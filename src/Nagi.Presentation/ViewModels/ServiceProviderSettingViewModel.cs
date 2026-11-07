@@ -1,5 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Nagi.Core.Models;
+using Nagi.Presentation.Resources;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -9,7 +10,21 @@ public partial class ServiceProviderSettingViewModel : ObservableObject
 
     public string Id { get; init; } = string.Empty;
     public string DisplayName { get; init; } = string.Empty;
-    public string? Description { get; init; }
+    public string? Description => Id switch
+    {
+        ServiceProviderIds.LrcLib => Strings.Settings_Provider_LRCLIB_Desc,
+        ServiceProviderIds.NetEase => Strings.Settings_Provider_NetEase_Desc,
+        ServiceProviderIds.MusicBrainz => Strings.Settings_Provider_MusicBrainz_Desc,
+        ServiceProviderIds.Wikipedia => Strings.Settings_Provider_Wikipedia_Desc,
+        ServiceProviderIds.CoverArtArchive => Strings.Settings_Provider_CoverArtArchive_Desc,
+        ServiceProviderIds.FanartTv => Strings.Settings_Provider_FanartTv_Desc,
+        ServiceProviderIds.TheAudioDb => Strings.Settings_Provider_TheAudioDB_Desc,
+        ServiceProviderIds.Deezer => Strings.Settings_Provider_Deezer_Desc,
+        ServiceProviderIds.AppleMusic => Strings.Settings_Provider_AppleMusic_Desc,
+        ServiceProviderIds.LastFm => Strings.Settings_Provider_LastFm_Desc,
+        _ => null
+    };
+
     public ServiceCategory Category { get; init; }
 
     /// <summary>MusicBrainz looks up the IDs other metadata providers use, so it stays first.</summary>
@@ -21,7 +36,6 @@ public partial class ServiceProviderSettingViewModel : ObservableObject
         {
             Id = setting.Id,
             DisplayName = setting.DisplayName,
-            Description = setting.Description,
             Category = setting.Category,
             IsEnabled = setting.IsEnabled
         };
@@ -33,7 +47,6 @@ public partial class ServiceProviderSettingViewModel : ObservableObject
         {
             Id = Id,
             DisplayName = DisplayName,
-            Description = Description,
             Category = Category,
             IsEnabled = IsEnabled,
             Order = order

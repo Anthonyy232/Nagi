@@ -11,6 +11,7 @@ using Nagi.Core.Services.Implementations.MusicServers;
 using Nagi.Core.Services.Implementations.Presence;
 using Nagi.Core.Services.Implementations.Romanization;
 using Nagi.Core.Services.Implementations;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services;
 
@@ -22,8 +23,8 @@ public static class CoreServiceRegistration
     /// <summary>
     ///     Adds the library, playback, metadata, scrobbling, lyrics, and maintenance services.
     ///     The host must also register logging, <c>IConfiguration</c>, and its platform services:
-    ///     <see cref="IPathConfiguration" />, <see cref="ISettingsService" />, <see cref="IAppInfoService" />, <see cref="ICredentialLockerService" />, <see cref="IAudioPlayer" />
-    ///     and <see cref="ISystemMediaControls" />.
+    ///     <see cref="IPathConfiguration" />, <see cref="ISettingsStore" />, <see cref="IAppInfoService" />, <see cref="ICredentialLockerService" />,
+    ///     <see cref="IAutoLaunchService" />, <see cref="IAudioPlayer" /> and <see cref="ISystemMediaControls" />.
     /// </summary>
     public static IServiceCollection AddNagiCore(this IServiceCollection services)
     {
@@ -33,6 +34,8 @@ public static class CoreServiceRegistration
             options.UseSqlite(new SqliteConnectionStringBuilder { DataSource = pathConfig.DatabasePath }.ToString());
         });
 
+        services.AddSingleton<ISettingsService, SettingsService>();
+        services.AddSettings(typeof(CoreSettings));
         services.AddSingleton<IFileSystemService, FileSystemService>();
         services.AddSingleton<ILibraryReader, LibraryReader>();
         services.AddSingleton<IPlaylistService, PlaylistService>();
@@ -254,6 +257,15 @@ public static class CoreServiceRegistration
         services.AddSingleton<IReplayGainService, ReplayGainService>();
 
         AddHttpClients(services);
+        return services;
+    }
+
+    /// <summary>
+    ///     Adds the settings declared in <paramref name="declaringType" /> to the ones the settings service resets and backs up.
+    /// </summary>
+    public static IServiceCollection AddSettings(this IServiceCollection services, Type declaringType)
+    {
+        foreach (var setting in Setting.DeclaredIn(declaringType)) services.AddSingleton(setting);
         return services;
     }
 

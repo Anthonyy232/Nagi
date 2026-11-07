@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Nagi.Core.Models;
+using Nagi.Core.Settings;
 using NSubstitute;
 using Xunit;
 
@@ -50,7 +51,7 @@ public partial class MusicPlaybackServiceTests
         var song = _testSongs[1];
         song.RemoteId = "s1";
         _musicServers.GetStreamUriAsync(song).Returns((Uri?)null);
-        _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.RestorePlaybackState, true);
         _playbackStateStore.LoadAsync().Returns(new PlaybackState
         {
             CurrentTrackId = song.Id,

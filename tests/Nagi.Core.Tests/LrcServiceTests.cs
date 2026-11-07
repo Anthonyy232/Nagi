@@ -7,6 +7,7 @@ using Nagi.Core.Models.Lyrics;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
+using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
@@ -18,7 +19,7 @@ public class LrcServiceTests : IDisposable
     private const string LrcPath = "C:\\lyrics\\test.lrc";
     private readonly IFileSystemService _fileSystem;
     private readonly IOnlineLyricsService _onlineLyricsService;
-    private readonly ISettingsService _settingsService;
+    private readonly SettingsService _settingsService;
     private readonly IPathConfiguration _pathConfig;
     private readonly ILibraryWriter _libraryWriter;
     private readonly ILogger<LrcService> _logger;
@@ -30,17 +31,11 @@ public class LrcServiceTests : IDisposable
     {
         _fileSystem = Substitute.For<IFileSystemService>();
         _onlineLyricsService = Substitute.For<IOnlineLyricsService>();
-        _settingsService = Substitute.For<ISettingsService>();
+        _settingsService = TestSettings.Create();
         _pathConfig = Substitute.For<IPathConfiguration>();
         _libraryWriter = Substitute.For<ILibraryWriter>();
         _logger = Substitute.For<ILogger<LrcService>>();
         _netEaseLyricsService = Substitute.For<INetEaseLyricsService>();
-        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Lyrics)
-            .Returns(new List<ServiceProviderSetting>
-            {
-                new() { Id = "lrclib", DisplayName = "LRCLIB", Category = ServiceCategory.Lyrics, IsEnabled = true, Order = 0 },
-                new() { Id = "netease", DisplayName = "NetEase", Category = ServiceCategory.Lyrics, IsEnabled = true, Order = 1 }
-            });
 
         _lrcService = new LrcService(
             _fileSystem,
@@ -59,14 +54,9 @@ public class LrcServiceTests : IDisposable
     public async Task LrcService_RespectsProviderOrder()
     {
         var song = new Song { Title = "Test Song", Duration = TimeSpan.FromMinutes(3) };
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
 
-        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Lyrics)
-            .Returns(new List<ServiceProviderSetting>
-            {
-                new() { Id = ServiceProviderIds.NetEase, Order = 0, IsEnabled = true },
-                new() { Id = ServiceProviderIds.LrcLib, Order = 1, IsEnabled = true }
-            });
+        _settingsService.EnableOnly(CoreSettings.LyricsProviders, ServiceProviderIds.NetEase, ServiceProviderIds.LrcLib);
 
         _netEaseLyricsService.SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns("[00:01.00]From NetEase");
@@ -87,7 +77,7 @@ public class LrcServiceTests : IDisposable
         string? first, string? second, string expected, bool timed)
     {
         var song = new Song { Title = "Song", FilePath = @"C:\Music\song.mp3" };
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
         _pathConfig.LrcCachePath.Returns(@"C:\LyricsCache");
         _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
             Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()).Returns(first);
@@ -131,7 +121,7 @@ public class LrcServiceTests : IDisposable
     {
         var song = new Song { Title = "Undertow", FilePath = @"nagi-server:0123\s2", RemoteId = "s2" };
         _musicServers.GetLyricsAsync(song, Arg.Any<CancellationToken>()).Returns((string?)null);
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
         _pathConfig.LrcCachePath.Returns(@"C:\LyricsCache");
         _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
             Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()).Returns("[00:02.00]From LRCLIB");
@@ -145,7 +135,7 @@ public class LrcServiceTests : IDisposable
     public async Task GetLyricsAsync_ServerSongWhileTheServerIsDown_IsAskedAgainLater()
     {
         var song = new Song { Title = "Breakwater", FilePath = @"nagi-server:0123\s1", RemoteId = "s1" };
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
         _musicServers.GetLyricsAsync(song, Arg.Any<CancellationToken>())
             .Returns(Task.FromException<string?>(new MusicServerException(MusicServerError.Unreachable, "offline")));
 
@@ -161,7 +151,7 @@ public class LrcServiceTests : IDisposable
     public async Task GetLyricsAsync_WhenOneProviderFails_DoesNotCacheNegativeResult(bool timeout)
     {
         var song = new Song { Id = Guid.NewGuid(), Title = "Retryable" };
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
         Exception failure = timeout ? new TaskCanceledException("Provider timeout") : new HttpRequestException("Offline");
         _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
                 Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>())
@@ -179,7 +169,7 @@ public class LrcServiceTests : IDisposable
     [Fact]
     public async Task GetLyricsAsync_WhenFirstProviderTimesOut_UsesFallbackLyrics()
     {
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
         _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
                 Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromException<string?>(new TaskCanceledException("Provider timeout")));
@@ -197,7 +187,7 @@ public class LrcServiceTests : IDisposable
     {
         using var cts = new CancellationTokenSource();
         var song = new Song { Id = Guid.NewGuid(), Title = "Cancelled" };
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
         _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
                 Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>())
             .Returns(_ =>
@@ -228,9 +218,8 @@ public class LrcServiceTests : IDisposable
         using var service = new LrcService(_fileSystem, onlineService, netEaseService, _settingsService,
             _pathConfig, _libraryWriter, _musicServers, _logger);
         var song = new Song { Id = Guid.NewGuid(), Title = "Song", DurationTicks = TimeSpan.FromSeconds(180).Ticks };
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
-        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Lyrics).Returns(
-            new List<ServiceProviderSetting> { new() { Id = providerId, IsEnabled = true } });
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
+        _settingsService.EnableOnly(CoreSettings.LyricsProviders, providerId);
         handler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.ServiceUnavailable));
 
         (await service.GetLyricsAsync(song)).Should().BeNull();
@@ -314,7 +303,7 @@ public class LrcServiceTests : IDisposable
         var song = new Song { Id = Guid.NewGuid(), LrcFilePath = cachedPath };
         _pathConfig.LrcCachePath.Returns(cacheRoot);
         _fileSystem.FileExists(cachedPath).Returns(true);
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
 
         var removed = await _lrcService.RemoveCachedLyricsAsync(song);
         var result = await _lrcService.GetLyricsAsync(song);
@@ -505,7 +494,7 @@ public class LrcServiceTests : IDisposable
     {
         var song = new Song { Title = "Test", LrcFilePath = null, Duration = TimeSpan.FromMinutes(3) };
         var preferredResult = new TaskCompletionSource<string?>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
         _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
             Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()).Returns(preferredResult.Task);
         _netEaseLyricsService.SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
@@ -541,7 +530,7 @@ public class LrcServiceTests : IDisposable
         };
         _pathConfig.LrcCachePath.Returns(cacheRoot);
         _fileSystem.FileExists(legacyPath).Returns(true);
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
         _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
                 Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>())
             .Returns("[00:01.00]Fresh Lyrics");
@@ -576,12 +565,12 @@ public class LrcServiceTests : IDisposable
         _pathConfig.LrcCachePath.Returns(cacheRoot);
         _fileSystem.FileExists(cachePath).Returns(true);
         _fileSystem.ReadAllTextAsync(cachePath).Returns("[00:01.00]Cached Lyrics");
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
 
         var result = await _lrcService.GetLyricsAsync(song);
 
         result!.Lines.Single().Text.Should().Be("Cached Lyrics");
         await _libraryWriter.DidNotReceive().UpdateSongLrcPathAsync(Arg.Any<Guid>(), Arg.Any<string?>());
-        await _settingsService.DidNotReceive().GetFetchOnlineLyricsEnabledAsync();
         await _onlineLyricsService.DidNotReceive().GetLyricsAsync(
             Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
     }
@@ -590,7 +579,7 @@ public class LrcServiceTests : IDisposable
     public async Task GetLyricsAsync_WhenOnlineFetchDisabled_DoesNotCallRemoteServices()
     {
         var song = new Song { Title = "Test", LrcFilePath = null };
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(false);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, false);
 
         var result = await _lrcService.GetLyricsAsync(song);
 
@@ -604,9 +593,8 @@ public class LrcServiceTests : IDisposable
     public async Task GetLyricsAsync_WhenNoProvidersEnabled_DoesNotFetchOrCacheNegativeResult()
     {
         var song = new Song { Title = "Test", LrcFilePath = null, Duration = TimeSpan.FromMinutes(3) };
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
-        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Lyrics)
-            .Returns(new List<ServiceProviderSetting>());
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
+        _settingsService.EnableOnly(CoreSettings.LyricsProviders);
 
         var result = await _lrcService.GetLyricsAsync(song);
 
@@ -624,9 +612,8 @@ public class LrcServiceTests : IDisposable
     public async Task GetLyricsAsync_WithOneEnabledProvider_OnlyCallsThatProvider(string providerId, string expectedText)
     {
         var song = new Song { Title = "Test", Duration = TimeSpan.FromMinutes(3) };
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
-        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Lyrics).Returns(
-            new List<ServiceProviderSetting> { new() { Id = providerId, IsEnabled = true } });
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
+        _settingsService.EnableOnly(CoreSettings.LyricsProviders, providerId);
         _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
                 Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()).Returns("[00:01.00]From LRCLIB");
         _netEaseLyricsService.SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
@@ -686,7 +673,7 @@ public class LrcServiceTests : IDisposable
     public async Task GetLyricsAsync_WhenLyricsAlreadyChecked_ReturnsNullWithoutFetching()
     {
         var song = new Song { Title = "Test", LrcFilePath = null, LyricsLastCheckedUtc = DateTime.UtcNow };
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
 
         var result = await _lrcService.GetLyricsAsync(song);
 
@@ -699,7 +686,7 @@ public class LrcServiceTests : IDisposable
     public async Task GetLyricsAsync_WhenAlreadyCancelled_DoesNotCallOnlineServices()
     {
         var song = new Song { Title = "Test", LrcFilePath = null, Duration = TimeSpan.FromMinutes(3) };
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
 
         using var cts = new CancellationTokenSource();
         cts.Cancel();
@@ -717,7 +704,7 @@ public class LrcServiceTests : IDisposable
         var song = new Song { Title = "Test", LrcFilePath = LrcPath };
         _fileSystem.FileExists(LrcPath).Returns(true);
         _fileSystem.ReadAllTextAsync(LrcPath).Returns("[00:01.00]Local Lyrics");
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
 
         var result = await _lrcService.GetLyricsAsync(song);
 
@@ -737,7 +724,7 @@ public class LrcServiceTests : IDisposable
         song.SongArtists.Add(new SongArtist { Song = song, Artist = artist2, Order = 1 });
         song.SyncDenormalizedFields();
 
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
         _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
             Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()).Returns("[00:01.00]Found");
 
@@ -761,7 +748,7 @@ public class LrcServiceTests : IDisposable
     public async Task GetLyricsAsync_WhenFetchDisabled_StopsWaitingForProvider(bool plainFound)
     {
         var song = new Song { Title = "Song" };
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
         var pending = new TaskCompletionSource<string?>(TaskCreationOptions.RunContinuationsAsynchronously);
         CancellationToken providerToken = default;
         Task<string?> Hold(CancellationToken token)
@@ -784,7 +771,7 @@ public class LrcServiceTests : IDisposable
         }
 
         var fetch = _lrcService.GetLyricsAsync(song);
-        _settingsService.FetchOnlineLyricsEnabledChanged += Raise.Event<Action<bool>>(false);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, false);
         try
         {
             var result = await fetch.WaitAsync(TimeSpan.FromSeconds(5));
@@ -804,12 +791,12 @@ public class LrcServiceTests : IDisposable
     public async Task GetLyricsAsync_WhenFetchReEnabledAfterDisable_AllowsNewFetch()
     {
         var song = new Song { Title = "Song" };
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
         _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
             Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()).Returns("[00:01.00]Lyric");
 
-        _settingsService.FetchOnlineLyricsEnabledChanged += Raise.Event<Action<bool>>(false);
-        _settingsService.FetchOnlineLyricsEnabledChanged += Raise.Event<Action<bool>>(true);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, false);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
         var result = await _lrcService.GetLyricsAsync(song);
 
         result.Should().NotBeNull();
@@ -822,7 +809,7 @@ public class LrcServiceTests : IDisposable
     public async Task GetLyricsAsync_WhenProvidersReturnEmpty_MarksLyricsAsChecked()
     {
         var song = new Song { Title = "Unknown Song" };
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
         _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
             Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()).Returns((string?)null);
         _netEaseLyricsService.SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())

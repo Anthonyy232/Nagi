@@ -20,6 +20,8 @@ using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Implementations;
+using Nagi.Core.Settings;
+using Nagi.Presentation.Services;
 
 namespace Nagi.WinUI;
 
@@ -110,7 +112,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         { "Insights", typeof(InsightsPage) }
     };
 
-    private readonly IUISettingsService _settingsService;
+    private readonly ISettingsService _settingsService;
     private readonly TransparencyEffectsMonitor _transparencyEffects;
     private readonly IThemeService _themeService;
     private readonly Win32InteropService _win32InteropService;
@@ -118,7 +120,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private SplitViewContentMotion? _queueContentMotion;
     private SplitViewContentMotion? _navigationContentMotion;
 
-    private bool _isPlayerAnimationEnabled = true;
     private bool _isPointerOverPlayer;
     private readonly DispatcherTimer _hoverTimer = new();
     private bool _pendingPointerOverPlayer;
@@ -131,7 +132,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private ElementTheme _lastKnownTheme;
 
     public MainPage(PlayerViewModel viewModel, InsightsViewModel insightsViewModel,
-        GlobalOperationViewModel globalOperation, IUISettingsService settingsService, IThemeService themeService,
+        GlobalOperationViewModel globalOperation, ISettingsService settingsService, IThemeService themeService,
         IDispatcherService dispatcherService, Win32InteropService win32InteropService,
         NavigationService navigationService, TransparencyEffectsMonitor transparencyEffects, ILogger<MainPage> logger)
     {
@@ -285,7 +286,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     }
 
     private bool ShouldExpandPlayer =>
-        !_isPlayerAnimationEnabled || _isPointerOverPlayer || ViewModel.IsQueuePanelOpen ||
+        !_settingsService.Get(AppSettings.PlayerAnimation) || _isPointerOverPlayer || ViewModel.IsQueuePanelOpen ||
         ViewModel.CurrentPlayingTrack != null && ViewModel.IsPlaying;
 
     private void UpdatePlayerVisualState(bool useTransitions = true)
@@ -315,10 +316,9 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
     }
 
-    private async Task PopulateNavigationAsync()
+    private void PopulateNavigation()
     {
-        var navItems = await ViewModel.GetVisibleNavigationItemsAsync();
-        if (_isUnloaded) return;
+        var navItems = ViewModel.GetVisibleNavigationItems();
         var wasUpdating = _isUpdatingNavViewSelection;
         _isUpdatingNavViewSelection = true;
         try
@@ -369,22 +369,14 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         ContentFrame.Navigated += OnContentFrameNavigated;
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
         CompositionAnimationHelper.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
-        _settingsService.PlayerAnimationSettingChanged += OnPlayerAnimationSettingChanged;
-        _settingsService.NavigationSettingsChanged += OnNavigationSettingsChanged;
+        _settingsService.SettingChanged += OnSettingChanged;
         _transparencyEffects.Changed += OnTransparencyEffectsChanged;
-        _settingsService.PlayerDesignSettingsChanged += OnPlayerDesignSettingsChanged;
         AddHandler(PointerPressedEvent, new PointerEventHandler(OnGlobalPointerPressed), true);
         KeyDown += OnSelectionKeyDown;
 
-        var brushTask = SetPlatformSpecificBrushAsync();
-        var navTask = PopulateNavigationAsync();
-        var animTask = _settingsService.GetPlayerAnimationEnabledAsync();
-        var paneTask = RestorePaneStateAsync();
-
-        await Task.WhenAll(brushTask, navTask, animTask, paneTask);
-        if (_isUnloaded) return;
-
-        _isPlayerAnimationEnabled = await animTask;
+        SetPlatformSpecificBrush();
+        PopulateNavigation();
+        if (ViewModel.GetRememberedPaneOpen() is { } isPaneOpen) NavView.IsPaneOpen = isPaneOpen;
 
         if (ContentFrame.CurrentSourcePageType is null)
             NavView.SelectedItem = NavView.MenuItems.FirstOrDefault() ?? NavView.SettingsItem;
@@ -408,10 +400,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         ContentFrame.Navigated -= OnContentFrameNavigated;
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
         CompositionAnimationHelper.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
-        _settingsService.PlayerAnimationSettingChanged -= OnPlayerAnimationSettingChanged;
-        _settingsService.NavigationSettingsChanged -= OnNavigationSettingsChanged;
+        _settingsService.SettingChanged -= OnSettingChanged;
         _transparencyEffects.Changed -= OnTransparencyEffectsChanged;
-        _settingsService.PlayerDesignSettingsChanged -= OnPlayerDesignSettingsChanged;
 
         // Dispose the tray icon control to prevent "Exception Processing Message 0xc0000005" errors on exit.
         AppTrayIconHost?.Dispose();
@@ -424,29 +414,50 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     ///     Sets the background brush for the floating player based on user settings and OS capabilities.
     ///     Handles switching between Acrylic (glass) and Solid (opaque) materials.
     /// </summary>
-    private async Task SetPlatformSpecificBrushAsync()
+    private void SetPlatformSpecificBrush()
     {
         var isAcrylicEnabled = _transparencyEffects.IsEnabled;
-        var material = await _settingsService.GetPlayerBackgroundMaterialAsync();
-        if (_isUnloaded) return;
+        var material = _settingsService.Get(AppSettings.PlayerBackgroundMaterial);
         var brushKey = !isAcrylicEnabled || material == PlayerBackgroundMaterial.Solid
             ? "PlayerBackgroundBrush"
             : _win32InteropService.IsWindows11OrNewer ? "Win11AcrylicBrush" : "Win10AcrylicBrush";
         FloatingPlayerContainer.Background = (Brush)Application.Current.Resources[brushKey];
     }
 
-    private void OnPlayerDesignSettingsChanged()
+    private void OnSettingChanged(Setting setting)
     {
-        _ = UpdateUiAsync(async () =>
+        if (setting == AppSettings.PlayerBackgroundMaterial || setting == AppSettings.PlayerTintIntensity)
         {
-            await SetPlatformSpecificBrushAsync();
-            if (!_isUnloaded) await _themeService.ReapplyCurrentDynamicThemeAsync();
-        });
+            _ = UpdateUiAsync(() =>
+            {
+                SetPlatformSpecificBrush();
+                return _themeService.ReapplyCurrentDynamicThemeAsync();
+            });
+        }
+        else if (setting == AppSettings.PlayerAnimation)
+        {
+            _dispatcherService.TryEnqueue(() =>
+            {
+                if (!_isUnloaded) UpdatePlayerVisualState(false);
+            });
+        }
+        else if (setting == AppSettings.NavigationItems)
+        {
+            _ = UpdateUiAsync(() =>
+            {
+                PopulateNavigation();
+                return Task.CompletedTask;
+            });
+        }
     }
 
     private void OnTransparencyEffectsChanged(bool isEnabled)
     {
-        _ = UpdateUiAsync(SetPlatformSpecificBrushAsync);
+        _ = UpdateUiAsync(() =>
+        {
+            SetPlatformSpecificBrush();
+            return Task.CompletedTask;
+        });
     }
 
     private void OnAnimationsEnabledChanged(Windows.UI.ViewManagement.UISettings sender,
@@ -459,21 +470,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             if (!CompositionAnimationHelper.AreAnimationsEnabled)
                 PlayerVisibilityStates.CurrentState?.Storyboard?.SkipToFill();
         });
-    }
-
-    private void OnPlayerAnimationSettingChanged(bool isEnabled)
-    {
-        _dispatcherService.TryEnqueue(() =>
-        {
-            if (_isUnloaded) return;
-            _isPlayerAnimationEnabled = isEnabled;
-            UpdatePlayerVisualState(false);
-        });
-    }
-
-    private void OnNavigationSettingsChanged()
-    {
-        _ = UpdateUiAsync(PopulateNavigationAsync);
     }
 
     private void OnActualThemeChanged(FrameworkElement sender, object args)
@@ -572,7 +568,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private void AppTitleBar_PaneToggleRequested(TitleBar sender, object args)
     {
         NavView.IsPaneOpen = !NavView.IsPaneOpen;
-        _ = ViewModel.RememberPaneOpenAsync(NavView.IsPaneOpen);
+        ViewModel.RememberPaneOpen(NavView.IsPaneOpen);
     }
 
     private void AppTitleBar_BackRequested(TitleBar sender, object args)
@@ -582,11 +578,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void VolumeSliderContainer_PointerWheelChanged(object sender, PointerRoutedEventArgs e) =>
         PlayerInputHelper.StepVolumeWithWheel(sender, e, ViewModel);
-
-    private async Task RestorePaneStateAsync()
-    {
-        if (await ViewModel.GetRememberedPaneOpenAsync() is { } isOpen && !_isUnloaded) NavView.IsPaneOpen = isOpen;
-    }
 
     /// <summary>
     ///     Handles global pointer pressed events to enable back navigation using the mouse side button.

@@ -58,8 +58,7 @@ public class ArtistViewViewModelTests
                 PageSize = 50,
                 Items = []
             });
-        var settings = Substitute.For<IUISettingsService>();
-        settings.GetSongsPerPageAsync().Returns(50);
+        var settings = TestSettings.Create();
         return new ArtistViewViewModel(library.Reader, library.Writer, scanner, Substitute.For<IPlaylistService>(),
             Substitute.For<IMusicPlaybackService>(), Substitute.For<IMusicNavigationService>(),
             settings, new ImmediateDispatcher(), ui ?? Substitute.For<IUIService>(), NullLogger<ArtistViewViewModel>.Instance);

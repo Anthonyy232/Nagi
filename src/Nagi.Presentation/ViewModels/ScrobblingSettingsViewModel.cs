@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Settings;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using CoreStrings = Nagi.Core.Resources.Strings;
@@ -14,7 +15,6 @@ namespace Nagi.Presentation.ViewModels;
 /// </summary>
 public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
 {
-    private readonly IUISettingsService _settingsService;
     private readonly IUIService _uiService;
     private readonly ILastFmAuthService _lastFmAuthService;
     private readonly IListenBrainzScrobblerService _listenBrainzScrobblerService;
@@ -22,15 +22,14 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
     private int _listenBrainzConnectionVersion;
 
     public ScrobblingSettingsViewModel(
-        IUISettingsService settingsService,
+        ISettingsService settingsService,
         IUIService uiService,
         ILastFmAuthService lastFmAuthService,
         IListenBrainzScrobblerService listenBrainzScrobblerService,
         IDispatcherService dispatcherService,
         ILogger<ScrobblingSettingsViewModel> logger)
-        : base(dispatcherService, logger)
+        : base(settingsService, dispatcherService, logger)
     {
-        _settingsService = settingsService;
         _uiService = uiService;
         _lastFmAuthService = lastFmAuthService;
         _listenBrainzScrobblerService = listenBrainzScrobblerService;
@@ -46,16 +45,54 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
 
     [ObservableProperty]
     public partial string? LastFmUsername { get; set; }
-    [ObservableProperty] public partial bool IsLastFmScrobblingEnabled { get; set; }
-    [ObservableProperty] public partial bool IsLastFmNowPlayingEnabled { get; set; }
+
+    public bool IsLastFmScrobblingEnabled
+    {
+        get => Get(CoreSettings.LastFmScrobbling);
+        set => Set(CoreSettings.LastFmScrobbling, value);
+    }
+
+    public bool IsLastFmNowPlayingEnabled
+    {
+        get => Get(CoreSettings.LastFmNowPlaying);
+        set => Set(CoreSettings.LastFmNowPlaying, value);
+    }
 
     public bool IsLastFmNotConnected => !IsLastFmConnected;
     public bool IsLastFmInitialAuthEnabled => !IsConnectingToLastFm;
 
     [ObservableProperty] public partial string ListenBrainzUserToken { get; set; } = string.Empty;
-    [ObservableProperty] public partial bool ListenBrainzScrobblingEnabled { get; set; }
-    [ObservableProperty] public partial bool ListenBrainzNowPlayingEnabled { get; set; }
-    [ObservableProperty] public partial string ListenBrainzServerUrl { get; set; } = string.Empty;
+
+    public bool ListenBrainzScrobblingEnabled
+    {
+        get => Get(CoreSettings.ListenBrainzScrobbling);
+        set
+        {
+            if (Set(CoreSettings.ListenBrainzScrobbling, value) && value) StampListenBrainzEnabledSinceIfNeeded();
+        }
+    }
+
+    public bool ListenBrainzNowPlayingEnabled
+    {
+        get => Get(CoreSettings.ListenBrainzNowPlaying);
+        set
+        {
+            if (Set(CoreSettings.ListenBrainzNowPlaying, value) && value) StampListenBrainzEnabledSinceIfNeeded();
+        }
+    }
+
+    /// <summary>Empty for the default server.</summary>
+    public string ListenBrainzServerUrl
+    {
+        get => Get(CoreSettings.ListenBrainzServerUrl) ?? string.Empty;
+        set
+        {
+            if (value == ListenBrainzServerUrl) return;
+            ++_listenBrainzConnectionVersion;
+            Set(CoreSettings.ListenBrainzServerUrl, string.IsNullOrWhiteSpace(value) ? null : value.Trim());
+        }
+    }
+
     [ObservableProperty] public partial string? ListenBrainzConnectionStatus { get; set; }
     [ObservableProperty] public partial bool ListenBrainzIsConnected { get; set; }
 
@@ -64,37 +101,22 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
     /// </summary>
     public async Task LoadAsync()
     {
-        var lastFmCredsTask = _settingsService.GetLastFmCredentialsAsync();
-        var lastFmAuthTokenTask = _settingsService.GetLastFmAuthTokenAsync();
-        var scrobblingTask = _settingsService.GetLastFmScrobblingEnabledAsync();
-        var nowPlayingTask = _settingsService.GetLastFmNowPlayingEnabledAsync();
-        var lbTokenTask = _settingsService.GetListenBrainzUserTokenAsync();
-        var lbScrobblingTask = _settingsService.GetListenBrainzScrobblingEnabledAsync();
-        var lbNowPlayingTask = _settingsService.GetListenBrainzNowPlayingEnabledAsync();
-        var lbServerUrlTask = _settingsService.GetListenBrainzServerUrlAsync();
+        var lastFmCredentialsTask = _settingsService.GetLastFmCredentialsAsync();
+        var listenBrainzTokenTask = _settingsService.GetListenBrainzUserTokenAsync();
 
-        await Task.WhenAll(lastFmCredsTask, lastFmAuthTokenTask, scrobblingTask, nowPlayingTask,
-            lbTokenTask, lbScrobblingTask, lbNowPlayingTask, lbServerUrlTask);
+        await Task.WhenAll(lastFmCredentialsTask, listenBrainzTokenTask);
 
         if (_isDisposed) return;
 
         ApplyWithoutSaving(() =>
         {
-            var lastFmCredentials = lastFmCredsTask.Result;
+            var lastFmCredentials = lastFmCredentialsTask.Result;
             LastFmUsername = lastFmCredentials?.Username;
             IsLastFmConnected = lastFmCredentials is not null && !string.IsNullOrEmpty(lastFmCredentials.Value.SessionKey);
+            IsConnectingToLastFm = !string.IsNullOrEmpty(_settingsService.Get(CoreSettings.LastFmAuthToken));
 
-            IsLastFmScrobblingEnabled = scrobblingTask.Result;
-            IsLastFmNowPlayingEnabled = nowPlayingTask.Result;
-
-            var authToken = lastFmAuthTokenTask.Result;
-            IsConnectingToLastFm = !string.IsNullOrEmpty(authToken);
-
-            ListenBrainzUserToken = lbTokenTask.Result ?? string.Empty;
+            ListenBrainzUserToken = listenBrainzTokenTask.Result ?? string.Empty;
             ListenBrainzIsConnected = !string.IsNullOrEmpty(ListenBrainzUserToken);
-            ListenBrainzScrobblingEnabled = lbScrobblingTask.Result;
-            ListenBrainzNowPlayingEnabled = lbNowPlayingTask.Result;
-            ListenBrainzServerUrl = lbServerUrlTask.Result ?? string.Empty;
             ListenBrainzConnectionStatus = null;
         });
     }
@@ -113,7 +135,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
             if (!IsLastFmAuthCurrent(version)) return;
             if (authData is { Token: not null, AuthUrl: not null })
             {
-                await _settingsService.SaveLastFmAuthTokenAsync(authData.Value.Token);
+                _settingsService.Set(CoreSettings.LastFmAuthToken, authData.Value.Token);
                 if (await _uiService.OpenUriAsync(new Uri(authData.Value.AuthUrl))) return;
             }
         }
@@ -124,7 +146,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
 
         if (!IsLastFmAuthCurrent(version)) return;
         IsConnectingToLastFm = false;
-        await SaveSettingAsync(() => _settingsService.SaveLastFmAuthTokenAsync(null));
+        Set(CoreSettings.LastFmAuthToken, null);
         await _uiService.ShowMessageDialogAsync(Strings.Settings_LastFm_AuthError_Title, Strings.Settings_LastFm_AuthError_Message);
     }
 
@@ -135,7 +157,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
         var version = _lastFmAuthVersion;
         try
         {
-            var authToken = await _settingsService.GetLastFmAuthTokenAsync();
+            var authToken = _settingsService.Get(CoreSettings.LastFmAuthToken);
             if (string.IsNullOrEmpty(authToken)) return;
 
             var sessionData = await _lastFmAuthService.GetSessionAsync(authToken);
@@ -143,16 +165,11 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
             if (sessionData is { Username: not null, SessionKey: not null })
             {
                 await _settingsService.SaveLastFmCredentialsAsync(sessionData.Value.Username, sessionData.Value.SessionKey);
-                await Task.WhenAll(_settingsService.SetLastFmScrobblingEnabledAsync(true),
-                    _settingsService.SetLastFmNowPlayingEnabledAsync(true));
+                _settingsService.Set(CoreSettings.LastFmScrobbling, true);
+                _settingsService.Set(CoreSettings.LastFmNowPlaying, true);
 
-                ApplyWithoutSaving(() =>
-                {
-                    LastFmUsername = sessionData.Value.Username;
-                    IsLastFmConnected = true;
-                    IsLastFmScrobblingEnabled = true;
-                    IsLastFmNowPlayingEnabled = true;
-                });
+                LastFmUsername = sessionData.Value.Username;
+                IsLastFmConnected = true;
                 return;
             }
         }
@@ -165,7 +182,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
             if (IsLastFmAuthCurrent(version))
             {
                 IsConnectingToLastFm = false;
-                await SaveSettingAsync(() => _settingsService.SaveLastFmAuthTokenAsync(null));
+                Set(CoreSettings.LastFmAuthToken, null);
             }
         }
 
@@ -175,11 +192,11 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
     }
 
     [RelayCommand]
-    private async Task CancelLastFmAuthAsync()
+    private void CancelLastFmAuth()
     {
         ++_lastFmAuthVersion;
         IsConnectingToLastFm = false;
-        await SaveSettingAsync(() => _settingsService.SaveLastFmAuthTokenAsync(null));
+        Set(CoreSettings.LastFmAuthToken, null);
     }
 
     [RelayCommand]
@@ -197,14 +214,9 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
         try
         {
             await _settingsService.ClearLastFmCredentialsAsync();
-            ApplyWithoutSaving(() =>
-            {
-                IsLastFmConnected = false;
-                LastFmUsername = null;
-                IsConnectingToLastFm = false;
-                IsLastFmScrobblingEnabled = false;
-                IsLastFmNowPlayingEnabled = false;
-            });
+            IsLastFmConnected = false;
+            LastFmUsername = null;
+            IsConnectingToLastFm = false;
         }
         catch (Exception ex)
         {
@@ -212,42 +224,11 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
         }
     }
 
-    partial void OnIsLastFmScrobblingEnabledChanged(bool value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetLastFmScrobblingEnabledAsync(value));
-
-    partial void OnIsLastFmNowPlayingEnabledChanged(bool value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetLastFmNowPlayingEnabledAsync(value));
-
-    partial void OnListenBrainzScrobblingEnabledChanged(bool value) =>
-        _ = SaveSettingAsync(async () =>
-        {
-            await _settingsService.SetListenBrainzScrobblingEnabledAsync(value);
-            if (value) await StampListenBrainzEnabledSinceIfNeededAsync();
-        });
-
-    partial void OnListenBrainzNowPlayingEnabledChanged(bool value) =>
-        _ = SaveSettingAsync(async () =>
-        {
-            await _settingsService.SetListenBrainzNowPlayingEnabledAsync(value);
-            if (value) await StampListenBrainzEnabledSinceIfNeededAsync();
-        });
-
-    partial void OnListenBrainzServerUrlChanged(string value)
+    // The first time any ListenBrainz submission is enabled, so historic listens are not backfilled.
+    private void StampListenBrainzEnabledSinceIfNeeded()
     {
-        if (_isInitializing) return;
-        ++_listenBrainzConnectionVersion;
-        _ = SaveSettingAsync(() =>
-            _settingsService.SetListenBrainzServerUrlAsync(string.IsNullOrWhiteSpace(value) ? null : value.Trim()));
-    }
-
-    /// <summary>
-    ///     Stamps <see cref="ISettingsService.SetListenBrainzEnabledSinceUtcAsync"/> with the current UTC time
-    ///     the first time any ListenBrainz submission is enabled, so historic listens are not backfilled.
-    /// </summary>
-    private async Task StampListenBrainzEnabledSinceIfNeededAsync()
-    {
-        if (await _settingsService.GetListenBrainzEnabledSinceUtcAsync() is null)
-            await _settingsService.SetListenBrainzEnabledSinceUtcAsync(DateTime.UtcNow);
+        if (_settingsService.Get(CoreSettings.ListenBrainzEnabledSinceUtc) is null)
+            Set(CoreSettings.ListenBrainzEnabledSinceUtc, DateTime.UtcNow);
     }
 
     [RelayCommand]
@@ -264,7 +245,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
             if (result.IsValid)
             {
                 await _settingsService.SaveListenBrainzUserTokenAsync(token);
-                await StampListenBrainzEnabledSinceIfNeededAsync();
+                StampListenBrainzEnabledSinceIfNeeded();
                 ListenBrainzIsConnected = true;
                 ListenBrainzConnectionStatus = string.Format(
                     Strings.SettingsPage_ListenBrainz_Connected,
@@ -304,15 +285,9 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
         try
         {
             await _settingsService.ClearListenBrainzUserTokenAsync();
-            await _settingsService.SetListenBrainzScrobblingEnabledAsync(false);
-            await _settingsService.SetListenBrainzNowPlayingEnabledAsync(false);
-            await _settingsService.SetListenBrainzEnabledSinceUtcAsync(null);
-
-            ApplyWithoutSaving(() =>
-            {
-                ListenBrainzScrobblingEnabled = false;
-                ListenBrainzNowPlayingEnabled = false;
-            });
+            _settingsService.Set(CoreSettings.ListenBrainzScrobbling, false);
+            _settingsService.Set(CoreSettings.ListenBrainzNowPlaying, false);
+            _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, null);
 
             ListenBrainzUserToken = string.Empty;
             ListenBrainzIsConnected = false;

@@ -9,17 +9,19 @@ using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Implementations;
 using WinRT.Interop;
+using Nagi.Core.Settings;
+using Nagi.Presentation.Services;
+using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.WinUI.Popups;
 
 public sealed partial class TrayPopup : Window
 {
-    private readonly IUISettingsService _settingsService;
+    private readonly ISettingsService _settingsService;
     private readonly Win32InteropService _win32InteropService;
     private bool _isClosed;
-    private bool _isCoverArtInFlyoutEnabled;
 
-    public TrayPopup(ElementTheme initialTheme, PlayerViewModel viewModel, IUISettingsService settingsService,
+    public TrayPopup(ElementTheme initialTheme, PlayerViewModel viewModel, ISettingsService settingsService,
         Win32InteropService win32InteropService)
     {
         InitializeComponent();
@@ -33,12 +35,12 @@ public sealed partial class TrayPopup : Window
         PlayerInputHelper.AttachSeekSlider(MediaSeekerSlider, ViewModel);
 
         ConfigureWindowAppearance();
-        _ = InitializeSettingsAsync();
+        UpdateCoverArtVisibility();
 
         Activated += OnActivated;
         Closed += OnClosed;
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
-        _settingsService.ShowCoverArtInTrayFlyoutSettingChanged += OnShowCoverArtSettingChanged;
+        _settingsService.SettingChanged += OnSettingChanged;
     }
 
     public PlayerViewModel ViewModel { get; }
@@ -69,16 +71,9 @@ public sealed partial class TrayPopup : Window
         return OuterBorder.DesiredSize.Height;
     }
 
-    private async Task InitializeSettingsAsync()
-    {
-        _isCoverArtInFlyoutEnabled = await _settingsService.GetShowCoverArtInTrayFlyoutAsync();
-        if (_isClosed) return;
-        UpdateCoverArtVisibility();
-    }
-
     private void UpdateCoverArtVisibility()
     {
-        var shouldBeVisible = _isCoverArtInFlyoutEnabled && !string.IsNullOrEmpty(ViewModel.AlbumArtUri);
+        var shouldBeVisible = _settingsService.Get(AppSettings.ShowCoverArtInTrayFlyout) && !string.IsNullOrEmpty(ViewModel.AlbumArtUri);
         CoverArtBackground.Visibility = shouldBeVisible ? Visibility.Visible : Visibility.Collapsed;
 
         CoverArtBrush.Source = BitmapImageFactory.Create(ViewModel.AlbumArtUri)!;
@@ -117,14 +112,12 @@ public sealed partial class TrayPopup : Window
         }
     }
 
-    private void OnShowCoverArtSettingChanged(bool isEnabled)
+    private void OnSettingChanged(Setting setting)
     {
+        if (setting != AppSettings.ShowCoverArtInTrayFlyout) return;
         DispatcherQueue.TryEnqueue(() =>
         {
-            if (_isClosed) return;
-
-            _isCoverArtInFlyoutEnabled = isEnabled;
-            UpdateCoverArtVisibility();
+            if (!_isClosed) UpdateCoverArtVisibility();
         });
     }
 
@@ -140,7 +133,7 @@ public sealed partial class TrayPopup : Window
     {
         _isClosed = true;
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
-        _settingsService.ShowCoverArtInTrayFlyoutSettingChanged -= OnShowCoverArtSettingChanged;
+        _settingsService.SettingChanged -= OnSettingChanged;
     }
 
     private void VolumeButton_PointerWheelChanged(object sender, PointerRoutedEventArgs e) =>

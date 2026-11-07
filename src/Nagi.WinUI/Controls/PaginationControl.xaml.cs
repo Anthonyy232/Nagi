@@ -12,7 +12,7 @@ public sealed partial class PaginationControl : UserControl
         InitializeComponent();
     }
 
-    public IReadOnlyList<int> PageSizeOptions => SettingsDefaults.PageSizeOptions;
+    public IReadOnlyList<int> PageSizeOptions => AppSettings.PageSizeOptions;
 
     public IPagedListViewModel ViewModel
     {

@@ -10,7 +10,7 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
-using Nagi.Presentation.Services;
+using Nagi.Core.Settings;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -22,19 +22,16 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
 {
     private const int SettingsSaveDebounceMs = 300;
 
-    private readonly IUISettingsService _settingsService;
     private readonly IUIService _uiService;
     private readonly ILibraryScanner _libraryScanner;
     private readonly IMusicServerService _musicServers;
     private readonly GlobalOperationViewModel _globalOperation;
     private readonly Debouncer _lyricsProviderSaveDebouncer;
     private readonly Debouncer _metadataProviderSaveDebouncer;
-    private readonly Debouncer _artistSplitSaveDebouncer;
-    private readonly Debouncer _genreSplitSaveDebouncer;
     private CancellationTokenSource? _metadataRescanCts;
 
     public LibrarySettingsViewModel(
-        IUISettingsService settingsService,
+        ISettingsService settingsService,
         IUIService uiService,
         ILibraryScanner libraryScanner,
         IMusicServerService musicServers,
@@ -42,9 +39,8 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
         IDispatcherService dispatcherService,
         ILogger<LibrarySettingsViewModel> logger,
         TimeProvider? timeProvider = null)
-        : base(dispatcherService, logger)
+        : base(settingsService, dispatcherService, logger)
     {
-        _settingsService = settingsService;
         _uiService = uiService;
         _libraryScanner = libraryScanner;
         _musicServers = musicServers;
@@ -53,80 +49,72 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
         timeProvider ??= TimeProvider.System;
         _lyricsProviderSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), timeProvider);
         _metadataProviderSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), timeProvider);
-        _artistSplitSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), timeProvider);
-        _genreSplitSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), timeProvider);
 
         LyricsProviders.CollectionChanged += OnLyricsProvidersCollectionChanged;
         MetadataProviders.CollectionChanged += OnMetadataProvidersCollectionChanged;
-
-        ApplyWithoutSaving(() =>
-        {
-            IsFetchOnlineMetadataEnabled = SettingsDefaults.FetchOnlineMetadataEnabled;
-            IsIgnoreLeadingArticlesOnSortEnabled = SettingsDefaults.IgnoreLeadingArticlesOnSortEnabled;
-            IsFetchOnlineLyricsEnabled = SettingsDefaults.FetchOnlineLyricsEnabled;
-            IsLyricsRomanizationEnabled = SettingsDefaults.LyricsRomanizationEnabled;
-        });
     }
 
-    [ObservableProperty] public partial bool IsFetchOnlineMetadataEnabled { get; set; }
-    [ObservableProperty] public partial bool IsIgnoreLeadingArticlesOnSortEnabled { get; set; }
-    [ObservableProperty] public partial bool IsFetchOnlineLyricsEnabled { get; set; }
-    [ObservableProperty] public partial bool IsLyricsRomanizationEnabled { get; set; }
-    [ObservableProperty] public partial string ArtistSplitCharacters { get; set; } = string.Empty;
-    [ObservableProperty] public partial string GenreSplitCharacters { get; set; } = string.Empty;
+    public bool IsFetchOnlineMetadataEnabled
+    {
+        get => Get(CoreSettings.FetchOnlineMetadata);
+        set => Set(CoreSettings.FetchOnlineMetadata, value);
+    }
+
+    public bool IsIgnoreLeadingArticlesOnSortEnabled
+    {
+        get => Get(CoreSettings.IgnoreLeadingArticlesOnSort);
+        set => Set(CoreSettings.IgnoreLeadingArticlesOnSort, value);
+    }
+
+    public bool IsFetchOnlineLyricsEnabled
+    {
+        get => Get(CoreSettings.FetchOnlineLyrics);
+        set => Set(CoreSettings.FetchOnlineLyrics, value);
+    }
+
+    public bool IsLyricsRomanizationEnabled
+    {
+        get => Get(CoreSettings.LyricsRomanization);
+        set => Set(CoreSettings.LyricsRomanization, value);
+    }
+
+    public string ArtistSplitCharacters
+    {
+        get => Get(CoreSettings.ArtistSplitCharacters);
+        set => Set(CoreSettings.ArtistSplitCharacters, value);
+    }
+
+    public string GenreSplitCharacters
+    {
+        get => Get(CoreSettings.GenreSplitCharacters);
+        set => Set(CoreSettings.GenreSplitCharacters, value);
+    }
 
     public ObservableRangeCollection<ServiceProviderSettingViewModel> LyricsProviders { get; } = new();
     public ObservableRangeCollection<ServiceProviderSettingViewModel> MetadataProviders { get; } = new();
 
     internal Task PendingSettingsSaves => Task.WhenAll(
         _lyricsProviderSaveDebouncer.PendingInvocation,
-        _metadataProviderSaveDebouncer.PendingInvocation,
-        _artistSplitSaveDebouncer.PendingInvocation,
-        _genreSplitSaveDebouncer.PendingInvocation);
+        _metadataProviderSaveDebouncer.PendingInvocation);
 
-    public async Task LoadAsync()
+    /// <summary>
+    ///     Loads the provider lists without writing anything back.
+    /// </summary>
+    public void Load()
     {
         ApplyWithoutSaving(() =>
         {
             foreach (var item in LyricsProviders) item.PropertyChanged -= OnLyricsProviderPropertyChanged;
-            LyricsProviders.Clear();
-
             foreach (var item in MetadataProviders) item.PropertyChanged -= OnMetadataProviderPropertyChanged;
-            MetadataProviders.Clear();
-        });
 
-        var onlineMetadataTask = _settingsService.GetFetchOnlineMetadataEnabledAsync();
-        var ignoreArticlesTask = _settingsService.GetIgnoreLeadingArticlesOnSortEnabledAsync();
-        var onlineLyricsTask = _settingsService.GetFetchOnlineLyricsEnabledAsync();
-        var lyricsRomanizationTask = _settingsService.GetLyricsRomanizationEnabledAsync();
-        var artistSplitTask = _settingsService.GetArtistSplitCharactersAsync();
-        var genreSplitTask = _settingsService.GetGenreSplitCharactersAsync();
-        var lyricsProvidersTask = _settingsService.GetServiceProvidersAsync(ServiceCategory.Lyrics);
-        var metadataProvidersTask = _settingsService.GetServiceProvidersAsync(ServiceCategory.Metadata);
-
-        await Task.WhenAll(onlineMetadataTask, ignoreArticlesTask, onlineLyricsTask, lyricsRomanizationTask,
-            artistSplitTask, genreSplitTask, lyricsProvidersTask, metadataProvidersTask);
-
-        if (_isDisposed) return;
-
-        ApplyWithoutSaving(() =>
-        {
-            IsFetchOnlineMetadataEnabled = onlineMetadataTask.Result;
-            IsIgnoreLeadingArticlesOnSortEnabled = ignoreArticlesTask.Result;
-            IsFetchOnlineLyricsEnabled = onlineLyricsTask.Result;
-            IsLyricsRomanizationEnabled = lyricsRomanizationTask.Result;
-
-            ArtistSplitCharacters = artistSplitTask.Result;
-            GenreSplitCharacters = genreSplitTask.Result;
-
-            var lyricsMapped = lyricsProvidersTask.Result
+            var lyricsMapped = _settingsService.Get(CoreSettings.LyricsProviders)
                 .Select(ServiceProviderSettingViewModel.FromSetting)
                 .ToList();
             foreach (var item in lyricsMapped)
                 item.PropertyChanged += OnLyricsProviderPropertyChanged;
             LyricsProviders.ReplaceRange(lyricsMapped);
 
-            var metadataProviders = metadataProvidersTask.Result
+            var metadataProviders = _settingsService.Get(CoreSettings.MetadataProviders)
                 .Select(ServiceProviderSettingViewModel.FromSetting)
                 .OrderByDescending(provider => provider.IsPinnedFirst)
                 .ToList();
@@ -150,20 +138,6 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
         _lyricsProviderSaveDebouncer.Dispose();
         _globalOperation.PropertyChanged -= OnGlobalOperationPropertyChanged;
         _metadataProviderSaveDebouncer.Dispose();
-        _artistSplitSaveDebouncer.Dispose();
-        _genreSplitSaveDebouncer.Dispose();
-    }
-
-    partial void OnArtistSplitCharactersChanged(string value)
-    {
-        if (_isInitializing) return;
-        QueueSettingsSave(_artistSplitSaveDebouncer, _ => _settingsService.SetArtistSplitCharactersAsync(value), nameof(ArtistSplitCharacters));
-    }
-
-    partial void OnGenreSplitCharactersChanged(string value)
-    {
-        if (_isInitializing) return;
-        QueueSettingsSave(_genreSplitSaveDebouncer, _ => _settingsService.SetGenreSplitCharactersAsync(value), nameof(GenreSplitCharacters));
     }
 
     private bool CanRescanMetadata() => !_globalOperation.IsInProgress;
@@ -200,8 +174,6 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
 
         try
         {
-            await SaveMetadataSplitSettingsAsync();
-            token.ThrowIfCancellationRequested();
             var progress = _globalOperation.CreateProgress(token);
             await _libraryScanner.ForceRescanMetadataAsync(progress, token);
             token.ThrowIfCancellationRequested();
@@ -230,16 +202,6 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
         }
     }
 
-    private async Task SaveMetadataSplitSettingsAsync()
-    {
-        _artistSplitSaveDebouncer.Cancel();
-        _genreSplitSaveDebouncer.Cancel();
-
-        await Task.WhenAll(
-            _settingsService.SetArtistSplitCharactersAsync(ArtistSplitCharacters),
-            _settingsService.SetGenreSplitCharactersAsync(GenreSplitCharacters));
-    }
-
     private void OnLyricsProvidersCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         if (e.NewItems != null)
@@ -263,7 +225,11 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
     private void QueueLyricsProviderSave()
     {
         var snapshot = LyricsProviders.Select((vm, i) => vm.ToSetting(i)).ToList();
-        QueueSettingsSave(_lyricsProviderSaveDebouncer, _ => _settingsService.SetServiceProvidersAsync(ServiceCategory.Lyrics, snapshot), nameof(LyricsProviders));
+        QueueSettingsSave(_lyricsProviderSaveDebouncer, _ =>
+        {
+            Set(CoreSettings.LyricsProviders, snapshot, nameof(LyricsProviders));
+            return Task.CompletedTask;
+        }, nameof(LyricsProviders));
     }
 
     private void OnMetadataProvidersCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -304,18 +270,10 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
     private void QueueMetadataProviderSave()
     {
         var snapshot = MetadataProviders.Select((vm, i) => vm.ToSetting(i)).ToList();
-        QueueSettingsSave(_metadataProviderSaveDebouncer, _ => _settingsService.SetServiceProvidersAsync(ServiceCategory.Metadata, snapshot), nameof(MetadataProviders));
+        QueueSettingsSave(_metadataProviderSaveDebouncer, _ =>
+        {
+            Set(CoreSettings.MetadataProviders, snapshot, nameof(MetadataProviders));
+            return Task.CompletedTask;
+        }, nameof(MetadataProviders));
     }
-
-    partial void OnIsFetchOnlineMetadataEnabledChanged(bool value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetFetchOnlineMetadataEnabledAsync(value));
-
-    partial void OnIsIgnoreLeadingArticlesOnSortEnabledChanged(bool value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetIgnoreLeadingArticlesOnSortEnabledAsync(value));
-
-    partial void OnIsFetchOnlineLyricsEnabledChanged(bool value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetFetchOnlineLyricsEnabledAsync(value));
-
-    partial void OnIsLyricsRomanizationEnabledChanged(bool value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetLyricsRomanizationEnabledAsync(value));
 }

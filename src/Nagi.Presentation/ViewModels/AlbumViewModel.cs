@@ -12,6 +12,8 @@ using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services;
+using Nagi.Core.Settings;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -47,7 +49,7 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
 
     public AlbumViewModel(ILibraryReader libraryReader, ILibraryScanner libraryScanner, IMusicPlaybackService musicPlaybackService,
         IMusicNavigationService musicNavigationService,
-        IUISettingsService settingsService, IDispatcherService dispatcherService, IUIService uiService, ILogger<AlbumViewModel> logger)
+        ISettingsService settingsService, IDispatcherService dispatcherService, IUIService uiService, ILogger<AlbumViewModel> logger)
         : base(libraryReader, libraryScanner, settingsService, dispatcherService, logger)
     {
         _musicPlaybackService = musicPlaybackService;
@@ -67,8 +69,8 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
 
     public bool HasAlbums => Albums.Any();
 
-    protected override async Task LoadInitialSortOrderAsync() =>
-        CurrentSortOrder = await _settingsService.GetSortOrderAsync<AlbumSortOrder>(SortOrderHelper.AlbumsSortOrderKey);
+    protected override void LoadInitialSortOrder() =>
+        CurrentSortOrder = _settingsService.Get(AppSettings.AlbumsSortOrder);
 
     protected override string FormatTotalItemsText(int count) =>
         count == 1
@@ -131,7 +133,7 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
             return;
 
         CurrentSortOrder = newSortOrder;
-        await _settingsService.SetSortOrderAsync(SortOrderHelper.AlbumsSortOrderKey, newSortOrder);
+        _settingsService.Set(AppSettings.AlbumsSortOrder, newSortOrder);
         CurrentPage = 1;
         await LoadCommand.ExecuteAsync(CancellationToken.None);
     }

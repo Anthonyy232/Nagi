@@ -10,6 +10,7 @@ using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -59,12 +60,12 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
     {
         var token = await _settingsService.GetListenBrainzUserTokenAsync().ConfigureAwait(false);
         if (string.IsNullOrEmpty(token)) return false;
-        return await _settingsService.GetListenBrainzScrobblingEnabledAsync().ConfigureAwait(false);
+        return _settingsService.Get(CoreSettings.ListenBrainzScrobbling);
     }
 
     public async Task ProcessPendingListensAsync(CancellationToken cancellationToken)
     {
-        var enabledSince = await _settingsService.GetListenBrainzEnabledSinceUtcAsync().ConfigureAwait(false);
+        var enabledSince = _settingsService.Get(CoreSettings.ListenBrainzEnabledSinceUtc);
         if (!enabledSince.HasValue) return;
 
         await using var ctx = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
@@ -252,7 +253,7 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
             return SubmissionOutcome.TransientFailure;
         }
 
-        var baseUrl = await ResolveBaseUrlAsync().ConfigureAwait(false);
+        var baseUrl = ResolveBaseUrl();
         var url = $"{baseUrl}{SubmitListensPath}";
 
         return await _pipelines.ExecuteWithFallbackAsync(
@@ -286,9 +287,9 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
             cancellationToken).ConfigureAwait(false);
     }
 
-    private async Task<string> ResolveBaseUrlAsync()
+    private string ResolveBaseUrl()
     {
-        var configured = await _settingsService.GetListenBrainzServerUrlAsync().ConfigureAwait(false);
+        var configured = _settingsService.Get(CoreSettings.ListenBrainzServerUrl);
         var sanitized = SanitizeBaseUrl(configured);
         if (sanitized is not null) return sanitized;
 

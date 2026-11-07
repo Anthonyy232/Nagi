@@ -14,6 +14,7 @@ using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Core.Settings;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -61,7 +62,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService,
-        IUISettingsService settingsService,
+        ISettingsService settingsService,
         IUIService uiService,
         ILogger logger)
         : base(libraryReader, libraryScanner, settingsService, dispatcherService, logger)
@@ -82,9 +83,9 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         _playbackService.TrackChanged += OnPlaybackTrackChanged;
         IsPlaying = _playbackService.IsPlaying;
         _playbackService.PlaybackStateChanged += OnPlaybackStateChanged;
-        _settingsService.SongListColumnsChanged += OnSongListColumnsChanged;
-        _settingsService.ShowSongListHeaderSettingChanged += OnShowSongListHeaderChanged;
-        _ = LoadListSettingsAsync();
+        ChosenColumns = _settingsService.Get(AppSettings.SongListColumns);
+        ShowsColumnHeader = _settingsService.Get(AppSettings.ShowSongListHeader);
+        _settingsService.SettingChanged += OnSettingChanged;
     }
 
     private void OnPlaybackTrackChanged()
@@ -159,36 +160,23 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(VisibleColumns))]
-    public partial SongListColumns ChosenColumns { get; set; } = SettingsDefaults.DefaultSongListColumns;
+    public partial SongListColumns ChosenColumns { get; set; }
 
-    [ObservableProperty] public partial bool ShowsColumnHeader { get; set; } = SettingsDefaults.ShowSongListHeaderEnabled;
+    [ObservableProperty] public partial bool ShowsColumnHeader { get; set; }
 
     /// <summary>
     ///     The chosen columns, less any that every row would repeat, such as the album on an album's page.
     /// </summary>
     public virtual SongListColumns VisibleColumns => ChosenColumns;
 
-    private async Task LoadListSettingsAsync()
+    private void OnSettingChanged(Setting setting)
     {
-        ChosenColumns = await _settingsService.GetSongListColumnsAsync();
-        ShowsColumnHeader = await _settingsService.GetShowSongListHeaderAsync();
-    }
-
-    private void OnSongListColumnsChanged(SongListColumns columns)
-    {
-        if (_isDisposed) return;
+        if (setting != AppSettings.SongListColumns && setting != AppSettings.ShowSongListHeader) return;
         _dispatcherService.TryEnqueue(() =>
         {
-            if (!_isDisposed) ChosenColumns = columns;
-        });
-    }
-
-    private void OnShowSongListHeaderChanged(bool isEnabled)
-    {
-        if (_isDisposed) return;
-        _dispatcherService.TryEnqueue(() =>
-        {
-            if (!_isDisposed) ShowsColumnHeader = isEnabled;
+            if (_isDisposed) return;
+            ChosenColumns = _settingsService.Get(AppSettings.SongListColumns);
+            ShowsColumnHeader = _settingsService.Get(AppSettings.ShowSongListHeader);
         });
     }
 
@@ -649,8 +637,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         _playlistService.PlaylistsChanged -= OnPlaylistsChanged;
         _playbackService.TrackChanged -= OnPlaybackTrackChanged;
         _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
-        _settingsService.SongListColumnsChanged -= OnSongListColumnsChanged;
-        _settingsService.ShowSongListHeaderSettingChanged -= OnShowSongListHeaderChanged;
+        _settingsService.SettingChanged -= OnSettingChanged;
         Songs.CollectionChanged -= OnSongsCollectionChanged;
 
         base.Dispose();

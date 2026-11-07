@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
@@ -14,36 +13,21 @@ namespace Nagi.Core.Services.Implementations;
 ///     and the song ID lists used to build playback queues.
 ///     This service is designed to be a singleton and is internally thread-safe.
 /// </summary>
-public partial class LibraryReader : ILibraryReader, IDisposable
+public partial class LibraryReader : ILibraryReader
 {
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly IFileSystemService _fileSystem;
     private readonly ISettingsService _settingsService;
-    private readonly ILogger<LibraryReader> _logger;
-    private volatile bool _ignoreArticlesOnSort = true;
-    private int _disposeState;
 
     public LibraryReader(
         IDbContextFactory<MusicDbContext> contextFactory,
         IFileSystemService fileSystem,
-        ISettingsService settingsService,
-        ILogger<LibraryReader> logger)
+        ISettingsService settingsService)
     {
         _contextFactory = contextFactory;
         _fileSystem = fileSystem;
         _settingsService = settingsService;
-        _logger = logger;
-        _settingsService.IgnoreLeadingArticlesOnSortEnabledChanged += OnIgnoreLeadingArticlesOnSortChanged;
-        _ = InitializeIgnoreArticlesFlagAsync();
     }
-
-    private async Task InitializeIgnoreArticlesFlagAsync()
-    {
-        try { _ignoreArticlesOnSort = await _settingsService.GetIgnoreLeadingArticlesOnSortEnabledAsync().ConfigureAwait(false); }
-        catch (Exception ex) { _logger.LogWarning(ex, "Failed to load IgnoreLeadingArticlesOnSort setting; using default ({Default}).", _ignoreArticlesOnSort); }
-    }
-
-    private void OnIgnoreLeadingArticlesOnSortChanged(bool value) => _ignoreArticlesOnSort = value;
 
     public async Task<Folder?> GetFolderByIdAsync(Guid folderId)
     {
@@ -339,11 +323,4 @@ public partial class LibraryReader : ILibraryReader, IDisposable
     }
 
     private static string? NormalizeString(string? s) => ArtistNameHelper.NormalizeStringCore(s);
-
-    public void Dispose()
-    {
-        if (Interlocked.Exchange(ref _disposeState, 1) != 0) return;
-        _settingsService.IgnoreLeadingArticlesOnSortEnabledChanged -= OnIgnoreLeadingArticlesOnSortChanged;
-        GC.SuppressFinalize(this);
-    }
 }

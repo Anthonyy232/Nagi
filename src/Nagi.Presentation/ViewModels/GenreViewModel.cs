@@ -11,6 +11,8 @@ using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services;
+using Nagi.Core.Settings;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -20,7 +22,7 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
     private readonly ILibraryScanner _libraryScanner;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
-    private readonly IUISettingsService _settingsService;
+    private readonly ISettingsService _settingsService;
     private readonly IUIService _uiService;
     private bool _hasSortOrderLoaded;
     private List<GenreSummary> _allGenres = new();
@@ -28,7 +30,7 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
     private readonly SemaphoreSlim _loadLock = new(1, 1);
 
     public GenreViewModel(ILibraryReader libraryReader, ILibraryScanner libraryScanner, IMusicPlaybackService musicPlaybackService,
-        INavigationService navigationService, IUISettingsService settingsService, IDispatcherService dispatcherService, IUIService uiService,
+        INavigationService navigationService, ISettingsService settingsService, IDispatcherService dispatcherService, IUIService uiService,
         ILogger<GenreViewModel> logger)
         : base(dispatcherService, logger)
     {
@@ -116,7 +118,7 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
         {
             if (!_hasSortOrderLoaded)
             {
-                CurrentSortOrder = await _settingsService.GetSortOrderAsync<GenreSortOrder>(SortOrderHelper.GenresSortOrderKey);
+                CurrentSortOrder = _settingsService.Get(AppSettings.GenresSortOrder);
                 _hasSortOrderLoaded = true;
             }
             var genreModels = await Task.Run(() => _libraryReader.GetGenreSummariesAsync(cancellationToken), cancellationToken);
@@ -178,7 +180,7 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
             && newSortOrder != CurrentSortOrder)
         {
             CurrentSortOrder = newSortOrder;
-            await _settingsService.SetSortOrderAsync(SortOrderHelper.GenresSortOrderKey, newSortOrder);
+            _settingsService.Set(AppSettings.GenresSortOrder, newSortOrder);
             ApplyFilter();
         }
     }

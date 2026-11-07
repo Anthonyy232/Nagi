@@ -13,6 +13,8 @@ using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services;
+using Nagi.Core.Settings;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -48,7 +50,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
         ILibraryReader libraryReader,
         ILibraryWriter libraryWriter,
         ILibraryScanner libraryScanner,
-        IUISettingsService settingsService,
+        ISettingsService settingsService,
         IMusicPlaybackService musicPlaybackService,
         IDispatcherService dispatcherService,
         IMusicNavigationService musicNavigationService,
@@ -76,8 +78,8 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
 
     public bool HasArtists => Artists.Any();
 
-    protected override async Task LoadInitialSortOrderAsync() =>
-        CurrentSortOrder = await _settingsService.GetSortOrderAsync<ArtistSortOrder>(SortOrderHelper.ArtistsSortOrderKey);
+    protected override void LoadInitialSortOrder() =>
+        CurrentSortOrder = _settingsService.Get(AppSettings.ArtistsSortOrder);
 
     protected override string FormatTotalItemsText(int count) =>
         count == 1
@@ -146,7 +148,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
             return;
 
         CurrentSortOrder = newSortOrder;
-        await _settingsService.SetSortOrderAsync(SortOrderHelper.ArtistsSortOrderKey, newSortOrder);
+        _settingsService.Set(AppSettings.ArtistsSortOrder, newSortOrder);
         CurrentPage = 1;
         await LoadCommand.ExecuteAsync(CancellationToken.None);
     }

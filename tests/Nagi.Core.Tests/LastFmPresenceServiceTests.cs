@@ -1,7 +1,10 @@
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Services.Implementations;
 using Nagi.Core.Services.Implementations.Presence;
+using Nagi.Core.Settings;
+using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Xunit;
@@ -12,7 +15,7 @@ public class LastFmPresenceServiceTests : IAsyncDisposable
 {
     private readonly ILastFmScrobblerService _scrobblerService;
     private readonly ILibraryWriter _libraryWriter;
-    private readonly ISettingsService _settingsService;
+    private readonly SettingsService _settingsService;
     private readonly ILogger<LastFmPresenceService> _logger;
     private readonly LastFmPresenceService _service;
 
@@ -20,11 +23,11 @@ public class LastFmPresenceServiceTests : IAsyncDisposable
     {
         _scrobblerService = Substitute.For<ILastFmScrobblerService>();
         _libraryWriter = Substitute.For<ILibraryWriter>();
-        _settingsService = Substitute.For<ISettingsService>();
+        _settingsService = TestSettings.Create();
         _logger = Substitute.For<ILogger<LastFmPresenceService>>();
 
-        _settingsService.GetLastFmNowPlayingEnabledAsync().Returns(true);
-        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.LastFmNowPlaying, true);
+        _settingsService.Set(CoreSettings.LastFmScrobbling, true);
         _scrobblerService.ScrobbleAsync(Arg.Any<Song>(), Arg.Any<DateTime>()).Returns(true);
 
         _service = new LastFmPresenceService(
@@ -41,13 +44,11 @@ public class LastFmPresenceServiceTests : IAsyncDisposable
     {
         await _service.InitializeAsync();
         var song = new Song { Title = "Song" };
-        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(false);
-        _settingsService.LastFmSettingsChanged += Raise.Event<Action>();
+        _settingsService.Set(CoreSettings.LastFmScrobbling, false);
         await _service.OnTrackEligibleForScrobblingAsync(song, 1, DateTime.UnixEpoch);
         await _scrobblerService.DidNotReceive().ScrobbleAsync(Arg.Any<Song>(), Arg.Any<DateTime>());
 
-        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(true);
-        _settingsService.LastFmSettingsChanged += Raise.Event<Action>();
+        _settingsService.Set(CoreSettings.LastFmScrobbling, true);
         await _service.OnTrackEligibleForScrobblingAsync(song, 1, DateTime.UnixEpoch);
         await _scrobblerService.Received(1).ScrobbleAsync(song, DateTime.UnixEpoch);
     }
@@ -57,7 +58,7 @@ public class LastFmPresenceServiceTests : IAsyncDisposable
     [InlineData(false, 0)]
     public async Task OnTrackChangedAsync_UpdatesNowPlayingOnlyWhenEnabled(bool nowPlayingEnabled, int expectedCalls)
     {
-        _settingsService.GetLastFmNowPlayingEnabledAsync().Returns(nowPlayingEnabled);
+        _settingsService.Set(CoreSettings.LastFmNowPlaying, nowPlayingEnabled);
         await _service.InitializeAsync();
 
         var song = new Song { Title = "Test Song" };
@@ -109,16 +110,5 @@ public class LastFmPresenceServiceTests : IAsyncDisposable
             new Song { Title = "Song" }, 1L, DateTime.UnixEpoch);
 
         await _libraryWriter.DidNotReceive().MarkListenAsScrobbledAsync(Arg.Any<long>());
-    }
-
-    [Fact]
-    public async Task DisposeAsync_UnsubscribesFromSettingsEvent()
-    {
-        await _service.InitializeAsync();
-        await _service.DisposeAsync();
-
-        _settingsService.ClearReceivedCalls();
-        _settingsService.LastFmSettingsChanged += Raise.Event<Action>();
-        await _settingsService.DidNotReceive().GetLastFmNowPlayingEnabledAsync();
     }
 }

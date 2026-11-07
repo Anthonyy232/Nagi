@@ -7,6 +7,7 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Http.Pipelines;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -46,7 +47,7 @@ public partial class LibraryService
     public async Task StartMetadataBackgroundFetchAsync()
     {
         if (_shutdownCts.IsCancellationRequested) return;
-        if (!await _settingsService.GetFetchOnlineMetadataEnabledAsync().ConfigureAwait(false)) return;
+        if (!_settingsService.Get(CoreSettings.FetchOnlineMetadata)) return;
         if (!await _metadataFetchSemaphore.WaitAsync(0).ConfigureAwait(false))
         {
             _logger.LogDebug("Metadata background fetch already running, skipping.");
@@ -60,9 +61,7 @@ public partial class LibraryService
             var token = runCts.Token;
             await Task.Run(async () =>
             {
-                var enabledProviders = await _settingsService
-                    .GetEnabledServiceProvidersAsync(Models.ServiceCategory.Metadata)
-                    .ConfigureAwait(false);
+                var enabledProviders = _settingsService.Get(CoreSettings.MetadataProviders).Where(p => p.IsEnabled).ToList();
 
                 if (enabledProviders.Count == 0)
                 {
@@ -470,7 +469,7 @@ public partial class LibraryService
         // Get enabled metadata providers in priority order. Callers in batch paths preload this
         // once for the whole run to avoid repeated settings-store reads + list rebuilds per artist.
         var enabledProviders = preloadedEnabledProviders
-            ?? await _settingsService.GetEnabledServiceProvidersAsync(Models.ServiceCategory.Metadata).ConfigureAwait(false);
+            ?? _settingsService.Get(CoreSettings.MetadataProviders).Where(p => p.IsEnabled).ToList();
 
         if (enabledProviders.Count == 0)
         {
@@ -611,9 +610,10 @@ public partial class LibraryService
             cancellationToken).ConfigureAwait(false);
     }
 
-    private void OnFetchOnlineMetadataEnabledChanged(bool isEnabled)
+    private void OnSettingChanged(Setting setting)
     {
-        if (!isEnabled) CancelMetadataFetch();
+        if (setting == CoreSettings.FetchOnlineMetadata && !_settingsService.Get(CoreSettings.FetchOnlineMetadata))
+            CancelMetadataFetch();
     }
 
     private void CancelMetadataFetch()

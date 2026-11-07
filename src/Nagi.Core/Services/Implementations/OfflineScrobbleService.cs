@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -29,16 +30,16 @@ public class OfflineScrobbleService : IDisposable
         _settingsService = settingsService;
         _logger = logger;
         _shutdownToken = _cancellationTokenSource.Token;
-        _settingsService.LastFmSettingsChanged += OnSettingsChanged;
-        _settingsService.ListenBrainzSettingsChanged += OnSettingsChanged;
+        _settingsService.SettingChanged += OnSettingChanged;
+        _settingsService.CredentialsChanged += OnScrobblingChanged;
     }
 
     public void Dispose()
     {
         if (_shutdownToken.IsCancellationRequested) return;
         _logger.LogDebug("Disposing OfflineScrobbleService.");
-        _settingsService.LastFmSettingsChanged -= OnSettingsChanged;
-        _settingsService.ListenBrainzSettingsChanged -= OnSettingsChanged;
+        _settingsService.SettingChanged -= OnSettingChanged;
+        _settingsService.CredentialsChanged -= OnScrobblingChanged;
         _cancellationTokenSource.Cancel();
         _cancellationTokenSource.Dispose();
     }
@@ -132,7 +133,15 @@ public class OfflineScrobbleService : IDisposable
         }
     }
 
-    private async void OnSettingsChanged()
+    private void OnSettingChanged(Setting setting)
+    {
+        if (setting == CoreSettings.LastFmScrobbling || setting == CoreSettings.LastFmNowPlaying ||
+            setting == CoreSettings.ListenBrainzScrobbling || setting == CoreSettings.ListenBrainzNowPlaying ||
+            setting == CoreSettings.ListenBrainzServerUrl || setting == CoreSettings.ListenBrainzEnabledSinceUtc)
+            OnScrobblingChanged();
+    }
+
+    private async void OnScrobblingChanged()
     {
         _logger.LogDebug("Scrobbling settings changed. Triggering immediate queue processing.");
         try

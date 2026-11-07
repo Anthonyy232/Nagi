@@ -7,6 +7,7 @@ using Nagi.Core.Data;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -120,7 +121,7 @@ public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter
 
     public string Id => ServiceProviderIds.LastFm;
 
-    public Task<bool> IsEnabledAsync() => _settingsService.GetLastFmScrobblingEnabledAsync();
+    public Task<bool> IsEnabledAsync() => Task.FromResult(_settingsService.Get(CoreSettings.LastFmScrobbling));
 
     public async Task ProcessPendingListensAsync(CancellationToken cancellationToken)
     {

@@ -1,7 +1,10 @@
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Services.Implementations;
 using Nagi.Core.Services.Implementations.Presence;
+using Nagi.Core.Settings;
+using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Xunit;
@@ -14,13 +17,13 @@ public class ListenBrainzPresenceServiceTests : IAsyncDisposable
     private readonly ILogger<ListenBrainzPresenceService> _logger;
     private readonly IListenBrainzScrobblerService _scrobblerService;
     private readonly ListenBrainzPresenceService _service;
-    private readonly ISettingsService _settingsService;
+    private readonly SettingsService _settingsService;
 
     public ListenBrainzPresenceServiceTests()
     {
         _scrobblerService = Substitute.For<IListenBrainzScrobblerService>();
         _libraryWriter = Substitute.For<ILibraryWriter>();
-        _settingsService = Substitute.For<ISettingsService>();
+        _settingsService = TestSettings.Create();
         _logger = Substitute.For<ILogger<ListenBrainzPresenceService>>();
 
         _service = new ListenBrainzPresenceService(
@@ -34,8 +37,8 @@ public class ListenBrainzPresenceServiceTests : IAsyncDisposable
 
     private async Task InitializeServiceAsync(bool nowPlaying, bool scrobbling)
     {
-        _settingsService.GetListenBrainzNowPlayingEnabledAsync().Returns(nowPlaying);
-        _settingsService.GetListenBrainzScrobblingEnabledAsync().Returns(scrobbling);
+        _settingsService.Set(CoreSettings.ListenBrainzNowPlaying, nowPlaying);
+        _settingsService.Set(CoreSettings.ListenBrainzScrobbling, scrobbling);
         await _service.InitializeAsync();
     }
 

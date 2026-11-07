@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -39,10 +40,11 @@ public partial class MusicPlaybackService
     private void OnAudioPlayerVolumeChanged()
     {
         FireAndForgetSafe(
-            async () =>
+            () =>
             {
-                await _settingsService.SaveVolumeAsync(_audioPlayer.Volume);
+                _settingsService.Set(CoreSettings.Volume, _audioPlayer.Volume);
                 VolumeStateChanged?.Invoke();
+                return Task.CompletedTask;
             },
             "Volume save");
     }
@@ -150,13 +152,13 @@ public partial class MusicPlaybackService
             "Media controls Seek");
     }
 
-    private async Task ApplyReplayGainIfEnabledAsync(bool? isEnabledOverride = null)
+    private async Task ApplyReplayGainIfEnabledAsync()
     {
         var version = ++_replayGainVersion;
         var request = _playbackRequestVersion;
         var song = CurrentTrack;
         if (song == null) return;
-        var isEnabled = isEnabledOverride ?? await _settingsService.GetVolumeNormalizationEnabledAsync();
+        var isEnabled = _settingsService.Get(CoreSettings.VolumeNormalization);
         if (!IsCurrentRequest(request) || version != _replayGainVersion) return;
 
         if (isEnabled && !_transientTracks.ContainsKey(song.Id) &&
@@ -178,25 +180,15 @@ public partial class MusicPlaybackService
         await _audioPlayer.SetReplayGainAsync(gain);
     }
 
-    private void OnVolumeNormalizationEnabledChanged(bool isEnabled)
+    private void OnSettingChanged(Setting setting)
     {
-        FireAndForgetSafe(
-            () => ApplyReplayGainIfEnabledAsync(isEnabled),
-            "ReplayGain settings change", trackForDisposal: true);
-    }
-
-    private void OnFadeOnPlayPauseEnabledChanged(bool isEnabled)
-    {
-        _audioPlayer.SetFadeOnPlayPauseEnabled(isEnabled);
-    }
-
-    private void OnFadeInDurationChanged(int durationMs)
-    {
-        _audioPlayer.SetFadeInDuration(durationMs);
-    }
-
-    private void OnFadeOutDurationChanged(int durationMs)
-    {
-        _audioPlayer.SetFadeOutDuration(durationMs);
+        if (setting == CoreSettings.VolumeNormalization)
+            FireAndForgetSafe(ApplyReplayGainIfEnabledAsync, "ReplayGain settings change", trackForDisposal: true);
+        else if (setting == CoreSettings.FadeOnPlayPause)
+            _audioPlayer.SetFadeOnPlayPauseEnabled(_settingsService.Get(CoreSettings.FadeOnPlayPause));
+        else if (setting == CoreSettings.FadeInDurationMs)
+            _audioPlayer.SetFadeInDuration(_settingsService.Get(CoreSettings.FadeInDurationMs));
+        else if (setting == CoreSettings.FadeOutDurationMs)
+            _audioPlayer.SetFadeOutDuration(_settingsService.Get(CoreSettings.FadeOutDurationMs));
     }
 }

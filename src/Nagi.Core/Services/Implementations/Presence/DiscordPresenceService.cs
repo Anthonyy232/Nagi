@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Implementations.Presence;
 
@@ -143,9 +144,9 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     {
         if (song.Album is not { } album) return null;
         if (_coverUrls.TryGetValue(album.Id, out var cachedUrl)) return cachedUrl;
-        if (!await _settingsService.GetFetchOnlineMetadataEnabledAsync().ConfigureAwait(false)) return null;
+        if (!_settingsService.Get(CoreSettings.FetchOnlineMetadata)) return null;
 
-        var providers = await _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata).ConfigureAwait(false);
+        var providers = _settingsService.Get(CoreSettings.MetadataProviders).Where(p => p.IsEnabled).ToList();
         var result = await _albumCoverService.FindCoverUrlAsync(
             new AlbumCoverQuery(album.Title, album.PrimaryArtistName, song.MusicBrainzReleaseId, song.MusicBrainzReleaseGroupId),
             providers).ConfigureAwait(false);

@@ -2,7 +2,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services;
 using Nagi.Presentation.ViewModels;
 using NSubstitute;
 using Xunit;
@@ -118,8 +118,8 @@ public class PagedListViewModelTests
     [Fact]
     public async Task LoadAll_WaitsForUiBatchAndDiscardsItAfterReset()
     {
-        var settings = Substitute.For<IUISettingsService>();
-        settings.GetSongsPerPageAsync().Returns(0);
+        var settings = TestSettings.Create();
+        settings.Set(AppSettings.SongsPerPage, 0);
         var dispatcher = Substitute.For<IDispatcherService>();
         dispatcher.TryEnqueue(Arg.Any<Action>()).Returns(call => { call.Arg<Action>()(); return true; });
         var batchQueued = new TaskCompletionSource<Func<Task>>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -192,8 +192,7 @@ public class PagedListViewModelTests
     [Fact]
     public async Task ChangingPageSize_ReloadsTheSelectedSize()
     {
-        var settings = Substitute.For<IUISettingsService>();
-        settings.GetSongsPerPageAsync().Returns(50);
+        var settings = TestSettings.Create();
         using var viewModel = new TestViewModel(settings, (page, size, _) => Task.FromResult(
             new PagedResult<int> { PageNumber = page, PageSize = size, TotalCount = 100, Items = [size] }));
         await viewModel.LoadAsync(CancellationToken.None);
@@ -232,12 +231,11 @@ public class PagedListViewModelTests
 
     private static TestViewModel CreateViewModel(Func<int, int, CancellationToken, Task<PagedResult<int>>> load)
     {
-        var settings = Substitute.For<IUISettingsService>();
-        settings.GetSongsPerPageAsync().Returns(50);
+        var settings = TestSettings.Create();
         return new TestViewModel(settings, load);
     }
 
-    private sealed class TestViewModel(IUISettingsService settings,
+    private sealed class TestViewModel(ISettingsService settings,
         Func<int, int, CancellationToken, Task<PagedResult<int>>> load,
         IDispatcherService? dispatcher = null)
         : PagedListViewModelBase<int>(Substitute.For<ILibraryReader>(), Substitute.For<ILibraryScanner>(), settings,

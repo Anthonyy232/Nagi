@@ -1,4 +1,5 @@
 using Nagi.Core.Models;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -52,11 +53,12 @@ public partial class MusicPlaybackService
             BandGains = Enumerable.Repeat(0.0f, CurrentEqualizerSettings.BandGains.Count).ToList()
         });
 
-    private async Task ApplyEqualizerAsync(EqualizerSettings settings)
+    private Task ApplyEqualizerAsync(EqualizerSettings settings)
     {
         CurrentEqualizerSettings = settings;
         _audioPlayer.ApplyEqualizerSettings(settings);
-        await _settingsService.SetEqualizerSettingsAsync(settings);
+        _settingsService.Set(CoreSettings.Equalizer, settings);
         EqualizerChanged?.Invoke();
+        return Task.CompletedTask;
     }
 }

@@ -1,182 +1,47 @@
-﻿using Nagi.Core.Models;
-using Nagi.Core.Services.Data;
+﻿using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Abstractions;
 
 /// <summary>
-///     Application-wide, non-UI settings.
+///     Reads and writes the app's settings, and keeps the scrobbling accounts' credentials in the operating
+///     system's credential store.
 /// </summary>
 public interface ISettingsService
 {
-    event Action? LastFmSettingsChanged;
-
-    event Action? ListenBrainzSettingsChanged;
-
-    event Action<bool>? DiscordRichPresenceSettingChanged;
-
-    event Action<bool>? VolumeNormalizationEnabledChanged;
-
-    event Action<bool>? FadeOnPlayPauseEnabledChanged;
-
-    event Action<int>? FadeInDurationChanged;
-
-    event Action<int>? FadeOutDurationChanged;
-
-    event Action<bool>? FetchOnlineMetadataEnabledChanged;
-
-    event Action<bool>? FetchOnlineLyricsEnabledChanged;
-
-    event Action<bool>? LyricsRomanizationEnabledChanged;
+    /// <summary>
+    ///     Raised on the thread that changed the setting, only when its effective value changed.
+    /// </summary>
+    event Action<Setting>? SettingChanged;
 
     /// <summary>
-    ///     Gets the initial volume level for the media player.
+    ///     Raised when a Last.fm or ListenBrainz credential is saved or removed.
     /// </summary>
-    /// <returns>A volume level between 0.0 and 1.0.</returns>
-    Task<double> GetInitialVolumeAsync();
+    event Action? CredentialsChanged;
 
-    /// <summary>
-    ///     Saves the current volume level.
-    /// </summary>
-    /// <param name="volume">The volume level to save, clamped between 0.0 and 1.0.</param>
-    Task SaveVolumeAsync(double volume);
+    T Get<T>(Setting<T> setting);
 
-    Task<bool> GetInitialMuteStateAsync();
+    void Set<T>(Setting<T> setting, T value);
 
-    Task SaveMuteStateAsync(bool isMuted);
-
-    Task<bool> GetInitialShuffleStateAsync();
-
-    Task SaveShuffleStateAsync(bool isEnabled);
-
-    Task<RepeatMode> GetInitialRepeatModeAsync();
-
-    Task SaveRepeatModeAsync(RepeatMode mode);
-
-    Task<bool> GetRestorePlaybackStateEnabledAsync();
-
-    Task SetRestorePlaybackStateEnabledAsync(bool isEnabled);
-
-    Task<bool> GetFetchOnlineMetadataEnabledAsync();
-
-    Task SetFetchOnlineMetadataEnabledAsync(bool isEnabled);
-
-    Task<bool> GetDiscordRichPresenceEnabledAsync();
-
-    Task SetDiscordRichPresenceEnabledAsync(bool isEnabled);
-
-    Task<bool> GetFetchOnlineLyricsEnabledAsync();
-
-    Task SetFetchOnlineLyricsEnabledAsync(bool isEnabled);
-
-    Task<bool> GetLyricsRomanizationEnabledAsync();
-
-    Task SetLyricsRomanizationEnabledAsync(bool isEnabled);
-
-    Task<bool> GetLastFmScrobblingEnabledAsync();
-
-    Task SetLastFmScrobblingEnabledAsync(bool isEnabled);
-
-    Task<bool> GetLastFmNowPlayingEnabledAsync();
-
-    Task SetLastFmNowPlayingEnabledAsync(bool isEnabled);
-
-    /// <summary>
-    ///     Gets the saved Last.fm credentials from secure storage.
-    /// </summary>
-    /// <returns>A tuple containing the username and session key, or null if not present.</returns>
+    /// <returns>The username and session key, or null if not signed in.</returns>
     Task<(string? Username, string? SessionKey)?> GetLastFmCredentialsAsync();
 
-    /// <summary>
-    ///     Saves the Last.fm credentials securely.
-    /// </summary>
     Task SaveLastFmCredentialsAsync(string username, string sessionKey);
 
+    /// <summary>
+    ///     Signs out of Last.fm: removes the credentials and the pending sign-in, and turns its submissions off.
+    /// </summary>
     Task ClearLastFmCredentialsAsync();
 
-    /// <summary>
-    ///     Saves the temporary authentication token received from Last.fm.
-    /// </summary>
-    /// <param name="token">The token to save, or null to clear it.</param>
-    Task SaveLastFmAuthTokenAsync(string? token);
-
-    Task<string?> GetLastFmAuthTokenAsync();
-
-    Task<bool> GetListenBrainzScrobblingEnabledAsync();
-
-    Task SetListenBrainzScrobblingEnabledAsync(bool isEnabled);
-
-    Task<bool> GetListenBrainzNowPlayingEnabledAsync();
-
-    Task SetListenBrainzNowPlayingEnabledAsync(bool isEnabled);
-
-    /// <summary>Gets the saved ListenBrainz user token from secure storage, or null.</summary>
     Task<string?> GetListenBrainzUserTokenAsync();
 
     Task SaveListenBrainzUserTokenAsync(string token);
 
     Task ClearListenBrainzUserTokenAsync();
 
-    /// <summary>Gets the configured ListenBrainz server URL, or null for the default (api.listenbrainz.org).</summary>
-    Task<string?> GetListenBrainzServerUrlAsync();
-
-    /// <summary>Sets the ListenBrainz server URL. Pass null to reset to default.</summary>
-    Task SetListenBrainzServerUrlAsync(string? url);
-
     /// <summary>
-    ///     Gets the UTC timestamp at which ListenBrainz submission was first enabled. Listens with
-    ///     <c>ListenTimestampUtc</c> before this cutoff are ignored by the offline queue.
+    ///     Resets every setting, signs out of both scrobbling accounts, clears the saved playback session and turns
+    ///     launching at sign-in off.
     /// </summary>
-    Task<DateTime?> GetListenBrainzEnabledSinceUtcAsync();
-
-    /// <summary>Sets the ListenBrainz enabled-since cutoff. Pass null to clear.</summary>
-    Task SetListenBrainzEnabledSinceUtcAsync(DateTime? timestamp);
-
-    Task<string> GetArtistSplitCharactersAsync();
-
-    Task SetArtistSplitCharactersAsync(string characters);
-
-    Task<string> GetGenreSplitCharactersAsync();
-
-    Task SetGenreSplitCharactersAsync(string characters);
-
-    Task<EqualizerSettings?> GetEqualizerSettingsAsync();
-
-    Task SetEqualizerSettingsAsync(EqualizerSettings settings);
-
-    Task<bool> GetVolumeNormalizationEnabledAsync();
-
-    Task SetVolumeNormalizationEnabledAsync(bool isEnabled);
-
-    Task<bool> GetWasapiExclusiveModeEnabledAsync();
-
-    Task SetWasapiExclusiveModeEnabledAsync(bool isEnabled);
-
-    Task<string> GetAudioOutputDeviceIdAsync();
-
-    Task SetAudioOutputDeviceIdAsync(string deviceId);
-
-    Task<bool> GetFadeOnPlayPauseEnabledAsync();
-
-    Task SetFadeOnPlayPauseEnabledAsync(bool isEnabled);
-
-    Task<int> GetFadeInDurationMsAsync();
-
-    Task SetFadeInDurationMsAsync(int durationMs);
-
-    Task<int> GetFadeOutDurationMsAsync();
-
-    Task SetFadeOutDurationMsAsync(int durationMs);
-
-    /// <summary>
-    ///     Gets whether leading English articles ("the", "a", "an") should be ignored when
-    ///     sorting albums, artists, and songs alphabetically.
-    /// </summary>
-    Task<bool> GetIgnoreLeadingArticlesOnSortEnabledAsync();
-
-    Task SetIgnoreLeadingArticlesOnSortEnabledAsync(bool isEnabled);
-
-    event Action<bool>? IgnoreLeadingArticlesOnSortEnabledChanged;
-
     Task ResetToDefaultsAsync();
 
     /// <summary>
@@ -186,22 +51,9 @@ public interface ISettingsService
     Task<string> ExportAsync();
 
     /// <summary>
-    ///     Replaces every stored setting with a snapshot from <see cref="ExportAsync" />. Takes full effect after a
-    ///     restart. Throws <see cref="System.Text.Json.JsonException" /> without changing anything if the snapshot
-    ///     isn't valid.
+    ///     Replaces every stored setting with a snapshot from <see cref="ExportAsync" />, without raising
+    ///     <see cref="SettingChanged" />: it takes full effect after a restart. Throws
+    ///     <see cref="System.Text.Json.JsonException" /> without changing anything if the snapshot isn't valid.
     /// </summary>
     Task ImportAsync(string snapshot);
-
-    /// <summary>
-    ///     Gets the configured service providers for a specific category.
-    /// </summary>
-    /// <returns>A list of service provider settings, ordered by priority.</returns>
-    Task<List<ServiceProviderSetting>> GetServiceProvidersAsync(ServiceCategory category);
-
-    Task SetServiceProvidersAsync(ServiceCategory category, List<ServiceProviderSetting> providers);
-
-    /// <summary>
-    ///     Gets enabled service providers for a category, sorted by priority (lowest Order first).
-    /// </summary>
-    Task<List<ServiceProviderSetting>> GetEnabledServiceProvidersAsync(ServiceCategory category);
 }

@@ -8,6 +8,7 @@ using Nagi.Core.Tests.Utils;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
+using Nagi.Core.Settings;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using SixLabors.ImageSharp;
@@ -21,7 +22,7 @@ public class AtlMetadataServiceTests : IDisposable
     private const string LrcCachePath = "C:\\cache\\lrc";
     private readonly IFileSystemService _fileSystem;
     private readonly IImageProcessor _imageProcessor;
-    private readonly ISettingsService _settingsService;
+    private readonly SettingsService _settingsService;
     private readonly AtlMetadataService _metadataService;
     private readonly string _tempDirectory;
 
@@ -33,14 +34,11 @@ public class AtlMetadataServiceTests : IDisposable
         _fileSystem = Substitute.For<IFileSystemService>();
         var pathConfig = Substitute.For<IPathConfiguration>();
         var logger = Substitute.For<ILogger<AtlMetadataService>>();
-        _settingsService = Substitute.For<ISettingsService>();
+        _settingsService = TestSettings.Create();
 
         _tempDirectory = Directory.CreateTempSubdirectory("Nagi-AtlTests-").FullName;
 
         pathConfig.LrcCachePath.Returns(LrcCachePath);
-
-        _settingsService.GetArtistSplitCharactersAsync().Returns(Task.FromResult(string.Empty));
-        _settingsService.GetGenreSplitCharactersAsync().Returns(Task.FromResult(string.Empty));
 
         _metadataService = new AtlMetadataService(_imageProcessor, _fileSystem, pathConfig, logger, _settingsService);
     }
@@ -181,7 +179,7 @@ public class AtlMetadataServiceTests : IDisposable
             track.Genre = "Rock;Pop/Indie\\Jazz";
         });
 
-        _settingsService.GetGenreSplitCharactersAsync().Returns(Task.FromResult(";/\\"));
+        _settingsService.Set(CoreSettings.GenreSplitCharacters, ";/\\");
         var result = await _metadataService.ExtractMetadataAsync(filePath);
         result.Genres.Should().ContainInOrder("Rock", "Pop", "Indie", "Jazz");
     }
@@ -194,7 +192,7 @@ public class AtlMetadataServiceTests : IDisposable
             track.Genre = "2-Step\u02F5Funky Breaks";
         });
 
-        _settingsService.GetGenreSplitCharactersAsync().Returns(Task.FromResult("\\"));
+        _settingsService.Set(CoreSettings.GenreSplitCharacters, "\\");
 
         var result = await _metadataService.ExtractMetadataAsync(filePath);
 
@@ -483,7 +481,7 @@ public class AtlMetadataServiceTests : IDisposable
             track.Album = "Multi Album";
         });
 
-        _settingsService.GetArtistSplitCharactersAsync().Returns(";/\\");
+        _settingsService.Set(CoreSettings.ArtistSplitCharacters, ";/\\");
 
         var expectedCacheFileName = FileNameHelper.GenerateLrcCacheFileName(
             filePath, "Artist A", "Multi Album", "Multi Artist Song");
@@ -505,33 +503,24 @@ public class AtlMetadataServiceTests : IDisposable
             track.Artist = "Artist A / Artist B";
         });
 
-        _settingsService.GetArtistSplitCharactersAsync().Returns("");
+        _settingsService.Set(CoreSettings.ArtistSplitCharacters, "");
         var result = await _metadataService.ExtractMetadataAsync(filePath);
         result.Artists.Should().ContainSingle().Which.Should().Be("Artist A / Artist B");
     }
 
     [Fact]
-    public async Task ExtractMetadataAsync_WhenSplitSettingsChangeDuringRead_NextScanUsesNewSettings()
+    public async Task ExtractMetadataAsync_WhenSplitSettingsChange_NextScanUsesNewSettings()
     {
         var filePath = CreateTestAudioFile("settings-change.mp3", track =>
         {
             track.Artist = "Artist A / Artist B";
             track.Genre = "Rock/Pop";
         });
-        var readStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var oldSetting = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _settingsService.GetArtistSplitCharactersAsync().Returns(_ =>
-        {
-            readStarted.TrySetResult();
-            return oldSetting.Task;
-        });
+        var firstScan = await _metadataService.ExtractMetadataAsync(filePath, includeMediaAssets: false);
+        firstScan.Artists.Should().Equal("Artist A / Artist B");
 
-        var firstScan = _metadataService.ExtractMetadataAsync(filePath, includeMediaAssets: false);
-        await readStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
-        _settingsService.GetArtistSplitCharactersAsync().Returns("/");
-        _settingsService.GetGenreSplitCharactersAsync().Returns("/");
-        oldSetting.SetResult("");
-        await firstScan;
+        _settingsService.Set(CoreSettings.ArtistSplitCharacters, "/");
+        _settingsService.Set(CoreSettings.GenreSplitCharacters, "/");
 
         var result = await _metadataService.ExtractMetadataAsync(filePath, includeMediaAssets: false);
 

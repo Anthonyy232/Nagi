@@ -5,6 +5,7 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Helpers;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -105,7 +106,7 @@ public partial class LibraryReader
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = context.Artists.AsNoTracking();
         var totalCount = await query.CountAsync(token).ConfigureAwait(false);
-        var ignoreArticles = _ignoreArticlesOnSort;
+        var ignoreArticles = _settingsService.Get(CoreSettings.IgnoreLeadingArticlesOnSort);
 
         // Apply sort order - for SongCountDesc, we need to join with songs and count
         IOrderedQueryable<Artist> orderedQuery = sortOrder switch
@@ -145,7 +146,7 @@ public partial class LibraryReader
             ? context.Artists
             : BuildArtistSearchQuery(context, normalizedTerm);
         var totalCount = await query.CountAsync(token).ConfigureAwait(false);
-        var sortedQuery = _ignoreArticlesOnSort
+        var sortedQuery = _settingsService.Get(CoreSettings.IgnoreLeadingArticlesOnSort)
             ? query.AsNoTracking().OrderBy(a => a.SortName).ThenBy(a => a.Id)
             : query.AsNoTracking().OrderBy(a => a.Name).ThenBy(a => a.Id);
         var pagedData = await sortedQuery
@@ -438,7 +439,7 @@ public partial class LibraryReader
 
     private IOrderedQueryable<Album> ApplyAlbumSortOrder(IQueryable<Album> query, AlbumSortOrder sortOrder)
     {
-        var ignoreArticles = _ignoreArticlesOnSort;
+        var ignoreArticles = _settingsService.Get(CoreSettings.IgnoreLeadingArticlesOnSort);
         Expression<Func<Album, string>> title = ignoreArticles ? a => a.SortTitle : a => a.Title;
         Expression<Func<Album, string>> artist = ignoreArticles ? a => a.PrimaryArtistSortName : a => a.PrimaryArtistName;
         return sortOrder switch
@@ -455,7 +456,7 @@ public partial class LibraryReader
     }
 
     private IOrderedQueryable<Song> ApplySongSortOrder(IQueryable<Song> query, SongSortOrder sortOrder) =>
-        SongQuery.Sort(query, sortOrder, _ignoreArticlesOnSort);
+        SongQuery.Sort(query, sortOrder, _settingsService.Get(CoreSettings.IgnoreLeadingArticlesOnSort));
 
     private static IQueryable<PlaylistSong> FilterPlaylistSongs(IQueryable<PlaylistSong> query, string searchTerm)
     {

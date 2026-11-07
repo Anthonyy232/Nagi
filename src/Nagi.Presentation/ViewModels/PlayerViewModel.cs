@@ -14,6 +14,8 @@ using Nagi.Presentation.Models;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Core.Settings;
+using Nagi.Presentation.Services;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -26,7 +28,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     private readonly IMusicNavigationService _musicNavigationService;
 
     private readonly IMusicPlaybackService _playbackService;
-    private readonly IUISettingsService _settingsService;
+    private readonly ISettingsService _settingsService;
     private readonly IWindowService _windowService;
     private readonly ILibraryReader _libraryReader;
     private readonly ILibraryWriter _libraryWriter;
@@ -48,7 +50,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 
     public PlayerViewModel(IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
-        IDispatcherService dispatcherService, IUISettingsService settingsService, IWindowService windowService,
+        IDispatcherService dispatcherService, ISettingsService settingsService, IWindowService windowService,
         ILibraryReader libraryReader, ILibraryWriter libraryWriter, ILibraryScanner libraryScanner, ILogger<PlayerViewModel> logger, IUIService uiService,
         TimeProvider? timeProvider = null)
     {
@@ -70,15 +72,15 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         History = new RecentHistoryViewModel(_libraryReader, _dispatcherService, _logger);
         CurrentTimeText = "0:00";
         TotalDurationText = "0:00";
-        QueueDisplaySettings.PropertyChanged += OnQueueDisplaySettingChanged;
 
         SubscribeToPlaybackServiceEvents();
         InitializeListeningEvents();
         _libraryScanner.LibraryContentChanged += OnQueueLibraryContentChanged;
-        SubscribeToSettingsServiceEvents();
+        _settingsService.SettingChanged += OnSettingChanged;
         SubscribeToWindowServiceEvents();
         InitializeStateFromService();
-        _ = InitializeSettingsAsync();
+        LoadPlayerButtonSettings();
+        QueueDisplaySettings = _settingsService.Get(AppSettings.QueueDisplay);
     }
 
     [ObservableProperty]
@@ -228,7 +230,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         UnsubscribeFromPlaybackServiceEvents();
         CleanupListening();
         _libraryScanner.LibraryContentChanged -= OnQueueLibraryContentChanged;
-        UnsubscribeFromSettingsServiceEvents();
+        _settingsService.SettingChanged -= OnSettingChanged;
         UnsubscribeFromWindowServiceEvents();
         QueueDisplaySettings.PropertyChanged -= OnQueueDisplaySettingChanged;
         SidebarQueue.Dispose();
@@ -242,10 +244,10 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     ///     Loads player button settings and splits them into main and secondary controls
     ///     based on a special "Separator" item.
     /// </summary>
-    private async Task LoadPlayerButtonSettingsAsync()
+    private void LoadPlayerButtonSettings()
     {
         if (_isCleanedUp) return;
-        var allButtons = await _settingsService.GetPlayerButtonSettingsAsync();
+        var allButtons = _settingsService.Get(AppSettings.PlayerButtons);
 
         var enabledButtons = allButtons.Where(s => s.IsEnabled).ToList();
 
@@ -327,17 +329,17 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     }
 
     /// <returns>Whether the navigation pane was open last time, or <c>null</c> when its state isn't remembered.</returns>
-    public async Task<bool?> GetRememberedPaneOpenAsync() =>
-        await _settingsService.GetRememberPaneStateEnabledAsync() ? await _settingsService.GetLastPaneOpenAsync() : null;
+    public bool? GetRememberedPaneOpen() =>
+        _settingsService.Get(AppSettings.RememberPaneState) ? _settingsService.Get(AppSettings.LastPaneOpen) : null;
 
     /// <returns>The navigation items the user has turned on, in their chosen order.</returns>
-    public async Task<IReadOnlyList<NavigationItemSetting>> GetVisibleNavigationItemsAsync() =>
-        (await _settingsService.GetNavigationItemsAsync()).Where(item => item.IsEnabled).ToList();
+    public IReadOnlyList<NavigationItemSetting> GetVisibleNavigationItems() =>
+        _settingsService.Get(AppSettings.NavigationItems).Where(item => item.IsEnabled).ToList();
 
-    public async Task RememberPaneOpenAsync(bool isOpen)
+    public void RememberPaneOpen(bool isOpen)
     {
-        if (await _settingsService.GetRememberPaneStateEnabledAsync())
-            await _settingsService.SetLastPaneOpenAsync(isOpen);
+        if (_settingsService.Get(AppSettings.RememberPaneState))
+            _settingsService.Set(AppSettings.LastPaneOpen, isOpen);
     }
 
     private bool CanClearQueue() => _playbackService.PlaybackQueue.Count > 0;
@@ -760,42 +762,11 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         RunOnUIThread(UpdateEfficiencyMode);
     }
 
-    private async Task InitializeSettingsAsync()
+    private void OnSettingChanged(Setting setting)
     {
-        try
-        {
-            await LoadPlayerButtonSettingsAsync();
-            if (_isCleanedUp) return;
-            QueueDisplaySettings = await _settingsService.GetQueueDisplaySettingsAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to load player button settings during initialization");
-        }
-    }
-
-    private void SubscribeToSettingsServiceEvents()
-    {
-        _settingsService.PlayerButtonSettingsChanged += OnSettingsService_PlayerButtonSettingsChanged;
-        _settingsService.QueueDisplaySettingsChanged += OnSettingsService_QueueDisplaySettingsChanged;
-    }
-
-    private void UnsubscribeFromSettingsServiceEvents()
-    {
-        _settingsService.PlayerButtonSettingsChanged -= OnSettingsService_PlayerButtonSettingsChanged;
-        _settingsService.QueueDisplaySettingsChanged -= OnSettingsService_QueueDisplaySettingsChanged;
-    }
-
-    private async void OnSettingsService_PlayerButtonSettingsChanged()
-    {
-        try
-        {
-            await _dispatcherService.EnqueueAsync(LoadPlayerButtonSettingsAsync);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to reload player button settings.");
-        }
+        if (setting == AppSettings.PlayerButtons) RunOnUIThread(LoadPlayerButtonSettings);
+        else if (setting == AppSettings.QueueDisplay)
+            RunOnUIThread(() => QueueDisplaySettings = _settingsService.Get(AppSettings.QueueDisplay));
     }
 
     partial void OnQueueDisplaySettingsChanging(QueueDisplaySettings value) =>
@@ -807,13 +778,10 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         SidebarQueue.SetShowTotalDuration(value.ShowTotalDuration);
     }
 
-    private void OnSettingsService_QueueDisplaySettingsChanged(QueueDisplaySettings settings) =>
-        RunOnUIThread(() => QueueDisplaySettings = settings);
-
-    private async void OnQueueDisplaySettingChanged(object? sender, PropertyChangedEventArgs e)
+    private void OnQueueDisplaySettingChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(QueueDisplaySettings.ShowTotalDuration))
             SidebarQueue.SetShowTotalDuration(QueueDisplaySettings.ShowTotalDuration);
-        await _settingsService.SetQueueDisplaySettingsAsync(QueueDisplaySettings);
+        _settingsService.Set(AppSettings.QueueDisplay, QueueDisplaySettings);
     }
 }

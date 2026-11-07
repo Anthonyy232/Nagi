@@ -6,7 +6,10 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Services.Implementations;
 using Nagi.Core.Services.Implementations.Presence;
+using Nagi.Core.Settings;
+using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
 
@@ -16,7 +19,7 @@ public class DiscordPresenceServiceTests
 {
     private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
     private readonly IAlbumCoverService _albumCovers = Substitute.For<IAlbumCoverService>();
-    private readonly ISettingsService _settings = Substitute.For<ISettingsService>();
+    private readonly SettingsService _settings = TestSettings.Create();
 
     public DiscordPresenceServiceTests() => _playback.PlaybackRate.Returns(1.0);
 
@@ -87,8 +90,8 @@ public class DiscordPresenceServiceTests
     {
         var url = "https://covers.test/".PadRight(urlLength, 'x');
         var expected = expectCover ? url : null;
-        _settings.GetFetchOnlineMetadataEnabledAsync().Returns(onlineMetadata);
-        _settings.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata).Returns(new List<ServiceProviderSetting>());
+        _settings.Set(CoreSettings.FetchOnlineMetadata, onlineMetadata);
+        _settings.EnableOnly(CoreSettings.MetadataProviders);
         _albumCovers.FindCoverUrlAsync(default!, default!).ReturnsForAnyArgs(ServiceResult<string>.FromSuccess(url));
         var album = new Album { Title = "Album" };
         await using var service = new DiscordPresenceService(Substitute.For<IConfiguration>(),

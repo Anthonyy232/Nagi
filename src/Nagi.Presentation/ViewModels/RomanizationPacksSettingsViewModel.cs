@@ -13,26 +13,32 @@ namespace Nagi.Presentation.ViewModels;
 /// <summary>
 ///     Settings section listing downloadable lyric romanization packs.
 /// </summary>
-public partial class RomanizationPacksSettingsViewModel : SettingsSectionViewModel
+public partial class RomanizationPacksSettingsViewModel : ObservableObject, IDisposable
 {
+    private readonly IDispatcherService _dispatcherService;
+    private readonly ILogger<RomanizationPacksSettingsViewModel> _logger;
     private readonly IRomanizationPackManager _romanizationPackManager;
     private CancellationTokenSource? _romanizationPackCts;
+    private bool _isDisposed;
 
     public RomanizationPacksSettingsViewModel(
         IRomanizationPackManager romanizationPackManager,
         IDispatcherService dispatcherService,
         ILogger<RomanizationPacksSettingsViewModel> logger)
-        : base(dispatcherService, logger)
     {
         _romanizationPackManager = romanizationPackManager;
+        _dispatcherService = dispatcherService;
+        _logger = logger;
     }
 
     [ObservableProperty] public partial bool IsLoadingRomanizationPacks { get; set; }
     [ObservableProperty] public partial string? RomanizationPacksStatus { get; set; }
     public ObservableRangeCollection<RomanizationPackViewModel> RomanizationPacks { get; } = new();
 
-    protected override void OnDisposing()
+    public void Dispose()
     {
+        if (_isDisposed) return;
+        _isDisposed = true;
         _romanizationPackCts?.Cancel();
         _romanizationPackCts?.Dispose();
     }

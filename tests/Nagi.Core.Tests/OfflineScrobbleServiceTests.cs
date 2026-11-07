@@ -1,6 +1,8 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
+using Nagi.Core.Settings;
+using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
 
@@ -8,11 +10,11 @@ namespace Nagi.Core.Tests;
 
 public class OfflineScrobbleServiceTests
 {
-    private readonly ISettingsService _settingsService;
+    private readonly SettingsService _settingsService;
 
     public OfflineScrobbleServiceTests()
     {
-        _settingsService = Substitute.For<ISettingsService>();
+        _settingsService = TestSettings.Create();
     }
 
     private OfflineScrobbleService CreateService(params IListenSubmitter[] submitters)
@@ -133,25 +135,25 @@ public class OfflineScrobbleServiceTests
     }
 
     [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task SettingsChanged_TriggersImmediateProcessing(bool lastFm)
+    [InlineData("lastfm")]
+    [InlineData("listenbrainz")]
+    [InlineData("credentials")]
+    public async Task ScrobblingChange_TriggersImmediateProcessing(string change)
     {
         var submitter = Substitute.For<IListenSubmitter>();
         submitter.IsEnabledAsync().Returns(true);
 
         using var service = CreateService(submitter);
 
-        if (lastFm)
-            _settingsService.LastFmSettingsChanged += Raise.Event<Action>();
-        else
-            _settingsService.ListenBrainzSettingsChanged += Raise.Event<Action>();
+        if (change == "lastfm") _settingsService.Set(CoreSettings.LastFmScrobbling, true);
+        else if (change == "listenbrainz") _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
+        else await _settingsService.SaveListenBrainzUserTokenAsync("token");
 
         await submitter.Received().ProcessPendingListensAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task Dispose_UnsubscribesFromBothSettingsChangedEvents()
+    public async Task Dispose_StopsReactingToScrobblingChanges()
     {
         var submitter = Substitute.For<IListenSubmitter>();
         submitter.IsEnabledAsync().Returns(true);
@@ -159,11 +161,11 @@ public class OfflineScrobbleServiceTests
         using var service = CreateService(submitter);
         service.Dispose();
 
-        _settingsService.LastFmSettingsChanged += Raise.Event<Action>();
-        _settingsService.ListenBrainzSettingsChanged += Raise.Event<Action>();
+        _settingsService.Set(CoreSettings.LastFmScrobbling, true);
+        _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
+        await _settingsService.SaveListenBrainzUserTokenAsync("token");
 
         await submitter.DidNotReceive().IsEnabledAsync();
         await submitter.DidNotReceive().ProcessPendingListensAsync(Arg.Any<CancellationToken>());
     }
-
 }

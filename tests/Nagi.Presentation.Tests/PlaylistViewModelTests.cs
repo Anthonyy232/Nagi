@@ -184,7 +184,7 @@ public class PlaylistViewModelTests
     }
 
     private PlaylistViewModel CreateViewModel() => new(_library.Reader, _library.Scanner, _library.Playlists, _smart, Substitute.For<IMusicPlaybackService>(),
-        Substitute.For<INavigationService>(), _ui, Substitute.For<IUISettingsService>(), new ImmediateDispatcher(),
+        Substitute.For<INavigationService>(), _ui, TestSettings.Create(), new ImmediateDispatcher(),
         NullLogger<PlaylistViewModel>.Instance);
 
     [Theory]

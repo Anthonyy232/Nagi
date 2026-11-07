@@ -24,7 +24,7 @@ public class FolderSongListViewModelTests
         var oldFolder = new Folder { Name = "Old", Path = @"C:\Old" };
         var pending = new TaskCompletionSource<Folder?>(TaskCreationOptions.RunContinuationsAsynchronously);
         library.Reader.GetFolderByIdAsync(oldFolder.Id).Returns(pending.Task);
-        using var viewModel = CreateViewModel(library, Substitute.For<IUISettingsService>());
+        using var viewModel = CreateViewModel(library);
         var loading = viewModel.InitializeAsync(oldFolder.Name, oldFolder.Id);
         if (dispose) viewModel.Dispose();
         else
@@ -55,7 +55,7 @@ public class FolderSongListViewModelTests
         library.Reader.GetAllSongIdsInDirectoryRecursiveAsync(root.Id, folder.Path, Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(pending.Task);
         var playback = Substitute.For<IMusicPlaybackService>();
-        using var viewModel = CreateViewModel(library, Substitute.For<IUISettingsService>(), playback);
+        using var viewModel = CreateViewModel(library, playback);
         await viewModel.InitializeAsync(root.Name, root.Id);
         var playing = viewModel.PlaySubfolderCommand.ExecuteAsync(folder);
 
@@ -81,7 +81,7 @@ public class FolderSongListViewModelTests
         library.Reader.SearchAllSongIdsInFolderAsync(root.Id, child.Path, "Match", Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(new List<Guid> { song.Id });
         var playback = Substitute.For<IMusicPlaybackService>();
-        using var viewModel = CreateViewModel(library, Substitute.For<IUISettingsService>(), playback);
+        using var viewModel = CreateViewModel(library, playback);
         await viewModel.InitializeAsync(root.Name, root.Id);
         await viewModel.NavigateToSubfolderCommand.ExecuteAsync(child);
         viewModel.IsAtRootLevel.Should().BeFalse();
@@ -109,7 +109,7 @@ public class FolderSongListViewModelTests
         var library = new LibraryFakes();
         var root = new Folder { Name = "Library", Path = rootPath };
         library.Reader.GetFolderByIdAsync(root.Id).Returns(root);
-        using var viewModel = CreateViewModel(library, Substitute.For<IUISettingsService>());
+        using var viewModel = CreateViewModel(library);
 
         await viewModel.InitializeAsync(root.Name, root.Id, directoryPath);
 
@@ -129,8 +129,6 @@ public class FolderSongListViewModelTests
     public async Task LoadPageAsync_WhenSongsWereRemoved_UpdatesPageAndContents(int remainingSongs)
     {
         var library = new LibraryFakes();
-        var settings = Substitute.For<IUISettingsService>();
-        settings.GetSongsPerPageAsync().Returns(50);
         var folder = new Folder { Id = Guid.NewGuid(), Path = @"C:\Music", Name = "Music" };
         library.Reader.GetFolderByIdAsync(folder.Id).Returns(folder);
         var count = 151;
@@ -142,7 +140,7 @@ public class FolderSongListViewModelTests
                 TotalCount = count,
                 Items = call.ArgAt<int>(2) < count ? [song] : []
             });
-        using var viewModel = CreateViewModel(library, settings);
+        using var viewModel = CreateViewModel(library);
         await viewModel.InitializeAsync(folder.Name, folder.Id);
         count = remainingSongs;
 
@@ -156,11 +154,10 @@ public class FolderSongListViewModelTests
         viewModel.FolderContents.Should().HaveCount(remainingSongs == 0 ? 0 : 1);
     }
 
-    private static FolderSongListViewModel CreateViewModel(LibraryFakes library, IUISettingsService settings,
-        IMusicPlaybackService? playback = null) =>
+    private static FolderSongListViewModel CreateViewModel(LibraryFakes library, IMusicPlaybackService? playback = null) =>
         new(library.Reader, library.Writer, library.Scanner, Substitute.For<IPlaylistService>(), playback ?? Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(),
-            new ImmediateDispatcher(), settings, Substitute.For<IUIService>(),
+            new ImmediateDispatcher(), TestSettings.Create(), Substitute.For<IUIService>(),
             NullLogger<FolderSongListViewModel>.Instance);
 
     [Fact]
@@ -219,7 +216,7 @@ public class FolderSongListViewModelTests
         library.Reader.GetSubFolderCountAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(1);
         library.Reader.GetSubFoldersPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns(new[] { new Folder { Name = "Album", Path = @"C:\Music\Album" } });
-        using var viewModel = CreateViewModel(library, Substitute.For<IUISettingsService>());
+        using var viewModel = CreateViewModel(library);
 
         await viewModel.InitializeAsync(root.Name, root.Id);
 
@@ -239,7 +236,7 @@ public class FolderSongListViewModelTests
     private sealed class SelectionFolderList(LibraryFakes library)
         : FolderSongListViewModel(library.Reader, library.Writer, library.Scanner, Substitute.For<IPlaylistService>(), Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(),
-            Substitute.For<IUISettingsService>(), Substitute.For<IUIService>(), NullLogger<FolderSongListViewModel>.Instance)
+            TestSettings.Create(), Substitute.For<IUIService>(), NullLogger<FolderSongListViewModel>.Instance)
     {
         public Task<List<Guid>> ResolveSelectionAsync() => GetCurrentSelectionIdsAsync();
     }

@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Implementations.Presence;
 
@@ -17,9 +18,6 @@ public class ListenBrainzPresenceService : IPresenceService
     private readonly IListenBrainzScrobblerService _scrobblerService;
     private readonly ISettingsService _settingsService;
 
-    private bool _isNowPlayingEnabled;
-    private bool _isScrobblingEnabled;
-
     public ListenBrainzPresenceService(
         IListenBrainzScrobblerService scrobblerService,
         ILibraryWriter libraryWriter,
@@ -34,16 +32,15 @@ public class ListenBrainzPresenceService : IPresenceService
 
     public string Name => "ListenBrainz";
 
-    public async Task InitializeAsync()
+    public Task InitializeAsync()
     {
         _logger.LogDebug("Initializing ListenBrainz Presence Service.");
-        _settingsService.ListenBrainzSettingsChanged += OnSettingsChanged;
-        await UpdateLocalSettingsAsync().ConfigureAwait(false);
+        return Task.CompletedTask;
     }
 
     public async Task OnTrackChangedAsync(Song song, long listenHistoryId)
     {
-        if (_isNowPlayingEnabled)
+        if (_settingsService.Get(CoreSettings.ListenBrainzNowPlaying))
             try
             {
                 await _scrobblerService.UpdateNowPlayingAsync(song).ConfigureAwait(false);
@@ -76,7 +73,7 @@ public class ListenBrainzPresenceService : IPresenceService
         long listenHistoryId,
         DateTime listenStartedUtc)
     {
-        if (!_isScrobblingEnabled) return;
+        if (!_settingsService.Get(CoreSettings.ListenBrainzScrobbling)) return;
 
         _logger.LogDebug(
             "Track '{TrackTitle}' is eligible for ListenBrainz. Attempting real-time submission.", song.Title);
@@ -98,30 +95,5 @@ public class ListenBrainzPresenceService : IPresenceService
         }
     }
 
-    public ValueTask DisposeAsync()
-    {
-        _settingsService.ListenBrainzSettingsChanged -= OnSettingsChanged;
-        return ValueTask.CompletedTask;
-    }
-
-    private async void OnSettingsChanged()
-    {
-        try
-        {
-            await UpdateLocalSettingsAsync().ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to update ListenBrainz presence settings.");
-        }
-    }
-
-    private async Task UpdateLocalSettingsAsync()
-    {
-        _isNowPlayingEnabled = await _settingsService.GetListenBrainzNowPlayingEnabledAsync().ConfigureAwait(false);
-        _isScrobblingEnabled = await _settingsService.GetListenBrainzScrobblingEnabledAsync().ConfigureAwait(false);
-        _logger.LogDebug(
-            "Updated ListenBrainz settings. Playing Now: {IsNowPlayingEnabled}, Scrobbling: {IsScrobblingEnabled}",
-            _isNowPlayingEnabled, _isScrobblingEnabled);
-    }
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }

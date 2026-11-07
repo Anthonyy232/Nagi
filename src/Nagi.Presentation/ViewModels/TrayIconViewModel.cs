@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Core.Settings;
+using Nagi.Presentation.Services;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -11,14 +13,13 @@ public partial class TrayIconViewModel : ObservableObject
     private readonly IAppInfoService _appInfoService;
     private readonly IDispatcherService _dispatcherService;
     private readonly ILogger<TrayIconViewModel> _logger;
-    private readonly IUISettingsService _settingsService;
+    private readonly ISettingsService _settingsService;
     private readonly ITrayPopupService _trayPopupService;
     private readonly IWindowService _windowService;
 
-    private bool _isHideToTrayEnabled;
 
     public TrayIconViewModel(
-        IUISettingsService settingsService,
+        ISettingsService settingsService,
         ITrayPopupService trayPopupService,
         IWindowService windowService,
         IAppInfoService appInfoService,
@@ -32,7 +33,7 @@ public partial class TrayIconViewModel : ObservableObject
         _dispatcherService = dispatcherService;
         _logger = logger;
 
-        _settingsService.HideToTraySettingChanged += OnHideToTraySettingChanged;
+        _settingsService.SettingChanged += OnSettingChanged;
     }
 
     [ObservableProperty]
@@ -45,24 +46,23 @@ public partial class TrayIconViewModel : ObservableObject
         _logger.LogDebug("Cleaning up TrayIconViewModel resources");
         _windowService.Closing -= OnAppWindowClosing;
         _windowService.UIStateChanged -= OnWindowStateChanged;
-        _settingsService.HideToTraySettingChanged -= OnHideToTraySettingChanged;
+        _settingsService.SettingChanged -= OnSettingChanged;
     }
 
-    public async Task InitializeAsync()
+    public void Initialize()
     {
         _windowService.Closing += OnAppWindowClosing;
         _windowService.UIStateChanged += OnWindowStateChanged;
-
-        _isHideToTrayEnabled = await _settingsService.GetHideToTrayEnabledAsync();
         UpdateTrayIconVisibility();
         _logger.LogDebug("Initialized. HideToTray: {IsHideToTrayEnabled}, IsWindowVisible: {IsWindowVisible}",
-            _isHideToTrayEnabled, _windowService.IsVisible);
-
+            IsHideToTrayEnabled, _windowService.IsVisible);
     }
+
+    private bool IsHideToTrayEnabled => _settingsService.Get(AppSettings.HideToTray);
 
     private void UpdateTrayIconVisibility()
     {
-        IsTrayIconVisible = _isHideToTrayEnabled && !_windowService.IsVisible;
+        IsTrayIconVisible = IsHideToTrayEnabled && !_windowService.IsVisible;
     }
 
     private void OnWindowStateChanged()
@@ -75,7 +75,7 @@ public partial class TrayIconViewModel : ObservableObject
         if (_windowService.IsExiting) return;
 
         // Closing during onboarding exits, since there is nothing to keep running in the tray.
-        if (_isHideToTrayEnabled && !_windowService.IsShowingOnboarding)
+        if (IsHideToTrayEnabled && !_windowService.IsShowingOnboarding)
         {
             args.Cancel = true;
             _logger.LogDebug("'Hide to Tray' is enabled. Intercepting close and hiding window");
@@ -83,12 +83,13 @@ public partial class TrayIconViewModel : ObservableObject
         }
     }
 
-    private void OnHideToTraySettingChanged(bool isEnabled)
+    private void OnSettingChanged(Setting setting)
     {
+        if (setting != AppSettings.HideToTray) return;
         _dispatcherService.TryEnqueue(() =>
         {
+            var isEnabled = IsHideToTrayEnabled;
             _logger.LogDebug("'Hide to Tray' setting changed to {IsEnabled}", isEnabled);
-            _isHideToTrayEnabled = isEnabled;
             UpdateTrayIconVisibility();
 
             // If the feature is disabled while the window is hidden, show the window to prevent it from becoming inaccessible.

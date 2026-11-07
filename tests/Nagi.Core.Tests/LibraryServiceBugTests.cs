@@ -22,7 +22,7 @@ public class LibraryServiceBugTests : IDisposable
     private readonly ILogger<LibraryService> _logger;
     private readonly IMetadataService _metadataService;
     private readonly IPathConfiguration _pathConfig;
-    private readonly ISettingsService _settingsService;
+    private readonly SettingsService _settingsService;
     private readonly IReplayGainService _replayGainService;
     private readonly IImageProcessor _imageProcessor;
     private readonly ProviderPipelineProvider _pipelines;
@@ -33,7 +33,7 @@ public class LibraryServiceBugTests : IDisposable
         _metadataService = Substitute.For<IMetadataService>();
         _httpClientFactory = Substitute.For<IHttpClientFactory>();
         _pathConfig = Substitute.For<IPathConfiguration>();
-        _settingsService = Substitute.For<ISettingsService>();
+        _settingsService = TestSettings.Create();
         _replayGainService = Substitute.For<IReplayGainService>();
         _imageProcessor = Substitute.For<IImageProcessor>();
         _logger = Substitute.For<ILogger<LibraryService>>();
@@ -41,7 +41,7 @@ public class LibraryServiceBugTests : IDisposable
         _dbHelper = new DbContextFactoryTestHelper(useFileDatabase: true);
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
-        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, _settingsService, Substitute.For<ILogger<LibraryReader>>());
+        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, _settingsService);
 
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
@@ -62,7 +62,6 @@ public class LibraryServiceBugTests : IDisposable
     public void Dispose()
     {
         _libraryService.Dispose();
-        _libraryReader.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
     }

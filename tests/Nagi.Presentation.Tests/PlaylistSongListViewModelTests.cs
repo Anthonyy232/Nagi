@@ -225,7 +225,7 @@ public class PlaylistSongListViewModelTests
     private sealed class TestPlaylist(LibraryFakes library, IPlaylistService playlists, IUIService ui)
         : PlaylistSongListViewModel(library.Reader, library.Writer, library.Scanner, playlists, Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(),
-            Substitute.For<IUISettingsService>(), ui, NullLogger<PlaylistSongListViewModel>.Instance)
+            TestSettings.Create(), ui, NullLogger<PlaylistSongListViewModel>.Instance)
     {
         public Task<List<Guid>>? PendingSelection { get; set; }
         protected override Task<List<Guid>> GetCurrentSelectionIdsAsync() => PendingSelection ?? base.GetCurrentSelectionIdsAsync();

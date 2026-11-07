@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Settings;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Navigation;
@@ -25,7 +26,6 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
     private const int SettingsSaveDebounceMs = 300;
     private const int VisualSettingDebounceMs = 200;
 
-    private readonly IUISettingsService _settingsService;
     private readonly IThemeService _themeService;
     private readonly IUIService _uiService;
     private readonly IAppInfoService _appInfoService;
@@ -34,8 +34,12 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
     private readonly Debouncer _playerTintSaveDebouncer;
     private readonly Debouncer _accentColorSaveDebouncer;
 
+    // Dragging a slider or color picker re-themes the app on every save, so these values wait to be saved.
+    private ArgbColor? _pendingAccentColor;
+    private double? _pendingPlayerTintIntensity;
+
     public AppearanceSettingsViewModel(
-        IUISettingsService settingsService,
+        ISettingsService settingsService,
         IThemeService themeService,
         IUIService uiService,
         IAppInfoService appInfoService,
@@ -43,9 +47,8 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         IDispatcherService dispatcherService,
         ILogger<AppearanceSettingsViewModel> logger,
         TimeProvider? timeProvider = null)
-        : base(dispatcherService, logger)
+        : base(settingsService, dispatcherService, logger)
     {
-        _settingsService = settingsService;
         _themeService = themeService;
         _uiService = uiService;
         _appInfoService = appInfoService;
@@ -56,31 +59,102 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         _accentColorSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(VisualSettingDebounceMs), timeProvider);
 
         NavigationItems.CollectionChanged += OnNavigationItemsCollectionChanged;
+        SetSongListColumnToggles(_settingsService.Get(AppSettings.SongListColumns));
         foreach (var setting in SongListColumnSettings) setting.PropertyChanged += OnSongListColumnSettingChanged;
-
-        ApplyWithoutSaving(() =>
-        {
-            SelectedTheme = SettingsDefaults.Theme;
-            SelectedBackdropMaterial = SettingsDefaults.DefaultBackdropMaterial;
-            IsDynamicThemingEnabled = SettingsDefaults.DynamicThemingEnabled;
-            IsRememberWindowSizeEnabled = SettingsDefaults.RememberWindowSizeEnabled;
-            IsRememberWindowPositionEnabled = SettingsDefaults.RememberWindowPositionEnabled;
-            IsRememberPaneStateEnabled = SettingsDefaults.RememberPaneStateEnabled;
-            IsSongListHeaderEnabled = SettingsDefaults.ShowSongListHeaderEnabled;
-        });
     }
 
-    [ObservableProperty] public partial AppTheme SelectedTheme { get; set; }
-    [ObservableProperty] public partial BackdropMaterial SelectedBackdropMaterial { get; set; }
-    [ObservableProperty] public partial bool IsDynamicThemingEnabled { get; set; }
-    [ObservableProperty] public partial ArgbColor AccentColor { get; set; }
-    [ObservableProperty] public partial PlayerBackgroundMaterial SelectedPlayerBackgroundMaterial { get; set; }
-    [ObservableProperty] public partial double PlayerTintIntensity { get; set; }
+    public AppTheme SelectedTheme
+    {
+        get => Get(AppSettings.Theme);
+        set
+        {
+            if (value != SelectedTheme && Set(AppSettings.Theme, value)) _themeService.ApplyTheme(value);
+        }
+    }
+
+    public BackdropMaterial SelectedBackdropMaterial
+    {
+        get => Get(AppSettings.BackdropMaterial);
+        set => Set(AppSettings.BackdropMaterial, value);
+    }
+
+    public bool IsDynamicThemingEnabled
+    {
+        get => Get(AppSettings.DynamicTheming);
+        set
+        {
+            if (value != IsDynamicThemingEnabled && Set(AppSettings.DynamicTheming, value))
+                _ = ApplyDynamicThemingAsync(value);
+        }
+    }
+
+    public ArgbColor AccentColor
+    {
+        get => _pendingAccentColor ?? Get(AppSettings.AccentColor) ?? ThemePalette.BrandAccentColor;
+        set
+        {
+            if (value == AccentColor) return;
+            _pendingAccentColor = value;
+            OnPropertyChanged();
+            QueueSettingsSave(_accentColorSaveDebouncer, async token =>
+            {
+                Set(AppSettings.AccentColor, value);
+                if (_pendingAccentColor == value) _pendingAccentColor = null;
+                token.ThrowIfCancellationRequested();
+                if (!IsDynamicThemingEnabled)
+                    await _themeService.ApplyAccentColorAsync(value);
+            }, nameof(AccentColor));
+        }
+    }
+
+    public PlayerBackgroundMaterial SelectedPlayerBackgroundMaterial
+    {
+        get => Get(AppSettings.PlayerBackgroundMaterial);
+        set => Set(AppSettings.PlayerBackgroundMaterial, value);
+    }
+
+    public double PlayerTintIntensity
+    {
+        get => _pendingPlayerTintIntensity ?? Get(AppSettings.PlayerTintIntensity);
+        set
+        {
+            if (value == PlayerTintIntensity) return;
+            _pendingPlayerTintIntensity = value;
+            OnPropertyChanged();
+            QueueSettingsSave(_playerTintSaveDebouncer, _ =>
+            {
+                Set(AppSettings.PlayerTintIntensity, value);
+                if (_pendingPlayerTintIntensity == value) _pendingPlayerTintIntensity = null;
+                return Task.CompletedTask;
+            }, nameof(PlayerTintIntensity));
+        }
+    }
+
     [ObservableProperty] public partial LanguageModel? SelectedLanguage { get; set; }
-    [ObservableProperty] public partial bool IsRememberWindowSizeEnabled { get; set; }
-    [ObservableProperty] public partial bool IsRememberWindowPositionEnabled { get; set; }
-    [ObservableProperty] public partial bool IsRememberPaneStateEnabled { get; set; }
-    [ObservableProperty] public partial bool IsSongListHeaderEnabled { get; set; }
+
+    public bool IsRememberWindowSizeEnabled
+    {
+        get => Get(AppSettings.RememberWindowSize);
+        set => Set(AppSettings.RememberWindowSize, value);
+    }
+
+    public bool IsRememberWindowPositionEnabled
+    {
+        get => Get(AppSettings.RememberWindowPosition);
+        set => Set(AppSettings.RememberWindowPosition, value);
+    }
+
+    public bool IsRememberPaneStateEnabled
+    {
+        get => Get(AppSettings.RememberPaneState);
+        set => Set(AppSettings.RememberPaneState, value);
+    }
+
+    public bool IsSongListHeaderEnabled
+    {
+        get => Get(AppSettings.ShowSongListHeader);
+        set => Set(AppSettings.ShowSongListHeader, value);
+    }
 
     public IReadOnlyList<AppTheme> AvailableThemes { get; } = Enum.GetValues<AppTheme>();
     public IReadOnlyList<BackdropMaterial> AvailableBackdropMaterials { get; } = Enum.GetValues<BackdropMaterial>();
@@ -97,59 +171,18 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         _accentColorSaveDebouncer.PendingInvocation);
 
     /// <summary>
-    ///     Loads the saved values without writing anything back, then fills in the full language list
-    ///     in the background.
+    ///     Loads the navigation menu and the language choice without writing anything back, then fills in the full
+    ///     language list in the background.
     /// </summary>
-    public async Task LoadAsync()
+    public void Load()
     {
+        var currentLangCode = _settingsService.Get(AppSettings.Language);
         ApplyWithoutSaving(() =>
         {
+            var navigationItems = _settingsService.Get(AppSettings.NavigationItems);
             foreach (var item in NavigationItems) item.PropertyChanged -= OnNavigationItemPropertyChanged;
-            NavigationItems.Clear();
-        });
-
-        var navItemsTask = _settingsService.GetNavigationItemsAsync();
-        var themeTask = _settingsService.GetThemeAsync();
-        var backdropTask = _settingsService.GetBackdropMaterialAsync();
-        var dynamicThemingTask = _settingsService.GetDynamicThemingAsync();
-        var accentColorTask = _settingsService.GetAccentColorAsync();
-        var playerMaterialTask = _settingsService.GetPlayerBackgroundMaterialAsync();
-        var playerTintTask = _settingsService.GetPlayerTintIntensityAsync();
-        var languageTask = _settingsService.GetLanguageAsync();
-        var rememberWindowTask = _settingsService.GetRememberWindowSizeEnabledAsync();
-        var rememberPositionTask = _settingsService.GetRememberWindowPositionEnabledAsync();
-        var rememberPaneTask = _settingsService.GetRememberPaneStateEnabledAsync();
-        var songListColumnsTask = _settingsService.GetSongListColumnsAsync();
-        var songListHeaderTask = _settingsService.GetShowSongListHeaderAsync();
-
-        await Task.WhenAll(navItemsTask, themeTask, backdropTask, dynamicThemingTask, accentColorTask,
-            playerMaterialTask, playerTintTask, languageTask, rememberWindowTask, rememberPositionTask,
-            rememberPaneTask, songListColumnsTask, songListHeaderTask);
-
-        if (_isDisposed) return;
-
-        var currentLangCode = languageTask.Result;
-        ApplyWithoutSaving(() =>
-        {
-            foreach (var item in navItemsTask.Result)
-            {
-                item.PropertyChanged += OnNavigationItemPropertyChanged;
-            }
-            NavigationItems.ReplaceRange(navItemsTask.Result);
-
-            SelectedTheme = themeTask.Result;
-            SelectedBackdropMaterial = backdropTask.Result;
-            IsDynamicThemingEnabled = dynamicThemingTask.Result;
-            IsRememberWindowSizeEnabled = rememberWindowTask.Result;
-            IsRememberWindowPositionEnabled = rememberPositionTask.Result;
-            IsRememberPaneStateEnabled = rememberPaneTask.Result;
-            SetSongListColumnToggles(songListColumnsTask.Result);
-            IsSongListHeaderEnabled = songListHeaderTask.Result;
-
-            SelectedPlayerBackgroundMaterial = playerMaterialTask.Result;
-            PlayerTintIntensity = playerTintTask.Result;
-
-            AccentColor = accentColorTask.Result ?? SettingsDefaults.BrandAccentColor;
+            foreach (var item in navigationItems) item.PropertyChanged += OnNavigationItemPropertyChanged;
+            NavigationItems.ReplaceRange(navigationItems);
 
             // Initialize with a minimal list immediately so the binding is valid on first render.
             // The full language list is populated asynchronously to avoid blocking startup.
@@ -161,6 +194,12 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         });
 
         _ = PopulateAvailableLanguagesAsync(currentLangCode);
+    }
+
+    protected override void OnSettingChanged(Setting setting)
+    {
+        if (setting == AppSettings.SongListColumns)
+            ApplyWithoutSaving(() => SetSongListColumnToggles(_settingsService.Get(AppSettings.SongListColumns)));
     }
 
     protected override void OnDisposing()
@@ -181,10 +220,10 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
 
         try
         {
-            var currentLanguage = await _settingsService.GetLanguageAsync();
+            var currentLanguage = _settingsService.Get(AppSettings.Language);
             if (string.Equals(value.Code, currentLanguage, StringComparison.OrdinalIgnoreCase)) return;
 
-            await _settingsService.SetLanguageAsync(value.Code);
+            _settingsService.Set(AppSettings.Language, value.Code);
 
             var title = Strings.SettingsPage_RestartRequired_Title;
             var message = Strings.SettingsPage_RestartRequired_Message;
@@ -196,15 +235,6 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         {
             _logger.LogError(ex, "Failed to set language to {LanguageCode}", value.Code);
         }
-    }
-
-    partial void OnSelectedPlayerBackgroundMaterialChanged(PlayerBackgroundMaterial value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetPlayerBackgroundMaterialAsync(value));
-
-    partial void OnPlayerTintIntensityChanged(double value)
-    {
-        if (_isInitializing) return;
-        QueueSettingsSave(_playerTintSaveDebouncer, _ => _settingsService.SetPlayerTintIntensityAsync(value), nameof(PlayerTintIntensity));
     }
 
     /// <summary>
@@ -219,7 +249,7 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
 
     /// <summary>
     /// Populates AvailableLanguages asynchronously by scanning for satellite resource assemblies.
-    /// Fires and forgets from LoadAsync — does not block startup.
+    /// Fires and forgets from Load — does not block startup.
     /// Updates SelectedLanguage once the full list is available.
     /// </summary>
     private async Task PopulateAvailableLanguagesAsync(string currentLangCode)
@@ -282,112 +312,59 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
     private void QueueNavigationItemSave()
     {
         var snapshot = NavigationItems.ToList();
-        QueueSettingsSave(_navigationItemSaveDebouncer, _ => _settingsService.SetNavigationItemsAsync(snapshot), nameof(NavigationItems));
+        QueueSettingsSave(_navigationItemSaveDebouncer, _ =>
+        {
+            Set(AppSettings.NavigationItems, snapshot, nameof(NavigationItems));
+            return Task.CompletedTask;
+        }, nameof(NavigationItems));
     }
-
-    partial void OnIsSongListHeaderEnabledChanged(bool value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetShowSongListHeaderAsync(value));
 
     private void OnSongListColumnSettingChanged(object? sender, PropertyChangedEventArgs e)
     {
+        if (_isInitializing) return;
         var columns = SongListColumnSettings.Where(setting => setting.IsEnabled)
             .Aggregate(SongListColumns.None, (all, setting) => all | setting.Column);
-        _ = SaveSettingAsync(() => _settingsService.SetSongListColumnsAsync(columns));
+        Set(AppSettings.SongListColumns, columns, nameof(SongListColumnSettings));
     }
 
-    async partial void OnSelectedThemeChanged(AppTheme value)
+    private async Task ApplyDynamicThemingAsync(bool isEnabled)
     {
-        if (_isInitializing) return;
         try
         {
-            await _settingsService.SetThemeAsync(value);
-            _themeService.ApplyTheme(value);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error changing app theme to {Theme}", value);
-        }
-    }
-
-    partial void OnSelectedBackdropMaterialChanged(BackdropMaterial value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetBackdropMaterialAsync(value));
-
-    async partial void OnIsDynamicThemingEnabledChanged(bool value)
-    {
-        if (_isInitializing) return;
-        try
-        {
-            await _settingsService.SetDynamicThemingAsync(value);
-            if (value)
-            {
+            if (isEnabled)
                 await _themeService.ReapplyCurrentDynamicThemeAsync();
-            }
             else
-            {
-                var accentColor = await _settingsService.GetAccentColorAsync();
-                await _themeService.ApplyAccentColorAsync(accentColor);
-            }
+                await _themeService.ApplyAccentColorAsync(_settingsService.Get(AppSettings.AccentColor));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error updating dynamic theming to {Value}", value);
+            _logger.LogError(ex, "Error updating dynamic theming to {Value}", isEnabled);
         }
-    }
-
-    partial void OnIsRememberWindowSizeEnabledChanged(bool value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetRememberWindowSizeEnabledAsync(value));
-
-    partial void OnIsRememberWindowPositionEnabledChanged(bool value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetRememberWindowPositionEnabledAsync(value));
-
-    partial void OnIsRememberPaneStateEnabledChanged(bool value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetRememberPaneStateEnabledAsync(value));
-
-    partial void OnAccentColorChanged(ArgbColor value)
-    {
-        if (_isInitializing) return;
-        QueueSettingsSave(_accentColorSaveDebouncer, async token =>
-        {
-            await _settingsService.SetAccentColorAsync(value);
-            token.ThrowIfCancellationRequested();
-            if (!IsDynamicThemingEnabled)
-                await _themeService.ApplyAccentColorAsync(value);
-        }, nameof(AccentColor));
     }
 
     [RelayCommand]
     private async Task ResetAccentColorAsync()
     {
         _accentColorSaveDebouncer.Cancel();
-        ApplyWithoutSaving(() => AccentColor = SettingsDefaults.BrandAccentColor);
-
-        await _settingsService.SetAccentColorAsync(null);
-        if (!IsDynamicThemingEnabled)
-        {
-            await _themeService.ApplyAccentColorAsync(null);
-        }
+        _pendingAccentColor = null;
+        Set(AppSettings.AccentColor, null, nameof(AccentColor));
+        OnPropertyChanged(nameof(AccentColor));
+        if (!IsDynamicThemingEnabled) await ApplyDynamicThemingAsync(false);
     }
 
     [RelayCommand]
-    private async Task ResetPlayerDesignSettingsAsync()
+    private void ResetPlayerDesignSettings()
     {
         _playerTintSaveDebouncer.Cancel();
-        ApplyWithoutSaving(() =>
-        {
-            SelectedPlayerBackgroundMaterial = SettingsDefaults.DefaultPlayerBackgroundMaterial;
-            PlayerTintIntensity = SettingsDefaults.DefaultPlayerTintIntensity;
-        });
-
-        await _settingsService.SetPlayerBackgroundMaterialAsync(SettingsDefaults.DefaultPlayerBackgroundMaterial);
-        await _settingsService.SetPlayerTintIntensityAsync(SettingsDefaults.DefaultPlayerTintIntensity);
+        _pendingPlayerTintIntensity = null;
+        Set(AppSettings.PlayerBackgroundMaterial, AppSettings.PlayerBackgroundMaterial.Default, nameof(SelectedPlayerBackgroundMaterial));
+        Set(AppSettings.PlayerTintIntensity, AppSettings.PlayerTintIntensity.Default, nameof(PlayerTintIntensity));
+        OnPropertyChanged(nameof(PlayerTintIntensity));
     }
 
     [RelayCommand]
-    private async Task ResetSongListColumnsAsync()
-    {
-        ApplyWithoutSaving(() => SetSongListColumnToggles(SettingsDefaults.DefaultSongListColumns));
-        await _settingsService.SetSongListColumnsAsync(SettingsDefaults.DefaultSongListColumns);
-    }
+    private void ResetSongListColumns() =>
+        Set(AppSettings.SongListColumns, AppSettings.SongListColumns.Default, nameof(SongListColumnSettings));
 
     private void SetSongListColumnToggles(SongListColumns columns)
     {

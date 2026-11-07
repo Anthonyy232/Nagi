@@ -9,7 +9,7 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
-using Nagi.Presentation.Services;
+using Nagi.Core.Settings;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -23,7 +23,6 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
 
     private readonly IMusicPlaybackService _playbackService;
     private readonly IAudioPlayer _audioPlayer;
-    private readonly IUISettingsService _settingsService;
     private readonly IUIService _uiService;
     private readonly IFFmpegService _ffmpegService;
     private readonly IReplayGainService _replayGainService;
@@ -39,7 +38,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
     public AudioSettingsViewModel(
         IMusicPlaybackService playbackService,
         IAudioPlayer audioPlayer,
-        IUISettingsService settingsService,
+        ISettingsService settingsService,
         IUIService uiService,
         IFFmpegService ffmpegService,
         IReplayGainService replayGainService,
@@ -47,11 +46,10 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         IDispatcherService dispatcherService,
         ILogger<AudioSettingsViewModel> logger,
         TimeProvider? timeProvider = null)
-        : base(dispatcherService, logger)
+        : base(settingsService, dispatcherService, logger)
     {
         _playbackService = playbackService;
         _audioPlayer = audioPlayer;
-        _settingsService = settingsService;
         _uiService = uiService;
         _ffmpegService = ffmpegService;
         _replayGainService = replayGainService;
@@ -61,21 +59,42 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
 
         _playbackService.EqualizerChanged += OnPlaybackService_EqualizerChanged;
         AvailableEqualizerPresets = _playbackService.AvailablePresets;
-
-        ApplyWithoutSaving(() =>
-        {
-            EqualizerPreamp = SettingsDefaults.EqualizerPreamp;
-            IsVolumeNormalizationEnabled = SettingsDefaults.VolumeNormalizationEnabled;
-            IsWasapiExclusiveModeEnabled = SettingsDefaults.WasapiExclusiveModeEnabled;
-            IsFadeOnPlayPauseEnabled = SettingsDefaults.FadeOnPlayPauseEnabled;
-        });
     }
 
-    [ObservableProperty] public partial bool IsVolumeNormalizationEnabled { get; set; }
-    [ObservableProperty] public partial bool IsWasapiExclusiveModeEnabled { get; set; }
-    [ObservableProperty] public partial bool IsFadeOnPlayPauseEnabled { get; set; }
-    [ObservableProperty] public partial double FadeInDurationMs { get; set; }
-    [ObservableProperty] public partial double FadeOutDurationMs { get; set; }
+    public bool IsVolumeNormalizationEnabled
+    {
+        get => Get(CoreSettings.VolumeNormalization);
+        set
+        {
+            // Turning it off also cancels an enable still waiting on FFmpeg or the user, which hasn't saved yet.
+            if (!value) DisableVolumeNormalization();
+            else if (!IsVolumeNormalizationEnabled) _ = EnableVolumeNormalizationAsync();
+        }
+    }
+
+    public bool IsWasapiExclusiveModeEnabled
+    {
+        get => Get(CoreSettings.WasapiExclusiveMode);
+        set => Set(CoreSettings.WasapiExclusiveMode, value);
+    }
+
+    public bool IsFadeOnPlayPauseEnabled
+    {
+        get => Get(CoreSettings.FadeOnPlayPause);
+        set => Set(CoreSettings.FadeOnPlayPause, value);
+    }
+
+    public double FadeInDurationMs
+    {
+        get => Get(CoreSettings.FadeInDurationMs);
+        set => Set(CoreSettings.FadeInDurationMs, (int)value);
+    }
+
+    public double FadeOutDurationMs
+    {
+        get => Get(CoreSettings.FadeOutDurationMs);
+        set => Set(CoreSettings.FadeOutDurationMs, (int)value);
+    }
 
     [ObservableProperty] public partial IReadOnlyList<AudioOutputDeviceInfo> AudioOutputDevices { get; set; } = Array.Empty<AudioOutputDeviceInfo>();
     [ObservableProperty] public partial AudioOutputDeviceInfo? SelectedAudioOutputDevice { get; set; }
@@ -90,31 +109,9 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
     internal Task PendingSettingsSaves => _preampDebouncer.PendingInvocation;
 
     /// <summary>
-    ///     Loads the saved playback settings and rebuilds the equalizer bands from the playback service,
-    ///     without writing anything back.
+    ///     Rebuilds the equalizer bands from the playback service without writing anything back.
     /// </summary>
-    public async Task LoadAsync()
-    {
-        var volumeNormTask = _settingsService.GetVolumeNormalizationEnabledAsync();
-        var wasapiExclusiveTask = _settingsService.GetWasapiExclusiveModeEnabledAsync();
-        var fadeTask = _settingsService.GetFadeOnPlayPauseEnabledAsync();
-        var fadeInTask = _settingsService.GetFadeInDurationMsAsync();
-        var fadeOutTask = _settingsService.GetFadeOutDurationMsAsync();
-
-        await Task.WhenAll(volumeNormTask, wasapiExclusiveTask, fadeTask, fadeInTask, fadeOutTask);
-
-        if (_isDisposed) return;
-
-        ApplyWithoutSaving(() =>
-        {
-            IsVolumeNormalizationEnabled = volumeNormTask.Result;
-            IsWasapiExclusiveModeEnabled = wasapiExclusiveTask.Result;
-            IsFadeOnPlayPauseEnabled = fadeTask.Result;
-            FadeInDurationMs = fadeInTask.Result;
-            FadeOutDurationMs = fadeOutTask.Result;
-            LoadEqualizerState();
-        });
-    }
+    public void Load() => ApplyWithoutSaving(LoadEqualizerState);
 
     protected override void OnDisposing()
     {
@@ -137,7 +134,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         try
         {
             var devices = await _audioPlayer.GetAudioOutputDevicesAsync();
-            var savedId = await _settingsService.GetAudioOutputDeviceIdAsync();
+            var savedId = _settingsService.Get(CoreSettings.AudioOutputDeviceId);
             // A user selection can start while enumeration is awaiting VLC. Let
             // that operation own the displayed selection until it finishes.
             if (_isDisposed || IsAudioOutputBusy) return;
@@ -188,7 +185,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
                 return;
             }
             SelectedAudioOutputDevice = device;
-            await _settingsService.SetAudioOutputDeviceIdAsync(device.Id);
+            _settingsService.Set(CoreSettings.AudioOutputDeviceId, device.Id);
             AudioOutputDeviceMessage = string.Empty;
         }
         catch (Exception ex)
@@ -314,21 +311,23 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         QueueSettingsSave(_preampDebouncer, _ => _playbackService.SetEqualizerPreampAsync(value), nameof(EqualizerPreamp));
     }
 
-    async partial void OnIsVolumeNormalizationEnabledChanged(bool value)
+    private void DisableVolumeNormalization()
     {
-        if (_isInitializing || _isDisposed) return;
+        ++_volumeNormalizationVersion;
+        _replayGainScanCts?.Cancel();
+        Set(CoreSettings.VolumeNormalization, false, nameof(IsVolumeNormalizationEnabled));
+    }
+
+    // Normalization needs FFmpeg and a library scan, so it stays off until the user confirms. When they back out,
+    // the toggle goes back to the saved value.
+    private async Task EnableVolumeNormalizationAsync()
+    {
+        if (_isDisposed) return;
         var version = ++_volumeNormalizationVersion;
         bool IsCurrent() => !_isDisposed && version == _volumeNormalizationVersion;
 
         try
         {
-            if (!value)
-            {
-                _replayGainScanCts?.Cancel();
-                await _settingsService.SetVolumeNormalizationEnabledAsync(false);
-                return;
-            }
-
             var ffmpegInstalled = await _ffmpegService.IsFFmpegInstalledAsync();
             if (!IsCurrent()) return;
             if (!ffmpegInstalled)
@@ -338,7 +337,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
                 if (!IsCurrent()) return;
                 if (!ffmpegInstalled)
                 {
-                    IsVolumeNormalizationEnabled = false;
+                    OnPropertyChanged(nameof(IsVolumeNormalizationEnabled));
                     return;
                 }
             }
@@ -351,31 +350,21 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
             if (!IsCurrent()) return;
             if (!confirmed)
             {
-                IsVolumeNormalizationEnabled = false;
+                OnPropertyChanged(nameof(IsVolumeNormalizationEnabled));
                 return;
             }
 
-            await _settingsService.SetVolumeNormalizationEnabledAsync(true);
-            if (IsCurrent()) await ScanLibraryForReplayGainAsync();
+            if (Set(CoreSettings.VolumeNormalization, true, nameof(IsVolumeNormalizationEnabled)) && IsCurrent())
+                await ScanLibraryForReplayGainAsync();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error toggling volume normalization to {Value}", value);
-            if (value && IsCurrent()) IsVolumeNormalizationEnabled = false;
+            _logger.LogError(ex, "Error turning volume normalization on");
+            if (!IsCurrent()) return;
+            Set(CoreSettings.VolumeNormalization, false, nameof(IsVolumeNormalizationEnabled));
+            OnPropertyChanged(nameof(IsVolumeNormalizationEnabled));
         }
     }
-
-    partial void OnIsWasapiExclusiveModeEnabledChanged(bool value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetWasapiExclusiveModeEnabledAsync(value));
-
-    partial void OnIsFadeOnPlayPauseEnabledChanged(bool value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetFadeOnPlayPauseEnabledAsync(value));
-
-    partial void OnFadeInDurationMsChanged(double value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetFadeInDurationMsAsync((int)value));
-
-    partial void OnFadeOutDurationMsChanged(double value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetFadeOutDurationMsAsync((int)value));
 
     private async Task ScanLibraryForReplayGainAsync()
     {

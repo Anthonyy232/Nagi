@@ -1,4 +1,4 @@
-﻿namespace Nagi.Presentation.Services.Abstractions;
+﻿namespace Nagi.Core.Services.Abstractions;
 
 /// <summary>
 ///     Starts the app when the user signs in, through the operating system's startup registration.

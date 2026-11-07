@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Implementations.Presence;
 
@@ -17,9 +18,6 @@ public class LastFmPresenceService : IPresenceService
     private readonly ILastFmScrobblerService _scrobblerService;
     private readonly ISettingsService _settingsService;
 
-    private bool _isNowPlayingEnabled;
-    private bool _isScrobblingEnabled;
-
     public LastFmPresenceService(
         ILastFmScrobblerService scrobblerService,
         ILibraryWriter libraryWriter,
@@ -34,16 +32,15 @@ public class LastFmPresenceService : IPresenceService
 
     public string Name => "Last.fm";
 
-    public async Task InitializeAsync()
+    public Task InitializeAsync()
     {
         _logger.LogDebug("Initializing Last.fm Presence Service.");
-        _settingsService.LastFmSettingsChanged += OnSettingsChanged;
-        await UpdateLocalSettingsAsync().ConfigureAwait(false);
+        return Task.CompletedTask;
     }
 
     public async Task OnTrackChangedAsync(Song song, long listenHistoryId)
     {
-        if (_isNowPlayingEnabled)
+        if (_settingsService.Get(CoreSettings.LastFmNowPlaying))
             try
             {
                 await _scrobblerService.UpdateNowPlayingAsync(song).ConfigureAwait(false);
@@ -75,7 +72,7 @@ public class LastFmPresenceService : IPresenceService
         long listenHistoryId,
         DateTime listenStartedUtc)
     {
-        if (!_isScrobblingEnabled) return;
+        if (!_settingsService.Get(CoreSettings.LastFmScrobbling)) return;
 
         _logger.LogDebug("Track '{TrackTitle}' is eligible for scrobbling. Attempting real-time submission.", song.Title);
 
@@ -95,30 +92,5 @@ public class LastFmPresenceService : IPresenceService
         }
     }
 
-    public ValueTask DisposeAsync()
-    {
-        _settingsService.LastFmSettingsChanged -= OnSettingsChanged;
-        return ValueTask.CompletedTask;
-    }
-
-    private async void OnSettingsChanged()
-    {
-        try
-        {
-            await UpdateLocalSettingsAsync().ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to update Last.fm presence settings.");
-        }
-    }
-
-    private async Task UpdateLocalSettingsAsync()
-    {
-        _isNowPlayingEnabled = await _settingsService.GetLastFmNowPlayingEnabledAsync().ConfigureAwait(false);
-        _isScrobblingEnabled = await _settingsService.GetLastFmScrobblingEnabledAsync().ConfigureAwait(false);
-        _logger.LogDebug(
-            "Updated Last.fm settings. Now Playing: {IsNowPlayingEnabled}, Scrobbling: {IsScrobblingEnabled}",
-            _isNowPlayingEnabled, _isScrobblingEnabled);
-    }
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }

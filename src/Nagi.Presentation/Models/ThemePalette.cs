@@ -1,6 +1,5 @@
 using MaterialColorUtilities.ColorAppearance;
 using MaterialColorUtilities.Utils;
-using Nagi.Presentation.Services;
 
 namespace Nagi.Presentation.Models;
 
@@ -19,6 +18,11 @@ public readonly record struct ThemePalette(
     private static readonly ArgbColor White = ArgbColor.FromRgb(byte.MaxValue, byte.MaxValue, byte.MaxValue);
 
     /// <summary>
+    ///     Nagi's brand accent colour, derived from the app logo. Used while no custom accent is set.
+    /// </summary>
+    public static ArgbColor BrandAccentColor { get; } = ArgbColor.FromRgb(0x21, 0x94, 0x4B);
+
+    /// <summary>
     ///     The palette for the playing track's album colors, or for <paramref name="accent" /> when dynamic theming is
     ///     off or the track has no swatch for this theme.
     /// </summary>
@@ -35,7 +39,7 @@ public readonly record struct ThemePalette(
 
     /// <param name="accent">The user's accent color; <c>null</c> uses the brand color.</param>
     public static ThemePalette ForAccent(ArgbColor? accent, bool isLightTheme, double tintIntensity) =>
-        Create(accent ?? SettingsDefaults.BrandAccentColor, isLightTheme, tintIntensity);
+        Create(accent ?? BrandAccentColor, isLightTheme, tintIntensity);
 
     /// <param name="tintIntensity">How far the player tint moves from the theme background towards the primary color, from 0 to 1.</param>
     /// <param name="mediaOnImageSource">The color to derive the accent shown over album art from; <c>null</c> uses the primary color.</param>

@@ -1,6 +1,7 @@
 using Nagi.Core.Models.Lyrics;
 using Nagi.Core.Models.Romanization;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Implementations.Romanization;
 
@@ -31,7 +32,7 @@ public sealed class LyricRomanizationService : ILyricRomanizationService
             .Select(line => new LyricLine(line.StartTime, line.Text) { TranslatedText = line.TranslatedText })
             .ToList();
 
-        if (!await _settingsService.GetLyricsRomanizationEnabledAsync().ConfigureAwait(false))
+        if (!_settingsService.Get(CoreSettings.LyricsRomanization))
             return snapshot;
 
         var installedPacks = await _packManager.GetInstalledPacksAsync(cancellationToken).ConfigureAwait(false);

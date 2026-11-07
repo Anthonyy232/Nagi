@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Settings;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 using NSubstitute;
@@ -16,9 +17,8 @@ public class LibraryViewModelTests
     public async Task FavoritesNavigation_UsesFavoriteSongsAndRestoresLibraryPlaybackOrder()
     {
         var library = new LibraryFakes();
-        var settings = Substitute.For<IUISettingsService>();
+        var settings = TestSettings.Create();
         var playback = Substitute.For<IMusicPlaybackService>();
-        settings.GetSongsPerPageAsync().Returns(50);
         var favorite = new Song { Id = Guid.NewGuid(), Title = "Favorite", IsLoved = true };
         var other = new Song { Id = Guid.NewGuid(), Title = "Other" };
         library.Reader.GetFavoritesPagedAsync(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<int>(),
@@ -53,9 +53,8 @@ public class LibraryViewModelTests
     public async Task ArticleSortSetting_RefreshesDisplayedSongsAndPlaybackOrder()
     {
         var library = new LibraryFakes();
-        var settings = Substitute.For<IUISettingsService>();
+        var settings = TestSettings.Create();
         var playback = Substitute.For<IMusicPlaybackService>();
-        settings.GetSongsPerPageAsync().Returns(50);
         var apple = new Song { Id = Guid.NewGuid(), Title = "Apple" };
         var moon = new Song { Id = Guid.NewGuid(), Title = "A Moon" };
         Song[] orderedSongs = [apple, moon];
@@ -84,7 +83,7 @@ public class LibraryViewModelTests
                 refreshed.TrySetResult();
         };
         orderedSongs = [moon, apple];
-        settings.IgnoreLeadingArticlesOnSortEnabledChanged += Raise.Event<Action<bool>>(false);
+        settings.Set(CoreSettings.IgnoreLeadingArticlesOnSort, false);
         await refreshed.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
         viewModel.Songs.Select(song => song.Title).Should().Equal("A Moon", "Apple");
@@ -97,8 +96,7 @@ public class LibraryViewModelTests
     public async Task Initialize_AfterQueryFailure_CanRetry()
     {
         var library = new LibraryFakes();
-        var settings = Substitute.For<IUISettingsService>();
-        settings.GetSongsPerPageAsync().Returns(50);
+        var settings = TestSettings.Create();
         var attempts = 0;
         library.Reader.GetAllSongsPagedAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<SongSortOrder>(),
             Arg.Any<CancellationToken>()).Returns(_ => attempts++ == 0
@@ -138,8 +136,7 @@ public class LibraryViewModelTests
     public async Task LibraryRefresh_RespectsResetAfterReachingTheUiQueue(bool reset)
     {
         var library = new LibraryFakes();
-        var settings = Substitute.For<IUISettingsService>();
-        settings.GetSongsPerPageAsync().Returns(50);
+        var settings = TestSettings.Create();
         library.Reader.GetAllSongsPagedAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<SongSortOrder>(),
             Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
             {

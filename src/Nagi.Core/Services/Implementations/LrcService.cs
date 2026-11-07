@@ -6,6 +6,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Models.Lyrics;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -42,7 +43,7 @@ public class LrcService : ILrcService, IDisposable
         _libraryWriter = libraryWriter;
         _musicServers = musicServers;
         _logger = logger;
-        _settingsService.FetchOnlineLyricsEnabledChanged += OnFetchOnlineLyricsEnabledChanged;
+        _settingsService.SettingChanged += OnSettingChanged;
     }
 
     public async Task<ParsedLrc?> GetLyricsAsync(Song song, CancellationToken cancellationToken = default)
@@ -89,7 +90,7 @@ public class LrcService : ILrcService, IDisposable
 
         // Look online only if never checked before, unless the local file is missing or unsafe to reuse.
         if ((!forceOnlineRefresh && song.LyricsLastCheckedUtc != null)
-            || !await _settingsService.GetFetchOnlineLyricsEnabledAsync().ConfigureAwait(false))
+            || !_settingsService.Get(CoreSettings.FetchOnlineLyrics))
             return null;
 
         CancellationToken settingsToken;
@@ -105,7 +106,7 @@ public class LrcService : ILrcService, IDisposable
         if (token.IsCancellationRequested)
             return null;
 
-        var enabledProviders = await _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Lyrics).ConfigureAwait(false);
+        var enabledProviders = _settingsService.Get(CoreSettings.LyricsProviders).Where(p => p.IsEnabled).ToList();
         if (enabledProviders.Count == 0) return null;
         var allProvidersSucceeded = true;
 
@@ -371,13 +372,14 @@ public class LrcService : ILrcService, IDisposable
         return latestMatchIndex;
     }
 
-    private void OnFetchOnlineLyricsEnabledChanged(bool isEnabled)
+    private void OnSettingChanged(Setting setting)
     {
+        if (setting != CoreSettings.FetchOnlineLyrics) return;
         lock (_ctsLock)
         {
             if (_disposed) return;
 
-            if (!isEnabled)
+            if (!_settingsService.Get(CoreSettings.FetchOnlineLyrics))
             {
                 _logger.LogInformation("Fetch online lyrics disabled. Cancelling ongoing fetches.");
                 _settingsCts.Cancel();
@@ -396,7 +398,7 @@ public class LrcService : ILrcService, IDisposable
         {
             if (_disposed) return;
             _disposed = true;
-            _settingsService.FetchOnlineLyricsEnabledChanged -= OnFetchOnlineLyricsEnabledChanged;
+            _settingsService.SettingChanged -= OnSettingChanged;
             _settingsCts.Cancel();
             _settingsCts.Dispose();
         }

@@ -17,8 +17,7 @@ public class GenreViewModelTests
         var library = new LibraryFakes();
         library.Reader.GetGenreSummariesAsync(Arg.Any<CancellationToken>())
             .Returns(new[] { new GenreSummary(Guid.NewGuid(), "Jazz", 1), new GenreSummary(Guid.NewGuid(), "Rock", 1) });
-        var settings = Substitute.For<IUISettingsService>();
-        using var viewModel = CreateViewModel(library, settings: settings);
+        using var viewModel = CreateViewModel(library);
         await viewModel.LoadGenresAsync(CancellationToken.None);
 
         await viewModel.ChangeSortOrderAsync(nameof(GenreSortOrder.NameDesc));
@@ -144,8 +143,8 @@ public class GenreViewModelTests
     }
 
     private static GenreViewModel CreateViewModel(LibraryFakes library, IMusicPlaybackService? playback = null,
-        IUIService? ui = null, IUISettingsService? settings = null) =>
+        IUIService? ui = null) =>
         new(library.Reader, library.Scanner, playback ?? Substitute.For<IMusicPlaybackService>(),
-            Substitute.For<INavigationService>(), settings ?? Substitute.For<IUISettingsService>(),
+            Substitute.For<INavigationService>(), TestSettings.Create(),
             new ImmediateDispatcher(), ui ?? Substitute.For<IUIService>(), NullLogger<GenreViewModel>.Instance);
 }

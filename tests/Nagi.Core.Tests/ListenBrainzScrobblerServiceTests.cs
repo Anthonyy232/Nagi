@@ -9,6 +9,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
+using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
@@ -22,7 +23,8 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly TestHttpMessageHandler _httpMessageHandler;
     private readonly ILogger<ListenBrainzScrobblerService> _logger;
-    private readonly ISettingsService _settingsService;
+    private readonly ICredentialLockerService _credentials;
+    private readonly SettingsService _settingsService;
     private readonly IAppInfoService _appInfoService = Substitute.For<IAppInfoService>();
 
     private string? _capturedRequestBody;
@@ -32,7 +34,8 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     public ListenBrainzScrobblerServiceTests()
     {
         _httpClientFactory = Substitute.For<IHttpClientFactory>();
-        _settingsService = Substitute.For<ISettingsService>();
+        _credentials = Substitute.For<ICredentialLockerService>();
+        _settingsService = TestSettings.Create(credentials: _credentials);
         _httpMessageHandler = new TestHttpMessageHandler();
         _logger = Substitute.For<ILogger<ListenBrainzScrobblerService>>();
         _dbHelper = new DbContextFactoryTestHelper();
@@ -40,8 +43,7 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
         var httpClient = new HttpClient(_httpMessageHandler);
         _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
 
-        _settingsService.GetListenBrainzUserTokenAsync().Returns(Task.FromResult<string?>(Token));
-        _settingsService.GetListenBrainzServerUrlAsync().Returns(Task.FromResult<string?>(null));
+        SetToken(Token);
 
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ListenBrainz);
     }
@@ -172,7 +174,7 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     public async Task SubmitListenAsync_RespectsCustomServerUrl()
     {
 
-        _settingsService.GetListenBrainzServerUrlAsync().Returns(Task.FromResult<string?>("https://lb.example.com"));
+        _settingsService.Set(CoreSettings.ListenBrainzServerUrl, "https://lb.example.com");
         SetupHttpResponse(HttpStatusCode.OK, "{\"status\":\"ok\"}");
 
         var service = CreateService();
@@ -218,26 +220,25 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     [Fact]
     public async Task IListenSubmitter_IsEnabledAsync_RequiresTokenAndScrobblingToggle()
     {
-        _settingsService.GetListenBrainzUserTokenAsync().Returns(Task.FromResult<string?>("tok"));
-        _settingsService.GetListenBrainzScrobblingEnabledAsync().Returns(true);
+        SetToken("tok");
+        _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
         IListenSubmitter sut = CreateService();
         (await sut.IsEnabledAsync()).Should().BeTrue();
 
-        _settingsService.GetListenBrainzScrobblingEnabledAsync().Returns(false);
+        _settingsService.Set(CoreSettings.ListenBrainzScrobbling, false);
         (await sut.IsEnabledAsync()).Should().BeFalse();
 
-        _settingsService.GetListenBrainzScrobblingEnabledAsync().Returns(true);
-        _settingsService.GetListenBrainzUserTokenAsync().Returns(Task.FromResult<string?>(null));
+        _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
+        SetToken(null);
         (await sut.IsEnabledAsync()).Should().BeFalse();
     }
 
     [Fact]
     public async Task ProcessPendingListensAsync_BatchesPendingListensIntoOneRequest()
     {
-        _settingsService.GetListenBrainzUserTokenAsync().Returns(Task.FromResult<string?>("tok"));
-        _settingsService.GetListenBrainzScrobblingEnabledAsync().Returns(true);
-        _settingsService.GetListenBrainzEnabledSinceUtcAsync()
-            .Returns(Task.FromResult<DateTime?>(DateTime.UtcNow.AddDays(-1)));
+        SetToken("tok");
+        _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
+        _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, DateTime.UtcNow.AddDays(-1));
         SetupHttpResponse(HttpStatusCode.OK, "{\"status\":\"ok\"}");
 
         await SeedPendingListensAsync((1, DateTime.UtcNow.AddMinutes(-10)), (2, DateTime.UtcNow.AddMinutes(-5)));
@@ -259,10 +260,10 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     [Fact]
     public async Task ProcessPendingListensAsync_SkipsListensBeforeEnabledSince()
     {
-        _settingsService.GetListenBrainzUserTokenAsync().Returns(Task.FromResult<string?>("tok"));
-        _settingsService.GetListenBrainzScrobblingEnabledAsync().Returns(true);
+        SetToken("tok");
+        _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
         var cutoff = DateTime.UtcNow;
-        _settingsService.GetListenBrainzEnabledSinceUtcAsync().Returns(Task.FromResult<DateTime?>(cutoff));
+        _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, cutoff);
 
         await SeedPendingListensAsync((10, cutoff.AddHours(-1)));
 
@@ -279,10 +280,9 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     [InlineData(HttpStatusCode.Unauthorized)]
     public async Task ProcessPendingListensAsync_RecoverableBatchFailurePreservesListensForRetry(HttpStatusCode status)
     {
-        _settingsService.GetListenBrainzUserTokenAsync().Returns(Task.FromResult<string?>("tok"));
-        _settingsService.GetListenBrainzScrobblingEnabledAsync().Returns(true);
-        _settingsService.GetListenBrainzEnabledSinceUtcAsync()
-            .Returns(Task.FromResult<DateTime?>(DateTime.UtcNow.AddDays(-1)));
+        SetToken("tok");
+        _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
+        _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, DateTime.UtcNow.AddDays(-1));
 
         SetupHttpResponse(status, "{}");
 
@@ -306,8 +306,8 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     [Fact]
     public async Task ProcessPendingListensAsync_RejectedBatch_IsolatesBadListenAndKeepsUnacknowledgedListens()
     {
-        _settingsService.GetListenBrainzScrobblingEnabledAsync().Returns(true);
-        _settingsService.GetListenBrainzEnabledSinceUtcAsync().Returns(DateTime.UtcNow.AddDays(-1));
+        _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
+        _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, DateTime.UtcNow.AddDays(-1));
         _httpMessageHandler.RespondSequence(
             (HttpStatusCode.BadRequest, "{}"),
             (HttpStatusCode.BadRequest, "{}"),
@@ -358,6 +358,9 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
         }));
         await context.SaveChangesAsync();
     }
+
+    private void SetToken(string? token) =>
+        _credentials.RetrieveCredential("Nagi/ListenBrainz").Returns(token is null ? null : ("token", token));
 
     private void SetupHttpResponse(HttpStatusCode statusCode, string body)
     {

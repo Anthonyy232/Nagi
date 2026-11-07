@@ -4,8 +4,9 @@ using Microsoft.Extensions.Time.Testing;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Services.Implementations;
+using Nagi.Core.Settings;
 using Nagi.Presentation.Models;
-using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
 using Nagi.Presentation.ViewModels;
@@ -16,7 +17,9 @@ namespace Nagi.Presentation.Tests;
 
 public class SettingsViewModelTests : IDisposable
 {
-    private readonly IUISettingsService _settings = Substitute.For<IUISettingsService>();
+    private readonly ICredentialLockerService _credentials = Substitute.For<ICredentialLockerService>();
+    private readonly SettingsService _settings;
+    private readonly ISettingsService _resetSettings = Substitute.For<ISettingsService>();
     private readonly IThemeService _theme = Substitute.For<IThemeService>();
     private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
     private readonly IAudioPlayer _audioPlayer = Substitute.For<IAudioPlayer>();
@@ -37,9 +40,7 @@ public class SettingsViewModelTests : IDisposable
 
     public SettingsViewModelTests()
     {
-        _settings.GetPlayerButtonSettingsAsync().Returns(new List<PlayerButtonSetting>());
-        _settings.GetNavigationItemsAsync().Returns(new List<NavigationItemSetting>());
-        _settings.GetServiceProvidersAsync(Arg.Any<ServiceCategory>()).Returns(new List<ServiceProviderSetting>());
+        _settings = TestSettings.Create(credentials: _credentials, autoLaunch: _autoLaunch);
         _playback.AvailablePresets.Returns(Array.Empty<EqualizerPreset>());
         _dispatcher.HasThreadAccess.Returns(true);
         _dispatcher.TryEnqueue(Arg.Any<Action>()).Returns(call => { call.Arg<Action>()(); return true; });
@@ -56,7 +57,7 @@ public class SettingsViewModelTests : IDisposable
             new RomanizationPacksSettingsViewModel(Substitute.For<IRomanizationPackManager>(), _dispatcher,
                 NullLogger<RomanizationPacksSettingsViewModel>.Instance),
             new DataManagementSettingsViewModel(_ui, Substitute.For<IPlaylistExportService>(),
-                _backup, _lifecycle, _settings, _library.Writer, _playback,
+                _backup, _lifecycle, _resetSettings, _library.Writer, _playback,
                 NullLogger<DataManagementSettingsViewModel>.Instance),
             NullLogger<SettingsViewModel>.Instance, _timeProvider);
     }
@@ -67,23 +68,38 @@ public class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
+    public void SettingProperties_WriteTheStoreAndFollowChangesMadeElsewhere()
+    {
+        var changed = new List<string?>();
+        _viewModel.Library.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
+        _viewModel.Library.ArtistSplitCharacters.Should().BeEmpty();
+
+        _settings.Set(CoreSettings.ArtistSplitCharacters, ";");
+        _viewModel.Library.GenreSplitCharacters = "/";
+
+        _viewModel.Library.ArtistSplitCharacters.Should().Be(";");
+        changed.Should().Contain(nameof(LibrarySettingsViewModel.ArtistSplitCharacters));
+        _settings.Get(CoreSettings.GenreSplitCharacters).Should().Be("/");
+    }
+
+    [Fact]
     public async Task AudioOutput_MissingSavedDeviceDisplaysDefaultWithoutLosingPreference()
     {
         _audioPlayer.GetAudioOutputDevicesAsync().Returns(Array.Empty<AudioOutputDeviceInfo>());
-        _settings.GetAudioOutputDeviceIdAsync().Returns("disconnected-dac");
+        _settings.Set(CoreSettings.AudioOutputDeviceId, "disconnected-dac");
 
         await _viewModel.Audio.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
 
         _viewModel.Audio.SelectedAudioOutputDevice!.Id.Should().BeEmpty();
         _viewModel.Audio.AudioOutputDeviceMessage.Should().NotBeEmpty();
-        await _settings.DidNotReceive().SetAudioOutputDeviceIdAsync(Arg.Any<string>());
+        _settings.Get(CoreSettings.AudioOutputDeviceId).Should().Be("disconnected-dac");
     }
 
     [Fact]
     public async Task AudioOutput_ReconnectedDeviceDoesNotMisrepresentVlcFallbackAsAnActiveSelection()
     {
         var device = new AudioOutputDeviceInfo("dac", "DAC");
-        _settings.GetAudioOutputDeviceIdAsync().Returns(device.Id);
+        _settings.Set(CoreSettings.AudioOutputDeviceId, device.Id);
         _audioPlayer.AudioOutputDeviceId.Returns(string.Empty);
         _audioPlayer.GetAudioOutputDevicesAsync().Returns(new[] { device });
         _audioPlayer.SetAudioOutputDeviceAsync(device.Id).Returns(true);
@@ -112,7 +128,7 @@ public class SettingsViewModelTests : IDisposable
         selectionNotifications.Should().BeGreaterThan(0);
         _viewModel.Audio.AudioOutputDeviceMessage.Should().NotBeEmpty();
         _viewModel.Audio.IsAudioOutputBusy.Should().BeFalse();
-        await _settings.DidNotReceive().SetAudioOutputDeviceIdAsync(Arg.Any<string>());
+        _settings.Get(CoreSettings.AudioOutputDeviceId).Should().BeEmpty();
     }
 
     [Fact]
@@ -120,7 +136,7 @@ public class SettingsViewModelTests : IDisposable
     {
         _audioPlayer.AudioOutputDeviceId.Returns("dac");
         _audioPlayer.GetAudioOutputDevicesAsync().Returns(new[] { new AudioOutputDeviceInfo("dac", "DAC") });
-        _settings.GetAudioOutputDeviceIdAsync().Returns("dac");
+        _settings.Set(CoreSettings.AudioOutputDeviceId, "dac");
         await _viewModel.Audio.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
 
         _audioPlayer.GetAudioOutputDevicesAsync().Returns(new[]
@@ -155,7 +171,7 @@ public class SettingsViewModelTests : IDisposable
 
         _viewModel.Audio.SelectedAudioOutputDevice.Should().Be(device);
         await _audioPlayer.Received(1).SetAudioOutputDeviceAsync(device.Id);
-        await _settings.Received(1).SetAudioOutputDeviceIdAsync(device.Id);
+        _settings.Get(CoreSettings.AudioOutputDeviceId).Should().Be(device.Id);
     }
 
     [Theory]
@@ -166,21 +182,21 @@ public class SettingsViewModelTests : IDisposable
         var token = new TaskCompletionSource<(string Token, string AuthUrl)?>(TaskCreationOptions.RunContinuationsAsynchronously);
         var session = new TaskCompletionSource<(string Username, string SessionKey)?>(TaskCreationOptions.RunContinuationsAsynchronously);
         _lastFm.GetAuthenticationTokenAsync().Returns(token.Task);
-        _settings.GetLastFmAuthTokenAsync().Returns("temporary");
+        _settings.Set(CoreSettings.LastFmAuthToken, "temporary");
         _lastFm.GetSessionAsync("temporary").Returns(session.Task);
         var authenticating = finalizing
             ? _viewModel.Scrobbling.LastFmFinalizeAuthCommand.ExecuteAsync(null)
             : _viewModel.Scrobbling.LastFmInitialAuthCommand.ExecuteAsync(null);
 
-        await _viewModel.Scrobbling.CancelLastFmAuthCommand.ExecuteAsync(null);
+        _viewModel.Scrobbling.CancelLastFmAuthCommand.Execute(null);
         token.SetResult(("late-token", "not a URI"));
         session.SetResult(("user", "late-session"));
         await authenticating.WaitAsync(TimeSpan.FromSeconds(5));
 
         _viewModel.Scrobbling.IsLastFmConnected.Should().BeFalse();
         _viewModel.Scrobbling.IsConnectingToLastFm.Should().BeFalse();
-        await _settings.DidNotReceive().SaveLastFmAuthTokenAsync("late-token");
-        await _settings.DidNotReceive().SaveLastFmCredentialsAsync(Arg.Any<string>(), Arg.Any<string>());
+        _settings.Get(CoreSettings.LastFmAuthToken).Should().BeNull();
+        _credentials.DidNotReceive().SaveCredential(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>());
     }
 
     [Theory]
@@ -188,7 +204,7 @@ public class SettingsViewModelTests : IDisposable
     [InlineData(true)]
     public async Task LastFm_RequestFailureResetsConnectionFlow(bool finalizing)
     {
-        _settings.GetLastFmAuthTokenAsync().Returns("temporary");
+        _settings.Set(CoreSettings.LastFmAuthToken, "temporary");
         if (finalizing)
             _lastFm.GetSessionAsync("temporary").Returns(Task.FromException<(string Username, string SessionKey)?>(new IOException("Offline")));
         else
@@ -198,7 +214,7 @@ public class SettingsViewModelTests : IDisposable
         await (finalizing ? _viewModel.Scrobbling.LastFmFinalizeAuthCommand : _viewModel.Scrobbling.LastFmInitialAuthCommand).ExecuteAsync(null);
 
         _viewModel.Scrobbling.IsConnectingToLastFm.Should().BeFalse();
-        await _settings.Received(1).SaveLastFmAuthTokenAsync(null);
+        _settings.Get(CoreSettings.LastFmAuthToken).Should().BeNull();
         await _ui.Received(1).ShowMessageDialogAsync(Arg.Any<string>(), Arg.Any<string>());
     }
 
@@ -214,7 +230,7 @@ public class SettingsViewModelTests : IDisposable
 
         await _ui.Received(1).OpenUriAsync(new Uri("https://www.last.fm/api/auth?token=token"));
         _viewModel.Scrobbling.IsConnectingToLastFm.Should().Be(opened);
-        await _settings.Received(opened ? 0 : 1).SaveLastFmAuthTokenAsync(null);
+        _settings.Get(CoreSettings.LastFmAuthToken).Should().Be(opened ? "token" : null);
     }
 
     [Theory]
@@ -243,7 +259,7 @@ public class SettingsViewModelTests : IDisposable
 
         Received.InOrder(() =>
         {
-            _settings.ResetToDefaultsAsync();
+            _resetSettings.ResetToDefaultsAsync();
             _library.Writer.ClearAllLibraryDataAsync();
             _playback.ClearQueueAsync();
             _lifecycle.Restart();
@@ -264,9 +280,9 @@ public class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public async Task LastFm_FinalizePersistsTogglesOnce()
+    public async Task LastFm_FinalizeSavesTheSessionAndTurnsSubmissionsOn()
     {
-        _settings.GetLastFmAuthTokenAsync().Returns("temporary");
+        _settings.Set(CoreSettings.LastFmAuthToken, "temporary");
         _lastFm.GetSessionAsync("temporary").Returns(("user", "session"));
 
         await _viewModel.Scrobbling.LastFmFinalizeAuthCommand.ExecuteAsync(null);
@@ -274,8 +290,8 @@ public class SettingsViewModelTests : IDisposable
         _viewModel.Scrobbling.IsLastFmConnected.Should().BeTrue();
         _viewModel.Scrobbling.IsLastFmScrobblingEnabled.Should().BeTrue();
         _viewModel.Scrobbling.IsLastFmNowPlayingEnabled.Should().BeTrue();
-        await _settings.Received(1).SetLastFmScrobblingEnabledAsync(true);
-        await _settings.Received(1).SetLastFmNowPlayingEnabledAsync(true);
+        _settings.Get(CoreSettings.LastFmAuthToken).Should().BeNull();
+        _credentials.Received(1).SaveCredential(Arg.Any<string>(), "user", "session");
     }
 
     [Theory]
@@ -295,7 +311,7 @@ public class SettingsViewModelTests : IDisposable
         await checking.WaitAsync(TimeSpan.FromSeconds(5));
 
         _viewModel.Scrobbling.ListenBrainzIsConnected.Should().BeFalse();
-        await _settings.DidNotReceive().SaveListenBrainzUserTokenAsync(Arg.Any<string>());
+        _credentials.DidNotReceive().SaveCredential(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>());
     }
 
     [Fact]
@@ -405,8 +421,7 @@ public class SettingsViewModelTests : IDisposable
         context.RunAll();
 
         _viewModel.Audio.IsVolumeNormalizationEnabled.Should().BeFalse();
-        await _settings.Received(1).SetVolumeNormalizationEnabledAsync(false);
-        await _settings.DidNotReceive().SetVolumeNormalizationEnabledAsync(true);
+        _settings.Get(CoreSettings.VolumeNormalization).Should().BeFalse();
         await _replayGain.DidNotReceive().ScanLibraryAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>());
     }
 
@@ -453,7 +468,7 @@ public class SettingsViewModelTests : IDisposable
     {
         var languages = new TaskCompletionSource<IReadOnlyList<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
         _appInfo.GetAvailableLanguagesAsync().Returns(languages.Task);
-        _settings.GetLanguageAsync().Returns("ja");
+        _settings.Set(AppSettings.Language, "ja");
         await _viewModel.LoadSettingsAsync();
         var originalSelection = _viewModel.Appearance.SelectedLanguage;
         if (dispose) _viewModel.Dispose();
@@ -474,50 +489,43 @@ public class SettingsViewModelTests : IDisposable
             _viewModel.Appearance.SelectedLanguage!.Code.Should().Be("ja-JP");
             _viewModel.Appearance.AvailableLanguages.Select(language => language.Code).Should().Equal("", "en-US", "ja-JP");
         }
-        await _settings.DidNotReceive().SetLanguageAsync(Arg.Any<string>());
+        _settings.Get(AppSettings.Language).Should().Be("ja");
         await _ui.DidNotReceive().ShowMessageDialogAsync(Arg.Any<string>(), Arg.Any<string>());
     }
 
     [Fact]
-    public async Task DisposeDuringLoad_DoesNotPopulateSettings()
+    public async Task DisposeDuringLoad_DoesNotApplyAutoLaunchState()
     {
         var startup = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var language = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
         _autoLaunch.IsEnabledAsync().Returns(startup.Task);
-        _settings.GetLanguageAsync().Returns(language.Task);
         var first = _viewModel.LoadSettingsAsync();
         var second = _viewModel.LoadSettingsAsync();
 
         _viewModel.Dispose();
         startup.SetResult(true);
-        language.SetResult("en-US");
         await Task.WhenAll(first, second).WaitAsync(TimeSpan.FromSeconds(5));
 
-        _viewModel.Appearance.AvailableLanguages.Should().BeEmpty();
         _viewModel.IsAutoLaunchEnabled.Should().BeFalse();
     }
 
     [Fact]
-    public async Task Load_FillsLibrarySectionWithMusicBrainzFirstAndWithoutSaving()
+    public async Task Load_PinsMusicBrainzFirstWithoutSaving()
     {
-        _settings.GetArtistSplitCharactersAsync().Returns(";");
-        _settings.GetFetchOnlineLyricsEnabledAsync().Returns(true);
-        _settings.GetServiceProvidersAsync(ServiceCategory.Metadata).Returns(new List<ServiceProviderSetting>
+        _settings.Set(CoreSettings.MetadataProviders, new List<ServiceProviderSetting>
         {
-            new() { Id = ServiceProviderIds.TheAudioDb, Category = ServiceCategory.Metadata },
-            new() { Id = ServiceProviderIds.MusicBrainz, Category = ServiceCategory.Metadata }
+            new() { Id = ServiceProviderIds.TheAudioDb, Category = ServiceCategory.Metadata, Order = 0 },
+            new() { Id = ServiceProviderIds.MusicBrainz, Category = ServiceCategory.Metadata, Order = 1 }
         });
+        var changed = new List<Setting>();
+        _settings.SettingChanged += changed.Add;
 
         await _viewModel.LoadSettingsAsync();
         _timeProvider.Advance(TimeSpan.FromSeconds(1));
         await _viewModel.PendingSettingsSaves.WaitAsync(TimeSpan.FromSeconds(5));
 
-        _viewModel.Library.ArtistSplitCharacters.Should().Be(";");
-        _viewModel.Library.IsFetchOnlineLyricsEnabled.Should().BeTrue();
-        _viewModel.Library.MetadataProviders.Select(p => p.Id).Should().Equal(ServiceProviderIds.MusicBrainz, ServiceProviderIds.TheAudioDb);
-        await _settings.DidNotReceive().SetArtistSplitCharactersAsync(Arg.Any<string>());
-        await _settings.DidNotReceive().SetFetchOnlineLyricsEnabledAsync(Arg.Any<bool>());
-        await _settings.DidNotReceive().SetServiceProvidersAsync(Arg.Any<ServiceCategory>(), Arg.Any<List<ServiceProviderSetting>>());
+        _viewModel.Library.MetadataProviders.Select(p => p.Id).Should()
+            .StartWith(new[] { ServiceProviderIds.MusicBrainz, ServiceProviderIds.TheAudioDb });
+        changed.Should().BeEmpty();
     }
 
     [Fact]
@@ -525,25 +533,26 @@ public class SettingsViewModelTests : IDisposable
     {
         _viewModel.Appearance.PlayerTintIntensity = .75;
 
-        await _viewModel.Appearance.ResetPlayerDesignSettingsCommand.ExecuteAsync(null);
+        _viewModel.Appearance.ResetPlayerDesignSettingsCommand.Execute(null);
         await AdvanceDebouncesAsync();
 
-        await _settings.Received(1).SetPlayerTintIntensityAsync(SettingsDefaults.DefaultPlayerTintIntensity);
-        await _settings.DidNotReceive().SetPlayerTintIntensityAsync(.75);
+        _viewModel.Appearance.PlayerTintIntensity.Should().Be(AppSettings.PlayerTintIntensity.Default);
+        _settings.Get(AppSettings.PlayerTintIntensity).Should().Be(AppSettings.PlayerTintIntensity.Default);
     }
 
     [Fact]
-    public async Task ResetSongListColumns_SavesTheDefaultsOnceRatherThanEachToggle()
+    public void ResetSongListColumns_SavesTheDefaultsOnceRatherThanEachToggle()
     {
         var trackNumber = _viewModel.Appearance.SongListColumnSettings.Single(s => s.Column == SongListColumns.TrackNumber);
         trackNumber.IsEnabled = true;
-        _settings.ClearReceivedCalls();
+        var changed = new List<Setting>();
+        _settings.SettingChanged += changed.Add;
 
-        await _viewModel.Appearance.ResetSongListColumnsCommand.ExecuteAsync(null);
+        _viewModel.Appearance.ResetSongListColumnsCommand.Execute(null);
 
         trackNumber.IsEnabled.Should().BeFalse();
-        await _settings.Received(1).SetSongListColumnsAsync(Arg.Any<SongListColumns>());
-        await _settings.Received(1).SetSongListColumnsAsync(SettingsDefaults.DefaultSongListColumns);
+        changed.Should().Equal(AppSettings.SongListColumns);
+        _settings.Get(AppSettings.SongListColumns).Should().Be(AppSettings.SongListColumns.Default);
     }
 
     [Theory]
@@ -556,7 +565,8 @@ public class SettingsViewModelTests : IDisposable
         _appInfo.GetAvailableLanguagesAsync().Returns(Array.Empty<string>());
         var loading = _viewModel.LoadSettingsAsync();
 
-        await (playerDesign ? _viewModel.Appearance.ResetPlayerDesignSettingsCommand : _viewModel.Appearance.ResetAccentColorCommand).ExecuteAsync(null);
+        if (playerDesign) _viewModel.Appearance.ResetPlayerDesignSettingsCommand.Execute(null);
+        else await _viewModel.Appearance.ResetAccentColorCommand.ExecuteAsync(null);
         startup.SetResult(true);
         await loading.WaitAsync(TimeSpan.FromSeconds(5));
 
@@ -635,8 +645,8 @@ public class SettingsViewModelTests : IDisposable
         await _viewModel.Appearance.ResetAccentColorCommand.ExecuteAsync(null);
         await AdvanceDebouncesAsync();
 
-        await _settings.Received(1).SetAccentColorAsync(null);
-        await _settings.DidNotReceive().SetAccentColorAsync(Arg.Is<ArgbColor?>(color => color.HasValue));
+        _viewModel.Appearance.AccentColor.Should().Be(ThemePalette.BrandAccentColor);
+        _settings.Get(AppSettings.AccentColor).Should().BeNull();
         await _theme.Received(1).ApplyAccentColorAsync(null);
         await _theme.DidNotReceive().ApplyAccentColorAsync(Arg.Is<ArgbColor?>(color => color.HasValue));
     }
@@ -644,24 +654,17 @@ public class SettingsViewModelTests : IDisposable
     [Fact]
     public async Task ResetPlayerButtons_ReplacesLayoutOnceAndSavesWithoutPendingDuplicates()
     {
-        var defaults = new List<PlayerButtonSetting>
-        {
-            new() { Id = "PlayPause", DisplayName = "Play", IsEnabled = true },
-            new() { Id = "Next", DisplayName = "Next", IsEnabled = true }
-        };
-        _settings.GetDefaultPlayerButtonSettings().Returns(defaults);
-        _viewModel.PlayerButtons.Add(new PlayerButtonSetting
-        { Id = "Old", DisplayName = "Old", IsEnabled = true });
+        var defaults = AppSettings.PlayerButtons.Default.Select(button => (button.Id, button.IsEnabled)).ToList();
+        _viewModel.PlayerButtons.Add(new PlayerButtonSetting { Id = "Shuffle", DisplayName = "Shuffle", IsEnabled = false });
         var collectionChanges = 0;
         _viewModel.PlayerButtons.CollectionChanged += (_, _) => collectionChanges++;
 
-        await _viewModel.ResetPlayerButtonsCommand.ExecuteAsync(null);
+        _viewModel.ResetPlayerButtonsCommand.Execute(null);
         await AdvanceDebouncesAsync();
 
-        _viewModel.PlayerButtons.Should().Equal(defaults);
+        _viewModel.PlayerButtons.Select(button => (button.Id, button.IsEnabled)).Should().Equal(defaults);
         collectionChanges.Should().Be(1);
-        await _settings.Received(1).SetPlayerButtonSettingsAsync(Arg.Is<List<PlayerButtonSetting>>(
-            buttons => buttons.SequenceEqual(defaults)));
+        _settings.Get(AppSettings.PlayerButtons).Select(button => (button.Id, button.IsEnabled)).Should().Equal(defaults);
     }
 
     [Theory]
@@ -669,10 +672,10 @@ public class SettingsViewModelTests : IDisposable
     [InlineData(true)]
     public async Task PendingSaves_CoalesceIndependently_AndCancelOnDisposal(bool dispose)
     {
-        _viewModel.Library.ArtistSplitCharacters = "first";
-        _viewModel.Library.ArtistSplitCharacters = "artist";
-        _viewModel.Library.GenreSplitCharacters = "first";
-        _viewModel.Library.GenreSplitCharacters = "genre";
+        var tintChanges = 0;
+        _settings.SettingChanged += setting => { if (setting == AppSettings.PlayerTintIntensity) tintChanges++; };
+        _viewModel.Appearance.PlayerTintIntensity = .2;
+        _viewModel.Appearance.PlayerTintIntensity = .3;
         _viewModel.Audio.EqualizerPreamp = 1;
         _viewModel.Audio.EqualizerPreamp = 2;
         if (dispose) _viewModel.Dispose();
@@ -681,17 +684,14 @@ public class SettingsViewModelTests : IDisposable
 
         if (dispose)
         {
-            await _settings.DidNotReceive().SetArtistSplitCharactersAsync(Arg.Any<string>());
-            await _settings.DidNotReceive().SetGenreSplitCharactersAsync(Arg.Any<string>());
+            tintChanges.Should().Be(0);
             await _playback.DidNotReceive().SetEqualizerPreampAsync(Arg.Any<float>());
         }
         else
         {
-            await _settings.Received(1).SetArtistSplitCharactersAsync("artist");
-            await _settings.Received(1).SetGenreSplitCharactersAsync("genre");
+            tintChanges.Should().Be(1);
+            _settings.Get(AppSettings.PlayerTintIntensity).Should().Be(.3);
             await _playback.Received(1).SetEqualizerPreampAsync(2);
-            await _settings.DidNotReceive().SetArtistSplitCharactersAsync("first");
-            await _settings.DidNotReceive().SetGenreSplitCharactersAsync("first");
             await _playback.DidNotReceive().SetEqualizerPreampAsync(1);
         }
     }

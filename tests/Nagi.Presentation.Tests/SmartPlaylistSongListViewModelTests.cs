@@ -134,7 +134,7 @@ public class SmartPlaylistSongListViewModelTests
     private sealed class TestSmartPlaylist(LibraryFakes library, ISmartPlaylistService playlists)
         : SmartPlaylistSongListViewModel(library.Reader, library.Writer, library.Scanner, Substitute.For<IPlaylistService>(), playlists,
             Substitute.For<IMusicPlaybackService>(), Substitute.For<IMusicNavigationService>(),
-            new ImmediateDispatcher(), Substitute.For<IUISettingsService>(), Substitute.For<IUIService>(),
+            new ImmediateDispatcher(), TestSettings.Create(), Substitute.For<IUIService>(),
             NullLogger<SmartPlaylistSongListViewModel>.Instance)
     {
         public Task<PagedResult<Song>> RandomPageAsync(int page, int size, CancellationToken token = default) =>

@@ -20,7 +20,8 @@ public class CoreServiceRegistrationTests
         services.AddLogging();
         services.AddSingleton(Substitute.For<IConfiguration>());
         services.AddSingleton(Substitute.For<IPathConfiguration>());
-        services.AddSingleton(Substitute.For<ISettingsService>());
+        services.AddSingleton(Substitute.For<ISettingsStore>());
+        services.AddSingleton(Substitute.For<IAutoLaunchService>());
         services.AddSingleton(Substitute.For<IAppInfoService>());
         services.AddSingleton(Substitute.For<ICredentialLockerService>());
         services.AddSingleton(Substitute.For<IAudioPlayer>());

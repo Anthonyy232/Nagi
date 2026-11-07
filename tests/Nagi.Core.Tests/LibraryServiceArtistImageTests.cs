@@ -7,6 +7,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
+using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -35,7 +36,7 @@ public class LibraryServiceArtistImageTests : IDisposable
     private readonly ILogger<LibraryService> _logger;
     private readonly IMetadataService _metadataService;
     private readonly IPathConfiguration _pathConfig;
-    private readonly ISettingsService _settingsService;
+    private readonly SettingsService _settingsService;
     private readonly IReplayGainService _replayGainService;
     private readonly ProviderPipelineProvider _pipelines;
 
@@ -45,7 +46,7 @@ public class LibraryServiceArtistImageTests : IDisposable
         _metadataService = Substitute.For<IMetadataService>();
         _httpClientFactory = Substitute.For<IHttpClientFactory>();
         _pathConfig = Substitute.For<IPathConfiguration>();
-        _settingsService = Substitute.For<ISettingsService>();
+        _settingsService = TestSettings.Create();
         _replayGainService = Substitute.For<IReplayGainService>();
         _imageProcessor = Substitute.For<IImageProcessor>();
         _logger = Substitute.For<ILogger<LibraryService>>();
@@ -67,12 +68,11 @@ public class LibraryServiceArtistImageTests : IDisposable
 
         _imageProcessor.ProcessImageBytesAsync(ImageBytes).Returns(Task.FromResult(ProcessedBytes));
 
-        _settingsService.GetEnabledServiceProvidersAsync(Arg.Any<ServiceCategory>())
-            .Returns(Task.FromResult(new List<ServiceProviderSetting>()));
+        _settingsService.EnableOnly(CoreSettings.MetadataProviders);
 
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
-        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, _settingsService, Substitute.For<ILogger<LibraryReader>>());
+        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, _settingsService);
 
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
@@ -125,7 +125,6 @@ public class LibraryServiceArtistImageTests : IDisposable
     public void Dispose()
     {
         _libraryService.Dispose();
-        _libraryReader.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
     }

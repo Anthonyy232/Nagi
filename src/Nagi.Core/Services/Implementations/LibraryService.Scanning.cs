@@ -4,6 +4,7 @@ using Nagi.Core.Constants;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -57,7 +58,7 @@ public partial class LibraryService
     {
         var scanned = await RescanFolderForMusicAsync(folderId, false, allowFolderRemovalOnMissing: false,
             cancellationToken: cancellationToken, registerAsActiveScan: false).ConfigureAwait(false);
-        if (scanned && await _settingsService.GetVolumeNormalizationEnabledAsync().ConfigureAwait(false))
+        if (scanned && _settingsService.Get(CoreSettings.VolumeNormalization))
             await RunReplayGainAnalysisAsync(null, cancellationToken).ConfigureAwait(false);
         return scanned;
     }
@@ -302,7 +303,7 @@ public partial class LibraryService
             }, operationToken);
 
             // Batch refreshes run ReplayGain once after their final folder.
-            if (scanResult && registerAsActiveScan && await _settingsService.GetVolumeNormalizationEnabledAsync().ConfigureAwait(false))
+            if (scanResult && registerAsActiveScan && _settingsService.Get(CoreSettings.VolumeNormalization))
             {
                 await RunReplayGainAnalysisAsync(progress, operationToken).ConfigureAwait(false);
             }
@@ -453,7 +454,7 @@ public partial class LibraryService
             }
 
             // Run ReplayGain analysis ONCE after all folders are scanned (if enabled and changes were made)
-            if (anyChangesMade && await _settingsService.GetVolumeNormalizationEnabledAsync().ConfigureAwait(false))
+            if (anyChangesMade && _settingsService.Get(CoreSettings.VolumeNormalization))
             {
                 await RunReplayGainAnalysisAsync(progress, operationToken).ConfigureAwait(false);
             }

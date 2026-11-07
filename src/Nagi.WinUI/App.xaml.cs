@@ -23,6 +23,7 @@ using Serilog;
 using WinRT;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
+using Nagi.Core.Settings;
 
 namespace Nagi.WinUI;
 
@@ -75,13 +76,12 @@ public partial class App : Application
             {
                 mainWindow.Content = new Pages.SplashPage();
                 mainWindow.InitializeCustomTitleBar();
-                await mainWindow.RestoreWindowStateAsync();
+                mainWindow.RestoreWindowState();
             }
             // Before doing heavy blocking initialization, show the window to the user
             var isStartupLaunch = Environment.GetCommandLineArgs()
                 .Any(arg => arg.Equals("--startup", StringComparison.OrdinalIgnoreCase));
-            var uiSettings = Services!.GetRequiredService<IUISettingsService>();
-            var startMinimized = await uiSettings.GetStartMinimizedEnabledAsync();
+            var startMinimized = Services!.GetRequiredService<ISettingsService>().Get(AppSettings.StartMinimized);
 
             if (!isStartupLaunch && !startMinimized)
             {
@@ -100,7 +100,7 @@ public partial class App : Application
 
             _ = ProcessFileActivationQueueAsync();
 
-            await HandleWindowActivationAsync(isStartupLaunch);
+            HandleWindowActivation(isStartupLaunch);
             await RunPendingJumpListTaskAsync();
 
             EnqueuePostLaunchTasks();
@@ -258,7 +258,7 @@ public partial class App : Application
 
         Services = ConfigureServices(mainWindow, configuration);
 
-        mainWindow.InitializeDependencies(Services.GetRequiredService<IUISettingsService>(),
+        mainWindow.InitializeDependencies(Services.GetRequiredService<ISettingsService>(),
             Services.GetRequiredService<TaskbarService>(), Services.GetRequiredService<TransparencyEffectsMonitor>(),
             Services.GetRequiredService<ILogger<MainWindow>>());
     }
@@ -289,7 +289,7 @@ public partial class App : Application
             if (_window is MainWindow mainWindow)
             {
                 _logger?.LogDebug("Saving window state...");
-                await mainWindow.SaveWindowStateAsync();
+                mainWindow.SaveWindowState();
                 mainWindow.Cleanup();
             }
 
@@ -395,15 +395,14 @@ public partial class App : Application
         }
     }
 
-    private async Task HandleWindowActivationAsync(bool isStartupLaunch = false)
+    private void HandleWindowActivation(bool isStartupLaunch = false)
     {
         if (_isExiting || _window is null || Services is null) return;
 
-        var settingsService = Services.GetRequiredService<IUISettingsService>();
-        var startMinimized = await settingsService.GetStartMinimizedEnabledAsync();
-        var minimizeToMiniPlayer = await settingsService.GetMinimizeToMiniPlayerEnabledAsync();
-        var hideToTray = await settingsService.GetHideToTrayEnabledAsync();
-        if (_isExiting) return;
+        var settingsService = Services.GetRequiredService<ISettingsService>();
+        var startMinimized = settingsService.Get(AppSettings.StartMinimized);
+        var minimizeToMiniPlayer = settingsService.Get(AppSettings.MinimizeToMiniPlayer);
+        var hideToTray = settingsService.Get(AppSettings.HideToTray);
         var windowService = Services.GetRequiredService<IWindowService>();
 
         // A launch received during initialization takes precedence over startup minimization.
@@ -441,11 +440,14 @@ public partial class App : Application
         MainDispatcherQueue?.TryEnqueue(DispatcherQueuePriority.Low, async () =>
         {
             if (_isExiting || Services is null) return;
-            var uiSettings = Services.GetRequiredService<IUISettingsService>();
+            var settings = Services.GetRequiredService<ISettingsService>();
             // The mini-player only exists while "Minimize to Mini-Player" is on, so the task follows it.
-            uiSettings.MinimizeToMiniPlayerSettingChanged += enabled =>
-                MainDispatcherQueue?.TryEnqueue(() => _ = RegisterJumpListAsync(enabled));
-            await RegisterJumpListAsync(await uiSettings.GetMinimizeToMiniPlayerEnabledAsync());
+            settings.SettingChanged += setting =>
+            {
+                if (setting == AppSettings.MinimizeToMiniPlayer)
+                    MainDispatcherQueue?.TryEnqueue(() => _ = RegisterJumpListAsync(settings.Get(AppSettings.MinimizeToMiniPlayer)));
+            };
+            await RegisterJumpListAsync(settings.Get(AppSettings.MinimizeToMiniPlayer));
         });
     }
 

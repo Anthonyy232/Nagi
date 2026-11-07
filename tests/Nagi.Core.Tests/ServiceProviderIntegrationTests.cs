@@ -6,6 +6,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
+using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
@@ -15,7 +16,7 @@ namespace Nagi.Core.Tests;
 public class ServiceProviderIntegrationTests : IDisposable
 {
     private readonly ProviderPipelineProvider _pipelines;
-    private readonly ISettingsService _settingsService;
+    private readonly SettingsService _settingsService;
     private readonly IPathConfiguration _pathConfig;
     private readonly ILastFmMetadataService _lastFmService;
     private readonly IFanartTvService _fanartTvService;
@@ -32,7 +33,7 @@ public class ServiceProviderIntegrationTests : IDisposable
 
     public ServiceProviderIntegrationTests()
     {
-        _settingsService = Substitute.For<ISettingsService>();
+        _settingsService = TestSettings.Create();
         _pathConfig = Substitute.For<IPathConfiguration>();
         _lastFmService = Substitute.For<ILastFmMetadataService>();
         _fanartTvService = Substitute.For<IFanartTvService>();
@@ -45,7 +46,7 @@ public class ServiceProviderIntegrationTests : IDisposable
 
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
-        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, Substitute.For<IFileSystemService>(), _settingsService, Substitute.For<ILogger<LibraryReader>>());
+        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, Substitute.For<IFileSystemService>(), _settingsService);
 
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
@@ -70,13 +71,12 @@ public class ServiceProviderIntegrationTests : IDisposable
             Substitute.For<ILogger<LibraryService>>());
 
         _pathConfig.ArtistImageCachePath.Returns("C:\\cache\\artistimages");
-        _settingsService.GetFetchOnlineMetadataEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.FetchOnlineMetadata, true);
     }
 
     public void Dispose()
     {
         _libraryService.Dispose();
-        _libraryReader.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _httpHandler.Dispose();
         _dbHelper.Dispose();
@@ -92,8 +92,7 @@ public class ServiceProviderIntegrationTests : IDisposable
             context.SaveChanges();
         }
 
-        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata)
-            .Returns(new List<ServiceProviderSetting>());
+        _settingsService.EnableOnly(CoreSettings.MetadataProviders);
 
         await _libraryService.GetArtistDetailsAsync(artist.Id, true);
 
@@ -112,13 +111,8 @@ public class ServiceProviderIntegrationTests : IDisposable
             context.SaveChanges();
         }
 
-        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata)
-            .Returns(new List<ServiceProviderSetting>
-            {
-                new() { Id = ServiceProviderIds.TheAudioDb, Order = 0, IsEnabled = true },
-                new() { Id = ServiceProviderIds.FanartTv, Order = 1, IsEnabled = true },
-                new() { Id = ServiceProviderIds.LastFm, Order = 2, IsEnabled = true }
-            });
+        _settingsService.EnableOnly(CoreSettings.MetadataProviders, ServiceProviderIds.TheAudioDb, ServiceProviderIds.FanartTv,
+            ServiceProviderIds.LastFm);
         _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccess(new ArtistInfo { Biography = "Available biography" }));
 
@@ -139,13 +133,8 @@ public class ServiceProviderIntegrationTests : IDisposable
             context.SaveChanges();
         }
 
-        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata)
-            .Returns(new List<ServiceProviderSetting>
-            {
-                new() { Id = ServiceProviderIds.FanartTv },
-                new() { Id = ServiceProviderIds.Deezer },
-                new() { Id = ServiceProviderIds.LastFm }
-            });
+        _settingsService.EnableOnly(CoreSettings.MetadataProviders, ServiceProviderIds.FanartTv, ServiceProviderIds.Deezer,
+            ServiceProviderIds.LastFm);
         _deezerService.GetArtistImageUrlAsync(artist.Name, Arg.Any<CancellationToken>())
             .Returns(ServiceResult<string>.FromSuccess("https://deezer.test/artist.jpg"));
         _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
@@ -182,8 +171,7 @@ public class ServiceProviderIntegrationTests : IDisposable
             context.SaveChanges();
         }
 
-        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata)
-            .Returns(new List<ServiceProviderSetting> { new() { Id = ServiceProviderIds.CoverArtArchive } });
+        _settingsService.EnableOnly(CoreSettings.MetadataProviders, ServiceProviderIds.CoverArtArchive);
         _albumCoverService.FindCoverUrlAsync(
                 Arg.Is<AlbumCoverQuery>(q => q.Title == "Album" && q.ArtistName == "Artist" && q.ReleaseId == "release-id"),
                 Arg.Any<IReadOnlyList<ServiceProviderSetting>>(), Arg.Any<CancellationToken>())
@@ -233,8 +221,7 @@ public class ServiceProviderIntegrationTests : IDisposable
             context.SaveChanges();
         }
 
-        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata)
-            .Returns(new List<ServiceProviderSetting> { new() { Id = ServiceProviderIds.CoverArtArchive } });
+        _settingsService.EnableOnly(CoreSettings.MetadataProviders, ServiceProviderIds.CoverArtArchive);
         _albumCoverService.FindCoverUrlAsync(default!, default!, default).ReturnsForAnyArgs(_ =>
         {
             using var scanContext = _dbHelper.ContextFactory.CreateDbContext();
@@ -266,11 +253,11 @@ public class ServiceProviderIntegrationTests : IDisposable
             context.Albums.Add(new Album { Title = "Album" });
             context.SaveChanges();
         }
-        _settingsService.GetFetchOnlineMetadataEnabledAsync().Returns(false);
+        _settingsService.Set(CoreSettings.FetchOnlineMetadata, false);
 
         await _libraryService.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
 
-        await _settingsService.DidNotReceive().GetEnabledServiceProvidersAsync(Arg.Any<ServiceCategory>());
+        _lastFmService.ReceivedCalls().Should().BeEmpty();
         _albumCoverService.ReceivedCalls().Should().BeEmpty();
     }
 }

@@ -4,6 +4,8 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Pages;
 using Microsoft.Windows.AppLifecycle;
+using Nagi.Core.Settings;
+using Nagi.Presentation.Services;
 
 namespace Nagi.WinUI.Services.Implementations;
 
@@ -12,14 +14,14 @@ public class ApplicationLifecycle : IApplicationLifecycle
     private readonly MainWindow _window;
     private readonly IWindowService _windowService;
     private readonly ILibraryReader _libraryReader;
-    private readonly IUISettingsService _settingsService;
+    private readonly ISettingsService _settingsService;
     private readonly IThemeService _themeService;
     private readonly Func<MainPage> _createMainPage;
     private readonly Func<OnboardingPage> _createOnboardingPage;
     private readonly ILogger<ApplicationLifecycle> _logger;
 
     public ApplicationLifecycle(MainWindow window, IWindowService windowService, ILibraryReader libraryReader,
-        IUISettingsService settingsService, IThemeService themeService, Func<MainPage> createMainPage,
+        ISettingsService settingsService, IThemeService themeService, Func<MainPage> createMainPage,
         Func<OnboardingPage> createOnboardingPage, ILogger<ApplicationLifecycle> logger)
     {
         _createMainPage = createMainPage;
@@ -52,8 +54,7 @@ public class ApplicationLifecycle : IApplicationLifecycle
             if (_window.Content is not OnboardingPage) _window.Content = _createOnboardingPage();
         }
 
-        var savedTheme = await _settingsService.GetThemeAsync();
-        _themeService.ApplyTheme(savedTheme);
+        _themeService.ApplyTheme(_settingsService.Get(AppSettings.Theme));
 
         _window.NotifyContentLoaded();
         _window.InitializeCustomTitleBar();

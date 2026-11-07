@@ -14,6 +14,8 @@ using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services;
+using Nagi.Core.Settings;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -52,7 +54,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService,
-        IUISettingsService settingsService,
+        ISettingsService settingsService,
         IUIService uiService,
         ILogger<FolderSongListViewModel> logger)
         : base(libraryReader, libraryWriter, libraryScanner, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
@@ -90,14 +92,11 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             _currentDirectoryPath = directoryPath ?? string.Empty;
             IsServer = isServer;
 
-            var rootFolderTask = _libraryReader.GetFolderByIdAsync(rootFolderId);
-            var sortTask = _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.FolderViewSortOrderKey);
-
-            await Task.WhenAll(rootFolderTask, sortTask);
+            var rootFolder = await _libraryReader.GetFolderByIdAsync(rootFolderId);
             if (!IsSongContextCurrent(generation)) return;
 
-            _rootFolderPath = rootFolderTask.Result?.Path;
-            CurrentSortOrder = sortTask.Result;
+            _rootFolderPath = rootFolder?.Path;
+            CurrentSortOrder = _settingsService.Get(AppSettings.FolderViewSortOrder);
 
             if (string.IsNullOrEmpty(_currentDirectoryPath))
                 _currentDirectoryPath = _rootFolderPath ?? string.Empty;
@@ -270,7 +269,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
 
         try
         {
-            await EnsureInitialSettingsLoadedAsync();
+            EnsureInitialSettingsLoaded();
             token.ThrowIfCancellationRequested();
 
             if (!string.IsNullOrEmpty(sortOrderString) &&
@@ -524,7 +523,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase
 
     protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
     {
-        return _settingsService.SetSortOrderAsync(SortOrderHelper.FolderViewSortOrderKey, sortOrder);
+        _settingsService.Set(AppSettings.FolderViewSortOrder, sortOrder);
+        return Task.CompletedTask;
     }
 
     public override void ResetState()

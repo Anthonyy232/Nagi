@@ -14,6 +14,8 @@ using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services;
+using Nagi.Core.Settings;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -48,7 +50,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
-        IUISettingsService settingsService,
+        ISettingsService settingsService,
         IDispatcherService dispatcherService,
         IUIService uiService,
         ILogger<ArtistViewViewModel> logger)
@@ -109,14 +111,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         try
         {
             _artistId = artistId;
-            var onlineMetadataTask = _settingsService.GetFetchOnlineMetadataEnabledAsync();
-            var sortOrderTask = _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.ArtistViewSortOrderKey);
-
-            await Task.WhenAll(onlineMetadataTask, sortOrderTask);
-            token.ThrowIfCancellationRequested();
-
-            var shouldFetchOnline = await onlineMetadataTask;
-            CurrentSortOrder = await sortOrderTask;
+            var shouldFetchOnline = _settingsService.Get(CoreSettings.FetchOnlineMetadata);
+            CurrentSortOrder = _settingsService.Get(AppSettings.ArtistViewSortOrder);
 
             // Updates its own UI.
             var songsTask = RefreshOrSortSongsAsync(manualToken: token);
@@ -218,7 +214,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase
 
     protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
     {
-        return _settingsService.SetSortOrderAsync(SortOrderHelper.ArtistViewSortOrderKey, sortOrder);
+        _settingsService.Set(AppSettings.ArtistViewSortOrder, sortOrder);
+        return Task.CompletedTask;
     }
 
     public override void ResetState()

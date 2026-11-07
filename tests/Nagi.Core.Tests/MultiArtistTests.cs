@@ -28,7 +28,7 @@ public class MultiArtistTests : IDisposable
         _metadataService = Substitute.For<IMetadataService>();
 
         var httpClientFactory = Substitute.For<IHttpClientFactory>();
-        var settingsService = Substitute.For<ISettingsService>();
+        var settingsService = TestSettings.Create();
         var pathConfig = Substitute.For<IPathConfiguration>();
         pathConfig.AlbumArtCachePath.Returns("C:\\cache\\albumart");
         pathConfig.ArtistImageCachePath.Returns("C:\\cache\\artistimages");
@@ -36,7 +36,7 @@ public class MultiArtistTests : IDisposable
 
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
-        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, settingsService, Substitute.For<ILogger<LibraryReader>>());
+        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, settingsService);
 
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
@@ -58,7 +58,6 @@ public class MultiArtistTests : IDisposable
     public void Dispose()
     {
         _libraryService.Dispose();
-        _libraryReader.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
     }
@@ -254,7 +253,7 @@ public class MultiArtistTests : IDisposable
         _metadataService.ExtractMetadataAsync(filePath).Returns(metadata);
 
         using var playbackService = new MusicPlaybackService(
-            Substitute.For<ISettingsService>(),
+            TestSettings.Create(),
             Substitute.For<IPlaybackStateStore>(),
             Substitute.For<IAudioPlayer>(),
             Substitute.For<ISystemMediaControls>(),

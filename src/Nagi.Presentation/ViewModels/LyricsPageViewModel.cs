@@ -12,6 +12,7 @@ using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Core.Settings;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -67,7 +68,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         _playbackService.PositionChanged += OnPlaybackServicePositionChanged;
         _playbackService.DurationChanged += OnPlaybackServiceDurationChanged;
         _playbackService.PlaybackStateChanged += OnPlaybackServicePlaybackStateChanged;
-        _settingsService.LyricsRomanizationEnabledChanged += OnLyricsRomanizationEnabledChanged;
+        _settingsService.SettingChanged += OnSettingChanged;
         _romanizationPackManager.PacksChanged += OnRomanizationPacksChanged;
 
         _ = UpdateForTrack(_playbackService.CurrentTrack);
@@ -144,7 +145,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         _playbackService.PositionChanged -= OnPlaybackServicePositionChanged;
         _playbackService.DurationChanged -= OnPlaybackServiceDurationChanged;
         _playbackService.PlaybackStateChanged -= OnPlaybackServicePlaybackStateChanged;
-        _settingsService.LyricsRomanizationEnabledChanged -= OnLyricsRomanizationEnabledChanged;
+        _settingsService.SettingChanged -= OnSettingChanged;
         _romanizationPackManager.PacksChanged -= OnRomanizationPacksChanged;
 
     }
@@ -402,8 +403,9 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         _ = UpdateForTrack(_playbackService.CurrentTrack);
     }
 
-    private void OnLyricsRomanizationEnabledChanged(bool isEnabled)
+    private void OnSettingChanged(Setting setting)
     {
+        if (setting != CoreSettings.LyricsRomanization) return;
         _ = UpdateForTrack(_playbackService.CurrentTrack);
     }
 

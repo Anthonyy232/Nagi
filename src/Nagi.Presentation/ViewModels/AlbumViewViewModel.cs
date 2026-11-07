@@ -12,6 +12,8 @@ using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services;
+using Nagi.Core.Settings;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -31,7 +33,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService,
-        IUISettingsService settingsService,
+        ISettingsService settingsService,
         IUIService uiService,
         ILogger<AlbumViewViewModel> logger)
         : base(libraryReader, libraryWriter, libraryScanner, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
@@ -89,12 +91,9 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         {
             _albumId = albumId;
             var albumTask = _libraryReader.GetAlbumByIdAsync(albumId);
-            var sortOrderTask = _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.AlbumViewSortOrderKey);
-
-            await Task.WhenAll(albumTask, sortOrderTask);
-            if (!IsSongContextCurrent(generation)) return;
-            CurrentSortOrder = await sortOrderTask;
             var album = await albumTask;
+            if (!IsSongContextCurrent(generation)) return;
+            CurrentSortOrder = _settingsService.Get(AppSettings.AlbumViewSortOrder);
 
             if (album != null)
             {
@@ -249,7 +248,8 @@ public partial class AlbumViewViewModel : SongListViewModelBase
 
     protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
     {
-        return _settingsService.SetSortOrderAsync(SortOrderHelper.AlbumViewSortOrderKey, sortOrder);
+        _settingsService.Set(AppSettings.AlbumViewSortOrder, sortOrder);
+        return Task.CompletedTask;
     }
 
     private void CancelDurationFetch()

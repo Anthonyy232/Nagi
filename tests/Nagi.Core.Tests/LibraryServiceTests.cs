@@ -8,6 +8,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
+using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
@@ -31,7 +32,7 @@ public partial class LibraryServiceTests : IDisposable
 
     private readonly IMetadataService _metadataService;
     private readonly IPathConfiguration _pathConfig;
-    private readonly ISettingsService _settingsService;
+    private readonly SettingsService _settingsService;
     private readonly IReplayGainService _replayGainService;
     private readonly IMusicBrainzService _musicBrainzService;
     private readonly IFanartTvService _fanartTvService;
@@ -47,7 +48,7 @@ public partial class LibraryServiceTests : IDisposable
         _lastFmService = Substitute.For<ILastFmMetadataService>();
         _httpClientFactory = Substitute.For<IHttpClientFactory>();
         _pathConfig = Substitute.For<IPathConfiguration>();
-        _settingsService = Substitute.For<ISettingsService>();
+        _settingsService = TestSettings.Create();
         _replayGainService = Substitute.For<IReplayGainService>();
         _musicBrainzService = Substitute.For<IMusicBrainzService>();
         _fanartTvService = Substitute.For<IFanartTvService>();
@@ -68,7 +69,7 @@ public partial class LibraryServiceTests : IDisposable
 
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
-        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, _settingsService, Substitute.For<ILogger<LibraryReader>>());
+        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, _settingsService);
 
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
@@ -96,7 +97,6 @@ public partial class LibraryServiceTests : IDisposable
     public void Dispose()
     {
         _libraryService.Dispose();
-        _libraryReader.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
         _httpMessageHandler.Dispose();
@@ -128,8 +128,7 @@ public partial class LibraryServiceTests : IDisposable
             context.Artists.Add(artist);
             await context.SaveChangesAsync();
         }
-        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata).Returns(
-            new List<ServiceProviderSetting> { new() { Id = providerId, IsEnabled = true } });
+        _settingsService.EnableOnly(CoreSettings.MetadataProviders, providerId);
         _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>()).Returns(
             ServiceResult<ArtistInfo>.FromTemporaryError(), ServiceResult<ArtistInfo>.FromSuccessNotFound());
         _theAudioDbService.GetArtistMetadataAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>()).Returns(
@@ -161,12 +160,7 @@ public partial class LibraryServiceTests : IDisposable
             context.Artists.Add(artist);
             await context.SaveChangesAsync();
         }
-        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata).Returns(
-            new List<ServiceProviderSetting>
-            {
-                new() { Id = providerId, IsEnabled = true },
-                new() { Id = ServiceProviderIds.LastFm, IsEnabled = true }
-            });
+        _settingsService.EnableOnly(CoreSettings.MetadataProviders, providerId, ServiceProviderIds.LastFm);
         _theAudioDbService.GetArtistMetadataAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromException<ServiceResult<TheAudioDbArtistInfo>>(new TaskCanceledException("Timed out")));
         _musicBrainzService.SearchArtistAsync(artist.Name, Arg.Any<CancellationToken>())
@@ -189,12 +183,7 @@ public partial class LibraryServiceTests : IDisposable
             context.Artists.Add(artist);
             await context.SaveChangesAsync();
         }
-        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata).Returns(
-            new List<ServiceProviderSetting>
-            {
-                new() { Id = ServiceProviderIds.MusicBrainz, IsEnabled = true },
-                new() { Id = ServiceProviderIds.LastFm, IsEnabled = true }
-            });
+        _settingsService.EnableOnly(CoreSettings.MetadataProviders, ServiceProviderIds.MusicBrainz, ServiceProviderIds.LastFm);
         var identity = new TaskCompletionSource<ServiceResult<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
         var metadata = new TaskCompletionSource<ServiceResult<ArtistInfo>>(TaskCreationOptions.RunContinuationsAsynchronously);
         var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -231,8 +220,7 @@ public partial class LibraryServiceTests : IDisposable
             context.Artists.Add(artist);
             await context.SaveChangesAsync();
         }
-        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata).Returns(
-            new List<ServiceProviderSetting> { new() { Id = ServiceProviderIds.LastFm, IsEnabled = true } });
+        _settingsService.EnableOnly(CoreSettings.MetadataProviders, ServiceProviderIds.LastFm);
         _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccess(new ArtistInfo
             {
@@ -267,15 +255,14 @@ public partial class LibraryServiceTests : IDisposable
     [InlineData("reset")]
     public async Task BackgroundMetadata_CancellationLetsActiveRunUnwind(string action)
     {
-        _settingsService.GetFetchOnlineMetadataEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.FetchOnlineMetadata, true);
         var artist = new Artist { Name = "Pending artist" };
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
             context.Artists.Add(artist);
             await context.SaveChangesAsync();
         }
-        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata)
-            .Returns(new List<ServiceProviderSetting> { new() { Id = ServiceProviderIds.LastFm } });
+        _settingsService.EnableOnly(CoreSettings.MetadataProviders, ServiceProviderIds.LastFm);
         var started = new TaskCompletionSource<CancellationToken>(TaskCreationOptions.RunContinuationsAsynchronously);
         var provider = new TaskCompletionSource<ServiceResult<ArtistInfo>>(TaskCreationOptions.RunContinuationsAsynchronously);
         _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>()).Returns(call =>
@@ -288,7 +275,7 @@ public partial class LibraryServiceTests : IDisposable
         var token = await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
         Task reset = Task.CompletedTask;
         if (action == "dispose") _libraryService.Dispose();
-        else if (action == "disable") _settingsService.FetchOnlineMetadataEnabledChanged += Raise.Event<Action<bool>>(false);
+        else if (action == "disable") _settingsService.Set(CoreSettings.FetchOnlineMetadata, false);
         else
         {
             reset = _libraryService.ClearAllLibraryDataAsync();
@@ -310,6 +297,7 @@ public partial class LibraryServiceTests : IDisposable
         }
         _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccessNotFound());
+        _settingsService.Set(CoreSettings.FetchOnlineMetadata, true);
         await _libraryService.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(5));
         await _lastFmService.Received(action == "disable" ? 2 : 1)
             .GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>());
@@ -333,7 +321,7 @@ public partial class LibraryServiceTests : IDisposable
         var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var metadata = new TaskCompletionSource<SongFileMetadata>(TaskCreationOptions.RunContinuationsAsynchronously);
         var songMetadata = new SongFileMetadata { FilePath = songPath, Title = "Song", Artists = ["Artist"] };
-        _settingsService.GetVolumeNormalizationEnabledAsync().Returns(duringReplayGain);
+        _settingsService.Set(CoreSettings.VolumeNormalization, duringReplayGain);
         _replayGainService.ScanLibraryAsync(Arg.Any<IProgress<ScanProgress>?>(), Arg.Any<CancellationToken>()).Returns(async call =>
         {
             started.TrySetResult();
@@ -392,7 +380,7 @@ public partial class LibraryServiceTests : IDisposable
         });
         _metadataService.ExtractMetadataAsync(secondPath, secondFolder.Path)
             .Returns(new SongFileMetadata { FilePath = secondPath, Title = "Second" });
-        _settingsService.GetVolumeNormalizationEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.VolumeNormalization, true);
         var songCountsAtAnalysis = new List<int>();
         _replayGainService.ScanLibraryAsync(Arg.Any<IProgress<ScanProgress>?>(), Arg.Any<CancellationToken>())
             .Returns(async _ =>
@@ -416,9 +404,8 @@ public partial class LibraryServiceTests : IDisposable
     [Fact]
     public async Task BackgroundMetadataFetch_AttemptsEachArtistOncePerRunAndRetriesOnNextRun()
     {
-        _settingsService.GetFetchOnlineMetadataEnabledAsync().Returns(true);
-        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata)
-            .Returns(new List<ServiceProviderSetting> { new() { Id = ServiceProviderIds.LastFm } });
+        _settingsService.Set(CoreSettings.FetchOnlineMetadata, true);
+        _settingsService.EnableOnly(CoreSettings.MetadataProviders, ServiceProviderIds.LastFm);
         _lastFmService.GetArtistInfoAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromTemporaryError());
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
@@ -873,11 +860,7 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata)
-            .Returns(new List<ServiceProviderSetting>
-            {
-                new() { Id = ServiceProviderIds.LastFm, IsEnabled = true, Category = ServiceCategory.Metadata }
-            });
+        _settingsService.EnableOnly(CoreSettings.MetadataProviders, ServiceProviderIds.LastFm);
 
         _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccess(new ArtistInfo
@@ -972,8 +955,7 @@ public partial class LibraryServiceTests : IDisposable
     public async Task RescanFolderForMusicAsync_SupersedingScansWaitForActiveWorkAndApplyOnlyLatest()
     {
         using var database = new DbContextFactoryTestHelper(useFileDatabase: true);
-        using var reader = new LibraryReader(database.ContextFactory, _fileSystem, _settingsService,
-            Substitute.For<ILogger<LibraryReader>>());
+        var reader = new LibraryReader(database.ContextFactory, _fileSystem, _settingsService);
         using var service = CreateLibraryService(database, reader);
         var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\Concurrent", Name = "Concurrent" };
         await using (var context = database.ContextFactory.CreateDbContext())
@@ -1261,8 +1243,7 @@ public partial class LibraryServiceTests : IDisposable
     public async Task ListenCallbacks_ConcurrentSessionsPreserveCounters()
     {
         using var database = new DbContextFactoryTestHelper(useFileDatabase: true);
-        using var reader = new LibraryReader(database.ContextFactory, _fileSystem, _settingsService,
-            Substitute.For<ILogger<LibraryReader>>());
+        var reader = new LibraryReader(database.ContextFactory, _fileSystem, _settingsService);
         using var service = CreateLibraryService(database, reader);
         var song = new Song { FilePath = @"C:\Music\song.mp3", Folder = new Folder { Path = @"C:\Music", Name = "Music" } };
         await using (var context = database.ContextFactory.CreateDbContext())

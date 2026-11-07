@@ -1,10 +1,10 @@
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
+using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
@@ -14,20 +14,18 @@ namespace Nagi.Core.Tests;
 public class LibraryReaderTests : IDisposable
 {
     private readonly DbContextFactoryTestHelper _dbHelper = new();
-    private readonly ISettingsService _settingsService = Substitute.For<ISettingsService>();
+    private readonly SettingsService _settingsService = TestSettings.Create();
     private readonly LibraryReader _libraryReader;
 
     public LibraryReaderTests()
     {
         var fileSystem = Substitute.For<IFileSystemService>();
         fileSystem.NormalizePath(Arg.Any<string>()).Returns(call => PathCanonicalizer.Normalize(call.Arg<string>()));
-        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, fileSystem, _settingsService,
-            Substitute.For<ILogger<LibraryReader>>());
+        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, fileSystem, _settingsService);
     }
 
     public void Dispose()
     {
-        _libraryReader.Dispose();
         _dbHelper.Dispose();
     }
 
@@ -312,7 +310,7 @@ public class LibraryReaderTests : IDisposable
             ctx.Albums.AddRange(apple, banana, beeAlbum);
             await ctx.SaveChangesAsync();
         }
-        _settingsService.IgnoreLeadingArticlesOnSortEnabledChanged += Raise.Event<Action<bool>>(ignoreArticles);
+        _settingsService.Set(CoreSettings.IgnoreLeadingArticlesOnSort, ignoreArticles);
 
         var result = await _libraryReader.SearchAlbumsPagedAsync(term, 1, 20);
         var results = result.Items.ToList();

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -58,8 +59,8 @@ public partial class AtlMetadataService : IMetadataService
                 return metadata;
             }
 
-            var splitCharacters = await _settingsService.GetArtistSplitCharactersAsync().ConfigureAwait(false);
-            var genreSplitCharacters = await _settingsService.GetGenreSplitCharactersAsync().ConfigureAwait(false);
+            var splitCharacters = _settingsService.Get(CoreSettings.ArtistSplitCharacters);
+            var genreSplitCharacters = _settingsService.Get(CoreSettings.GenreSplitCharacters);
             PopulateMetadataFromTrack(metadata, track, splitCharacters, genreSplitCharacters);
 
             if (includeMediaAssets)

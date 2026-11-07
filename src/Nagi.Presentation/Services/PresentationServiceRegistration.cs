@@ -1,5 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Services;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services.Implementations;
 using Nagi.Presentation.ViewModels;
@@ -17,9 +17,7 @@ public static class PresentationServiceRegistration
     /// </summary>
     public static IServiceCollection AddNagiPresentation(this IServiceCollection services)
     {
-        services.AddSingleton<SettingsService>();
-        services.AddSingleton<IUISettingsService>(sp => sp.GetRequiredService<SettingsService>());
-        services.AddSingleton<ISettingsService>(sp => sp.GetRequiredService<SettingsService>());
+        services.AddSettings(typeof(AppSettings));
         services.AddSingleton<IMusicNavigationService, MusicNavigationService>();
         services.AddSingleton<ViewModelFactory>();
         services.AddSingleton<MusicServerPrompts>();

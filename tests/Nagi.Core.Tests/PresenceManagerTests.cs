@@ -2,7 +2,10 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Services.Implementations;
 using Nagi.Core.Services.Implementations.Presence;
+using Nagi.Core.Settings;
+using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Xunit;
@@ -12,7 +15,8 @@ namespace Nagi.Core.Tests;
 public class PresenceManagerTests : IAsyncDisposable
 {
     private readonly IMusicPlaybackService _playbackService;
-    private readonly ISettingsService _settingsService;
+    private readonly ICredentialLockerService _credentials;
+    private readonly SettingsService _settingsService;
     private readonly ILogger<PresenceManager> _logger;
     private readonly IPresenceService _discordService;
     private readonly IPresenceService _lastFmService;
@@ -21,7 +25,8 @@ public class PresenceManagerTests : IAsyncDisposable
     public PresenceManagerTests()
     {
         _playbackService = Substitute.For<IMusicPlaybackService>();
-        _settingsService = Substitute.For<ISettingsService>();
+        _credentials = Substitute.For<ICredentialLockerService>();
+        _settingsService = TestSettings.Create(credentials: _credentials);
         _logger = Substitute.For<ILogger<PresenceManager>>();
         _discordService = Substitute.For<IPresenceService>();
         _lastFmService = Substitute.For<IPresenceService>();
@@ -29,10 +34,7 @@ public class PresenceManagerTests : IAsyncDisposable
         _discordService.Name.Returns("Discord");
         _lastFmService.Name.Returns("Last.fm");
 
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(false);
-        _settingsService.GetLastFmCredentialsAsync().Returns((("user", "key"))!);
-        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(false);
-        _settingsService.GetLastFmNowPlayingEnabledAsync().Returns(false);
+        _credentials.RetrieveCredential("Nagi/LastFm").Returns(("user", "key"));
 
         _manager = new PresenceManager(
             _playbackService,
@@ -46,7 +48,7 @@ public class PresenceManagerTests : IAsyncDisposable
     [Fact]
     public async Task PlaybackEvents_WaitingForServiceActivation_ReachAServiceInOrder()
     {
-        _settingsService.GetLastFmNowPlayingEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.LastFmNowPlaying, true);
         await _manager.InitializeAsync();
         var initializing = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -84,7 +86,7 @@ public class PresenceManagerTests : IAsyncDisposable
             if (states.Count == 2) statesReceived.TrySetResult();
             return Task.CompletedTask;
         });
-        _settingsService.DiscordRichPresenceSettingChanged += Raise.Event<Action<bool>>(true);
+        _settingsService.Set(CoreSettings.DiscordRichPresence, true);
         try
         {
             await initializing.Task.WaitAsync(TimeSpan.FromSeconds(5));
@@ -123,7 +125,7 @@ public class PresenceManagerTests : IAsyncDisposable
     [Fact]
     public async Task InitializeAsync_WhenCalledTwice_OnlyInitializesOnce()
     {
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.DiscordRichPresence, true);
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         _discordService.InitializeAsync().Returns(release.Task);
 
@@ -132,7 +134,7 @@ public class PresenceManagerTests : IAsyncDisposable
         release.SetResult();
         await Task.WhenAll(first, second).WaitAsync(TimeSpan.FromSeconds(5));
 
-        await _settingsService.Received(1).GetDiscordRichPresenceEnabledAsync();
+        await _discordService.Received(1).InitializeAsync();
         _playbackService.PlaybackStateChanged += Raise.Event<Action>();
         await _discordService.Received(1).OnPlaybackStateChangedAsync(false);
     }
@@ -140,7 +142,7 @@ public class PresenceManagerTests : IAsyncDisposable
     [Fact]
     public async Task ShutdownAsync_DuringInitialization_WaitsAndDisposesActivatedServices()
     {
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.DiscordRichPresence, true);
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         _discordService.InitializeAsync().Returns(release.Task);
 
@@ -157,7 +159,7 @@ public class PresenceManagerTests : IAsyncDisposable
     [Fact]
     public async Task ShutdownAsync_WhenStopFails_StillDisposesServiceAndCanRestart()
     {
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.DiscordRichPresence, true);
         await _manager.InitializeAsync();
         _discordService.OnPlaybackStoppedAsync().ThrowsAsync(new InvalidOperationException("Stop failed"));
 
@@ -171,7 +173,7 @@ public class PresenceManagerTests : IAsyncDisposable
     [Fact]
     public async Task InitializeAsync_WithRestoredTrack_ImmediatelyUpdatesDiscord()
     {
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.DiscordRichPresence, true);
         var song = new Song { Title = "Restored track" };
         _playbackService.CurrentTrack.Returns(song);
         _playbackService.CurrentListenHistoryId.Returns((long?)null);
@@ -185,7 +187,7 @@ public class PresenceManagerTests : IAsyncDisposable
     [Fact]
     public async Task InitializeAsync_WhenPlaybackChangesWhileConnecting_SynchronizesCurrentTrack()
     {
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.DiscordRichPresence, true);
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         _discordService.InitializeAsync().Returns(release.Task);
         var initialization = _manager.InitializeAsync();
@@ -202,7 +204,7 @@ public class PresenceManagerTests : IAsyncDisposable
     [Fact]
     public async Task InitializeAsync_WhenDiscordDisabled_DoesNotActivateDiscordService()
     {
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(false);
+        _settingsService.Set(CoreSettings.DiscordRichPresence, false);
 
         await _manager.InitializeAsync();
 
@@ -217,10 +219,9 @@ public class PresenceManagerTests : IAsyncDisposable
     public async Task InitializeAsync_ActivatesLastFmOnlyWithCredentialsAndAFeatureEnabled(
         bool hasCredentials, bool scrobbling, bool nowPlaying, int activations)
     {
-        _settingsService.GetLastFmCredentialsAsync()
-            .Returns(Task.FromResult<(string?, string?)?>(hasCredentials ? ("user", "key") : null));
-        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(scrobbling);
-        _settingsService.GetLastFmNowPlayingEnabledAsync().Returns(nowPlaying);
+        _credentials.RetrieveCredential("Nagi/LastFm").Returns(hasCredentials ? ("user", "key") : null);
+        _settingsService.Set(CoreSettings.LastFmScrobbling, scrobbling);
+        _settingsService.Set(CoreSettings.LastFmNowPlaying, nowPlaying);
 
         await _manager.InitializeAsync();
 
@@ -228,42 +229,38 @@ public class PresenceManagerTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task DiscordRichPresenceSettingChanged_WhenEnabled_ActivatesDiscordService()
+    public async Task DiscordRichPresenceChanged_WhenEnabled_ActivatesDiscordService()
     {
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(false);
+        _settingsService.Set(CoreSettings.DiscordRichPresence, false);
         await _manager.InitializeAsync();
         _discordService.ClearReceivedCalls();
 
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(true);
-        _settingsService.DiscordRichPresenceSettingChanged += Raise.Event<Action<bool>>(true);
+        _settingsService.Set(CoreSettings.DiscordRichPresence, true);
 
         await _discordService.Received(1).InitializeAsync();
     }
 
     [Fact]
-    public async Task DiscordRichPresenceSettingChanged_WhenDisabled_DeactivatesDiscordService()
+    public async Task DiscordRichPresenceChanged_WhenDisabled_DeactivatesDiscordService()
     {
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.DiscordRichPresence, true);
         await _manager.InitializeAsync();
         _discordService.ClearReceivedCalls();
 
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(false);
-        _settingsService.DiscordRichPresenceSettingChanged += Raise.Event<Action<bool>>(false);
+        _settingsService.Set(CoreSettings.DiscordRichPresence, false);
 
         await _discordService.Received(1).OnPlaybackStoppedAsync();
     }
 
     [Fact]
-    public async Task LastFmSettingsChanged_WhenScrobblingEnabled_ActivatesLastFmService()
+    public async Task LastFmScrobblingEnabled_ActivatesLastFmService()
     {
-        _settingsService.GetLastFmCredentialsAsync().Returns((("user", "key"))!);
-        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(false);
-        _settingsService.GetLastFmNowPlayingEnabledAsync().Returns(false);
+        _settingsService.Set(CoreSettings.LastFmScrobbling, false);
+        _settingsService.Set(CoreSettings.LastFmNowPlaying, false);
         await _manager.InitializeAsync();
         _lastFmService.ClearReceivedCalls();
 
-        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(true);
-        _settingsService.LastFmSettingsChanged += Raise.Event<Action>();
+        _settingsService.Set(CoreSettings.LastFmScrobbling, true);
 
         await _lastFmService.Received(1).InitializeAsync();
     }
@@ -271,7 +268,7 @@ public class PresenceManagerTests : IAsyncDisposable
     [Fact]
     public async Task OnTrackChanged_WhenTrackClearedAfterPlaying_BroadcastsStopToActiveServices()
     {
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.DiscordRichPresence, true);
         await _manager.InitializeAsync();
 
         var track = new Song { Title = "Playing Track" };
@@ -290,7 +287,7 @@ public class PresenceManagerTests : IAsyncDisposable
     [Fact]
     public async Task OnScrobbleEligibilityReached_BroadcastsEligibilityToActiveServices()
     {
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.DiscordRichPresence, true);
         await _manager.InitializeAsync();
 
         var song = new Song { Title = "Eligible Song" };
@@ -305,8 +302,8 @@ public class PresenceManagerTests : IAsyncDisposable
     [Fact]
     public async Task ShutdownAsync_DisposesEveryActiveService()
     {
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(true);
-        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.DiscordRichPresence, true);
+        _settingsService.Set(CoreSettings.LastFmScrobbling, true);
         await _manager.InitializeAsync();
 
         await _manager.ShutdownAsync();
@@ -320,7 +317,7 @@ public class PresenceManagerTests : IAsyncDisposable
     [Fact]
     public async Task OnPositionChanged_ThrottlesRepeatedUpdatesButResetsForNewTrack()
     {
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.DiscordRichPresence, true);
         await _manager.InitializeAsync();
         var duration = TimeSpan.FromMinutes(3);
         var position = TimeSpan.FromSeconds(30);
@@ -344,16 +341,15 @@ public class PresenceManagerTests : IAsyncDisposable
     [Theory]
     [InlineData("token", 1)]
     [InlineData(null, 0)]
-    public async Task ListenBrainzSettingsChanged_RequiresTokenForActivation(string? token, int activations)
+    public async Task ListenBrainzScrobblingEnabled_RequiresTokenForActivation(string? token, int activations)
     {
         var service = Substitute.For<IPresenceService>();
         service.Name.Returns("ListenBrainz");
         await using var manager = new PresenceManager(_playbackService, [service], _settingsService, _logger);
         await manager.InitializeAsync();
-        _settingsService.GetListenBrainzUserTokenAsync().Returns(token);
-        _settingsService.GetListenBrainzScrobblingEnabledAsync().Returns(true);
+        _credentials.RetrieveCredential("Nagi/ListenBrainz").Returns(token is null ? null : ("token", token));
 
-        _settingsService.ListenBrainzSettingsChanged += Raise.Event<Action>();
+        _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
 
         await service.Received(activations).InitializeAsync();
     }
@@ -361,8 +357,8 @@ public class PresenceManagerTests : IAsyncDisposable
     [Fact]
     public async Task InitializeAsync_WhenServiceFails_CleansItUpAndActivatesOthers()
     {
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(true);
-        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.DiscordRichPresence, true);
+        _settingsService.Set(CoreSettings.LastFmScrobbling, true);
         _discordService.InitializeAsync().ThrowsAsync(new InvalidOperationException("Initialization failed"));
 
         await _manager.InitializeAsync();
@@ -377,8 +373,8 @@ public class PresenceManagerTests : IAsyncDisposable
     [Fact]
     public async Task Broadcast_WhenOneServiceFails_StillReachesOthers()
     {
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(true);
-        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.DiscordRichPresence, true);
+        _settingsService.Set(CoreSettings.LastFmScrobbling, true);
         await _manager.InitializeAsync();
         _discordService.OnPlaybackStateChangedAsync(true).ThrowsAsync(new InvalidOperationException("Provider failed"));
 

@@ -8,6 +8,7 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
+using Nagi.Core.Settings;
 using NSubstitute;
 
 namespace Nagi.Benchmarks.Helpers;
@@ -44,7 +45,7 @@ internal sealed class LibraryBenchmarkFixture : IDisposable
         services.AddSingleton<IAlbumCoverService>(Substitute.For<IAlbumCoverService>());
 
         var settingsService = Substitute.For<ISettingsService>();
-        settingsService.GetVolumeNormalizationEnabledAsync().Returns(false);
+        settingsService.Get(CoreSettings.VolumeNormalization).Returns(false);
         services.AddSingleton<ISettingsService>(settingsService);
 
         services.AddSingleton<IReplayGainService>(Substitute.For<IReplayGainService>());

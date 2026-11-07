@@ -3,6 +3,7 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -72,10 +73,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         _mediaControls.PreviousPressed += OnMediaControlsPreviousPressed;
         _mediaControls.SeekRequested += OnMediaControlsSeekRequested;
 
-        _settingsService.VolumeNormalizationEnabledChanged += OnVolumeNormalizationEnabledChanged;
-        _settingsService.FadeOnPlayPauseEnabledChanged += OnFadeOnPlayPauseEnabledChanged;
-        _settingsService.FadeInDurationChanged += OnFadeInDurationChanged;
-        _settingsService.FadeOutDurationChanged += OnFadeOutDurationChanged;
+        _settingsService.SettingChanged += OnSettingChanged;
 
         EqualizerBands = _audioPlayer.GetEqualizerBands();
     }
@@ -143,31 +141,20 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
         try
         {
-            var volumeTask = _settingsService.GetInitialVolumeAsync();
-            var muteTask = _settingsService.GetInitialMuteStateAsync();
-            var shuffleTask = _settingsService.GetInitialShuffleStateAsync();
-            var repeatTask = _settingsService.GetInitialRepeatModeAsync();
-            var eqTask = _settingsService.GetEqualizerSettingsAsync();
-            var restoreEnabledTask = _settingsService.GetRestorePlaybackStateEnabledAsync();
-            var fadeEnabledTask = _settingsService.GetFadeOnPlayPauseEnabledAsync();
-            var fadeInTask = _settingsService.GetFadeInDurationMsAsync();
-            var fadeOutTask = _settingsService.GetFadeOutDurationMsAsync();
-            var playbackStateTask = _playbackStateStore.LoadAsync();
-
-            await Task.WhenAll(volumeTask, muteTask, shuffleTask, repeatTask, eqTask, restoreEnabledTask, fadeEnabledTask, fadeInTask, fadeOutTask, playbackStateTask);
+            var savedState = await _playbackStateStore.LoadAsync();
             if (_isDisposed) return;
 
-            await _audioPlayer.SetVolumeAsync(volumeTask.Result);
+            await _audioPlayer.SetVolumeAsync(_settingsService.Get(CoreSettings.Volume));
             if (_isDisposed) return;
-            await _audioPlayer.SetMuteAsync(muteTask.Result);
+            await _audioPlayer.SetMuteAsync(_settingsService.Get(CoreSettings.IsMuted));
             if (_isDisposed) return;
-            _audioPlayer.SetFadeOnPlayPauseEnabled(fadeEnabledTask.Result);
-            _audioPlayer.SetFadeInDuration(fadeInTask.Result);
-            _audioPlayer.SetFadeOutDuration(fadeOutTask.Result);
-            IsShuffleEnabled = shuffleTask.Result;
-            CurrentRepeatMode = repeatTask.Result;
+            _audioPlayer.SetFadeOnPlayPauseEnabled(_settingsService.Get(CoreSettings.FadeOnPlayPause));
+            _audioPlayer.SetFadeInDuration(_settingsService.Get(CoreSettings.FadeInDurationMs));
+            _audioPlayer.SetFadeOutDuration(_settingsService.Get(CoreSettings.FadeOutDurationMs));
+            IsShuffleEnabled = _settingsService.Get(CoreSettings.IsShuffleEnabled);
+            CurrentRepeatMode = _settingsService.Get(CoreSettings.RepeatMode);
 
-            CurrentEqualizerSettings = eqTask.Result;
+            CurrentEqualizerSettings = _settingsService.Get(CoreSettings.Equalizer);
             if (CurrentEqualizerSettings != null && CurrentEqualizerSettings.BandGains.Count != EqualizerBands.Count)
             {
                 _logger.LogWarning("Equalizer settings band count ({SavedCount}) does not match available bands ({AvailableCount}). Resetting equalizer to default.",
@@ -184,17 +171,13 @@ public partial class MusicPlaybackService : IMusicPlaybackService
                     BandGains = Enumerable.Repeat(0.0f, EqualizerBands.Count).ToList()
                 };
 
-                await _settingsService.SetEqualizerSettingsAsync(CurrentEqualizerSettings);
-                if (_isDisposed) return;
+                _settingsService.Set(CoreSettings.Equalizer, CurrentEqualizerSettings);
             }
             _audioPlayer.ApplyEqualizerSettings(CurrentEqualizerSettings);
 
             var restoredSuccessfully = false;
-            if (restoreLastSession && restoreEnabledTask.Result)
-            {
-                var savedState = playbackStateTask.Result;
-                if (savedState != null) restoredSuccessfully = await RestoreInternalPlaybackStateAsync(savedState);
-            }
+            if (restoreLastSession && _settingsService.Get(CoreSettings.RestorePlaybackState) && savedState != null)
+                restoredSuccessfully = await RestoreInternalPlaybackStateAsync(savedState);
 
             if (_isDisposed) return;
             if (!restoredSuccessfully) ClearQueuesInternal();
@@ -206,7 +189,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         {
             if (_isDisposed) return;
             _logger.LogError(ex, "MusicPlaybackService initialization failed. Using default settings.");
-            await _audioPlayer.SetVolumeAsync(0.5);
+            await _audioPlayer.SetVolumeAsync(CoreSettings.Volume.Default);
             if (_isDisposed) return;
             await _audioPlayer.SetMuteAsync(false);
             if (_isDisposed) return;
@@ -600,14 +583,14 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     public async Task SetVolumeAsync(double volume)
     {
         await _audioPlayer.SetVolumeAsync(volume);
-        await _settingsService.SaveVolumeAsync(_audioPlayer.Volume);
+        _settingsService.Set(CoreSettings.Volume, _audioPlayer.Volume);
     }
 
     public async Task ToggleMuteAsync()
     {
         var newMuteState = !_audioPlayer.IsMuted;
         await _audioPlayer.SetMuteAsync(newMuteState);
-        await _settingsService.SaveMuteStateAsync(newMuteState);
+        _settingsService.Set(CoreSettings.IsMuted, newMuteState);
     }
 
     public async Task SetPlaybackRateAsync(double rate)
@@ -617,9 +600,9 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         PlaybackRate = rate;
     }
 
-    public async Task SetShuffleAsync(bool enable)
+    public Task SetShuffleAsync(bool enable)
     {
-        if (IsShuffleEnabled == enable) return;
+        if (IsShuffleEnabled == enable) return Task.CompletedTask;
 
         IsShuffleEnabled = enable;
         CurrentShuffleMode = ShuffleMode.Random;
@@ -635,20 +618,22 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         }
         CommitQueueChanges();
 
-        await _settingsService.SaveShuffleStateAsync(IsShuffleEnabled);
+        _settingsService.Set(CoreSettings.IsShuffleEnabled, IsShuffleEnabled);
         ShuffleModeChanged?.Invoke();
         UpdateMediaControlsNavigation();
+        return Task.CompletedTask;
     }
 
-    public async Task SetRepeatModeAsync(RepeatMode mode)
+    public Task SetRepeatModeAsync(RepeatMode mode)
     {
-        if (CurrentRepeatMode == mode) return;
+        if (CurrentRepeatMode == mode) return Task.CompletedTask;
 
         CurrentRepeatMode = mode;
         _logger.LogDebug("Repeat mode set to {RepeatMode}", CurrentRepeatMode);
-        await _settingsService.SaveRepeatModeAsync(CurrentRepeatMode);
+        _settingsService.Set(CoreSettings.RepeatMode, CurrentRepeatMode);
         RepeatModeChanged?.Invoke();
         UpdateMediaControlsNavigation();
+        return Task.CompletedTask;
     }
 
     public Task PlayQueueItemAsync(int originalQueueIndex) =>
@@ -808,10 +793,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         _mediaControls.NextPressed -= OnMediaControlsNextPressed;
         _mediaControls.PreviousPressed -= OnMediaControlsPreviousPressed;
         _mediaControls.SeekRequested -= OnMediaControlsSeekRequested;
-        _settingsService.VolumeNormalizationEnabledChanged -= OnVolumeNormalizationEnabledChanged;
-        _settingsService.FadeOnPlayPauseEnabledChanged -= OnFadeOnPlayPauseEnabledChanged;
-        _settingsService.FadeInDurationChanged -= OnFadeInDurationChanged;
-        _settingsService.FadeOutDurationChanged -= OnFadeOutDurationChanged;
+        _settingsService.SettingChanged -= OnSettingChanged;
     }
 
     private void UpdateMediaControlsNavigation()

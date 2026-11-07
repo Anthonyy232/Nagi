@@ -29,11 +29,9 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
         _audioPlayer = Substitute.For<IAudioPlayer>();
         _library = new LibraryFakes();
         _library.Writer.MarkListenAsEligibleForScrobblingAsync(Arg.Any<long>()).Returns(true);
-        var settingsService = Substitute.For<ISettingsService>();
+        var settingsService = TestSettings.Create();
         var metadataService = Substitute.For<IMetadataService>();
         var logger = Substitute.For<ILogger<MusicPlaybackService>>();
-
-        settingsService.GetInitialVolumeAsync().Returns(0.5);
 
         _audioPlayer.GetEqualizerBands().Returns(new List<(uint, float)> { (0, 60f), (1, 170f) });
 

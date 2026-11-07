@@ -10,6 +10,7 @@ using Nagi.Core.Models.Lyrics;
 using Nagi.Core.Models.Romanization;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations.Romanization;
+using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
@@ -467,8 +468,8 @@ public sealed class RomanizationPackTests : IDisposable
         InstalledRomanizationPack? installedPack,
         params InstalledRomanizationPack[] additionalInstalledPacks)
     {
-        var settings = Substitute.For<ISettingsService>();
-        settings.GetLyricsRomanizationEnabledAsync().Returns(Task.FromResult(isEnabled));
+        var settings = TestSettings.Create();
+        settings.Set(CoreSettings.LyricsRomanization, isEnabled);
 
         var installedPacks = new List<InstalledRomanizationPack>();
         if (installedPack is not null) installedPacks.Add(installedPack);

@@ -7,6 +7,7 @@ using Nagi.Core.Services.Implementations;
 using Nagi.Core.Services.Implementations.Presence;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
+using Nagi.Core.Settings;
 
 namespace Nagi.Presentation.Services;
 
@@ -41,7 +42,7 @@ public static class AppServices
         await windowTask;
 
         var presenceTask = services.GetRequiredService<PresenceManager>().InitializeAsync();
-        var trayTask = services.GetRequiredService<TrayIconViewModel>().InitializeAsync();
+        services.GetRequiredService<TrayIconViewModel>().Initialize();
         var appInfoTask = services.GetRequiredService<IAppInfoService>().InitializeAsync();
 
         // playback and settings both need EF ready. LoadSettingsAsync also reads
@@ -57,7 +58,7 @@ public static class AppServices
         await playbackTask;
         var settingsTask = services.GetRequiredService<SettingsViewModel>().LoadSettingsAsync();
 
-        await Task.WhenAll(presenceTask, trayTask, scrobbleTask, appInfoTask, settingsTask);
+        await Task.WhenAll(presenceTask, scrobbleTask, appInfoTask, settingsTask);
 
         logger.LogInformation("Core services initialized successfully.");
     }
@@ -101,7 +102,7 @@ public static class AppServices
 
         try
         {
-            if (await settingsService.GetRestorePlaybackStateEnabledAsync())
+            if (settingsService.Get(CoreSettings.RestorePlaybackState))
                 await musicPlaybackService.SavePlaybackStateAsync();
             else
                 services.GetRequiredService<IPlaybackStateStore>().Clear();

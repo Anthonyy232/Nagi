@@ -21,6 +21,4 @@ public class ServiceProviderSetting
     ///     Priority order: lower is higher priority, 0 is highest.
     /// </summary>
     public int Order { get; set; }
-
-    public string? Description { get; set; }
 }

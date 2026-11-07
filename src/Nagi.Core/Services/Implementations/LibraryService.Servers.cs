@@ -5,6 +5,7 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -154,8 +155,8 @@ public partial class LibraryService
                            .FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false)
                        // Removed while this sync waited for the scan lock.
                        ?? throw new OperationCanceledException($"Server folder {folderId} was removed.");
-        var artistSplitCharacters = await _settingsService.GetArtistSplitCharactersAsync().ConfigureAwait(false);
-        var genreSplitCharacters = await _settingsService.GetGenreSplitCharactersAsync().ConfigureAwait(false);
+        var artistSplitCharacters = _settingsService.Get(CoreSettings.ArtistSplitCharacters);
+        var genreSplitCharacters = _settingsService.Get(CoreSettings.GenreSplitCharacters);
         foreach (var song in songs)
         {
             // Under the root, so folder browsing lists the song there, and escaped, so an ID with a slash can't make subfolders.

@@ -8,6 +8,7 @@ using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
+using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
@@ -27,7 +28,8 @@ public class LastFmScrobblerServiceTests : IDisposable
     private readonly TestHttpMessageHandler _httpMessageHandler;
     private readonly ILogger<LastFmScrobblerService> _logger;
     private readonly LastFmScrobblerService _scrobblerService;
-    private readonly ISettingsService _settingsService;
+    private readonly ICredentialLockerService _credentials;
+    private readonly SettingsService _settingsService;
 
     private Dictionary<string, string>? _capturedRequestParams;
 
@@ -37,7 +39,8 @@ public class LastFmScrobblerServiceTests : IDisposable
     {
         _httpClientFactory = Substitute.For<IHttpClientFactory>();
         _apiKeyService = Substitute.For<IApiKeyService>();
-        _settingsService = Substitute.For<ISettingsService>();
+        _credentials = Substitute.For<ICredentialLockerService>();
+        _settingsService = TestSettings.Create(credentials: _credentials);
         _httpMessageHandler = new TestHttpMessageHandler();
         _logger = Substitute.For<ILogger<LastFmScrobblerService>>();
         _dbHelper = new DbContextFactoryTestHelper();
@@ -135,7 +138,7 @@ public class LastFmScrobblerServiceTests : IDisposable
         _apiKeyService.GetApiKeyAsync("lastfm").Returns(Task.FromResult(apiKey));
         _apiKeyService.GetApiKeyAsync("lastfm-secret").Returns(Task.FromResult(apiSecret));
         (string?, string?)? credentials = sessionKey != null ? ("user", sessionKey) : null;
-        _settingsService.GetLastFmCredentialsAsync().Returns(Task.FromResult(credentials));
+        _credentials.RetrieveCredential("Nagi/LastFm").Returns(credentials);
 
         var nowPlayingResult = await _scrobblerService.UpdateNowPlayingAsync(CreateTestSong());
         var scrobbleResult = await _scrobblerService.ScrobbleAsync(CreateTestSong(), DateTime.UtcNow);
@@ -224,7 +227,7 @@ public class LastFmScrobblerServiceTests : IDisposable
     [InlineData("<lfm status='ok'><scrobbles accepted='0' ignored='1'><scrobble><ignoredMessage code='3'>Timestamp too old</ignoredMessage></scrobble></scrobbles></lfm>")]
     public async Task ProcessPendingListensAsync_AcknowledgedOrPermanentlyRejectedListensDoNotBlockQueue(string firstResponse)
     {
-        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.LastFmScrobbling, true);
         SetupValidCredentials();
         _httpMessageHandler.RespondSequence(
             (HttpStatusCode.OK, firstResponse),
@@ -261,7 +264,7 @@ public class LastFmScrobblerServiceTests : IDisposable
     [InlineData(HttpStatusCode.OK, "")]
     public async Task ProcessPendingListensAsync_RecoverableFailurePreservesRemainingListensForRetry(HttpStatusCode status, string body)
     {
-        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(true);
+        _settingsService.Set(CoreSettings.LastFmScrobbling, true);
         SetupValidCredentials();
 
         _httpMessageHandler.RespondSequence(
@@ -326,8 +329,7 @@ public class LastFmScrobblerServiceTests : IDisposable
     {
         _apiKeyService.GetApiKeyAsync("lastfm").Returns(Task.FromResult<string?>(ApiKey));
         _apiKeyService.GetApiKeyAsync("lastfm-secret").Returns(Task.FromResult<string?>(ApiSecret));
-        _settingsService.GetLastFmCredentialsAsync()
-            .Returns(Task.FromResult<(string?, string?)?>(("user", SessionKey)));
+        _credentials.RetrieveCredential("Nagi/LastFm").Returns(("user", SessionKey));
     }
     private void SetupHttpResponse(HttpStatusCode statusCode)
     {

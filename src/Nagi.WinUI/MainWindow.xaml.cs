@@ -18,6 +18,9 @@ using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Implementations;
 using WinRT.Interop;
+using Nagi.Core.Settings;
+using Nagi.Presentation.Services;
+using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.WinUI;
 
@@ -39,7 +42,7 @@ public sealed partial class MainWindow : Window
     private bool _isTitleBarInitialized;
     private ILogger<MainWindow>? _logger;
     private FrameworkElement? _rootElement;
-    private IUISettingsService? _settingsService;
+    private ISettingsService? _settingsService;
     private TaskbarService? _taskbarService;
     private TransparencyEffectsMonitor? _transparencyEffects;
 
@@ -54,7 +57,7 @@ public sealed partial class MainWindow : Window
         ExtendsContentIntoTitleBar = true;
     }
 
-    public void InitializeDependencies(IUISettingsService settingsService, TaskbarService taskbarService,
+    public void InitializeDependencies(ISettingsService settingsService, TaskbarService taskbarService,
         TransparencyEffectsMonitor transparencyEffects, ILogger<MainWindow> logger)
     {
         _settingsService = settingsService;
@@ -66,7 +69,7 @@ public sealed partial class MainWindow : Window
         _lastWindowPosition = _appWindow.Position;
         _appWindow.Changed += OnWindowGeometryChanged;
         Activated += OnWindowActivated;
-        _settingsService.BackdropMaterialChanged += OnBackdropMaterialChanged;
+        _settingsService.SettingChanged += OnSettingChanged;
         _transparencyEffects.Changed += OnTransparencyEffectsChanged;
     }
 
@@ -78,10 +81,7 @@ public sealed partial class MainWindow : Window
         if (_appWindow != null) _appWindow.Changed -= OnWindowGeometryChanged;
 
         if (_rootElement != null) _rootElement.ActualThemeChanged -= OnActualThemeChanged;
-        if (_settingsService != null)
-        {
-            _settingsService.BackdropMaterialChanged -= OnBackdropMaterialChanged;
-        }
+        if (_settingsService != null) _settingsService.SettingChanged -= OnSettingChanged;
 
         if (_transparencyEffects != null) _transparencyEffects.Changed -= OnTransparencyEffectsChanged;
 
@@ -150,7 +150,7 @@ public sealed partial class MainWindow : Window
 
         if (!_isBackdropInitialized)
         {
-            _ = TrySetBackdropAsync();
+            TrySetBackdrop();
             _isBackdropInitialized = true;
         }
 
@@ -167,21 +167,21 @@ public sealed partial class MainWindow : Window
     ///     Saves the current window size and/or position if the respective settings are enabled.
     ///     This should be called explicitly by the application before shutdown.
     /// </summary>
-    public async Task SaveWindowStateAsync()
+    public void SaveWindowState()
     {
         if (_settingsService == null) return;
 
-        if (await _settingsService.GetRememberWindowSizeEnabledAsync())
+        if (_settingsService.Get(AppSettings.RememberWindowSize))
         {
             var size = _lastWindowSize;
-            await _settingsService.SetLastWindowSizeAsync(size.Width, size.Height);
+            _settingsService.Set(AppSettings.LastWindowSize, (size.Width, size.Height));
             _logger?.LogDebug("Saving window size: {Width}x{Height}", size.Width, size.Height);
         }
 
-        if (await _settingsService.GetRememberWindowPositionEnabledAsync())
+        if (_settingsService.Get(AppSettings.RememberWindowPosition))
         {
             var position = _lastWindowPosition;
-            await _settingsService.SetLastWindowPositionAsync(position.X, position.Y);
+            _settingsService.Set(AppSettings.LastWindowPosition, (position.X, position.Y));
             _logger?.LogDebug("Saving window position: ({X}, {Y})", position.X, position.Y);
         }
     }
@@ -194,14 +194,14 @@ public sealed partial class MainWindow : Window
         if (args.DidPositionChange) _lastWindowPosition = sender.Position;
     }
 
-    private void OnBackdropMaterialChanged(BackdropMaterial material)
+    private void OnSettingChanged(Setting setting)
     {
-        _ = TrySetBackdropAsync(material);
+        if (setting == AppSettings.BackdropMaterial) DispatcherQueue.TryEnqueue(TrySetBackdrop);
     }
 
     private void OnTransparencyEffectsChanged(bool isEnabled)
     {
-        _ = TrySetBackdropAsync();
+        TrySetBackdrop();
     }
 
     private void OnActualThemeChanged(FrameworkElement sender, object args)
@@ -209,7 +209,7 @@ public sealed partial class MainWindow : Window
         UpdateTitleBarTheme();
     }
 
-    private async Task TrySetBackdropAsync(BackdropMaterial? material = null)
+    private void TrySetBackdrop()
     {
         if (_settingsService is null || _transparencyEffects is null) return;
 
@@ -219,9 +219,7 @@ public sealed partial class MainWindow : Window
             // The framework handles the controllers and configuration automatically.
             if (_transparencyEffects.IsEnabled)
             {
-                material ??= await _settingsService.GetBackdropMaterialAsync();
-
-                switch (material)
+                switch (_settingsService.Get(AppSettings.BackdropMaterial))
                 {
                     case BackdropMaterial.Mica:
                         SystemBackdrop = new MicaBackdrop { Kind = MicaKind.Base };
@@ -279,7 +277,7 @@ public sealed partial class MainWindow : Window
     ///     Restores the main window size and/or position from saved settings if the features are enabled.
     ///     This should be called before the window is shown to prevent visual flashes.
     /// </summary>
-    public async Task RestoreWindowStateAsync()
+    public void RestoreWindowState()
     {
         if (_settingsService == null) return;
 
@@ -287,11 +285,11 @@ public sealed partial class MainWindow : Window
 
         try
         {
-            var savedSize = await _settingsService.GetRememberWindowSizeEnabledAsync()
-                ? await _settingsService.GetLastWindowSizeAsync()
+            var savedSize = _settingsService.Get(AppSettings.RememberWindowSize)
+                ? _settingsService.Get(AppSettings.LastWindowSize)
                 : null;
-            var savedPosition = await _settingsService.GetRememberWindowPositionEnabledAsync()
-                ? await _settingsService.GetLastWindowPositionAsync()
+            var savedPosition = _settingsService.Get(AppSettings.RememberWindowPosition)
+                ? _settingsService.Get(AppSettings.LastWindowPosition)
                 : null;
 
             if (savedSize.HasValue && savedPosition.HasValue)

@@ -6,6 +6,8 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Helpers;
+using Nagi.Core.Settings;
+using Nagi.Presentation.Services;
 
 namespace Nagi.WinUI.Services.Implementations;
 
@@ -14,10 +16,10 @@ public class ThemeService : IThemeService
     private readonly MainWindow _window;
     private readonly ILogger<ThemeService> _logger;
     private readonly IMusicPlaybackService _playbackService;
-    private readonly IUISettingsService _settingsService;
+    private readonly ISettingsService _settingsService;
     private readonly IDispatcherService _dispatcherService;
 
-    public ThemeService(MainWindow window, IUISettingsService settingsService, IMusicPlaybackService playbackService,
+    public ThemeService(MainWindow window, ISettingsService settingsService, IMusicPlaybackService playbackService,
         IDispatcherService dispatcherService, ILogger<ThemeService> logger)
     {
         _window = window;
@@ -52,14 +54,14 @@ public class ThemeService : IThemeService
     public async Task ApplyDynamicThemeFromSwatchesAsync(string? lightSwatchId, string? darkSwatchId)
     {
         var isLightTheme = await IsLightThemeAsync();
-        SetAppColors(ThemePalette.ForTrack(await _settingsService.GetDynamicThemingAsync(), lightSwatchId, darkSwatchId,
-            await _settingsService.GetAccentColorAsync(), isLightTheme, await _settingsService.GetPlayerTintIntensityAsync()));
+        SetAppColors(ThemePalette.ForTrack(_settingsService.Get(AppSettings.DynamicTheming), lightSwatchId, darkSwatchId,
+            _settingsService.Get(AppSettings.AccentColor), isLightTheme, _settingsService.Get(AppSettings.PlayerTintIntensity)));
     }
 
     public async Task ApplyAccentColorAsync(ArgbColor? color)
     {
         var isLightTheme = await IsLightThemeAsync();
-        SetAppColors(ThemePalette.ForAccent(color, isLightTheme, await _settingsService.GetPlayerTintIntensityAsync()));
+        SetAppColors(ThemePalette.ForAccent(color, isLightTheme, _settingsService.Get(AppSettings.PlayerTintIntensity)));
     }
 
     private void SetAppColors(ThemePalette palette)

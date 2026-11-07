@@ -4,8 +4,10 @@ using Microsoft.Extensions.Time.Testing;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Services.Implementations;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
+using Nagi.Presentation.Services;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 using NSubstitute;
@@ -16,7 +18,7 @@ namespace Nagi.Presentation.Tests;
 public partial class PlayerViewModelTests : IDisposable
 {
     private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
-    private readonly IUISettingsService _settings = Substitute.For<IUISettingsService>();
+    private readonly SettingsService _settings = TestSettings.Create();
     private readonly IDispatcherService _dispatcher = Substitute.For<IDispatcherService>();
     private readonly FakeTimeProvider _time = new();
     private readonly PlayerViewModel _viewModel;
@@ -27,11 +29,7 @@ public partial class PlayerViewModelTests : IDisposable
         _dispatcher.HasThreadAccess.Returns(true);
         _dispatcher.EnqueueAsync(Arg.Any<Func<Task>>()).Returns(call => call.Arg<Func<Task>>()());
         _playback.PlaybackQueue.Returns(Array.Empty<Guid>());
-        _settings.GetPlayerButtonSettingsAsync().Returns(new List<PlayerButtonSetting>
-        {
-            new() { Id = "Volume", DisplayName = "Volume", IsEnabled = true }
-        });
-        _settings.GetQueueDisplaySettingsAsync().Returns(new QueueDisplaySettings());
+        _settings.Set(AppSettings.PlayerButtons, [new PlayerButtonSetting { Id = "Volume", DisplayName = "Volume", IsEnabled = true }]);
         _viewModel = new PlayerViewModel(_playback, Substitute.For<IMusicNavigationService>(),
             _dispatcher, _settings, Substitute.For<IWindowService>(),
             _library.Reader, _library.Writer, _library.Scanner, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>(), _time);

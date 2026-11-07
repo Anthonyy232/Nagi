@@ -14,6 +14,8 @@ using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services;
+using Nagi.Core.Settings;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -98,7 +100,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     private readonly ISmartPlaylistService _smartPlaylistService;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
-    private readonly IUISettingsService _settingsService;
+    private readonly ISettingsService _settingsService;
     private readonly IUIService _uiService;
     private bool _hasSortOrderLoaded;
     private readonly List<PlaylistViewModelItem> _allPlaylists = new();
@@ -108,7 +110,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 
     public PlaylistViewModel(ILibraryReader libraryReader, ILibraryScanner libraryScanner, IPlaylistService playlistService, ISmartPlaylistService smartPlaylistService,
         IMusicPlaybackService musicPlaybackService, INavigationService navigationService, IUIService uiService,
-        IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<PlaylistViewModel> logger)
+        ISettingsService settingsService, IDispatcherService dispatcherService, ILogger<PlaylistViewModel> logger)
         : base(dispatcherService, logger)
     {
         _libraryReader = libraryReader;
@@ -313,26 +315,17 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         try
         {
             StatusMessage = Strings.Playlist_Status_Loading;
-            Task<PlaylistSortOrder>? sortTask = null;
-            if (!_hasSortOrderLoaded)
-            {
-                sortTask = _settingsService.GetSortOrderAsync<PlaylistSortOrder>(SortOrderHelper.PlaylistsSortOrderKey);
-            }
-
             var playlistsTask = _libraryReader.GetAllPlaylistsAsync();
             var smartPlaylistsTask = _smartPlaylistService.GetAllSmartPlaylistsAsync();
             var matchCountsTask = _smartPlaylistService.GetAllMatchingSongCountsAsync();
 
-            if (sortTask != null)
-                await Task.WhenAll(sortTask, playlistsTask, smartPlaylistsTask, matchCountsTask);
-            else
-                await Task.WhenAll(playlistsTask, smartPlaylistsTask, matchCountsTask);
+            await Task.WhenAll(playlistsTask, smartPlaylistsTask, matchCountsTask);
 
             if (_isDisposed || loadVersion != _loadVersion) return;
 
-            if (sortTask != null)
+            if (!_hasSortOrderLoaded)
             {
-                CurrentSortOrder = sortTask.Result;
+                CurrentSortOrder = _settingsService.Get(AppSettings.PlaylistsSortOrder);
                 _hasSortOrderLoaded = true;
             }
 
@@ -600,7 +593,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             && newSortOrder != CurrentSortOrder)
         {
             CurrentSortOrder = newSortOrder;
-            await _settingsService.SetSortOrderAsync(SortOrderHelper.PlaylistsSortOrderKey, newSortOrder);
+            _settingsService.Set(AppSettings.PlaylistsSortOrder, newSortOrder);
             ApplyFilter();
         }
     }

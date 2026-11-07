@@ -8,6 +8,8 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services;
+using Nagi.Core.Settings;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -23,17 +25,18 @@ public partial class LibraryViewModel : SongListViewModelBase
         IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService,
-        IUISettingsService settingsService,
+        ISettingsService settingsService,
         IUIService uiService,
         ILogger<LibraryViewModel> logger)
         : base(libraryReader, libraryWriter, libraryScanner, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
         PageTitle = Strings.LibraryPage_Title;
-        _settingsService.IgnoreLeadingArticlesOnSortEnabledChanged += OnIgnoreLeadingArticlesOnSortChanged;
+        _settingsService.SettingChanged += OnSettingChanged;
     }
 
-    private void OnIgnoreLeadingArticlesOnSortChanged(bool value)
+    private void OnSettingChanged(Setting setting)
     {
+        if (setting != CoreSettings.IgnoreLeadingArticlesOnSort) return;
         _dispatcherService.TryEnqueue(() =>
         {
             CurrentPage = 1;
@@ -43,7 +46,7 @@ public partial class LibraryViewModel : SongListViewModelBase
 
     public override void Dispose()
     {
-        _settingsService.IgnoreLeadingArticlesOnSortEnabledChanged -= OnIgnoreLeadingArticlesOnSortChanged;
+        _settingsService.SettingChanged -= OnSettingChanged;
         base.Dispose();
     }
 
@@ -74,7 +77,7 @@ public partial class LibraryViewModel : SongListViewModelBase
     public async Task InitializeAsync()
     {
         _logger.LogDebug("Initializing LibraryViewModel");
-        CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.LibrarySortOrderKey);
+        CurrentSortOrder = _settingsService.Get(AppSettings.LibrarySortOrder);
 
         await RefreshOrSortSongsCommand.ExecuteAsync(null);
         HasInitialized = !HasLoadError;
@@ -115,7 +118,8 @@ public partial class LibraryViewModel : SongListViewModelBase
 
     protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
     {
-        return _settingsService.SetSortOrderAsync(SortOrderHelper.LibrarySortOrderKey, sortOrder);
+        _settingsService.Set(AppSettings.LibrarySortOrder, sortOrder);
+        return Task.CompletedTask;
     }
 
 }

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Settings;
 using NSubstitute;
 using Xunit;
 
@@ -107,8 +108,8 @@ public partial class LibraryServiceTests
         var client = ServerWith(song);
         await _libraryService.SyncServerFolderAsync(folder.Id, client);
 
-        _settingsService.GetArtistSplitCharactersAsync().Returns(";");
-        _settingsService.GetGenreSplitCharactersAsync().Returns("/");
+        _settingsService.Set(CoreSettings.ArtistSplitCharacters, ";");
+        _settingsService.Set(CoreSettings.GenreSplitCharacters, "/");
         await _libraryService.SyncServerFolderAsync(folder.Id, client);
 
         await using var context = _dbHelper.ContextFactory.CreateDbContext();

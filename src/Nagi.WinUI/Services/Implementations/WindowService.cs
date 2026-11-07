@@ -7,6 +7,8 @@ using Microsoft.UI.Xaml;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Helpers;
+using Nagi.Core.Settings;
+using Nagi.Presentation.Services;
 
 namespace Nagi.WinUI.Services.Implementations;
 
@@ -14,12 +16,11 @@ public sealed class WindowService : IWindowService, IDisposable
 {
     private readonly IDispatcherService _dispatcherService;
     private readonly ILogger<WindowService> _logger;
-    private readonly IUISettingsService _settingsService;
+    private readonly ISettingsService _settingsService;
     private readonly Win32InteropService _win32InteropService;
     private AppWindow? _appWindow;
     private bool _isClosingMiniPlayerProgrammatically;
     private bool _isDisposed;
-    private volatile bool _isMiniPlayerEnabled;
     private bool? _lastEfficiencyMode;
 
     private readonly MainWindow _mainWindow;
@@ -27,7 +28,7 @@ public sealed class WindowService : IWindowService, IDisposable
     private MiniPlayerWindow? _miniPlayerWindow;
 
     public WindowService(MainWindow mainWindow, Func<MiniPlayerWindow> createMiniPlayerWindow,
-        Win32InteropService win32InteropService, IUISettingsService settingsService,
+        Win32InteropService win32InteropService, ISettingsService settingsService,
         IDispatcherService dispatcherService, ILogger<WindowService> logger)
     {
         _createMiniPlayerWindow = createMiniPlayerWindow;
@@ -54,8 +55,6 @@ public sealed class WindowService : IWindowService, IDisposable
             _appWindow.Changed -= OnAppWindowChanged;
             _appWindow.IsShownInSwitchers = true;
         }
-
-        _settingsService.MinimizeToMiniPlayerSettingChanged -= OnMinimizeToMiniPlayerSettingChanged;
 
         // Synchronous cleanup of mini player state. Capture and null the reference
         // to prevent any in-flight operations from using a stale window.
@@ -101,16 +100,16 @@ public sealed class WindowService : IWindowService, IDisposable
 
     public bool IsShowingOnboarding => _mainWindow.Content is Pages.OnboardingPage;
 
-    public async Task InitializeAsync()
+    private bool IsMiniPlayerEnabled => _settingsService.Get(AppSettings.MinimizeToMiniPlayer);
+
+    public Task InitializeAsync()
     {
         _appWindow = _mainWindow.AppWindow;
 
         _appWindow.Closing += OnAppWindowClosing;
         _mainWindow.Closed += OnWindowClosed;
         _appWindow.Changed += OnAppWindowChanged;
-        _settingsService.MinimizeToMiniPlayerSettingChanged += OnMinimizeToMiniPlayerSettingChanged;
-
-        _isMiniPlayerEnabled = await _settingsService.GetMinimizeToMiniPlayerEnabledAsync();
+        return Task.CompletedTask;
     }
 
     public void Hide()
@@ -157,7 +156,7 @@ public sealed class WindowService : IWindowService, IDisposable
 
     public void ShowMiniPlayer()
     {
-        if (!_isMiniPlayerEnabled || _miniPlayerWindow is not null) return;
+        if (!IsMiniPlayerEnabled || _miniPlayerWindow is not null) return;
 
         _dispatcherService.TryEnqueue(() =>
         {
@@ -166,7 +165,7 @@ public sealed class WindowService : IWindowService, IDisposable
             try
             {
                 // Re-check inside the dispatched action to handle race conditions.
-                if (!_isMiniPlayerEnabled || _miniPlayerWindow is not null) return;
+                if (!IsMiniPlayerEnabled || _miniPlayerWindow is not null) return;
 
                 _miniPlayerWindow = _createMiniPlayerWindow();
                 _miniPlayerWindow.Closed += OnMiniPlayerClosed;
@@ -180,11 +179,6 @@ public sealed class WindowService : IWindowService, IDisposable
                 _miniPlayerWindow = null;
             }
         });
-    }
-
-    private void OnMinimizeToMiniPlayerSettingChanged(bool isEnabled)
-    {
-        _isMiniPlayerEnabled = isEnabled;
     }
 
     private void OnAppWindowClosing(AppWindow sender, AppWindowClosingEventArgs args)
@@ -207,7 +201,7 @@ public sealed class WindowService : IWindowService, IDisposable
             {
                 case OverlappedPresenterState.Minimized:
                     // Nothing can be playing during onboarding, so minimizing it stays an ordinary minimize.
-                    if (_isMiniPlayerEnabled && !IsShowingOnboarding)
+                    if (IsMiniPlayerEnabled && !IsShowingOnboarding)
                     {
                         _appWindow.IsShownInSwitchers = false;
                         ShowMiniPlayer();

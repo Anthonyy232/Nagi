@@ -7,6 +7,7 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Resources;
+using Nagi.Core.Settings;
 
 namespace Nagi.Audio.LibVlc;
 
@@ -52,8 +53,8 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private double _userVolume = 1.0;
     private volatile bool _isFading;
     private volatile bool _isFadeOnPlayPauseEnabled;
-    private int _fadeInDurationMs = 200;
-    private int _fadeOutDurationMs = 150;
+    private int _fadeInDurationMs = CoreSettings.FadeInDurationMs.Default;
+    private int _fadeOutDurationMs = CoreSettings.FadeOutDurationMs.Default;
     private CancellationTokenSource? _fadeCts;
 
     private float _playbackRate = 1f;
@@ -94,8 +95,8 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         try
         {
             if (_isInitialized || _isDisposed) return;
-            var useWasapiExclusive = await _settingsService.GetWasapiExclusiveModeEnabledAsync().ConfigureAwait(false);
-            var outputDeviceId = await _settingsService.GetAudioOutputDeviceIdAsync().ConfigureAwait(false);
+            var useWasapiExclusive = _settingsService.Get(CoreSettings.WasapiExclusiveMode);
+            var outputDeviceId = _settingsService.Get(CoreSettings.AudioOutputDeviceId);
             await Task.Run(() => InitializeLibVlcCore(useWasapiExclusive, outputDeviceId), _disposeCts.Token).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (_isDisposed)

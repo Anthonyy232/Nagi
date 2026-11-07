@@ -101,7 +101,7 @@ public class SongListViewModelTests
     private sealed class TestSongList(Func<int, int, CancellationToken, Task<PagedResult<Song>>> load)
         : SongListViewModelBase(Substitute.For<ILibraryReader>(), Substitute.For<ILibraryWriter>(), Substitute.For<ILibraryScanner>(), Substitute.For<IPlaylistService>(),
             Substitute.For<IMusicPlaybackService>(),
-            Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), Substitute.For<IUISettingsService>(),
+            Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), TestSettings.Create(),
             Substitute.For<IUIService>(), NullLogger.Instance)
     {
         protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
@@ -130,7 +130,7 @@ public class SongListViewModelTests
     private sealed class SelectionTestList(Task<List<Guid>> ids, IMusicPlaybackService? playback = null, IUIService? ui = null)
         : SongListViewModelBase(Substitute.For<ILibraryReader>(), Substitute.For<ILibraryWriter>(), Substitute.For<ILibraryScanner>(), Substitute.For<IPlaylistService>(),
             playback ?? Substitute.For<IMusicPlaybackService>(),
-            Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), Substitute.For<IUISettingsService>(),
+            Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), TestSettings.Create(),
             ui ?? Substitute.For<IUIService>(), NullLogger.Instance)
     {
         protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default) => ids;

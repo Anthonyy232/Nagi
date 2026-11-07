@@ -100,8 +100,7 @@ public class AlbumViewViewModelTests
 
     private static AlbumViewViewModel CreateViewModel(LibraryFakes library, IDispatcherService? dispatcher = null)
     {
-        var settings = Substitute.For<IUISettingsService>();
-        settings.GetSongsPerPageAsync().Returns(50);
+        var settings = TestSettings.Create();
         return new AlbumViewViewModel(library.Reader, library.Writer, library.Scanner, Substitute.For<IPlaylistService>(),
             Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), dispatcher ?? new ImmediateDispatcher(), settings,

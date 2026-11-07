@@ -33,7 +33,7 @@ public class LibraryServiceEventTests : IDisposable
 
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
-        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, Substitute.For<ISettingsService>(), Substitute.For<ILogger<LibraryReader>>());
+        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, TestSettings.Create());
 
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
@@ -44,7 +44,7 @@ public class LibraryServiceEventTests : IDisposable
             Substitute.For<IAlbumCoverService>(),
             Substitute.For<IHttpClientFactory>(),
             Substitute.For<IPathConfiguration>(),
-            Substitute.For<ISettingsService>(),
+            TestSettings.Create(),
             Substitute.For<IReplayGainService>(),
             Substitute.For<IImageProcessor>(),
             _pipelines,
@@ -54,7 +54,6 @@ public class LibraryServiceEventTests : IDisposable
     public void Dispose()
     {
         _libraryService.Dispose();
-        _libraryReader.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
     }

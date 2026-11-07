@@ -10,6 +10,8 @@ using Nagi.Core.Services.Data;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services;
+using Nagi.Core.Settings;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -25,7 +27,7 @@ public partial class GenreViewViewModel : SongListViewModelBase
         IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService,
-        IUISettingsService settingsService,
+        ISettingsService settingsService,
         IUIService uiService,
         ILogger<GenreViewViewModel> logger)
         : base(libraryReader, libraryWriter, libraryScanner, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
@@ -70,7 +72,7 @@ public partial class GenreViewViewModel : SongListViewModelBase
         GenreName = navParam.GenreName;
         PageTitle = navParam.GenreName;
 
-        var sortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.GenreViewSortOrderKey);
+        var sortOrder = _settingsService.Get(AppSettings.GenreViewSortOrder);
         CurrentSortOrder = sortOrder;
         await RefreshOrSortSongsAsync();
     }
@@ -80,7 +82,8 @@ public partial class GenreViewViewModel : SongListViewModelBase
 
     protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
     {
-        return _settingsService.SetSortOrderAsync(SortOrderHelper.GenreViewSortOrderKey, sortOrder);
+        _settingsService.Set(AppSettings.GenreViewSortOrder, sortOrder);
+        return Task.CompletedTask;
     }
 
 }

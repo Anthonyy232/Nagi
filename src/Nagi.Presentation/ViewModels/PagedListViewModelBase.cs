@@ -9,6 +9,7 @@ using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Services;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Core.Settings;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -22,7 +23,7 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
 {
     protected readonly ILibraryReader _libraryReader;
     protected readonly ILibraryScanner _libraryScanner;
-    protected readonly IUISettingsService _settingsService;
+    protected readonly ISettingsService _settingsService;
 
     protected readonly object _loadLock = new();
     private readonly Debouncer _libraryChangeDebouncer = new(TimeSpan.FromSeconds(1));
@@ -46,13 +47,13 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     public partial int TotalPages { get; set; } = 1;
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasNextPage), nameof(HasPreviousPage))]
-    public partial int SongsPerPage { get; set; } = SettingsDefaults.DefaultSongsPerPage;
+    public partial int SongsPerPage { get; set; } = AppSettings.SongsPerPage.Default;
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanPaginate))]
     public partial int TotalItemCount { get; set; }
 
     /// <summary>Paging only means something once there are more items than the smallest page holds.</summary>
-    public bool CanPaginate => TotalItemCount > SettingsDefaults.PageSizeOptions[0];
+    public bool CanPaginate => TotalItemCount > AppSettings.PageSizeOptions[0];
 
     public bool HasNextPage => IsPaginationEnabled && SongsPerPage != 0 && CurrentPage < TotalPages;
     public bool HasPreviousPage => IsPaginationEnabled && SongsPerPage != 0 && CurrentPage > 1;
@@ -69,7 +70,7 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     protected PagedListViewModelBase(
         ILibraryReader libraryReader,
         ILibraryScanner libraryScanner,
-        IUISettingsService settingsService,
+        ISettingsService settingsService,
         IDispatcherService dispatcherService,
         ILogger logger)
         : base(dispatcherService, logger)
@@ -78,12 +79,14 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
         _libraryScanner = libraryScanner;
         _settingsService = settingsService;
         _libraryScanner.LibraryContentChanged += OnLibraryContentChanged;
-        _settingsService.SongsPerPageChanged += OnSettingsSongsPerPageChanged;
+        _settingsService.SettingChanged += OnSettingChanged;
     }
 
     protected abstract Task<PagedResult<TItem>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token);
 
-    protected virtual Task LoadInitialSortOrderAsync() => Task.CompletedTask;
+    protected virtual void LoadInitialSortOrder()
+    {
+    }
 
     protected abstract string FormatTotalItemsText(int count);
 
@@ -134,8 +137,10 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
 
     partial void OnIsLoadingChanged(bool value) => OnLoadingStateChanged(value);
 
-    private void OnSettingsSongsPerPageChanged(int newSize)
+    private void OnSettingChanged(Setting setting)
     {
+        if (setting != AppSettings.SongsPerPage) return;
+        var newSize = _settingsService.Get(AppSettings.SongsPerPage);
         _dispatcherService.TryEnqueue(() =>
         {
             if (_isDisposed || SongsPerPage == newSize) return;
@@ -159,7 +164,7 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
 
         CancelInflightPageLoad();
 
-        _ = _settingsService.SetSongsPerPageAsync(value);
+        _settingsService.Set(AppSettings.SongsPerPage, value);
 
         _dispatcherService.TryEnqueue(() =>
         {
@@ -227,11 +232,11 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     ///     thereafter. Subclasses with an overridden load pipeline should call this once before
     ///     their first page query so they pick up the user's saved preference.
     /// </summary>
-    protected async Task EnsureInitialSettingsLoadedAsync()
+    protected void EnsureInitialSettingsLoaded()
     {
         if (_hasLoadedInitialSettings) return;
 
-        var pageSize = await _settingsService.GetSongsPerPageAsync();
+        var pageSize = _settingsService.Get(AppSettings.SongsPerPage);
         _isSettingSongsPerPage = true;
         try { SongsPerPage = pageSize; }
         finally { _isSettingSongsPerPage = false; }
@@ -265,11 +270,11 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
 
         try
         {
-            await EnsureInitialSettingsLoadedAsync();
+            EnsureInitialSettingsLoaded();
 
             if (!_hasLoadedInitialSortOrder)
             {
-                await LoadInitialSortOrderAsync();
+                LoadInitialSortOrder();
                 _hasLoadedInitialSortOrder = true;
             }
 
@@ -407,7 +412,7 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
         CancelPendingSearch();
 
         _libraryScanner.LibraryContentChanged -= OnLibraryContentChanged;
-        _settingsService.SongsPerPageChanged -= OnSettingsSongsPerPageChanged;
+        _settingsService.SettingChanged -= OnSettingChanged;
         CancelInflightPageLoad();
         _libraryChangeDebouncer.Dispose();
     }

@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using System.Diagnostics;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Implementations.Presence;
 
@@ -129,9 +130,8 @@ public class PresenceManager : IAsyncDisposable, IDisposable
         _playbackService.PlaybackStateChanged += OnPlaybackStateChanged;
         _playbackService.PositionChanged += OnPositionChanged;
         _playbackService.ScrobbleEligibilityReached += OnScrobbleEligibilityReached;
-        _settingsService.LastFmSettingsChanged += OnLastFmSettingsChanged;
-        _settingsService.ListenBrainzSettingsChanged += OnListenBrainzSettingsChanged;
-        _settingsService.DiscordRichPresenceSettingChanged += OnDiscordRichPresenceSettingChanged;
+        _settingsService.SettingChanged += OnSettingChanged;
+        _settingsService.CredentialsChanged += OnCredentialsChanged;
     }
 
     private void UnsubscribeFromEvents()
@@ -140,48 +140,39 @@ public class PresenceManager : IAsyncDisposable, IDisposable
         _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
         _playbackService.PositionChanged -= OnPositionChanged;
         _playbackService.ScrobbleEligibilityReached -= OnScrobbleEligibilityReached;
-        _settingsService.LastFmSettingsChanged -= OnLastFmSettingsChanged;
-        _settingsService.ListenBrainzSettingsChanged -= OnListenBrainzSettingsChanged;
-        _settingsService.DiscordRichPresenceSettingChanged -= OnDiscordRichPresenceSettingChanged;
+        _settingsService.SettingChanged -= OnSettingChanged;
+        _settingsService.CredentialsChanged -= OnCredentialsChanged;
     }
 
-    private void OnDiscordRichPresenceSettingChanged(bool isEnabled)
+    private void OnSettingChanged(Setting setting)
+    {
+        if (setting == CoreSettings.DiscordRichPresence) RefreshService("Discord");
+        else if (setting == CoreSettings.LastFmScrobbling || setting == CoreSettings.LastFmNowPlaying) RefreshService("Last.fm");
+        else if (setting == CoreSettings.ListenBrainzScrobbling || setting == CoreSettings.ListenBrainzNowPlaying)
+            RefreshService("ListenBrainz");
+    }
+
+    private void OnCredentialsChanged()
+    {
+        RefreshService("Last.fm");
+        RefreshService("ListenBrainz");
+    }
+
+    private void RefreshService(string name)
     {
         _ = HandleEventAsync(
             async () =>
             {
-                if (_presenceServices.TryGetValue("Discord", out var service))
-                    await SetServiceActiveAsync(service, isEnabled).ConfigureAwait(false);
-            },
-            "Discord presence setting change");
-    }
-
-    private void OnLastFmSettingsChanged()
-    {
-        _ = HandleEventAsync(
-            async () =>
-            {
-                if (_presenceServices.TryGetValue("Last.fm", out var service))
+                if (_presenceServices.TryGetValue(name, out var service))
                     await SetServiceActiveAsync(service).ConfigureAwait(false);
             },
-            "Last.fm settings change");
-    }
-
-    private void OnListenBrainzSettingsChanged()
-    {
-        _ = HandleEventAsync(
-            async () =>
-            {
-                if (_presenceServices.TryGetValue("ListenBrainz", out var service))
-                    await SetServiceActiveAsync(service).ConfigureAwait(false);
-            },
-            "ListenBrainz settings change");
+            $"{name} settings change");
     }
 
     private Task<bool> IsServiceEnabledAsync(IPresenceService service) =>
         service.Name switch
         {
-            "Discord" => _settingsService.GetDiscordRichPresenceEnabledAsync(),
+            "Discord" => Task.FromResult(_settingsService.Get(CoreSettings.DiscordRichPresence)),
             "Last.fm" => IsLastFmServiceEnabledAsync(),
             "ListenBrainz" => IsListenBrainzServiceEnabledAsync(),
             // Only acts for songs streamed from a server, which always hears about their plays.
@@ -194,10 +185,7 @@ public class PresenceManager : IAsyncDisposable, IDisposable
         var hasCredentials = await _settingsService.GetLastFmCredentialsAsync().ConfigureAwait(false) != null;
         if (!hasCredentials) return false;
 
-        var isScrobblingEnabled = await _settingsService.GetLastFmScrobblingEnabledAsync().ConfigureAwait(false);
-        var isNowPlayingEnabled = await _settingsService.GetLastFmNowPlayingEnabledAsync().ConfigureAwait(false);
-
-        return isScrobblingEnabled || isNowPlayingEnabled;
+        return _settingsService.Get(CoreSettings.LastFmScrobbling) || _settingsService.Get(CoreSettings.LastFmNowPlaying);
     }
 
     private async Task<bool> IsListenBrainzServiceEnabledAsync()
@@ -205,10 +193,7 @@ public class PresenceManager : IAsyncDisposable, IDisposable
         var token = await _settingsService.GetListenBrainzUserTokenAsync().ConfigureAwait(false);
         if (string.IsNullOrEmpty(token)) return false;
 
-        var isScrobblingEnabled = await _settingsService.GetListenBrainzScrobblingEnabledAsync().ConfigureAwait(false);
-        var isNowPlayingEnabled = await _settingsService.GetListenBrainzNowPlayingEnabledAsync().ConfigureAwait(false);
-
-        return isScrobblingEnabled || isNowPlayingEnabled;
+        return _settingsService.Get(CoreSettings.ListenBrainzScrobbling) || _settingsService.Get(CoreSettings.ListenBrainzNowPlaying);
     }
 
     private async Task SetServiceActiveAsync(IPresenceService service, bool? shouldBeActive = null)
