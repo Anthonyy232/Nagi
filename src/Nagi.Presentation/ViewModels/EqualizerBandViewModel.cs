@@ -20,7 +20,7 @@ public partial class EqualizerBandViewModel : ObservableObject, IDisposable
         _debouncer = new Debouncer(TimeSpan.FromMilliseconds(AudioSettingsViewModel.EqualizerDebounceDelayMilliseconds), timeProvider);
         Index = index;
         FrequencyLabel = frequency < KiloHertzThreshold ? $"{frequency:F0}" : $"{frequency / KiloHertzThreshold:F0}K";
-        AccessibleName = string.Format(Strings.SettingsPage_EqualizerBand_Name, frequency);
+        AccessibleName = ResourceFormatter.Format(Strings.SettingsPage_EqualizerBand_Name, frequency);
         SetGainFromService(initialGain);
     }
 

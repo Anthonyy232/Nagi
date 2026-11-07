@@ -84,7 +84,7 @@ public partial class PlaylistViewModelItem : ObservableObject
                 (false, true) => Strings.Playlist_Count_Singular,
                 _ => Strings.Playlist_Count_Plural
             }, SongCount);
-            return ServerName is null ? count : string.Format(Strings.Playlist_FromServer_Format, ServerName, count);
+            return ServerName is null ? count : ResourceFormatter.Format(Strings.Playlist_FromServer_Format, ServerName, count);
         }
     }
 
@@ -516,7 +516,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
             Strings.PlaylistPage_DeleteDialog_Title,
-            string.Format(Strings.PlaylistPage_DeleteDialog_Content_Format, playlist.Name),
+            ResourceFormatter.Format(Strings.PlaylistPage_DeleteDialog_Content_Format, playlist.Name),
             Strings.PlaylistPage_DeleteDialog_DeleteButton,
             Strings.Generic_Cancel,
             defaultToCancel: true);

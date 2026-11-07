@@ -275,7 +275,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
 public class DiscHeader : IListHeader
 {
     public int DiscNumber { get; set; }
-    public string Title => string.Format(Strings.AlbumView_DiscHeader, DiscNumber);
+    public string Title => ResourceFormatter.Format(Strings.AlbumView_DiscHeader, DiscNumber);
 
     public override string ToString() => Title;
 }

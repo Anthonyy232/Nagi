@@ -67,7 +67,7 @@ public partial class DataManagementSettingsViewModel : ObservableObject
             _logger.LogCritical(ex, "Application reset failed");
             await _uiService.ShowMessageDialogAsync(
                 Strings.Settings_ResetError_Title,
-                string.Format(Strings.Settings_ResetError_Message, ex.Message));
+                ResourceFormatter.Format(Strings.Settings_ResetError_Message, ex.Message));
         }
     }
 
@@ -129,7 +129,7 @@ public partial class DataManagementSettingsViewModel : ObservableObject
         {
             await _uiService.ShowMessageDialogAsync(
                 Strings.Settings_Backup_Success_Title,
-                string.Format(Strings.Settings_Backup_Success_Message, result.BackupSizeMB, result.BackupFilePath));
+                ResourceFormatter.Format(Strings.Settings_Backup_Success_Message, result.BackupSizeMB, result.BackupFilePath));
         }
         else
         {

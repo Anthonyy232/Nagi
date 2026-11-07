@@ -83,7 +83,7 @@ public partial class UIService
         var inputTextBox = new TextBox { Text = currentName };
         var dialog = new ContentDialog
         {
-            Title = string.Format(Strings.PlaylistPage_RenameDialog_Title_Format, currentName),
+            Title = ResourceFormatter.Format(Strings.PlaylistPage_RenameDialog_Title_Format, currentName),
             Content = inputTextBox,
             PrimaryButtonText = Strings.PlaylistPage_RenameDialog_RenameButton,
             CloseButtonText = Strings.Generic_Cancel,

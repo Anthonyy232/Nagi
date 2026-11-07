@@ -394,7 +394,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         catch (OperationCanceledException) { }
         catch (Exception ex)
         {
-            error = string.Format(Strings.Settings_Status_VolumeNorm_Error_Format, ex.Message);
+            error = ResourceFormatter.Format(Strings.Settings_Status_VolumeNorm_Error_Format, ex.Message);
             _logger.LogError(ex, "Failed to scan library for ReplayGain");
         }
         finally

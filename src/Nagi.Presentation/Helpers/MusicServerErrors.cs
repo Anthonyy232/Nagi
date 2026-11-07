@@ -20,7 +20,7 @@ public static class MusicServerErrors
             MusicServerError.SignInMethodUnsupported => Strings.MusicServer_Error_SignInMethod_Format,
             _ => null
         };
-        return format is null ? null : string.Format(format, serverName);
+        return format is null ? null : ResourceFormatter.Format(format, serverName);
     }
 
     /// <summary>
@@ -42,6 +42,6 @@ public static class MusicServerErrors
     /// <returns>True when the user signed in again.</returns>
     public static async Task<bool> OfferSignInAsync(IUIService ui, Guid folderId, string serverName) =>
         await ui.ShowConfirmationDialogAsync(Strings.FolderPage_Menu_SignIn,
-            string.Format(Strings.MusicServer_Error_SavedSignIn_Format, serverName), Strings.MusicServerDialog_SignInButton)
+            ResourceFormatter.Format(Strings.MusicServer_Error_SavedSignIn_Format, serverName), Strings.MusicServerDialog_SignInButton)
         && await ui.ShowMusicServerSignInDialogAsync(folderId);
 }

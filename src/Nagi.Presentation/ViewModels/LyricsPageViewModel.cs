@@ -288,7 +288,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             else
             {
                 SongTitle = !string.IsNullOrWhiteSpace(song.ArtistName)
-                    ? string.Format(Strings.Lyrics_SongTitleFormat, song.Title, song.ArtistName)
+                    ? ResourceFormatter.Format(Strings.Lyrics_SongTitleFormat, song.Title, song.ArtistName)
                     : song.Title;
                 SongDuration = _playbackService.Duration;
                 IsLoading = true;

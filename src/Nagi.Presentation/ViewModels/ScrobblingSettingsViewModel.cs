@@ -7,6 +7,7 @@ using Nagi.Core.Settings;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using CoreStrings = Nagi.Core.Resources.Strings;
+using Nagi.Presentation.Helpers;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -249,7 +250,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
             if (result.IsValid && !await _settingsService.SaveListenBrainzUserTokenAsync(token))
             {
                 ListenBrainzIsConnected = false;
-                ListenBrainzConnectionStatus = string.Format(
+                ListenBrainzConnectionStatus = ResourceFormatter.Format(
                     Strings.SettingsPage_ListenBrainz_ConnectionFailed,
                     Strings.MusicServer_Error_SignInNotSaved);
             }
@@ -257,14 +258,14 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
             {
                 StampListenBrainzEnabledSinceIfNeeded();
                 ListenBrainzIsConnected = true;
-                ListenBrainzConnectionStatus = string.Format(
+                ListenBrainzConnectionStatus = ResourceFormatter.Format(
                     Strings.SettingsPage_ListenBrainz_Connected,
                     result.Username);
             }
             else
             {
                 ListenBrainzIsConnected = false;
-                ListenBrainzConnectionStatus = string.Format(
+                ListenBrainzConnectionStatus = ResourceFormatter.Format(
                     Strings.SettingsPage_ListenBrainz_ConnectionFailed,
                     result.Error);
             }
@@ -274,7 +275,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
             _logger.LogError(ex, "ListenBrainz token validation failed");
             if (_isDisposed || version != _listenBrainzConnectionVersion) return;
             ListenBrainzIsConnected = false;
-            ListenBrainzConnectionStatus = string.Format(
+            ListenBrainzConnectionStatus = ResourceFormatter.Format(
                 Strings.SettingsPage_ListenBrainz_ConnectionFailed,
                 CoreStrings.ListenBrainz_Unreachable);
         }

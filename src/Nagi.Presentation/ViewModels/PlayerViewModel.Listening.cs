@@ -11,6 +11,7 @@ using Nagi.Core.Services.Data;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Helpers;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -38,7 +39,7 @@ public partial class PlayerViewModel
 
     public IReadOnlyList<PlaybackRateOption> PlaybackRateOptions { get; } =
         new[] { 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0 }.Select(rate => new PlaybackRateOption(rate,
-            rate == 1.0 ? Strings.Listening_PlaybackSpeedNormal : string.Format(Strings.Listening_PlaybackSpeedFormat, rate)))
+            rate == 1.0 ? Strings.Listening_PlaybackSpeedNormal : ResourceFormatter.Format(Strings.Listening_PlaybackSpeedFormat, rate)))
         .ToList();
 
     public IReadOnlyList<SleepTimerOption> SleepTimerOptions { get; } =
@@ -190,7 +191,7 @@ public partial class PlayerViewModel
         {
             PlaybackStopMode.AfterTrack => Strings.Listening_StopAfterTrack,
             PlaybackStopMode.EndOfQueue => Strings.Listening_StopAtQueueEnd,
-            PlaybackStopMode.Timer => string.Format(Strings.Listening_TimerRemaining,
+            PlaybackStopMode.Timer => ResourceFormatter.Format(Strings.Listening_TimerRemaining,
                 DurationFormatter.Format(TimeSpan.FromSeconds(Math.Max(0, Math.Ceiling((_playbackService.StopDeadline!.Value - DateTimeOffset.UtcNow).TotalSeconds))))),
             _ => string.Empty
         };
