@@ -84,7 +84,6 @@ public sealed partial class LibVlcAudioPlayerService
             if (state is VLCState.Paused or VLCState.Stopped) _isOpening = false;
             StateChanged?.Invoke();
 
-            // Only fire PlaybackEnded for natural end of playback, not explicit stops
             if (state == VLCState.Stopped && currentSong is not null && !isExplicitStop)
             {
                 _logger.LogDebug("Detected natural end of playback for song '{SongTitle}'.", currentSong.Title);

@@ -16,8 +16,6 @@ public sealed partial class LibVlcAudioPlayerService
     {
         try
         {
-            // Immediately broadcast state change so UI Play/Pause button switches
-            // instantly, without waiting for the fade to finish.
             _dispatcherService.TryEnqueue(() =>
             {
                 if (!_isDisposed) StateChanged?.Invoke();

@@ -230,7 +230,6 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
         try
         {
-            // If a newer LoadAsync call superseded us while we waited for the lock, skip entirely.
             token.ThrowIfCancellationRequested();
             _currentSong = song;
 
@@ -268,7 +267,6 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
                 _mediaPlayer!.Media = _currentMedia;
                 _hasCurrentMediaStarted = false;
-                // Do NOT dispose the media immediately - let it be disposed when no longer needed
             }).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
@@ -305,7 +303,6 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         await EnsureInitializedAsync().ConfigureAwait(false);
         if (_isDisposed || _mediaPlayer is null) return;
 
-        // Cancel any ongoing fade (e.g. a fade-out from a previous pause that didn't complete)
         var newPlayCts = CancellationTokenSource.CreateLinkedTokenSource(_disposeCts.Token);
         var fadeCt = newPlayCts.Token;
         var oldPlayCts = Interlocked.Exchange(ref _fadeCts, newPlayCts);
@@ -316,8 +313,6 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
         _isPausing = false;
 
-        // Immediately broadcast state change so UI Play/Pause button switches
-        // instantly to play (and registers that IsPausing is now false)
         _dispatcherService.TryEnqueue(() =>
         {
             if (!_isDisposed) StateChanged?.Invoke();
@@ -416,13 +411,10 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
         _logger.LogDebug("Stop command received.");
 
-        // Cancel any active fade immediately so audio stops without delay
         CancelFade();
 
-        // Mark as explicit stop to prevent false PlaybackEnded in state changed handler
         _isExplicitStop = true;
 
-        // Cancel any pending load — no point loading media we're about to stop
         var pendingLoad = Interlocked.Exchange(ref _loadCts, null);
         pendingLoad?.Cancel();
         pendingLoad?.Dispose();

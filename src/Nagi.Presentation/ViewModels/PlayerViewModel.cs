@@ -220,10 +220,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         }
     }
 
-    /// <summary>
-    ///     Cleans up resources and unsubscribes from service events.
-    ///     Called during application shutdown.
-    /// </summary>
     public void Cleanup()
     {
         if (_isCleanedUp) return;
@@ -242,10 +238,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         _openingIndicator.Dispose();
     }
 
-    /// <summary>
-    ///     Loads player button settings and splits them into main and secondary controls
-    ///     based on the <see cref="PlayerButtonIds.Separator" /> item.
-    /// </summary>
     private void LoadPlayerButtonSettings()
     {
         if (_isCleanedUp) return;
@@ -427,7 +419,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 
     partial void OnCurrentPositionChanged(double value)
     {
-        // Only update time text when the displayed second changes
         var currentSecond = (int)value;
         if (currentSecond != _lastDisplayedSecond)
         {
@@ -444,11 +435,9 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 
     partial void OnIsUserDraggingSliderChanged(bool value)
     {
-        // When the user finishes dragging, perform the final seek.
         if (!value && !_isUpdatingFromService)
         {
             var newPosition = TimeSpan.FromSeconds(CurrentPosition);
-            // Seek only if the position is meaningfully different from the player's known position.
             if (Math.Abs(_playbackService.CurrentPosition.TotalSeconds - newPosition.TotalSeconds) > 0.1)
             {
                 _ = _playbackService.SeekAsync(newPosition);

@@ -57,7 +57,6 @@ public partial class MusicPlaybackService
 
         if (!isLongEnough || !hasPlayedEnough) return;
 
-        // Prevent re-entry within the same listening session.
         _isEligibilityMarked = true;
         var sessionId = CurrentListenHistoryId.Value;
         var song = CurrentTrack!;
