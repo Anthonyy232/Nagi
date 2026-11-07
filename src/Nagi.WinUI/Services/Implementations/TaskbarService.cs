@@ -17,15 +17,8 @@ using static Nagi.WinUI.Helpers.NativeMethods;
 namespace Nagi.WinUI.Services.Implementations;
 
 /// <summary>
-///     Provides Windows taskbar thumbnail toolbar integration for media playback controls.
-///     This service creates and manages the previous, play/pause, and next buttons that appear
-///     in the taskbar thumbnail preview when hovering over the application icon.
+///     The previous, play/pause and next buttons in the main window's taskbar thumbnail, drawn in the accent color.
 /// </summary>
-/// <remarks>
-///     This service uses native Win32 interop via ITaskbarList4 to register thumbnail buttons
-///     and handle button click events through window message processing. Icons are rendered
-///     using Win2D for reliable, GPU-accelerated rendering without visual tree dependencies.
-/// </remarks>
 public sealed class TaskbarService : IDisposable
 {
     private const int PreviousButtonId = 1;
@@ -144,7 +137,7 @@ public sealed class TaskbarService : IDisposable
         if ((uint)msg == _wmTaskbarButtonCreated)
         {
             _logger.LogDebug("TaskbarButtonCreated received, reinitializing buttons");
-            _buttons = null; // Force re-creation
+            _buttons = null;
             _ = RefreshIconsAsync();
             return;
         }

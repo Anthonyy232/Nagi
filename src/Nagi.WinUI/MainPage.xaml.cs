@@ -27,10 +27,6 @@ using Nagi.Presentation.Navigation;
 
 namespace Nagi.WinUI;
 
-/// <summary>
-///     The main shell of the application, hosting navigation, content, and the media player.
-///     It also provides the custom title bar elements to the main window.
-/// </summary>
 public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 {
     private int _queueDragVersion;
@@ -345,10 +341,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         KeyDown -= OnSelectionKeyDown;
     }
 
-    /// <summary>
-    ///     Sets the background brush for the floating player based on user settings and OS capabilities.
-    ///     Handles switching between Acrylic (glass) and Solid (opaque) materials.
-    /// </summary>
     private void SetPlatformSpecificBrush()
     {
         var isAcrylicEnabled = SystemVisualSettings.TransparencyEffectsEnabled;
@@ -464,10 +456,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private void VolumeSliderContainer_PointerWheelChanged(object sender, PointerRoutedEventArgs e) =>
         PlayerInputHelper.StepVolumeWithWheel(sender, e, ViewModel);
 
-    /// <summary>
-    ///     Handles global pointer pressed events to enable back navigation using the mouse side button.
-    ///     This is registered with handledEventsToo: true to catch events even if child controls swallow them.
-    /// </summary>
+    // Registered with handledEventsToo, so the mouse back button and click-away work even where a child control
+    // handled the press.
     private void OnGlobalPointerPressed(object sender, PointerRoutedEventArgs e)
     {
         var point = e.GetCurrentPoint(sender as UIElement);
