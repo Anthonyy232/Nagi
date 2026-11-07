@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
+using Nagi.Core.Settings;
 
 namespace Nagi.Audio.LibVlc;
 
@@ -36,7 +37,7 @@ public sealed partial class LibVlcAudioPlayerService
             {
                 _vlcOperationLock.Release();
             }
-            await FadeAsync(fromVolume, 0.0, TimeSpan.FromMilliseconds(_fadeOutDurationMs), fadeCt).ConfigureAwait(false);
+            await FadeAsync(fromVolume, 0.0, TimeSpan.FromMilliseconds(_settingsService.Get(CoreSettings.FadeOutDurationMs)), fadeCt).ConfigureAwait(false);
 
             if (_isDisposed || _mediaPlayer is null || fadeCt.IsCancellationRequested) return;
 
@@ -86,21 +87,6 @@ public sealed partial class LibVlcAudioPlayerService
         {
             _vlcOperationLock.Release();
         }
-    }
-
-    public void SetFadeOnPlayPauseEnabled(bool isEnabled)
-    {
-        _isFadeOnPlayPauseEnabled = isEnabled;
-    }
-
-    public void SetFadeInDuration(int durationMs)
-    {
-        _fadeInDurationMs = durationMs;
-    }
-
-    public void SetFadeOutDuration(int durationMs)
-    {
-        _fadeOutDurationMs = durationMs;
     }
 
     public async Task SetMuteAsync(bool isMuted)

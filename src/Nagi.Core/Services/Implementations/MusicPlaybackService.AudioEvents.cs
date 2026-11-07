@@ -37,16 +37,13 @@ public partial class MusicPlaybackService
         UpdateMediaControlsTimeline(CurrentPosition);
     }
 
+    // The one place volume and mute are saved, so changes made outside Nagi, such as in the Windows volume mixer, are
+    // kept too.
     private void OnAudioPlayerVolumeChanged()
     {
-        FireAndForgetSafe(
-            () =>
-            {
-                _settingsService.Set(CoreSettings.Volume, _audioPlayer.Volume);
-                VolumeStateChanged?.Invoke();
-                return Task.CompletedTask;
-            },
-            "Volume save");
+        VolumeStateChanged?.Invoke();
+        _settingsService.Set(CoreSettings.Volume, _audioPlayer.Volume);
+        _settingsService.Set(CoreSettings.IsMuted, _audioPlayer.IsMuted);
     }
 
     private void OnAudioPlayerPositionChanged()
@@ -188,11 +185,5 @@ public partial class MusicPlaybackService
     {
         if (setting == CoreSettings.VolumeNormalization)
             FireAndForgetSafe(ApplyReplayGainIfEnabledAsync, "ReplayGain settings change", trackForDisposal: true);
-        else if (setting == CoreSettings.FadeOnPlayPause)
-            _audioPlayer.SetFadeOnPlayPauseEnabled(_settingsService.Get(CoreSettings.FadeOnPlayPause));
-        else if (setting == CoreSettings.FadeInDurationMs)
-            _audioPlayer.SetFadeInDuration(_settingsService.Get(CoreSettings.FadeInDurationMs));
-        else if (setting == CoreSettings.FadeOutDurationMs)
-            _audioPlayer.SetFadeOutDuration(_settingsService.Get(CoreSettings.FadeOutDurationMs));
     }
 }

@@ -298,7 +298,8 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     Task<TimeSpan> GetQueueDurationAsync(IEnumerable<Guid> songIds, CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Saves the current playback state (queue, track, position) to persistent storage.
+    ///     Saves the queue and current track for the next launch, or clears the saved session when the user turned
+    ///     restoring it off.
     /// </summary>
     Task SavePlaybackStateAsync();
 }

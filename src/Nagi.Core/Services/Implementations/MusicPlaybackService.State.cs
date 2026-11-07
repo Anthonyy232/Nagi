@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -10,6 +11,11 @@ public partial class MusicPlaybackService
 {
     public async Task SavePlaybackStateAsync()
     {
+        if (!_settingsService.Get(CoreSettings.RestorePlaybackState))
+        {
+            _playbackStateStore.Clear();
+            return;
+        }
         if (!_isInitialized) return;
 
         var playbackQueue = _queue.Order.Where(id => !_transientTracks.ContainsKey(id)).ToList();

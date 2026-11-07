@@ -43,17 +43,12 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private volatile bool _isExplicitStop; // Prevents false PlaybackEnded events on user/error stop
     private double _replayGainOffset;
 
-    // Nagi intentionally keeps approximately 2 dB of headroom below LibVLC's
-    // nominal 12 dB flat/unity preset.
     private float _basePreamp = EqualizerSettings.DefaultPreampDb;
 
     // Fade support: tracks user-set volume separately from the live VLC volume so that
     // fade animations do not propagate to the UI or persist to settings.
-    private double _userVolume = 1.0;
+    private double _userVolume = CoreSettings.Volume.Default;
     private volatile bool _isFading;
-    private volatile bool _isFadeOnPlayPauseEnabled;
-    private int _fadeInDurationMs = CoreSettings.FadeInDurationMs.Default;
-    private int _fadeOutDurationMs = CoreSettings.FadeOutDurationMs.Default;
     private CancellationTokenSource? _fadeCts;
 
     private float _playbackRate = 1f;
@@ -324,6 +319,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         var oldPlayCts = Interlocked.Exchange(ref _fadeCts, newPlayCts);
         oldPlayCts?.Cancel();
         oldPlayCts?.Dispose();
+        var fadeOnPlay = _settingsService.Get(CoreSettings.FadeOnPlayPause);
         var startFadeIn = false;
 
         _isPausing = false;
@@ -342,7 +338,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             {
                 if (_isDisposed) return;
 
-                if (_isFadeOnPlayPauseEnabled)
+                if (fadeOnPlay)
                 {
                     // Silence before playing so fade-in starts from zero.
                     _isFading = true;
@@ -361,7 +357,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
                 if (!_hasCurrentMediaStarted) SetOpening(true);
                 if (_mediaPlayer.Play())
                 {
-                    startFadeIn = _isFadeOnPlayPauseEnabled;
+                    startFadeIn = fadeOnPlay;
                 }
                 else
                 {
@@ -384,14 +380,14 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         }
 
         if (startFadeIn)
-            _ = FadeAsync(0.0, _userVolume, TimeSpan.FromMilliseconds(_fadeInDurationMs), fadeCt);
+            _ = FadeAsync(0.0, _userVolume, TimeSpan.FromMilliseconds(_settingsService.Get(CoreSettings.FadeInDurationMs)), fadeCt);
     }
 
     public async Task PauseAsync()
     {
         if (_isDisposed || !_isInitialized || _mediaPlayer is null) return;
 
-        if (_isFadeOnPlayPauseEnabled)
+        if (_settingsService.Get(CoreSettings.FadeOnPlayPause))
         {
             var newPauseCts = CancellationTokenSource.CreateLinkedTokenSource(_disposeCts.Token);
             var fadeCt = newPauseCts.Token;

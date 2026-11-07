@@ -38,7 +38,6 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _metadataService = Substitute.For<IMetadataService>();
         _logger = Substitute.For<ILogger<MusicPlaybackService>>();
 
-        _settingsService.Set(CoreSettings.RestorePlaybackState, false);
         _playbackStateStore.LoadAsync().Returns((PlaybackState?)null);
 
         _service = new MusicPlaybackService(
@@ -1664,13 +1663,32 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task SetVolumeAsync_PersistsTheVolumeAcceptedByTheAudioPlayer()
+    public void AudioPlayerVolumeChange_ShowsAndSavesTheVolumeAndMuteThePlayerReports()
     {
+        var shown = 0;
+        _service.VolumeStateChanged += () => shown++;
         _audioPlayer.Volume.Returns(0.33);
+        _audioPlayer.IsMuted.Returns(true);
 
-        await _service.SetVolumeAsync(0.333);
+        // As when the user changes it in the Windows volume mixer.
+        _audioPlayer.VolumeChanged += Raise.Event<Action>();
 
+        shown.Should().Be(1);
         _settingsService.Get(CoreSettings.Volume).Should().Be(0.33);
+        _settingsService.Get(CoreSettings.IsMuted).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task SavePlaybackStateAsync_WhenRestoringIsOff_ClearsTheSavedSession()
+    {
+        await _service.InitializeAsync();
+        await _service.PlayAsync(_testSongs);
+        _settingsService.Set(CoreSettings.RestorePlaybackState, false);
+
+        await _service.SavePlaybackStateAsync();
+
+        _playbackStateStore.Received(1).Clear();
+        await _playbackStateStore.DidNotReceive().SaveAsync(Arg.Any<PlaybackState>());
     }
 
     [Theory]

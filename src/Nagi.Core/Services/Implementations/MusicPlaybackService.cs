@@ -131,9 +131,6 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             if (_isDisposed) return;
             await _audioPlayer.SetMuteAsync(_settingsService.Get(CoreSettings.IsMuted));
             if (_isDisposed) return;
-            _audioPlayer.SetFadeOnPlayPauseEnabled(_settingsService.Get(CoreSettings.FadeOnPlayPause));
-            _audioPlayer.SetFadeInDuration(_settingsService.Get(CoreSettings.FadeInDurationMs));
-            _audioPlayer.SetFadeOutDuration(_settingsService.Get(CoreSettings.FadeOutDurationMs));
             IsShuffleEnabled = _settingsService.Get(CoreSettings.IsShuffleEnabled);
             CurrentRepeatMode = _settingsService.Get(CoreSettings.RepeatMode);
 
@@ -542,18 +539,9 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             await PlayInternalAsync(songIds, 0, true, new PlaybackContext(PlaybackContextType.Library, null), request);
     });
 
-    public async Task SetVolumeAsync(double volume)
-    {
-        await _audioPlayer.SetVolumeAsync(volume);
-        _settingsService.Set(CoreSettings.Volume, _audioPlayer.Volume);
-    }
+    public Task SetVolumeAsync(double volume) => _audioPlayer.SetVolumeAsync(volume);
 
-    public async Task ToggleMuteAsync()
-    {
-        var newMuteState = !_audioPlayer.IsMuted;
-        await _audioPlayer.SetMuteAsync(newMuteState);
-        _settingsService.Set(CoreSettings.IsMuted, newMuteState);
-    }
+    public Task ToggleMuteAsync() => _audioPlayer.SetMuteAsync(!_audioPlayer.IsMuted);
 
     public async Task SetPlaybackRateAsync(double rate)
     {
