@@ -1,4 +1,3 @@
-using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Helpers;
@@ -114,23 +113,4 @@ public static class SortOrderHelper
         AlbumSortOrder.SongCountAsc => LeastSongsLabel,
         _ => ArtistAscLabel
     });
-
-    /// <summary>
-    ///     Maps a <see cref="SongSortOrder" /> to the equivalent <see cref="SmartPlaylistSortOrder" /> by matching
-    ///     enum member names. Falls back to <see cref="SmartPlaylistSortOrder.TitleAsc" /> for members without a
-    ///     counterpart (e.g. <see cref="SongSortOrder.PlaylistOrder" />).
-    /// </summary>
-    public static SmartPlaylistSortOrder MapToSmartPlaylistSortOrder(SongSortOrder sortOrder) =>
-        Enum.TryParse<SmartPlaylistSortOrder>(sortOrder.ToString(), out var mapped)
-            ? mapped
-            : SmartPlaylistSortOrder.TitleAsc;
-
-    /// <summary>
-    ///     Maps a <see cref="SmartPlaylistSortOrder" /> to the equivalent <see cref="SongSortOrder" /> by matching
-    ///     enum member names. Falls back to <see cref="SongSortOrder.TitleAsc" /> when no counterpart exists.
-    /// </summary>
-    public static SongSortOrder MapToSongSortOrder(SmartPlaylistSortOrder sortOrder) =>
-        Enum.TryParse<SongSortOrder>(sortOrder.ToString(), out var mapped)
-            ? mapped
-            : SongSortOrder.TitleAsc;
 }

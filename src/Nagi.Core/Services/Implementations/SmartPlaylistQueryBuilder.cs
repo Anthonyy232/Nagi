@@ -18,7 +18,7 @@ internal static class SmartPlaylistQueryBuilder
             .Include(s => s.Genres)
             .AsSplitQuery();
 
-        return SongQuery.Sort(query, sortOrderOverride ?? SortOrderHelper.MapToSongSortOrder(smartPlaylist.SortOrder));
+        return SongQuery.Sort(query, sortOrderOverride ?? smartPlaylist.SortOrder.ToSongSortOrder());
     }
 
     public static IQueryable<Song> BuildCountQuery(MusicDbContext context, SmartPlaylist smartPlaylist, string? searchTerm = null)
