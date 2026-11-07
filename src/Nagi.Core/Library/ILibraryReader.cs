@@ -1,4 +1,5 @@
 using Nagi.Core.Listening;
+using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
 
 namespace Nagi.Core.Library;

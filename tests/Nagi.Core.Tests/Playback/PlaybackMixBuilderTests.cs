@@ -1,5 +1,4 @@
 using FluentAssertions;
-using Nagi.Core.Listening;
 using Nagi.Core.Playback;
 using Xunit;
 

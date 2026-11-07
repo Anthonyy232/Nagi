@@ -1,6 +1,4 @@
-﻿using Nagi.Core.Listening;
-
-namespace Nagi.Core.Playback;
+﻿namespace Nagi.Core.Playback;
 
 public class PlaybackState
 {

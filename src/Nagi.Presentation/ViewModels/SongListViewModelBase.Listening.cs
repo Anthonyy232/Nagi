@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
-using Nagi.Core.Listening;
+using Nagi.Core.Playback;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;
 

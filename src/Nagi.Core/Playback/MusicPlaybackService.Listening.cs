@@ -1,5 +1,3 @@
-using Nagi.Core.Listening;
-
 namespace Nagi.Core.Playback;
 
 public partial class MusicPlaybackService

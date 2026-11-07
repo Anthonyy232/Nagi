@@ -44,6 +44,14 @@ public enum PlaybackContextType
     Transient = 8
 }
 
+public enum PlaybackStopMode
+{
+    Off,
+    AfterTrack,
+    EndOfQueue,
+    Timer
+}
+
 public record PlaybackContext(PlaybackContextType Type, Guid? ContextId);
 
 /// <summary>

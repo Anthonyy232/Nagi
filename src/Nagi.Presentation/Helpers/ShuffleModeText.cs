@@ -1,4 +1,4 @@
-using Nagi.Core.Listening;
+using Nagi.Core.Playback;
 using Nagi.Presentation.Resources;
 
 namespace Nagi.Presentation.Helpers;
