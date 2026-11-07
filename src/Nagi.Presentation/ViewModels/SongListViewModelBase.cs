@@ -38,9 +38,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     /// </summary>
     [ObservableProperty] public partial Guid? CurrentPlayingSongId { get; set; }
 
-    /// <summary>
-    ///     Whether playback is running, mirrored from <see cref="IMusicPlaybackService.IsPlaying" />.
-    /// </summary>
     [ObservableProperty] public partial bool IsPlaying { get; set; }
 
     // Loaded on demand unless a view requires it for editing.
@@ -77,9 +74,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
         _playlistService.PlaylistsChanged += OnPlaylistsChanged;
 
-        // Mirror the playback service's current track Id so row "now playing" indicators
-        // can react. Initialize from the current state in case a track is already playing
-        // when this view model is constructed (e.g. navigating to a list while music plays).
         CurrentPlayingSongId = _playbackService.CurrentTrack?.Id;
         _playbackService.TrackChanged += OnPlaybackTrackChanged;
         IsPlaying = _playbackService.IsPlaying;
@@ -113,7 +107,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     private void OnPlaylistsChanged(object? sender, EventArgs e)
     {
-        // Only reload if we've already loaded once; ignore if never loaded (avoids loading when not needed).
         if (!HasLoadedPlaylists || _isDisposed) return;
 
         _dispatcherService.TryEnqueue(() =>
@@ -359,9 +352,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         }
     }
 
-    /// <summary>
-    ///     Mirrors the rows selected in the list.
-    /// </summary>
     public virtual void OnSongsSelectionChanged(IEnumerable<object> selectedItems)
     {
         SelectedSongs.Clear();
@@ -375,9 +365,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         UpdateSelectionStatus();
     }
 
-    /// <summary>
-    ///     Returns the playback context for this view. Subclasses override to provide the correct source type and ID.
-    /// </summary>
     protected virtual PlaybackContext GetPlaybackContext() => new(PlaybackContextType.Library, null);
 
     /// <summary>
@@ -414,7 +401,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
         if (startIndex == -1)
         {
-            // Fallback for a song not in the list for some reason.
             await _playbackService.PlayAsync(song.Id);
             return;
         }

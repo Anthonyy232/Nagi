@@ -113,8 +113,6 @@ public sealed partial class ArtistViewPage : SongListPage
                 AlbumsViewport.Height = newHeight;
             }
 
-            // Translate the content up to mimic scrolling naturally
-            // We clamp the translation so it doesn't float away if we scroll way past
             var translationY = (float)-Math.Min(scrollOffset, _lastKnownAlbumsHeight);
             AlbumsContent.Translation = new Vector3(0, translationY, 0);
 
@@ -122,7 +120,6 @@ public sealed partial class ArtistViewPage : SongListPage
             {
                 var opacity = Math.Clamp(newHeight / _lastKnownAlbumsHeight, 0, 1);
 
-                // Optimization: Snap to 0 if very low to save GPU composition effort
                 if (opacity < 0.05) opacity = 0;
 
                 AlbumsViewport.Opacity = opacity;
