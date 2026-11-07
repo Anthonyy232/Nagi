@@ -26,8 +26,8 @@ public partial class LibraryServiceTests
         await _library.Listening.SetSongsLovedAsync(songs.Select(s => s.Id).Append(Guid.NewGuid()), true);
         await _library.Listening.SetSongsLovedAsync([songs[2].Id], false);
 
-        var page = await _libraryReader.GetFavoritesPagedAsync("100%", 2, 1, SongSortOrder.TitleAsc);
-        var ids = await _libraryReader.GetFavoriteSongIdsAsync("100%", SongSortOrder.TitleAsc);
+        var page = await _libraryReader.GetSongsAsync(SongScope.Favorites, "100%", SongSortOrder.TitleAsc, 2, 1);
+        var ids = await _libraryReader.GetSongIdsAsync(SongScope.Favorites, "100%", SongSortOrder.TitleAsc);
 
         page.TotalCount.Should().Be(2);
         page.Items.Should().ContainSingle().Which.Id.Should().Be(ids[1]);

@@ -9,9 +9,8 @@ using Nagi.Core.Services.Helpers;
 namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
-///     Read-only queries over the music library: entity lookups, folder browsing, paging, search,
-///     and the song ID lists used to build playback queues.
-///     This service is designed to be a singleton and is internally thread-safe.
+///     Read-only queries over the music library. This service is designed to be a singleton and is internally
+///     thread-safe.
 /// </summary>
 public partial class LibraryReader : ILibraryReader
 {
@@ -59,49 +58,6 @@ public partial class LibraryReader : ILibraryReader
             .Where(f => f.ParentFolderId == null)
             .Select(f => new FolderSummary(f, f.Songs.Count, f.MusicServer != null))
             .ToListAsync(token).ConfigureAwait(false);
-    }
-
-    public Task<IEnumerable<Folder>> GetSubFoldersPagedAsync(Guid parentFolderId, int skip, int take, CancellationToken token = default) =>
-        SearchSubFoldersPagedAsync(parentFolderId, string.Empty, skip, take, token);
-
-    public async Task<int> GetSubFolderCountBySearchAsync(Guid parentFolderId, string searchTerm, CancellationToken token = default)
-    {
-        if (string.IsNullOrWhiteSpace(searchTerm))
-            return await GetSubFolderCountAsync(parentFolderId, token).ConfigureAwait(false);
-
-        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var term = LikePatternHelper.CreateContainsPattern(NormalizeString(searchTerm) ?? string.Empty);
-        return await context.Folders.AsNoTracking()
-            .CountAsync(f => f.ParentFolderId == parentFolderId &&
-                             EF.Functions.Like(f.Name, term, LikePatternHelper.EscapeCharacter), token).ConfigureAwait(false);
-    }
-
-    public async Task<IEnumerable<Folder>> SearchSubFoldersPagedAsync(Guid parentFolderId, string searchTerm, int skip, int take, CancellationToken token = default)
-    {
-        if (take <= 0) return Enumerable.Empty<Folder>();
-        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var query = context.Folders.AsNoTracking()
-            .Where(f => f.ParentFolderId == parentFolderId);
-
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-        {
-            var term = LikePatternHelper.CreateContainsPattern(NormalizeString(searchTerm) ?? string.Empty);
-            query = query.Where(f => EF.Functions.Like(f.Name, term, LikePatternHelper.EscapeCharacter));
-        }
-
-        return await query
-            .OrderBy(f => f.Name)
-            .ThenBy(f => f.Path)
-            .ThenBy(f => f.Id)
-            .Skip(skip)
-            .Take(take)
-            .ToListAsync(token).ConfigureAwait(false);
-    }
-
-    public async Task<int> GetSubFolderCountAsync(Guid parentFolderId, CancellationToken token = default)
-    {
-        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        return await context.Folders.CountAsync(f => f.ParentFolderId == parentFolderId, token).ConfigureAwait(false);
     }
 
     private static Task<Guid?> GetRandomEntityIdAsync<T>(IQueryable<T> query) where T : class =>
@@ -201,7 +157,7 @@ public partial class LibraryReader : ILibraryReader
         return await context.Artists.AsNoTracking().FirstOrDefaultAsync(a => a.Name == normalizedName).ConfigureAwait(false);
     }
 
-    public async Task<IEnumerable<Album>> GetTopAlbumsForArtistAsync(Guid artistId, int limit)
+    public async Task<IEnumerable<Album>> GetAlbumsForArtistAsync(Guid artistId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var albumIds = context.AlbumArtists
@@ -214,7 +170,6 @@ public partial class LibraryReader : ILibraryReader
             .OrderByDescending(album => album.Songs.Sum(s => s.PlayCount))
             .ThenByDescending(album => album.Songs.Count)
             .ThenBy(album => album.Id)
-            .Take(limit)
             .ToListAsync().ConfigureAwait(false);
     }
 
@@ -242,14 +197,6 @@ public partial class LibraryReader : ILibraryReader
             .FirstOrDefaultAsync(al => al.Id == albumId).ConfigureAwait(false);
     }
 
-    public async Task<TimeSpan> GetSearchTotalDurationInAlbumAsync(Guid albumId, string searchTerm, CancellationToken token = default)
-    {
-        await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
-        var ticks = await FilterScopedSongs(context.Songs.Where(s => s.AlbumId == albumId), searchTerm)
-            .SumAsync(s => s.DurationTicks, token).ConfigureAwait(false);
-
-        return TimeSpan.FromTicks(ticks);
-    }
 
     public async Task<IEnumerable<Playlist>> GetAllPlaylistsAsync(CancellationToken token = default)
     {
@@ -322,5 +269,40 @@ public partial class LibraryReader : ILibraryReader
         return await GetRandomEntityIdAsync(query).ConfigureAwait(false);
     }
 
-    private static string? NormalizeString(string? s) => ArtistNameHelper.NormalizeStringCore(s);
+
+    public async Task<IReadOnlyList<MixCandidate>> GetMixCandidatesAsync(IEnumerable<Guid> songIds, CancellationToken token = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
+        var result = new List<MixCandidate>();
+        foreach (var ids in songIds.Distinct().Chunk(500))
+            result.AddRange(await context.Songs.AsNoTracking().Where(s => ids.Contains(s.Id))
+                .Select(s => new MixCandidate(s.Id, s.PrimaryArtistName, s.DurationTicks, s.PlayCount, s.LastPlayedDate))
+                .ToListAsync(token).ConfigureAwait(false));
+        return result;
+    }
+
+    public async Task<IReadOnlyList<RecentListen>> GetRecentListensAsync(string searchTerm, int skip, int take, CancellationToken token = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
+        var query = context.ListenHistory.AsNoTracking();
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var songs = SongQuery.Matching(context, context.Songs, searchTerm).Select(s => s.Id);
+            query = query.Where(h => songs.Contains(h.SongId));
+        }
+        return await query.OrderByDescending(h => h.ListenTimestampUtc).ThenByDescending(h => h.Id)
+            .Skip(Math.Max(0, skip)).Take(Math.Clamp(take, 1, RecentListen.MaxPageSize))
+            .Select(h => new RecentListen(h.Id, h.SongId, h.Song.Title, h.Song.ArtistName, h.ListenTimestampUtc))
+            .ToListAsync(token).ConfigureAwait(false);
+    }
+
+    public async Task<RediscoverySuggestion?> GetRediscoverySuggestionAsync(CancellationToken token = default)
+    {
+        var cutoff = DateTime.UtcNow.AddDays(-90);
+        await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
+        return await context.Songs.AsNoTracking().Where(s => s.PlayCount >= 3 && s.LastPlayedDate < cutoff)
+            .OrderByDescending(s => s.IsLoved).ThenByDescending(s => s.PlayCount).ThenBy(s => s.LastPlayedDate).ThenBy(s => s.Id)
+            .Select(s => new RediscoverySuggestion(s.Id, s.Title, s.ArtistName, s.LastPlayedDate!.Value))
+            .FirstOrDefaultAsync(token).ConfigureAwait(false);
+    }
 }

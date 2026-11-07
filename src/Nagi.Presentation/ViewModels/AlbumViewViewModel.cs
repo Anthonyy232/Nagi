@@ -67,17 +67,14 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         SongSortOrder sortOrder, CancellationToken cancellationToken = default)
     {
         if (_albumId == Guid.Empty) return Task.FromResult(new PagedResult<Song>());
-        return IsSearchActive
-            ? _libraryReader.SearchSongsInAlbumPagedAsync(_albumId, SearchTerm, pageNumber, pageSize, cancellationToken)
-            : _libraryReader.GetSongsByAlbumIdPagedAsync(_albumId, pageNumber, pageSize, sortOrder, cancellationToken);
+        return _libraryReader.GetSongsAsync(new SongScope.Album(_albumId), SearchTerm, sortOrder, pageNumber, pageSize,
+            cancellationToken);
     }
 
     protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
     {
         if (_albumId == Guid.Empty) return Task.FromResult(new List<Guid>());
-        return IsSearchActive
-            ? _libraryReader.SearchAllSongIdsInAlbumAsync(_albumId, SearchTerm, sortOrder, token)
-            : _libraryReader.GetAllSongIdsByAlbumIdAsync(_albumId, sortOrder, token);
+        return _libraryReader.GetSongIdsAsync(new SongScope.Album(_albumId), SearchTerm, sortOrder, token);
     }
 
     public async Task LoadAlbumDetailsAsync(Guid albumId)
@@ -165,7 +162,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         try
         {
             var duration = await Task.Run(
-                () => _libraryReader.GetSearchTotalDurationInAlbumAsync(albumId, searchTerm, cancellationToken),
+                () => _libraryReader.GetSongsDurationAsync(new SongScope.Album(albumId), searchTerm, cancellationToken),
                 cancellationToken).ConfigureAwait(false);
 
             _dispatcherService.TryEnqueue(() =>

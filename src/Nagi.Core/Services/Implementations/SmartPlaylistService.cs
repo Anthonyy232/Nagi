@@ -6,6 +6,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Helpers;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -13,6 +14,7 @@ public class SmartPlaylistService : ISmartPlaylistService
 {
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly PlaylistRules _rules;
+    private readonly ISettingsService _settingsService;
     private readonly ILogger<SmartPlaylistService> _logger;
 
     public event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;
@@ -24,12 +26,16 @@ public class SmartPlaylistService : ISmartPlaylistService
         IFileSystemService fileSystem,
         IPathConfiguration pathConfig,
         IImageProcessor imageProcessor,
+        ISettingsService settingsService,
         ILogger<SmartPlaylistService> logger)
     {
         _contextFactory = contextFactory;
         _rules = new PlaylistRules(fileSystem, imageProcessor, pathConfig, logger);
+        _settingsService = settingsService;
         _logger = logger;
     }
+
+    private bool IgnoreArticles => _settingsService.Get(CoreSettings.IgnoreLeadingArticlesOnSort);
 
     public async Task<SmartPlaylist> CreateSmartPlaylistAsync(SmartPlaylist playlist) =>
         (await SaveSmartPlaylistAsync(playlist, isNew: true).ConfigureAwait(false))!;
@@ -172,7 +178,7 @@ public class SmartPlaylistService : ISmartPlaylistService
             };
         }
 
-        var query = SongQuery.ExcludeHeavyFields(SmartPlaylistQueryBuilder.BuildQuery(context, smartPlaylist, searchTerm, sortOrder));
+        var query = SongQuery.ExcludeHeavyFields(SmartPlaylistQueryBuilder.BuildQuery(context, smartPlaylist, IgnoreArticles, searchTerm, sortOrder));
         var totalCount = await SmartPlaylistQueryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm).CountAsync(token).ConfigureAwait(false);
 
         var pagedData = await query
@@ -210,7 +216,7 @@ public class SmartPlaylistService : ISmartPlaylistService
         if (smartPlaylist is null)
             return new List<Guid>();
 
-        return await SmartPlaylistQueryBuilder.BuildQuery(context, smartPlaylist, searchTerm, sortOrder)
+        return await SmartPlaylistQueryBuilder.BuildQuery(context, smartPlaylist, IgnoreArticles, searchTerm, sortOrder)
             .Select(s => s.Id)
             .ToListAsync(token).ConfigureAwait(false);
     }

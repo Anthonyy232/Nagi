@@ -11,26 +11,20 @@ namespace Nagi.Core.Services.Implementations;
 
 internal static class SmartPlaylistQueryBuilder
 {
-    public static IQueryable<Song> BuildQuery(MusicDbContext context, SmartPlaylist smartPlaylist, string? searchTerm = null, SongSortOrder? sortOrderOverride = null)
+    public static IQueryable<Song> BuildQuery(MusicDbContext context, SmartPlaylist smartPlaylist, bool ignoreArticles,
+        string? searchTerm = null, SongSortOrder? sortOrderOverride = null)
     {
         var query = BuildCountQuery(context, smartPlaylist, searchTerm)
             .Include(s => s.Album)
             .Include(s => s.Genres)
             .AsSplitQuery();
 
-        return SongQuery.Sort(query, sortOrderOverride ?? smartPlaylist.SortOrder.ToSongSortOrder());
+        return SongQuery.Sort(query, sortOrderOverride ?? smartPlaylist.SortOrder.ToSongSortOrder(), ignoreArticles);
     }
 
     public static IQueryable<Song> BuildCountQuery(MusicDbContext context, SmartPlaylist smartPlaylist, string? searchTerm = null)
     {
-        var query = context.Songs.AsNoTracking();
-
-        query = ApplyRuleFilters(query, smartPlaylist);
-
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-            query = SongQuery.Search(context, query, ArtistNameHelper.NormalizeStringCore(searchTerm)!);
-
-        return query;
+        return SongQuery.Matching(context, ApplyRuleFilters(context.Songs.AsNoTracking(), smartPlaylist), searchTerm);
     }
 
     private static IQueryable<Song> ApplyRuleFilters(IQueryable<Song> query, SmartPlaylist smartPlaylist)

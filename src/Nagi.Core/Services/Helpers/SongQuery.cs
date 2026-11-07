@@ -10,11 +10,13 @@ namespace Nagi.Core.Services.Helpers;
 internal static class SongQuery
 {
     /// <summary>
-    ///     The <paramref name="songs" /> whose title, artists, album, year or genres contain
-    ///     <paramref name="normalizedTerm" />.
+    ///     The <paramref name="songs" /> whose title, artists, album, year or genres contain the search term, or all of
+    ///     them for a blank one. Every song list searches this way.
     /// </summary>
-    public static IQueryable<Song> Search(MusicDbContext context, IQueryable<Song> songs, string normalizedTerm)
+    public static IQueryable<Song> Matching(MusicDbContext context, IQueryable<Song> songs, string? searchTerm)
     {
+        if (ArtistNameHelper.NormalizeStringCore(searchTerm) is not { } normalizedTerm) return songs;
+
         var term = LikePatternHelper.CreateContainsPattern(normalizedTerm);
         var artistIds = context.Artists
             .Where(artist => EF.Functions.Like(artist.Name, term, LikePatternHelper.EscapeCharacter))
@@ -40,7 +42,7 @@ internal static class SongQuery
             );
     }
 
-    public static IOrderedQueryable<Song> Sort(IQueryable<Song> query, SongSortOrder sortOrder, bool ignoreArticles = false)
+    public static IOrderedQueryable<Song> Sort(IQueryable<Song> query, SongSortOrder sortOrder, bool ignoreArticles)
     {
         Expression<Func<Song, string>> title = ignoreArticles ? s => s.SortTitle : s => s.Title;
         Expression<Func<Song, string>> artist = ignoreArticles ? s => s.PrimaryArtistSortName : s => s.PrimaryArtistName;

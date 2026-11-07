@@ -50,8 +50,8 @@ public class ArtistViewViewModelTests
 
     private static ArtistViewViewModel CreateViewModel(LibraryFakes library, IUIService? ui = null)
     {
-        library.Reader.GetSongsByArtistIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
-            Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
+        library.Reader.GetSongsAsync(Arg.Any<SongScope>(), Arg.Any<string?>(), Arg.Any<SongSortOrder>(),
+            Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
             {
                 PageNumber = 1,
                 PageSize = 50,

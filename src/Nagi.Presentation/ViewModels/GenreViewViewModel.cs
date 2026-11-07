@@ -43,20 +43,15 @@ public partial class GenreViewViewModel : SongListViewModelBase
     {
         if (_genreId == Guid.Empty) return Task.FromResult(new PagedResult<Song>());
 
-        if (IsSearchActive)
-            return _libraryReader.SearchSongsInGenrePagedAsync(_genreId, SearchTerm, pageNumber, pageSize, cancellationToken);
-
-        return _libraryReader.GetSongsByGenreIdPagedAsync(_genreId, pageNumber, pageSize, sortOrder, cancellationToken);
+        return _libraryReader.GetSongsAsync(new SongScope.Genre(_genreId), SearchTerm, sortOrder, pageNumber, pageSize,
+            cancellationToken);
     }
 
     protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
     {
         if (_genreId == Guid.Empty) return Task.FromResult(new List<Guid>());
 
-        if (IsSearchActive)
-            return _libraryReader.SearchAllSongIdsInGenreAsync(_genreId, SearchTerm, sortOrder, token);
-
-        return _libraryReader.GetAllSongIdsByGenreIdAsync(_genreId, sortOrder, token);
+        return _libraryReader.GetSongIdsAsync(new SongScope.Genre(_genreId), SearchTerm, sortOrder, token);
     }
 
     public async Task LoadGenreDetailsAsync(GenreViewNavigationParameter? navParam)

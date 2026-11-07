@@ -34,19 +34,19 @@ public class LibraryQueryBenchmarks
 
     [Benchmark]
     public Task<PagedResult<Song>> BrowseFirstPage() =>
-        _fixture.Reader.GetAllSongsPagedAsync(1, PageSize);
+        _fixture.Reader.GetSongsAsync(SongScope.Library, null, SongSortOrder.TitleAsc, 1, PageSize);
 
     [Benchmark]
     public Task<PagedResult<Song>> BrowseLastPage() =>
-        _fixture.Reader.GetAllSongsPagedAsync(SongCount / PageSize, PageSize);
+        _fixture.Reader.GetSongsAsync(SongScope.Library, null, SongSortOrder.TitleAsc, SongCount / PageSize, PageSize);
 
     [Benchmark]
     public Task<PagedResult<Song>> SearchGuestArtist() =>
-        _fixture.Reader.SearchSongsPagedAsync(GuestArtistName, 1, PageSize);
+        _fixture.Reader.GetSongsAsync(SongScope.Library, GuestArtistName, SongSortOrder.TitleAsc, 1, PageSize);
 
     [Benchmark]
     public Task<PagedResult<Song>> SearchNoMatches() =>
-        _fixture.Reader.SearchSongsPagedAsync("Missing Artist Needle", 1, PageSize);
+        _fixture.Reader.GetSongsAsync(SongScope.Library, "Missing Artist Needle", SongSortOrder.TitleAsc, 1, PageSize);
 
     [Benchmark]
     public Task<PagedResult<Song>> SmartPlaylistPage() =>

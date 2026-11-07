@@ -21,15 +21,15 @@ public class LibraryViewModelTests
         var playback = Substitute.For<IMusicPlaybackService>();
         var favorite = new Song { Id = Guid.NewGuid(), Title = "Favorite", IsLoved = true };
         var other = new Song { Id = Guid.NewGuid(), Title = "Other" };
-        library.Reader.GetFavoritesPagedAsync(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<int>(),
-            Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
+        library.Reader.GetSongsAsync(SongScope.Favorites, Arg.Any<string?>(), Arg.Any<SongSortOrder>(),
+            Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
             { PageNumber = 1, PageSize = 50, TotalCount = 1, Items = [favorite] });
-        library.Reader.GetAllSongsPagedAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<SongSortOrder>(),
+        library.Reader.GetSongsAsync(SongScope.Library, Arg.Any<string?>(), Arg.Any<SongSortOrder>(), Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
             { PageNumber = 1, PageSize = 50, TotalCount = 2, Items = [favorite, other] });
-        library.Reader.GetFavoriteSongIdsAsync(Arg.Any<string>(), Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
+        library.Reader.GetSongIdsAsync(SongScope.Favorites, Arg.Any<string?>(), Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns([favorite.Id]);
-        library.Reader.GetAllSongIdsAsync(Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
+        library.Reader.GetSongIdsAsync(SongScope.Library, Arg.Any<string?>(), Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns([favorite.Id, other.Id]);
         using var viewModel = new LibraryViewModel(library.Reader, library.Listening, library.Notifier, library.Folders, Substitute.For<IPlaylistService>(), playback,
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), settings,
@@ -58,7 +58,7 @@ public class LibraryViewModelTests
         var apple = new Song { Id = Guid.NewGuid(), Title = "Apple" };
         var moon = new Song { Id = Guid.NewGuid(), Title = "A Moon" };
         Song[] orderedSongs = [apple, moon];
-        library.Reader.GetAllSongsPagedAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<SongSortOrder>(),
+        library.Reader.GetSongsAsync(SongScope.Library, Arg.Any<string?>(), Arg.Any<SongSortOrder>(), Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<CancellationToken>()).Returns(_ => new PagedResult<Song>
             {
                 PageNumber = 1,
@@ -66,7 +66,7 @@ public class LibraryViewModelTests
                 TotalCount = 2,
                 Items = orderedSongs
             });
-        library.Reader.GetAllSongIdsAsync(Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
+        library.Reader.GetSongIdsAsync(SongScope.Library, Arg.Any<string?>(), Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(_ => orderedSongs.Select(song => song.Id).ToList());
         using var viewModel = new LibraryViewModel(library.Reader, library.Listening, library.Notifier, library.Folders, Substitute.For<IPlaylistService>(), playback,
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), settings,
@@ -98,7 +98,7 @@ public class LibraryViewModelTests
         var library = new LibraryFakes();
         var settings = TestSettings.Create();
         var attempts = 0;
-        library.Reader.GetAllSongsPagedAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<SongSortOrder>(),
+        library.Reader.GetSongsAsync(SongScope.Library, Arg.Any<string?>(), Arg.Any<SongSortOrder>(), Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<CancellationToken>()).Returns(_ => attempts++ == 0
                 ? Task.FromException<PagedResult<Song>>(new IOException("Library unavailable"))
                 : Task.FromResult(new PagedResult<Song>
@@ -137,7 +137,7 @@ public class LibraryViewModelTests
     {
         var library = new LibraryFakes();
         var settings = TestSettings.Create();
-        library.Reader.GetAllSongsPagedAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<SongSortOrder>(),
+        library.Reader.GetSongsAsync(SongScope.Library, Arg.Any<string?>(), Arg.Any<SongSortOrder>(), Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
             {
                 PageNumber = 1,
@@ -159,8 +159,8 @@ public class LibraryViewModelTests
 
         if (reset)
         {
-            await library.Reader.DidNotReceive().GetAllSongsPagedAsync(Arg.Any<int>(), Arg.Any<int>(),
-                Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>());
+            await library.Reader.DidNotReceive().GetSongsAsync(SongScope.Library, Arg.Any<string?>(), Arg.Any<SongSortOrder>(),
+                Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
             viewModel.Songs.Should().BeEmpty();
         }
         else

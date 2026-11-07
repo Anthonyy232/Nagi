@@ -32,7 +32,8 @@ public class SmartPlaylistServiceTests : IDisposable
 
         _pathConfig.PlaylistImageCachePath.Returns("C:\\cache\\playlists");
 
-        _service = new SmartPlaylistService(_dbHelper.ContextFactory, _fileSystem, _pathConfig, _imageProcessor, _logger);
+        _service = new SmartPlaylistService(_dbHelper.ContextFactory, _fileSystem, _pathConfig, _imageProcessor, TestSettings.Create(),
+            _logger);
 
         SeedTestData();
     }

@@ -21,8 +21,8 @@ public class PlaylistSongListViewModelTests
 
     public PlaylistSongListViewModelTests()
     {
-        _library.Reader.GetSongsByPlaylistPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
-                Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
+        _library.Reader.GetSongsAsync(Arg.Any<SongScope>(), Arg.Any<string?>(), Arg.Any<SongSortOrder>(),
+                Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns(call => new PagedResult<Song>
             {
                 PageNumber = 1,
@@ -30,7 +30,7 @@ public class PlaylistSongListViewModelTests
                 TotalCount = _songs.Count,
                 Items = _songs.ToList()
             });
-        _library.Reader.GetAllSongIdsByPlaylistIdAsync(Arg.Any<Guid>(), Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
+        _library.Reader.GetSongIdsAsync(Arg.Any<SongScope>(), Arg.Any<string?>(), Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(_ => _songs.Select(song => song.Id).ToList());
         _playlists.MovePlaylistSongAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<double>()).Returns(true);
         _playlists.UpdatePlaylistOrderAsync(Arg.Any<Guid>(), Arg.Any<IEnumerable<Guid>>()).Returns(true);
@@ -169,8 +169,8 @@ public class PlaylistSongListViewModelTests
 
         viewModel.Songs.Select(song => song.Id).Should().Equal(_songs.Select(song => song.Id));
         await _ui.DidNotReceiveWithAnyArgs().ShowMessageDialogAsync(default!, default!);
-        await _library.Reader.Received(1).GetSongsByPlaylistPagedAsync(newPlaylist, Arg.Any<int>(), Arg.Any<int>(),
-            Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>());
+        await _library.Reader.Received(1).GetSongsAsync(new SongScope.Playlist(newPlaylist), Arg.Any<string?>(), Arg.Any<SongSortOrder>(),
+            Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -268,7 +268,7 @@ public class PlaylistSongListViewModelTests
 
         await _playlists.Received(1).RemoveSongsFromPlaylistAsync(_playlistId,
             Arg.Is<IEnumerable<Guid>>(ids => ids.SequenceEqual(new[] { _songs[0].Id })));
-        await _library.Reader.Received(1).GetSongsByPlaylistPagedAsync(newPlaylist, Arg.Any<int>(), Arg.Any<int>(),
-            Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>());
+        await _library.Reader.Received(1).GetSongsAsync(new SongScope.Playlist(newPlaylist), Arg.Any<string?>(), Arg.Any<SongSortOrder>(),
+            Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
     }
 }

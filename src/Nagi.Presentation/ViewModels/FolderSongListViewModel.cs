@@ -138,23 +138,11 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         return folder?.Id;
     }
 
-    private Task<int> FetchTotalFolderCountAsync(Guid parentFolderId, CancellationToken token = default)
-    {
-        if (IsSearchActive)
-            return _libraryReader.GetSubFolderCountBySearchAsync(parentFolderId, SearchTerm, token);
+    private Task<int> FetchTotalFolderCountAsync(Guid parentFolderId, CancellationToken token = default) =>
+        _libraryReader.GetSubFolderCountAsync(parentFolderId, SearchTerm, token);
 
-        return _libraryReader.GetSubFolderCountAsync(parentFolderId, token);
-    }
-
-    private Task<IEnumerable<Folder>> FetchFolderSliceAsync(Guid parentFolderId, int skip, int take, CancellationToken token = default)
-    {
-        if (take <= 0) return Task.FromResult(Enumerable.Empty<Folder>());
-
-        if (IsSearchActive)
-            return _libraryReader.SearchSubFoldersPagedAsync(parentFolderId, SearchTerm, skip, take, token);
-
-        return _libraryReader.GetSubFoldersPagedAsync(parentFolderId, skip, take, token);
-    }
+    private Task<IEnumerable<Folder>> FetchFolderSliceAsync(Guid parentFolderId, int skip, int take, CancellationToken token = default) =>
+        _libraryReader.GetSubFoldersAsync(parentFolderId, SearchTerm, skip, take, token);
 
     /// <summary>
     ///     Returns TotalCount even when take=0,
@@ -165,11 +153,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         if (!_rootFolderId.HasValue || string.IsNullOrEmpty(_currentDirectoryPath))
             return Task.FromResult(new PagedResult<Song>());
 
-        if (IsSearchActive)
-            return _libraryReader.SearchSongsInFolderOffsetAsync(_rootFolderId.Value, _currentDirectoryPath, SearchTerm, skip, take, sortOrder, token);
-
-        return _libraryReader.GetSongsInDirectoryOffsetAsync(
-            _rootFolderId.Value, _currentDirectoryPath, skip, take, sortOrder, token);
+        return _libraryReader.GetSongSliceAsync(new SongScope.Directory(_rootFolderId.Value, _currentDirectoryPath), SearchTerm,
+            sortOrder, skip, take, token);
     }
 
     /// <summary>
@@ -372,11 +357,13 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         if (!_rootFolderId.HasValue || string.IsNullOrEmpty(_currentDirectoryPath))
             return Task.FromResult(new List<Guid>());
 
-        if (IsSearchActive)
-            return _libraryReader.SearchAllSongIdsInFolderAsync(_rootFolderId.Value, _currentDirectoryPath, SearchTerm, sortOrder, token);
-
-        return _libraryReader.GetAllSongIdsInDirectoryRecursiveAsync(_rootFolderId.Value, _currentDirectoryPath, sortOrder, token);
+        // Searching plays what the page shows: the matching songs of this folder. Otherwise the folder plays with its subfolders.
+        SongScope scope = IsSearchActive
+            ? new SongScope.Directory(_rootFolderId.Value, _currentDirectoryPath)
+            : new SongScope.DirectoryTree(_rootFolderId.Value, _currentDirectoryPath);
+        return _libraryReader.GetSongIdsAsync(scope, SearchTerm, sortOrder, token);
     }
+
 
     [RelayCommand]
     private Task NavigateToSubfolderAsync(Folder? folder) =>
@@ -450,8 +437,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase
 
         try
         {
-            var songIds = await _libraryReader.GetAllSongIdsInDirectoryRecursiveAsync(
-                _rootFolderId.Value, folder.Path, SongSortOrder.TitleAsc, CancellationToken.None);
+            var songIds = await _libraryReader.GetSongIdsAsync(
+                new SongScope.DirectoryTree(_rootFolderId.Value, folder.Path), null, SongSortOrder.TitleAsc, CancellationToken.None);
 
             if (IsSongContextCurrent(generation) && songIds.Count > 0)
                 await _playbackService.PlayAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Folder, folder.Id));
@@ -491,8 +478,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         {
             try
             {
-                var folderSongs = await _libraryReader.GetAllSongIdsInDirectoryRecursiveAsync(
-                    rootFolderId, folderPath, SongSortOrder.TitleAsc, CancellationToken.None);
+                var folderSongs = await _libraryReader.GetSongIdsAsync(
+                    new SongScope.DirectoryTree(rootFolderId, folderPath), null, SongSortOrder.TitleAsc, CancellationToken.None);
                 ids.AddRange(folderSongs.Except(ids));
             }
             catch (Exception ex)

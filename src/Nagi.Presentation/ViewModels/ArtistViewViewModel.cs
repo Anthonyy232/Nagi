@@ -84,20 +84,15 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     {
         if (_artistId == Guid.Empty) return Task.FromResult(new PagedResult<Song>());
 
-        if (IsSearchActive)
-            return _libraryReader.SearchSongsInArtistPagedAsync(_artistId, SearchTerm, pageNumber, pageSize, cancellationToken);
-
-        return _libraryReader.GetSongsByArtistIdPagedAsync(_artistId, pageNumber, pageSize, sortOrder, cancellationToken);
+        return _libraryReader.GetSongsAsync(new SongScope.Artist(_artistId), SearchTerm, sortOrder, pageNumber, pageSize,
+            cancellationToken);
     }
 
     protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
     {
         if (_artistId == Guid.Empty) return Task.FromResult(new List<Guid>());
 
-        if (IsSearchActive)
-            return _libraryReader.SearchAllSongIdsInArtistAsync(_artistId, SearchTerm, sortOrder, token);
-
-        return _libraryReader.GetAllSongIdsByArtistIdAsync(_artistId, sortOrder, token);
+        return _libraryReader.GetSongIdsAsync(new SongScope.Artist(_artistId), SearchTerm, sortOrder, token);
     }
 
     public async Task LoadArtistDetailsAsync(Guid artistId)
@@ -118,7 +113,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
             // Updates its own UI.
             var songsTask = RefreshOrSortSongsAsync(manualToken: token);
             var artistTask = _artwork.GetArtistDetailsAsync(artistId, token);
-            var albumsTask = _libraryReader.GetTopAlbumsForArtistAsync(artistId, int.MaxValue);
+            var albumsTask = _libraryReader.GetAlbumsForArtistAsync(artistId);
 
             await Task.WhenAll(artistTask, albumsTask, songsTask);
             token.ThrowIfCancellationRequested();

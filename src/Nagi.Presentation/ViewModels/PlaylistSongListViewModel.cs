@@ -98,20 +98,15 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
     {
         if (!_currentPlaylistId.HasValue) return Task.FromResult(new PagedResult<Song>());
 
-        if (IsSearchActive)
-            return _libraryReader.SearchSongsInPlaylistPagedAsync(_currentPlaylistId.Value, SearchTerm, pageNumber, pageSize, sortOrder, cancellationToken);
-
-        return _libraryReader.GetSongsByPlaylistPagedAsync(_currentPlaylistId.Value, pageNumber, pageSize, sortOrder, cancellationToken);
+        return _libraryReader.GetSongsAsync(new SongScope.Playlist(_currentPlaylistId.Value), SearchTerm, sortOrder,
+            pageNumber, pageSize, cancellationToken);
     }
 
     protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
     {
         if (!_currentPlaylistId.HasValue) return Task.FromResult(new List<Guid>());
 
-        if (IsSearchActive)
-            return _libraryReader.SearchAllSongIdsInPlaylistAsync(_currentPlaylistId.Value, SearchTerm, sortOrder, token);
-
-        return _libraryReader.GetAllSongIdsByPlaylistIdAsync(_currentPlaylistId.Value, sortOrder, token);
+        return _libraryReader.GetSongIdsAsync(new SongScope.Playlist(_currentPlaylistId.Value), SearchTerm, sortOrder, token);
     }
 
     protected override PlaybackContext GetPlaybackContext() =>

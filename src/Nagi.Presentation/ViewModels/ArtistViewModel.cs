@@ -86,9 +86,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
             : ResourceFormatter.Format(Strings.Artists_Count_Plural, count);
 
     protected override Task<PagedResult<Artist>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token) =>
-        IsSearchActive
-            ? _libraryReader.SearchArtistsPagedAsync(SearchTerm, pageNumber, pageSize, token)
-            : _libraryReader.GetAllArtistsPagedAsync(pageNumber, pageSize, CurrentSortOrder, token);
+        _libraryReader.GetArtistsAsync(SearchTerm, CurrentSortOrder, pageNumber, pageSize, token);
 
     protected override void ApplyItemsToCollection(PagedResult<Artist> result, bool append)
     {

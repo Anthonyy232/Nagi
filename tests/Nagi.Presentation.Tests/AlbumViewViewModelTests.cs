@@ -30,8 +30,8 @@ public class AlbumViewViewModelTests
         await load.WaitAsync(TimeSpan.FromSeconds(5));
 
         viewModel.AlbumTitle.Should().Be(title);
-        await library.Reader.DidNotReceive().GetSongsByAlbumIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
-            Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>());
+        await library.Reader.DidNotReceive().GetSongsAsync(Arg.Any<SongScope>(), Arg.Any<string?>(), Arg.Any<SongSortOrder>(),
+            Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -44,8 +44,8 @@ public class AlbumViewViewModelTests
 
         viewModel.Songs.Should().BeEmpty();
         viewModel.GroupedSongsFlat.Should().BeEmpty();
-        await library.Reader.DidNotReceive().GetSongsByAlbumIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
-            Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>());
+        await library.Reader.DidNotReceive().GetSongsAsync(Arg.Any<SongScope>(), Arg.Any<string?>(), Arg.Any<SongSortOrder>(),
+            Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -53,8 +53,8 @@ public class AlbumViewViewModelTests
     {
         var library = new LibraryFakes();
         library.Reader.GetAlbumByIdAsync(Arg.Any<Guid>()).Returns(call => new Album { Id = call.Arg<Guid>(), Title = "Album" });
-        library.Reader.GetSongsByAlbumIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
-            Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
+        library.Reader.GetSongsAsync(Arg.Any<SongScope>(), Arg.Any<string?>(), Arg.Any<SongSortOrder>(),
+            Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
             {
                 PageNumber = 1,
                 PageSize = 50,
@@ -62,7 +62,7 @@ public class AlbumViewViewModelTests
                 Items = [new Song { DurationTicks = TimeSpan.TicksPerMinute }]
             });
         var duration = new TaskCompletionSource<TimeSpan>(TaskCreationOptions.RunContinuationsAsynchronously);
-        library.Reader.GetSearchTotalDurationInAlbumAsync(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+        library.Reader.GetSongsDurationAsync(Arg.Any<SongScope>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(duration.Task);
         var dispatcher = new HoldingDispatcher();
         using var viewModel = CreateViewModel(library, dispatcher);
@@ -83,8 +83,8 @@ public class AlbumViewViewModelTests
     {
         var library = new LibraryFakes();
         library.Reader.GetAlbumByIdAsync(Arg.Any<Guid>()).Returns(new Album { Title = "Long album" });
-        library.Reader.GetSongsByAlbumIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
-            Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
+        library.Reader.GetSongsAsync(Arg.Any<SongScope>(), Arg.Any<string?>(), Arg.Any<SongSortOrder>(),
+            Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
             {
                 PageNumber = 1,
                 PageSize = 50,

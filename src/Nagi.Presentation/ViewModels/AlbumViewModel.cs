@@ -80,9 +80,7 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
             : ResourceFormatter.Format(Strings.Albums_Count_Plural, count);
 
     protected override Task<PagedResult<Album>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token) =>
-        IsSearchActive
-            ? _libraryReader.SearchAlbumsPagedAsync(SearchTerm, pageNumber, pageSize, token)
-            : _libraryReader.GetAllAlbumsPagedAsync(pageNumber, pageSize, CurrentSortOrder, token);
+        _libraryReader.GetAlbumsAsync(SearchTerm, CurrentSortOrder, pageNumber, pageSize, token);
 
     protected override void ApplyItemsToCollection(PagedResult<Album> result, bool append)
     {

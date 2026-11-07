@@ -763,23 +763,23 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         switch (type)
         {
             case PlaybackContextType.Album:
-                _library.Reader.GetAllSongIdsByAlbumIdAsync(id, Arg.Any<SongSortOrder>()).Returns(songIds);
+                _library.Reader.GetSongIdsAsync(new SongScope.Album(id), null, Arg.Any<SongSortOrder>()).Returns(songIds);
                 await _service.PlayAlbumAsync(id);
                 break;
             case PlaybackContextType.Artist:
-                _library.Reader.GetAllSongIdsByArtistIdAsync(id, Arg.Any<SongSortOrder>()).Returns(songIds);
+                _library.Reader.GetSongIdsAsync(new SongScope.Artist(id), null, Arg.Any<SongSortOrder>()).Returns(songIds);
                 await _service.PlayArtistAsync(id);
                 break;
             case PlaybackContextType.Folder:
-                _library.Reader.GetAllSongIdsByFolderIdAsync(id, Arg.Any<SongSortOrder>()).Returns(songIds);
+                _library.Reader.GetSongIdsAsync(new SongScope.Folder(id), null, Arg.Any<SongSortOrder>()).Returns(songIds);
                 await _service.PlayFolderAsync(id);
                 break;
             case PlaybackContextType.Genre:
-                _library.Reader.GetAllSongIdsByGenreIdAsync(id, Arg.Any<SongSortOrder>()).Returns(songIds);
+                _library.Reader.GetSongIdsAsync(new SongScope.Genre(id), null, Arg.Any<SongSortOrder>()).Returns(songIds);
                 await _service.PlayGenreAsync(id);
                 break;
             default:
-                _library.Reader.GetAllSongIdsByPlaylistIdAsync(id, Arg.Any<SongSortOrder>()).Returns(songIds);
+                _library.Reader.GetSongIdsAsync(new SongScope.Playlist(id), null, Arg.Any<SongSortOrder>()).Returns(songIds);
                 await _service.PlayPlaylistAsync(id);
                 break;
         }
@@ -1502,7 +1502,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     {
         var release = new TaskCompletionSource<List<Guid>>(TaskCreationOptions.RunContinuationsAsynchronously);
         var albumId = Guid.NewGuid();
-        _library.Reader.GetAllSongIdsByAlbumIdAsync(albumId, SongSortOrder.TrackNumberAsc).Returns(release.Task);
+        _library.Reader.GetSongIdsAsync(new SongScope.Album(albumId), null, SongSortOrder.TrackNumberAsc).Returns(release.Task);
         var oldRequest = _service.PlayAlbumAsync(albumId);
 
         await _service.PlayAsync(_testSongs[1]);

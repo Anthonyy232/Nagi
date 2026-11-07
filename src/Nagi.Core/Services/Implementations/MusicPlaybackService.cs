@@ -540,42 +540,42 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
     public Task PlayAlbumAsync(Guid albumId) => RunPlaybackRequest(async request =>
     {
-        var songIds = await _libraryReader.GetAllSongIdsByAlbumIdAsync(albumId, SongSortOrder.TrackNumberAsc);
+        var songIds = await _libraryReader.GetSongIdsAsync(new SongScope.Album(albumId), null, SongSortOrder.TrackNumberAsc);
         if (IsCurrentRequest(request))
             await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Album, albumId), request);
     });
 
     public Task PlayArtistAsync(Guid artistId) => RunPlaybackRequest(async request =>
     {
-        var songIds = await _libraryReader.GetAllSongIdsByArtistIdAsync(artistId, SongSortOrder.TitleAsc);
+        var songIds = await _libraryReader.GetSongIdsAsync(new SongScope.Artist(artistId), null, SongSortOrder.TitleAsc);
         if (IsCurrentRequest(request))
             await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Artist, artistId), request);
     });
 
     public Task PlayFolderAsync(Guid folderId) => RunPlaybackRequest(async request =>
     {
-        var songIds = await _libraryReader.GetAllSongIdsByFolderIdAsync(folderId, SongSortOrder.TitleAsc);
+        var songIds = await _libraryReader.GetSongIdsAsync(new SongScope.Folder(folderId), null, SongSortOrder.TitleAsc);
         if (IsCurrentRequest(request))
             await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Folder, folderId), request);
     });
 
     public Task PlayPlaylistAsync(Guid playlistId) => RunPlaybackRequest(async request =>
     {
-        var songIds = await _libraryReader.GetAllSongIdsByPlaylistIdAsync(playlistId, SongSortOrder.PlaylistOrder);
+        var songIds = await _libraryReader.GetSongIdsAsync(new SongScope.Playlist(playlistId), null, SongSortOrder.PlaylistOrder);
         if (IsCurrentRequest(request))
             await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Playlist, playlistId), request);
     });
 
     public Task PlayGenreAsync(Guid genreId) => RunPlaybackRequest(async request =>
     {
-        var songIds = await _libraryReader.GetAllSongIdsByGenreIdAsync(genreId, SongSortOrder.TitleAsc);
+        var songIds = await _libraryReader.GetSongIdsAsync(new SongScope.Genre(genreId), null, SongSortOrder.TitleAsc);
         if (IsCurrentRequest(request))
             await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Genre, genreId), request);
     });
 
     public Task ShuffleLibraryAsync() => RunPlaybackRequest(async request =>
     {
-        var songIds = await _libraryReader.GetAllSongIdsAsync(SongSortOrder.TitleAsc);
+        var songIds = await _libraryReader.GetSongIdsAsync(SongScope.Library, null, SongSortOrder.TitleAsc);
         if (IsCurrentRequest(request))
             await PlayInternalAsync(songIds, 0, true, new PlaybackContext(PlaybackContextType.Library, null), request);
     });
