@@ -5,6 +5,7 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Nagi.Core.Services;
 using Nagi.Presentation.Services;
+using Nagi.WinUI.Controls;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Popups;
 using Nagi.WinUI.Services;

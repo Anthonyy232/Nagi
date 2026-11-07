@@ -6,6 +6,7 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Services;

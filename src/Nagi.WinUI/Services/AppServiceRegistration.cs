@@ -4,6 +4,7 @@ using Nagi.Audio.LibVlc;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Popups;
