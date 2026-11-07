@@ -5,8 +5,8 @@ using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
 using Nagi.Core.Settings;
+using Nagi.Presentation.Lists;
 using Nagi.Presentation.Services.Abstractions;
-using Nagi.Presentation.ViewModels;
 using NSubstitute;
 using Xunit;
 

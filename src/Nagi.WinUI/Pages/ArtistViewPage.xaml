@@ -6,7 +6,7 @@
     xmlns:controls="using:ImageEx"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewmodels="using:Nagi.Presentation.ViewModels"
+    xmlns:lists="using:Nagi.Presentation.Lists"
     xmlns:library="using:Nagi.Core.Library"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
@@ -16,7 +16,7 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="AlbumCardTemplate" x:DataType="viewmodels:ArtistAlbumViewModelItem">
+        <DataTemplate x:Key="AlbumCardTemplate" x:DataType="lists:ArtistAlbumViewModelItem">
             <Grid x:Name="AlbumCard"
                 Width="{StaticResource AlbumCardWidth}"
                 MinHeight="{StaticResource AlbumCardMinHeight}"

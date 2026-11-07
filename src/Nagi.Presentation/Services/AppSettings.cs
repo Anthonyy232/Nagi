@@ -3,6 +3,7 @@ using Nagi.Core.Library;
 using Nagi.Core.Playlists;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Common;
+using Nagi.Presentation.Lists;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
@@ -121,8 +122,8 @@ public static class AppSettings
     public static readonly Setting<SongSortOrder> GenreViewSortOrder = Setting.EnumName("SortOrder_GenreView", SongSortOrder.TitleAsc);
 
     private static SongListColumns DefaultSongListColumns() =>
-        Models.SongListColumns.Title | Models.SongListColumns.Artist | Models.SongListColumns.Album |
-        Models.SongListColumns.Year | Models.SongListColumns.Duration;
+        Lists.SongListColumns.Title | Lists.SongListColumns.Artist | Lists.SongListColumns.Album |
+        Lists.SongListColumns.Year | Lists.SongListColumns.Duration;
 
     // Stored as a JSON array of two numbers.
     private static Setting<(int, int)?> IntPair(string key) => new(key, () => null,

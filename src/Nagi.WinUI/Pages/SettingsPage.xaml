@@ -12,6 +12,7 @@
     xmlns:localConverters="using:Nagi.WinUI.Converters"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Nagi.Presentation.Models"
+    xmlns:lists="using:Nagi.Presentation.Lists"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:viewmodels="using:Nagi.Presentation.ViewModels"
     mc:Ignorable="d"
@@ -402,7 +403,7 @@
                         <FontIcon Glyph="&#xE8FD;" />
                     </controls:SettingsExpander.HeaderIcon>
                     <controls:SettingsExpander.ItemTemplate>
-                        <DataTemplate x:DataType="models:SongListColumnSetting">
+                        <DataTemplate x:DataType="lists:SongListColumnSetting">
                             <controls:SettingsCard Header="{x:Bind DisplayName}">
                                 <ToggleSwitch IsOn="{x:Bind IsEnabled, Mode=TwoWay}" />
                             </controls:SettingsCard>

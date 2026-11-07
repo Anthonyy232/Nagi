@@ -2,7 +2,7 @@ using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using Nagi.Presentation.ViewModels;
+using Nagi.Presentation.Lists;
 
 namespace Nagi.WinUI.Pages;
 

@@ -5,7 +5,7 @@
     xmlns:controls="using:ImageEx"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:Nagi.Presentation.Models"
+    xmlns:lists="using:Nagi.Presentation.Lists"
     xmlns:resources="using:Nagi.Presentation.Resources"
     mc:Ignorable="d"
     CloseButtonText="{x:Bind resources:Strings.Generic_Close}"
@@ -49,7 +49,7 @@
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
-                    <DataTemplate x:DataType="models:SongInfoSection">
+                    <DataTemplate x:DataType="lists:SongInfoSection">
                         <StackPanel Spacing="8">
                             <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}" />
                             <ItemsControl ItemsSource="{x:Bind Fields}">
@@ -59,7 +59,7 @@
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
-                                    <DataTemplate x:DataType="models:SongInfoField">
+                                    <DataTemplate x:DataType="lists:SongInfoField">
                                         <Grid ColumnSpacing="16">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="140" />

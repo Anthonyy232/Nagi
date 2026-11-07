@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Navigation;
-using Nagi.Presentation.ViewModels;
+using Nagi.Presentation.Lists;
 using Nagi.Presentation.Navigation;
 
 namespace Nagi.WinUI.Pages;

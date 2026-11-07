@@ -1,5 +1,5 @@
 using Microsoft.UI.Xaml.Controls;
-using Nagi.Presentation.ViewModels;
+using Nagi.Presentation.Lists;
 
 namespace Nagi.WinUI.Dialogs;
 

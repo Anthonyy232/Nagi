@@ -2,8 +2,8 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Core.Library;
+using Nagi.Presentation.Lists;
 using Nagi.Presentation.Services.Implementations;
-using Nagi.Presentation.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 
 namespace Nagi.WinUI.Pages;

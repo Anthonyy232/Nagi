@@ -5,9 +5,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="using:Nagi.Presentation.Models"
+    xmlns:lists="using:Nagi.Presentation.Lists"
     xmlns:resources="using:Nagi.Presentation.Resources"
-    xmlns:vm="using:Nagi.Presentation.ViewModels"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
     x:Name="pageRoot"
@@ -17,7 +16,7 @@
     <Page.Resources>
         <uihelpers:FolderContentItemTemplateSelector x:Key="FolderContentItemTemplateSelector">
             <uihelpers:FolderContentItemTemplateSelector.FolderTemplate>
-                <DataTemplate x:DataType="local:FolderContentItem">
+                <DataTemplate x:DataType="lists:FolderContentItem">
                     <Grid Height="54" ColumnSpacing="12" Background="Transparent">
                         <Grid.ContextFlyout>
                             <MenuFlyout Opening="FolderItemMenuFlyout_Opening">
@@ -51,7 +50,7 @@
             </uihelpers:FolderContentItemTemplateSelector.FolderTemplate>
 
             <uihelpers:FolderContentItemTemplateSelector.SongTemplate>
-                <DataTemplate x:DataType="local:FolderContentItem">
+                <DataTemplate x:DataType="lists:FolderContentItem">
                     <uicontrols:SongRow Song="{x:Bind Song}" ViewModel="{Binding DataContext, ElementName=pageRoot}" />
                 </DataTemplate>
             </uihelpers:FolderContentItemTemplateSelector.SongTemplate>
@@ -103,7 +102,7 @@
                 <BreadcrumbBar ItemsSource="{x:Bind ViewModel.Breadcrumbs, Mode=OneWay}"
                                ItemClicked="OnBreadcrumbItemClicked">
                     <BreadcrumbBar.ItemTemplate>
-                        <DataTemplate x:DataType="vm:BreadcrumbItem">
+                        <DataTemplate x:DataType="lists:BreadcrumbItem">
                             <TextBlock Text="{x:Bind Name}" />
                         </DataTemplate>
                     </BreadcrumbBar.ItemTemplate>

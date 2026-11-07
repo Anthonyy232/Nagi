@@ -6,7 +6,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="using:Nagi.Presentation.ViewModels"
+    xmlns:lists="using:Nagi.Presentation.Lists"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
     xmlns:controls="using:ImageEx"
@@ -102,7 +102,7 @@
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
             <GridView.ItemTemplate>
-                <DataTemplate x:DataType="vm:PlaylistViewModelItem">
+                <DataTemplate x:DataType="lists:PlaylistViewModelItem">
                     <Grid
                         Width="{StaticResource CollectionCardWidth}"
                         Height="{StaticResource CollectionCardHeight}"

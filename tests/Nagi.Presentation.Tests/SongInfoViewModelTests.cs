@@ -3,7 +3,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Library;
 using Nagi.Core.Platform;
-using Nagi.Presentation.ViewModels;
+using Nagi.Presentation.Lists;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Xunit;

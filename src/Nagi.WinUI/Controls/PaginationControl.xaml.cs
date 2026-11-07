@@ -1,7 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Nagi.Presentation.Lists;
 using Nagi.Presentation.Services;
-using Nagi.Presentation.ViewModels;
 
 namespace Nagi.WinUI.Controls;
 

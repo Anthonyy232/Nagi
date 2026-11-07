@@ -1,0 +1,19 @@
+using Nagi.Core.Library;
+
+namespace Nagi.Presentation.Lists;
+
+public sealed class FolderContentItem
+{
+    private FolderContentItem(Folder folder) => Folder = folder;
+    private FolderContentItem(Song song) => Song = song;
+
+    public Folder? Folder { get; }
+    public Song? Song { get; }
+    public bool IsFolder => Folder is not null;
+    public string DisplayName => Folder?.Name ?? Song!.Title;
+
+    public static FolderContentItem FromFolder(Folder folder) => new(folder);
+    public static FolderContentItem FromSong(Song song) => new(song);
+
+    public override string ToString() => DisplayName;
+}

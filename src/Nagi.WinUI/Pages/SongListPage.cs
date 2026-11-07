@@ -4,8 +4,8 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Library;
+using Nagi.Presentation.Lists;
 using Nagi.Presentation.Navigation;
-using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;
 

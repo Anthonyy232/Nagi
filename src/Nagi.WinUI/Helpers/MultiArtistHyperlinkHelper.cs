@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Nagi.Core.Library;
-using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Lists;
 using Nagi.Presentation.Navigation;
 
 namespace Nagi.WinUI.Helpers;

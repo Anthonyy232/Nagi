@@ -3,8 +3,8 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Library;
 using Nagi.Core.Platform;
 using Nagi.Core.Settings;
+using Nagi.Presentation.Lists;
 using Nagi.Presentation.Services;
-using Nagi.Presentation.ViewModels;
 using NSubstitute;
 using Xunit;
 

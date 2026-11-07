@@ -9,6 +9,7 @@ using Nagi.Core.Library;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Presentation.Common;
+using Nagi.Presentation.Lists;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;

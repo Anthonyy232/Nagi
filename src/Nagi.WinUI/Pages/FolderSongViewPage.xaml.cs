@@ -4,9 +4,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Nagi.Core.Library;
-using Nagi.Presentation.Models;
+using Nagi.Presentation.Lists;
 using Nagi.Presentation.Services.Implementations;
-using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Pages;

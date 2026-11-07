@@ -10,7 +10,7 @@ using Nagi.Core.Metadata;
 using Nagi.Core.Platform;
 using Nagi.Core.Playlists;
 using Nagi.Presentation.Common;
-using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Lists;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
