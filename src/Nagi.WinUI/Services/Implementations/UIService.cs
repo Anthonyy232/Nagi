@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Windows.Storage.Pickers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Nagi.Core.Constants;
 using Nagi.Core.Models;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;

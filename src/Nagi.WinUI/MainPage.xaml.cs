@@ -85,33 +85,9 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         await ViewModel.SidebarQueue.RemoveAsync(entry);
     }
 
-    // Maps detail pages back to their parent navigation item for selection synchronization.
-    private readonly Dictionary<Type, string> _detailPageToParentTagMap = new()
-    {
-        { typeof(PlaylistSongViewPage), NavigationTags.Playlists },
-        { typeof(SmartPlaylistSongViewPage), NavigationTags.Playlists },
-        { typeof(FolderSongViewPage), NavigationTags.Folders },
-        { typeof(ArtistViewPage), NavigationTags.Artists },
-        { typeof(AlbumViewPage), NavigationTags.Albums },
-        { typeof(GenreViewPage), NavigationTags.Genres }
-    };
-
     private readonly IDispatcherService _dispatcherService;
+    private readonly NavigationService _navigationService;
     private readonly ILogger<MainPage> _logger;
-
-    private readonly Dictionary<string, Type> _pages = new()
-    {
-        { NavigationTags.Library, typeof(LibraryPage) },
-        { NavigationTags.Favorites, typeof(LibraryPage) },
-        { NavigationTags.Folders, typeof(FolderPage) },
-        { NavigationTags.Playlists, typeof(PlaylistPage) },
-        { "Settings", typeof(SettingsPage) },
-        { NavigationTags.Artists, typeof(ArtistPage) },
-        { NavigationTags.Albums, typeof(AlbumPage) },
-        { NavigationTags.Genres, typeof(GenrePage) },
-        { NavigationTags.Insights, typeof(InsightsPage) }
-    };
-
     private readonly ISettingsService _settingsService;
 
     private SplitViewContentMotion? _queueContentMotion;
@@ -135,6 +111,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         GlobalOperation = globalOperation;
         _settingsService = settingsService;
         _dispatcherService = dispatcherService;
+        _navigationService = navigationService;
         _logger = logger;
 
         InitializeComponent();
@@ -165,13 +142,10 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             return;
         }
 
-        if (selectedItem is NavigationViewItem { Tag: string tag } && _pages.TryGetValue(tag, out var pageType))
-        {
-            var favorites = tag == NavigationTags.Favorites;
-            if (ContentFrame.CurrentSourcePageType != pageType ||
-                ContentFrame.Content is LibraryPage library && library.ViewModel.ShowFavoritesOnly != favorites)
-                ContentFrame.Navigate(pageType, favorites ? NavigationTags.Favorites : null, transitionInfo);
-        }
+        if (selectedItem is NavigationViewItem { Tag: string tag } &&
+            AppDestinations.TryGetMenuPage(tag, out var pageType, out var parameter) &&
+            (ContentFrame.CurrentSourcePageType != pageType || !Equals(_navigationService.CurrentParameter, parameter)))
+            ContentFrame.Navigate(pageType, parameter, transitionInfo);
     }
 
     private void TryGoBack()
@@ -240,23 +214,19 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
     }
 
-    private void UpdateNavViewSelection(Type? currentPageType, bool? favorites = null)
+    private void UpdateNavViewSelection()
     {
         var wasUpdating = _isUpdatingNavViewSelection;
         _isUpdatingNavViewSelection = true;
         try
         {
-            if (currentPageType == typeof(SettingsPage))
+            if (ContentFrame.CurrentSourcePageType == typeof(SettingsPage))
             {
                 NavView.SelectedItem = NavView.SettingsItem;
                 return;
             }
 
-            var tag = _pages.FirstOrDefault(p => p.Value == currentPageType).Key;
-            if (currentPageType == typeof(LibraryPage))
-                tag = (favorites ?? (ContentFrame.Content as LibraryPage)?.ViewModel.ShowFavoritesOnly) == true ? NavigationTags.Favorites : NavigationTags.Library;
-            if (tag is null && currentPageType is not null)
-                _detailPageToParentTagMap.TryGetValue(currentPageType, out tag);
+            var tag = AppDestinations.GetMenuTag(ContentFrame.CurrentSourcePageType, _navigationService.CurrentParameter);
             NavView.SelectedItem = NavView.MenuItems.OfType<NavigationViewItem>()
                 .FirstOrDefault(item => Equals(item.Tag, tag));
         }
@@ -314,7 +284,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
                     Icon = new FontIcon { Glyph = AppIconGlyphs.ToGlyph(item.Icon) }
                 });
             }
-            UpdateNavViewSelection(ContentFrame.CurrentSourcePageType);
+            UpdateNavViewSelection();
         }
         finally
         {
@@ -360,7 +330,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         if (ContentFrame.CurrentSourcePageType is null)
             NavView.SelectedItem = NavView.MenuItems.FirstOrDefault() ?? NavView.SettingsItem;
 
-        UpdateNavViewSelection(ContentFrame.CurrentSourcePageType);
+        UpdateNavViewSelection();
 
         UpdatePlayerVisualState(false);
     }
@@ -450,13 +420,13 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private void OnContentFrameNavigated(object sender, NavigationEventArgs e)
     {
         _logger.LogDebug("Navigated to {PageName}.", e.SourcePageType.Name);
-        var isDetailPage = _detailPageToParentTagMap.ContainsKey(e.SourcePageType);
+        var isDetailPage = AppDestinations.IsDetailPage(e.SourcePageType);
         var isLyricsPage = e.SourcePageType == typeof(LyricsPage);
         ViewModel.IsLyricsPageActive = isLyricsPage;
 
         AppTitleBar.IsBackButtonVisible = ContentFrame.CanGoBack && (isDetailPage || isLyricsPage);
 
-        UpdateNavViewSelection(e.SourcePageType, e.Parameter is NavigationTags.Favorites);
+        UpdateNavViewSelection();
 
         var isSettingsPage = e.SourcePageType == typeof(SettingsPage);
         // Keep destination bounds stable while player space changes, so WinUI can finish the outgoing fade.

@@ -1,54 +1,33 @@
-﻿using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Services.Abstractions;
-using Nagi.WinUI.Pages;
 
 namespace Nagi.WinUI.Services.Implementations;
 
 /// <summary>
 ///     Opens detail pages in the frame that <see cref="MainPage" /> hands over through <see cref="Initialize" />.
 /// </summary>
-public class NavigationService : INavigationService, IDisposable
+public class NavigationService : INavigationService
 {
-    private static readonly Dictionary<Type, Type> DetailPages = new()
-    {
-        [typeof(AlbumViewNavigationParameter)] = typeof(AlbumViewPage),
-        [typeof(ArtistViewNavigationParameter)] = typeof(ArtistViewPage),
-        [typeof(FolderSongViewNavigationParameter)] = typeof(FolderSongViewPage),
-        [typeof(GenreViewNavigationParameter)] = typeof(GenreViewPage),
-        [typeof(PlaylistSongViewNavigationParameter)] = typeof(PlaylistSongViewPage),
-        [typeof(SmartPlaylistSongViewNavigationParameter)] = typeof(SmartPlaylistSongViewPage),
-    };
-
     private readonly ILogger<NavigationService> _logger;
-
     private Frame? _frame;
-    private bool _isDisposed;
-    private object? _lastParameter;
 
     public NavigationService(ILogger<NavigationService> logger)
     {
         _logger = logger;
     }
 
-    public void Dispose()
-    {
-        if (_isDisposed) return;
-
-        if (_frame != null) _frame.Navigated -= OnFrameNavigated;
-
-        _isDisposed = true;
-        GC.SuppressFinalize(this);
-    }
+    /// <summary>
+    ///     The parameter the frame's current page was opened with.
+    /// </summary>
+    public object? CurrentParameter { get; private set; }
 
     public void Initialize(Frame frame)
     {
-        ArgumentNullException.ThrowIfNull(frame);
         if (_frame != null) _frame.Navigated -= OnFrameNavigated;
-        _lastParameter = null;
+        CurrentParameter = null;
         _frame = frame;
         _frame.Navigated += OnFrameNavigated;
     }
@@ -56,8 +35,7 @@ public class NavigationService : INavigationService, IDisposable
     public void NavigateTo(INavigationParameter parameter)
     {
         ArgumentNullException.ThrowIfNull(parameter);
-        if (!DetailPages.TryGetValue(parameter.GetType(), out var pageType))
-            throw new ArgumentException($"No page accepts {parameter.GetType().Name}.", nameof(parameter));
+        var pageType = AppDestinations.GetDetailPage(parameter);
 
         if (_frame is null)
         {
@@ -65,7 +43,7 @@ public class NavigationService : INavigationService, IDisposable
             return;
         }
 
-        if (Equals(_lastParameter, parameter))
+        if (Equals(CurrentParameter, parameter))
         {
             _logger.LogDebug("Navigation to same page {PageName} prevented.", pageType.Name);
             return;
@@ -74,8 +52,5 @@ public class NavigationService : INavigationService, IDisposable
         _frame.Navigate(pageType, parameter);
     }
 
-    private void OnFrameNavigated(object sender, NavigationEventArgs e)
-    {
-        _lastParameter = e.Parameter;
-    }
+    private void OnFrameNavigated(object sender, NavigationEventArgs e) => CurrentParameter = e.Parameter;
 }
