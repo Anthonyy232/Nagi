@@ -523,7 +523,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
 
         var totalSaved = 0;
         var isNetworkFolder = _fileSystem.IsNetworkPath(baseFolderPath);
-        var failureSummary = new ConcurrentDictionary<string, int>();
+        var failureSummary = new ConcurrentDictionary<ExtractionFailure, int>();
         var producerTask = Task.Run(async () =>
         {
             try
@@ -548,26 +548,23 @@ public sealed class LibraryFolderService : ILibraryFolderService
                             var metadata = await _metadataService.ExtractMetadataAsync(filePath, baseFolderPath, includeMediaAssets)
                                 .WaitAsync(ct).ConfigureAwait(false);
 
-                            // Retry once for transient failure classes. UnsupportedFormat / CorruptFile
-                            // are permanent — no point retrying. Timeouts and file-access errors are
-                            // often transient on network storage (brief SMB stall, renegotiation).
-                            if (metadata.ExtractionFailed &&
-                                (metadata.ErrorMessage == "ExtractionTimeout" || metadata.ErrorMessage == "FileAccessError"))
+                            // Timeouts and file-access errors are often a network share stalling for a moment, so they get
+                            // one more try after a pause long enough for a brief stall to pass; other failures are permanent.
+                            if (metadata.Failure is ExtractionFailure.Timeout or ExtractionFailure.FileAccess)
                             {
                                 await Task.Delay(500, ct).ConfigureAwait(false);
                                 metadata = await _metadataService.ExtractMetadataAsync(filePath, baseFolderPath, includeMediaAssets)
                                     .WaitAsync(ct).ConfigureAwait(false);
                             }
 
-                            if (!metadata.ExtractionFailed)
+                            if (metadata.Failure is not { } failure)
                             {
                                 await channel.Writer.WriteAsync(metadata, ct).ConfigureAwait(false);
                             }
                             else
                             {
-                                var code = metadata.ErrorMessage ?? "Unknown";
-                                failureSummary.AddOrUpdate(code, 1, (_, n) => n + 1);
-                                _logger.LogDebug("Failed to extract metadata ({ErrorCode}) from file: {FilePath}", code, filePath);
+                                failureSummary.AddOrUpdate(failure, 1, (_, n) => n + 1);
+                                _logger.LogDebug("Failed to extract metadata ({Failure}) from file: {FilePath}", failure, filePath);
                             }
                         }
                         finally

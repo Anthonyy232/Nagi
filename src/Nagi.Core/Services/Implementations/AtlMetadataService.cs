@@ -54,8 +54,7 @@ public partial class AtlMetadataService : IMetadataService
             if (!track.AudioFormat.Readable || track.AudioFormat.ID == -1 ||
                 track.AudioFormat.Name?.Equals("Unknown", StringComparison.OrdinalIgnoreCase) == true)
             {
-                metadata.ExtractionFailed = true;
-                metadata.ErrorMessage = "UnsupportedFormat";
+                metadata.Failure = ExtractionFailure.UnsupportedFormat;
                 return metadata;
             }
 
@@ -94,27 +93,23 @@ public partial class AtlMetadataService : IMetadataService
         catch (TimeoutException)
         {
             _logger.LogWarning("Metadata extraction timed out for file: {FilePath}", filePath);
-            metadata.ExtractionFailed = true;
-            metadata.ErrorMessage = "ExtractionTimeout";
+            metadata.Failure = ExtractionFailure.Timeout;
         }
         catch (IOException ex)
         {
             _logger.LogWarning(ex, "File access error during metadata extraction for '{FilePath}'.", filePath);
-            metadata.ExtractionFailed = true;
-            metadata.ErrorMessage = "FileAccessError";
+            metadata.Failure = ExtractionFailure.FileAccess;
         }
         catch (UnauthorizedAccessException ex)
         {
             _logger.LogWarning(ex, "Access denied during metadata extraction for '{FilePath}'.", filePath);
-            metadata.ExtractionFailed = true;
-            metadata.ErrorMessage = "AccessDenied";
+            metadata.Failure = ExtractionFailure.AccessDenied;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unexpected error occurred during metadata extraction for '{FilePath}'.",
                 filePath);
-            metadata.ExtractionFailed = true;
-            metadata.ErrorMessage = ex.GetType().Name;
+            metadata.Failure = ExtractionFailure.Unexpected;
         }
 
         return metadata;

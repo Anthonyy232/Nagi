@@ -106,7 +106,7 @@ public class AtlMetadataServiceTests : IDisposable
         _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>())
             .Returns(Task.FromResult<(string?, string?, string?)>(("C:/art/1.jpg", "light1", "dark1")));
         var result = await _metadataService.ExtractMetadataAsync(filePath);
-        result.ExtractionFailed.Should().BeFalse();
+        result.Failure.Should().BeNull();
         result.Title.Should().Be("Test Title");
         result.Artists.Should().ContainSingle().Which.Should().Be("Test Artist");
         result.AlbumArtists.Should().ContainSingle().Which.Should().Be("Test Album Artist");
@@ -309,8 +309,7 @@ public class AtlMetadataServiceTests : IDisposable
         _fileSystem.GetFileInfo(filePath).Returns(new FileInfo(filePath));
         _fileSystem.FileExists(filePath).Returns(true);
         var result = await _metadataService.ExtractMetadataAsync(filePath);
-        result.ExtractionFailed.Should().BeTrue();
-        result.ErrorMessage.Should().Be("UnsupportedFormat");
+        result.Failure.Should().Be(ExtractionFailure.UnsupportedFormat);
     }
 
     [Fact]

@@ -28,8 +28,8 @@ public class SongFileMetadata
     public double? ReplayGainTrackGain { get; set; }
     public double? ReplayGainTrackPeak { get; set; }
     public string? Composer { get; set; }
-    public bool ExtractionFailed { get; set; }
-    public string? ErrorMessage { get; set; }
+    /// <summary>Why the file couldn't be read, or null when it was.</summary>
+    public ExtractionFailure? Failure { get; set; }
     public string? Grouping { get; set; }
     public string? Copyright { get; set; }
     public string? Comment { get; set; }
@@ -43,4 +43,18 @@ public class SongFileMetadata
 
     /// <summary>Album artist IDs in tag order; they pair with <see cref="AlbumArtists"/> only when the counts match.</summary>
     public List<string> MusicBrainzAlbumArtistIds { get; set; } = new();
+}
+
+public enum ExtractionFailure
+{
+    UnsupportedFormat,
+
+    /// <summary>Reading took too long, which a brief network storage stall can cause.</summary>
+    Timeout,
+
+    /// <summary>The file couldn't be opened or read, which a brief network storage stall can cause.</summary>
+    FileAccess,
+
+    AccessDenied,
+    Unexpected
 }
