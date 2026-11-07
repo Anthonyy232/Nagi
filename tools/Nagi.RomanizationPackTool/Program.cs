@@ -3,11 +3,6 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using Nagi.Core.Lyrics.Romanization;
 
-var jsonOptions = new JsonSerializerOptions
-{
-    PropertyNameCaseInsensitive = true
-};
-
 if (args.Length > 0 && args[0].Equals("generate-key", StringComparison.OrdinalIgnoreCase))
 {
     var keyDirectory = args.Length > 1 ? args[1] : Path.Combine("tools", "romanization-packs", ".signing");
@@ -31,9 +26,9 @@ foreach (var packDirectory in Directory.EnumerateDirectories(options.SourceDirec
     await using var manifestStream = File.OpenRead(manifestPath);
     var manifest = await JsonSerializer.DeserializeAsync<RomanizationPackManifest>(
         manifestStream,
-        jsonOptions) ?? throw new InvalidOperationException($"Invalid manifest: {manifestPath}");
+        RomanizationJson.Options) ?? throw new InvalidOperationException($"Invalid manifest: {manifestPath}");
 
-    var metadata = await ReadMetadataAsync(packDirectory, jsonOptions);
+    var metadata = await ReadMetadataAsync(packDirectory);
     var archiveName = $"{manifest.Id}-{manifest.Version}.nagipack";
     var archivePath = Path.Combine(options.OutputDirectory, archiveName);
 
@@ -75,7 +70,7 @@ var unsignedEnvelope = new RomanizationCatalogEnvelope
 };
 
 var unsignedPath = Path.Combine(options.OutputDirectory, "catalog.unsigned.json");
-await File.WriteAllTextAsync(unsignedPath, JsonSerializer.Serialize(unsignedEnvelope, jsonOptions));
+await File.WriteAllTextAsync(unsignedPath, JsonSerializer.Serialize(unsignedEnvelope, RomanizationJson.Options));
 Console.WriteLine($"Wrote unsigned catalog -> {unsignedPath}");
 
 if (!string.IsNullOrWhiteSpace(privateKeyPem))
@@ -84,11 +79,11 @@ if (!string.IsNullOrWhiteSpace(privateKeyPem))
     var signedEnvelope = new RomanizationCatalogEnvelope
     {
         Catalog = catalog,
-        Signature = SignCatalog(catalog, privateKeyPem, jsonOptions)
+        Signature = SignCatalog(catalog, privateKeyPem)
     };
 
     var signedPath = Path.Combine(options.OutputDirectory, "catalog.json");
-    await File.WriteAllTextAsync(signedPath, JsonSerializer.Serialize(signedEnvelope, jsonOptions));
+    await File.WriteAllTextAsync(signedPath, JsonSerializer.Serialize(signedEnvelope, RomanizationJson.Options));
     Console.WriteLine($"Wrote signed catalog -> {signedPath}");
 }
 else
@@ -96,7 +91,7 @@ else
     Console.WriteLine("Set NAGI_ROMANIZATION_CATALOG_PRIVATE_KEY_PEM to emit signed catalog.json.");
 }
 
-static async Task<CatalogEntryMetadata> ReadMetadataAsync(string packDirectory, JsonSerializerOptions jsonOptions)
+static async Task<CatalogEntryMetadata> ReadMetadataAsync(string packDirectory)
 {
     var metadataPath = Path.Combine(packDirectory, "catalog-entry.json");
     if (!File.Exists(metadataPath)) return new CatalogEntryMetadata();
@@ -104,7 +99,7 @@ static async Task<CatalogEntryMetadata> ReadMetadataAsync(string packDirectory, 
     await using var stream = File.OpenRead(metadataPath);
     return await JsonSerializer.DeserializeAsync<CatalogEntryMetadata>(
         stream,
-        jsonOptions) ?? new CatalogEntryMetadata();
+        RomanizationJson.Options) ?? new CatalogEntryMetadata();
 }
 
 static void CreatePackArchive(string sourceDirectory, string archivePath)
@@ -122,9 +117,9 @@ static void CreatePackArchive(string sourceDirectory, string archivePath)
     }
 }
 
-static string SignCatalog(RomanizationPackCatalog catalog, string privateKeyPem, JsonSerializerOptions jsonOptions)
+static string SignCatalog(RomanizationPackCatalog catalog, string privateKeyPem)
 {
-    var payload = JsonSerializer.SerializeToUtf8Bytes(catalog, jsonOptions);
+    var payload = JsonSerializer.SerializeToUtf8Bytes(catalog, RomanizationJson.Options);
     using var ecdsa = ECDsa.Create();
     ecdsa.ImportFromPem(privateKeyPem);
     return Convert.ToBase64String(ecdsa.SignData(payload, HashAlgorithmName.SHA256, DSASignatureFormat.Rfc3279DerSequence));
