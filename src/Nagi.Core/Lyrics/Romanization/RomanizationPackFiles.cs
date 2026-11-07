@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Platform;
 
 namespace Nagi.Core.Lyrics.Romanization;
 

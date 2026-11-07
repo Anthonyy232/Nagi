@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Lyrics.Romanization;
-using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Platform;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;
 

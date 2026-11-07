@@ -1,5 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using Nagi.Core.Services;
+using Nagi.Core;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services.Implementations;
 using Nagi.Presentation.ViewModels;

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.Platform;
 
 public interface IDispatcherService
 {

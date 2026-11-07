@@ -6,7 +6,7 @@
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
-    xmlns:constants="using:Nagi.Core.Constants"
+    xmlns:constants="using:Nagi.Core.Platform"
     xmlns:coreModels="using:Nagi.Core.Playback"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:localConverters="using:Nagi.WinUI.Converters"

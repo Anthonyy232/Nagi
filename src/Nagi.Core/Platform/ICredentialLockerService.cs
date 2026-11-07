@@ -1,4 +1,4 @@
-﻿namespace Nagi.Core.Services.Abstractions;
+﻿namespace Nagi.Core.Platform;
 
 /// <summary>
 ///     Stores secrets in the operating system's credential store, such as the Windows Credential Manager.

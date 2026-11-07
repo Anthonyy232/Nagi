@@ -1,5 +1,5 @@
 using System.Collections.Concurrent;
-using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Platform;
 using Nagi.Core.Settings;
 
 namespace Nagi.Core.Lyrics.Romanization;

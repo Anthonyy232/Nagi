@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
-namespace Nagi.Core.Helpers;
+namespace Nagi.Core.Platform;
 
 public static partial class UrlRedaction
 {

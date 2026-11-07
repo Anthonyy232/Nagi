@@ -1,4 +1,4 @@
-﻿namespace Nagi.Core.Services.Abstractions;
+﻿namespace Nagi.Core.Platform;
 
 public interface IAppInfoService
 {

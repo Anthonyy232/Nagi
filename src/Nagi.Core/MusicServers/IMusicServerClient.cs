@@ -21,7 +21,7 @@ public interface IMusicServerClient
     /// <summary>
     ///     A URL that streams the original file. It carries the credentials itself because the player can't send
     ///     headers, and it must carry them in its query and nowhere else: logs drop URL queries
-    ///     (<see cref="Nagi.Core.Helpers.UrlRedaction" />), not paths.
+    ///     (<see cref="Nagi.Core.Platform.UrlRedaction" />), not paths.
     /// </summary>
     Uri GetStreamUri(string songId);
 

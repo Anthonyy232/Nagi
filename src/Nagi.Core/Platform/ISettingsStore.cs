@@ -1,4 +1,4 @@
-﻿namespace Nagi.Core.Services.Abstractions;
+﻿namespace Nagi.Core.Platform;
 
 /// <summary>
 ///     The platform's persistent key-value store for settings. Values are strings, booleans and numbers.

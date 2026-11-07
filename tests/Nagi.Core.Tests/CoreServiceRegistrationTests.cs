@@ -2,16 +2,14 @@ using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nagi.Core.Artwork;
-using Nagi.Core.Helpers;
 using Nagi.Core.Library;
 using Nagi.Core.MusicServers;
 using Nagi.Core.OnlineProviders;
+using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
 using Nagi.Core.Presence;
 using Nagi.Core.Scrobbling;
-using Nagi.Core.Services;
-using Nagi.Core.Services.Abstractions;
 using NSubstitute;
 using Xunit;
 

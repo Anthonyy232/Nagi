@@ -4,7 +4,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Data.Sqlite;
 using Nagi.Core.Backup;
-using Nagi.Core.Helpers;
+using Nagi.Core.Platform;
 using Nagi.Core.Settings;
 using NSubstitute;
 using Xunit;

@@ -1,4 +1,4 @@
-namespace Nagi.Core.Helpers;
+namespace Nagi.Core.Platform;
 
 /// <summary>
 ///     Enumerates files without allowing an inaccessible directory, transient filesystem error,

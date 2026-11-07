@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Platform;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Services.Abstractions;
 

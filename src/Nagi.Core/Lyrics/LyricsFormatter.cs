@@ -1,5 +1,5 @@
 using ModernLrc;
-using Nagi.Core.Helpers;
+using Nagi.Core.Platform;
 
 namespace Nagi.Core.Lyrics;
 

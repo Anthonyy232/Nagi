@@ -1,6 +1,6 @@
 using FluentAssertions;
 using Nagi.Core.Artwork;
-using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Platform;
 using NSubstitute;
 using Xunit;
 

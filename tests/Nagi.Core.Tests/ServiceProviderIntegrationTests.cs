@@ -1,13 +1,12 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Artwork;
-using Nagi.Core.Helpers;
 using Nagi.Core.Library;
 using Nagi.Core.Metadata;
 using Nagi.Core.OnlineProviders;
 using Nagi.Core.OnlineProviders.Pipelines;
+using Nagi.Core.Platform;
 using Nagi.Core.Playback;
-using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;

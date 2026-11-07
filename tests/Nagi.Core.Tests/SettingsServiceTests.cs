@@ -1,8 +1,8 @@
 using System.Text.Json;
 using FluentAssertions;
 using Nagi.Core.OnlineProviders;
+using Nagi.Core.Platform;
 using Nagi.Core.Playback;
-using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;

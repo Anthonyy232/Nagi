@@ -10,7 +10,7 @@ using Nagi.Core.Library;
 using Nagi.Core.Listening;
 using Nagi.Core.OnlineProviders;
 using Nagi.Core.OnlineProviders.Pipelines;
-using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Platform;
 using Nagi.Core.Settings;
 
 namespace Nagi.Core.Scrobbling;

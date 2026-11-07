@@ -1,10 +1,9 @@
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Nagi.Core.Helpers;
 using Nagi.Core.Library;
 using Nagi.Core.Listening;
+using Nagi.Core.Platform;
 using Nagi.Core.Playlists;
-using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;

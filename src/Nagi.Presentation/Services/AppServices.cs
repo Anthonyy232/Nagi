@@ -3,10 +3,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
 using Nagi.Core.Library;
+using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Presence;
 using Nagi.Core.Scrobbling;
-using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 

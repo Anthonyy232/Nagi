@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Data;
-using Nagi.Core.Helpers;
+using Nagi.Core.Platform;
 
 namespace Nagi.Core.Library;
 

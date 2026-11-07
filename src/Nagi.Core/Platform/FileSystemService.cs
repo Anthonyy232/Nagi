@@ -1,9 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-using Nagi.Core.Helpers;
-using Nagi.Core.Services.Abstractions;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Platform;
 
 public class FileSystemService : IFileSystemService
 {

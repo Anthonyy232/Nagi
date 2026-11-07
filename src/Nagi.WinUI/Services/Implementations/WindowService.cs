@@ -3,7 +3,7 @@ using H.NotifyIcon.EfficiencyMode;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Platform;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;

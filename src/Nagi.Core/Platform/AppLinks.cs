@@ -1,4 +1,4 @@
-namespace Nagi.Core.Constants;
+namespace Nagi.Core.Platform;
 
 /// <summary>
 ///     Where the project lives and how users reach its author.

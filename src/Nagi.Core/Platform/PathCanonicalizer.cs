@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Nagi.Core.Helpers;
+namespace Nagi.Core.Platform;
 
 /// <summary>
 ///     Normalizes filesystem paths so that semantically identical paths compare equal as strings.
@@ -12,7 +12,7 @@ public static class PathCanonicalizer
 {
     /// <summary>
     ///     Applies deterministic textual normalization. Network/UNC resolution must happen
-    ///     in the platform-specific <see cref="Services.Abstractions.IFileSystemService"/> first.
+    ///     in the platform-specific <see cref="IFileSystemService"/> first.
     /// </summary>
     public static string Normalize(string path) => Normalize(path, Path.DirectorySeparatorChar);
 

@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Platform;
 using Nagi.Presentation.Resources;
 
 namespace Nagi.WinUI.Services.Implementations;

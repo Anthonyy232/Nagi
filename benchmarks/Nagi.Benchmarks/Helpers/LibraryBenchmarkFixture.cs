@@ -5,13 +5,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Artwork;
 using Nagi.Core.Data;
-using Nagi.Core.Helpers;
 using Nagi.Core.Library;
 using Nagi.Core.Metadata;
 using Nagi.Core.OnlineProviders.Pipelines;
+using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
-using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Settings;
 using NSubstitute;
 

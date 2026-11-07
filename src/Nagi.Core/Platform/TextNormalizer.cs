@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Nagi.Core.Helpers;
+namespace Nagi.Core.Platform;
 
 public static class TextNormalizer
 {

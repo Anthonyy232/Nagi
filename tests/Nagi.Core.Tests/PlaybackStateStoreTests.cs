@@ -1,6 +1,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
-using Nagi.Core.Helpers;
+using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using NSubstitute;
 using Xunit;

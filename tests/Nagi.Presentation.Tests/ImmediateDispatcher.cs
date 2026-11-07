@@ -1,4 +1,4 @@
-using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Platform;
 
 namespace Nagi.Presentation.Tests;
 

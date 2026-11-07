@@ -1,4 +1,4 @@
-﻿namespace Nagi.Core.Helpers;
+﻿namespace Nagi.Core.Platform;
 
 public static class FileNameHelper
 {

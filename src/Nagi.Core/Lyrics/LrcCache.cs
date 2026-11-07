@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
-using Nagi.Core.Helpers;
 using Nagi.Core.Library;
+using Nagi.Core.Platform;
 
 namespace Nagi.Core.Lyrics;
 

@@ -1,4 +1,4 @@
-using Nagi.Core.Helpers;
+using Nagi.Core.Platform;
 
 namespace Nagi.Core.Library;
 

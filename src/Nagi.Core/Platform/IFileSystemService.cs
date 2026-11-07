@@ -1,4 +1,4 @@
-﻿namespace Nagi.Core.Services.Abstractions;
+﻿namespace Nagi.Core.Platform;
 
 /// <summary>
 ///     File system access, behind an interface so that tests can fake the disk. Pure path manipulation uses

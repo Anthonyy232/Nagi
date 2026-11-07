@@ -3,7 +3,7 @@ using Windows.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
-using Nagi.Core.Helpers;
+using Nagi.Core.Platform;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
 using Nagi.WinUI.Helpers;

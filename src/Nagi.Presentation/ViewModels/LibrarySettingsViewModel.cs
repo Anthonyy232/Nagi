@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
 using Nagi.Core.MusicServers;
 using Nagi.Core.OnlineProviders;
-using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Platform;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;

@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Platform;
 using Nagi.Core.Playback;
-using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.Core.Settings;
 

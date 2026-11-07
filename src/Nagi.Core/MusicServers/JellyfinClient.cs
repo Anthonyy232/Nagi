@@ -6,8 +6,8 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using Nagi.Core.Library;
 using Nagi.Core.Lyrics;
+using Nagi.Core.Platform;
 using Nagi.Core.Playlists;
-using Nagi.Core.Services.Abstractions;
 using static Nagi.Core.MusicServers.MusicServerHttp;
 
 namespace Nagi.Core.MusicServers;

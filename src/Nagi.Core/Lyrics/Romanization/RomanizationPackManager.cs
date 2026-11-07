@@ -3,9 +3,7 @@ using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Constants;
-using Nagi.Core.Helpers;
-using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Platform;
 
 namespace Nagi.Core.Lyrics.Romanization;
 

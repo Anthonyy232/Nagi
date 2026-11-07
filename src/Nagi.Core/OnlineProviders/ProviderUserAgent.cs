@@ -1,4 +1,4 @@
-using Nagi.Core.Constants;
+using Nagi.Core.Platform;
 
 namespace Nagi.Core.OnlineProviders;
 
