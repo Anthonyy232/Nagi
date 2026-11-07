@@ -172,7 +172,7 @@ public sealed partial class LibVlcAudioPlayerService
             ApplyCombinedPreamp();
             var bandCount = Math.Min(settings.BandGains.Count, (int)_equalizer.BandCount);
             for (var i = 0; i < bandCount; i++)
-                _equalizer.SetAmp(Math.Clamp(settings.BandGains[i], -20.0f, 20.0f), (uint)i);
+                _equalizer.SetAmp(Math.Clamp(settings.BandGains[i], EqualizerSettings.MinGainDb, EqualizerSettings.MaxGainDb), (uint)i);
 
             return _mediaPlayer.SetEqualizer(_equalizer);
         }
@@ -212,8 +212,7 @@ public sealed partial class LibVlcAudioPlayerService
     {
         if (_isDisposed || !_isInitialized || _equalizer is null || _mediaPlayer is null) return;
 
-        // VLC equalizer preamp range: -20 to +20 dB
-        var combinedPreamp = (float)Math.Clamp(_basePreamp + _replayGainOffset, -20.0, 20.0);
+        var combinedPreamp = (float)Math.Clamp(_basePreamp + _replayGainOffset, EqualizerSettings.MinGainDb, EqualizerSettings.MaxGainDb);
         _equalizer.SetPreamp(combinedPreamp);
         _mediaPlayer.SetEqualizer(_equalizer);
     }

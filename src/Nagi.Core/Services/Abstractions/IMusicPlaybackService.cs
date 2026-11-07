@@ -302,7 +302,7 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     /// <summary>
     ///     Sets the gain for a specific band index.
     /// </summary>
-    /// <param name="gain">The new gain in decibels (-20 to 20).</param>
+    /// <param name="gain">In decibels, from <see cref="EqualizerSettings.MinGainDb" /> to <see cref="EqualizerSettings.MaxGainDb" />.</param>
     Task SetEqualizerBandAsync(uint bandIndex, float gain);
 
     /// <summary>
@@ -322,7 +322,7 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     /// <summary>
     ///     Sets the pre-amplification level for the equalizer.
     /// </summary>
-    /// <param name="gain">The new gain in decibels (-20 to 20).</param>
+    /// <param name="gain">In decibels, from <see cref="EqualizerSettings.MinGainDb" /> to <see cref="EqualizerSettings.MaxGainDb" />.</param>
     Task SetEqualizerPreampAsync(float gain);
 
     /// <summary>
