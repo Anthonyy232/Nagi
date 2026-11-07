@@ -224,9 +224,6 @@
     <value>Actualización de la biblioteca completa.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>No se pudo agregar la carpeta.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>El nombre de la lista de reproducción no puede estar vacío.</value>
   </data>

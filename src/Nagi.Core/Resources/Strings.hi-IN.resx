@@ -224,9 +224,6 @@
     <value>लाइब्रेरी रीफ्रेश पूरा हुआ।</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>फ़ोल्डर जोड़ा नहीं जा सका।</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>प्लेलिस्ट का नाम खाली नहीं हो सकता।</value>
   </data>

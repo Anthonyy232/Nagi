@@ -224,9 +224,6 @@
     <value>Aggiornamento libreria completato.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Impossibile aggiungere la cartella.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Il nome della playlist non può essere vuoto.</value>
   </data>

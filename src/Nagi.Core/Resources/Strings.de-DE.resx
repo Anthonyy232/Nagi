@@ -224,9 +224,6 @@
     <value>Bibliotheksaktualisierung abgeschlossen.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Der Ordner konnte nicht hinzugefügt werden.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Der Wiedergabelistenname darf nicht leer sein.</value>
   </data>

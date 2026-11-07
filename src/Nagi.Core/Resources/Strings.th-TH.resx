@@ -224,9 +224,6 @@
     <value>รีเฟรชคลังเพลงเสร็จสมบูรณ์</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>ไม่สามารถเพิ่มโฟลเดอร์ได้</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>ชื่อเพลย์ลิสต์ต้องไม่ว่างเปล่า</value>
   </data>

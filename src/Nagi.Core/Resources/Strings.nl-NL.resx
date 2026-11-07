@@ -224,9 +224,6 @@
     <value>Vernieuwen bibliotheek voltooid.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Kon de map niet toevoegen.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Afspeellijstnaam mag niet leeg zijn.</value>
   </data>

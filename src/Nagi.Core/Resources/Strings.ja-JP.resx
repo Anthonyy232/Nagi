@@ -224,9 +224,6 @@
     <value>ライブラリの更新が完了しました。</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>フォルダーを追加できませんでした。</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>プレイリスト名を空にすることはできません。</value>
   </data>

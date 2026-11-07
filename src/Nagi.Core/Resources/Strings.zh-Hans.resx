@@ -224,9 +224,6 @@
     <value>音乐库刷新完成。</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>无法添加文件夹。</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>播放列表名称不能为空。</value>
   </data>

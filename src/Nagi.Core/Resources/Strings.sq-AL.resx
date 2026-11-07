@@ -224,9 +224,6 @@
     <value>Rifreskimi i bibliotekës u përfundua.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Nuk u mundësua shtimi i dosjes.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Emri i listës së luajtjes nuk mund të jetë bosh.</value>
   </data>

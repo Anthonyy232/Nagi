@@ -224,9 +224,6 @@
     <value>Освежавање библиотеке завршено.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Није могуће додати фасциклу.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Назив плејлисте не може бити празан.</value>
   </data>

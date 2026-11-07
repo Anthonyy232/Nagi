@@ -224,9 +224,6 @@
     <value>Làm mới thư viện hoàn tất.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Không thể thêm thư mục.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Tên danh sách phát không được để trống.</value>
   </data>

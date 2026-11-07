@@ -224,9 +224,6 @@
     <value>Biblioteekverfrissing voltooi.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Kon nie die vouer byvoeg nie.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Snitlysnaam kan nie leeg wees nie.</value>
   </data>

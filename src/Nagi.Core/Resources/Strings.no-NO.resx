@@ -224,9 +224,6 @@
     <value>Bibliotekoppdatering fullført.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Kunne ikke legge til mappen.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Spillelistenavnet kan ikke være tomt.</value>
   </data>

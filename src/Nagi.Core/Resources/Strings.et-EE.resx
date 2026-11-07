@@ -224,9 +224,6 @@
     <value>Teegi värskendamine lõpetatud.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Kausta ei saanud lisada.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Esitusloendi nimi ei tohi olla tühi.</value>
   </data>

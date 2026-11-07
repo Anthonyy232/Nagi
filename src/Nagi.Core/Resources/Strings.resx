@@ -228,9 +228,6 @@
   </data>
 
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Could not add the folder.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Playlist name cannot be empty.</value>
   </data>

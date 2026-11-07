@@ -224,9 +224,6 @@
     <value>媒體庫重新整理完成。</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>無法新增資料夾。</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>播放清單名稱不能為空。</value>
   </data>

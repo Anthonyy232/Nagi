@@ -224,9 +224,6 @@
     <value>நூலகப் புதுப்பித்தல் முடிந்தது.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>கோப்புறையைச் சேர்க்க முடியவில்லை.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>பிளேலிஸ்ட் பெயர் காலியாக இருக்க முடியாது.</value>
   </data>

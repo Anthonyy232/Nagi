@@ -224,9 +224,6 @@
     <value>Bibliotekos atnaujinimas baigtas.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Nepavyko pridėti aplanko.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Grojaraščio pavadinimas negali būti tuščias.</value>
   </data>

@@ -224,9 +224,6 @@
     <value>Kitaplık yenileme tamamlandı.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Klasör eklenemedi.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Çalma listesi adı boş olamaz.</value>
   </data>

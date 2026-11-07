@@ -224,9 +224,6 @@
     <value>Könyvtár frissítése kész.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>A mappa hozzáadása nem sikerült.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>A lejátszási lista neve nem lehet üres.</value>
   </data>

@@ -224,9 +224,6 @@
     <value>Osvježavanje biblioteke završeno.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Nije moguće dodati mapu.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Naziv popisa pjesama ne može biti prazan.</value>
   </data>

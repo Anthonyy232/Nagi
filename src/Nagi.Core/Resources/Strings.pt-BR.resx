@@ -224,9 +224,6 @@
     <value>Atualização da biblioteca concluída.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Não foi possível adicionar a pasta.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>O nome da playlist não pode estar vazio.</value>
   </data>

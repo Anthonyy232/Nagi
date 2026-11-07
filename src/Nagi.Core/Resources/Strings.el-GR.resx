@@ -224,9 +224,6 @@
     <value>Ολοκληρώθηκε η ανανέωση της βιβλιοθήκης.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Δεν ήταν δυνατή η προσθήκη του φακέλου.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Το όνομα της λίστας αναπαραγωγής δεν μπορεί να είναι κενό.</value>
   </data>

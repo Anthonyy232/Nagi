@@ -224,9 +224,6 @@
     <value>Odświeżanie biblioteki zakończone.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Nie można dodać folderu.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Nazwa playlisty nie może być pusta.</value>
   </data>

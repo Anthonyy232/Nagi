@@ -224,9 +224,6 @@
     <value>Оновлення бібліотеки завершено.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Не вдалося додати папку.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Назва списку відтворення не може бути порожньою.</value>
   </data>

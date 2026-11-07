@@ -224,9 +224,6 @@
     <value>Aktualizace knihovny dokončena.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Složku se nepodařilo přidat.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Název seznamu skladeb nemůže být prázdný.</value>
   </data>

@@ -224,9 +224,6 @@
     <value>ਲਾਇਬ੍ਰੇਰੀ ਰਿਫ੍ਰੈਸ਼ ਪੂਰਾ ਹੋ ਗਿਆ।</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>ਫ਼ੋਲਡਰ ਜੋੜਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ।</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟ ਦਾ ਨਾਮ ਖਾਲੀ ਨਹੀਂ ਹੋ ਸਕਦਾ।</value>
   </data>

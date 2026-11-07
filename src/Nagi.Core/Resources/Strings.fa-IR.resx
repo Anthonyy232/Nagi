@@ -224,9 +224,6 @@
     <value>تازه‌سازی کتابخانه کامل شد.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>افزودن پوشه امکان‌پذیر نبود.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>نام لیست پخش نمی‌تواند خالی باشد.</value>
   </data>

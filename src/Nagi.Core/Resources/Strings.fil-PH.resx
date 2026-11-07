@@ -224,9 +224,6 @@
     <value>Kumpleto na ang pag-refresh ng library.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Hindi maidagdag ang folder.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Hindi maaaring walang laman ang pangalan ng playlist.</value>
   </data>

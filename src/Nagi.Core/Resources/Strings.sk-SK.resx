@@ -224,9 +224,6 @@
     <value>Obnovenie knižnice dokončené.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Priečinok sa nepodarilo pridať.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Názov zoznamu skladieb nemôže byť prázdny.</value>
   </data>

@@ -224,9 +224,6 @@
     <value>Обновление библиотеки завершено.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Не удалось добавить папку.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Имя плейлиста не может быть пустым.</value>
   </data>

@@ -224,9 +224,6 @@
     <value>Athnuachan leabharlainne críochnaithe.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Níorbh fhéidir an fillteán a chur leis.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Ní féidir ainm an tseinmliosta a bheith folamh.</value>
   </data>

@@ -224,9 +224,6 @@
     <value>اكتمل تحديث المكتبة.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>تعذر إضافة المجلد.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>لا يمكن أن يكون اسم قائمة التشغيل فارغاً.</value>
   </data>
