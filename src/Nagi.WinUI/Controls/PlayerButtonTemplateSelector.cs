@@ -19,9 +19,9 @@ public class PlayerButtonTemplateSelector : DataTemplateSelector
 
         return buttonSetting.Id switch
         {
-            "PlayPause" => PlayPauseButtonTemplate,
-            "Lyrics" => LyricsButtonTemplate,
-            "Queue" => QueueButtonTemplate,
+            PlayerButtonIds.PlayPause => PlayPauseButtonTemplate,
+            PlayerButtonIds.Lyrics => LyricsButtonTemplate,
+            PlayerButtonIds.Queue => QueueButtonTemplate,
             _ => DefaultButtonTemplate
         };
     }

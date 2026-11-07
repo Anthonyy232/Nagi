@@ -13,7 +13,7 @@ public partial class PlayerButtonSetting : ObservableObject
     public AppIcon Icon { get; set; }
 
     [JsonIgnore]
-    public bool IsSeparator => Id == "Separator";
+    public bool IsSeparator => Id == PlayerButtonIds.Separator;
 
     /// <summary>
     ///     XAML binding counterpart to <see cref="IsSeparator"/>.

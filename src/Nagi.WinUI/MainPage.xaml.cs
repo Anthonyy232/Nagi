@@ -22,6 +22,7 @@ using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Implementations;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Services;
+using Nagi.Presentation.Navigation;
 
 namespace Nagi.WinUI;
 
@@ -87,12 +88,12 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     // Maps detail pages back to their parent navigation item for selection synchronization.
     private readonly Dictionary<Type, string> _detailPageToParentTagMap = new()
     {
-        { typeof(PlaylistSongViewPage), "Playlists" },
-        { typeof(SmartPlaylistSongViewPage), "Playlists" },
-        { typeof(FolderSongViewPage), "Folders" },
-        { typeof(ArtistViewPage), "Artists" },
-        { typeof(AlbumViewPage), "Albums" },
-        { typeof(GenreViewPage), "Genres" }
+        { typeof(PlaylistSongViewPage), NavigationTags.Playlists },
+        { typeof(SmartPlaylistSongViewPage), NavigationTags.Playlists },
+        { typeof(FolderSongViewPage), NavigationTags.Folders },
+        { typeof(ArtistViewPage), NavigationTags.Artists },
+        { typeof(AlbumViewPage), NavigationTags.Albums },
+        { typeof(GenreViewPage), NavigationTags.Genres }
     };
 
     private readonly IDispatcherService _dispatcherService;
@@ -101,15 +102,15 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private readonly Dictionary<string, Type> _pages = new()
     {
-        { "Library", typeof(LibraryPage) },
-        { "Favorites", typeof(LibraryPage) },
-        { "Folders", typeof(FolderPage) },
-        { "Playlists", typeof(PlaylistPage) },
+        { NavigationTags.Library, typeof(LibraryPage) },
+        { NavigationTags.Favorites, typeof(LibraryPage) },
+        { NavigationTags.Folders, typeof(FolderPage) },
+        { NavigationTags.Playlists, typeof(PlaylistPage) },
         { "Settings", typeof(SettingsPage) },
-        { "Artists", typeof(ArtistPage) },
-        { "Albums", typeof(AlbumPage) },
-        { "Genres", typeof(GenrePage) },
-        { "Insights", typeof(InsightsPage) }
+        { NavigationTags.Artists, typeof(ArtistPage) },
+        { NavigationTags.Albums, typeof(AlbumPage) },
+        { NavigationTags.Genres, typeof(GenrePage) },
+        { NavigationTags.Insights, typeof(InsightsPage) }
     };
 
     private readonly ISettingsService _settingsService;
@@ -180,10 +181,10 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
         if (selectedItem is NavigationViewItem { Tag: string tag } && _pages.TryGetValue(tag, out var pageType))
         {
-            var favorites = tag == "Favorites";
+            var favorites = tag == NavigationTags.Favorites;
             if (ContentFrame.CurrentSourcePageType != pageType ||
                 ContentFrame.Content is LibraryPage library && library.ViewModel.ShowFavoritesOnly != favorites)
-                ContentFrame.Navigate(pageType, favorites ? "Favorites" : null, transitionInfo);
+                ContentFrame.Navigate(pageType, favorites ? NavigationTags.Favorites : null, transitionInfo);
         }
     }
 
@@ -267,7 +268,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
             var tag = _pages.FirstOrDefault(p => p.Value == currentPageType).Key;
             if (currentPageType == typeof(LibraryPage))
-                tag = (favorites ?? (ContentFrame.Content as LibraryPage)?.ViewModel.ShowFavoritesOnly) == true ? "Favorites" : "Library";
+                tag = (favorites ?? (ContentFrame.Content as LibraryPage)?.ViewModel.ShowFavoritesOnly) == true ? NavigationTags.Favorites : NavigationTags.Library;
             if (tag is null && currentPageType is not null)
                 _detailPageToParentTagMap.TryGetValue(currentPageType, out tag);
             NavView.SelectedItem = NavView.MenuItems.OfType<NavigationViewItem>()
@@ -529,7 +530,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
         AppTitleBar.IsBackButtonVisible = ContentFrame.CanGoBack && (isDetailPage || isLyricsPage);
 
-        UpdateNavViewSelection(e.SourcePageType, e.Parameter is "Favorites");
+        UpdateNavViewSelection(e.SourcePageType, e.Parameter is NavigationTags.Favorites);
 
         var isSettingsPage = e.SourcePageType == typeof(SettingsPage);
         // Keep destination bounds stable while player space changes, so WinUI can finish the outgoing fade.

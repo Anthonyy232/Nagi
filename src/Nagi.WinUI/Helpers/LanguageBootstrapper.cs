@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Windows.Globalization;
 using Nagi.WinUI.Services.Implementations;
+using Nagi.Presentation.Services;
 
 namespace Nagi.WinUI.Helpers;
 
@@ -10,12 +11,7 @@ public static class LanguageBootstrapper
     {
         try
         {
-            string? language = null;
-
-            if (new ApplicationDataSettingsStore().Values.TryGetValue("AppLanguage", out var val) && val is string s)
-            {
-                language = s;
-            }
+            var language = AppSettings.Language.ReadFrom(new ApplicationDataSettingsStore());
 
             if (!string.IsNullOrEmpty(language))
             {

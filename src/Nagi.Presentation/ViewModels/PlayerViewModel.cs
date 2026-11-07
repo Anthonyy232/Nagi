@@ -185,22 +185,22 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 
     partial void OnIsPlayingChanged(bool value)
     {
-        UpdateButtonState("PlayPause", PlayPauseIcon, PlayPauseButtonToolTip, isLoading: IsOpening);
+        UpdateButtonState(PlayerButtonIds.PlayPause, PlayPauseIcon, PlayPauseButtonToolTip, isLoading: IsOpening);
     }
 
     partial void OnIsOpeningChanged(bool value)
     {
-        UpdateButtonState("PlayPause", PlayPauseIcon, PlayPauseButtonToolTip, isLoading: value);
+        UpdateButtonState(PlayerButtonIds.PlayPause, PlayPauseIcon, PlayPauseButtonToolTip, isLoading: value);
     }
 
     partial void OnIsShuffleEnabledChanged(bool value)
     {
-        UpdateButtonState("Shuffle", ShuffleIcon, ShuffleButtonToolTip, IsShuffleEnabled);
+        UpdateButtonState(PlayerButtonIds.Shuffle, ShuffleIcon, ShuffleButtonToolTip, IsShuffleEnabled);
     }
 
     partial void OnCurrentRepeatModeChanged(RepeatMode value)
     {
-        UpdateButtonState("Repeat", RepeatIcon, RepeatButtonToolTip);
+        UpdateButtonState(PlayerButtonIds.Repeat, RepeatIcon, RepeatButtonToolTip);
     }
 
     private void UpdateButtonState(string buttonId, AppIcon icon, string toolTip, bool isIconActive = true,
@@ -242,7 +242,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 
     /// <summary>
     ///     Loads player button settings and splits them into main and secondary controls
-    ///     based on a special "Separator" item.
+    ///     based on the <see cref="PlayerButtonIds.Separator" /> item.
     /// </summary>
     private void LoadPlayerButtonSettings()
     {
@@ -251,51 +251,51 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 
         var enabledButtons = allButtons.Where(s => s.IsEnabled).ToList();
 
-        IsVolumeControlVisible = enabledButtons.Any(b => b.Id == "Volume");
+        IsVolumeControlVisible = enabledButtons.Any(b => b.Id == PlayerButtonIds.Volume);
 
-        var separatorIndex = enabledButtons.FindIndex(b => b.Id == "Separator");
+        var separatorIndex = enabledButtons.FindIndex(b => b.IsSeparator);
 
         foreach (var button in enabledButtons)
         {
             switch (button.Id)
             {
-                case "PlayPause":
+                case PlayerButtonIds.PlayPause:
                     button.Command = PlayPauseCommand;
                     button.DynamicIcon = PlayPauseIcon;
                     button.DynamicToolTip = PlayPauseButtonToolTip;
                     button.IsLoading = IsOpening;
                     break;
-                case "Shuffle":
+                case PlayerButtonIds.Shuffle:
                     button.Command = ToggleShuffleCommand;
                     button.IsIconActive = IsShuffleEnabled;
                     button.DynamicIcon = ShuffleIcon;
                     button.DynamicToolTip = ShuffleButtonToolTip;
                     break;
-                case "Repeat":
+                case PlayerButtonIds.Repeat:
                     button.Command = CycleRepeatCommand;
                     button.DynamicIcon = RepeatIcon;
                     button.DynamicToolTip = RepeatButtonToolTip;
                     break;
-                case "Volume":
+                case PlayerButtonIds.Volume:
                     button.Command = ToggleMuteCommand;
                     button.DynamicIcon = VolumeIcon;
                     button.DynamicToolTip = VolumeButtonToolTip;
                     break;
-                case "Previous":
+                case PlayerButtonIds.Previous:
                     button.Command = PreviousCommand;
                     button.DynamicIcon = button.Icon;
                     button.DynamicToolTip = Strings.Player_PreviousButton_ToolTip;
                     break;
-                case "Next":
+                case PlayerButtonIds.Next:
                     button.Command = NextCommand;
                     button.DynamicIcon = button.Icon;
                     button.DynamicToolTip = Strings.Player_NextButton_ToolTip;
                     break;
-                case "Lyrics":
+                case PlayerButtonIds.Lyrics:
                     button.DynamicIcon = button.Icon;
                     button.DynamicToolTip = Strings.Player_LyricsButton_ToolTip;
                     break;
-                case "Queue":
+                case PlayerButtonIds.Queue:
                     button.Command = ToggleQueuePanelCommand;
                     button.DynamicIcon = button.Icon;
                     button.DynamicToolTip = Strings.Player_QueueButton_ToolTip;
@@ -409,14 +409,14 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 
     private bool CanNavigateToTrack(object? parameter) => parameter != null || CurrentPlayingTrack != null;
 
-    partial void OnIsMutedChanged(bool value) => UpdateButtonState("Volume", VolumeIcon, VolumeButtonToolTip);
+    partial void OnIsMutedChanged(bool value) => UpdateButtonState(PlayerButtonIds.Volume, VolumeIcon, VolumeButtonToolTip);
 
     /// <summary>Moves the volume one step, as the mouse wheel does over a volume control.</summary>
     public void StepVolume(bool up) => CurrentVolume = Math.Clamp(CurrentVolume + (up ? 5 : -5), 0, 100);
 
     partial void OnCurrentVolumeChanged(double value)
     {
-        UpdateButtonState("Volume", VolumeIcon, VolumeButtonToolTip);
+        UpdateButtonState(PlayerButtonIds.Volume, VolumeIcon, VolumeButtonToolTip);
         if (_isUpdatingFromService) return;
         var serviceVolume = Math.Clamp(value / 100.0, 0.0, 1.0);
         if (Math.Abs(_playbackService.Volume - serviceVolume) > 0.001)
@@ -695,7 +695,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         {
             IsShuffleEnabled = _playbackService.IsShuffleEnabled;
             OnPropertyChanged(nameof(ShuffleButtonToolTip));
-            UpdateButtonState("Shuffle", ShuffleIcon, ShuffleButtonToolTip, IsShuffleEnabled);
+            UpdateButtonState(PlayerButtonIds.Shuffle, ShuffleIcon, ShuffleButtonToolTip, IsShuffleEnabled);
             UpdateCurrentQueueDisplay();
             SidebarQueue.Refresh();
         });

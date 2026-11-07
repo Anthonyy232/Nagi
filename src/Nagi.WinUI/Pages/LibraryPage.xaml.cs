@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.ViewModels;
+using Nagi.Presentation.Navigation;
 
 namespace Nagi.WinUI.Pages;
 
@@ -23,6 +24,6 @@ public sealed partial class LibraryPage : SongListPage
     {
         base.OnNavigatedTo(e);
         ClearSelection();
-        await ViewModel.OpenAsync(e.Parameter is "Favorites");
+        await ViewModel.OpenAsync(e.Parameter is NavigationTags.Favorites);
     }
 }

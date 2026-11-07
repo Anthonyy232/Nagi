@@ -66,8 +66,9 @@ public static class AppSettings
                 }, StringComparer.OrdinalIgnoreCase).ToList();
 
             // Older saved layouts predate the divider between playback and auxiliary buttons.
-            if (!buttons.Any(item => item.Id == "Separator"))
-                buttons.Insert(Math.Min(5, buttons.Count), defaults.Single(item => item.Id == "Separator"));
+            var separatorIndex = defaults.FindIndex(item => item.IsSeparator);
+            if (!buttons.Any(item => item.IsSeparator))
+                buttons.Insert(Math.Min(separatorIndex, buttons.Count), defaults[separatorIndex]);
             return buttons;
         });
 
@@ -130,26 +131,26 @@ public static class AppSettings
 
     private static List<NavigationItemSetting> DefaultNavigationItems() =>
     [
-        new() { DisplayName = Strings.Settings_Nav_Library, Tag = "Library", Icon = AppIcon.Library, IsEnabled = true },
-        new() { DisplayName = Strings.Settings_Nav_Folders, Tag = "Folders", Icon = AppIcon.Folders, IsEnabled = true },
-        new() { DisplayName = Strings.Settings_Nav_Playlists, Tag = "Playlists", Icon = AppIcon.Playlists, IsEnabled = true },
-        new() { DisplayName = Strings.Settings_Nav_Artists, Tag = "Artists", Icon = AppIcon.Artists, IsEnabled = true },
-        new() { DisplayName = Strings.Settings_Nav_Albums, Tag = "Albums", Icon = AppIcon.Albums, IsEnabled = true },
-        new() { DisplayName = Strings.Settings_Nav_Genres, Tag = "Genres", Icon = AppIcon.Genres, IsEnabled = true },
-        new() { DisplayName = Strings.Settings_Nav_Insights, Tag = "Insights", Icon = AppIcon.Insights, IsEnabled = false },
-        new() { DisplayName = Strings.Listening_Favorites, Tag = "Favorites", Icon = AppIcon.Favorites, IsEnabled = false }
+        new() { DisplayName = Strings.Settings_Nav_Library, Tag = NavigationTags.Library, Icon = AppIcon.Library, IsEnabled = true },
+        new() { DisplayName = Strings.Settings_Nav_Folders, Tag = NavigationTags.Folders, Icon = AppIcon.Folders, IsEnabled = true },
+        new() { DisplayName = Strings.Settings_Nav_Playlists, Tag = NavigationTags.Playlists, Icon = AppIcon.Playlists, IsEnabled = true },
+        new() { DisplayName = Strings.Settings_Nav_Artists, Tag = NavigationTags.Artists, Icon = AppIcon.Artists, IsEnabled = true },
+        new() { DisplayName = Strings.Settings_Nav_Albums, Tag = NavigationTags.Albums, Icon = AppIcon.Albums, IsEnabled = true },
+        new() { DisplayName = Strings.Settings_Nav_Genres, Tag = NavigationTags.Genres, Icon = AppIcon.Genres, IsEnabled = true },
+        new() { DisplayName = Strings.Settings_Nav_Insights, Tag = NavigationTags.Insights, Icon = AppIcon.Insights, IsEnabled = false },
+        new() { DisplayName = Strings.Listening_Favorites, Tag = NavigationTags.Favorites, Icon = AppIcon.Favorites, IsEnabled = false }
     ];
 
     private static List<PlayerButtonSetting> DefaultPlayerButtons() =>
     [
-        new() { Id = "Shuffle", DisplayName = Strings.Settings_Button_Shuffle, Icon = AppIcon.Shuffle, IsEnabled = true },
-        new() { Id = "Previous", DisplayName = Strings.Settings_Button_Previous, Icon = AppIcon.Previous, IsEnabled = true },
-        new() { Id = "PlayPause", DisplayName = Strings.Settings_Button_PlayPause, Icon = AppIcon.Play, IsEnabled = true },
-        new() { Id = "Next", DisplayName = Strings.Settings_Button_Next, Icon = AppIcon.Next, IsEnabled = true },
-        new() { Id = "Repeat", DisplayName = Strings.Settings_Button_Repeat, Icon = AppIcon.RepeatAll, IsEnabled = true },
-        new() { Id = "Separator", DisplayName = Strings.Settings_Button_Divider, IsEnabled = true },
-        new() { Id = "Lyrics", DisplayName = Strings.Settings_Button_Lyrics, Icon = AppIcon.Lyrics, IsEnabled = true },
-        new() { Id = "Queue", DisplayName = Strings.Settings_Button_Queue, Icon = AppIcon.Queue, IsEnabled = true },
-        new() { Id = "Volume", DisplayName = Strings.Settings_Button_Volume, Icon = AppIcon.VolumeHigh, IsEnabled = true }
+        new() { Id = PlayerButtonIds.Shuffle, DisplayName = Strings.Settings_Button_Shuffle, Icon = AppIcon.Shuffle, IsEnabled = true },
+        new() { Id = PlayerButtonIds.Previous, DisplayName = Strings.Settings_Button_Previous, Icon = AppIcon.Previous, IsEnabled = true },
+        new() { Id = PlayerButtonIds.PlayPause, DisplayName = Strings.Settings_Button_PlayPause, Icon = AppIcon.Play, IsEnabled = true },
+        new() { Id = PlayerButtonIds.Next, DisplayName = Strings.Settings_Button_Next, Icon = AppIcon.Next, IsEnabled = true },
+        new() { Id = PlayerButtonIds.Repeat, DisplayName = Strings.Settings_Button_Repeat, Icon = AppIcon.RepeatAll, IsEnabled = true },
+        new() { Id = PlayerButtonIds.Separator, DisplayName = Strings.Settings_Button_Divider, IsEnabled = true },
+        new() { Id = PlayerButtonIds.Lyrics, DisplayName = Strings.Settings_Button_Lyrics, Icon = AppIcon.Lyrics, IsEnabled = true },
+        new() { Id = PlayerButtonIds.Queue, DisplayName = Strings.Settings_Button_Queue, Icon = AppIcon.Queue, IsEnabled = true },
+        new() { Id = PlayerButtonIds.Volume, DisplayName = Strings.Settings_Button_Volume, Icon = AppIcon.VolumeHigh, IsEnabled = true }
     ];
 }
