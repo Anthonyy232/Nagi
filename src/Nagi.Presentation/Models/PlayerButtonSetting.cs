@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Nagi.Presentation.Models;
 
-public partial class PlayerButtonSetting : ObservableObject
+public partial class PlayerButtonSetting : ObservableObject, IToggleItem
 {
     [ObservableProperty] public partial bool IsEnabled { get; set; }
 

@@ -11,7 +11,6 @@
     xmlns:localConverters="using:Nagi.WinUI.Converters"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Nagi.Presentation.Models"
-    xmlns:navigation="using:Nagi.Presentation.Navigation"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:viewmodels="using:Nagi.Presentation.ViewModels"
     mc:Ignorable="d"
@@ -28,8 +27,7 @@
         <localConverters:PlayerBackgroundMaterialToStringConverter x:Key="PlayerBackgroundMaterialToStringConverter" />
         <localConverters:DoubleToPercentageConverter x:Key="DoubleToPercentageConverter" />
 
-        <!-- Shared template for service provider items in Lyrics and Metadata source lists -->
-        <DataTemplate x:Key="ServiceProviderItemTemplate" x:DataType="viewmodels:ServiceProviderSettingViewModel">
+        <DataTemplate x:Key="ToggleItemTemplate" x:DataType="models:IToggleItem">
             <Grid Padding="12,8" VerticalAlignment="Center"
                   ToolTipService.ToolTip="{x:Bind Description}">
                 <Grid.ColumnDefinitions>
@@ -39,7 +37,6 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <!-- Drag Handle -->
                 <FontIcon
                     Grid.Column="0"
                     HorizontalAlignment="Center"
@@ -53,7 +50,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Foreground="{ThemeResource AppPrimaryColorBrush}"
-                    Glyph="&#xE774;" />
+                    Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(Icon)}" />
 
                 <TextBlock
                     Grid.Column="2"
@@ -69,6 +66,21 @@
                     IsOn="{x:Bind IsEnabled, Mode=TwoWay}" />
             </Grid>
         </DataTemplate>
+
+        <Style x:Key="ReorderableToggleListViewStyle" TargetType="ListView">
+            <Setter Property="Width" Value="350" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="AllowDrop" Value="True" />
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CanDragItems" Value="True" />
+            <Setter Property="CanReorderItems" Value="True" />
+            <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+            <Setter Property="ItemContainerStyle" Value="{StaticResource NavigationListViewItemStyle}" />
+            <Setter Property="ItemTemplate" Value="{StaticResource ToggleItemTemplate}" />
+            <Setter Property="SelectionMode" Value="Single" />
+        </Style>
 
         <DataTemplate x:Key="RomanizationPackItemTemplate" x:DataType="viewmodels:RomanizationPackViewModel">
             <Border
@@ -381,61 +393,8 @@
                     </controls:SettingsCard.HeaderIcon>
 
                     <ListView
-                        Width="350"
-                        HorizontalAlignment="Right"
-                        AllowDrop="True"
-                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                        BorderThickness="1"
-                        CanDragItems="True"
-                        CanReorderItems="True"
-                        CornerRadius="{ThemeResource ControlCornerRadius}"
-                        ItemContainerStyle="{StaticResource NavigationListViewItemStyle}"
                         ItemsSource="{x:Bind ViewModel.Appearance.NavigationItems}"
-                        SelectionMode="Single">
-
-                        <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="navigation:NavigationItemSetting">
-                                <Grid Padding="12,8" VerticalAlignment="Center">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="28" />
-                                        <ColumnDefinition Width="32" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <!-- Drag Handle -->
-                                    <FontIcon
-                                        Grid.Column="0"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        FontSize="12"
-                                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                                        Glyph="&#xE76F;" />
-
-                                    <FontIcon
-                                        Grid.Column="1"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        Foreground="{ThemeResource AppPrimaryColorBrush}"
-                                        Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(Icon)}" />
-
-                                    <TextBlock
-                                        Grid.Column="2"
-                                        Margin="8,0,12,0"
-                                        VerticalAlignment="Center"
-                                        FontWeight="SemiBold"
-                                        Text="{x:Bind DisplayName}" />
-
-                                    <ToggleSwitch
-                                        Grid.Column="3"
-                                        VerticalAlignment="Center"
-                                        AutomationProperties.Name="{x:Bind DisplayName}"
-                                        IsOn="{x:Bind IsEnabled, Mode=TwoWay}" />
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                        Style="{StaticResource ReorderableToggleListViewStyle}" />
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
@@ -948,20 +907,8 @@
                                 <FontIcon Glyph="&#xE8FD;" />
                             </controls:SettingsCard.HeaderIcon>
                             <ListView
-                                    Width="350"
-                                    HorizontalAlignment="Right"
-                                    AllowDrop="True"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                    BorderThickness="1"
-                                    CanDragItems="True"
-                                    CanReorderItems="True"
-                                    CornerRadius="{ThemeResource ControlCornerRadius}"
-                                    ItemsSource="{x:Bind ViewModel.Library.MetadataProviders}"
-                                    DragItemsStarting="ProvidersListView_DragItemsStarting"
-                                    ItemContainerStyle="{StaticResource NavigationListViewItemStyle}"
-                                    ItemTemplate="{StaticResource ServiceProviderItemTemplate}"
-                                    SelectionMode="Single" />
+                                ItemsSource="{x:Bind ViewModel.Library.MetadataProviders}"
+                                Style="{StaticResource ReorderableToggleListViewStyle}" />
                         </controls:SettingsCard>
                     </controls:SettingsExpander.Items>
                 </controls:SettingsExpander>
@@ -982,20 +929,8 @@
                                 <FontIcon Glyph="&#xE8FD;" />
                             </controls:SettingsCard.HeaderIcon>
                             <ListView
-                                Width="350"
-                                HorizontalAlignment="Right"
-                                AllowDrop="True"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1"
-                                CanDragItems="True"
-                                CanReorderItems="True"
-                                CornerRadius="{ThemeResource ControlCornerRadius}"
                                 ItemsSource="{x:Bind ViewModel.Library.LyricsProviders}"
-                                DragItemsStarting="ProvidersListView_DragItemsStarting"
-                                ItemContainerStyle="{StaticResource NavigationListViewItemStyle}"
-                                ItemTemplate="{StaticResource ServiceProviderItemTemplate}"
-                                SelectionMode="Single" />
+                                Style="{StaticResource ReorderableToggleListViewStyle}" />
                         </controls:SettingsCard>
 
                     </controls:SettingsExpander.Items>

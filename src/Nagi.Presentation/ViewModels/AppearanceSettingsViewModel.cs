@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.Threading.Tasks;
@@ -23,14 +22,12 @@ namespace Nagi.Presentation.ViewModels;
 /// </summary>
 public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
 {
-    private const int SettingsSaveDebounceMs = 300;
     private const int VisualSettingDebounceMs = 200;
 
     private readonly IThemeService _themeService;
     private readonly IUIService _uiService;
     private readonly IAppInfoService _appInfoService;
     private readonly IApplicationLifecycle _applicationLifecycle;
-    private readonly Debouncer _navigationItemSaveDebouncer;
     private readonly Debouncer _playerTintSaveDebouncer;
     private readonly Debouncer _accentColorSaveDebouncer;
 
@@ -54,11 +51,12 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         _appInfoService = appInfoService;
         _applicationLifecycle = applicationLifecycle;
         timeProvider ??= TimeProvider.System;
-        _navigationItemSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), timeProvider);
         _playerTintSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(VisualSettingDebounceMs), timeProvider);
         _accentColorSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(VisualSettingDebounceMs), timeProvider);
 
-        NavigationItems.CollectionChanged += OnNavigationItemsCollectionChanged;
+        NavigationItems = new ReorderableToggleList<NavigationItemSetting>(
+            items => Set(AppSettings.NavigationItems, items.ToList(), nameof(NavigationItems)), dispatcherService,
+            timeProvider);
         SetSongListColumnToggles(_settingsService.Get(AppSettings.SongListColumns));
         foreach (var setting in SongListColumnSettings) setting.PropertyChanged += OnSongListColumnSettingChanged;
     }
@@ -160,13 +158,13 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
     public IReadOnlyList<BackdropMaterial> AvailableBackdropMaterials { get; } = Enum.GetValues<BackdropMaterial>();
     public IReadOnlyList<PlayerBackgroundMaterial> AvailablePlayerBackgroundMaterials { get; } = Enum.GetValues<PlayerBackgroundMaterial>();
     public ObservableRangeCollection<LanguageModel> AvailableLanguages { get; } = new();
-    public ObservableRangeCollection<NavigationItemSetting> NavigationItems { get; } = new();
+    public ReorderableToggleList<NavigationItemSetting> NavigationItems { get; }
 
     public IReadOnlyList<SongListColumnSetting> SongListColumnSettings { get; } =
         SongListColumnsHelper.All.Select(column => new SongListColumnSetting(column)).ToList();
 
     internal Task PendingSettingsSaves => Task.WhenAll(
-        _navigationItemSaveDebouncer.PendingInvocation,
+        NavigationItems.PendingSave,
         _playerTintSaveDebouncer.PendingInvocation,
         _accentColorSaveDebouncer.PendingInvocation);
 
@@ -176,14 +174,10 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
     /// </summary>
     public void Load()
     {
+        NavigationItems.Load(_settingsService.Get(AppSettings.NavigationItems));
         var currentLangCode = _settingsService.Get(AppSettings.Language);
         ApplyWithoutSaving(() =>
         {
-            var navigationItems = _settingsService.Get(AppSettings.NavigationItems);
-            foreach (var item in NavigationItems) item.PropertyChanged -= OnNavigationItemPropertyChanged;
-            foreach (var item in navigationItems) item.PropertyChanged += OnNavigationItemPropertyChanged;
-            NavigationItems.ReplaceRange(navigationItems);
-
             // Initialize with a minimal list immediately so the binding is valid on first render.
             // The full language list is populated asynchronously to avoid blocking startup.
             AvailableLanguages.Clear();
@@ -204,12 +198,9 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
 
     protected override void OnDisposing()
     {
-        NavigationItems.CollectionChanged -= OnNavigationItemsCollectionChanged;
-
-        foreach (var item in NavigationItems) item.PropertyChanged -= OnNavigationItemPropertyChanged;
+        NavigationItems.Dispose();
         foreach (var setting in SongListColumnSettings) setting.PropertyChanged -= OnSongListColumnSettingChanged;
 
-        _navigationItemSaveDebouncer.Dispose();
         _playerTintSaveDebouncer.Dispose();
         _accentColorSaveDebouncer.Dispose();
     }
@@ -287,36 +278,6 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         {
             _logger.LogWarning(ex, "Failed to populate available languages.");
         }
-    }
-
-    private void OnNavigationItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-        if (e.NewItems != null)
-            foreach (NavigationItemSetting item in e.NewItems)
-                item.PropertyChanged += OnNavigationItemPropertyChanged;
-
-        if (e.OldItems != null)
-            foreach (NavigationItemSetting item in e.OldItems)
-                item.PropertyChanged -= OnNavigationItemPropertyChanged;
-
-        if (!_isInitializing)
-            QueueNavigationItemSave();
-    }
-
-    private void OnNavigationItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (_isInitializing || e.PropertyName != nameof(NavigationItemSetting.IsEnabled)) return;
-        QueueNavigationItemSave();
-    }
-
-    private void QueueNavigationItemSave()
-    {
-        var snapshot = NavigationItems.ToList();
-        QueueSettingsSave(_navigationItemSaveDebouncer, _ =>
-        {
-            Set(AppSettings.NavigationItems, snapshot, nameof(NavigationItems));
-            return Task.CompletedTask;
-        }, nameof(NavigationItems));
     }
 
     private void OnSongListColumnSettingChanged(object? sender, PropertyChangedEventArgs e)
