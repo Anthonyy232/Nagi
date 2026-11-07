@@ -34,9 +34,6 @@ public sealed partial class GenrePage : SearchablePage
 
     private void GenresGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is GenreSummary clickedGenre)
-        {
-            ViewModel.NavigateToGenreDetail(clickedGenre);
-        }
+        if (e.ClickedItem is GenreSummary clickedGenre) ViewModel.OpenGenre(clickedGenre);
     }
 }

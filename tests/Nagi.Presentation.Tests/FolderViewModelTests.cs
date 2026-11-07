@@ -173,6 +173,6 @@ public class FolderViewModelTests
 
     private static FolderViewModel CreateViewModel(LibraryFakes library, IUIService ui, IMusicServerService? musicServers = null) =>
         new(library.Reader, library.Folders, library.Notifier, musicServers ?? Substitute.For<IMusicServerService>(),
-            new GlobalOperationViewModel(), Substitute.For<IMusicPlaybackService>(), Substitute.For<INavigationService>(), ui,
+            new GlobalOperationViewModel(), Substitute.For<IMusicPlaybackService>(), Substitute.For<IMusicNavigationService>(), ui,
             new ImmediateDispatcher(), NullLogger<FolderViewModel>.Instance);
 }

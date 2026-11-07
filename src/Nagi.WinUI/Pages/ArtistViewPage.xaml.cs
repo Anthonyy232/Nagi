@@ -50,10 +50,7 @@ public sealed partial class ArtistViewPage : SongListPage
 
     private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is ArtistAlbumViewModelItem clickedAlbum)
-        {
-            ViewModel.GoToAlbumCommand.Execute(clickedAlbum);
-        }
+        if (e.ClickedItem is ArtistAlbumViewModelItem clickedAlbum) ViewModel.OpenAlbum(clickedAlbum);
     }
 
     private void ArtistImage_PointerEntered(object sender, PointerRoutedEventArgs e) => EditOverlay.Opacity = 1;

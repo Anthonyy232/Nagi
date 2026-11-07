@@ -10,6 +10,7 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services;
 using Nagi.Presentation.Services.Abstractions;
@@ -529,7 +530,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     }
 
     [RelayCommand]
-    private Task GoToAlbumAsync(object? parameter) => _musicNavigationService.NavigateToAlbumAsync(parameter);
+    private Task GoToAlbumAsync(Song? song) => song is null ? Task.CompletedTask : _musicNavigationService.OpenAlbumAsync(song);
 
     /// <summary>
     ///     Loads a song's credited artists in credit order, for the "Go to artist" submenu.
@@ -549,9 +550,8 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     }
 
     [RelayCommand]
-    // Without a parameter it opens the artist of the selected song.
-    public Task GoToArtistAsync(object? parameter) =>
-        _musicNavigationService.NavigateToArtistAsync(parameter ?? SelectedSongs.FirstOrDefault());
+    private Task GoToArtistAsync(ArtistNavigationRequest? request) =>
+        request is null ? Task.CompletedTask : _musicNavigationService.OpenArtistAsync(request);
 
     protected bool CanExecuteLoadCommands()
     {

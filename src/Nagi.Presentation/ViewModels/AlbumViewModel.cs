@@ -9,6 +9,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
@@ -44,8 +45,6 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly IMusicNavigationService _musicNavigationService;
     private readonly IUIService _uiService;
-
-    private bool _isNavigating;
 
     public AlbumViewModel(ILibraryReader libraryReader, ILibraryNotifier libraryNotifier, IArtworkService artwork,
         IMusicPlaybackService musicPlaybackService,
@@ -94,12 +93,7 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
         return Task.CompletedTask;
     }
 
-    public async Task NavigateToAlbumDetailAsync(object? parameter)
-    {
-        if (_isNavigating) return;
-        try { _isNavigating = true; await _musicNavigationService.NavigateToAlbumAsync(parameter); }
-        finally { _isNavigating = false; }
-    }
+    public void OpenAlbum(AlbumViewModelItem album) => _musicNavigationService.OpenAlbum(album.Id);
 
     [RelayCommand]
     private async Task PlayAlbumAsync(Guid albumId)
@@ -119,12 +113,7 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
     }
 
     [RelayCommand]
-    public async Task GoToArtistAsync(object? parameter)
-    {
-        if (_isNavigating) return;
-        try { _isNavigating = true; await _musicNavigationService.NavigateToArtistAsync(parameter); }
-        finally { _isNavigating = false; }
-    }
+    private Task GoToArtistAsync(ArtistNavigationRequest request) => _musicNavigationService.OpenArtistAsync(request);
 
     [RelayCommand]
     public async Task ChangeSortOrderAsync(string sortOrderString)

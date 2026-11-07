@@ -10,7 +10,6 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
-using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
@@ -54,7 +53,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     private readonly IMusicServerService _musicServers;
     private readonly ILogger<FolderViewModel> _logger;
     private readonly IMusicPlaybackService _musicPlaybackService;
-    private readonly INavigationService _navigationService;
+    private readonly IMusicNavigationService _navigationService;
     private readonly IUIService _uiService;
     private readonly IDispatcherService _dispatcherService;
     private readonly GlobalOperationViewModel _globalOperation;
@@ -62,7 +61,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
 
     public FolderViewModel(ILibraryReader libraryReader, ILibraryFolderService libraryFolders, ILibraryNotifier libraryNotifier,
         IMusicServerService musicServers, GlobalOperationViewModel globalOperation,
-        IMusicPlaybackService musicPlaybackService, INavigationService navigationService, IUIService uiService,
+        IMusicPlaybackService musicPlaybackService, IMusicNavigationService navigationService, IUIService uiService,
         IDispatcherService dispatcherService, ILogger<FolderViewModel> logger)
     {
         _libraryReader = libraryReader;
@@ -125,17 +124,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
 
     public bool HasFolders => Folders.Any();
 
-    public void NavigateToFolderDetail(FolderViewModelItem? folder)
-    {
-        if (folder is null) return;
-        var navParam = new FolderSongViewNavigationParameter
-        {
-            Title = folder.Name,
-            FolderId = folder.Id,
-            IsServer = folder.IsServer
-        };
-        _navigationService.NavigateTo(navParam);
-    }
+    public void OpenFolder(FolderViewModelItem folder) => _navigationService.OpenFolder(folder.Id, folder.Name, folder.IsServer);
 
     [RelayCommand]
     private async Task PlayFolderAsync(Guid folderId)

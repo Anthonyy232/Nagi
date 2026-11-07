@@ -44,8 +44,6 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly IMusicNavigationService _musicNavigationService;
 
-    private bool _isNavigating;
-
     public ArtistViewModel(
         ILibraryReader libraryReader,
         ILibraryNotifier libraryNotifier,
@@ -114,12 +112,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
         return Task.CompletedTask;
     }
 
-    public async Task NavigateToArtistDetailAsync(object? parameter)
-    {
-        if (_isNavigating) return;
-        try { _isNavigating = true; await _musicNavigationService.NavigateToArtistAsync(parameter); }
-        finally { _isNavigating = false; }
-    }
+    public void OpenArtist(ArtistViewModelItem artist) => _musicNavigationService.OpenArtist(artist.Id);
 
     [RelayCommand]
     private async Task PlayArtistAsync(Guid artistId)

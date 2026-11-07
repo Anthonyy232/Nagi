@@ -34,9 +34,6 @@ public sealed partial class AlbumPage : SearchablePage
 
     private void AlbumsGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is AlbumViewModelItem clickedAlbum)
-        {
-            _ = ViewModel.NavigateToAlbumDetailAsync(clickedAlbum);
-        }
+        if (e.ClickedItem is AlbumViewModelItem clickedAlbum) ViewModel.OpenAlbum(clickedAlbum);
     }
 }

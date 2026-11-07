@@ -32,9 +32,6 @@ public sealed partial class PlaylistPage : SearchablePage
 
     private void PlaylistsGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is PlaylistViewModelItem clickedPlaylist)
-        {
-            ViewModel.NavigateToPlaylistDetail(clickedPlaylist);
-        }
+        if (e.ClickedItem is PlaylistViewModelItem clickedPlaylist) ViewModel.OpenPlaylist(clickedPlaylist);
     }
 }

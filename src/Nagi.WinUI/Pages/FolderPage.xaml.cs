@@ -25,9 +25,6 @@ public sealed partial class FolderPage : Page
 
     private void FoldersGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is FolderViewModelItem clickedFolder)
-        {
-            ViewModel.NavigateToFolderDetail(clickedFolder);
-        }
+        if (e.ClickedItem is FolderViewModelItem clickedFolder) ViewModel.OpenFolder(clickedFolder);
     }
 }

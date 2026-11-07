@@ -145,6 +145,6 @@ public class GenreViewModelTests
     private static GenreViewModel CreateViewModel(LibraryFakes library, IMusicPlaybackService? playback = null,
         IUIService? ui = null) =>
         new(library.Reader, library.Notifier, playback ?? Substitute.For<IMusicPlaybackService>(),
-            Substitute.For<INavigationService>(), TestSettings.Create(),
+            Substitute.For<IMusicNavigationService>(), TestSettings.Create(),
             new ImmediateDispatcher(), ui ?? Substitute.For<IUIService>(), NullLogger<GenreViewModel>.Instance);
 }

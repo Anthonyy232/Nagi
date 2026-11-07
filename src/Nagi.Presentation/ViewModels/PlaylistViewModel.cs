@@ -11,7 +11,6 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
-using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
@@ -98,7 +97,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     private readonly IPlaylistService _playlistService;
     private readonly ISmartPlaylistService _smartPlaylistService;
     private readonly IMusicPlaybackService _musicPlaybackService;
-    private readonly INavigationService _navigationService;
+    private readonly IMusicNavigationService _navigationService;
     private readonly ISettingsService _settingsService;
     private readonly IUIService _uiService;
     private bool _hasSortOrderLoaded;
@@ -108,7 +107,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     private bool _isDisposed;
 
     public PlaylistViewModel(ILibraryReader libraryReader, IPlaylistService playlistService, ISmartPlaylistService smartPlaylistService,
-        IMusicPlaybackService musicPlaybackService, INavigationService navigationService, IUIService uiService,
+        IMusicPlaybackService musicPlaybackService, IMusicNavigationService navigationService, IUIService uiService,
         ISettingsService settingsService, IDispatcherService dispatcherService, ILogger<PlaylistViewModel> logger)
         : base(dispatcherService, logger)
     {
@@ -172,25 +171,12 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 
     public bool HasPlaylists => Playlists.Count > 0;
 
-    public void NavigateToPlaylistDetail(PlaylistViewModelItem? playlist)
+    public void OpenPlaylist(PlaylistViewModelItem playlist)
     {
-        if (playlist is null) return;
-
         if (playlist.IsSmart)
-            _navigationService.NavigateTo(new SmartPlaylistSongViewNavigationParameter
-            {
-                Title = playlist.Name,
-                SmartPlaylistId = playlist.Id,
-                CoverImageUri = playlist.CoverImageUri
-            });
+            _navigationService.OpenSmartPlaylist(playlist.Id, playlist.Name, playlist.CoverImageUri);
         else
-            _navigationService.NavigateTo(new PlaylistSongViewNavigationParameter
-            {
-                Title = playlist.Name,
-                PlaylistId = playlist.Id,
-                CoverImageUri = playlist.CoverImageUri,
-                IsFromServer = playlist.IsFromServer
-            });
+            _navigationService.OpenPlaylist(playlist.Id, playlist.Name, playlist.CoverImageUri, playlist.IsFromServer);
     }
 
     /// <summary>

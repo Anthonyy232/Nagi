@@ -5,7 +5,6 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Services.Abstractions;
-using Nagi.Presentation.ViewModels;
 
 namespace Nagi.Presentation.Services.Implementations;
 
@@ -14,91 +13,82 @@ public class MusicNavigationService(
     INavigationService navigationService,
     ILogger<MusicNavigationService> logger) : IMusicNavigationService
 {
-    public async Task NavigateToArtistAsync(object? parameter)
+    public void OpenAlbum(Guid albumId) => navigationService.NavigateTo(new AlbumViewNavigationParameter(albumId));
+
+    public async Task OpenAlbumAsync(Song song)
     {
-        if (await TryResolveAsync(ResolveArtistIdAsync, parameter, "artist") is { } artistId)
-            navigationService.NavigateTo(new ArtistViewNavigationParameter(artistId));
+        if (await TryResolveAsync(() => ResolveAlbumIdAsync(song), song, "album") is { } albumId) OpenAlbum(albumId);
     }
 
-    public async Task NavigateToAlbumAsync(object? parameter)
+    public void OpenArtist(Guid artistId) => navigationService.NavigateTo(new ArtistViewNavigationParameter(artistId));
+
+    public async Task OpenArtistAsync(ArtistNavigationRequest request)
     {
-        if (await TryResolveAsync(ResolveAlbumIdAsync, parameter, "album") is { } albumId)
-            navigationService.NavigateTo(new AlbumViewNavigationParameter(albumId));
+        if (await TryResolveAsync(() => ResolveArtistIdAsync(request), request, "artist") is { } artistId) OpenArtist(artistId);
     }
+
+    public void OpenGenre(Guid genreId, string name) =>
+        navigationService.NavigateTo(new GenreViewNavigationParameter { GenreId = genreId, GenreName = name });
+
+    public void OpenFolder(Guid folderId, string name, bool isServer) =>
+        navigationService.NavigateTo(new FolderSongViewNavigationParameter { FolderId = folderId, Title = name, IsServer = isServer });
+
+    public void OpenPlaylist(Guid playlistId, string name, string? coverImageUri, bool isFromServer) =>
+        navigationService.NavigateTo(new PlaylistSongViewNavigationParameter
+        {
+            PlaylistId = playlistId,
+            Title = name,
+            CoverImageUri = coverImageUri,
+            IsFromServer = isFromServer
+        });
+
+    public void OpenSmartPlaylist(Guid smartPlaylistId, string name, string? coverImageUri) =>
+        navigationService.NavigateTo(new SmartPlaylistSongViewNavigationParameter
+        {
+            SmartPlaylistId = smartPlaylistId,
+            Title = name,
+            CoverImageUri = coverImageUri
+        });
 
     // Only the library lookup is caught: a page that fails to build should reach the crash handler like any navigation.
-    private async Task<Guid?> TryResolveAsync(Func<object?, Task<Guid?>> resolve, object? parameter, string kind)
+    private async Task<Guid?> TryResolveAsync(Func<Task<Guid?>> resolve, object request, string kind)
     {
         try
         {
-            if (await resolve(parameter) is { } id) return id;
-            logger.LogWarning("Could not resolve the {Kind} to open from {Parameter}", kind, parameter);
+            if (await resolve() is { } id) return id;
+            logger.LogWarning("Could not resolve the {Kind} to open from {Request}", kind, request);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to look up the {Kind} of {Parameter}", kind, parameter);
+            logger.LogError(ex, "Failed to look up the {Kind} of {Request}", kind, request);
         }
         return null;
     }
 
-    private async Task<Guid?> ResolveArtistIdAsync(object? parameter)
+    private async Task<Guid?> ResolveArtistIdAsync(ArtistNavigationRequest request)
     {
-        switch (parameter)
-        {
-            case Artist artist:
-                return artist.Id;
-            case ArtistViewModelItem artistItem:
-                return artistItem.Id;
-        }
-
-        var song = parameter switch
-        {
-            Song value => value,
-            ArtistNavigationRequest request => request.Song,
-            _ => null
-        };
-        var artistName = parameter switch
-        {
-            string value => value,
-            ArtistNavigationRequest request => request.ArtistName,
-            _ => null
-        };
-
-        if (song is not null)
+        if (request.Song is { } song)
         {
             var artists = song.GetCreditedArtists();
             if (artists.Count == 0)
                 artists = (await libraryReader.GetArtistsForSongAsync(song.Id)).ToList();
 
             // A named request must never fall back to a different primary artist.
-            var target = string.IsNullOrEmpty(artistName)
+            var target = string.IsNullOrEmpty(request.ArtistName)
                 ? artists.FirstOrDefault()
-                : artists.FirstOrDefault(value => value.Name.Equals(artistName, StringComparison.OrdinalIgnoreCase));
+                : artists.FirstOrDefault(value => value.Name.Equals(request.ArtistName, StringComparison.OrdinalIgnoreCase));
             if (target is not null) return target.Id;
         }
 
-        return string.IsNullOrEmpty(artistName) ? null : (await libraryReader.GetArtistByNameAsync(artistName))?.Id;
+        return string.IsNullOrEmpty(request.ArtistName)
+            ? null
+            : (await libraryReader.GetArtistByNameAsync(request.ArtistName))?.Id;
     }
 
-    private async Task<Guid?> ResolveAlbumIdAsync(object? parameter)
+    private async Task<Guid?> ResolveAlbumIdAsync(Song song)
     {
-        switch (parameter)
-        {
-            case Album album:
-                return album.Id;
-            case AlbumViewModelItem item:
-                return item.Id;
-            case ArtistAlbumViewModelItem item:
-                return item.Id;
-            case Song song when (song.Album?.Id ?? song.AlbumId) is { } albumId:
-                return albumId;
-            case Song song:
-                var fullSong = await libraryReader.GetSongByIdAsync(song.Id);
-                return fullSong?.Album?.Id ?? fullSong?.AlbumId;
-            case Guid requestedId:
-                return (await libraryReader.GetAlbumByIdAsync(requestedId))?.Id;
-            default:
-                return null;
-        }
+        if ((song.Album?.Id ?? song.AlbumId) is { } albumId) return albumId;
+        var fullSong = await libraryReader.GetSongByIdAsync(song.Id);
+        return fullSong?.Album?.Id ?? fullSong?.AlbumId;
     }
 }

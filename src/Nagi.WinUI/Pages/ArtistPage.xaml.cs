@@ -34,9 +34,6 @@ public sealed partial class ArtistPage : SearchablePage
 
     private void ArtistsGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is ArtistViewModelItem clickedArtist)
-        {
-            _ = ViewModel.NavigateToArtistDetailAsync(clickedArtist);
-        }
+        if (e.ClickedItem is ArtistViewModelItem clickedArtist) ViewModel.OpenArtist(clickedArtist);
     }
 }

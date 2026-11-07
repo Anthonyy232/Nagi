@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
-using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
 using Nagi.Core.Settings;
@@ -20,7 +19,7 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
     private readonly ILibraryReader _libraryReader;
     private readonly ILibraryNotifier _libraryNotifier;
     private readonly IMusicPlaybackService _musicPlaybackService;
-    private readonly INavigationService _navigationService;
+    private readonly IMusicNavigationService _navigationService;
     private readonly ISettingsService _settingsService;
     private readonly IUIService _uiService;
     private bool _hasSortOrderLoaded;
@@ -29,7 +28,7 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
     private readonly SemaphoreSlim _loadLock = new(1, 1);
 
     public GenreViewModel(ILibraryReader libraryReader, ILibraryNotifier libraryNotifier, IMusicPlaybackService musicPlaybackService,
-        INavigationService navigationService, ISettingsService settingsService, IDispatcherService dispatcherService, IUIService uiService,
+        IMusicNavigationService navigationService, ISettingsService settingsService, IDispatcherService dispatcherService, IUIService uiService,
         ILogger<GenreViewModel> logger)
         : base(dispatcherService, logger)
     {
@@ -93,16 +92,7 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
 
     public bool HasGenres => Genres.Any();
 
-    public void NavigateToGenreDetail(GenreSummary? genre)
-    {
-        if (genre is null) return;
-        var navParam = new GenreViewNavigationParameter
-        {
-            GenreId = genre.Id,
-            GenreName = genre.Name
-        };
-        _navigationService.NavigateTo(navParam);
-    }
+    public void OpenGenre(GenreSummary genre) => _navigationService.OpenGenre(genre.Id, genre.Name);
 
     [RelayCommand]
     public async Task LoadGenresAsync(CancellationToken cancellationToken)

@@ -173,6 +173,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         Songs.Clear();
     }
 
+    public void OpenAlbum(ArtistAlbumViewModelItem album) => _musicNavigationService.OpenAlbum(album.Id);
+
     [RelayCommand]
     private Task PlayAlbumAsync(Guid albumId) => RunActionAsync(() => _playbackService.PlayAlbumAsync(albumId));
 
