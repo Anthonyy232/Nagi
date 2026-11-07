@@ -1,5 +1,4 @@
 using FluentAssertions;
-using Nagi.Core.Library;
 using Nagi.Core.Playlists;
 using System.Globalization;
 using Nagi.Presentation.ViewModels;

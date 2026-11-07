@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
 using Nagi.Core.Library;
-using Nagi.Core.Listening;
 using Nagi.Core.Platform;
 using Nagi.Core.Scrobbling;
 

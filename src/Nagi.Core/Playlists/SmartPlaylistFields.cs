@@ -1,5 +1,3 @@
-using Nagi.Core.Library;
-
 namespace Nagi.Core.Playlists;
 
 public enum SmartPlaylistFieldKind

@@ -4,10 +4,8 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using Nagi.Core.Library;
 using Nagi.Core.Lyrics;
 using Nagi.Core.Platform;
-using Nagi.Core.Playlists;
 using static Nagi.Core.MusicServers.MusicServerHttp;
 
 namespace Nagi.Core.MusicServers;

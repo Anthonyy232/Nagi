@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Artwork;
 using Nagi.Core.Data;
-using Nagi.Core.Listening;
 using Nagi.Core.Metadata;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;

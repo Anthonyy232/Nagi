@@ -1,6 +1,4 @@
-﻿using Nagi.Core.Library;
-
-namespace Nagi.Core.Metadata;
+﻿namespace Nagi.Core.Metadata;
 
 public class SongFileMetadata
 {

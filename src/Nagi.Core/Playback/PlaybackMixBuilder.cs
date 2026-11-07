@@ -1,4 +1,3 @@
-using Nagi.Core.Library;
 using Nagi.Core.Listening;
 
 namespace Nagi.Core.Playback;

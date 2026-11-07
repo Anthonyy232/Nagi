@@ -2,7 +2,6 @@ using FluentAssertions;
 using Nagi.Core.Library;
 using Nagi.Core.Listening;
 using Nagi.Core.Playback;
-using Nagi.Core.Playlists;
 using Nagi.Core.Tests.Utils;
 using Xunit;
 

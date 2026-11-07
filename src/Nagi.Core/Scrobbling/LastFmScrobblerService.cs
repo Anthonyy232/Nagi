@@ -5,7 +5,6 @@ using System.Globalization;
 using System.Xml.Linq;
 using Nagi.Core.Data;
 using Nagi.Core.Library;
-using Nagi.Core.Listening;
 using Nagi.Core.OnlineProviders;
 using Nagi.Core.OnlineProviders.Pipelines;
 using Nagi.Core.Settings;

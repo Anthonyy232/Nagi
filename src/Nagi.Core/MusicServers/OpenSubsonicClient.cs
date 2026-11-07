@@ -6,9 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Nagi.Core.Library;
 using Nagi.Core.Lyrics;
-using Nagi.Core.Playlists;
 using static Nagi.Core.MusicServers.MusicServerHttp;
 
 namespace Nagi.Core.MusicServers;

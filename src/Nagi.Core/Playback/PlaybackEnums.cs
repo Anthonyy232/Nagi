@@ -1,7 +1,4 @@
-﻿using Nagi.Core.Library;
-using Nagi.Core.Playlists;
-
-namespace Nagi.Core.Playback;
+﻿namespace Nagi.Core.Playback;
 
 public enum PlaybackEndReason
 {

@@ -4,7 +4,6 @@ using System.Text.Json;
 using System.Web;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Library;
 using Nagi.Core.OnlineProviders;
 using Nagi.Core.OnlineProviders.Pipelines;
 using Nagi.Core.Tests.Utils;

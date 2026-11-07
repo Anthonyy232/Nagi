@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Data;
 using Nagi.Core.Listening;
-using Nagi.Core.MusicServers;
 using Nagi.Core.Platform;
 using Nagi.Core.Playlists;
 using Nagi.Core.Settings;

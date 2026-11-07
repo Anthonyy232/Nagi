@@ -1,7 +1,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Time.Testing;
-using Nagi.Core.Library;
 using Nagi.Core.Playlists;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
