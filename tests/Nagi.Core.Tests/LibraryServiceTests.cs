@@ -261,11 +261,8 @@ public partial class LibraryServiceTests : IDisposable
         Task reset = Task.CompletedTask;
         if (action == "dispose") _library.Dispose();
         else if (action == "disable") _settingsService.Set(CoreSettings.FetchOnlineMetadata, false);
-        else
-        {
-            reset = _library.Reset.ClearAllLibraryDataAsync();
-            reset.IsCompleted.Should().BeFalse();
-        }
+        // The reset may finish at once: cancelling the run can unwind it, releasing the fetch, within that call.
+        else reset = _library.Reset.ClearAllLibraryDataAsync();
         token.IsCancellationRequested.Should().BeTrue();
         provider.SetResult(ServiceResult<ArtistInfo>.FromSuccess(new ArtistInfo { Biography = "Late result" }));
         await Task.WhenAll(run, reset).WaitAsync(TimeSpan.FromSeconds(5));
