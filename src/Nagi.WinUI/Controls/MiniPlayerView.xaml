@@ -6,10 +6,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:media="using:CommunityToolkit.WinUI.Media"
     xmlns:library="using:Nagi.Core.Library"
-    xmlns:viewmodels="using:Nagi.Presentation.ViewModels"
+    xmlns:player="using:Nagi.Presentation.Player"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:resources="using:Nagi.Presentation.Resources"
-    d:DataContext="{d:DesignInstance Type=viewmodels:PlayerViewModel, IsDesignTimeCreatable=True}"
+    d:DataContext="{d:DesignInstance Type=player:PlayerViewModel, IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
 
     <!--  The root grid handles pointer enter/exit events to show or hide the controls.  -->

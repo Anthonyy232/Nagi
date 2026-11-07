@@ -1,6 +1,6 @@
 using System.Windows.Input;
 using Microsoft.UI.Xaml.Controls;
-using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Player;
 using Nagi.Presentation.Resources;
 
 namespace Nagi.WinUI.Helpers;

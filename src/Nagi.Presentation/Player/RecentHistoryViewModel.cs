@@ -9,10 +9,9 @@ using Nagi.Core.Listening;
 using Nagi.Core.Platform;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Lists;
-using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Player;
 
 public partial class RecentHistoryViewModel : SearchableViewModelBase, IDisposable
 {

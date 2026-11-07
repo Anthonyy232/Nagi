@@ -7,6 +7,7 @@ using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Presence;
 using Nagi.Core.Scrobbling;
+using Nagi.Presentation.Player;
 using Nagi.Presentation.ViewModels;
 
 namespace Nagi.Presentation.Services;

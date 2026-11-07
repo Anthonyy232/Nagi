@@ -2,7 +2,7 @@ using Nagi.Core.Library;
 using Nagi.Core.Listening;
 using Nagi.Presentation.Common;
 
-namespace Nagi.Presentation.Models;
+namespace Nagi.Presentation.Player;
 
 public sealed record RecentListenEntry(RecentListen Listen, Song? Song = null)
 {

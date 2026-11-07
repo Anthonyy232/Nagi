@@ -1,6 +1,6 @@
 using Nagi.Core.Playback;
 
-namespace Nagi.Presentation.Helpers;
+namespace Nagi.Presentation.Player;
 
 /// <summary>
 ///     The minutes the "Play for" and sleep timer dialogs accept.

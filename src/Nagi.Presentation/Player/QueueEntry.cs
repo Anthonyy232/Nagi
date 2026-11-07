@@ -2,7 +2,7 @@ using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Nagi.Core.Library;
 
-namespace Nagi.Presentation.Models;
+namespace Nagi.Presentation.Player;
 
 public sealed class QueueEntry(Song song, int position) : ObservableObject
 {

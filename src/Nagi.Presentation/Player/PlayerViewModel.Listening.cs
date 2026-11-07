@@ -10,11 +10,10 @@ using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Lists;
-using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Player;
 
 public partial class PlayerViewModel
 {

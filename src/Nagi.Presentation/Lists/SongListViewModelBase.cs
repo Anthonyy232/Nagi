@@ -14,10 +14,10 @@ using Nagi.Core.Playlists;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Navigation;
+using Nagi.Presentation.Player;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
-using Nagi.Presentation.ViewModels;
 
 namespace Nagi.Presentation.Lists;
 

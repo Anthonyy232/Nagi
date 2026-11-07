@@ -1,9 +1,7 @@
 using Nagi.Core.Playback;
 using Nagi.Presentation.Common;
-using Nagi.Presentation.Helpers;
-using Nagi.Presentation.Models;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Player;
 
 /// <summary>
 ///     The "Play for" dialog: how long to play and which kind of mix.

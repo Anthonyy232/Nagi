@@ -12,6 +12,7 @@
     xmlns:localConverters="using:Nagi.WinUI.Converters"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Nagi.Presentation.Models"
+    xmlns:player="using:Nagi.Presentation.Player"
     xmlns:lists="using:Nagi.Presentation.Lists"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:viewmodels="using:Nagi.Presentation.ViewModels"
@@ -665,7 +666,7 @@
                                 </ListView.ItemContainerStyle>
 
                                 <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="models:PlayerButtonSetting">
+                                    <DataTemplate x:DataType="player:PlayerButtonSetting">
                                         <Grid
                                             Width="Auto"
                                             MinWidth="28"

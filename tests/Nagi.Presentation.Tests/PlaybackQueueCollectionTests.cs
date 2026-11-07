@@ -3,7 +3,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Library;
 using Nagi.Core.Playback;
-using Nagi.Presentation.Models;
+using Nagi.Presentation.Player;
 using NSubstitute;
 using Xunit;
 

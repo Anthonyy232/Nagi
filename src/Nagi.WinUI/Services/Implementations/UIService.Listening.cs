@@ -3,9 +3,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Core.Playback;
 using Nagi.Presentation.Common;
-using Nagi.Presentation.Models;
+using Nagi.Presentation.Player;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.ViewModels;
 
 namespace Nagi.WinUI.Services.Implementations;
 

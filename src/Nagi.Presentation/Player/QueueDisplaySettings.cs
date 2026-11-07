@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Nagi.Presentation.Models;
+namespace Nagi.Presentation.Player;
 
 public partial class QueueDisplaySettings : ObservableObject
 {

@@ -2,8 +2,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Text.Json.Serialization;
 using Nagi.Presentation.Common;
+using Nagi.Presentation.Models;
 
-namespace Nagi.Presentation.Models;
+namespace Nagi.Presentation.Player;
 
 public partial class PlayerButtonSetting : ObservableObject, IToggleItem
 {

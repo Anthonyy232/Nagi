@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Player;
 
 /// <summary>
 ///     What a list needs to highlight its "now playing" row: which song is current and whether

@@ -1,6 +1,4 @@
-using Nagi.Presentation.Helpers;
-
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Player;
 
 /// <summary>
 ///     The sleep timer dialog: how long until playback stops, and whether the playing track finishes first.

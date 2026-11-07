@@ -10,7 +10,7 @@ using Nagi.Core.Playback;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
 
-namespace Nagi.Presentation.Models;
+namespace Nagi.Presentation.Player;
 
 public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackService, ILogger logger)
     : ObservableCollection<QueueEntry>, IIncrementalItemSource, IDisposable

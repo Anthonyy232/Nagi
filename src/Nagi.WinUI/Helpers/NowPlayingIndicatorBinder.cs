@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
-using Nagi.Presentation.ViewModels;
+using Nagi.Presentation.Player;
 using Nagi.WinUI.Controls;
 
 namespace Nagi.WinUI.Helpers;

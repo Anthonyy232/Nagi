@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewmodels="using:Nagi.Presentation.ViewModels"
+    xmlns:player="using:Nagi.Presentation.Player"
     xmlns:media="using:CommunityToolkit.WinUI.Media"
     xmlns:muxm="using:Microsoft.UI.Xaml.Media"
     xmlns:library="using:Nagi.Core.Library"
@@ -21,7 +21,7 @@
             BorderThickness="1"
             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
             CornerRadius="{ThemeResource OverlayCornerRadius}"
-            d:DataContext="{d:DesignInstance Type=viewmodels:PlayerViewModel}">
+            d:DataContext="{d:DesignInstance Type=player:PlayerViewModel}">
 
         <Grid>
             <Grid CornerRadius="{ThemeResource OverlayCornerRadius}"

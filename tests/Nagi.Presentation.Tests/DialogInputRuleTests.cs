@@ -1,6 +1,6 @@
 using FluentAssertions;
 using Nagi.Core.Playback;
-using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Player;
 using Nagi.Presentation.ViewModels;
 using Xunit;
 

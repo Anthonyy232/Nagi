@@ -1,4 +1,4 @@
-namespace Nagi.Presentation.Models;
+namespace Nagi.Presentation.Player;
 
 /// <summary>
 ///     The ids of the player buttons. The user's button layout is saved by id, so they never change.

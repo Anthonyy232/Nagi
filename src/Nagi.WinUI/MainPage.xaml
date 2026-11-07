@@ -9,7 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:imageEx="using:ImageEx"
-    xmlns:uiModels="using:Nagi.Presentation.Models"
+    xmlns:player="using:Nagi.Presentation.Player"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     mc:Ignorable="d"
     KeyboardAcceleratorPlacementMode="Hidden">
@@ -19,7 +19,7 @@
     </UserControl.KeyboardAccelerators>
     <UserControl.Resources>
         <ResourceDictionary>
-            <DataTemplate x:Key="PlayerButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
+            <DataTemplate x:Key="PlayerButtonTemplate" x:DataType="player:PlayerButtonSetting">
                 <Button
                     Command="{x:Bind Command}"
                     Style="{StaticResource MediaControlButtonStyle}"
@@ -32,7 +32,7 @@
                 </Button>
             </DataTemplate>
 
-            <DataTemplate x:Key="PlayPauseButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
+            <DataTemplate x:Key="PlayPauseButtonTemplate" x:DataType="player:PlayerButtonSetting">
                 <Button
                     Command="{x:Bind Command}"
                     Style="{StaticResource MediaControlButtonStyle}"
@@ -54,7 +54,7 @@
                 </Button>
             </DataTemplate>
 
-            <DataTemplate x:Key="LyricsButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
+            <DataTemplate x:Key="LyricsButtonTemplate" x:DataType="player:PlayerButtonSetting">
                 <Button
                     ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneTime}"
                     AutomationProperties.Name="{x:Bind DynamicToolTip, Mode=OneTime}"
@@ -75,7 +75,7 @@
                 </Button>
             </DataTemplate>
 
-            <DataTemplate x:Key="QueueButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
+            <DataTemplate x:Key="QueueButtonTemplate" x:DataType="player:PlayerButtonSetting">
                 <Button AllowDrop="True"
                         DragEnter="QueueButton_DragEnter"
                         DragOver="Queue_DragOver"
@@ -377,7 +377,7 @@
                                                               Visibility="{x:Bind ViewModel.SidebarQueue.ShowMoreLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                             </ListView.Footer>
                                             <ListView.ItemTemplate>
-                                                <DataTemplate x:DataType="uiModels:QueueEntry">
+                                                <DataTemplate x:DataType="player:QueueEntry">
                                                     <Grid Background="Transparent" Tag="{x:Bind}" DoubleTapped="QueueEntry_DoubleTapped"
                                                           ToolTipService.ToolTip="{x:Bind Title}">
                                                         <Grid.ContextFlyout>
@@ -456,12 +456,12 @@
                                                 <ListView.ItemTemplateSelector>
                                                     <uihelpers:HeaderedListTemplateSelector>
                                                         <uihelpers:HeaderedListTemplateSelector.HeaderTemplate>
-                                                            <DataTemplate x:DataType="uiModels:RecentListenDateHeader">
+                                                            <DataTemplate x:DataType="player:RecentListenDateHeader">
                                                                 <TextBlock Text="{x:Bind Title}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                                             </DataTemplate>
                                                         </uihelpers:HeaderedListTemplateSelector.HeaderTemplate>
                                                         <uihelpers:HeaderedListTemplateSelector.SongTemplate>
-                                                            <DataTemplate x:DataType="uiModels:RecentListenEntry">
+                                                            <DataTemplate x:DataType="player:RecentListenEntry">
                                                                 <Grid Background="Transparent" Tag="{x:Bind}" DoubleTapped="HistoryEntry_DoubleTapped"
                                                                       ToolTipService.ToolTip="{x:Bind Title}">
                                                                     <Grid.ContextFlyout><MenuFlyout>
