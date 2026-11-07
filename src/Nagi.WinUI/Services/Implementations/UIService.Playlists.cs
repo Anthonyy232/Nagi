@@ -54,7 +54,7 @@ public partial class UIService
             Title = Strings.PlaylistPage_CreateDialog_Title,
             Content = dialogContent,
             PrimaryButtonText = Strings.PlaylistPage_CreateDialog_CreateButton,
-            CloseButtonText = Strings.PlaylistPage_CreateDialog_CancelButton,
+            CloseButtonText = Strings.Generic_Cancel,
             DefaultButton = ContentDialogButton.Primary,
             IsPrimaryButtonEnabled = false,
             XamlRoot = xamlRoot
@@ -93,7 +93,7 @@ public partial class UIService
             Title = string.Format(Strings.PlaylistPage_RenameDialog_Title_Format, currentName),
             Content = inputTextBox,
             PrimaryButtonText = Strings.PlaylistPage_RenameDialog_RenameButton,
-            CloseButtonText = Strings.PlaylistPage_CreateDialog_CancelButton,
+            CloseButtonText = Strings.Generic_Cancel,
             DefaultButton = ContentDialogButton.Primary,
             IsPrimaryButtonEnabled = false,
             XamlRoot = xamlRoot

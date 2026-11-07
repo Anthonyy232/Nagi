@@ -707,9 +707,6 @@ Archivos que no se pudieron importar: {0}.</value>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
     <value>Crear</value>
   </data>
-  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>Cancelar</value>
-  </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>Renombrar '{0}'</value>
   </data>
@@ -1386,6 +1383,12 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
     <value>Restablecer a valores por defecto</value>
   </data>
+  <data name="SettingsPage_ResetPlayerStyling_Content" xml:space="preserve">
+    <value>Restablecer a valores por defecto</value>
+  </data>
+  <data name="SettingsPage_ResetSongListColumns_Content" xml:space="preserve">
+    <value>Restablecer a valores por defecto</value>
+  </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Material de la ventana</value>
   </data>
@@ -1983,7 +1986,7 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Página siguiente</value>
   </data>
-  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+  <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>ej. ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">

@@ -707,9 +707,6 @@ Arquivos que não puderam ser importados: {0}.</value>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
     <value>Criar</value>
   </data>
-  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>Cancelar</value>
-  </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>Renomear '{0}'</value>
   </data>
@@ -1386,6 +1383,12 @@ Deseja continuar?</value>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
     <value>Restaurar ao padrão</value>
   </data>
+  <data name="SettingsPage_ResetPlayerStyling_Content" xml:space="preserve">
+    <value>Restaurar ao padrão</value>
+  </data>
+  <data name="SettingsPage_ResetSongListColumns_Content" xml:space="preserve">
+    <value>Restaurar ao padrão</value>
+  </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Material da Janela</value>
   </data>
@@ -1983,7 +1986,7 @@ Deseja continuar?</value>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Próxima Página</value>
   </data>
-  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+  <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>ex: ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">

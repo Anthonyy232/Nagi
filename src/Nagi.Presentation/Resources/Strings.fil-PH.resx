@@ -707,9 +707,6 @@ Mga file na hindi ma-import: {0}.</value>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
     <value>Gumawa</value>
   </data>
-  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>Kanselahin</value>
-  </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>Palitan ang pangalan ng '{0}'</value>
   </data>
@@ -1386,6 +1383,12 @@ Gusto mo bang magpatuloy?</value>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
     <value>Ibalik sa Default</value>
   </data>
+  <data name="SettingsPage_ResetPlayerStyling_Content" xml:space="preserve">
+    <value>Ibalik sa Default</value>
+  </data>
+  <data name="SettingsPage_ResetSongListColumns_Content" xml:space="preserve">
+    <value>Ibalik sa Default</value>
+  </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Materyal ng Window</value>
   </data>
@@ -1983,7 +1986,7 @@ Gusto mo bang magpatuloy?</value>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Susunod na Pahina</value>
   </data>
-  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+  <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>hal. ;/\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">

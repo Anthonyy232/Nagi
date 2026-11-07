@@ -707,9 +707,6 @@
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
     <value>ਬਣਾਓ</value>
   </data>
-  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>ਰੱਦ ਕਰੋ</value>
-  </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>'{0}' ਦਾ ਨਾਮ ਬਦਲੋ</value>
   </data>
@@ -1386,6 +1383,12 @@
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
     <value>ਡਿਫ਼ਾਲਟ 'ਤੇ ਰੀਸੈੱਟ ਕਰੋ</value>
   </data>
+  <data name="SettingsPage_ResetPlayerStyling_Content" xml:space="preserve">
+    <value>ਡਿਫ਼ਾਲਟ 'ਤੇ ਰੀਸੈੱਟ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_ResetSongListColumns_Content" xml:space="preserve">
+    <value>ਡਿਫ਼ਾਲਟ 'ਤੇ ਰੀਸੈੱਟ ਕਰੋ</value>
+  </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>ਵਿੰਡੋ ਸਮੱਗਰੀ</value>
   </data>
@@ -1983,7 +1986,7 @@
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>ਅਗਲਾ ਪੰਨਾ</value>
   </data>
-  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+  <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>ਉਦਾਹਰਨ ਲਈ ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">

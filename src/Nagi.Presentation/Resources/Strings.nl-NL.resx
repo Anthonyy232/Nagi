@@ -707,9 +707,6 @@ Bestanden die niet konden worden geïmporteerd: {0}.</value>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
     <value>Maken</value>
   </data>
-  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>Annuleren</value>
-  </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>Hernoem '{0}'</value>
   </data>
@@ -1386,6 +1383,12 @@ Wil je doorgaan?</value>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
     <value>Standaardwaarden herstellen</value>
   </data>
+  <data name="SettingsPage_ResetPlayerStyling_Content" xml:space="preserve">
+    <value>Standaardwaarden herstellen</value>
+  </data>
+  <data name="SettingsPage_ResetSongListColumns_Content" xml:space="preserve">
+    <value>Standaardwaarden herstellen</value>
+  </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Venstermateriaal</value>
   </data>
@@ -1983,7 +1986,7 @@ Wil je doorgaan?</value>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Volgende pagina</value>
   </data>
-  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+  <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>bijv. ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">

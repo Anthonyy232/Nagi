@@ -263,7 +263,7 @@
                                 Grid.Column="1"
                                 Command="{x:Bind ViewModel.Appearance.ResetPlayerDesignSettingsCommand}"
                                 Style="{StaticResource SettingsResetHyperlinkButtonStyle}"
-                                Content="{x:Bind resources:Strings.SettingsPage_ResetAccentColor_Content, Mode=OneTime}" />
+                                Content="{x:Bind resources:Strings.SettingsPage_ResetPlayerStyling_Content, Mode=OneTime}" />
                         </Grid>
                     </controls:SettingsExpander.Header>
                     <controls:SettingsExpander.HeaderIcon>
@@ -394,7 +394,7 @@
                                 Grid.Column="1"
                                 Command="{x:Bind ViewModel.Appearance.ResetSongListColumnsCommand}"
                                 Style="{StaticResource SettingsResetHyperlinkButtonStyle}"
-                                Content="{x:Bind resources:Strings.SettingsPage_ResetAccentColor_Content, Mode=OneTime}" />
+                                Content="{x:Bind resources:Strings.SettingsPage_ResetSongListColumns_Content, Mode=OneTime}" />
                         </Grid>
                     </controls:SettingsExpander.Header>
                     <controls:SettingsExpander.HeaderIcon>
@@ -822,7 +822,7 @@
                         <TextBox
                             Width="150"
                             AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_ArtistSplitting_Header, Mode=OneTime}"
-                            PlaceholderText="{x:Bind resources:Strings.SettingsPage_FolderExclusion_Placeholder, Mode=OneTime}"
+                            PlaceholderText="{x:Bind resources:Strings.SettingsPage_SplitCharacters_Placeholder, Mode=OneTime}"
                             Text="{x:Bind ViewModel.Library.ArtistSplitCharacters, Mode=TwoWay}" />
                         <Button
                             Command="{x:Bind ViewModel.Library.RescanMetadataCommand}"
@@ -839,7 +839,7 @@
                         <TextBox
                             Width="150"
                             AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_GenreSplitting_Header, Mode=OneTime}"
-                            PlaceholderText="{x:Bind resources:Strings.SettingsPage_FolderExclusion_Placeholder, Mode=OneTime}"
+                            PlaceholderText="{x:Bind resources:Strings.SettingsPage_SplitCharacters_Placeholder, Mode=OneTime}"
                             Text="{x:Bind ViewModel.Library.GenreSplitCharacters, Mode=TwoWay}" />
                         <Button
                             Command="{x:Bind ViewModel.Library.RescanMetadataCommand}"

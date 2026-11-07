@@ -518,7 +518,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             Strings.PlaylistPage_DeleteDialog_Title,
             string.Format(Strings.PlaylistPage_DeleteDialog_Content_Format, playlist.Name),
             Strings.PlaylistPage_DeleteDialog_DeleteButton,
-            Strings.PlaylistPage_CreateDialog_CancelButton,
+            Strings.Generic_Cancel,
             defaultToCancel: true);
         var (playlistId, isSmart) = (playlist.Id, playlist.IsSmart);
         if (!confirmed || _isDisposed || IsAnyOperationInProgress) return;
