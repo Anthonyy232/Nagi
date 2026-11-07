@@ -14,14 +14,11 @@ namespace Nagi.Presentation.ViewModels;
 
 public partial class LibraryViewModel : SongListViewModelBase
 {
-    private readonly ILibraryFolderService _libraryFolders;
-    private bool _isInitialScanTriggered;
 
     public LibraryViewModel(
         ILibraryReader libraryReader,
         IListeningService listening,
         ILibraryNotifier libraryNotifier,
-        ILibraryFolderService libraryFolders,
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
@@ -31,7 +28,6 @@ public partial class LibraryViewModel : SongListViewModelBase
         ILogger<LibraryViewModel> logger)
         : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
-        _libraryFolders = libraryFolders;
         PageTitle = Strings.LibraryPage_Title;
         _settingsService.SettingChanged += OnSettingChanged;
     }
@@ -73,33 +69,6 @@ public partial class LibraryViewModel : SongListViewModelBase
 
         await RefreshOrSortSongsCommand.ExecuteAsync(null);
         HasInitialized = !HasLoadError;
-
-        if (_isInitialScanTriggered) return;
-        _isInitialScanTriggered = true;
-
-        _logger.LogDebug("Starting initial background library refresh");
-        // The library change refreshes the view when the background scan finishes.
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                // Run the dedup pass before refresh so the UI doesn't briefly show duplicate
-                // entries from a prior (pre-canonicalization) run.
-                await _libraryFolders.DeduplicateLibraryAsync().ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Library deduplication pass failed during startup.");
-            }
-            try
-            {
-                await _libraryFolders.RefreshAllFoldersAsync().ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Initial background library refresh failed.");
-            }
-        });
     }
 
     protected override bool ShouldReloadOnLibraryChange(LibraryChangeKind kind) =>

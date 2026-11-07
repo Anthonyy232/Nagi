@@ -636,7 +636,27 @@ public sealed class LibraryFolderService : ILibraryFolderService
         return new FileImport(totalSaved, discoveredDirectories, import.ReplacedCovers);
     }
 
-    public async Task<int> DeduplicateLibraryAsync(CancellationToken cancellationToken = default)
+    public async Task RefreshOnStartupAsync()
+    {
+        try
+        {
+            // Merged first, so the scan doesn't read a folder the library holds twice.
+            await DeduplicateLibraryAsync().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Library deduplication pass failed during startup.");
+        }
+
+        await RefreshAllFoldersAsync().ConfigureAwait(false);
+    }
+
+    /// <summary>
+    ///     Collapses library rows that represent the same physical folder or file under different path
+    ///     representations (e.g., mapped drive vs UNC), keeping playlist entries and listening history.
+    /// </summary>
+    /// <returns>The number of duplicate rows removed.</returns>
+    internal async Task<int> DeduplicateLibraryAsync(CancellationToken cancellationToken = default)
     {
         using var operationCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _writeLock.ShutdownToken);
         cancellationToken = operationCts.Token;

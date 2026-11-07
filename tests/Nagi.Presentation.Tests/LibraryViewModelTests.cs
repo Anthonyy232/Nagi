@@ -31,7 +31,7 @@ public class LibraryViewModelTests
             .Returns([favorite.Id]);
         library.Reader.GetSongIdsAsync(SongScope.Library, Arg.Any<string?>(), Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns([favorite.Id, other.Id]);
-        using var viewModel = new LibraryViewModel(library.Reader, library.Listening, library.Notifier, library.Folders, Substitute.For<IPlaylistService>(), playback,
+        using var viewModel = new LibraryViewModel(library.Reader, library.Listening, library.Notifier, Substitute.For<IPlaylistService>(), playback,
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), settings,
             Substitute.For<IUIService>(), NullLogger<LibraryViewModel>.Instance);
 
@@ -68,7 +68,7 @@ public class LibraryViewModelTests
             });
         library.Reader.GetSongIdsAsync(SongScope.Library, Arg.Any<string?>(), Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(_ => orderedSongs.Select(song => song.Id).ToList());
-        using var viewModel = new LibraryViewModel(library.Reader, library.Listening, library.Notifier, library.Folders, Substitute.For<IPlaylistService>(), playback,
+        using var viewModel = new LibraryViewModel(library.Reader, library.Listening, library.Notifier, Substitute.For<IPlaylistService>(), playback,
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), settings,
             Substitute.For<IUIService>(), NullLogger<LibraryViewModel>.Instance);
         await viewModel.RefreshOrSortSongsAsync();
@@ -108,13 +108,7 @@ public class LibraryViewModelTests
                     TotalCount = 1,
                     Items = [new Song { Title = "Recovered" }]
                 }));
-        var scanFinished = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        library.Folders.RefreshAllFoldersAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>()).Returns(_ =>
-        {
-            scanFinished.TrySetResult();
-            return Task.FromResult(true);
-        });
-        using var viewModel = new LibraryViewModel(library.Reader, library.Listening, library.Notifier, library.Folders, Substitute.For<IPlaylistService>(),
+        using var viewModel = new LibraryViewModel(library.Reader, library.Listening, library.Notifier, Substitute.For<IPlaylistService>(),
             Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), settings,
             Substitute.For<IUIService>(), NullLogger<LibraryViewModel>.Instance);
@@ -123,11 +117,9 @@ public class LibraryViewModelTests
         viewModel.HasInitialized.Should().BeFalse();
 
         await viewModel.InitializeAsync();
-        await scanFinished.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
         viewModel.HasInitialized.Should().BeTrue();
         viewModel.Songs.Should().ContainSingle().Which.Title.Should().Be("Recovered");
-        await library.Folders.Received(1).RefreshAllFoldersAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>());
     }
 
     [Theory]
@@ -146,7 +138,7 @@ public class LibraryViewModelTests
                 Items = [new Song { Title = "New song" }]
             });
         var dispatcher = new HeldDispatcher();
-        using var viewModel = new LibraryViewModel(library.Reader, library.Listening, library.Notifier, library.Folders, Substitute.For<IPlaylistService>(),
+        using var viewModel = new LibraryViewModel(library.Reader, library.Listening, library.Notifier, Substitute.For<IPlaylistService>(),
             Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), dispatcher, settings, Substitute.For<IUIService>(),
             NullLogger<LibraryViewModel>.Instance);

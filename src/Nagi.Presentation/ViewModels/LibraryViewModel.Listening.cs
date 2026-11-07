@@ -33,8 +33,7 @@ public partial class LibraryViewModel
         : ShowFavoritesOnly ? Strings.Listening_FavoritesEmptyDescription : Strings.LibraryPage_EmptyState_Subtitle;
 
     /// <summary>
-    ///     Shows the whole library or only favorites, loading the songs and starting the initial background rescan on
-    ///     the first visit.
+    ///     Shows the whole library or only favorites, loading the songs on the first visit.
     /// </summary>
     public async Task OpenAsync(bool favorites)
     {

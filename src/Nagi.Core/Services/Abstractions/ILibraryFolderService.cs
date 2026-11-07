@@ -52,9 +52,8 @@ public interface ILibraryFolderService
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Collapses library rows that represent the same physical folder or file under different
-    ///     path representations (e.g., mapped drive vs UNC). Returns the number of duplicate rows
-    ///     removed. Safe to invoke repeatedly.
+    ///     Brings the library up to date when the app starts: merges rows that older versions stored twice under
+    ///     different spellings of a path, then rescans every folder on disk. Failures are logged.
     /// </summary>
-    Task<int> DeduplicateLibraryAsync(CancellationToken cancellationToken = default);
+    Task RefreshOnStartupAsync();
 }
