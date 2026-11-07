@@ -255,11 +255,10 @@ public class MusicDbContext : DbContext
             entity.HasIndex(aa => aa.ArtistId);
         });
 
-        // SQLite stores no time zone, so a time reads back as Unspecified; the ones named for UTC say so again.
+        // SQLite stores no time zone, so a time reads back as Unspecified. Every stored time is UTC.
         var utc = new ValueConverter<DateTime, DateTime>(value => value, value => DateTime.SpecifyKind(value, DateTimeKind.Utc));
         foreach (var property in modelBuilder.Model.GetEntityTypes().SelectMany(entity => entity.GetProperties())
-                     .Where(property => property.Name.EndsWith("Utc", StringComparison.Ordinal) &&
-                                        (property.ClrType == typeof(DateTime) || property.ClrType == typeof(DateTime?))))
+                     .Where(property => property.ClrType == typeof(DateTime) || property.ClrType == typeof(DateTime?)))
             property.SetValueConverter(utc);
     }
 

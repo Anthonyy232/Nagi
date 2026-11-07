@@ -145,6 +145,33 @@ public class LibraryReaderTests : IDisposable
     }
 
     [Fact]
+    public async Task StoredTimes_ReadBackAsUtc()
+    {
+        var time = new DateTime(2024, 5, 6, 7, 8, 9, DateTimeKind.Utc);
+        var folder = new Folder { Name = "Music", Path = @"C:\Music", LastModifiedDate = time };
+        var song = new Song
+        {
+            Folder = folder,
+            FilePath = @"C:\Music\song.flac",
+            DirectoryPath = folder.Path,
+            DateAddedToLibrary = time,
+            FileCreatedDate = time,
+            FileModifiedDate = time,
+            LastPlayedDate = time
+        };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Songs.Add(song);
+            await context.SaveChangesAsync();
+        }
+
+        var stored = (await _libraryReader.GetSongByIdAsync(song.Id))!;
+
+        new[] { stored.DateAddedToLibrary, stored.FileCreatedDate, stored.FileModifiedDate, stored.LastPlayedDate, stored.Folder.LastModifiedDate }
+            .Should().AllSatisfy(value => value!.Value.Kind.Should().Be(DateTimeKind.Utc));
+    }
+
+    [Fact]
     public async Task DirectoryPages_ListMatchingSubFoldersBeforeSongsAcrossPages()
     {
         var root = new Folder { Name = "Music", Path = @"C:\Music" };
