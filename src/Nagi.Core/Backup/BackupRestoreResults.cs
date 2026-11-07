@@ -1,4 +1,4 @@
-﻿namespace Nagi.Core.Services.Data;
+﻿namespace Nagi.Core.Backup;
 
 public record BackupResult(bool Success, string? BackupFilePath, double BackupSizeMB, string? ErrorMessage = null);
 

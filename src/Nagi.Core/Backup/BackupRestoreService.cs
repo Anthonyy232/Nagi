@@ -5,9 +5,8 @@ using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Data;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Backup;
 
 public class BackupRestoreService : IBackupRestoreService
 {
