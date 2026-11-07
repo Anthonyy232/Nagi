@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
+using Nagi.Presentation.ViewModels;
 
 namespace Nagi.WinUI.Services.Implementations;
 
@@ -12,10 +13,11 @@ public partial class UIService
     {
         if (!TryGetXamlRoot(out var xamlRoot)) return null;
 
+        var viewModel = new LyricsEditorDialogViewModel(lyrics, canRemove);
         var editor = new TextBox
         {
             AcceptsReturn = true,
-            Text = lyrics,
+            Text = viewModel.Lyrics,
             PlaceholderText = Strings.LyricsPage_EditLyrics_Placeholder,
             TextWrapping = TextWrapping.Wrap,
             MinWidth = 520,
@@ -27,19 +29,21 @@ public partial class UIService
             Title = Strings.LyricsPage_EditLyrics_Title,
             Content = editor,
             PrimaryButtonText = Strings.LyricsPage_EditLyrics_Save,
-            SecondaryButtonText = canRemove ? Strings.LyricsPage_EditLyrics_Remove : string.Empty,
+            SecondaryButtonText = viewModel.CanRemove ? Strings.LyricsPage_EditLyrics_Remove : string.Empty,
             CloseButtonText = Strings.Generic_Cancel,
             DefaultButton = ContentDialogButton.Primary,
+            IsPrimaryButtonEnabled = viewModel.CanSave,
             XamlRoot = xamlRoot
         };
 
-        void UpdateSaveButton() => dialog.IsPrimaryButtonEnabled = LyricsEdit.CanSave(editor.Text, lyrics);
-
-        editor.TextChanged += (_, _) => UpdateSaveButton();
-        UpdateSaveButton();
+        editor.TextChanged += (_, _) =>
+        {
+            viewModel.Lyrics = editor.Text;
+            dialog.IsPrimaryButtonEnabled = viewModel.CanSave;
+        };
         return await ShowDialogAsync(dialog) switch
         {
-            ContentDialogResult.Primary => new LyricsEdit(LyricsEditAction.Save, editor.Text),
+            ContentDialogResult.Primary => viewModel.Save(),
             ContentDialogResult.Secondary => new LyricsEdit(LyricsEditAction.Remove),
             _ => null
         };
