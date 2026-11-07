@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -167,109 +166,6 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         TrackChanged?.Invoke();
         PlaybackStateChanged?.Invoke();
         PositionChanged?.Invoke();
-    }
-
-    public Task PlayTransientFileAsync(string filePath) =>
-        RunPlaybackRequest(request => PlayTransientFileInternalAsync(filePath, request));
-
-    private async Task PlayTransientFileInternalAsync(string filePath, int request)
-    {
-        _queueVersion++;
-        _logger.LogDebug("Playing transient file: {FilePath}", filePath);
-        var transientSong = await CreateTransientSongAsync(filePath);
-        if (!IsCurrentRequest(request)) return;
-
-        if (CurrentListenHistoryId.HasValue)
-        {
-            var sessionId = CurrentListenHistoryId.Value;
-            var position = _audioPlayer.CurrentPosition;
-            CurrentListenHistoryId = null;
-            FireAndForgetSafe(() => _libraryWriter.FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.Skipped), "Finalizing session on Transient Playback", trackForDisposal: true);
-        }
-
-        _isEligibilityMarked = false;
-
-        _isTransitioningTrack = true;
-        ClearQueuesInternal();
-        _transientTracks.Register(transientSong);
-        QueueChanged?.Invoke();
-
-        CurrentTrack = transientSong;
-        _currentContext = new PlaybackContext(PlaybackContextType.Transient, null);
-
-        // Track listens for transient playback only when the file maps to a known library song.
-        // Truly external files remain untracked because ListenHistory requires a Song FK.
-        var existingLibrarySong = await _libraryReader.GetSongByFilePathAsync(filePath);
-        if (!IsCurrentRequest(request)) return;
-        if (existingLibrarySong != null)
-            await StartListenSessionAsync(existingLibrarySong.Id, request);
-        if (!IsCurrentRequest(request)) return;
-
-        await _audioPlayer.LoadAsync(transientSong);
-        if (!IsCurrentRequest(request)) return;
-        await ApplyReplayGainIfEnabledAsync();
-        if (!IsCurrentRequest(request)) return;
-        await _audioPlayer.PlayAsync();
-        if (!IsCurrentRequest(request)) return;
-        UpdateMediaControlsNavigation();
-
-        TrackChanged?.Invoke();
-    }
-
-    private async Task<Song> CreateTransientSongAsync(string filePath)
-    {
-        var metadata = await _metadataService.ExtractMetadataAsync(filePath);
-
-        var validArtists = metadata.Artists
-            .Where(a => !string.IsNullOrWhiteSpace(a))
-            .Select(a => ArtistNameHelper.Normalize(a))
-            .ToList();
-        if (validArtists.Count == 0)
-        {
-            validArtists.Add(Artist.UnknownArtistName);
-        }
-
-        var validAlbumArtists = metadata.AlbumArtists
-            .Where(a => !string.IsNullOrWhiteSpace(a))
-            .Select(a => ArtistNameHelper.Normalize(a))
-            .ToList();
-        if (validAlbumArtists.Count == 0)
-        {
-            validAlbumArtists = validArtists;
-        }
-
-        return new Song
-        {
-            FilePath = filePath,
-            Title = metadata.Title,
-            ArtistName = Artist.GetDisplayName(validArtists),
-            PrimaryArtistName = validArtists.First(),
-
-            SongArtists = validArtists.Select((a, i) => new SongArtist
-            {
-                Artist = new Artist { Name = a },
-                Order = i
-            }).ToList(),
-            Album = new Album
-            {
-                Title = ArtistNameHelper.NormalizeStringCore(metadata.Album) ?? Album.UnknownAlbumName,
-
-                ArtistName = Artist.GetDisplayName(validAlbumArtists),
-                PrimaryArtistName = validAlbumArtists.First(),
-
-                AlbumArtists = validAlbumArtists.Select((aa, i) => new AlbumArtist
-                {
-                    Artist = new Artist { Name = aa },
-                    Order = i
-                }).ToList()
-            },
-            Duration = metadata.Duration,
-            Genres = metadata.Genres.Where(g => !string.IsNullOrWhiteSpace(g))
-                .Distinct(StringComparer.OrdinalIgnoreCase).Select(g => new Genre { Name = g }).ToList(),
-            AlbumArtUriFromTrack = metadata.CoverArtUri,
-            Lyrics = metadata.Lyrics,
-            LrcFilePath = metadata.LrcFilePath
-        };
     }
 
     public Task PlayAsync(Guid songId) => songId == Guid.Empty
@@ -576,7 +472,6 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         }
 
         CurrentTrack = song;
-        PruneTransientTracks();
 
         // Before the listen session starts, so a server song that can't stream isn't credited with any listening time.
         var streamUri = await _musicServers.GetStreamUriAsync(song);

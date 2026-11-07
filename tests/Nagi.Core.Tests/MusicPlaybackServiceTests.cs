@@ -279,7 +279,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task PlayTransientFileAsync_WhenCalled_ClearsQueueAndPlaysFile()
+    public async Task PlayTransientFileAsync_ReplacesTheQueueWithTheFileAndPlaysIt()
     {
         const string filePath = "C:\\temp\\transient.mp3";
         var metadata = new SongFileMetadata
@@ -296,9 +296,9 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
 
         await _service.PlayTransientFileAsync(filePath);
 
-        _service.PlayOrder.Should().BeEmpty();
         _service.CurrentTrack.Should().NotBeNull();
         _service.CurrentTrack!.Title.Should().Be("Transient Song");
+        _service.PlayOrder.Should().Equal(_service.CurrentTrack.Id);
         _service.CurrentTrack!.ArtistName.Should().Be("Temp Artist");
         _service.CurrentTrack!.Lyrics.Should().Be("Embedded lyrics");
         _service.CurrentTrack!.LrcFilePath.Should().Be("C:\\temp\\transient.lrc");
@@ -888,7 +888,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task PlayTransientFileAsync_WhenFileExistsInLibrary_StartsTransientSession()
+    public async Task PlayTransientFileAsync_WhenFileIsInTheLibrary_PlaysAndRecordsTheLibrarySong()
     {
         await _service.InitializeAsync();
 
@@ -909,10 +909,12 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         };
 
         _library.Reader.GetSongByFilePathAsync(filePath).Returns(mappedSong);
+        _library.Reader.GetSongByIdAsync(mappedSong.Id).Returns(mappedSong);
         _library.Writer.StartListenSessionAsync(mappedSong.Id, Arg.Any<PlaybackContext>()).Returns(777L);
 
         await _service.PlayTransientFileAsync(filePath);
 
+        _service.CurrentTrack.Should().BeSameAs(mappedSong);
         _service.CurrentListenHistoryId.Should().Be(777L);
         await _library.Writer.Received(1).StartListenSessionAsync(
             mappedSong.Id,
@@ -1754,7 +1756,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task NextAsync_AfterPlayingTransientFile_StopsPlayback()
+    public async Task NextAsync_AfterPlayingAFileOnItsOwn_StopsPlayback()
     {
         const string filePath = "C:\\temp\\transient.mp3";
         _metadataService.ExtractMetadataAsync(filePath).Returns(new SongFileMetadata { Title = "Transient" });
@@ -1762,7 +1764,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
 
         await _service.PlayTransientFileAsync(filePath);
 
-        _service.PlayOrder.Should().BeEmpty();
+        _service.PlayOrder.Should().ContainSingle();
 
         await _service.NextAsync();
 

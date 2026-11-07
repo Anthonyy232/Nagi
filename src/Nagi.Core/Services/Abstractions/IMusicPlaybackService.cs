@@ -157,8 +157,7 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     Task ShuffleLibraryAsync();
 
     /// <summary>
-    ///     Plays a single audio file directly from its path, clearing the current queue.
-    ///     The file does not need to be in the library.
+    ///     Replaces the queue with a single audio file and plays it. A file in the library plays as that library song.
     /// </summary>
     Task PlayTransientFileAsync(string filePath);
 

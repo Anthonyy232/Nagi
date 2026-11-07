@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Constants;
+using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
 
@@ -16,6 +17,15 @@ public partial class MusicPlaybackService
         QueueChanged?.Invoke();
         UpdateMediaControlsNavigation();
     }
+
+    public Task PlayTransientFileAsync(string filePath) => RunPlaybackRequest(async request =>
+    {
+        _logger.LogDebug("Playing file: {FilePath}", filePath);
+        var songs = await ResolveFilesAsync([filePath], () => IsCurrentRequest(request));
+        if (songs is not null)
+            await PlayInternalAsync(songs.Select(song => song.Id), 0, null,
+                new PlaybackContext(PlaybackContextType.Transient, null), request);
+    });
 
     public Task AddTransientFilesToQueueAsync(IEnumerable<string> paths)
     {
@@ -45,55 +55,79 @@ public partial class MusicPlaybackService
             : ExpandToAudioFiles(requested);
         if (paths.Count == 0) return;
 
-        var songs = new List<(Song Song, bool Transient)>(paths.Count);
+        var songs = await ResolveFilesAsync(paths, () => !_isDisposed && queueVersion == _queueVersion);
+        if (songs is null) return;
+        _queue.Add(songs.Select(song => song.Id));
+        CommitQueueChanges();
+
+        if (CurrentTrack == null && IsCurrentRequest(request))
+        {
+            _currentContext = new PlaybackContext(PlaybackContextType.Transient, null);
+            await PlayQueueItemAsync(songs[0].Id);
+        }
+    }
+
+    /// <summary>
+    ///     A file in the library plays as its library song, so its listens are recorded; any other file gets a song
+    ///     built from its tags, kept only while it is queued.
+    /// </summary>
+    /// <returns>The songs, or null when <paramref name="isCurrent" /> turned false along the way.</returns>
+    private async Task<List<Song>?> ResolveFilesAsync(IReadOnlyList<string> paths, Func<bool> isCurrent)
+    {
+        var songs = new List<Song>(paths.Count);
         foreach (var path in paths)
         {
             if (_transientTracks.TryGetByPath(path, out var knownTransient))
             {
-                songs.Add((knownTransient, true));
+                songs.Add(knownTransient);
                 continue;
             }
 
             var librarySong = await _libraryReader.GetSongByFilePathAsync(path);
-            if (_isDisposed || queueVersion != _queueVersion) return;
+            if (!isCurrent()) return null;
             if (librarySong != null)
             {
-                songs.Add((librarySong, false));
+                songs.Add(librarySong);
                 continue;
             }
 
             var transientSong = await CreateTransientSongAsync(path);
-            if (_isDisposed || queueVersion != _queueVersion) return;
-            songs.Add((transientSong, true));
+            if (!isCurrent()) return null;
+            // Another add may have resolved the same path while metadata was loading.
+            if (_transientTracks.TryGetByPath(path, out var existing)) transientSong = existing;
+            else _transientTracks.Register(transientSong);
+            songs.Add(transientSong);
         }
+        return songs;
+    }
 
-        if (_queue.Count == 0 && CurrentTrack != null)
+    private async Task<Song> CreateTransientSongAsync(string filePath)
+    {
+        var metadata = await _metadataService.ExtractMetadataAsync(filePath);
+        var artists = metadata.Artists.Select(ArtistNameHelper.Normalize).DefaultIfEmpty(Artist.UnknownArtistName).ToList();
+        var albumArtists = ArtistNameHelper.NormalizeAlbumArtists(metadata.AlbumArtists, artists);
+
+        return new Song
         {
-            _queue.Add([CurrentTrack.Id]);
-            _queue.SetCurrent(CurrentTrack.Id);
-        }
-        var added = new List<Guid>(songs.Count);
-        foreach (var item in songs)
-        {
-            var song = item.Song;
-            if (item.Transient)
+            FilePath = filePath,
+            Title = metadata.Title,
+            ArtistName = Artist.GetDisplayName(artists),
+            PrimaryArtistName = artists[0],
+            SongArtists = artists.Select((name, i) => new SongArtist { Artist = new Artist { Name = name }, Order = i }).ToList(),
+            Album = new Album
             {
-                // Another add may have resolved the same path while metadata was loading.
-                if (_transientTracks.TryGetByPath(song.FilePath, out var existing))
-                    song = existing;
-                else
-                    _transientTracks.Register(song);
-            }
-            added.Add(song.Id);
-        }
-        _queue.Add(added);
-        CommitQueueChanges();
-
-        if (CurrentTrack == null && added.Count > 0 && IsCurrentRequest(request))
-        {
-            _currentContext = new PlaybackContext(PlaybackContextType.Transient, null);
-            await PlayQueueItemAsync(added[0]);
-        }
+                Title = ArtistNameHelper.NormalizeStringCore(metadata.Album) ?? Album.UnknownAlbumName,
+                ArtistName = Artist.GetDisplayName(albumArtists),
+                PrimaryArtistName = albumArtists[0],
+                AlbumArtists = albumArtists.Select((name, i) => new AlbumArtist { Artist = new Artist { Name = name }, Order = i }).ToList()
+            },
+            Duration = metadata.Duration,
+            Genres = metadata.Genres.Where(g => !string.IsNullOrWhiteSpace(g))
+                .Distinct(StringComparer.OrdinalIgnoreCase).Select(g => new Genre { Name = g }).ToList(),
+            AlbumArtUriFromTrack = metadata.CoverArtUri,
+            Lyrics = metadata.Lyrics,
+            LrcFilePath = metadata.LrcFilePath
+        };
     }
 
     public async Task<IReadOnlyDictionary<Guid, Song>> GetQueueSongsAsync(IEnumerable<Guid> songIds,
@@ -133,12 +167,7 @@ public partial class MusicPlaybackService
         return true;
     }
 
-    private void PruneTransientTracks()
-    {
-        var retainedIds = _queue.Order.ToHashSet();
-        if (CurrentTrack != null) retainedIds.Add(CurrentTrack.Id);
-        _transientTracks.RetainOnly(retainedIds);
-    }
+    private void PruneTransientTracks() => _transientTracks.RetainOnly(_queue.Order.ToHashSet());
 
     public Task AddRangeToQueueAsync(IEnumerable<Guid> songIds)
     {
