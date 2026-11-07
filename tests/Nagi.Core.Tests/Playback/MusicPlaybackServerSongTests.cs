@@ -55,9 +55,9 @@ public partial class MusicPlaybackServiceTests
         _settingsService.Set(CoreSettings.RestorePlaybackState, true);
         _playbackStateStore.LoadAsync().Returns(new PlaybackState
         {
-            CurrentTrackId = song.Id,
+            PositionId = song.Id,
             PlaybackQueueTrackIds = _testSongs.Select(s => s.Id).ToList(),
-            CurrentPlaybackQueueIndex = 1
+            IsLoaded = true
         });
 
         await _service.InitializeAsync();

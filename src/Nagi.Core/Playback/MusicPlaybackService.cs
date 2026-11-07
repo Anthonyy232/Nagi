@@ -138,7 +138,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         }
 
         if (_isDisposed) return;
-        _queue.SetShuffled(_settingsService.Get(CoreSettings.IsShuffleEnabled));
+        var shuffle = _settingsService.Get(CoreSettings.IsShuffleEnabled);
         CurrentRepeatMode = _settingsService.Get(CoreSettings.RepeatMode);
 
         var restoredSuccessfully = false;
@@ -146,7 +146,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         {
             try
             {
-                restoredSuccessfully = await RestoreInternalPlaybackStateAsync(savedState);
+                restoredSuccessfully = await RestoreInternalPlaybackStateAsync(savedState, shuffle);
             }
             catch (Exception ex)
             {
@@ -155,7 +155,11 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         }
 
         if (_isDisposed) return;
-        if (!restoredSuccessfully) ClearQueuesInternal();
+        if (!restoredSuccessfully)
+        {
+            ClearQueuesInternal();
+            _queue.SetShuffled(shuffle);
+        }
         _logger.LogDebug("MusicPlaybackService initialized. Session restored: {IsRestored}", restoredSuccessfully);
 
         _isInitialized = true;

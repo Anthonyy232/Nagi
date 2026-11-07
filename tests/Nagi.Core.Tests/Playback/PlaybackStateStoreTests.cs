@@ -18,7 +18,7 @@ public class PlaybackStateStoreTests
             var path = Path.Combine(directory.FullName, "playback_state.json");
             var store = CreateStore(path);
             var songId = Guid.NewGuid();
-            await store.SaveAsync(new PlaybackState { CurrentTrackId = songId, PlaybackQueueTrackIds = [songId] });
+            await store.SaveAsync(new PlaybackState { PositionId = songId, PlaybackQueueTrackIds = [songId] });
 
             using (File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
@@ -27,7 +27,7 @@ public class PlaybackStateStoreTests
             }
 
             var state = await store.LoadAsync();
-            state!.CurrentTrackId.Should().Be(songId);
+            state!.PositionId.Should().Be(songId);
             state.PlaybackQueueTrackIds.Should().Equal(songId);
             Directory.GetFiles(directory.FullName).Should().Equal(path);
             store.Clear();
