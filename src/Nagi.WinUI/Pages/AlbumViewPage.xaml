@@ -76,7 +76,7 @@
                 <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Bottom" Spacing="8">
                     <TextBlock Text="{x:Bind resources:Strings.AlbumViewPage_Header_Label, Mode=OneTime}" Style="{ThemeResource CaptionTextBlockStyle}" />
                     <TextBlock Style="{ThemeResource HeaderTextBlockStyle}"
-                               Text="{x:Bind ViewModel.AlbumTitle, Mode=OneWay}" />
+                               Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}" />
                     <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                         <TextBlock FontWeight="SemiBold"
                                    Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"

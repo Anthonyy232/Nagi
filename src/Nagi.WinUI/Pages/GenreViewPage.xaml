@@ -55,12 +55,12 @@
                         Width="{StaticResource HeaderImageSize}"
                         Height="{StaticResource HeaderImageSize}"
                         CornerRadius="{StaticResource ArtworkCornerRadius}"
-                        Background="{x:Bind ViewModel.GenreName, Converter={StaticResource GenreToGradientConverter}, Mode=OneWay}" />
+                        Background="{x:Bind ViewModel.PageTitle, Converter={StaticResource GenreToGradientConverter}, Mode=OneWay}" />
 
                 <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Center" Spacing="8">
                     <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="{x:Bind resources:Strings.GenreViewPage_Header_Caption, Mode=OneTime}" />
                     <TextBlock Style="{ThemeResource HeaderTextBlockStyle}"
-                               Text="{x:Bind ViewModel.GenreName, Mode=OneWay}" />
+                               Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}" />
                 </StackPanel>
             </Grid>
 

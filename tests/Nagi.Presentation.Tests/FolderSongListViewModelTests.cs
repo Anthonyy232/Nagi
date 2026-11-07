@@ -4,6 +4,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Models;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 using NSubstitute;
@@ -18,19 +19,19 @@ public class FolderSongListViewModelTests
     [InlineData(false, true)]
     [InlineData(true, false)]
     [InlineData(true, true)]
-    public async Task InitializeAsync_ObsoleteFolderLookupCannotUpdateThePage(bool dispose, bool fails)
+    public async Task Open_ObsoleteFolderLookupCannotUpdateThePage(bool dispose, bool fails)
     {
         var library = new LibraryFakes();
         var oldFolder = new Folder { Name = "Old", Path = @"C:\Old" };
         var pending = new TaskCompletionSource<Folder?>(TaskCreationOptions.RunContinuationsAsynchronously);
         library.Reader.GetFolderByIdAsync(oldFolder.Id).Returns(pending.Task);
         using var viewModel = CreateViewModel(library);
-        var loading = viewModel.InitializeAsync(oldFolder.Name, oldFolder.Id);
+        var loading = viewModel.OpenAsync(new FolderSongViewNavigationParameter { Title = oldFolder.Name, FolderId = oldFolder.Id });
         if (dispose) viewModel.Dispose();
         else
         {
             var next = ConfigureRoot(library);
-            await viewModel.InitializeAsync(next.Name, next.Id);
+            await viewModel.OpenAsync(new FolderSongViewNavigationParameter { Title = next.Name, FolderId = next.Id });
         }
         var title = viewModel.PageTitle;
         var breadcrumbs = viewModel.Breadcrumbs.ToArray();
@@ -57,7 +58,7 @@ public class FolderSongListViewModelTests
             .Returns(pending.Task);
         var playback = Substitute.For<IMusicPlaybackService>();
         using var viewModel = CreateViewModel(library, playback);
-        await viewModel.InitializeAsync(root.Name, root.Id);
+        await viewModel.OpenAsync(new FolderSongViewNavigationParameter { Title = root.Name, FolderId = root.Id });
         var playing = viewModel.PlaySubfolderCommand.ExecuteAsync(folder);
 
         viewModel.Dispose();
@@ -82,7 +83,7 @@ public class FolderSongListViewModelTests
             .Returns(new List<Guid> { song.Id });
         var playback = Substitute.For<IMusicPlaybackService>();
         using var viewModel = CreateViewModel(library, playback);
-        await viewModel.InitializeAsync(root.Name, root.Id);
+        await viewModel.OpenAsync(new FolderSongViewNavigationParameter { Title = root.Name, FolderId = root.Id });
         await viewModel.NavigateToSubfolderCommand.ExecuteAsync(child);
         viewModel.IsAtRootLevel.Should().BeFalse();
         viewModel.SearchTerm = "Match";
@@ -103,7 +104,7 @@ public class FolderSongListViewModelTests
     [InlineData(@"C:\", "C:\\", @"C:\Album")]
     [InlineData(@"C:\Music\", "Music", @"C:\Music\Album")]
     [InlineData(@"C:\Music", "Music", @"C:\Music\")]
-    public async Task InitializeAsync_BreadcrumbsHandleRootAndTrailingSeparators(
+    public async Task Breadcrumbs_HandleRootAndTrailingSeparators(
         string rootPath, string rootName, string directoryPath)
     {
         var library = new LibraryFakes();
@@ -111,7 +112,8 @@ public class FolderSongListViewModelTests
         library.Reader.GetFolderByIdAsync(root.Id).Returns(root);
         using var viewModel = CreateViewModel(library);
 
-        await viewModel.InitializeAsync(root.Name, root.Id, directoryPath);
+        await viewModel.OpenAsync(new FolderSongViewNavigationParameter { Title = root.Name, FolderId = root.Id });
+        await viewModel.NavigateToSubfolderCommand.ExecuteAsync(new Folder { Path = directoryPath });
 
         viewModel.Breadcrumbs[0].Name.Should().Be(rootName);
         viewModel.Breadcrumbs[0].Path.Should().Be(rootPath);
@@ -143,7 +145,7 @@ public class FolderSongListViewModelTests
                 Items = (call.ArgAt<int>(3) - 1) * call.ArgAt<int>(4) < count ? [song] : []
             });
         using var viewModel = CreateViewModel(library);
-        await viewModel.InitializeAsync(folder.Name, folder.Id);
+        await viewModel.OpenAsync(new FolderSongViewNavigationParameter { Title = folder.Name, FolderId = folder.Id });
         count = remainingSongs;
 
         viewModel.CurrentPage = 3;
@@ -175,7 +177,7 @@ public class FolderSongListViewModelTests
         library.Reader.GetSongIdsAsync(new SongScope.DirectoryTree(root.Id, selectedFolder.Path), null, Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(pending.Task);
         using var viewModel = new SelectionFolderList(library);
-        await viewModel.InitializeAsync(root.Name, root.Id);
+        await viewModel.OpenAsync(new FolderSongViewNavigationParameter { Title = root.Name, FolderId = root.Id });
         viewModel.OnSongsSelectionChanged([FolderContentItem.FromFolder(selectedFolder)]);
 
         var resolving = viewModel.ResolveSelectionAsync();
@@ -200,7 +202,7 @@ public class FolderSongListViewModelTests
         library.Reader.GetSongIdsAsync(new SongScope.DirectoryTree(root.Id, selectedFolder.Path), null, Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(_ => { started.SetResult(); return pending.Task; });
         using var viewModel = new SelectionFolderList(library);
-        await viewModel.InitializeAsync(root.Name, root.Id);
+        await viewModel.OpenAsync(new FolderSongViewNavigationParameter { Title = root.Name, FolderId = root.Id });
         viewModel.OnSongsSelectionChanged([FolderContentItem.FromFolder(selectedFolder)]);
         var resolving = viewModel.ResolveSelectionAsync();
         await started.Task.WaitAsync(TimeSpan.FromSeconds(10));
@@ -221,7 +223,7 @@ public class FolderSongListViewModelTests
             .Returns(new DirectoryPage { Folders = [new Folder { Name = "Album", Path = @"C:\Music\Album" }], FolderCount = 1, TotalCount = 1 });
         using var viewModel = CreateViewModel(library);
 
-        await viewModel.InitializeAsync(root.Name, root.Id);
+        await viewModel.OpenAsync(new FolderSongViewNavigationParameter { Title = root.Name, FolderId = root.Id });
 
         viewModel.Songs.Should().BeEmpty();
         viewModel.PlayAllSongsCommand.CanExecute(null).Should().BeTrue();

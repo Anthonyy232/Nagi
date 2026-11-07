@@ -7,6 +7,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Core.Settings;
@@ -83,8 +84,8 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
 
     protected abstract string FormatTotalItemsText(PagedResult<TItem> result);
 
-    /// <summary>The header text after a failed load, or null to keep the last one.</summary>
-    protected virtual string? LoadErrorText => null;
+    /// <summary>The header text after a failed load.</summary>
+    protected virtual string LoadErrorText => Strings.Generic_Error;
 
     protected virtual Task OnPageLoadedAsync(PagedResult<TItem> result, CancellationToken token) => Task.CompletedTask;
 
@@ -243,7 +244,7 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
             if (!token.IsCancellationRequested && !_isDisposed)
             {
                 HasLoadError = true;
-                if (!stepsPage && LoadErrorText is { } errorText) TotalItemsText = errorText;
+                if (!stepsPage) TotalItemsText = LoadErrorText;
             }
         }
         finally

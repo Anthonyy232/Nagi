@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 using NSubstitute;
@@ -39,8 +40,8 @@ public class SmartPlaylistSongListViewModelTests
         };
         _playlists.GetSmartPlaylistByIdAsync(current.Id).Returns(current);
         using var viewModel = CreateViewModel();
-        var oldLoad = viewModel.InitializeAsync("Old", oldId);
-        await viewModel.InitializeAsync("Navigation label", current.Id);
+        var oldLoad = viewModel.OpenAsync(new SmartPlaylistSongViewNavigationParameter { Title = "Old", SmartPlaylistId = oldId });
+        await viewModel.OpenAsync(new SmartPlaylistSongViewNavigationParameter { Title = "Navigation label", SmartPlaylistId = current.Id });
 
         pending.SetResult(new SmartPlaylist { Id = oldId, Name = "Outdated" });
         await oldLoad;
@@ -61,7 +62,7 @@ public class SmartPlaylistSongListViewModelTests
         var pending = new TaskCompletionSource<SmartPlaylist?>();
         _playlists.GetSmartPlaylistByIdAsync(id).Returns(pending.Task);
         using var viewModel = CreateViewModel();
-        var loading = viewModel.InitializeAsync("Initial", id);
+        var loading = viewModel.OpenAsync(new SmartPlaylistSongViewNavigationParameter { Title = "Initial", SmartPlaylistId = id });
 
         if (dispose) viewModel.Dispose();
         else viewModel.ResetState();
@@ -93,10 +94,10 @@ public class SmartPlaylistSongListViewModelTests
         {
             if (viewModel.Songs.Contains(currentSong)) applied.TrySetResult();
         };
-        var oldLoad = viewModel.InitializeAsync("Old", oldId);
+        var oldLoad = viewModel.OpenAsync(new SmartPlaylistSongViewNavigationParameter { Title = "Old", SmartPlaylistId = oldId });
         await started.Task.WaitAsync(TimeSpan.FromSeconds(10));
 
-        await viewModel.InitializeAsync("New", newId);
+        await viewModel.OpenAsync(new SmartPlaylistSongViewNavigationParameter { Title = "New", SmartPlaylistId = newId });
         pending.SetResult(new PagedResult<Song> { Items = [new Song { Title = "Old song" }], TotalCount = 1 });
         await oldLoad;
         await applied.Task.WaitAsync(TimeSpan.FromSeconds(10));
@@ -118,7 +119,7 @@ public class SmartPlaylistSongListViewModelTests
                 .Where(song => call.Arg<IEnumerable<Guid>>().Contains(song.Id)).ToDictionary(song => song.Id));
         using var viewModel = CreateViewModel();
 
-        await viewModel.InitializeAsync("Random", playlist.Id);
+        await viewModel.OpenAsync(new SmartPlaylistSongViewNavigationParameter { Title = "Random", SmartPlaylistId = playlist.Id });
         await viewModel.PlayAllSongsCommand.ExecuteAsync(null);
 
         viewModel.Songs.Select(song => song.Id).Should().Equal(ids);

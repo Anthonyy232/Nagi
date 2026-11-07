@@ -13,8 +13,7 @@ public sealed partial class LibraryPage : SongListPage
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<LibraryViewModel>();
         DataContext = ViewModel;
-        // The library view model is shared and the page is cached, so it outlives each visit.
-        InitializeSongList(ViewModel, ownsViewModel: false, SearchToggleButton, SearchTextBox,
+        InitializeSongList(ViewModel, SearchToggleButton, SearchTextBox,
             Strings.LibraryPage_SearchButton_Search_ToolTip, ColumnHeaderHost, SongsListView);
     }
 

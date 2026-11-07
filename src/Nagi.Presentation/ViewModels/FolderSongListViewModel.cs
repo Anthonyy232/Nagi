@@ -11,6 +11,7 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
@@ -32,7 +33,7 @@ public sealed class BreadcrumbItem
 ///     directory. Folders and songs are paged together in a single virtual list: folders appear first, then songs.
 ///     Supports hierarchical navigation through subfolders and folder-name search.
 /// </summary>
-public partial class FolderSongListViewModel : SongListViewModelBase
+public partial class FolderSongListViewModel : DetailSongListViewModelBase<FolderSongViewNavigationParameter>
 {
     private string _currentDirectoryPath = string.Empty;
     private Guid? _rootFolderId;
@@ -74,40 +75,24 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     public string EmptySubtitle =>
         IsServer ? Strings.FolderSongViewPage_ServerEmpty_Subtitle : Strings.FolderSongViewPage_Empty_Subtitle;
 
-    public async Task InitializeAsync(string title, Guid rootFolderId, string? directoryPath = null, bool isServer = false)
+    protected override async Task<bool> OpenDetailsAsync(FolderSongViewNavigationParameter parameter, CancellationToken token)
     {
-        if (_isDisposed) return;
-        ResetState();
-        var generation = CaptureSongContext();
+        _rootFolderId = parameter.FolderId;
+        _rootFolderPath = null;
+        _currentDirectoryPath = string.Empty;
+        IsServer = parameter.IsServer;
 
-        try
-        {
-            _rootFolderId = rootFolderId;
-            _rootFolderPath = null;
-            _currentDirectoryPath = directoryPath ?? string.Empty;
-            IsServer = isServer;
+        var rootFolder = await _libraryReader.GetFolderByIdAsync(parameter.FolderId);
+        if (token.IsCancellationRequested) return true;
 
-            var rootFolder = await _libraryReader.GetFolderByIdAsync(rootFolderId);
-            if (!IsSongContextCurrent(generation)) return;
-
-            _rootFolderPath = rootFolder?.Path;
-
-            if (string.IsNullOrEmpty(_currentDirectoryPath))
-                _currentDirectoryPath = _rootFolderPath ?? string.Empty;
-
-            PageTitle = title;
-            UpdateBreadcrumbs();
-            await LoadAsync(CancellationToken.None);
-        }
-        catch (Exception ex)
-        {
-            if (!IsSongContextCurrent(generation)) return;
-            _logger.LogError(ex, "Failed to load directory items for {Path}", _currentDirectoryPath);
-            TotalItemsText = Strings.Folders_ErrorLoading;
-            FolderContents.Clear();
-            Songs.Clear();
-        }
+        _rootFolderPath = rootFolder?.Path;
+        _currentDirectoryPath = _rootFolderPath ?? string.Empty;
+        PageTitle = parameter.Title;
+        UpdateBreadcrumbs();
+        return true;
     }
+
+    protected override void ClearDetails() => FolderContents.Clear();
 
     private SongScope.Directory? CurrentDirectory => _rootFolderId is { } rootFolderId && !string.IsNullOrEmpty(_currentDirectoryPath)
         ? new SongScope.Directory(rootFolderId, _currentDirectoryPath)

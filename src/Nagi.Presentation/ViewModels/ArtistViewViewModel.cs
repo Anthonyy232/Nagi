@@ -12,6 +12,7 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
@@ -38,11 +39,10 @@ public sealed class ArtistAlbumViewModelItem
     public override string ToString() => Name;
 }
 
-public partial class ArtistViewViewModel : SongListViewModelBase
+public partial class ArtistViewViewModel : DetailSongListViewModelBase<ArtistViewNavigationParameter>
 {
     private readonly IArtworkService _artwork;
     private Guid _artistId;
-    private CancellationTokenSource? _pageCts;
 
     public ArtistViewViewModel(
         ILibraryReader libraryReader,
@@ -59,9 +59,10 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger, SortOrders, AppSettings.ArtistViewSortOrder)
     {
         _artwork = artwork;
-        ArtistName = Strings.ArtistView_DefaultArtistName;
+        PageTitle = Strings.ArtistView_DefaultArtistName;
         ArtistBio = Strings.Status_Loading;
         Albums.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasAlbums));
+        _libraryNotifier.ArtistImagesChanged += OnArtistImagesChanged;
     }
 
     private static readonly SongSortOrder[] SortOrders =
@@ -69,8 +70,6 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         SongSortOrder.TitleAsc, SongSortOrder.TitleDesc, SongSortOrder.YearAsc, SongSortOrder.YearDesc,
         SongSortOrder.AlbumAsc, SongSortOrder.AlbumDesc, SongSortOrder.FileCreatedDateAsc, SongSortOrder.FileCreatedDateDesc
     ];
-
-    [ObservableProperty] public partial string ArtistName { get; set; }
 
     [ObservableProperty] public partial string ArtistBio { get; set; }
 
@@ -99,80 +98,33 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         return _libraryReader.GetSongIdsAsync(new SongScope.Artist(_artistId), SearchTerm, sortOrder, token);
     }
 
-    public async Task LoadArtistDetailsAsync(Guid artistId)
+    // The details can wait on an online lookup, so the songs don't wait for them.
+    protected override bool LoadsSongsWithDetails => true;
+
+    protected override string NotFoundTitle => Strings.ArtistView_ArtistNotFound;
+
+    protected override string OpenErrorTitle => Strings.ArtistView_Error;
+
+    protected override async Task<bool> OpenDetailsAsync(ArtistViewNavigationParameter parameter, CancellationToken token)
     {
-        if (_isDisposed) return;
-        ResetState();
-        _pageCts = new CancellationTokenSource();
-        var token = _pageCts.Token;
-        _logger.LogDebug("Loading details for artist ID {ArtistId}", artistId);
+        _artistId = parameter.ArtistId;
+        var artistTask = _artwork.GetArtistDetailsAsync(parameter.ArtistId, token);
+        var albumsTask = _libraryReader.GetAlbumsForArtistAsync(parameter.ArtistId);
+        await Task.WhenAll(artistTask, albumsTask);
+        if (artistTask.Result is not { } artist || token.IsCancellationRequested) return artistTask.Result is not null;
 
-        _libraryNotifier.ArtistImagesChanged += OnArtistImagesChanged;
-
-        try
-        {
-            _artistId = artistId;
-
-            var songsTask = LoadAsync(token);
-            var artistTask = _artwork.GetArtistDetailsAsync(artistId, token);
-            var albumsTask = _libraryReader.GetAlbumsForArtistAsync(artistId);
-
-            await Task.WhenAll(artistTask, albumsTask, songsTask);
-            token.ThrowIfCancellationRequested();
-
-            var artist = await artistTask;
-
-            if (artist != null)
-            {
-                PopulateArtistDetails(artist);
-                var topAlbums = await albumsTask;
-                Albums.ReplaceRange(topAlbums.Select(a => new ArtistAlbumViewModelItem(a)));
-            }
-            else
-            {
-                HandleArtistNotFound(artistId);
-            }
-        }
-        catch (Exception ex)
-        {
-            if (!token.IsCancellationRequested) HandleLoadError(artistId, ex);
-        }
-    }
-
-    private void PopulateArtistDetails(Artist artist)
-    {
-        ArtistName = artist.Name;
         PageTitle = artist.Name;
         ArtistImageUri = ImageUriHelper.GetUriWithCacheBuster(artist.LocalImageCachePath);
-        ArtistBio = string.IsNullOrWhiteSpace(artist.Biography)
-            ? Strings.ArtistView_NoBiography
-            : artist.Biography;
-
-        _logger.LogDebug("Populated details for artist '{ArtistName}' ({ArtistId})", artist.Name, artist.Id);
+        ArtistBio = string.IsNullOrWhiteSpace(artist.Biography) ? Strings.ArtistView_NoBiography : artist.Biography;
+        Albums.ReplaceRange(albumsTask.Result.Select(album => new ArtistAlbumViewModelItem(album)));
+        return true;
     }
 
-    private void HandleArtistNotFound(Guid artistId)
+    protected override void ClearDetails()
     {
-        _logger.LogWarning("Artist with ID {ArtistId} not found", artistId);
-        ArtistName = Strings.ArtistView_ArtistNotFound;
-        PageTitle = Strings.Generic_NoItems;
         ArtistBio = string.Empty;
         ArtistImageUri = null;
         Albums.Clear();
-        Songs.Clear();
-        TotalItemsText = ResourceFormatter.Format(Strings.Songs_Count_Plural, 0);
-    }
-
-    private void HandleLoadError(Guid artistId, Exception ex)
-    {
-        _logger.LogError(ex, "Failed to load artist with ID {ArtistId}", artistId);
-        ArtistName = Strings.ArtistView_Error;
-        PageTitle = Strings.Generic_Error;
-        ArtistBio = string.Empty;
-        ArtistImageUri = null;
-        TotalItemsText = Strings.Generic_Error;
-        Albums.Clear();
-        Songs.Clear();
     }
 
     public void OpenAlbum(ArtistAlbumViewModelItem album) => _musicNavigationService.OpenAlbum(album.Id);
@@ -182,19 +134,13 @@ public partial class ArtistViewViewModel : SongListViewModelBase
 
     private void OnArtistImagesChanged(object? sender, IReadOnlyList<ArtistImageChange> changes)
     {
-        if (changes.FirstOrDefault(change => change.ArtistId == _artistId) is { } change)
+        if (changes.FirstOrDefault(change => change.ArtistId == _artistId) is not { } change) return;
+        var token = OpenToken;
+        _dispatcherService.TryEnqueue(() =>
         {
-            var generation = CaptureSongContext();
-            _logger.LogDebug("Received metadata update for artist ID {ArtistId}", _artistId);
-            _dispatcherService.TryEnqueue(() =>
-            {
-                // Guard against updates after the page has been cleaned up.
-                // This prevents COMException crashes when navigating away quickly after an image update.
-                if (!IsSongContextCurrent(generation) || _pageCts is null) return;
-
-                ArtistImageUri = ImageUriHelper.GetUriWithCacheBuster(change.ImagePath, DateTime.UtcNow);
-            });
-        }
+            if (token.IsCancellationRequested || _isDisposed) return;
+            ArtistImageUri = ImageUriHelper.GetUriWithCacheBuster(change.ImagePath, DateTime.UtcNow);
+        });
     }
 
     public override SongListColumns VisibleColumns => ChosenColumns & ~SongListColumns.Artist;
@@ -202,17 +148,10 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     protected override PlaybackContext GetPlaybackContext() =>
         _artistId != Guid.Empty ? new(PlaybackContextType.Artist, _artistId) : base.GetPlaybackContext();
 
-    public override void ResetState()
+    public override void Dispose()
     {
-        _pageCts?.Cancel();
-        _pageCts?.Dispose();
-        _pageCts = null;
-
-        base.ResetState();
-        _logger.LogDebug("Cleaned up ArtistViewViewModel search resources");
         _libraryNotifier.ArtistImagesChanged -= OnArtistImagesChanged;
-
-        _logger.LogDebug("Cleaned up for artist ID {ArtistId}", _artistId);
+        base.Dispose();
     }
 
     /// <summary>
@@ -226,20 +165,20 @@ public partial class ArtistViewViewModel : SongListViewModelBase
             var localPath = await _uiService.PickSingleFileAsync(FileExtensions.ImageFileExtensions);
             if (string.IsNullOrWhiteSpace(localPath)) return;
 
-            _logger.LogInformation("Updating custom image for current artist ({ArtistName}) from {Path}", ArtistName, localPath);
+            _logger.LogInformation("Updating custom image for current artist ({ArtistName}) from {Path}", PageTitle, localPath);
             await _artwork.UpdateArtistImageAsync(_artistId, localPath);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to change the image of artist {ArtistName}", ArtistName);
+            _logger.LogError(ex, "Failed to change the image of artist {ArtistName}", PageTitle);
         }
     }
 
     [RelayCommand]
     private async Task RemoveArtistImageAsync()
     {
-        _logger.LogInformation("Removing custom image for current artist ({ArtistName})", ArtistName);
+        _logger.LogInformation("Removing custom image for current artist ({ArtistName})", PageTitle);
         try { await _artwork.RemoveArtistImageAsync(_artistId); }
-        catch (Exception ex) { _logger.LogError(ex, "Failed to remove the image of artist {ArtistName}", ArtistName); }
+        catch (Exception ex) { _logger.LogError(ex, "Failed to remove the image of artist {ArtistName}", PageTitle); }
     }
 }

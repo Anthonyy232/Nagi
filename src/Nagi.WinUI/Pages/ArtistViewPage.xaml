@@ -190,7 +190,7 @@
                     <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Center" Spacing="8">
                         <TextBlock Text="{x:Bind resources:Strings.ArtistViewPage_Header_Label, Mode=OneTime}" Style="{ThemeResource CaptionTextBlockStyle}" />
                         <TextBlock Style="{ThemeResource HeaderTextBlockStyle}"
-                                   Text="{x:Bind ViewModel.ArtistName, Mode=OneWay}" />
+                                   Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}" />
                         <TextBlock
                             MaxLines="3"
                             Opacity="0.8"

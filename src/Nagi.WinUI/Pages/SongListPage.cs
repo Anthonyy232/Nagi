@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Models;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;
@@ -21,20 +22,16 @@ public abstract class SongListPage : SearchablePage
     private readonly List<NowPlayingIndicatorBinder> _nowPlayingBinders = new();
     private SongListViewModelBase? _viewModel;
     private ListView[] _songLists = [];
-    private bool _ownsViewModel;
 
     /// <summary>
-    ///     Call after InitializeComponent. When <paramref name="ownsViewModel" /> is true the view model
-    ///     is disposed on navigating away; cached pages with a shared view model pass false.
-    ///     The column header goes in <paramref name="columnHeaderHost" /> above the lists, not in them, so it
-    ///     stays in view and re-sorting doesn't make a list follow its old first row.
+    ///     Call after InitializeComponent. The column header goes in <paramref name="columnHeaderHost" /> above the
+    ///     lists, not in them, so it stays in view and re-sorting doesn't make a list follow its old first row.
     /// </summary>
-    protected void InitializeSongList(SongListViewModelBase viewModel, bool ownsViewModel, Button searchButton,
+    protected void InitializeSongList(SongListViewModelBase viewModel, Button searchButton,
         TextBox searchBox, string searchToolTip, Border columnHeaderHost, params ListView[] songLists)
     {
         InitializeSearch(viewModel, searchButton, searchBox, searchToolTip);
         _viewModel = viewModel;
-        _ownsViewModel = ownsViewModel;
         _songLists = songLists;
         columnHeaderHost.Child = CreateColumnHeader(viewModel);
         Loaded += AttachNowPlayingBinders;
@@ -48,17 +45,20 @@ public abstract class SongListPage : SearchablePage
     /// </summary>
     protected virtual Song? GetSong(object? item) => item as Song;
 
-    protected override void OnNavigatedTo(NavigationEventArgs e)
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
         // For the "Add to playlist" menu. A cached page's shared view model keeps them up to date once loaded.
         if (!_viewModel!.HasLoadedPlaylists) _ = _viewModel.LoadAvailablePlaylistsAsync();
+        if (_viewModel is IDetailListViewModel detail && e.Parameter is INavigationParameter parameter)
+            await detail.OpenAsync(parameter);
     }
 
+    // A cached page keeps its view model, which is shared, for the next visit.
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        if (_ownsViewModel) _viewModel!.Dispose();
+        if (NavigationCacheMode == NavigationCacheMode.Disabled) _viewModel!.Dispose();
     }
 
     internal void ClearSelection() => ActiveSongList.SelectedItems.Clear();

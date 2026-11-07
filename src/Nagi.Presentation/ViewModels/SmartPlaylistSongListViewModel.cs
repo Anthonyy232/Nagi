@@ -9,6 +9,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
@@ -18,7 +19,7 @@ namespace Nagi.Presentation.ViewModels;
 ///     A specialized song list view model for displaying songs that match a smart playlist's rules.
 ///     Unlike regular playlists, smart playlist songs are read-only and dynamically generated.
 /// </summary>
-public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
+public partial class SmartPlaylistSongListViewModel : DetailSongListViewModelBase<SmartPlaylistSongViewNavigationParameter>
 {
     private static readonly SongSortOrder[] SortOrders =
     [
@@ -32,7 +33,6 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
 
     private readonly ISmartPlaylistService _smartPlaylistService;
     private Guid? _currentSmartPlaylistId;
-    private int _playlistGeneration;
 
     public SmartPlaylistSongListViewModel(
         ILibraryReader libraryReader,
@@ -69,7 +69,13 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
             }
 
             var edited = await _uiService.ShowSmartPlaylistEditorAsync(smartPlaylist);
-            if (edited is not null) await InitializeAsync(edited.Name, smartPlaylistId, edited.CoverImageUri);
+            if (edited is not null)
+                await OpenAsync(new SmartPlaylistSongViewNavigationParameter
+                {
+                    Title = edited.Name,
+                    SmartPlaylistId = smartPlaylistId,
+                    CoverImageUri = edited.CoverImageUri
+                });
         }
         catch (Exception ex)
         {
@@ -86,47 +92,31 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverImageUri);
 
-    public async Task InitializeAsync(string title, Guid smartPlaylistId, string? coverImageUri = null)
+    protected override string LoadErrorText => Strings.SmartPlaylist_ErrorLoading;
+
+    // A smart playlist that no longer exists shows as an empty list under the name it was opened with.
+    protected override async Task<bool> OpenDetailsAsync(SmartPlaylistSongViewNavigationParameter parameter,
+        CancellationToken token)
     {
-        if (_isDisposed) return;
-        ResetState();
-        var generation = _playlistGeneration;
-        CurrentPage = 1;
         Sort.Current = SongSortOrder.TitleAsc;
-        Songs.Clear();
-        TotalItemCount = 0;
         RuleSummary = string.Empty;
-        _logger.LogDebug("Initializing for smart playlist '{Title}' (ID: {SmartPlaylistId})", title, smartPlaylistId);
+        PageTitle = parameter.Title;
+        _currentSmartPlaylistId = parameter.SmartPlaylistId;
+        CoverImageUri = parameter.CoverImageUri;
 
-        try
+        var smartPlaylist = await _smartPlaylistService.GetSmartPlaylistByIdAsync(parameter.SmartPlaylistId);
+        if (token.IsCancellationRequested) return true;
+        if (smartPlaylist is null)
         {
-            PageTitle = title;
-            _currentSmartPlaylistId = smartPlaylistId;
-            CoverImageUri = coverImageUri;
-
-            var smartPlaylist = await _smartPlaylistService.GetSmartPlaylistByIdAsync(smartPlaylistId);
-            if (_isDisposed || generation != _playlistGeneration) return;
-            if (smartPlaylist != null)
-            {
-                PageTitle = smartPlaylist.Name;
-                CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(smartPlaylist.CoverImageUri, smartPlaylist.DateModified);
-                RuleSummary = BuildRuleSummary(smartPlaylist);
-                Sort.Current = smartPlaylist.SortOrder.ToSongSortOrder();
-            }
-            else
-            {
-                _currentSmartPlaylistId = null;
-            }
-
-            await LoadAsync(CancellationToken.None);
+            _currentSmartPlaylistId = null;
+            return true;
         }
-        catch (Exception ex)
-        {
-            if (_isDisposed || generation != _playlistGeneration) return;
-            _logger.LogError(ex, "Failed to initialize smart playlist {SmartPlaylistId}", _currentSmartPlaylistId);
-            TotalItemsText = Strings.SmartPlaylist_ErrorLoading;
-            Songs.Clear();
-        }
+
+        PageTitle = smartPlaylist.Name;
+        CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(smartPlaylist.CoverImageUri, smartPlaylist.DateModified);
+        RuleSummary = BuildRuleSummary(smartPlaylist);
+        Sort.Current = smartPlaylist.SortOrder.ToSongSortOrder();
+        return true;
     }
 
     private static string BuildRuleSummary(SmartPlaylist smartPlaylist)
@@ -200,10 +190,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
 
     public override void ResetState()
     {
-        _logger.LogDebug("Cleaning up SmartPlaylistSongListViewModel resources");
-
         _currentSmartPlaylistId = null;
-        _playlistGeneration++;
 
         base.ResetState();
     }

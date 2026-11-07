@@ -5,7 +5,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
-using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Implementations;
 using Nagi.Presentation.ViewModels;
@@ -25,19 +24,13 @@ public sealed partial class ArtistViewPage : SongListPage
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<ViewModelFactory>().Create<ArtistViewViewModel>();
         DataContext = ViewModel;
-        InitializeSongList(ViewModel, ownsViewModel: true, SearchToggleButton, SearchTextBox,
+        InitializeSongList(ViewModel, SearchToggleButton, SearchTextBox,
             Strings.ArtistViewPage_SearchButton_Search_ToolTip, ColumnHeaderHost, SongsListView);
         SongsListView.Loaded += OnSongsListViewLoaded;
     }
 
     public ArtistViewViewModel ViewModel { get; }
 
-    protected override async void OnNavigatedTo(NavigationEventArgs e)
-    {
-        base.OnNavigatedTo(e);
-        var navParam = (ArtistViewNavigationParameter)e.Parameter;
-        await ViewModel.LoadArtistDetailsAsync(navParam.ArtistId);
-    }
 
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
