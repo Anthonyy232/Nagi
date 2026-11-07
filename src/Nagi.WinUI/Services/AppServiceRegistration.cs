@@ -5,7 +5,7 @@ using Nagi.Audio.LibVlc;
 using Nagi.Core;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
-using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Services;
 using Nagi.Presentation.Shell;
 using Nagi.Presentation.Theme;

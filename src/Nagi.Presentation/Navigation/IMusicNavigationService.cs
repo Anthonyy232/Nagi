@@ -1,7 +1,6 @@
 ﻿using Nagi.Core.Library;
-using Nagi.Presentation.Navigation;
 
-namespace Nagi.Presentation.Services.Abstractions;
+namespace Nagi.Presentation.Navigation;
 
 /// <summary>
 ///     Opens the page that shows an album, an artist or another collection.

@@ -1,6 +1,4 @@
-﻿using Nagi.Presentation.Navigation;
-
-namespace Nagi.Presentation.Services.Abstractions;
+﻿namespace Nagi.Presentation.Navigation;
 
 public interface INavigationService
 {

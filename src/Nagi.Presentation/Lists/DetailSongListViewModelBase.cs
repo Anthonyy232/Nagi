@@ -10,7 +10,6 @@ using Nagi.Core.Playlists;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Shell;
 
 namespace Nagi.Presentation.Lists;

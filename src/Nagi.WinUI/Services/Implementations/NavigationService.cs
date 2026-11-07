@@ -2,7 +2,6 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Presentation.Navigation;
-using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.WinUI.Services.Implementations;
 

@@ -11,8 +11,8 @@ using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.MusicServers;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Shell;
 
 namespace Nagi.Presentation.Lists;

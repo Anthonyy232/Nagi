@@ -3,10 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
 using Nagi.Presentation.Lists;
-using Nagi.Presentation.Navigation;
-using Nagi.Presentation.Services.Abstractions;
 
-namespace Nagi.Presentation.Services.Implementations;
+namespace Nagi.Presentation.Navigation;
 
 public class MusicNavigationService(
     ILibraryReader libraryReader,
