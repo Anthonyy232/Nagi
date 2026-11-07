@@ -503,9 +503,6 @@
   <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
     <value>κανόνες</value>
   </data>
-  <data name="SongList_PageTitle_Default" xml:space="preserve">
-    <value>Τραγούδια</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} αντικείμενο</value>
   </data>
@@ -936,11 +933,8 @@
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Αναζήτηση άλμπουμ…</value>
   </data>
-  <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
+  <data name="Generic_PickRandom" xml:space="preserve">
     <value>Επιλέξτε ένα τυχαία</value>
-  </data>
-  <data name="AlbumPage_Menu_Play" xml:space="preserve">
-    <value>Αναπαραγωγή</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
     <value>Δεν βρέθηκαν άλμπουμ</value>
@@ -951,23 +945,14 @@
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>Άλμπουμ</value>
   </data>
-  <data name="AlbumViewPage_Songs_Title" xml:space="preserve">
+  <data name="SongList_Songs" xml:space="preserve">
     <value>Τραγούδια</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Αναζήτηση στο άλμπουμ…</value>
   </data>
-  <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Αναπαραγωγή όλων</value>
-  </data>
-  <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Τυχαία αναπαραγωγή όλων</value>
-  </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
     <value>Δεν βρέθηκαν τραγούδια σε αυτό το άλμπουμ</value>
-  </data>
-  <data name="AlbumViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Δοκιμάστε να αναζητήσετε κάτι άλλο</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
     <value>Καλλιτέχνες</value>
@@ -975,16 +960,10 @@
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Αναζήτηση καλλιτεχνών…</value>
   </data>
-  <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Επιλέξτε ένα τυχαία</value>
-  </data>
-  <data name="ArtistPage_Menu_Play" xml:space="preserve">
-    <value>Αναπαραγωγή</value>
-  </data>
-  <data name="ArtistPage_Menu_ChangeImage" xml:space="preserve">
+  <data name="Generic_ChangeImage" xml:space="preserve">
     <value>Αλλαγή εικόνας</value>
   </data>
-  <data name="ArtistPage_Menu_RemoveImage" xml:space="preserve">
+  <data name="Generic_RemoveImage" xml:space="preserve">
     <value>Κατάργηση εικόνας</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
@@ -996,47 +975,23 @@
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
     <value>Αλλαγή εικόνας καλλιτέχνη</value>
   </data>
-  <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
-    <value>Αλλαγή εικόνας</value>
-  </data>
-  <data name="ArtistViewPage_ImageMenu_RemoveImage" xml:space="preserve">
-    <value>Κατάργηση εικόνας</value>
-  </data>
   <data name="ArtistViewPage_Header_Label" xml:space="preserve">
     <value>Καλλιτέχνης</value>
   </data>
   <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
     <value>Κορυφαία άλμπουμ</value>
   </data>
-  <data name="ArtistViewPage_Songs_Title" xml:space="preserve">
-    <value>Τραγούδια</value>
-  </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Αναζήτηση στον καλλιτέχνη…</value>
-  </data>
-  <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Αναπαραγωγή όλων</value>
-  </data>
-  <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Τυχαία αναπαραγωγή όλων</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
     <value>Δεν βρέθηκαν τραγούδια για αυτόν τον καλλιτέχνη</value>
   </data>
-  <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Δοκιμάστε να αναζητήσετε κάτι άλλο</value>
-  </data>
   <data name="FolderPage_Title" xml:space="preserve">
     <value>Φάκελοι</value>
   </data>
-  <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Επιλέξτε ένα τυχαία</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Προσθήκη φακέλου</value>
-  </data>
-  <data name="FolderPage_Menu_Play" xml:space="preserve">
-    <value>Αναπαραγωγή</value>
   </data>
   <data name="FolderPage_Menu_Rescan" xml:space="preserve">
     <value>Εκ νέου σάρωση</value>
@@ -1050,26 +1005,11 @@
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
     <value>Προσθέστε φακέλους μουσικής για να ξεκινήσετε</value>
   </data>
-  <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
-    <value>Αναπαραγωγή</value>
-  </data>
-  <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Προσθήκη σε λίστα αναπαραγωγής</value>
-  </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Φάκελος</value>
   </data>
-  <data name="FolderSongViewPage_Songs_Title" xml:space="preserve">
-    <value>Τραγούδια</value>
-  </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Αναζήτηση στον φάκελο…</value>
-  </data>
-  <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Αναπαραγωγή όλων</value>
-  </data>
-  <data name="FolderSongViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Τυχαία αναπαραγωγή όλων</value>
   </data>
   <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
     <value>Αυτός ο φάκελος είναι άδειος</value>
@@ -1083,12 +1023,6 @@
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Αναζήτηση ειδών…</value>
   </data>
-  <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Επιλέξτε ένα τυχαία</value>
-  </data>
-  <data name="GenrePage_Menu_Play" xml:space="preserve">
-    <value>Αναπαραγωγή</value>
-  </data>
   <data name="GenrePage_Empty_Title" xml:space="preserve">
     <value>Δεν βρέθηκαν είδη</value>
   </data>
@@ -1101,40 +1035,37 @@
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Αναζήτηση στη βιβλιοθήκη…</value>
   </data>
-  <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_PlayAll" xml:space="preserve">
     <value>Αναπαραγωγή όλων</value>
   </data>
-  <data name="LibraryPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_ShuffleAll" xml:space="preserve">
     <value>Τυχαία αναπαραγωγή όλων</value>
   </data>
-  <data name="LibraryPage_Context_Play" xml:space="preserve">
+  <data name="Generic_Play" xml:space="preserve">
     <value>Αναπαραγωγή</value>
   </data>
-  <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
+  <data name="SongList_Context_PlayNext" xml:space="preserve">
     <value>Αναπαραγωγή επόμενου</value>
   </data>
-  <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
+  <data name="SongList_Context_AddToQueue" xml:space="preserve">
     <value>Προσθήκη στην ουρά</value>
   </data>
-  <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
+  <data name="SongList_Context_AddToPlaylist" xml:space="preserve">
     <value>Προσθήκη σε λίστα αναπαραγωγής</value>
   </data>
-  <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
+  <data name="SongList_Context_GoToAlbum" xml:space="preserve">
     <value>Μετάβαση στο άλμπουμ</value>
   </data>
-  <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
+  <data name="SongList_Context_GoToArtist" xml:space="preserve">
     <value>Μετάβαση στον καλλιτέχνη</value>
   </data>
-  <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
+  <data name="SongList_Context_ShowInExplorer" xml:space="preserve">
     <value>Εμφάνιση στην Εξερεύνηση αρχείων</value>
-  </data>
-  <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Αναπαραγωγή</value>
   </data>
   <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
     <value>Δεν βρέθηκαν τραγούδια</value>
   </data>
-  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+  <data name="Generic_TrySearchingElse" xml:space="preserve">
     <value>Δοκιμάστε να αναζητήσετε κάτι άλλο</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
@@ -1245,9 +1176,6 @@
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Αναζήτηση λιστών αναπαραγωγής…</value>
   </data>
-  <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Επιλέξτε ένα τυχαία</value>
-  </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
     <value>Δημιουργία νέας λίστας αναπαραγωγής</value>
   </data>
@@ -1260,17 +1188,8 @@
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
     <value>Έξυπνη λίστα αναπαραγωγής</value>
   </data>
-  <data name="PlaylistPage_Context_Play" xml:space="preserve">
-    <value>Αναπαραγωγή</value>
-  </data>
   <data name="PlaylistPage_Context_Rename" xml:space="preserve">
     <value>Μετονομασία</value>
-  </data>
-  <data name="PlaylistPage_Context_ChangeImage" xml:space="preserve">
-    <value>Αλλαγή εικόνας</value>
-  </data>
-  <data name="PlaylistPage_Context_RemoveImage" xml:space="preserve">
-    <value>Κατάργηση εικόνας</value>
   </data>
   <data name="PlaylistPage_Context_Delete" xml:space="preserve">
     <value>Διαγραφή</value>
@@ -1284,19 +1203,10 @@
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Λίστα αναπαραγωγής</value>
   </data>
-  <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Τραγούδια</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Αναζήτηση στη λίστα αναπαραγωγής…</value>
   </data>
-  <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Αναπαραγωγή όλων</value>
-  </data>
-  <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Τυχαία αναπαραγωγή όλων</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
+  <data name="SongList_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>Αφαίρεση από τη λίστα αναπαραγωγής</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
@@ -1308,23 +1218,11 @@
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>Είδος</value>
   </data>
-  <data name="GenreViewPage_Section_Songs" xml:space="preserve">
-    <value>Τραγούδια</value>
-  </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Αναζήτηση στο είδος…</value>
   </data>
-  <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Αναπαραγωγή όλων</value>
-  </data>
-  <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Τυχαία αναπαραγωγή όλων</value>
-  </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
     <value>Δεν βρέθηκαν τραγούδια για αυτό το είδος</value>
-  </data>
-  <data name="GenreViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Δοκιμάστε να αναζητήσετε κάτι άλλο</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Ρυθμίσεις</value>
@@ -1689,20 +1587,11 @@
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Έξυπνη λίστα αναπαραγωγής</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Τραγούδια</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Αναζήτηση στην έξυπνη λίστα αναπαραγωγής…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Επεξεργασία κανόνων</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Αναπαραγωγή όλων</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Τυχαία αναπαραγωγή όλων</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>Κανένα τραγούδι δεν αντιστοιχεί στους τρέχοντες κανόνες</value>

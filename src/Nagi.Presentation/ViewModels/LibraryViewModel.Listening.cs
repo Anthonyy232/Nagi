@@ -30,7 +30,7 @@ public partial class LibraryViewModel
         : ShowFavoritesOnly ? Strings.Listening_FavoritesEmpty : Strings.LibraryPage_EmptyState_Title;
 
     public string EmptyStateSubtitle => IsSearchActive
-        ? Strings.LibraryPage_SearchEmpty_Subtitle
+        ? Strings.Generic_TrySearchingElse
         : ShowFavoritesOnly ? Strings.Listening_FavoritesEmptyDescription : Strings.LibraryPage_EmptyState_Subtitle;
 
     /// <summary>

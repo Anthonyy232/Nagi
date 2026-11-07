@@ -82,8 +82,8 @@
                 <uicontrols:SortButton Selection="{x:Bind ViewModel.Sort}" />
 
                 <Button
-                        ToolTipService.ToolTip="{x:Bind resources:Strings.GenrePage_RandomButton_ToolTip, Mode=OneTime}"
-                        AutomationProperties.Name="{x:Bind resources:Strings.GenrePage_RandomButton_ToolTip, Mode=OneTime}"
+                        ToolTipService.ToolTip="{x:Bind resources:Strings.Generic_PickRandom, Mode=OneTime}"
+                        AutomationProperties.Name="{x:Bind resources:Strings.Generic_PickRandom, Mode=OneTime}"
                         Style="{StaticResource SongListViewPageIconButton}"
                         Command="{x:Bind ViewModel.PlayRandomGenreCommand}"
                         Margin="0,0,1,0"
@@ -123,7 +123,7 @@
                             <Grid.ContextFlyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem
-                                        Text="{x:Bind resources:Strings.GenrePage_Menu_Play, Mode=OneTime}"
+                                        Text="{x:Bind resources:Strings.Generic_Play, Mode=OneTime}"
                                         Command="{Binding ViewModel.PlayGenreCommand, ElementName=GenrePageRoot}"
                                         CommandParameter="{x:Bind Id}">
                                         <MenuFlyoutItem.Icon>

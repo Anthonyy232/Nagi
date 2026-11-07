@@ -84,7 +84,7 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                    <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="{x:Bind resources:Strings.PlaylistSongViewPage_Section_Songs, Mode=OneTime}" Foreground="{StaticResource AppPrimaryColorBrush}" />
+                    <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="{x:Bind resources:Strings.SongList_Songs, Mode=OneTime}" Foreground="{StaticResource AppPrimaryColorBrush}" />
                     <TextBlock
                         VerticalAlignment="Center"
                         FontSize="13"
@@ -130,15 +130,15 @@
                     <uicontrols:SortButton Selection="{x:Bind ViewModel.Sort}" />
 
                     <Button Style="{StaticResource SongListViewPageIconButton}"
-                            ToolTipService.ToolTip="{x:Bind resources:Strings.PlaylistSongViewPage_PlayAllButton_ToolTip, Mode=OneTime}"
-                            AutomationProperties.Name="{x:Bind resources:Strings.PlaylistSongViewPage_PlayAllButton_ToolTip, Mode=OneTime}"
+                            ToolTipService.ToolTip="{x:Bind resources:Strings.SongList_PlayAll, Mode=OneTime}"
+                            AutomationProperties.Name="{x:Bind resources:Strings.SongList_PlayAll, Mode=OneTime}"
                             Command="{x:Bind ViewModel.PlayAllSongsCommand}">
                         <FontIcon Glyph="" FontSize="16" />
                     </Button>
 
                     <SplitButton Style="{StaticResource SongListViewPageShuffleButton}"
-                            ToolTipService.ToolTip="{x:Bind resources:Strings.PlaylistSongViewPage_ShufflePlayAllButton_ToolTip, Mode=OneTime}"
-                            AutomationProperties.Name="{x:Bind resources:Strings.PlaylistSongViewPage_ShufflePlayAllButton_ToolTip, Mode=OneTime}"
+                            ToolTipService.ToolTip="{x:Bind resources:Strings.SongList_ShuffleAll, Mode=OneTime}"
+                            AutomationProperties.Name="{x:Bind resources:Strings.SongList_ShuffleAll, Mode=OneTime}"
                             Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}">
                         <SplitButton.Flyout><MenuFlyout Opening="ListeningOptions_Opening" /></SplitButton.Flyout>
                         <FontIcon Glyph="" FontSize="16" />

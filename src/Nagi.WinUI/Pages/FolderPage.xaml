@@ -28,8 +28,8 @@
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
                 <Button
-                        ToolTipService.ToolTip="{x:Bind resources:Strings.FolderPage_RandomButton_ToolTip, Mode=OneTime}"
-                        AutomationProperties.Name="{x:Bind resources:Strings.FolderPage_RandomButton_ToolTip, Mode=OneTime}"
+                        ToolTipService.ToolTip="{x:Bind resources:Strings.Generic_PickRandom, Mode=OneTime}"
+                        AutomationProperties.Name="{x:Bind resources:Strings.Generic_PickRandom, Mode=OneTime}"
                         Style="{StaticResource SongListViewPageIconButton}"
                         Command="{x:Bind ViewModel.PlayRandomFolderCommand}"
                         Margin="0,0,1,0"
@@ -87,7 +87,7 @@
                         <Grid.ContextFlyout>
                             <MenuFlyout>
                                 <MenuFlyoutItem
-                                    Text="{x:Bind resources:Strings.FolderPage_Menu_Play, Mode=OneTime}"
+                                    Text="{x:Bind resources:Strings.Generic_Play, Mode=OneTime}"
                                     Command="{Binding DataContext.PlayFolderCommand, ElementName=FolderPageRoot}"
                                     CommandParameter="{x:Bind Id}"
                                     IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=FolderPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}" />

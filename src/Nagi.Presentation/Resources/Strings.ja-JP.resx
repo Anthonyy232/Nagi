@@ -503,9 +503,6 @@
   <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
     <value>ルール</value>
   </data>
-  <data name="SongList_PageTitle_Default" xml:space="preserve">
-    <value>曲</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0}アイテム</value>
   </data>
@@ -936,11 +933,8 @@
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>アルバムを検索…</value>
   </data>
-  <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
+  <data name="Generic_PickRandom" xml:space="preserve">
     <value>ランダムに選択</value>
-  </data>
-  <data name="AlbumPage_Menu_Play" xml:space="preserve">
-    <value>再生</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
     <value>アルバムが見つかりません</value>
@@ -951,23 +945,14 @@
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>アルバム</value>
   </data>
-  <data name="AlbumViewPage_Songs_Title" xml:space="preserve">
+  <data name="SongList_Songs" xml:space="preserve">
     <value>曲</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>アルバム内を検索…</value>
   </data>
-  <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>すべて再生</value>
-  </data>
-  <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>シャッフルしてすべて再生</value>
-  </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
     <value>このアルバムには曲が見つかりません</value>
-  </data>
-  <data name="AlbumViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>別のものを検索してみてください</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
     <value>アーティスト</value>
@@ -975,16 +960,10 @@
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>アーティストを検索…</value>
   </data>
-  <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>ランダムに選択</value>
-  </data>
-  <data name="ArtistPage_Menu_Play" xml:space="preserve">
-    <value>再生</value>
-  </data>
-  <data name="ArtistPage_Menu_ChangeImage" xml:space="preserve">
+  <data name="Generic_ChangeImage" xml:space="preserve">
     <value>画像を編集</value>
   </data>
-  <data name="ArtistPage_Menu_RemoveImage" xml:space="preserve">
+  <data name="Generic_RemoveImage" xml:space="preserve">
     <value>画像を削除</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
@@ -996,47 +975,23 @@
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
     <value>アーティスト画像を編集</value>
   </data>
-  <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
-    <value>画像を編集</value>
-  </data>
-  <data name="ArtistViewPage_ImageMenu_RemoveImage" xml:space="preserve">
-    <value>画像を削除</value>
-  </data>
   <data name="ArtistViewPage_Header_Label" xml:space="preserve">
     <value>アーティスト</value>
   </data>
   <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
     <value>トップアルバム</value>
   </data>
-  <data name="ArtistViewPage_Songs_Title" xml:space="preserve">
-    <value>曲</value>
-  </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>アーティスト内を検索…</value>
-  </data>
-  <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>すべて再生</value>
-  </data>
-  <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>シャッフルしてすべて再生</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
     <value>このアーティストの曲が見つかりません</value>
   </data>
-  <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>別のものを検索してみてください</value>
-  </data>
   <data name="FolderPage_Title" xml:space="preserve">
     <value>フォルダー</value>
   </data>
-  <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>ランダムに選択</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>フォルダーを追加</value>
-  </data>
-  <data name="FolderPage_Menu_Play" xml:space="preserve">
-    <value>再生</value>
   </data>
   <data name="FolderPage_Menu_Rescan" xml:space="preserve">
     <value>再スキャン</value>
@@ -1050,26 +1005,11 @@
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
     <value>開始するには音楽フォルダーを追加してください</value>
   </data>
-  <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
-    <value>再生</value>
-  </data>
-  <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>プレイリストに追加</value>
-  </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>フォルダー</value>
   </data>
-  <data name="FolderSongViewPage_Songs_Title" xml:space="preserve">
-    <value>曲</value>
-  </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>フォルダー内を検索…</value>
-  </data>
-  <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>すべて再生</value>
-  </data>
-  <data name="FolderSongViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>シャッフルしてすべて再生</value>
   </data>
   <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
     <value>このフォルダーは空です</value>
@@ -1083,12 +1023,6 @@
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>ジャンルを検索…</value>
   </data>
-  <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
-    <value>ランダムに選択</value>
-  </data>
-  <data name="GenrePage_Menu_Play" xml:space="preserve">
-    <value>再生</value>
-  </data>
   <data name="GenrePage_Empty_Title" xml:space="preserve">
     <value>ジャンルが見つかりません</value>
   </data>
@@ -1101,40 +1035,37 @@
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ライブラリを検索…</value>
   </data>
-  <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_PlayAll" xml:space="preserve">
     <value>すべて再生</value>
   </data>
-  <data name="LibraryPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_ShuffleAll" xml:space="preserve">
     <value>シャッフルしてすべて再生</value>
   </data>
-  <data name="LibraryPage_Context_Play" xml:space="preserve">
+  <data name="Generic_Play" xml:space="preserve">
     <value>再生</value>
   </data>
-  <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
+  <data name="SongList_Context_PlayNext" xml:space="preserve">
     <value>次に再生</value>
   </data>
-  <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
+  <data name="SongList_Context_AddToQueue" xml:space="preserve">
     <value>キューに追加</value>
   </data>
-  <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
+  <data name="SongList_Context_AddToPlaylist" xml:space="preserve">
     <value>プレイリストに追加</value>
   </data>
-  <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
+  <data name="SongList_Context_GoToAlbum" xml:space="preserve">
     <value>アルバムへ移動</value>
   </data>
-  <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
+  <data name="SongList_Context_GoToArtist" xml:space="preserve">
     <value>アーティストへ移動</value>
   </data>
-  <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
+  <data name="SongList_Context_ShowInExplorer" xml:space="preserve">
     <value>エクスプローラーで表示</value>
-  </data>
-  <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>再生</value>
   </data>
   <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
     <value>曲が見つかりませんでした</value>
   </data>
-  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+  <data name="Generic_TrySearchingElse" xml:space="preserve">
     <value>別のキーワードで検索してみてください</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
@@ -1245,9 +1176,6 @@
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>プレイリストを検索…</value>
   </data>
-  <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>ランダムに選択</value>
-  </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
     <value>新しいプレイリストを作成</value>
   </data>
@@ -1260,17 +1188,8 @@
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
     <value>スマートプレイリスト</value>
   </data>
-  <data name="PlaylistPage_Context_Play" xml:space="preserve">
-    <value>再生</value>
-  </data>
   <data name="PlaylistPage_Context_Rename" xml:space="preserve">
     <value>名前の変更</value>
-  </data>
-  <data name="PlaylistPage_Context_ChangeImage" xml:space="preserve">
-    <value>画像を編集</value>
-  </data>
-  <data name="PlaylistPage_Context_RemoveImage" xml:space="preserve">
-    <value>画像を削除</value>
   </data>
   <data name="PlaylistPage_Context_Delete" xml:space="preserve">
     <value>削除</value>
@@ -1284,19 +1203,10 @@
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>プレイリスト</value>
   </data>
-  <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>曲</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>プレイリスト内を検索…</value>
   </data>
-  <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>すべて再生</value>
-  </data>
-  <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>シャッフルしてすべて再生</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
+  <data name="SongList_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>プレイリストから削除</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
@@ -1308,23 +1218,11 @@
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>ジャンル</value>
   </data>
-  <data name="GenreViewPage_Section_Songs" xml:space="preserve">
-    <value>曲</value>
-  </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ジャンル内を検索…</value>
   </data>
-  <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>すべて再生</value>
-  </data>
-  <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>シャッフルしてすべて再生</value>
-  </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
     <value>このジャンルの曲が見つかりません</value>
-  </data>
-  <data name="GenreViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>別のものを検索してみてください</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>設定</value>
@@ -1689,20 +1587,11 @@
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>スマートプレイリスト</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>曲</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>スマート プレイリスト内を検索…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>ルールを編集</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>すべて再生</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>シャッフルしてすべて再生</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>現在のルールに一致する曲はありません</value>

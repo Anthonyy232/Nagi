@@ -503,9 +503,6 @@
   <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
     <value>নিয়ম</value>
   </data>
-  <data name="SongList_PageTitle_Default" xml:space="preserve">
-    <value>গান</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0}টি আইটেম</value>
   </data>
@@ -936,11 +933,8 @@
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>অ্যালবাম খুঁজুন…</value>
   </data>
-  <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
+  <data name="Generic_PickRandom" xml:space="preserve">
     <value>এলোমেলোভাবে একটি চয়ন করুন</value>
-  </data>
-  <data name="AlbumPage_Menu_Play" xml:space="preserve">
-    <value>চালান</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
     <value>কোনো অ্যালবাম পাওয়া যায়নি</value>
@@ -951,23 +945,14 @@
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>অ্যালবাম</value>
   </data>
-  <data name="AlbumViewPage_Songs_Title" xml:space="preserve">
+  <data name="SongList_Songs" xml:space="preserve">
     <value>গান</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>অ্যালবামে খুঁজুন…</value>
   </data>
-  <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>সব চালান</value>
-  </data>
-  <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>এলোমেলোভাবে সব চালান</value>
-  </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
     <value>এই অ্যালবামে কোনো গান পাওয়া যায়নি</value>
-  </data>
-  <data name="AlbumViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>অন্য কিছু অনুসন্ধান করার চেষ্টা করুন</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
     <value>শিল্পী</value>
@@ -975,16 +960,10 @@
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>শিল্পী খুঁজুন…</value>
   </data>
-  <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>এলোমেলোভাবে একটি চয়ন করুন</value>
-  </data>
-  <data name="ArtistPage_Menu_Play" xml:space="preserve">
-    <value>চালান</value>
-  </data>
-  <data name="ArtistPage_Menu_ChangeImage" xml:space="preserve">
+  <data name="Generic_ChangeImage" xml:space="preserve">
     <value>ছবি পরিবর্তন করুন</value>
   </data>
-  <data name="ArtistPage_Menu_RemoveImage" xml:space="preserve">
+  <data name="Generic_RemoveImage" xml:space="preserve">
     <value>ছবি সরান</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
@@ -996,47 +975,23 @@
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
     <value>শিল্পীর ছবি পরিবর্তন করুন</value>
   </data>
-  <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
-    <value>ছবি পরিবর্তন করুন</value>
-  </data>
-  <data name="ArtistViewPage_ImageMenu_RemoveImage" xml:space="preserve">
-    <value>ছবি সরান</value>
-  </data>
   <data name="ArtistViewPage_Header_Label" xml:space="preserve">
     <value>শিল্পী</value>
   </data>
   <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
     <value>সেরা অ্যালবাম</value>
   </data>
-  <data name="ArtistViewPage_Songs_Title" xml:space="preserve">
-    <value>গান</value>
-  </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>শিল্পীতে খুঁজুন…</value>
-  </data>
-  <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>সব চালান</value>
-  </data>
-  <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>এলোমেলোভাবে সব চালান</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
     <value>এই শিল্পীর জন্য কোনো গান পাওয়া যায়নি</value>
   </data>
-  <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>অন্য কিছু অনুসন্ধান করার চেষ্টা করুন</value>
-  </data>
   <data name="FolderPage_Title" xml:space="preserve">
     <value>ফোল্ডার</value>
   </data>
-  <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>এলোমেলোভাবে একটি চয়ন করুন</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>ফোল্ডার যোগ করুন</value>
-  </data>
-  <data name="FolderPage_Menu_Play" xml:space="preserve">
-    <value>চালান</value>
   </data>
   <data name="FolderPage_Menu_Rescan" xml:space="preserve">
     <value>পুনরায় স্ক্যান করুন</value>
@@ -1050,26 +1005,11 @@
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
     <value>শুরু করতে সঙ্গীত ফোল্ডার যোগ করুন</value>
   </data>
-  <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
-    <value>চালান</value>
-  </data>
-  <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>প্লেলিস্টে যোগ করুন</value>
-  </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>ফোল্ডার</value>
   </data>
-  <data name="FolderSongViewPage_Songs_Title" xml:space="preserve">
-    <value>গান</value>
-  </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ফোল্ডারে খুঁজুন…</value>
-  </data>
-  <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>সব চালান</value>
-  </data>
-  <data name="FolderSongViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>এলোমেলোভাবে সব চালান</value>
   </data>
   <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
     <value>এই ফোল্ডারটি খালি</value>
@@ -1083,12 +1023,6 @@
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>জেনার খুঁজুন…</value>
   </data>
-  <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
-    <value>এলোমেলোভাবে একটি চয়ন করুন</value>
-  </data>
-  <data name="GenrePage_Menu_Play" xml:space="preserve">
-    <value>চালান</value>
-  </data>
   <data name="GenrePage_Empty_Title" xml:space="preserve">
     <value>কোনো জেনার পাওয়া যায়নি</value>
   </data>
@@ -1101,40 +1035,37 @@
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>লাইব্রেরিতে খুঁজুন…</value>
   </data>
-  <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_PlayAll" xml:space="preserve">
     <value>সব চালান</value>
   </data>
-  <data name="LibraryPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_ShuffleAll" xml:space="preserve">
     <value>এলোমেলোভাবে সব চালান</value>
   </data>
-  <data name="LibraryPage_Context_Play" xml:space="preserve">
+  <data name="Generic_Play" xml:space="preserve">
     <value>চালান</value>
   </data>
-  <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
+  <data name="SongList_Context_PlayNext" xml:space="preserve">
     <value>পরবর্তী চালান</value>
   </data>
-  <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
+  <data name="SongList_Context_AddToQueue" xml:space="preserve">
     <value>কিউতে যোগ করুন</value>
   </data>
-  <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
+  <data name="SongList_Context_AddToPlaylist" xml:space="preserve">
     <value>প্লেলিস্টে যোগ করুন</value>
   </data>
-  <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
+  <data name="SongList_Context_GoToAlbum" xml:space="preserve">
     <value>অ্যালবামে যান</value>
   </data>
-  <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
+  <data name="SongList_Context_GoToArtist" xml:space="preserve">
     <value>শিল্পীতে যান</value>
   </data>
-  <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
+  <data name="SongList_Context_ShowInExplorer" xml:space="preserve">
     <value>ফাইল এক্সপ্লোরারে দেখান</value>
-  </data>
-  <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>চালান</value>
   </data>
   <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
     <value>কোনো গান পাওয়া যায়নি</value>
   </data>
-  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+  <data name="Generic_TrySearchingElse" xml:space="preserve">
     <value>অন্য কিছু দিয়ে খোঁজার চেষ্টা করুন</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
@@ -1245,9 +1176,6 @@
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>প্লেলিস্ট খুঁজুন…</value>
   </data>
-  <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>এলোমেলোভাবে একটি চয়ন করুন</value>
-  </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
     <value>একটি নতুন প্লেলিস্ট তৈরি করুন</value>
   </data>
@@ -1260,17 +1188,8 @@
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
     <value>স্মার্ট প্লেলিস্ট</value>
   </data>
-  <data name="PlaylistPage_Context_Play" xml:space="preserve">
-    <value>চালান</value>
-  </data>
   <data name="PlaylistPage_Context_Rename" xml:space="preserve">
     <value>নাম পরিবর্তন করুন</value>
-  </data>
-  <data name="PlaylistPage_Context_ChangeImage" xml:space="preserve">
-    <value>ছবি পরিবর্তন করুন</value>
-  </data>
-  <data name="PlaylistPage_Context_RemoveImage" xml:space="preserve">
-    <value>ছবি সরান</value>
   </data>
   <data name="PlaylistPage_Context_Delete" xml:space="preserve">
     <value>মুছে ফেলুন</value>
@@ -1284,19 +1203,10 @@
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>প্লেলিস্ট</value>
   </data>
-  <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>গান</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>প্লেলিস্টে খুঁজুন…</value>
   </data>
-  <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>সব চালান</value>
-  </data>
-  <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>এলোমেলোভাবে সব চালান</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
+  <data name="SongList_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>প্লেলিস্ট থেকে সরান</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
@@ -1308,23 +1218,11 @@
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>জেনার</value>
   </data>
-  <data name="GenreViewPage_Section_Songs" xml:space="preserve">
-    <value>গান</value>
-  </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>জেনারে খুঁজুন…</value>
   </data>
-  <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>সব চালান</value>
-  </data>
-  <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>এলোমেলোভাবে সব চালান</value>
-  </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
     <value>এই জেনারের জন্য কোনো গান পাওয়া যায়নি</value>
-  </data>
-  <data name="GenreViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>অন্য কিছু অনুসন্ধান করার চেষ্টা করুন</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>সেটিংস</value>
@@ -1689,20 +1587,11 @@
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>স্মার্ট প্লেলিস্ট</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>গান</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>স্মার্ট প্লেলিস্টে খুঁজুন…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>নিয়ম সম্পাদনা করুন</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>সব চালান</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>এলোমেলোভাবে সব চালান</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>বর্তমান নিয়মগুলির সাথে কোনো গান মেলে না</value>

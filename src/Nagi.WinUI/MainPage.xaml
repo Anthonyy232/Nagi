@@ -466,7 +466,7 @@
                                                                       ToolTipService.ToolTip="{x:Bind Title}">
                                                                     <Grid.ContextFlyout><MenuFlyout>
                                                                         <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_Play}" Command="{Binding DataContext.PlayHistoryNowCommand, ElementName=MainPageRoot}" CommandParameter="{x:Bind}" />
-                                                                        <MenuFlyoutItem Text="{x:Bind resources:Strings.LibraryPage_Context_PlayNext}" Command="{Binding DataContext.PlayHistoryNextCommand, ElementName=MainPageRoot}" CommandParameter="{x:Bind}" />
+                                                                        <MenuFlyoutItem Text="{x:Bind resources:Strings.SongList_Context_PlayNext}" Command="{Binding DataContext.PlayHistoryNextCommand, ElementName=MainPageRoot}" CommandParameter="{x:Bind}" />
                                                                     </MenuFlyout></Grid.ContextFlyout>
                                                                     <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                                                                     <StackPanel Margin="0,0,12,0" Spacing="4">

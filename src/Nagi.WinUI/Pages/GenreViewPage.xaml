@@ -71,7 +71,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                        <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="{x:Bind resources:Strings.GenreViewPage_Section_Songs, Mode=OneTime}" Foreground="{StaticResource AppPrimaryColorBrush}" />
+                        <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="{x:Bind resources:Strings.SongList_Songs, Mode=OneTime}" Foreground="{StaticResource AppPrimaryColorBrush}" />
                         <TextBlock
                             VerticalAlignment="Center"
                             FontSize="13"
@@ -117,13 +117,13 @@
 
                         <Button Command="{x:Bind ViewModel.PlayAllSongsCommand}"
                                 Style="{StaticResource SongListViewPageIconButton}"
-                                ToolTipService.ToolTip="{x:Bind resources:Strings.GenreViewPage_PlayAllButton_ToolTip, Mode=OneTime}"
-                                AutomationProperties.Name="{x:Bind resources:Strings.GenreViewPage_PlayAllButton_ToolTip, Mode=OneTime}">
+                                ToolTipService.ToolTip="{x:Bind resources:Strings.SongList_PlayAll, Mode=OneTime}"
+                                AutomationProperties.Name="{x:Bind resources:Strings.SongList_PlayAll, Mode=OneTime}">
                             <FontIcon FontSize="16" Glyph="" />
                         </Button>
                         <SplitButton Style="{StaticResource SongListViewPageShuffleButton}" Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}"
-                                ToolTipService.ToolTip="{x:Bind resources:Strings.GenreViewPage_ShufflePlayAllButton_ToolTip, Mode=OneTime}"
-                                AutomationProperties.Name="{x:Bind resources:Strings.GenreViewPage_ShufflePlayAllButton_ToolTip, Mode=OneTime}">
+                                ToolTipService.ToolTip="{x:Bind resources:Strings.SongList_ShuffleAll, Mode=OneTime}"
+                                AutomationProperties.Name="{x:Bind resources:Strings.SongList_ShuffleAll, Mode=OneTime}">
                             <SplitButton.Flyout><MenuFlyout Opening="ListeningOptions_Opening" /></SplitButton.Flyout>
                             <FontIcon FontSize="16" Glyph="" />
                         </SplitButton>
@@ -161,7 +161,7 @@
         <uicontrols:EmptyState Grid.Row="1"
                                Glyph="&#xE8D6;"
                                Title="{x:Bind resources:Strings.GenreViewPage_EmptyState_Title, Mode=OneTime}"
-                               Subtitle="{x:Bind resources:Strings.GenreViewPage_EmptyState_Subtitle, Mode=OneTime}"
+                               Subtitle="{x:Bind resources:Strings.Generic_TrySearchingElse, Mode=OneTime}"
                                IsShown="{x:Bind ViewModel.ShowEmptyState, Mode=OneWay}"
                                HasLoadError="{x:Bind ViewModel.HasLoadError, Mode=OneWay}" />
 

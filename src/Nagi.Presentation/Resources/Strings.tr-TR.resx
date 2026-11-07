@@ -503,9 +503,6 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
   <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
     <value>kurallar</value>
   </data>
-  <data name="SongList_PageTitle_Default" xml:space="preserve">
-    <value>Şarkılar</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} öğe</value>
   </data>
@@ -936,11 +933,8 @@ Devam etmek ister misiniz?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Albümlerde ara…</value>
   </data>
-  <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
+  <data name="Generic_PickRandom" xml:space="preserve">
     <value>Rastgele birini seç</value>
-  </data>
-  <data name="AlbumPage_Menu_Play" xml:space="preserve">
-    <value>Oynat</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
     <value>Albüm bulunamadı</value>
@@ -951,23 +945,14 @@ Devam etmek ister misiniz?</value>
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>Albüm</value>
   </data>
-  <data name="AlbumViewPage_Songs_Title" xml:space="preserve">
+  <data name="SongList_Songs" xml:space="preserve">
     <value>Şarkılar</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Albümde ara…</value>
   </data>
-  <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Tümünü oynat</value>
-  </data>
-  <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Karıştır ve tümünü oynat</value>
-  </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
     <value>Bu albümde şarkı bulunamadı</value>
-  </data>
-  <data name="AlbumViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Başka bir şey aramayı deneyin</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
     <value>Sanatçılar</value>
@@ -975,16 +960,10 @@ Devam etmek ister misiniz?</value>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Sanatçılarda ara…</value>
   </data>
-  <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Rastgele birini seç</value>
-  </data>
-  <data name="ArtistPage_Menu_Play" xml:space="preserve">
-    <value>Oynat</value>
-  </data>
-  <data name="ArtistPage_Menu_ChangeImage" xml:space="preserve">
+  <data name="Generic_ChangeImage" xml:space="preserve">
     <value>Resmi Değiştir</value>
   </data>
-  <data name="ArtistPage_Menu_RemoveImage" xml:space="preserve">
+  <data name="Generic_RemoveImage" xml:space="preserve">
     <value>Resmi Kaldır</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
@@ -996,47 +975,23 @@ Devam etmek ister misiniz?</value>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
     <value>Sanatçı resmini değiştir</value>
   </data>
-  <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
-    <value>Resmi Değiştir</value>
-  </data>
-  <data name="ArtistViewPage_ImageMenu_RemoveImage" xml:space="preserve">
-    <value>Resmi Kaldır</value>
-  </data>
   <data name="ArtistViewPage_Header_Label" xml:space="preserve">
     <value>Sanatçı</value>
   </data>
   <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
     <value>En İyi Albümler</value>
   </data>
-  <data name="ArtistViewPage_Songs_Title" xml:space="preserve">
-    <value>Şarkılar</value>
-  </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Sanatçıda ara…</value>
-  </data>
-  <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Tümünü oynat</value>
-  </data>
-  <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Karıştır ve tümünü oynat</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
     <value>Bu sanatçı için şarkı bulunamadı</value>
   </data>
-  <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Başka bir şey aramayı deneyin</value>
-  </data>
   <data name="FolderPage_Title" xml:space="preserve">
     <value>Klasörler</value>
   </data>
-  <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Rastgele birini seç</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Klasör ekle</value>
-  </data>
-  <data name="FolderPage_Menu_Play" xml:space="preserve">
-    <value>Oynat</value>
   </data>
   <data name="FolderPage_Menu_Rescan" xml:space="preserve">
     <value>Yeniden tara</value>
@@ -1050,26 +1005,11 @@ Devam etmek ister misiniz?</value>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
     <value>Başlamak için müzik klasörleri ekleyin</value>
   </data>
-  <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
-    <value>Oynat</value>
-  </data>
-  <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Çalma Listesine Ekle</value>
-  </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Klasör</value>
   </data>
-  <data name="FolderSongViewPage_Songs_Title" xml:space="preserve">
-    <value>Şarkılar</value>
-  </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Klasörde ara…</value>
-  </data>
-  <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Tümünü oynat</value>
-  </data>
-  <data name="FolderSongViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Karıştır ve tümünü oynat</value>
   </data>
   <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
     <value>Bu klasör boş</value>
@@ -1083,12 +1023,6 @@ Devam etmek ister misiniz?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Türlerde ara…</value>
   </data>
-  <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Rastgele birini seç</value>
-  </data>
-  <data name="GenrePage_Menu_Play" xml:space="preserve">
-    <value>Oynat</value>
-  </data>
   <data name="GenrePage_Empty_Title" xml:space="preserve">
     <value>Tür bulunamadı</value>
   </data>
@@ -1101,40 +1035,37 @@ Devam etmek ister misiniz?</value>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Kitaplıkta ara…</value>
   </data>
-  <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_PlayAll" xml:space="preserve">
     <value>Tümünü oynat</value>
   </data>
-  <data name="LibraryPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_ShuffleAll" xml:space="preserve">
     <value>Karıştır ve tümünü oynat</value>
   </data>
-  <data name="LibraryPage_Context_Play" xml:space="preserve">
+  <data name="Generic_Play" xml:space="preserve">
     <value>Oynat</value>
   </data>
-  <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
+  <data name="SongList_Context_PlayNext" xml:space="preserve">
     <value>Sıradaki Olarak Oynat</value>
   </data>
-  <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
+  <data name="SongList_Context_AddToQueue" xml:space="preserve">
     <value>Sıraya Ekle</value>
   </data>
-  <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
+  <data name="SongList_Context_AddToPlaylist" xml:space="preserve">
     <value>Çalma Listesine Ekle</value>
   </data>
-  <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
+  <data name="SongList_Context_GoToAlbum" xml:space="preserve">
     <value>Albümüne Git</value>
   </data>
-  <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
+  <data name="SongList_Context_GoToArtist" xml:space="preserve">
     <value>Sanatçıya Git</value>
   </data>
-  <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
+  <data name="SongList_Context_ShowInExplorer" xml:space="preserve">
     <value>Dosya Gezgini'nde Göster</value>
-  </data>
-  <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Oynat</value>
   </data>
   <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
     <value>Şarkı bulunamadı</value>
   </data>
-  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+  <data name="Generic_TrySearchingElse" xml:space="preserve">
     <value>Başka bir şey aramayı deneyin</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
@@ -1245,9 +1176,6 @@ Devam etmek ister misiniz?</value>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Çalma listelerinde ara…</value>
   </data>
-  <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Rastgele birini seç</value>
-  </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
     <value>Yeni bir çalma listesi oluştur</value>
   </data>
@@ -1260,17 +1188,8 @@ Devam etmek ister misiniz?</value>
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
     <value>Akıllı Çalma Listesi</value>
   </data>
-  <data name="PlaylistPage_Context_Play" xml:space="preserve">
-    <value>Oynat</value>
-  </data>
   <data name="PlaylistPage_Context_Rename" xml:space="preserve">
     <value>Yeniden Adlandır</value>
-  </data>
-  <data name="PlaylistPage_Context_ChangeImage" xml:space="preserve">
-    <value>Resmi Değiştir</value>
-  </data>
-  <data name="PlaylistPage_Context_RemoveImage" xml:space="preserve">
-    <value>Resmi Kaldır</value>
   </data>
   <data name="PlaylistPage_Context_Delete" xml:space="preserve">
     <value>Sil</value>
@@ -1284,19 +1203,10 @@ Devam etmek ister misiniz?</value>
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Çalma Listesi</value>
   </data>
-  <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Şarkılar</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Çalma listesinde ara…</value>
   </data>
-  <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Tümünü oynat</value>
-  </data>
-  <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Karıştır ve tümünü oynat</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
+  <data name="SongList_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>Çalma Listesinden Kaldır</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
@@ -1308,23 +1218,11 @@ Devam etmek ister misiniz?</value>
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>Tür</value>
   </data>
-  <data name="GenreViewPage_Section_Songs" xml:space="preserve">
-    <value>Şarkılar</value>
-  </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Türde ara…</value>
   </data>
-  <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Tümünü oynat</value>
-  </data>
-  <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Karıştır ve tümünü oynat</value>
-  </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
     <value>Bu tür için şarkı bulunamadı</value>
-  </data>
-  <data name="GenreViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Başka bir şey aramayı deneyin</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Ayarlar</value>
@@ -1689,20 +1587,11 @@ Devam etmek ister misiniz?</value>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Akıllı Çalma Listesi</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Şarkılar</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Akıllı çalma listesinde ara…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Kuralları düzenle</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Tümünü oynat</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Karıştır ve tümünü oynat</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>Mevcut kurallara uyan şarkı yok</value>

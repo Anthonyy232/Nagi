@@ -22,10 +22,10 @@
                         <Grid.ContextFlyout>
                             <MenuFlyout Opening="FolderItemMenuFlyout_Opening">
                                 <MenuFlyoutItem
-                                    Text="{x:Bind resources:Strings.FolderSongViewPage_FolderMenu_Play, Mode=OneTime}"
+                                    Text="{x:Bind resources:Strings.Generic_Play, Mode=OneTime}"
                                     Command="{Binding DataContext.PlaySubfolderCommand, ElementName=pageRoot}"
                                     CommandParameter="{x:Bind Folder}" />
-                                <MenuFlyoutSubItem Text="{x:Bind resources:Strings.FolderSongViewPage_FolderMenu_AddToPlaylist, Mode=OneTime}" />
+                                <MenuFlyoutSubItem Text="{x:Bind resources:Strings.SongList_Context_AddToPlaylist, Mode=OneTime}" />
                             </MenuFlyout>
                         </Grid.ContextFlyout>
 
@@ -138,7 +138,7 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                    <TextBlock Text="{x:Bind resources:Strings.FolderSongViewPage_Songs_Title, Mode=OneTime}" Style="{StaticResource SectionHeaderTextBlockStyle}" Foreground="{StaticResource AppPrimaryColorBrush}" />
+                    <TextBlock Text="{x:Bind resources:Strings.SongList_Songs, Mode=OneTime}" Style="{StaticResource SectionHeaderTextBlockStyle}" Foreground="{StaticResource AppPrimaryColorBrush}" />
                     <TextBlock
                         VerticalAlignment="Center"
                         FontSize="13"
@@ -184,15 +184,15 @@
                     <uicontrols:SortButton Selection="{x:Bind ViewModel.Sort}" />
 
                     <Button Command="{x:Bind ViewModel.PlayAllSongsCommand}"
-                            ToolTipService.ToolTip="{x:Bind resources:Strings.FolderSongViewPage_PlayAllButton_ToolTip, Mode=OneTime}"
-                            AutomationProperties.Name="{x:Bind resources:Strings.FolderSongViewPage_PlayAllButton_ToolTip, Mode=OneTime}"
+                            ToolTipService.ToolTip="{x:Bind resources:Strings.SongList_PlayAll, Mode=OneTime}"
+                            AutomationProperties.Name="{x:Bind resources:Strings.SongList_PlayAll, Mode=OneTime}"
                             Style="{StaticResource SongListViewPageIconButton}">
                         <FontIcon FontSize="16" Glyph="" />
                     </Button>
 
                     <SplitButton Style="{StaticResource SongListViewPageShuffleButton}" Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}"
-                            ToolTipService.ToolTip="{x:Bind resources:Strings.FolderSongViewPage_ShufflePlayButton_ToolTip, Mode=OneTime}"
-                            AutomationProperties.Name="{x:Bind resources:Strings.FolderSongViewPage_ShufflePlayButton_ToolTip, Mode=OneTime}">
+                            ToolTipService.ToolTip="{x:Bind resources:Strings.SongList_ShuffleAll, Mode=OneTime}"
+                            AutomationProperties.Name="{x:Bind resources:Strings.SongList_ShuffleAll, Mode=OneTime}">
                         <SplitButton.Flyout><MenuFlyout Opening="ListeningOptions_Opening" /></SplitButton.Flyout>
                         <FontIcon FontSize="16" Glyph="" />
                     </SplitButton>

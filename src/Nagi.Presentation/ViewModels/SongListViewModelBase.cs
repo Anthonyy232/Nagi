@@ -131,7 +131,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     [ObservableProperty] public partial ObservableCollection<Playlist> AvailablePlaylists { get; set; } = new();
 
-    [ObservableProperty] public partial string PageTitle { get; set; } = Strings.SongList_PageTitle_Default;
+    [ObservableProperty] public partial string PageTitle { get; set; } = Strings.SongList_Songs;
 
     [ObservableProperty]
     public partial string SelectedItemsCountText { get; set; } = string.Empty;

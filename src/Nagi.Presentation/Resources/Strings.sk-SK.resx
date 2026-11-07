@@ -503,9 +503,6 @@ Súbory, ktoré sa nepodarilo importovať: {0}.</value>
   <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
     <value>pravidlá</value>
   </data>
-  <data name="SongList_PageTitle_Default" xml:space="preserve">
-    <value>Skladby</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} položka</value>
   </data>
@@ -936,11 +933,8 @@ Chcete pokračovať?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať albumy…</value>
   </data>
-  <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
+  <data name="Generic_PickRandom" xml:space="preserve">
     <value>Vybrať náhodný</value>
-  </data>
-  <data name="AlbumPage_Menu_Play" xml:space="preserve">
-    <value>Prehrať</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
     <value>Žiadne albumy nenájdené</value>
@@ -951,23 +945,14 @@ Chcete pokračovať?</value>
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>Album</value>
   </data>
-  <data name="AlbumViewPage_Songs_Title" xml:space="preserve">
+  <data name="SongList_Songs" xml:space="preserve">
     <value>Skladby</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať v albume…</value>
   </data>
-  <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Prehrať všetky</value>
-  </data>
-  <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Zamiešať a prehrať všetky</value>
-  </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
     <value>V tomto albume neboli nájdené žiadne skladby</value>
-  </data>
-  <data name="AlbumViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Skúste vyhľadať niečo iné</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
     <value>Interpreti</value>
@@ -975,16 +960,10 @@ Chcete pokračovať?</value>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať interpretov…</value>
   </data>
-  <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Vybrať náhodného</value>
-  </data>
-  <data name="ArtistPage_Menu_Play" xml:space="preserve">
-    <value>Prehrať</value>
-  </data>
-  <data name="ArtistPage_Menu_ChangeImage" xml:space="preserve">
+  <data name="Generic_ChangeImage" xml:space="preserve">
     <value>Zmeniť obrázok</value>
   </data>
-  <data name="ArtistPage_Menu_RemoveImage" xml:space="preserve">
+  <data name="Generic_RemoveImage" xml:space="preserve">
     <value>Odstrániť obrázok</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
@@ -996,47 +975,23 @@ Chcete pokračovať?</value>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
     <value>Zmeniť obrázok interpreta</value>
   </data>
-  <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
-    <value>Zmeniť obrázok</value>
-  </data>
-  <data name="ArtistViewPage_ImageMenu_RemoveImage" xml:space="preserve">
-    <value>Odstrániť obrázok</value>
-  </data>
   <data name="ArtistViewPage_Header_Label" xml:space="preserve">
     <value>Interpret</value>
   </data>
   <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
     <value>Najlepšie albumy</value>
   </data>
-  <data name="ArtistViewPage_Songs_Title" xml:space="preserve">
-    <value>Skladby</value>
-  </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať u interpreta…</value>
-  </data>
-  <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Prehrať všetky</value>
-  </data>
-  <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Zamiešať a prehrať všetky</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
     <value>Pre tohto interpreta neboli nájdené žiadne skladby</value>
   </data>
-  <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Skúste vyhľadať niečo iné</value>
-  </data>
   <data name="FolderPage_Title" xml:space="preserve">
     <value>Priečinky</value>
   </data>
-  <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Vybrať náhodný</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Pridať priečinok</value>
-  </data>
-  <data name="FolderPage_Menu_Play" xml:space="preserve">
-    <value>Prehrať</value>
   </data>
   <data name="FolderPage_Menu_Rescan" xml:space="preserve">
     <value>Znova skenovať</value>
@@ -1050,26 +1005,11 @@ Chcete pokračovať?</value>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
     <value>Ak chcete začať, pridajte hudobné priečinky</value>
   </data>
-  <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
-    <value>Prehrať</value>
-  </data>
-  <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Pridať do zoznamu skladieb</value>
-  </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Priečinok</value>
   </data>
-  <data name="FolderSongViewPage_Songs_Title" xml:space="preserve">
-    <value>Skladby</value>
-  </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať v priečinku…</value>
-  </data>
-  <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Prehrať všetky</value>
-  </data>
-  <data name="FolderSongViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Zamiešať a prehrať všetky</value>
   </data>
   <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
     <value>Tento priečinok je prázdny</value>
@@ -1083,12 +1023,6 @@ Chcete pokračovať?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať žánre…</value>
   </data>
-  <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Vybrať náhodný</value>
-  </data>
-  <data name="GenrePage_Menu_Play" xml:space="preserve">
-    <value>Prehrať</value>
-  </data>
   <data name="GenrePage_Empty_Title" xml:space="preserve">
     <value>Žiadne žánre nenájdené</value>
   </data>
@@ -1101,40 +1035,37 @@ Chcete pokračovať?</value>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať v knižnici…</value>
   </data>
-  <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_PlayAll" xml:space="preserve">
     <value>Prehrať všetky</value>
   </data>
-  <data name="LibraryPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_ShuffleAll" xml:space="preserve">
     <value>Zamiešať a prehrať všetky</value>
   </data>
-  <data name="LibraryPage_Context_Play" xml:space="preserve">
+  <data name="Generic_Play" xml:space="preserve">
     <value>Prehrať</value>
   </data>
-  <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
+  <data name="SongList_Context_PlayNext" xml:space="preserve">
     <value>Prehrať ďalšie</value>
   </data>
-  <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
+  <data name="SongList_Context_AddToQueue" xml:space="preserve">
     <value>Pridať do radu</value>
   </data>
-  <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
+  <data name="SongList_Context_AddToPlaylist" xml:space="preserve">
     <value>Pridať do zoznamu skladieb</value>
   </data>
-  <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
+  <data name="SongList_Context_GoToAlbum" xml:space="preserve">
     <value>Prejsť na album</value>
   </data>
-  <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
+  <data name="SongList_Context_GoToArtist" xml:space="preserve">
     <value>Prejsť na interpreta</value>
   </data>
-  <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
+  <data name="SongList_Context_ShowInExplorer" xml:space="preserve">
     <value>Zobraziť v Prieskumníkovi</value>
-  </data>
-  <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Prehrať</value>
   </data>
   <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
     <value>Nenašli sa žiadne skladby</value>
   </data>
-  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+  <data name="Generic_TrySearchingElse" xml:space="preserve">
     <value>Skúste vyhľadať niečo iné</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
@@ -1245,9 +1176,6 @@ Chcete pokračovať?</value>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať zoznamy skladieb…</value>
   </data>
-  <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Vybrať náhodný</value>
-  </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
     <value>Vytvoriť nový zoznam skladieb</value>
   </data>
@@ -1260,17 +1188,8 @@ Chcete pokračovať?</value>
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
     <value>Inteligentný zoznam skladieb</value>
   </data>
-  <data name="PlaylistPage_Context_Play" xml:space="preserve">
-    <value>Prehrať</value>
-  </data>
   <data name="PlaylistPage_Context_Rename" xml:space="preserve">
     <value>Premenovať</value>
-  </data>
-  <data name="PlaylistPage_Context_ChangeImage" xml:space="preserve">
-    <value>Zmeniť obrázok</value>
-  </data>
-  <data name="PlaylistPage_Context_RemoveImage" xml:space="preserve">
-    <value>Odstrániť obrázok</value>
   </data>
   <data name="PlaylistPage_Context_Delete" xml:space="preserve">
     <value>Vymazať</value>
@@ -1284,19 +1203,10 @@ Chcete pokračovať?</value>
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Zoznam skladieb</value>
   </data>
-  <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Skladby</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať v zozname skladieb…</value>
   </data>
-  <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Prehrať všetky</value>
-  </data>
-  <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Zamiešať a prehrať všetky</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
+  <data name="SongList_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>Odstrániť zo zoznamu skladieb</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
@@ -1308,23 +1218,11 @@ Chcete pokračovať?</value>
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>Žáner</value>
   </data>
-  <data name="GenreViewPage_Section_Songs" xml:space="preserve">
-    <value>Skladby</value>
-  </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať v žánri…</value>
   </data>
-  <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Prehrať všetky</value>
-  </data>
-  <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Zamiešať a prehrať všetky</value>
-  </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
     <value>Pre tento žáner neboli nájdené žiadne skladby</value>
-  </data>
-  <data name="GenreViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Skúste vyhľadať niečo iné</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Nastavenia</value>
@@ -1689,20 +1587,11 @@ Chcete pokračovať?</value>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Inteligentný zoznam skladieb</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Skladby</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať v inteligentnom zozname skladieb…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Upraviť pravidlá</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Prehrať všetky</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Zamiešať a prehrať všetky</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>Žiadne skladby nezodpovedajú aktuálnym pravidlám</value>

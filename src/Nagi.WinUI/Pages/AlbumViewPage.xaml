@@ -97,7 +97,7 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                    <TextBlock Text="{x:Bind resources:Strings.AlbumViewPage_Songs_Title, Mode=OneTime}" Style="{StaticResource SectionHeaderTextBlockStyle}" Foreground="{StaticResource AppPrimaryColorBrush}" />
+                    <TextBlock Text="{x:Bind resources:Strings.SongList_Songs, Mode=OneTime}" Style="{StaticResource SectionHeaderTextBlockStyle}" Foreground="{StaticResource AppPrimaryColorBrush}" />
                     <TextBlock
                         VerticalAlignment="Center"
                         FontSize="13"
@@ -142,12 +142,12 @@
 
                     <uicontrols:SortButton Selection="{x:Bind ViewModel.Sort}" />
 
-                    <Button ToolTipService.ToolTip="{x:Bind resources:Strings.AlbumViewPage_PlayAllButton_ToolTip, Mode=OneTime}" AutomationProperties.Name="{x:Bind resources:Strings.AlbumViewPage_PlayAllButton_ToolTip, Mode=OneTime}" Style="{StaticResource SongListViewPageIconButton}"
+                    <Button ToolTipService.ToolTip="{x:Bind resources:Strings.SongList_PlayAll, Mode=OneTime}" AutomationProperties.Name="{x:Bind resources:Strings.SongList_PlayAll, Mode=OneTime}" Style="{StaticResource SongListViewPageIconButton}"
                             Command="{x:Bind ViewModel.PlayAllSongsCommand}">
                         <FontIcon Glyph="" FontSize="16" />
                     </Button>
 
-                    <SplitButton Style="{StaticResource SongListViewPageShuffleButton}" ToolTipService.ToolTip="{x:Bind resources:Strings.AlbumViewPage_ShufflePlayButton_ToolTip, Mode=OneTime}" AutomationProperties.Name="{x:Bind resources:Strings.AlbumViewPage_ShufflePlayButton_ToolTip, Mode=OneTime}"
+                    <SplitButton Style="{StaticResource SongListViewPageShuffleButton}" ToolTipService.ToolTip="{x:Bind resources:Strings.SongList_ShuffleAll, Mode=OneTime}" AutomationProperties.Name="{x:Bind resources:Strings.SongList_ShuffleAll, Mode=OneTime}"
                             Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}">
                         <SplitButton.Flyout><MenuFlyout Opening="ListeningOptions_Opening" /></SplitButton.Flyout>
                         <FontIcon Glyph="" FontSize="16" />
@@ -231,7 +231,7 @@
         <uicontrols:EmptyState Grid.Row="1"
                                Glyph="&#xE93C;"
                                Title="{x:Bind resources:Strings.AlbumViewPage_Empty_Title, Mode=OneTime}"
-                               Subtitle="{x:Bind resources:Strings.AlbumViewPage_Empty_Subtitle, Mode=OneTime}"
+                               Subtitle="{x:Bind resources:Strings.Generic_TrySearchingElse, Mode=OneTime}"
                                IsShown="{x:Bind ViewModel.ShowEmptyState, Mode=OneWay}"
                                HasLoadError="{x:Bind ViewModel.HasLoadError, Mode=OneWay}" />
 

@@ -94,8 +94,8 @@
                 <uicontrols:SortButton Selection="{x:Bind ViewModel.Sort}" />
 
                 <Button
-                        ToolTipService.ToolTip="{x:Bind resources:Strings.ArtistPage_RandomButton_ToolTip, Mode=OneTime}"
-                        AutomationProperties.Name="{x:Bind resources:Strings.ArtistPage_RandomButton_ToolTip, Mode=OneTime}"
+                        ToolTipService.ToolTip="{x:Bind resources:Strings.Generic_PickRandom, Mode=OneTime}"
+                        AutomationProperties.Name="{x:Bind resources:Strings.Generic_PickRandom, Mode=OneTime}"
                         Style="{StaticResource SongListViewPageIconButton}"
                         Command="{x:Bind ViewModel.PlayRandomArtistCommand}"
                         Margin="0,0,1,0"
@@ -128,17 +128,17 @@
                             <Grid.ContextFlyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem
-                                        Text="{x:Bind resources:Strings.ArtistPage_Menu_Play, Mode=OneTime}"
+                                        Text="{x:Bind resources:Strings.Generic_Play, Mode=OneTime}"
                                         Command="{Binding ViewModel.PlayArtistCommand, ElementName=ArtistPageRoot}"
                                         CommandParameter="{x:Bind Id}"
                                         IsEnabled="{Binding ViewModel.IsLoading, ElementName=ArtistPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
                                     <MenuFlyoutSeparator />
                                     <MenuFlyoutItem
-                                        Text="{x:Bind resources:Strings.ArtistPage_Menu_ChangeImage, Mode=OneTime}"
+                                        Text="{x:Bind resources:Strings.Generic_ChangeImage, Mode=OneTime}"
                                         Command="{Binding DataContext.ChangeArtistImageCommand, ElementName=ArtistPageRoot}"
                                         CommandParameter="{x:Bind Id}" />
                                     <MenuFlyoutItem
-                                        Text="{x:Bind resources:Strings.ArtistPage_Menu_RemoveImage, Mode=OneTime}"
+                                        Text="{x:Bind resources:Strings.Generic_RemoveImage, Mode=OneTime}"
                                         Command="{Binding DataContext.RemoveArtistImageCommand, ElementName=ArtistPageRoot}"
                                         CommandParameter="{x:Bind Id}"
                                         Visibility="{x:Bind IsCustomImage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />

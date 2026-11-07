@@ -503,9 +503,6 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
   <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
     <value>sheria</value>
   </data>
-  <data name="SongList_PageTitle_Default" xml:space="preserve">
-    <value>Nyimbo</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>kitu {0}</value>
   </data>
@@ -936,11 +933,8 @@ Je, unataka kuendelea?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tafuta albamu…</value>
   </data>
-  <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
+  <data name="Generic_PickRandom" xml:space="preserve">
     <value>Chagua moja kwa nasibu</value>
-  </data>
-  <data name="AlbumPage_Menu_Play" xml:space="preserve">
-    <value>Cheza</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
     <value>Hakuna albamu zilizopatikana</value>
@@ -951,23 +945,14 @@ Je, unataka kuendelea?</value>
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>Albamu</value>
   </data>
-  <data name="AlbumViewPage_Songs_Title" xml:space="preserve">
+  <data name="SongList_Songs" xml:space="preserve">
     <value>Nyimbo</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tafuta katika albamu…</value>
   </data>
-  <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Cheza zote</value>
-  </data>
-  <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Changanya na cheza zote</value>
-  </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
     <value>Hakuna nyimbo zilizopatikana kwenye albamu hii</value>
-  </data>
-  <data name="AlbumViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Jaribu kutafuta kitu kingine</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
     <value>Wasanii</value>
@@ -975,16 +960,10 @@ Je, unataka kuendelea?</value>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tafuta wasanii…</value>
   </data>
-  <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Chagua moja kwa nasibu</value>
-  </data>
-  <data name="ArtistPage_Menu_Play" xml:space="preserve">
-    <value>Cheza</value>
-  </data>
-  <data name="ArtistPage_Menu_ChangeImage" xml:space="preserve">
+  <data name="Generic_ChangeImage" xml:space="preserve">
     <value>Badilisha Picha</value>
   </data>
-  <data name="ArtistPage_Menu_RemoveImage" xml:space="preserve">
+  <data name="Generic_RemoveImage" xml:space="preserve">
     <value>Ondoa Picha</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
@@ -996,47 +975,23 @@ Je, unataka kuendelea?</value>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
     <value>Badilisha picha ya msanii</value>
   </data>
-  <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
-    <value>Badilisha Picha</value>
-  </data>
-  <data name="ArtistViewPage_ImageMenu_RemoveImage" xml:space="preserve">
-    <value>Ondoa Picha</value>
-  </data>
   <data name="ArtistViewPage_Header_Label" xml:space="preserve">
     <value>Msanii</value>
   </data>
   <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
     <value>Albamu Bora</value>
   </data>
-  <data name="ArtistViewPage_Songs_Title" xml:space="preserve">
-    <value>Nyimbo</value>
-  </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tafuta katika msanii…</value>
-  </data>
-  <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Cheza zote</value>
-  </data>
-  <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Changanya na cheza zote</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
     <value>Hakuna nyimbo zilizopatikana kwa msanii huyu</value>
   </data>
-  <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Jaribu kutafuta kitu kingine</value>
-  </data>
   <data name="FolderPage_Title" xml:space="preserve">
     <value>Folda</value>
   </data>
-  <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Chagua moja kwa nasibu</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Ongeza Folda</value>
-  </data>
-  <data name="FolderPage_Menu_Play" xml:space="preserve">
-    <value>Cheza</value>
   </data>
   <data name="FolderPage_Menu_Rescan" xml:space="preserve">
     <value>Changanua Upya</value>
@@ -1050,26 +1005,11 @@ Je, unataka kuendelea?</value>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
     <value>Ongeza folda za muziki ili kuanza</value>
   </data>
-  <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
-    <value>Cheza</value>
-  </data>
-  <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Ongeza kwenye Orodha ya Kucheza</value>
-  </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Folda</value>
   </data>
-  <data name="FolderSongViewPage_Songs_Title" xml:space="preserve">
-    <value>Nyimbo</value>
-  </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tafuta katika folda…</value>
-  </data>
-  <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Cheza zote</value>
-  </data>
-  <data name="FolderSongViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Changanya na cheza zote</value>
   </data>
   <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
     <value>Folda hii haina kitu</value>
@@ -1083,12 +1023,6 @@ Je, unataka kuendelea?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tafuta aina za muziki…</value>
   </data>
-  <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Chagua moja kwa nasibu</value>
-  </data>
-  <data name="GenrePage_Menu_Play" xml:space="preserve">
-    <value>Cheza</value>
-  </data>
   <data name="GenrePage_Empty_Title" xml:space="preserve">
     <value>Hakuna aina za muziki zilizopatikana</value>
   </data>
@@ -1101,40 +1035,37 @@ Je, unataka kuendelea?</value>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tafuta katika maktaba…</value>
   </data>
-  <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_PlayAll" xml:space="preserve">
     <value>Cheza zote</value>
   </data>
-  <data name="LibraryPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_ShuffleAll" xml:space="preserve">
     <value>Changanya na cheza zote</value>
   </data>
-  <data name="LibraryPage_Context_Play" xml:space="preserve">
+  <data name="Generic_Play" xml:space="preserve">
     <value>Cheza</value>
   </data>
-  <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
+  <data name="SongList_Context_PlayNext" xml:space="preserve">
     <value>Cheza Baada ya Wimbo Huu</value>
   </data>
-  <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
+  <data name="SongList_Context_AddToQueue" xml:space="preserve">
     <value>Ongeza kwenye Foleni</value>
   </data>
-  <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
+  <data name="SongList_Context_AddToPlaylist" xml:space="preserve">
     <value>Ongeza kwenye Orodha ya Kucheza</value>
   </data>
-  <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
+  <data name="SongList_Context_GoToAlbum" xml:space="preserve">
     <value>Nenda kwenye Albamu</value>
   </data>
-  <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
+  <data name="SongList_Context_GoToArtist" xml:space="preserve">
     <value>Nenda kwa Msanii</value>
   </data>
-  <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
+  <data name="SongList_Context_ShowInExplorer" xml:space="preserve">
     <value>Onyesha katika Kichunguzi cha Faili</value>
-  </data>
-  <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Cheza</value>
   </data>
   <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
     <value>Hakuna nyimbo zilizopatikana</value>
   </data>
-  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+  <data name="Generic_TrySearchingElse" xml:space="preserve">
     <value>Jaribu kutafuta kitu kingine</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
@@ -1245,9 +1176,6 @@ Je, unataka kuendelea?</value>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tafuta orodha za kucheza…</value>
   </data>
-  <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Chagua moja kwa nasibu</value>
-  </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
     <value>Unda orodha mpya ya kucheza</value>
   </data>
@@ -1260,17 +1188,8 @@ Je, unataka kuendelea?</value>
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
     <value>Orodha ya Kucheza Nadhifu</value>
   </data>
-  <data name="PlaylistPage_Context_Play" xml:space="preserve">
-    <value>Cheza</value>
-  </data>
   <data name="PlaylistPage_Context_Rename" xml:space="preserve">
     <value>Badilisha Jina</value>
-  </data>
-  <data name="PlaylistPage_Context_ChangeImage" xml:space="preserve">
-    <value>Badilisha Picha</value>
-  </data>
-  <data name="PlaylistPage_Context_RemoveImage" xml:space="preserve">
-    <value>Ondoa Picha</value>
   </data>
   <data name="PlaylistPage_Context_Delete" xml:space="preserve">
     <value>Futa</value>
@@ -1284,19 +1203,10 @@ Je, unataka kuendelea?</value>
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Orodha ya Kucheza</value>
   </data>
-  <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Nyimbo</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tafuta katika orodha ya kucheza…</value>
   </data>
-  <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Cheza zote</value>
-  </data>
-  <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Changanya na cheza zote</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
+  <data name="SongList_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>Ondoa kwenye Orodha ya Kucheza</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
@@ -1308,23 +1218,11 @@ Je, unataka kuendelea?</value>
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>Aina ya Muziki</value>
   </data>
-  <data name="GenreViewPage_Section_Songs" xml:space="preserve">
-    <value>Nyimbo</value>
-  </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tafuta katika aina ya muziki…</value>
   </data>
-  <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Cheza zote</value>
-  </data>
-  <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Changanya na cheza zote</value>
-  </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
     <value>Hakuna nyimbo zilizopatikana kwa aina hii ya muziki</value>
-  </data>
-  <data name="GenreViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Jaribu kutafuta kitu kingine</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Mipangilio</value>
@@ -1689,20 +1587,11 @@ Je, unataka kuendelea?</value>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Orodha ya Kucheza Nadhifu</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Nyimbo</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tafuta katika orodha ya kucheza nadhifu…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Hariri sheria</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Cheza zote</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Changanya na cheza zote</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>Hakuna nyimbo zinazolingana na sheria za sasa</value>
