@@ -1,42 +1,63 @@
+using System.Linq.Expressions;
 using Nagi.Core.Constants;
+using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Nagi.Core.Helpers;
 
+/// <summary>
+///     Where a cached artist or playlist image came from. Its file name, <c>{id}{suffix}{extension}</c>, records the
+///     kind, so an online lookup never replaces an image the user picked or one from the music folder.
+/// </summary>
+public enum CachedImageKind
+{
+    Fetched,
+    Folder,
+    Custom
+}
+
 public static class ImageStorageHelper
 {
+    public static string Suffix(this CachedImageKind kind) => kind switch
+    {
+        CachedImageKind.Fetched => ".fetched",
+        CachedImageKind.Folder => ".local",
+        CachedImageKind.Custom => ".custom",
+        _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, null)
+    };
+
     /// <summary>Whether a cached image is one the user picked, which online lookups must not replace.</summary>
-    public static bool IsCustomImage(string? path) => path?.Contains(".custom.", StringComparison.OrdinalIgnoreCase) == true;
+    public static bool IsCustomImage(string? path) => IsOfKind(path, CachedImageKind.Custom);
 
     /// <summary>Whether a cached artist image came from the user or the music folder rather than an online provider.</summary>
     public static bool IsUserOrFolderImage(string? path) =>
-        IsCustomImage(path) || path?.Contains(".local.", StringComparison.OrdinalIgnoreCase) == true;
+        IsCustomImage(path) || IsOfKind(path, CachedImageKind.Folder);
 
-    internal static string? FindCoverArtInDirectory(IFileSystemService fileSystem, string directory, ILogger logger)
+    /// <summary>
+    ///     <see cref="IsUserOrFolderImage" /> as a filter the database can run.
+    /// </summary>
+    internal static Expression<Func<Artist, bool>> HasNoUserOrFolderImage()
     {
-        try
-        {
-            return fileSystem.GetFiles(directory, "*.*")
-                .Where(path => !fileSystem.IsHiddenOrSystemFile(path) &&
-                               FileExtensions.ImageFileExtensions.Contains(Path.GetExtension(path)))
-                .Select(path => (Path: path, Priority: FileExtensions.GetCoverArtPriority(Path.GetFileNameWithoutExtension(path))))
-                .Where(candidate => candidate.Priority < int.MaxValue)
-                .OrderBy(candidate => candidate.Priority)
-                .FirstOrDefault().Path;
-        }
-        catch (Exception ex)
-        {
-            logger.LogDebug(ex, "Failed to enumerate cover art in directory '{Directory}'.", directory);
-            return null;
-        }
+        var custom = Marker(CachedImageKind.Custom);
+        var folder = Marker(CachedImageKind.Folder);
+        return artist => artist.LocalImageCachePath == null ||
+                         (!artist.LocalImageCachePath.Contains(custom) && !artist.LocalImageCachePath.Contains(folder));
     }
+
+    private static bool IsOfKind(string? path, CachedImageKind kind) =>
+        path?.Contains(Marker(kind), StringComparison.OrdinalIgnoreCase) == true;
+
+    // The suffix is followed by the extension's dot, which keeps an ID or folder name containing the suffix from matching.
+    private static string Marker(CachedImageKind kind) => kind.Suffix() + ".";
+
+    /// <returns>The image of that kind with any supported extension, or null if there is none.</returns>
+    public static string? FindImage(IFileSystemService fs, string directory, string baseFileName, CachedImageKind kind) =>
+        FindImage(fs, directory, baseFileName, kind.Suffix());
 
     /// <summary>
     ///     Finds the first existing image file matching the pattern {baseFileName}{suffix}.*
     ///     checks against all supported image extensions.
     /// </summary>
-    /// <returns>The full path to the image file, or null if not found.</returns>
     public static string? FindImage(IFileSystemService fs, string directory, string baseFileName, string suffix)
     {
         if (!fs.DirectoryExists(directory)) return null;
@@ -53,9 +74,9 @@ public static class ImageStorageHelper
         return null;
     }
 
-    /// <summary>
-    ///     Deletes all image files matching the pattern {baseFileName}{suffix}.*
-    /// </summary>
+    public static void DeleteImage(IFileSystemService fs, string directory, string baseFileName, CachedImageKind kind) =>
+        DeleteImage(fs, directory, baseFileName, kind.Suffix());
+
     public static void DeleteImage(IFileSystemService fs, string directory, string baseFileName, string suffix,
         string? exceptExtension = null)
     {
@@ -72,8 +93,11 @@ public static class ImageStorageHelper
         }
     }
 
+    public static Task<string?> SaveImageBytesAsync(IFileSystemService fs, string directory, string baseFileName,
+        CachedImageKind kind, byte[] imageBytes) =>
+        SaveImageBytesAsync(fs, directory, baseFileName, kind.Suffix(), imageBytes);
+
     /// <summary>
-    ///     Saves processed image bytes to the destination directory.
     ///     Replaces the destination only after the new image has been written successfully.
     /// </summary>
     public static async Task<string?> SaveImageBytesAsync(IFileSystemService fs, string directory,

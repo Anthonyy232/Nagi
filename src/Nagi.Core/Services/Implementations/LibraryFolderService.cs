@@ -846,260 +846,99 @@ public sealed class LibraryFolderService : ILibraryFolderService
     }
 
     /// <summary>
-    ///     Scans for songs in the folder that are missing LRC file references but now have
-    ///     matching .lrc files on disk. This handles the case where a user adds LRC files
-    ///     to an already-scanned folder without modifying the music files themselves.
+    ///     Gives songs without lyrics the .lrc or .txt file the user put beside them since the song was read.
     /// </summary>
+    /// <returns>The number of songs updated.</returns>
     private async Task<int> UpdateMissingLrcPathsAsync(Guid folderId, CancellationToken cancellationToken)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
         var songsWithoutLrc = await context.Songs
             .Where(s => s.FolderId == folderId && s.LrcFilePath == null)
             .Select(s => new { s.Id, s.FilePath })
             .ToListAsync(cancellationToken).ConfigureAwait(false);
 
-        if (songsWithoutLrc.Count == 0)
-            return 0;
-
-        // First pass: find LRC files using per-directory caches to avoid redundant filesystem calls.
-        // Multiple songs in the same directory share a single GetFiles enumeration.
-        var lrcFilesByDir = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
-        var txtFilesByDir = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
-        var songLrcMappings = new Dictionary<Guid, string>();
-
+        var finder = new MediaFileFinder(_fileSystem, _logger);
+        var lrcPaths = new Dictionary<Guid, string>();
         foreach (var song in songsWithoutLrc)
         {
             cancellationToken.ThrowIfCancellationRequested();
-
-            var directory = Path.GetDirectoryName(song.FilePath);
-            if (string.IsNullOrEmpty(directory)) continue;
-
-            var nameWithoutExt = Path.GetFileNameWithoutExtension(song.FilePath);
-
-            if (!lrcFilesByDir.TryGetValue(directory, out var lrcByName))
-            {
-                lrcByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                try
-                {
-                    foreach (var p in _fileSystem.GetFiles(directory, "*.lrc"))
-                        lrcByName.TryAdd(Path.GetFileNameWithoutExtension(p), p);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Error enumerating LRC files in '{Directory}'.", directory);
-                }
-                lrcFilesByDir[directory] = lrcByName;
-            }
-
-            if (lrcByName.TryGetValue(nameWithoutExt, out var lrcPath))
-            {
-                songLrcMappings[song.Id] = lrcPath;
-                continue;
-            }
-
-            // Lazy-populate TXT cache for this directory (only when no .lrc found)
-            if (!txtFilesByDir.TryGetValue(directory, out var txtByName))
-            {
-                txtByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                try
-                {
-                    foreach (var p in _fileSystem.GetFiles(directory, "*.txt"))
-                        txtByName.TryAdd(Path.GetFileNameWithoutExtension(p), p);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Error enumerating TXT files in '{Directory}'.", directory);
-                }
-                txtFilesByDir[directory] = txtByName;
-            }
-
-            if (txtByName.TryGetValue(nameWithoutExt, out var txtPath))
-                songLrcMappings[song.Id] = txtPath;
+            if (finder.FindSidecarLyrics(song.FilePath) is { } lrcPath) lrcPaths[song.Id] = lrcPath;
         }
 
-        if (songLrcMappings.Count == 0)
-            return 0;
-
-        // Process in batches to avoid SQL parameter limits and memory issues with large libraries
-        const int batchSize = 500;
-        var totalUpdated = 0;
-
-        foreach (var batchIds in songLrcMappings.Keys.Chunk(batchSize))
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var songsToUpdate = await context.Songs
-                .Where(s => batchIds.Contains(s.Id))
-                .ToListAsync(cancellationToken).ConfigureAwait(false);
-
-            foreach (var song in songsToUpdate)
-            {
-                song.LrcFilePath = songLrcMappings[song.Id];
-            }
-
-            totalUpdated += songsToUpdate.Count;
-        }
-
-        if (totalUpdated > 0)
-        {
-            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-            _logger.LogInformation("Updated {Count} songs with newly discovered LRC files.", totalUpdated);
-        }
-
-        return totalUpdated;
+        var updated = await UpdateSongsAsync(context, lrcPaths, (song, lrcPath) => song.LrcFilePath = lrcPath, cancellationToken)
+            .ConfigureAwait(false);
+        if (updated > 0) _logger.LogInformation("Updated {Count} songs with newly discovered LRC files.", updated);
+        return updated;
     }
 
     /// <summary>
-    ///     Scans for songs in the folder that are missing cover art but now have
-    ///     matching cover art files (cover.jpg, folder.png, etc.) on disk in their directory hierarchy.
-    ///     This handles the case where a user adds cover art files to an already-scanned folder
-    ///     without modifying the music files themselves.
+    ///     Gives songs without art the cover art file (cover.jpg, folder.png and the like) the user put in their
+    ///     directory or above it since the song was read.
     /// </summary>
+    /// <returns>The number of songs updated.</returns>
     private async Task<int> UpdateMissingCoverArtAsync(Guid folderId, string baseFolderPath, CancellationToken cancellationToken)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
         var songsWithoutCoverArt = await context.Songs
             .Where(s => s.FolderId == folderId && s.AlbumArtUriFromTrack == null)
             .Select(s => new { s.Id, s.FilePath })
             .ToListAsync(cancellationToken).ConfigureAwait(false);
 
-        if (songsWithoutCoverArt.Count == 0)
-            return 0;
-
-        _logger.LogDebug("Found {Count} songs without cover art in folder {FolderId}. Searching for cover art files...",
-            songsWithoutCoverArt.Count, folderId);
-
-        // Cache processed cover art by directory to avoid redundant processing for songs in same folder
-        var directoryCache = new Dictionary<string, (string? uri, string? lightSwatch, string? darkSwatch)?>(StringComparer.OrdinalIgnoreCase);
-        var songCoverArtMappings = new Dictionary<Guid, (string? uri, string? lightSwatch, string? darkSwatch)>();
-
-        // Shared per-directory cache for FindCoverArtInDirectory results across all hierarchy walks.
-        // Parent directories (e.g., artist folder, root folder) are shared by multiple song directories
-        // and would otherwise be scanned once per album directory without this cache.
-        var hierarchyDirCache = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
-
+        var finder = new MediaFileFinder(_fileSystem, _logger);
+        // Songs in one directory share their art, which is read and stored once.
+        var savedArt = new Dictionary<string, (string? Uri, string? LightSwatchId, string? DarkSwatchId)>(StringComparer.OrdinalIgnoreCase);
+        var covers = new Dictionary<Guid, (string? Uri, string? LightSwatchId, string? DarkSwatchId)>();
         foreach (var song in songsWithoutCoverArt)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            if (finder.FindCoverArt(song.FilePath, baseFolderPath) is not { } coverArtPath) continue;
 
-            var songDirectory = Path.GetDirectoryName(song.FilePath) ?? string.Empty;
-
-            if (directoryCache.TryGetValue(songDirectory, out var cachedResult))
+            if (!savedArt.TryGetValue(coverArtPath, out var cover))
             {
-                if (cachedResult.HasValue)
-                {
-                    songCoverArtMappings[song.Id] = cachedResult.Value;
-                }
-                continue;
+                cover = await SaveCoverArtAsync(coverArtPath).ConfigureAwait(false);
+                savedArt.Add(coverArtPath, cover);
             }
 
-            var coverArtPath = FindCoverArtInDirectoryHierarchy(song.FilePath, baseFolderPath, hierarchyDirCache);
-            if (coverArtPath != null)
-            {
-                try
-                {
-                    // Read and process the cover art file directly using the image processor
-                    // This is MUCH faster than re-extracting full audio metadata
-                    var imageBytes = await _fileSystem.ReadAllBytesAsync(coverArtPath).ConfigureAwait(false);
-                    if (imageBytes.Length > 0)
-                    {
-                        var coverArtResult = await _imageProcessor.SaveCoverArtAndExtractColorsAsync(imageBytes).ConfigureAwait(false);
-                        if (!string.IsNullOrEmpty(coverArtResult.uri))
-                        {
-                            var result = (coverArtResult.uri, coverArtResult.lightSwatchId, coverArtResult.darkSwatchId);
-                            directoryCache[songDirectory] = result;
-                            songCoverArtMappings[song.Id] = result;
-                            continue;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Failed to process cover art file {CoverArtPath} for song {SongId}.",
-                        coverArtPath, song.Id);
-                }
-            }
-
-            directoryCache[songDirectory] = null;
+            if (!string.IsNullOrEmpty(cover.Uri)) covers[song.Id] = cover;
         }
 
-        if (songCoverArtMappings.Count == 0)
-            return 0;
-
-        const int batchSize = 500;
-        var totalUpdated = 0;
-
-        foreach (var batchIds in songCoverArtMappings.Keys.Chunk(batchSize))
+        var updated = await UpdateSongsAsync(context, covers, (song, cover) =>
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var songsToUpdate = await context.Songs
-                .Where(s => batchIds.Contains(s.Id))
-                .ToListAsync(cancellationToken).ConfigureAwait(false);
-
-            foreach (var song in songsToUpdate)
-            {
-                var coverArtInfo = songCoverArtMappings[song.Id];
-                song.AlbumArtUriFromTrack = coverArtInfo.uri;
-                song.LightSwatchId = coverArtInfo.lightSwatch;
-                song.DarkSwatchId = coverArtInfo.darkSwatch;
-            }
-
-            totalUpdated += songsToUpdate.Count;
-        }
-
-        if (totalUpdated > 0)
-        {
-            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-            _logger.LogInformation("Updated {Count} songs with newly discovered cover art files.", totalUpdated);
-        }
-
-        return totalUpdated;
+            song.AlbumArtUriFromTrack = cover.Uri;
+            song.LightSwatchId = cover.LightSwatchId;
+            song.DarkSwatchId = cover.DarkSwatchId;
+        }, cancellationToken).ConfigureAwait(false);
+        if (updated > 0) _logger.LogInformation("Updated {Count} songs with newly discovered cover art files.", updated);
+        return updated;
     }
 
-    /// <summary>
-    ///     Searches for a cover art file in the directory hierarchy, starting from the song's
-    ///     directory and walking up to the base folder path.
-    /// </summary>
-    private string? FindCoverArtInDirectoryHierarchy(string songFilePath, string? baseFolderPath,
-        Dictionary<string, string?> hierarchyDirCache)
+    private async Task<(string? Uri, string? LightSwatchId, string? DarkSwatchId)> SaveCoverArtAsync(string coverArtPath)
     {
         try
         {
-            var currentDirectory = Path.GetDirectoryName(songFilePath);
-            if (string.IsNullOrEmpty(currentDirectory)) return null;
-
-            var normalizedBasePath = baseFolderPath?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-
-            while (!string.IsNullOrEmpty(currentDirectory))
-            {
-                if (!hierarchyDirCache.TryGetValue(currentDirectory, out var coverArtPath))
-                {
-                    coverArtPath = ImageStorageHelper.FindCoverArtInDirectory(_fileSystem, currentDirectory, _logger);
-                    hierarchyDirCache.Add(currentDirectory, coverArtPath);
-                }
-
-                if (coverArtPath != null) return coverArtPath;
-
-                var normalizedCurrent = currentDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-                if (!string.IsNullOrEmpty(normalizedBasePath) &&
-                    normalizedCurrent.Equals(normalizedBasePath, StringComparison.OrdinalIgnoreCase))
-                {
-                    break;
-                }
-
-                currentDirectory = Path.GetDirectoryName(currentDirectory);
-            }
-
-            return null;
+            var imageBytes = await _fileSystem.ReadAllBytesAsync(coverArtPath).ConfigureAwait(false);
+            if (imageBytes.Length > 0) return await _imageProcessor.SaveCoverArtAndExtractColorsAsync(imageBytes).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Error while searching for cover art in directory hierarchy for '{SongFilePath}'.",
-                songFilePath);
-            return null;
+            _logger.LogWarning(ex, "Failed to process cover art file {CoverArtPath}.", coverArtPath);
         }
+
+        return default;
+    }
+
+    private static async Task<int> UpdateSongsAsync<T>(MusicDbContext context, Dictionary<Guid, T> values,
+        Action<Song, T> update, CancellationToken cancellationToken)
+    {
+        var updated = 0;
+        foreach (var ids in values.Keys.Chunk(500))
+        {
+            var songs = await context.Songs.Where(s => ids.Contains(s.Id)).ToListAsync(cancellationToken).ConfigureAwait(false);
+            foreach (var song in songs) update(song, values[song.Id]);
+            updated += songs.Count;
+        }
+
+        if (updated > 0) await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        return updated;
     }
 }

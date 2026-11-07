@@ -15,8 +15,6 @@ internal sealed class PlaylistRules(
     IPathConfiguration pathConfig,
     ILogger logger)
 {
-    private const string CoverSuffix = ".custom";
-
     /// <exception cref="ArgumentException">The name is blank.</exception>
     public static string NormalizeName(string name)
     {
@@ -66,12 +64,12 @@ internal sealed class PlaylistRules(
         var originalBytes = await fileSystem.ReadAllBytesAsync(sourcePath).ConfigureAwait(false);
         var processedBytes = await imageProcessor.ProcessImageBytesAsync(originalBytes).ConfigureAwait(false);
         var savedPath = await ImageStorageHelper.SaveImageBytesAsync(fileSystem, pathConfig.PlaylistImageCachePath,
-            playlistId.ToString(), CoverSuffix, processedBytes).ConfigureAwait(false);
+            playlistId.ToString(), CachedImageKind.Custom, processedBytes).ConfigureAwait(false);
         return (savedPath is not null, savedPath);
     }
 
     private void DeleteCover(Guid playlistId) =>
-        ImageStorageHelper.DeleteImage(fileSystem, pathConfig.PlaylistImageCachePath, playlistId.ToString(), CoverSuffix);
+        ImageStorageHelper.DeleteImage(fileSystem, pathConfig.PlaylistImageCachePath, playlistId.ToString(), CachedImageKind.Custom);
 
     /// <summary>
     ///     Deletes a removed playlist's cover. The playlist is already gone, so a failure is only logged.

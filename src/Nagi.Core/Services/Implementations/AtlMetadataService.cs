@@ -78,7 +78,7 @@ public partial class AtlMetadataService : IMetadataService
                 }
 
                 if (string.IsNullOrWhiteSpace(metadata.LrcFilePath))
-                    metadata.LrcFilePath = LyricsStorageHelper.FindSidecar(_fileSystem, filePath, _logger);
+                    metadata.LrcFilePath = new MediaFileFinder(_fileSystem, _logger).FindSidecarLyrics(filePath);
                 try
                 {
                     (metadata.CoverArtUri, metadata.LightSwatchId, metadata.DarkSwatchId) =
@@ -245,7 +245,7 @@ public partial class AtlMetadataService : IMetadataService
     {
         try
         {
-            var coverArtPath = FindCoverArtInDirectoryHierarchy(filePath, baseFolderPath);
+            var coverArtPath = new MediaFileFinder(_fileSystem, _logger).FindCoverArt(filePath, baseFolderPath);
             if (string.IsNullOrEmpty(coverArtPath)) return default;
 
             var imageBytes = await _fileSystem.ReadAllBytesAsync(coverArtPath).ConfigureAwait(false);
@@ -263,32 +263,6 @@ public partial class AtlMetadataService : IMetadataService
             _logger.LogWarning(ex, "Failed to process directory cover art for '{FilePath}'.", filePath);
             return default;
         }
-    }
-
-    // Walks up from the song's folder, stopping at the library folder.
-    private string? FindCoverArtInDirectoryHierarchy(string songFilePath, string? baseFolderPath)
-    {
-        var currentDirectory = Path.GetDirectoryName(songFilePath);
-        if (string.IsNullOrEmpty(currentDirectory)) return null;
-
-        var normalizedBasePath = baseFolderPath?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-
-        while (!string.IsNullOrEmpty(currentDirectory))
-        {
-            var coverArtPath = ImageStorageHelper.FindCoverArtInDirectory(_fileSystem, currentDirectory, _logger);
-            if (coverArtPath != null) return coverArtPath;
-
-            var normalizedCurrent = currentDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-            if (!string.IsNullOrEmpty(normalizedBasePath) &&
-                normalizedCurrent.Equals(normalizedBasePath, StringComparison.OrdinalIgnoreCase))
-            {
-                break;
-            }
-
-            currentDirectory = Path.GetDirectoryName(currentDirectory);
-        }
-
-        return null;
     }
 
     // The user's override wins; lyrics extracted from the tags are reused until the audio file changes.

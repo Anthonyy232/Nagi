@@ -167,7 +167,7 @@ public class LrcService : ILrcService, IDisposable
 
         var cachedPath = song.LrcFilePath!;
         // A server song has no folder of its own to hold an .lrc file.
-        var sidecarPath = song.IsRemote ? null : LyricsStorageHelper.FindSidecar(_fileSystemService, song.FilePath, _logger);
+        var sidecarPath = song.IsRemote ? null : new MediaFileFinder(_fileSystemService, _logger).FindSidecarLyrics(song.FilePath);
         if (_fileSystemService.FileExists(cachedPath)) _fileSystemService.DeleteFile(cachedPath);
 
         song.LrcFilePath = sidecarPath;

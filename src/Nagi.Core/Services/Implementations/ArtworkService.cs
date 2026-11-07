@@ -165,7 +165,7 @@ public sealed class ArtworkService : IArtworkService
             var originalBytes = await _fileSystem.ReadAllBytesAsync(localFilePath).ConfigureAwait(false);
             var processedBytes = await _imageProcessor.ProcessImageBytesAsync(originalBytes).ConfigureAwait(false);
             var newPath = await ImageStorageHelper.SaveImageBytesAsync(_fileSystem, _pathConfig.ArtistImageCachePath,
-                artistId.ToString(), ".custom", processedBytes).ConfigureAwait(false);
+                artistId.ToString(), CachedImageKind.Custom, processedBytes).ConfigureAwait(false);
             if (newPath is null) return false;
 
             artist.LocalImageCachePath = newPath;
@@ -191,9 +191,9 @@ public sealed class ArtworkService : IArtworkService
         {
             var cachePath = _pathConfig.ArtistImageCachePath;
 
-            ImageStorageHelper.DeleteImage(_fileSystem, cachePath, artistId.ToString(), ".custom");
-            artist.LocalImageCachePath = ImageStorageHelper.FindImage(_fileSystem, cachePath, artistId.ToString(), ".local")
-                                         ?? ImageStorageHelper.FindImage(_fileSystem, cachePath, artistId.ToString(), ".fetched");
+            ImageStorageHelper.DeleteImage(_fileSystem, cachePath, artistId.ToString(), CachedImageKind.Custom);
+            artist.LocalImageCachePath = ImageStorageHelper.FindImage(_fileSystem, cachePath, artistId.ToString(), CachedImageKind.Folder)
+                                         ?? ImageStorageHelper.FindImage(_fileSystem, cachePath, artistId.ToString(), CachedImageKind.Fetched);
 
             await context.SaveChangesAsync().ConfigureAwait(false);
             _notifier.RaiseArtistImagesChanged([new ArtistImageChange(artist.Id, artist.LocalImageCachePath)]);
@@ -243,8 +243,7 @@ public sealed class ArtworkService : IArtworkService
         // A folder image replaces a fetched one, but never a custom image or an earlier folder image.
         var artistsNeedingImages = await context.Artists
             .Where(a => a.SongArtists.Any(sa => sa.Song.FolderId == folderId))
-            .Where(a => a.LocalImageCachePath == null ||
-                        (!a.LocalImageCachePath.Contains(".local.") && !a.LocalImageCachePath.Contains(".custom.")))
+            .Where(ImageStorageHelper.HasNoUserOrFolderImage())
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 
@@ -285,7 +284,7 @@ public sealed class ArtworkService : IArtworkService
         {
             try
             {
-                foreach (var suffix in new[] { ".fetched", ".custom", ".local", "" })
+                foreach (var suffix in Enum.GetValues<CachedImageKind>().Select(kind => kind.Suffix()).Append(""))
                     ImageStorageHelper.DeleteImage(_fileSystem, _pathConfig.ArtistImageCachePath, artistId.ToString(), suffix);
             }
             catch (Exception ex)
@@ -479,7 +478,7 @@ public sealed class ArtworkService : IArtworkService
         {
             var processed = await _imageProcessor.ProcessImageBytesAsync(imageBytes).ConfigureAwait(false);
             var localPath = await ImageStorageHelper.SaveImageBytesAsync(_fileSystem,
-                _pathConfig.ArtistImageCachePath, artist.Id.ToString(), ".local", processed).ConfigureAwait(false);
+                _pathConfig.ArtistImageCachePath, artist.Id.ToString(), CachedImageKind.Folder, processed).ConfigureAwait(false);
             if (string.IsNullOrEmpty(localPath)) return false;
 
             artist.LocalImageCachePath = localPath;
@@ -572,8 +571,8 @@ public sealed class ArtworkService : IArtworkService
 
     private async Task<string?> DownloadAndWriteImageInternalAsync(Guid artistId, Uri imageUrl, CancellationToken cancellationToken)
     {
-        var localPath = Path.Combine(_pathConfig.ArtistImageCachePath, $"{artistId}.fetched.jpg");
-        if (_fileSystem.FileExists(localPath)) return localPath;
+        var existing = ImageStorageHelper.FindImage(_fileSystem, _pathConfig.ArtistImageCachePath, artistId.ToString(), CachedImageKind.Fetched);
+        if (existing is not null) return existing;
 
         var imageBytes = await DownloadImageBytesAsync(imageUrl, cancellationToken).ConfigureAwait(false);
         if (imageBytes is null) return null;
@@ -581,7 +580,7 @@ public sealed class ArtworkService : IArtworkService
         var processedBytes = await Task.Run(() => _imageProcessor.ProcessImageBytesAsync(imageBytes), cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
         return await ImageStorageHelper.SaveImageBytesAsync(_fileSystem, _pathConfig.ArtistImageCachePath,
-            artistId.ToString(), ".fetched", processedBytes).ConfigureAwait(false);
+            artistId.ToString(), CachedImageKind.Fetched, processedBytes).ConfigureAwait(false);
     }
 
     private async Task<byte[]?> DownloadImageBytesAsync(Uri imageUrl, CancellationToken cancellationToken) =>
