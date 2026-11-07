@@ -20,25 +20,21 @@ public sealed partial class LyricsPage : Page
     private const int AnimationDurationMs = 300;
     private const float ActiveScale = 1.03f;
     private const float InactiveScale = 1.0f;
+
+    // Lines this far from the old or new current line are restyled when the current line moves.
+    private const int InfluenceRadius = 6;
+
+    private const string BaseLayerName = "BaseLayer";
+    private const string ActiveLayerName = "ActiveLayer";
+    private const string HoverBackgroundName = "HoverBackground";
     private readonly Storyboard _progressBarStoryboard = new();
     private readonly DoubleAnimation _progressBarAnimation = new() { To = 100, EnableDependentAnimation = true };
     private bool _isUnloaded;
 
-    /// <summary>
-    ///     Controls whether the next lyric line activation should snap immediately instead of animating.
-    ///     Set to true on page load and whenever new lyrics arrive (HasLyrics changed).
-    ///     Consumed and reset to false on the first CurrentLine change that triggers a scroll.
-    /// </summary>
+    // The first current line of newly loaded lyrics is jumped to rather than animated to.
     private bool _isInitialScroll = true;
 
     private int _lastActiveOverlayIndex = -1;
-
-    /// <summary>
-    ///     Cached index of ViewModel.CurrentLine within LyricLines.
-    ///     Kept in sync whenever CurrentLine changes to avoid repeated O(n) IndexOf calls
-    ///     in hot-path handlers like ElementPrepared.
-    /// </summary>
-    private int _currentLineIndex = -1;
 
     public LyricsPage()
     {
@@ -49,6 +45,7 @@ public sealed partial class LyricsPage : Page
         _progressBarStoryboard.Children.Add(_progressBarAnimation);
 
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
+        ViewModel.LyricsReplaced += OnLyricsReplaced;
         Unloaded += OnPageUnloaded;
     }
 
@@ -71,8 +68,6 @@ public sealed partial class LyricsPage : Page
             DispatcherQueue.TryEnqueue(() =>
             {
                 if (_isUnloaded) return;
-                // CurrentLine may have changed by the time this runs; recompute the index.
-                _currentLineIndex = ViewModel.LyricLines.IndexOf(ViewModel.CurrentLine!);
                 ApplyAllLineVisuals();
                 ScrollToCurrentLine(disableAnimation: true);
             });
@@ -84,6 +79,7 @@ public sealed partial class LyricsPage : Page
         _isUnloaded = true;
         CompositionAnimationHelper.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
+        ViewModel.LyricsReplaced -= OnLyricsReplaced;
         Unloaded -= OnPageUnloaded;
         _progressBarStoryboard.Stop();
         ViewModel.Dispose();
@@ -109,12 +105,6 @@ public sealed partial class LyricsPage : Page
                 {
                     if (_isUnloaded) return;
 
-                    // Keep cache in sync before any visual method reads it.
-                    _currentLineIndex = ViewModel.CurrentLine != null
-                        ? ViewModel.LyricLines.IndexOf(ViewModel.CurrentLine)
-                        : -1;
-
-                    // On first line change after lyrics load, snap immediately
                     if (_isInitialScroll)
                     {
                         _isInitialScroll = false;
@@ -140,27 +130,23 @@ public sealed partial class LyricsPage : Page
                     UpdateProgressBarForCurrentLine();
                 });
                 break;
-
-            case nameof(ViewModel.HasLyrics):
-                DispatcherQueue.TryEnqueue(() =>
-                {
-                    if (_isUnloaded) return;
-                    if (ViewModel.HasLyrics)
-                    {
-                        _isInitialScroll = true;
-                        _lastActiveOverlayIndex = -1;
-                        _currentLineIndex = -1;
-                    }
-                });
-                break;
         }
+    }
+
+    private void OnLyricsReplaced()
+    {
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            _isInitialScroll = true;
+            _lastActiveOverlayIndex = -1;
+        });
     }
 
     private void LyricsRepeater_ElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
     {
         if (args.Element is not Grid grid) return;
 
-        ApplyLineVisual(grid, args.Index, _currentLineIndex, false);
+        ApplyLineVisual(grid, args.Index, ViewModel.CurrentLineIndex, false);
     }
 
     private void LyricsRepeater_ElementClearing(ItemsRepeater sender, ItemsRepeaterElementClearingEventArgs args)
@@ -171,15 +157,14 @@ public sealed partial class LyricsPage : Page
         visual.StopAnimation("Scale");
         visual.Scale = new Vector3(1.0f, 1.0f, 1.0f);
 
-        SetLayerOpacity((Panel)grid.Children[0], 1.0f, false);
-        SetLayerOpacity((Panel)grid.Children[1], 0.0f, false);
+        SetLayerOpacity(Layer(grid, BaseLayerName), 1.0f, false);
+        SetLayerOpacity(Layer(grid, ActiveLayerName), 0.0f, false);
         SetHoverVisible(grid, false);
     }
 
     private void ScrollToCurrentLine(bool disableAnimation)
     {
-        // Use the cached index — _currentLineIndex is always updated before this is called.
-        var lineIndex = _currentLineIndex;
+        var lineIndex = ViewModel.CurrentLineIndex;
         if (lineIndex < 0) return;
 
         var element = LyricsRepeater.TryGetElement(lineIndex);
@@ -206,26 +191,20 @@ public sealed partial class LyricsPage : Page
 
     private void AnimateLineTransition()
     {
-        var currentIndex = _currentLineIndex;
+        var currentIndex = ViewModel.CurrentLineIndex;
+        var previousIndex = _lastActiveOverlayIndex;
+        if (previousIndex < 0 && currentIndex < 0) return;
 
-        // Compute the union of both influence windows in a single pass to avoid calling
-        // AnimateOpacity/AnimateScale twice on the same element (which would stop and restart
-        // the animation mid-frame, causing a visible flicker on sequential line changes).
-        var hasLast = _lastActiveOverlayIndex >= 0;
-        var hasCurrent = currentIndex >= 0;
-
-        if (!hasLast && !hasCurrent) return;
-
-        var windowStart = hasLast && hasCurrent
-            ? Math.Min(_lastActiveOverlayIndex, currentIndex) - 6
-            : hasLast ? _lastActiveOverlayIndex - 6 : currentIndex - 6;
-        var windowEnd = hasLast && hasCurrent
-            ? Math.Max(_lastActiveOverlayIndex, currentIndex) + 6
-            : hasLast ? _lastActiveOverlayIndex + 6 : currentIndex + 6;
+        // One pass over the union of both influence windows: animating a line twice would stop and restart its
+        // animation mid-frame, which flickers when lines change in quick succession.
+        var first = previousIndex < 0 ? currentIndex
+            : currentIndex < 0 ? previousIndex
+            : Math.Min(previousIndex, currentIndex);
+        var last = Math.Max(previousIndex, currentIndex);
 
         UpdateLinesInRange(
-            Math.Max(0, windowStart),
-            Math.Min(ViewModel.LyricLines.Count - 1, windowEnd),
+            Math.Max(0, first - InfluenceRadius),
+            Math.Min(ViewModel.LyricLines.Count - 1, last + InfluenceRadius),
             currentIndex, true);
 
         _lastActiveOverlayIndex = currentIndex;
@@ -233,7 +212,7 @@ public sealed partial class LyricsPage : Page
 
     private void ApplyAllLineVisuals()
     {
-        var currentIndex = _currentLineIndex;
+        var currentIndex = ViewModel.CurrentLineIndex;
 
         UpdateLinesInRange(0, ViewModel.LyricLines.Count - 1, currentIndex, false);
 
@@ -251,8 +230,8 @@ public sealed partial class LyricsPage : Page
     {
         var distance = currentIndex >= 0 ? Math.Abs(index - currentIndex) : int.MaxValue;
         var isActive = index == currentIndex;
-        SetLayerOpacity((Panel)grid.Children[0], (float)GetOpacityForDistance(distance), animate);
-        SetLayerOpacity((Panel)grid.Children[1], isActive ? 1.0f : 0.0f, animate);
+        SetLayerOpacity(Layer(grid, BaseLayerName), (float)GetOpacityForDistance(distance), animate);
+        SetLayerOpacity(Layer(grid, ActiveLayerName), isActive ? 1.0f : 0.0f, animate);
         var scale = isActive ? ActiveScale : InactiveScale;
         if (animate)
             CompositionAnimationHelper.AnimateScale(grid, scale, AnimationDurationMs);
@@ -286,8 +265,11 @@ public sealed partial class LyricsPage : Page
 
     private static void SetHoverVisible(object sender, bool visible)
     {
-        if (sender is Grid grid) grid.Children[2].Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+        if (sender is Grid grid)
+            ((UIElement)grid.FindName(HoverBackgroundName)).Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
     }
+
+    private static Panel Layer(Grid line, string name) => (Panel)line.FindName(name);
 
     private async void LyricItem_Tapped(object sender, TappedRoutedEventArgs e)
     {
