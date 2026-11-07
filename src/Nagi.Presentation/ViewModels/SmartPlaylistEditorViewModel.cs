@@ -151,8 +151,6 @@ public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposabl
 
     partial void OnMatchAllRulesChanged(bool value) => _ = UpdateMatchCountAsync();
 
-    partial void OnSelectedSortOptionChanged(SortOrderOption value) => _ = UpdateMatchCountAsync();
-
     [RelayCommand]
     private void AddRule() => Rules.Add(new RuleViewModel());
 
@@ -208,12 +206,11 @@ public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposabl
     /// </summary>
     private SmartPlaylist? BuildPlaylist()
     {
-        var name = Name.Trim();
-        if (string.IsNullOrWhiteSpace(name)) return null;
+        if (string.IsNullOrWhiteSpace(Name)) return null;
 
         var playlist = new SmartPlaylist
         {
-            Name = name,
+            Name = Name,
             MatchAllRules = MatchAllRules,
             SortOrder = SelectedSortOption.SortOrder,
             CoverImageUri = CoverImageUri,
@@ -239,7 +236,7 @@ public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposabl
                 token.ThrowIfCancellationRequested();
                 // SQLite executes count queries synchronously, so keep them off the UI thread.
                 int? count = playlist == null ? null
-                    : await Task.Run(() => _smartPlaylistService.GetMatchingSongCountAsync(playlist, token: token), token);
+                    : await Task.Run(() => _smartPlaylistService.GetMatchingSongCountAsync(playlist, token), token);
 
                 _dispatcherService.TryEnqueue(() =>
                 {

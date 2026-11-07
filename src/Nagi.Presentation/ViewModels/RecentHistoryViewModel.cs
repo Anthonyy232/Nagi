@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
@@ -94,7 +95,7 @@ public partial class RecentHistoryViewModel : SearchableViewModelBase, IDisposab
         {
             var (listens, songs) = await Task.Run(async () =>
             {
-                var listens = await _library.GetRecentListensAsync(searchTerm, offset, 100, loadToken);
+                var listens = await _library.GetRecentListensAsync(searchTerm, offset, RecentListen.MaxPageSize, loadToken);
                 if (preserveRows) listens = listens.TakeWhile(listen => listen.Id != newestListenId).ToArray();
                 var songs = await _library.GetQueueSongsAsync(listens.Select(listen => listen.SongId), loadToken);
                 return (listens, songs);
@@ -121,7 +122,7 @@ public partial class RecentHistoryViewModel : SearchableViewModelBase, IDisposab
                 for (var index = rows.Count - 1; index >= 0; index--) Entries.Insert(0, rows[index]);
             }
             else Entries.AppendOrReplace(rows, !reset);
-            if (!preserveRows || loadedCount == 0) HasMore = listens.Count == 100;
+            if (!preserveRows || loadedCount == 0) HasMore = listens.Count == RecentListen.MaxPageSize;
             return rows.Count;
         }
         catch (OperationCanceledException) { }

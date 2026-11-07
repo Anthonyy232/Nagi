@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
@@ -14,6 +15,7 @@ namespace Nagi.Presentation.Tests;
 
 public class PlaylistViewModelTests
 {
+    private static readonly DateTime CoverDate = new(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc);
     private readonly LibraryFakes _library = new LibraryFakes();
     private readonly ISmartPlaylistService _smart = Substitute.For<ISmartPlaylistService>();
     private readonly IUIService _ui = Substitute.For<IUIService>();
@@ -259,7 +261,7 @@ public class PlaylistViewModelTests
             _smart.GetAllSmartPlaylistsAsync().Returns(new[] { new SmartPlaylist { Id = id, CoverImageUri = "ms-appx:///custom.png" } });
             _smart.UpdateSmartPlaylistCoverAsync(id, null).Returns(_ =>
             {
-                _smart.PlaylistUpdated += Raise.EventWith(new PlaylistUpdatedEventArgs(id, null));
+                _smart.PlaylistUpdated += Raise.EventWith(new PlaylistUpdatedEventArgs(id, null, DateTime.UtcNow));
                 return true;
             });
         }
@@ -268,7 +270,7 @@ public class PlaylistViewModelTests
             _library.Reader.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new Playlist { Id = id, CoverImageUri = "ms-appx:///custom.png" } });
             _library.Playlists.UpdatePlaylistCoverAsync(id, null).Returns(_ =>
             {
-                _library.Playlists.PlaylistUpdated += Raise.EventWith(new PlaylistUpdatedEventArgs(id, null));
+                _library.Playlists.PlaylistUpdated += Raise.EventWith(new PlaylistUpdatedEventArgs(id, null, DateTime.UtcNow));
                 return true;
             });
         }
@@ -295,7 +297,7 @@ public class PlaylistViewModelTests
             _smart.GetAllSmartPlaylistsAsync().Returns(new[] { new SmartPlaylist { Id = id, Name = "Artwork" } });
             _smart.UpdateSmartPlaylistCoverAsync(id, selectedImage).Returns(_ =>
             {
-                _smart.PlaylistUpdated += Raise.EventWith(new PlaylistUpdatedEventArgs(id, cachedImage));
+                _smart.PlaylistUpdated += Raise.EventWith(new PlaylistUpdatedEventArgs(id, cachedImage, CoverDate));
                 return Task.FromResult(true);
             });
         }
@@ -304,7 +306,7 @@ public class PlaylistViewModelTests
             _library.Reader.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new Playlist { Id = id, Name = "Artwork" } });
             _library.Playlists.UpdatePlaylistCoverAsync(id, selectedImage).Returns(_ =>
             {
-                _library.Playlists.PlaylistUpdated += Raise.EventWith(new PlaylistUpdatedEventArgs(id, cachedImage));
+                _library.Playlists.PlaylistUpdated += Raise.EventWith(new PlaylistUpdatedEventArgs(id, cachedImage, CoverDate));
                 return Task.FromResult(true);
             });
         }
@@ -315,7 +317,7 @@ public class PlaylistViewModelTests
 
         await viewModel.ChangePlaylistCoverCommand.ExecuteAsync(viewModel.Playlists.Single());
 
-        viewModel.Playlists.Should().ContainSingle().Which.CoverImageUri.Should().Be(cachedImage);
+        viewModel.Playlists.Should().ContainSingle().Which.CoverImageUri.Should().Be(ImageUriHelper.GetUriWithCacheBuster(cachedImage, CoverDate));
         viewModel.Playlists[0].IsCustomImage.Should().BeTrue();
     }
 

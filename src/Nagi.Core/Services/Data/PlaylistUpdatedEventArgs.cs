@@ -4,9 +4,9 @@ public class PlaylistUpdatedEventArgs : EventArgs
 {
     public Guid PlaylistId { get; }
     public string? CoverImageUri { get; }
-    public DateTime? DateModified { get; }
+    public DateTime DateModified { get; }
 
-    public PlaylistUpdatedEventArgs(Guid playlistId, string? coverImageUri, DateTime? dateModified = null)
+    public PlaylistUpdatedEventArgs(Guid playlistId, string? coverImageUri, DateTime dateModified)
     {
         PlaylistId = playlistId;
         CoverImageUri = coverImageUri;

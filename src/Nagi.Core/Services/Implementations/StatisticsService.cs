@@ -1,5 +1,7 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Data;
+using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 
@@ -7,6 +9,45 @@ namespace Nagi.Core.Services.Implementations;
 
 public class StatisticsService : IStatisticsService
 {
+    // Song.PlayCount counts only scrobble-eligible listens (LibraryService); Insights also counts finished ones.
+    private static readonly Expression<Func<ListenHistory, ScoredListen>> Score = listen => new ScoredListen
+    {
+        SongId = listen.SongId,
+        CountsAsPlay = listen.IsEligibleForScrobbling || listen.EndReason == PlaybackEndReason.Finished,
+        DurationTicks = listen.ListenDurationTicks
+    };
+
+    private static readonly EntityKind<Song> Songs = new(
+        (_, listens) => listens.Select(listen => new Credit { EntityId = listen.SongId, Listen = listen }),
+        (context, pattern) => context.Songs
+            .Where(song => EF.Functions.Like(song.Title.ToLower(), pattern, LikePatternHelper.EscapeCharacter))
+            .Select(song => song.Id),
+        (context, ids, ct) => context.Songs.AsNoTracking().Where(song => ids.Contains(song.Id)).ToDictionaryAsync(song => song.Id, ct));
+
+    private static readonly EntityKind<Artist> Artists = new(
+        (context, listens) => listens.Join(context.SongArtists, listen => listen.SongId, songArtist => songArtist.SongId,
+            (listen, songArtist) => new Credit { EntityId = songArtist.ArtistId, Listen = listen }),
+        (context, pattern) => context.Artists
+            .Where(artist => EF.Functions.Like(artist.Name.ToLower(), pattern, LikePatternHelper.EscapeCharacter))
+            .Select(artist => artist.Id),
+        (context, ids, ct) => context.Artists.AsNoTracking().Where(artist => ids.Contains(artist.Id)).ToDictionaryAsync(artist => artist.Id, ct));
+
+    private static readonly EntityKind<Album> Albums = new(
+        (context, listens) => listens.Join(context.Songs.Where(song => song.AlbumId != null), listen => listen.SongId, song => song.Id,
+            (listen, song) => new Credit { EntityId = song.AlbumId!.Value, Listen = listen }),
+        (context, pattern) => context.Albums
+            .Where(album => EF.Functions.Like(album.Title.ToLower(), pattern, LikePatternHelper.EscapeCharacter))
+            .Select(album => album.Id),
+        (context, ids, ct) => context.Albums.AsNoTracking().Where(album => ids.Contains(album.Id)).ToDictionaryAsync(album => album.Id, ct));
+
+    private static readonly EntityKind<Genre> Genres = new(
+        (context, listens) => listens.Join(context.Songs, listen => listen.SongId, song => song.Id, (listen, song) => new { listen, song })
+            .SelectMany(row => row.song.Genres, (row, genre) => new Credit { EntityId = genre.Id, Listen = row.listen }),
+        (context, pattern) => context.Genres
+            .Where(genre => EF.Functions.Like(genre.Name.ToLower(), pattern, LikePatternHelper.EscapeCharacter))
+            .Select(genre => genre.Id),
+        (context, ids, ct) => context.Genres.AsNoTracking().Where(genre => ids.Contains(genre.Id)).ToDictionaryAsync(genre => genre.Id, ct));
+
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
 
     public StatisticsService(IDbContextFactory<MusicDbContext> contextFactory)
@@ -14,517 +55,82 @@ public class StatisticsService : IStatisticsService
         _contextFactory = contextFactory;
     }
 
-    public async Task<IEnumerable<SongStats>> GetTopSongsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.PlayCount, int offset = 0, string? searchTerm = null, CancellationToken ct = default)
-    {
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-            return (await GetTopSongsSearchPageAsync(range, limit, metric, offset, searchTerm, ct, includeTotalCount: false).ConfigureAwait(false)).Items;
+    public Task<StatisticsPage<SongStats>> GetTopSongsAsync(TimeRange range, SortMetric metric, int offset, int limit, string? searchTerm = null, CancellationToken ct = default) =>
+        GetTopAsync(Songs, range, metric, offset, limit, searchTerm,
+            (song, row) => new SongStats(song, row.Plays, TimeSpan.FromTicks(row.DurationTicks), row.Rank), ct);
 
-        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
+    public Task<StatisticsPage<ArtistStats>> GetTopArtistsAsync(TimeRange range, SortMetric metric, int offset, int limit, string? searchTerm = null, CancellationToken ct = default) =>
+        GetTopAsync(Artists, range, metric, offset, limit, searchTerm,
+            (artist, row) => new ArtistStats(artist, row.Plays, TimeSpan.FromTicks(row.DurationTicks), row.Rank), ct);
 
-        // Aggregate WITHOUT search filter so global ranks are based on the full dataset.
-        var statsQuery = query.GroupBy(lh => lh.SongId)
-            .Select(g => new
-            {
-                SongId = g.Key,
-                TotalPlays = g.Sum(lh => lh.IsEligibleForScrobbling || lh.EndReason == PlaybackEndReason.Finished ? 1 : 0),
-                TotalDurationTicks = g.Sum(lh => lh.ListenDurationTicks),
-                Skips = g.Sum(lh => lh.EndReason == PlaybackEndReason.Skipped && !lh.IsEligibleForScrobbling ? 1 : 0)
-            })
-            .Where(s => s.TotalPlays > 0);
+    public Task<StatisticsPage<AlbumStats>> GetTopAlbumsAsync(TimeRange range, SortMetric metric, int offset, int limit, string? searchTerm = null, CancellationToken ct = default) =>
+        GetTopAsync(Albums, range, metric, offset, limit, searchTerm,
+            (album, row) => new AlbumStats(album, row.Plays, TimeSpan.FromTicks(row.DurationTicks), row.Rank), ct);
 
-        if (metric == SortMetric.PlayCount)
-            statsQuery = statsQuery.OrderByDescending(s => s.TotalPlays).ThenBy(s => s.SongId);
-        else
-            statsQuery = statsQuery.OrderByDescending(s => s.TotalDurationTicks).ThenBy(s => s.SongId);
+    public Task<StatisticsPage<GenreStats>> GetTopGenresAsync(TimeRange range, SortMetric metric, int offset, int limit, string? searchTerm = null, CancellationToken ct = default) =>
+        GetTopAsync(Genres, range, metric, offset, limit, searchTerm,
+            (genre, row) => new GenreStats(genre, row.Plays, TimeSpan.FromTicks(row.DurationTicks), row.Rank), ct);
 
-        // No search: DB handles pagination. Global rank = offset + position + 1.
-        var topItems = await statsQuery.Skip(offset).Take(limit).ToListAsync(ct).ConfigureAwait(false);
-        var page = topItems
-            .Select((s, i) => (GlobalRank: offset + i + 1, s.SongId, s.TotalPlays, s.TotalDurationTicks, s.Skips))
-            .ToList();
-
-        var songIds = page.Select(x => x.SongId).ToHashSet();
-        var songs = await dbContext.Songs.AsNoTracking()
-            .Where(s => songIds.Contains(s.Id))
-            .ToDictionaryAsync(s => s.Id, ct).ConfigureAwait(false);
-
-        return page
-            .Where(x => songs.ContainsKey(x.SongId))
-            .Select(x => new SongStats(songs[x.SongId], x.TotalPlays, TimeSpan.FromTicks(x.TotalDurationTicks), x.Skips, x.GlobalRank));
-    }
-
-    public async Task<StatisticsPage<SongStats>> GetTopSongsPageAsync(TimeRange range, int limit, SortMetric metric, int offset, string? searchTerm, CancellationToken ct = default)
-    {
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-            return await GetTopSongsSearchPageAsync(range, limit, metric, offset, searchTerm, ct).ConfigureAwait(false);
-
-        var totalCount = await GetUniqueSongsPlayedAsync(range, ct).ConfigureAwait(false);
-        var items = (await GetTopSongsAsync(range, limit, metric, offset, null, ct).ConfigureAwait(false)).ToList();
-        return new StatisticsPage<SongStats>(items, totalCount);
-    }
-
-    public async Task<IEnumerable<ArtistStats>> GetTopArtistsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.Duration, int offset = 0, string? searchTerm = null, CancellationToken ct = default)
-    {
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-            return (await GetTopArtistsSearchPageAsync(range, limit, metric, offset, searchTerm, ct, includeTotalCount: false).ConfigureAwait(false)).Items;
-
-        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
-
-        // Aggregate WITHOUT search filter so global ranks are based on the full dataset.
-        var statsQuery = query
-            .Join(dbContext.Songs, lh => lh.SongId, s => s.Id, (lh, s) => new { lh, s })
-            .SelectMany(x => x.s.SongArtists, (x, sa) => new { x.lh, sa.ArtistId })
-            .GroupBy(x => x.ArtistId)
-            .Select(g => new
-            {
-                ArtistId = g.Key,
-                TotalPlays = g.Sum(x => x.lh.IsEligibleForScrobbling || x.lh.EndReason == PlaybackEndReason.Finished ? 1 : 0),
-                TotalDurationTicks = g.Sum(x => x.lh.ListenDurationTicks)
-            })
-            .Where(s => s.TotalPlays > 0);
-
-        if (metric == SortMetric.PlayCount)
-            statsQuery = statsQuery.OrderByDescending(s => s.TotalPlays).ThenBy(s => s.ArtistId);
-        else
-            statsQuery = statsQuery.OrderByDescending(s => s.TotalDurationTicks).ThenBy(s => s.ArtistId);
-
-        // No search: DB handles pagination. Global rank = offset + position + 1.
-        var topItems = await statsQuery.Skip(offset).Take(limit).ToListAsync(ct).ConfigureAwait(false);
-        var page = topItems
-            .Select((s, i) => (GlobalRank: offset + i + 1, s.ArtistId, s.TotalPlays, s.TotalDurationTicks))
-            .ToList();
-
-        var artistIds = page.Select(x => x.ArtistId).ToHashSet();
-        var artists = await dbContext.Artists.AsNoTracking()
-            .Where(a => artistIds.Contains(a.Id))
-            .ToDictionaryAsync(a => a.Id, ct).ConfigureAwait(false);
-
-        return page
-            .Where(x => artists.ContainsKey(x.ArtistId))
-            .Select(x => new ArtistStats(artists[x.ArtistId], x.TotalPlays, TimeSpan.FromTicks(x.TotalDurationTicks), x.GlobalRank));
-    }
-
-    public async Task<StatisticsPage<ArtistStats>> GetTopArtistsPageAsync(TimeRange range, int limit, SortMetric metric, int offset, string? searchTerm, CancellationToken ct = default)
-    {
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-            return await GetTopArtistsSearchPageAsync(range, limit, metric, offset, searchTerm, ct).ConfigureAwait(false);
-
-        var totalCount = await GetTopArtistsCountAsync(range, ct).ConfigureAwait(false);
-        var items = (await GetTopArtistsAsync(range, limit, metric, offset, null, ct).ConfigureAwait(false)).ToList();
-        return new StatisticsPage<ArtistStats>(items, totalCount);
-    }
-
-    private async Task<int> GetTopArtistsCountAsync(TimeRange range, CancellationToken ct)
-    {
-        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
-
-        return await query
-            .Where(history => history.IsEligibleForScrobbling || history.EndReason == PlaybackEndReason.Finished)
-            .SelectMany(history => history.Song.SongArtists)
-            .Select(artist => artist.ArtistId)
-            .Distinct()
-            .CountAsync(ct).ConfigureAwait(false);
-    }
-
-    public async Task<IEnumerable<AlbumStats>> GetTopAlbumsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.PlayCount, int offset = 0, string? searchTerm = null, CancellationToken ct = default)
-    {
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-            return (await GetTopAlbumsSearchPageAsync(range, limit, metric, offset, searchTerm, ct, includeTotalCount: false).ConfigureAwait(false)).Items;
-
-        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
-
-        // Aggregate WITHOUT search filter so global ranks are based on the full dataset.
-        var statsQuery = query
-            .Join(dbContext.Songs, lh => lh.SongId, s => s.Id, (lh, s) => new { lh, s })
-            .Where(x => x.s.AlbumId != null)
-            .GroupBy(x => x.s.AlbumId)
-            .Select(g => new
-            {
-                AlbumId = g.Key,
-                TotalPlays = g.Sum(x => x.lh.IsEligibleForScrobbling || x.lh.EndReason == PlaybackEndReason.Finished ? 1 : 0),
-                TotalDurationTicks = g.Sum(x => x.lh.ListenDurationTicks)
-            })
-            .Where(s => s.TotalPlays > 0);
-
-        if (metric == SortMetric.PlayCount)
-            statsQuery = statsQuery.OrderByDescending(s => s.TotalPlays).ThenBy(s => s.AlbumId);
-        else
-            statsQuery = statsQuery.OrderByDescending(s => s.TotalDurationTicks).ThenBy(s => s.AlbumId);
-
-        // No search: DB handles pagination. Global rank = offset + position + 1.
-        var topItems = await statsQuery.Skip(offset).Take(limit).ToListAsync(ct).ConfigureAwait(false);
-        var page = topItems
-            .Select((s, i) => (GlobalRank: offset + i + 1, s.AlbumId, s.TotalPlays, s.TotalDurationTicks))
-            .Select(x => (x.GlobalRank, AlbumId: x.AlbumId!.Value, x.TotalPlays, x.TotalDurationTicks))
-            .ToList();
-
-        var albumIds = page.Select(x => x.AlbumId).ToHashSet();
-        var albums = await dbContext.Albums.AsNoTracking()
-            .Where(a => albumIds.Contains(a.Id))
-            .ToDictionaryAsync(a => a.Id, ct).ConfigureAwait(false);
-
-        return page
-            .Where(x => albums.ContainsKey(x.AlbumId))
-            .Select(x => new AlbumStats(albums[x.AlbumId], x.TotalPlays, TimeSpan.FromTicks(x.TotalDurationTicks), x.GlobalRank));
-    }
-
-    public async Task<StatisticsPage<AlbumStats>> GetTopAlbumsPageAsync(TimeRange range, int limit, SortMetric metric, int offset, string? searchTerm, CancellationToken ct = default)
-    {
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-            return await GetTopAlbumsSearchPageAsync(range, limit, metric, offset, searchTerm, ct).ConfigureAwait(false);
-
-        var totalCount = await GetTopAlbumsCountAsync(range, ct).ConfigureAwait(false);
-        var items = (await GetTopAlbumsAsync(range, limit, metric, offset, null, ct).ConfigureAwait(false)).ToList();
-        return new StatisticsPage<AlbumStats>(items, totalCount);
-    }
-
-    private async Task<int> GetTopAlbumsCountAsync(TimeRange range, CancellationToken ct)
-    {
-        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
-
-        return await query
-            .Where(history => history.IsEligibleForScrobbling || history.EndReason == PlaybackEndReason.Finished)
-            .Select(history => history.Song.AlbumId)
-            .Where(albumId => albumId != null)
-            .Distinct()
-            .CountAsync(ct).ConfigureAwait(false);
-    }
-
-    public async Task<IEnumerable<GenreStats>> GetTopGenresAsync(TimeRange range, int limit = 10, SortMetric metric = SortMetric.PlayCount, int offset = 0, string? searchTerm = null, CancellationToken ct = default)
-    {
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-            return (await GetTopGenresSearchPageAsync(range, limit, metric, offset, searchTerm, ct, includeTotalCount: false).ConfigureAwait(false)).Items;
-
-        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
-
-        // Aggregate WITHOUT search filter so global ranks are based on the full dataset.
-        var statsQuery = query
-            .Join(dbContext.Songs, lh => lh.SongId, s => s.Id, (lh, s) => new { lh, s })
-            .SelectMany(x => x.s.Genres, (x, g) => new { x.lh, g.Id })
-            .GroupBy(x => x.Id)
-            .Select(g => new
-            {
-                GenreId = g.Key,
-                TotalPlays = g.Sum(x => x.lh.IsEligibleForScrobbling || x.lh.EndReason == PlaybackEndReason.Finished ? 1 : 0),
-                TotalDurationTicks = g.Sum(x => x.lh.ListenDurationTicks)
-            })
-            .Where(s => s.TotalPlays > 0);
-
-        if (metric == SortMetric.PlayCount)
-            statsQuery = statsQuery.OrderByDescending(s => s.TotalPlays).ThenBy(s => s.GenreId);
-        else
-            statsQuery = statsQuery.OrderByDescending(s => s.TotalDurationTicks).ThenBy(s => s.GenreId);
-
-        // No search: DB handles pagination. Global rank = offset + position + 1.
-        var topItems = await statsQuery.Skip(offset).Take(limit).ToListAsync(ct).ConfigureAwait(false);
-        var page = topItems
-            .Select((s, i) => (GlobalRank: offset + i + 1, s.GenreId, s.TotalPlays, s.TotalDurationTicks))
-            .ToList();
-
-        var genreIds = page.Select(x => x.GenreId).ToHashSet();
-        var genres = await dbContext.Genres.AsNoTracking()
-            .Where(g => genreIds.Contains(g.Id))
-            .ToDictionaryAsync(g => g.Id, ct).ConfigureAwait(false);
-
-        return page
-            .Where(x => genres.ContainsKey(x.GenreId))
-            .Select(x => new GenreStats(genres[x.GenreId], x.TotalPlays, TimeSpan.FromTicks(x.TotalDurationTicks), x.GlobalRank));
-    }
-
-    public async Task<StatisticsPage<GenreStats>> GetTopGenresPageAsync(TimeRange range, int limit, SortMetric metric, int offset, string? searchTerm, CancellationToken ct = default)
-    {
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-            return await GetTopGenresSearchPageAsync(range, limit, metric, offset, searchTerm, ct).ConfigureAwait(false);
-
-        var totalCount = await GetTopGenresCountAsync(range, ct).ConfigureAwait(false);
-        var items = (await GetTopGenresAsync(range, limit, metric, offset, null, ct).ConfigureAwait(false)).ToList();
-        return new StatisticsPage<GenreStats>(items, totalCount);
-    }
-
-    private async Task<int> GetTopGenresCountAsync(TimeRange range, CancellationToken ct)
-    {
-        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
-
-        return await query
-            .Where(history => history.IsEligibleForScrobbling || history.EndReason == PlaybackEndReason.Finished)
-            .SelectMany(history => history.Song.Genres)
-            .Select(genre => genre.Id)
-            .Distinct()
-            .CountAsync(ct).ConfigureAwait(false);
-    }
-
-    private async Task<StatisticsPage<SongStats>> GetTopSongsSearchPageAsync(
+    private async Task<StatisticsPage<TStats>> GetTopAsync<TEntity, TStats>(
+        EntityKind<TEntity> kind,
         TimeRange range,
-        int limit,
         SortMetric metric,
         int offset,
-        string searchTerm,
-        CancellationToken ct,
-        bool includeTotalCount = true)
-    {
-        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var history = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
-        var aggregates = history.GroupBy(lh => lh.SongId)
-            .Select(g => new
-            {
-                SongId = g.Key,
-                TotalPlays = g.Sum(lh => lh.IsEligibleForScrobbling || lh.EndReason == PlaybackEndReason.Finished ? 1 : 0),
-                TotalDurationTicks = g.Sum(lh => lh.ListenDurationTicks),
-                Skips = g.Sum(lh => lh.EndReason == PlaybackEndReason.Skipped && !lh.IsEligibleForScrobbling ? 1 : 0)
-            })
-            .Where(row => row.TotalPlays > 0);
-        var rows = aggregates.Join(
-            dbContext.Songs.AsNoTracking(),
-            aggregate => aggregate.SongId,
-            song => song.Id,
-            (aggregate, song) => new
-            {
-                aggregate.SongId,
-                aggregate.TotalPlays,
-                aggregate.TotalDurationTicks,
-                aggregate.Skips,
-                song.Title
-            });
-        var rankedRows = metric == SortMetric.PlayCount
-            ? rows.OrderByDescending(row => row.TotalPlays).ThenBy(row => row.SongId)
-            : rows.OrderByDescending(row => row.TotalDurationTicks).ThenBy(row => row.SongId);
-
-        var pageRows = new List<(int Rank, Guid SongId, int Plays, long DurationTicks, int Skips)>();
-        var globalRank = 0;
-        var totalCount = 0;
-        var safeOffset = Math.Max(0, offset);
-        var safeLimit = Math.Max(0, limit);
-        await foreach (var row in rankedRows.AsAsyncEnumerable().WithCancellation(ct).ConfigureAwait(false))
-        {
-            globalRank++;
-            if (!row.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) continue;
-
-            if (totalCount >= safeOffset && pageRows.Count < safeLimit)
-                pageRows.Add((globalRank, row.SongId, row.TotalPlays, row.TotalDurationTicks, row.Skips));
-            totalCount++;
-            if (!includeTotalCount && pageRows.Count >= safeLimit) break;
-        }
-
-        if (pageRows.Count == 0) return new StatisticsPage<SongStats>([], totalCount);
-
-        var ids = pageRows.Select(row => row.SongId).ToHashSet();
-        var entities = await dbContext.Songs.AsNoTracking()
-            .Where(song => ids.Contains(song.Id))
-            .ToDictionaryAsync(song => song.Id, ct)
-            .ConfigureAwait(false);
-        var items = pageRows
-            .Where(row => entities.ContainsKey(row.SongId))
-            .Select(row => new SongStats(entities[row.SongId], row.Plays, TimeSpan.FromTicks(row.DurationTicks), row.Skips, row.Rank))
-            .ToList();
-        return new StatisticsPage<SongStats>(items, totalCount);
-    }
-
-    private async Task<StatisticsPage<ArtistStats>> GetTopArtistsSearchPageAsync(
-        TimeRange range,
         int limit,
-        SortMetric metric,
-        int offset,
-        string searchTerm,
-        CancellationToken ct,
-        bool includeTotalCount = true)
+        string? searchTerm,
+        Func<TEntity, RankedRow, TStats> create,
+        CancellationToken ct)
     {
+        offset = Math.Max(0, offset);
+        limit = Math.Max(0, limit);
+
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var history = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
-        var aggregates = history
-            .Join(dbContext.Songs, lh => lh.SongId, song => song.Id, (lh, song) => new { lh, song })
-            .SelectMany(row => row.song.SongArtists, (row, songArtist) => new { row.lh, songArtist.ArtistId })
-            .GroupBy(row => row.ArtistId)
-            .Select(g => new
+        var totals = kind.Credit(dbContext, ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range).Select(Score))
+            .GroupBy(credit => credit.EntityId)
+            .Select(group => new RankedRow
             {
-                ArtistId = g.Key,
-                TotalPlays = g.Sum(row => row.lh.IsEligibleForScrobbling || row.lh.EndReason == PlaybackEndReason.Finished ? 1 : 0),
-                TotalDurationTicks = g.Sum(row => row.lh.ListenDurationTicks)
+                Id = group.Key,
+                Plays = group.Sum(credit => credit.Listen.CountsAsPlay ? 1 : 0),
+                DurationTicks = group.Sum(credit => credit.Listen.DurationTicks)
             })
-            .Where(row => row.TotalPlays > 0);
-        var rows = aggregates.Join(
-            dbContext.Artists.AsNoTracking(),
-            aggregate => aggregate.ArtistId,
-            artist => artist.Id,
-            (aggregate, artist) => new
-            {
-                aggregate.ArtistId,
-                aggregate.TotalPlays,
-                aggregate.TotalDurationTicks,
-                artist.Name
-            });
-        var rankedRows = metric == SortMetric.PlayCount
-            ? rows.OrderByDescending(row => row.TotalPlays).ThenBy(row => row.ArtistId)
-            : rows.OrderByDescending(row => row.TotalDurationTicks).ThenBy(row => row.ArtistId);
+            .Where(row => row.Plays > 0);
+        var ranked = metric == SortMetric.PlayCount
+            ? totals.OrderByDescending(row => row.Plays).ThenBy(row => row.Id)
+            : totals.OrderByDescending(row => row.DurationTicks).ThenBy(row => row.Id);
 
-        var pageRows = new List<(int Rank, Guid ArtistId, int Plays, long DurationTicks)>();
-        var globalRank = 0;
+        // A search filters the full ranking rather than ranking only the matches, so each item keeps its place.
+        var normalizedTerm = ArtistNameHelper.NormalizeStringCore(searchTerm);
+        var matching = normalizedTerm is null
+            ? null
+            : kind.Matching(dbContext, LikePatternHelper.CreateContainsPattern(normalizedTerm.ToLowerInvariant()));
+        var rows = matching is null
+            ? ranked.Select(row => new { Row = row, Matches = true })
+            : ranked.Select(row => new { Row = row, Matches = matching.Contains(row.Id) });
+
+        var pageRows = new List<RankedRow>();
+        var rank = 0;
         var totalCount = 0;
-        var safeOffset = Math.Max(0, offset);
-        var safeLimit = Math.Max(0, limit);
-        await foreach (var row in rankedRows.AsAsyncEnumerable().WithCancellation(ct).ConfigureAwait(false))
+        await foreach (var candidate in rows.AsAsyncEnumerable().WithCancellation(ct).ConfigureAwait(false))
         {
-            globalRank++;
-            if (!row.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) continue;
+            rank++;
+            if (!candidate.Matches) continue;
 
-            if (totalCount >= safeOffset && pageRows.Count < safeLimit)
-                pageRows.Add((globalRank, row.ArtistId, row.TotalPlays, row.TotalDurationTicks));
+            if (totalCount >= offset && pageRows.Count < limit)
+            {
+                candidate.Row.Rank = rank;
+                pageRows.Add(candidate.Row);
+            }
             totalCount++;
-            if (!includeTotalCount && pageRows.Count >= safeLimit) break;
         }
 
-        if (pageRows.Count == 0) return new StatisticsPage<ArtistStats>([], totalCount);
+        if (pageRows.Count == 0) return new StatisticsPage<TStats>([], totalCount);
 
-        var ids = pageRows.Select(row => row.ArtistId).ToHashSet();
-        var entities = await dbContext.Artists.AsNoTracking()
-            .Where(artist => ids.Contains(artist.Id))
-            .ToDictionaryAsync(artist => artist.Id, ct)
-            .ConfigureAwait(false);
+        var entities = await kind.Load(dbContext, pageRows.Select(row => row.Id).ToArray(), ct).ConfigureAwait(false);
         var items = pageRows
-            .Where(row => entities.ContainsKey(row.ArtistId))
-            .Select(row => new ArtistStats(entities[row.ArtistId], row.Plays, TimeSpan.FromTicks(row.DurationTicks), row.Rank))
+            .Where(row => entities.ContainsKey(row.Id))
+            .Select(row => create(entities[row.Id], row))
             .ToList();
-        return new StatisticsPage<ArtistStats>(items, totalCount);
-    }
-
-    private async Task<StatisticsPage<AlbumStats>> GetTopAlbumsSearchPageAsync(
-        TimeRange range,
-        int limit,
-        SortMetric metric,
-        int offset,
-        string searchTerm,
-        CancellationToken ct,
-        bool includeTotalCount = true)
-    {
-        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var history = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
-        var aggregates = history
-            .Join(dbContext.Songs, lh => lh.SongId, song => song.Id, (lh, song) => new { lh, song })
-            .Where(row => row.song.AlbumId != null)
-            .GroupBy(row => row.song.AlbumId)
-            .Select(g => new
-            {
-                AlbumId = g.Key,
-                TotalPlays = g.Sum(row => row.lh.IsEligibleForScrobbling || row.lh.EndReason == PlaybackEndReason.Finished ? 1 : 0),
-                TotalDurationTicks = g.Sum(row => row.lh.ListenDurationTicks)
-            })
-            .Where(row => row.TotalPlays > 0);
-        var rows = aggregates.Join(
-            dbContext.Albums.AsNoTracking(),
-            aggregate => aggregate.AlbumId,
-            album => (Guid?)album.Id,
-            (aggregate, album) => new
-            {
-                aggregate.AlbumId,
-                aggregate.TotalPlays,
-                aggregate.TotalDurationTicks,
-                album.Title
-            });
-        var rankedRows = metric == SortMetric.PlayCount
-            ? rows.OrderByDescending(row => row.TotalPlays).ThenBy(row => row.AlbumId)
-            : rows.OrderByDescending(row => row.TotalDurationTicks).ThenBy(row => row.AlbumId);
-
-        var pageRows = new List<(int Rank, Guid AlbumId, int Plays, long DurationTicks)>();
-        var globalRank = 0;
-        var totalCount = 0;
-        var safeOffset = Math.Max(0, offset);
-        var safeLimit = Math.Max(0, limit);
-        await foreach (var row in rankedRows.AsAsyncEnumerable().WithCancellation(ct).ConfigureAwait(false))
-        {
-            globalRank++;
-            if (!row.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) continue;
-
-            if (totalCount >= safeOffset && pageRows.Count < safeLimit)
-                pageRows.Add((globalRank, row.AlbumId!.Value, row.TotalPlays, row.TotalDurationTicks));
-            totalCount++;
-            if (!includeTotalCount && pageRows.Count >= safeLimit) break;
-        }
-
-        if (pageRows.Count == 0) return new StatisticsPage<AlbumStats>([], totalCount);
-
-        var ids = pageRows.Select(row => row.AlbumId).ToHashSet();
-        var entities = await dbContext.Albums.AsNoTracking()
-            .Where(album => ids.Contains(album.Id))
-            .ToDictionaryAsync(album => album.Id, ct)
-            .ConfigureAwait(false);
-        var items = pageRows
-            .Where(row => entities.ContainsKey(row.AlbumId))
-            .Select(row => new AlbumStats(entities[row.AlbumId], row.Plays, TimeSpan.FromTicks(row.DurationTicks), row.Rank))
-            .ToList();
-        return new StatisticsPage<AlbumStats>(items, totalCount);
-    }
-
-    private async Task<StatisticsPage<GenreStats>> GetTopGenresSearchPageAsync(
-        TimeRange range,
-        int limit,
-        SortMetric metric,
-        int offset,
-        string searchTerm,
-        CancellationToken ct,
-        bool includeTotalCount = true)
-    {
-        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var history = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
-        var aggregates = history
-            .Join(dbContext.Songs, lh => lh.SongId, song => song.Id, (lh, song) => new { lh, song })
-            .SelectMany(row => row.song.Genres, (row, genre) => new { row.lh, GenreId = genre.Id })
-            .GroupBy(row => row.GenreId)
-            .Select(g => new
-            {
-                GenreId = g.Key,
-                TotalPlays = g.Sum(row => row.lh.IsEligibleForScrobbling || row.lh.EndReason == PlaybackEndReason.Finished ? 1 : 0),
-                TotalDurationTicks = g.Sum(row => row.lh.ListenDurationTicks)
-            })
-            .Where(row => row.TotalPlays > 0);
-        var rows = aggregates.Join(
-            dbContext.Genres.AsNoTracking(),
-            aggregate => aggregate.GenreId,
-            genre => genre.Id,
-            (aggregate, genre) => new
-            {
-                aggregate.GenreId,
-                aggregate.TotalPlays,
-                aggregate.TotalDurationTicks,
-                genre.Name
-            });
-        var rankedRows = metric == SortMetric.PlayCount
-            ? rows.OrderByDescending(row => row.TotalPlays).ThenBy(row => row.GenreId)
-            : rows.OrderByDescending(row => row.TotalDurationTicks).ThenBy(row => row.GenreId);
-
-        var pageRows = new List<(int Rank, Guid GenreId, int Plays, long DurationTicks)>();
-        var globalRank = 0;
-        var totalCount = 0;
-        var safeOffset = Math.Max(0, offset);
-        var safeLimit = Math.Max(0, limit);
-        await foreach (var row in rankedRows.AsAsyncEnumerable().WithCancellation(ct).ConfigureAwait(false))
-        {
-            globalRank++;
-            if (!row.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) continue;
-
-            if (totalCount >= safeOffset && pageRows.Count < safeLimit)
-                pageRows.Add((globalRank, row.GenreId, row.TotalPlays, row.TotalDurationTicks));
-            totalCount++;
-            if (!includeTotalCount && pageRows.Count >= safeLimit) break;
-        }
-
-        if (pageRows.Count == 0) return new StatisticsPage<GenreStats>([], totalCount);
-
-        var ids = pageRows.Select(row => row.GenreId).ToHashSet();
-        var entities = await dbContext.Genres.AsNoTracking()
-            .Where(genre => ids.Contains(genre.Id))
-            .ToDictionaryAsync(genre => genre.Id, ct)
-            .ConfigureAwait(false);
-        var items = pageRows
-            .Where(row => entities.ContainsKey(row.GenreId))
-            .Select(row => new GenreStats(entities[row.GenreId], row.Plays, TimeSpan.FromTicks(row.DurationTicks), row.Rank))
-            .ToList();
-        return new StatisticsPage<GenreStats>(items, totalCount);
+        return new StatisticsPage<TStats>(items, totalCount);
     }
 
     private static IQueryable<ListenHistory> ApplyTimeRange(IQueryable<ListenHistory> query, TimeRange range)
@@ -543,19 +149,6 @@ public class StatisticsService : IStatisticsService
 
         var totalTicks = await query.SumAsync(lh => lh.ListenDurationTicks, ct).ConfigureAwait(false);
         return TimeSpan.FromTicks(totalTicks);
-    }
-
-    public async Task<int> GetUniqueSongsPlayedAsync(TimeRange range, CancellationToken ct = default)
-    {
-        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
-
-        return await query
-            .Where(lh => lh.IsEligibleForScrobbling || lh.EndReason == PlaybackEndReason.Finished)
-            .Select(lh => lh.SongId)
-            .Distinct()
-            .CountAsync(ct)
-            .ConfigureAwait(false);
     }
 
     public async Task<ListeningPatternStats> GetListeningPatternsAsync(TimeRange range, CancellationToken ct = default)
@@ -602,4 +195,30 @@ public class StatisticsService : IStatisticsService
             TimeSpan.FromTicks(s.DurationTicks)
         ));
     }
+
+    private sealed class ScoredListen
+    {
+        public Guid SongId { get; init; }
+        public bool CountsAsPlay { get; init; }
+        public long DurationTicks { get; init; }
+    }
+
+    private sealed class Credit
+    {
+        public Guid EntityId { get; init; }
+        public ScoredListen Listen { get; init; } = null!;
+    }
+
+    private sealed class RankedRow
+    {
+        public Guid Id { get; init; }
+        public int Plays { get; init; }
+        public long DurationTicks { get; init; }
+        public int Rank { get; set; }
+    }
+
+    private sealed record EntityKind<TEntity>(
+        Func<MusicDbContext, IQueryable<ScoredListen>, IQueryable<Credit>> Credit,
+        Func<MusicDbContext, string, IQueryable<Guid>> Matching,
+        Func<MusicDbContext, Guid[], CancellationToken, Task<Dictionary<Guid, TEntity>>> Load);
 }

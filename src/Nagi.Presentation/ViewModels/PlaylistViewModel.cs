@@ -621,15 +621,10 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             if (backingItem != null)
             {
                 backingItem.CoverImageUri = null;
-                backingItem.CoverImageUri = e.DateModified.HasValue
-                    ? ImageUriHelper.GetUriWithCacheBuster(e.CoverImageUri, e.DateModified)
-                    : ImageUriHelper.GetUriWithCacheBuster(e.CoverImageUri);
-                if (e.DateModified.HasValue)
-                {
-                    backingItem.DateModified = e.DateModified.Value;
-                    if (CurrentSortOrder is PlaylistSortOrder.DateModifiedAsc or PlaylistSortOrder.DateModifiedDesc)
-                        ApplyFilter();
-                }
+                backingItem.CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(e.CoverImageUri, e.DateModified);
+                backingItem.DateModified = e.DateModified;
+                if (CurrentSortOrder is PlaylistSortOrder.DateModifiedAsc or PlaylistSortOrder.DateModifiedDesc)
+                    ApplyFilter();
             }
         });
     }

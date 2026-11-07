@@ -12,11 +12,8 @@ namespace Nagi.Core.Services.Implementations;
 public class SmartPlaylistService : ISmartPlaylistService
 {
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
-    private readonly IFileSystemService _fileSystem;
-    private readonly IPathConfiguration _pathConfig;
+    private readonly PlaylistRules _rules;
     private readonly ILogger<SmartPlaylistService> _logger;
-    private readonly IImageProcessor _imageProcessor;
-    private readonly SmartPlaylistQueryBuilder _queryBuilder;
 
     public event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;
 
@@ -30,11 +27,8 @@ public class SmartPlaylistService : ISmartPlaylistService
         ILogger<SmartPlaylistService> logger)
     {
         _contextFactory = contextFactory;
-        _fileSystem = fileSystem;
-        _pathConfig = pathConfig;
-        _imageProcessor = imageProcessor;
+        _rules = new PlaylistRules(fileSystem, imageProcessor, pathConfig, logger);
         _logger = logger;
-        _queryBuilder = new SmartPlaylistQueryBuilder();
     }
 
     public async Task<SmartPlaylist> CreateSmartPlaylistAsync(SmartPlaylist playlist) =>
@@ -45,40 +39,34 @@ public class SmartPlaylistService : ISmartPlaylistService
 
     private async Task<SmartPlaylist?> SaveSmartPlaylistAsync(SmartPlaylist draft, bool isNew)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(draft.Name);
+        var name = PlaylistRules.NormalizeName(draft.Name);
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var playlist = isNew ? new SmartPlaylist() : await context.SmartPlaylists
             .Include(sp => sp.Rules).FirstOrDefaultAsync(sp => sp.Id == draft.Id).ConfigureAwait(false);
         if (playlist is null) return null;
 
-        playlist.Name = ArtistNameHelper.NormalizeStringCore(draft.Name) ?? draft.Name;
-        await ThrowIfNameTakenAsync(context, playlist.Name, isNew ? null : playlist.Id).ConfigureAwait(false);
+        await PlaylistRules.ThrowIfNameTakenAsync(OtherNames(context, playlist.Id), name).ConfigureAwait(false);
+        playlist.Name = name;
         playlist.Description = draft.Description;
         playlist.MatchAllRules = draft.MatchAllRules;
         playlist.SortOrder = draft.SortOrder;
-        playlist.DateModified = DateTime.UtcNow;
         if (!string.Equals(playlist.CoverImageUri, draft.CoverImageUri, StringComparison.Ordinal))
             await SetCoverAsync(playlist, draft.CoverImageUri).ConfigureAwait(false);
 
         context.SmartPlaylistRules.RemoveRange(playlist.Rules);
-        playlist.Rules = draft.Rules.Select((rule, order) => new SmartPlaylistRule
-        {
-            SmartPlaylistId = playlist.Id,
-            Field = rule.Field,
-            Operator = rule.Operator,
-            Value = ArtistNameHelper.NormalizeStringCore(SmartPlaylistRuleValue.ToStoredValue(rule.Field, rule.Operator, rule.Value)),
-            SecondValue = ArtistNameHelper.NormalizeStringCore(SmartPlaylistRuleValue.ToStoredValue(rule.Field, rule.Operator, rule.SecondValue)),
-            Order = order
-        }).ToList();
+        playlist.Rules = ToStoredRules(draft.Rules, playlist.Id);
         if (isNew)
+        {
+            playlist.DateModified = DateTime.UtcNow;
             context.SmartPlaylists.Add(playlist);
+            await context.SaveChangesAsync().ConfigureAwait(false);
+            PlaylistsChanged?.Invoke(this, EventArgs.Empty);
+        }
         else
+        {
             context.SmartPlaylistRules.AddRange(playlist.Rules);
-
-        await context.SaveChangesAsync().ConfigureAwait(false);
-        if (!isNew)
-            PlaylistUpdated?.Invoke(this, new PlaylistUpdatedEventArgs(playlist.Id, playlist.CoverImageUri, playlist.DateModified));
-        PlaylistsChanged?.Invoke(this, EventArgs.Empty);
+            await SaveChangesAsync(context, playlist).ConfigureAwait(false);
+        }
         return playlist;
     }
 
@@ -92,14 +80,7 @@ public class SmartPlaylistService : ISmartPlaylistService
         if (rowsAffected == 0) return false;
 
         _logger.LogInformation("Deleted smart playlist with ID {Id}", smartPlaylistId);
-        try
-        {
-            ImageStorageHelper.DeleteImage(_fileSystem, _pathConfig.PlaylistImageCachePath, smartPlaylistId.ToString(), ".custom");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to delete cached cover for deleted smart playlist {Id}.", smartPlaylistId);
-        }
+        _rules.DeleteCoverOfRemovedPlaylist(smartPlaylistId);
         PlaylistsChanged?.Invoke(this, EventArgs.Empty);
         return true;
     }
@@ -124,22 +105,14 @@ public class SmartPlaylistService : ISmartPlaylistService
 
     public async Task<bool> RenameSmartPlaylistAsync(Guid smartPlaylistId, string newName)
     {
-        if (string.IsNullOrWhiteSpace(newName))
-            throw new ArgumentException(Resources.Strings.Error_PlaylistNameEmpty, nameof(newName));
-
+        var normalizedName = PlaylistRules.NormalizeName(newName);
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var smartPlaylist = await context.SmartPlaylists.FindAsync(smartPlaylistId).ConfigureAwait(false);
         if (smartPlaylist is null) return false;
 
-        var normalizedName = ArtistNameHelper.NormalizeStringCore(newName) ?? newName;
-
-        await ThrowIfNameTakenAsync(context, normalizedName, smartPlaylistId).ConfigureAwait(false);
-
+        await PlaylistRules.ThrowIfNameTakenAsync(OtherNames(context, smartPlaylistId), normalizedName).ConfigureAwait(false);
         smartPlaylist.Name = normalizedName;
-        smartPlaylist.DateModified = DateTime.UtcNow;
-        await context.SaveChangesAsync().ConfigureAwait(false);
-        PlaylistUpdated?.Invoke(this, new PlaylistUpdatedEventArgs(smartPlaylist.Id, smartPlaylist.CoverImageUri, smartPlaylist.DateModified));
-        PlaylistsChanged?.Invoke(this, EventArgs.Empty);
+        await SaveChangesAsync(context, smartPlaylist).ConfigureAwait(false);
         return true;
     }
 
@@ -149,11 +122,9 @@ public class SmartPlaylistService : ISmartPlaylistService
         var smartPlaylist = await context.SmartPlaylists.FindAsync(smartPlaylistId).ConfigureAwait(false);
         if (smartPlaylist is null) return false;
 
-        await SetCoverAsync(smartPlaylist, newCoverImageUri).ConfigureAwait(false);
+        if (!await SetCoverAsync(smartPlaylist, newCoverImageUri).ConfigureAwait(false)) return false;
 
-        smartPlaylist.DateModified = DateTime.UtcNow;
-        await context.SaveChangesAsync().ConfigureAwait(false);
-        PlaylistUpdated?.Invoke(this, new PlaylistUpdatedEventArgs(smartPlaylist.Id, smartPlaylist.CoverImageUri, smartPlaylist.DateModified));
+        await SaveChangesAsync(context, smartPlaylist).ConfigureAwait(false);
         return true;
     }
 
@@ -177,14 +148,13 @@ public class SmartPlaylistService : ISmartPlaylistService
         if (smartPlaylist is null) return false;
 
         smartPlaylist.SortOrder = sortOrder;
-        smartPlaylist.DateModified = DateTime.UtcNow;
-        await context.SaveChangesAsync().ConfigureAwait(false);
+        await SaveChangesAsync(context, smartPlaylist).ConfigureAwait(false);
         return true;
     }
 
     public async Task<PagedResult<Song>> GetMatchingSongsPagedAsync(Guid smartPlaylistId, int pageNumber, int pageSize, string? searchTerm = null, SongSortOrder? sortOrder = null, CancellationToken token = default)
     {
-        SanitizePaging(ref pageNumber, ref pageSize);
+        Paging.Sanitize(ref pageNumber, ref pageSize);
 
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
         var smartPlaylist = await context.SmartPlaylists.AsNoTracking()
@@ -202,8 +172,8 @@ public class SmartPlaylistService : ISmartPlaylistService
             };
         }
 
-        var query = SongQuery.ExcludeHeavyFields(_queryBuilder.BuildQuery(context, smartPlaylist, searchTerm, sortOrder));
-        var totalCount = await _queryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm).CountAsync(token).ConfigureAwait(false);
+        var query = SongQuery.ExcludeHeavyFields(SmartPlaylistQueryBuilder.BuildQuery(context, smartPlaylist, searchTerm, sortOrder));
+        var totalCount = await SmartPlaylistQueryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm).CountAsync(token).ConfigureAwait(false);
 
         var pagedData = await query
             .Skip((pageNumber - 1) * pageSize)
@@ -219,23 +189,15 @@ public class SmartPlaylistService : ISmartPlaylistService
         };
     }
 
-    public async Task<int> GetMatchingSongCountAsync(Guid smartPlaylistId, string? searchTerm = null, CancellationToken token = default)
+    public async Task<int> GetMatchingSongCountAsync(SmartPlaylist smartPlaylist, CancellationToken token = default)
     {
+        var stored = new SmartPlaylist
+        {
+            MatchAllRules = smartPlaylist.MatchAllRules,
+            Rules = ToStoredRules(smartPlaylist.Rules, smartPlaylist.Id)
+        };
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
-        var smartPlaylist = await context.SmartPlaylists.AsNoTracking()
-            .Include(sp => sp.Rules)
-            .FirstOrDefaultAsync(sp => sp.Id == smartPlaylistId, token).ConfigureAwait(false);
-
-        if (smartPlaylist is null)
-            return 0;
-
-        return await _queryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm).CountAsync(token).ConfigureAwait(false);
-    }
-
-    public async Task<int> GetMatchingSongCountAsync(SmartPlaylist smartPlaylist, string? searchTerm = null, CancellationToken token = default)
-    {
-        await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
-        return await _queryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm).CountAsync(token).ConfigureAwait(false);
+        return await SmartPlaylistQueryBuilder.BuildCountQuery(context, stored).CountAsync(token).ConfigureAwait(false);
     }
 
     public async Task<List<Guid>> GetMatchingSongIdsAsync(Guid smartPlaylistId, string? searchTerm = null, SongSortOrder? sortOrder = null, CancellationToken token = default)
@@ -248,7 +210,7 @@ public class SmartPlaylistService : ISmartPlaylistService
         if (smartPlaylist is null)
             return new List<Guid>();
 
-        return await _queryBuilder.BuildQuery(context, smartPlaylist, searchTerm, sortOrder)
+        return await SmartPlaylistQueryBuilder.BuildQuery(context, smartPlaylist, searchTerm, sortOrder)
             .Select(s => s.Id)
             .ToListAsync(token).ConfigureAwait(false);
     }
@@ -263,41 +225,42 @@ public class SmartPlaylistService : ISmartPlaylistService
         var counts = new Dictionary<Guid, int>(smartPlaylists.Count);
         foreach (var smartPlaylist in smartPlaylists)
         {
-            counts[smartPlaylist.Id] = await _queryBuilder.BuildCountQuery(context, smartPlaylist)
+            counts[smartPlaylist.Id] = await SmartPlaylistQueryBuilder.BuildCountQuery(context, smartPlaylist)
                 .CountAsync().ConfigureAwait(false);
         }
         return counts;
     }
 
-    // Name is NOCASE-collated, so this matches the unique index rather than waiting for SaveChanges to fail.
-    private static async Task ThrowIfNameTakenAsync(MusicDbContext context, string name, Guid? exceptId)
-    {
-        if (await context.SmartPlaylists.AnyAsync(sp => sp.Id != exceptId && sp.Name == name).ConfigureAwait(false))
-            throw new PlaylistNameTakenException(name);
-    }
-
-    private async Task SetCoverAsync(SmartPlaylist playlist, string? path)
-    {
-        var cachePath = _pathConfig.PlaylistImageCachePath;
-        if (string.IsNullOrEmpty(path))
+    private static List<SmartPlaylistRule> ToStoredRules(IEnumerable<SmartPlaylistRule> rules, Guid smartPlaylistId) =>
+        rules.Select((rule, order) => new SmartPlaylistRule
         {
-            ImageStorageHelper.DeleteImage(_fileSystem, cachePath, playlist.Id.ToString(), ".custom");
-            playlist.CoverImageUri = null;
-            return;
-        }
+            SmartPlaylistId = smartPlaylistId,
+            Field = rule.Field,
+            Operator = rule.Operator,
+            Value = SmartPlaylistRuleValue.ToStoredValue(rule.Field, rule.Operator, rule.Value),
+            SecondValue = SmartPlaylistRuleValue.ToStoredValue(rule.Field, rule.Operator, rule.SecondValue),
+            Order = order
+        }).ToList();
 
-        var originalBytes = await _fileSystem.ReadAllBytesAsync(path).ConfigureAwait(false);
-        var processedBytes = await _imageProcessor.ProcessImageBytesAsync(originalBytes).ConfigureAwait(false);
-        var newPath = await ImageStorageHelper.SaveImageBytesAsync(_fileSystem, cachePath,
-            playlist.Id.ToString(), ".custom", processedBytes).ConfigureAwait(false);
-        if (newPath is not null) playlist.CoverImageUri = newPath;
-    }
-
-    private static void SanitizePaging(ref int pageNumber, ref int pageSize)
+    /// <summary>
+    ///     Saves a change to the playlist, stamping it as modified, and tells listeners.
+    /// </summary>
+    private async Task SaveChangesAsync(MusicDbContext context, SmartPlaylist playlist)
     {
-        if (pageNumber < 1) pageNumber = 1;
-        if (pageSize < 1) pageSize = 50;
-        if (pageSize > 500) pageSize = 500;
+        playlist.DateModified = DateTime.UtcNow;
+        await context.SaveChangesAsync().ConfigureAwait(false);
+        PlaylistUpdated?.Invoke(this, new PlaylistUpdatedEventArgs(playlist.Id, playlist.CoverImageUri, playlist.DateModified));
+        PlaylistsChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    private static IQueryable<string> OtherNames(MusicDbContext context, Guid smartPlaylistId) =>
+        context.SmartPlaylists.Where(sp => sp.Id != smartPlaylistId).Select(sp => sp.Name);
+
+    /// <returns>False when the cover couldn't be replaced and the current one stays.</returns>
+    private async Task<bool> SetCoverAsync(SmartPlaylist playlist, string? path)
+    {
+        var (replaced, cover) = await _rules.ReplaceCoverAsync(playlist.Id, path).ConfigureAwait(false);
+        if (replaced) playlist.CoverImageUri = cover;
+        return replaced;
+    }
 }

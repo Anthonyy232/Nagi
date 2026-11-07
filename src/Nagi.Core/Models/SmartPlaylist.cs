@@ -21,11 +21,6 @@ public class SmartPlaylist
     [MaxLength(2000)]
     public string? CoverImageUri { get; set; }
 
-    /// <summary>
-    ///     Determines how rules are combined.
-    ///     True = ALL rules must match (AND logic).
-    ///     False = ANY rule can match (OR logic).
-    /// </summary>
     public bool MatchAllRules { get; set; } = true;
 
     public SmartPlaylistSortOrder SortOrder { get; set; } = SmartPlaylistSortOrder.TitleAsc;

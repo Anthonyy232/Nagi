@@ -9,13 +9,9 @@ using Nagi.Core.Services.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
-/// <summary>
-///     Builds dynamic EF Core queries from smart playlist rules.
-///     This is the core rule engine that translates user-defined conditions into LINQ expressions.
-/// </summary>
-public class SmartPlaylistQueryBuilder
+internal static class SmartPlaylistQueryBuilder
 {
-    public IQueryable<Song> BuildQuery(MusicDbContext context, SmartPlaylist smartPlaylist, string? searchTerm = null, SongSortOrder? sortOrderOverride = null)
+    public static IQueryable<Song> BuildQuery(MusicDbContext context, SmartPlaylist smartPlaylist, string? searchTerm = null, SongSortOrder? sortOrderOverride = null)
     {
         var query = BuildCountQuery(context, smartPlaylist, searchTerm)
             .Include(s => s.Album)
@@ -25,17 +21,14 @@ public class SmartPlaylistQueryBuilder
         return SongQuery.Sort(query, sortOrderOverride ?? smartPlaylist.SortOrder.ToSongSortOrder());
     }
 
-    /// <summary>
-    ///     Builds a count-only query (more efficient than BuildQuery for counting).
-    /// </summary>
-    public IQueryable<Song> BuildCountQuery(MusicDbContext context, SmartPlaylist smartPlaylist, string? searchTerm = null)
+    public static IQueryable<Song> BuildCountQuery(MusicDbContext context, SmartPlaylist smartPlaylist, string? searchTerm = null)
     {
         var query = context.Songs.AsNoTracking();
 
         query = ApplyRuleFilters(query, smartPlaylist);
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
-            query = ApplySearchFilter(query, searchTerm);
+            query = SongQuery.Search(context, query, ArtistNameHelper.NormalizeStringCore(searchTerm)!);
 
         return query;
     }
@@ -68,8 +61,11 @@ public class SmartPlaylistQueryBuilder
         return query;
     }
 
-    private static Expression<Func<Song, bool>>? BuildRulePredicate(SmartPlaylistRule rule)
+    /// <returns>The rule's filter, or null when the rule can't filter and is ignored.</returns>
+    internal static Expression<Func<Song, bool>>? BuildRulePredicate(SmartPlaylistRule rule)
     {
+        if (!SmartPlaylistFields.Allows(rule.Field, rule.Operator)) return null;
+
         return rule.Field switch
         {
             SmartPlaylistField.Title => BuildTextPredicate(s => s.Title, rule),
@@ -236,7 +232,6 @@ public class SmartPlaylistQueryBuilder
 
     private static Expression<Func<Song, bool>>? BuildDurationPredicate(SmartPlaylistRule rule)
     {
-        // Duration values are in seconds - convert to ticks for database comparison
         if (!TryParseDuration(rule.Value, out var durationTicks)) return null;
 
         return rule.Operator switch
@@ -321,16 +316,4 @@ public class SmartPlaylistQueryBuilder
         var rightBody = ReplacingExpressionVisitor.Replace(right.Parameters[0], left.Parameters[0], right.Body);
         return Expression.Lambda<Func<Song, bool>>(Expression.OrElse(left.Body, rightBody), left.Parameters);
     }
-
-    private static IQueryable<Song> ApplySearchFilter(IQueryable<Song> query, string searchTerm)
-    {
-        var normalizedTerm = ArtistNameHelper.NormalizeStringCore(searchTerm) ?? searchTerm;
-        var term = LikePatternHelper.CreateContainsPattern(normalizedTerm);
-        return query.Where(s =>
-            EF.Functions.Like(s.Title, term, LikePatternHelper.EscapeCharacter)
-            || EF.Functions.Like(s.ArtistName, term, LikePatternHelper.EscapeCharacter)
-            || s.SongArtists.Any(sa => EF.Functions.Like(sa.Artist.Name, term, LikePatternHelper.EscapeCharacter))
-            || (s.Album != null && (EF.Functions.Like(s.Album.Title, term, LikePatternHelper.EscapeCharacter) || EF.Functions.Like(s.Album.ArtistName, term, LikePatternHelper.EscapeCharacter) || s.Album.AlbumArtists.Any(aa => EF.Functions.Like(aa.Artist.Name, term, LikePatternHelper.EscapeCharacter)))));
-    }
-
 }

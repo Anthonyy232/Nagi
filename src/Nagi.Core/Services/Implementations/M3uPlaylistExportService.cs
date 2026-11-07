@@ -23,7 +23,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
         _logger = logger;
     }
 
-    public async Task<PlaylistImportResult> ImportPlaylistAsync(string filePath, string playlistName)
+    private async Task<PlaylistImportResult> ImportPlaylistAsync(string filePath)
     {
         try
         {
@@ -75,13 +75,8 @@ public class M3uPlaylistExportService : IPlaylistExportService
             }
 
             // Nagi's playlist names are unique, so re-importing a file adds "Name (2)" rather than failing.
-            var takenNames = (await _libraryReader.GetAllPlaylistsAsync().ConfigureAwait(false))
-                .Where(existing => !existing.IsFromServer).Select(existing => existing.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
-            var baseName = ArtistNameHelper.NormalizeStringCore(playlistName) ?? playlistName;
-            var uniqueName = baseName;
-            for (var suffix = 2; takenNames.Contains(uniqueName); suffix++) uniqueName = $"{baseName} ({suffix})";
-
-            var playlist = await _playlistService.CreatePlaylistAsync(uniqueName).ConfigureAwait(false);
+            var name = await _playlistService.FindFreeNameAsync(Path.GetFileNameWithoutExtension(filePath)).ConfigureAwait(false);
+            var playlist = await _playlistService.CreatePlaylistAsync(name).ConfigureAwait(false);
             var songsAdded = false;
             try
             {
@@ -100,7 +95,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
 
             _logger.LogInformation(
                 "Imported playlist '{PlaylistName}' from {FilePath}: {Matched} matched, {Unmatched} unmatched",
-                playlistName, filePath, matchedSongIds.Count, unmatchedCount);
+                name, filePath, matchedSongIds.Count, unmatchedCount);
 
             return new PlaylistImportResult(true, matchedSongIds.Count, unmatchedCount);
         }
@@ -248,8 +243,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
 
         foreach (var filePath in filePaths)
         {
-            var playlistName = Path.GetFileNameWithoutExtension(filePath);
-            var result = await ImportPlaylistAsync(filePath, playlistName).ConfigureAwait(false);
+            var result = await ImportPlaylistAsync(filePath).ConfigureAwait(false);
 
             if (result.Success)
             {

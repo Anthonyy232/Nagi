@@ -5,7 +5,10 @@ namespace Nagi.Core.Services.Abstractions;
 
 public interface ISmartPlaylistService
 {
+    /// <inheritdoc cref="IPlaylistService.PlaylistUpdated" />
     event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;
+
+    /// <inheritdoc cref="IPlaylistService.PlaylistsChanged" />
     event EventHandler? PlaylistsChanged;
 
     /// <exception cref="PlaylistNameTakenException">Another smart playlist already has the name.</exception>
@@ -25,8 +28,12 @@ public interface ISmartPlaylistService
     Task<bool> SetSortOrderAsync(Guid smartPlaylistId, SmartPlaylistSortOrder sortOrder);
 
     Task<PagedResult<Song>> GetMatchingSongsPagedAsync(Guid smartPlaylistId, int pageNumber, int pageSize, string? searchTerm = null, SongSortOrder? sortOrder = null, CancellationToken token = default);
-    Task<int> GetMatchingSongCountAsync(Guid smartPlaylistId, string? searchTerm = null, CancellationToken token = default);
-    Task<int> GetMatchingSongCountAsync(SmartPlaylist smartPlaylist, string? searchTerm = null, CancellationToken token = default);
+
+    /// <summary>
+    ///     Counts the songs an unsaved playlist would match, reading its rule values as saving would.
+    /// </summary>
+    Task<int> GetMatchingSongCountAsync(SmartPlaylist smartPlaylist, CancellationToken token = default);
+
     Task<List<Guid>> GetMatchingSongIdsAsync(Guid smartPlaylistId, string? searchTerm = null, SongSortOrder? sortOrder = null, CancellationToken token = default);
 
     Task<Dictionary<Guid, int>> GetAllMatchingSongCountsAsync();

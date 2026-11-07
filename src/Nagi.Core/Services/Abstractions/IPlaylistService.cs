@@ -8,11 +8,24 @@ namespace Nagi.Core.Services.Abstractions;
 /// </summary>
 public interface IPlaylistService
 {
+    /// <summary>
+    ///     Raised after any change to an existing playlist or its songs, with its new cover and modification date.
+    /// </summary>
     event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;
+
+    /// <summary>
+    ///     Raised after any change a list of playlists shows: a playlist added, removed or changed.
+    /// </summary>
     event EventHandler? PlaylistsChanged;
 
     /// <exception cref="PlaylistNameTakenException">Another playlist already has the name.</exception>
     Task<Playlist> CreatePlaylistAsync(string name, string? description = null, string? coverImageUri = null);
+
+    /// <summary>
+    ///     The name as a playlist would store it, or the first free "Name (2)", "Name (3)"… when that is taken.
+    /// </summary>
+    Task<string> FindFreeNameAsync(string name);
+
     Task<bool> DeletePlaylistAsync(Guid playlistId);
     /// <exception cref="PlaylistNameTakenException">Another playlist already has the name.</exception>
     Task<bool> RenamePlaylistAsync(Guid playlistId, string newName);

@@ -65,7 +65,7 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     [NotifyPropertyChangedFor(nameof(HasNextPage), nameof(HasPreviousPage))]
     public partial bool IsPaginationEnabled { get; set; } = true;
 
-    protected int PageSize => !IsPaginationEnabled || SongsPerPage == 0 ? 500 : SongsPerPage;
+    protected int PageSize => !IsPaginationEnabled || SongsPerPage == 0 ? Paging.MaxPageSize : SongsPerPage;
 
     protected PagedListViewModelBase(
         ILibraryReader libraryReader,

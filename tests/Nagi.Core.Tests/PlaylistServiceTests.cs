@@ -59,6 +59,45 @@ public class PlaylistServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task FindFreeNameAsync_NumbersPastNagisOwnTakenNames()
+    {
+        await _playlistService.CreatePlaylistAsync("mix");
+        await _playlistService.CreatePlaylistAsync("Mix (2)");
+        var (serverPlaylist, songs) = await _dbHelper.SeedPlaylistAsync(1);
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            var stored = (await context.Playlists.FindAsync(serverPlaylist.Id))!;
+            stored.Name = "Mix (3)";
+            stored.ServerFolderId = songs[0].FolderId;
+            await context.SaveChangesAsync();
+        }
+
+        (await _playlistService.FindFreeNameAsync(" Mix ")).Should().Be("Mix (3)");
+        (await _playlistService.FindFreeNameAsync("Road Trip")).Should().Be("Road Trip");
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task ReorderingSongs_TellsPlaylistListsAboutTheNewModificationDate(bool move)
+    {
+        var (playlist, songs) = await _dbHelper.SeedPlaylistAsync(1, 2);
+        var changed = false;
+        PlaylistUpdatedEventArgs? update = null;
+        _playlistService.PlaylistsChanged += (_, _) => changed = true;
+        _playlistService.PlaylistUpdated += (_, args) => update = args;
+
+        var success = move
+            ? await _playlistService.MovePlaylistSongAsync(playlist.Id, songs[0].Id, 3)
+            : await _playlistService.UpdatePlaylistOrderAsync(playlist.Id, [songs[1].Id, songs[0].Id]);
+
+        success.Should().BeTrue();
+        changed.Should().BeTrue();
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        update!.DateModified.Should().Be((await context.Playlists.FindAsync(playlist.Id))!.DateModified);
+    }
+
+    [Fact]
     public async Task APlaylistFromAServer_CantBeChangedNorTakeANameFromNagisOwn()
     {
         var (playlist, songs) = await _dbHelper.SeedPlaylistAsync(1, 2);

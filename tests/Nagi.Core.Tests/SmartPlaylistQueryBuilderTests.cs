@@ -11,7 +11,6 @@ namespace Nagi.Core.Tests;
 public class SmartPlaylistQueryBuilderTests : IDisposable
 {
     private readonly DbContextFactoryTestHelper _dbHelper;
-    private readonly SmartPlaylistQueryBuilder _queryBuilder;
 
     private readonly Artist _artist1;
     private readonly Artist _artist2;
@@ -30,7 +29,6 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
     public SmartPlaylistQueryBuilderTests()
     {
         _dbHelper = new DbContextFactoryTestHelper();
-        _queryBuilder = new SmartPlaylistQueryBuilder();
 
         _artist1 = new Artist { Name = "The Beatles" };
         _artist2 = new Artist { Name = "Pink Floyd" };
@@ -237,7 +235,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         });
         using var context = _dbHelper.ContextFactory.CreateDbContext();
 
-        _queryBuilder.BuildQuery(context, playlist).Select(song => song.Title).ToList()
+        SmartPlaylistQueryBuilder.BuildQuery(context, playlist).Select(song => song.Title).ToList()
             .Should().BeEquivalentTo(expectedTitles);
     }
 
@@ -273,7 +271,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
 
         using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
-            var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+            var results = SmartPlaylistQueryBuilder.BuildQuery(context, playlist).ToList();
 
             results.Should().ContainSingle().Which.Title.Should().Be("Collaboration");
         }
@@ -310,7 +308,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
 
         using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
-            var results = _queryBuilder.BuildQuery(context, playlist, "Different Album Artist").ToList();
+            var results = SmartPlaylistQueryBuilder.BuildQuery(context, playlist, "Different Album Artist").ToList();
 
             results.Should().ContainSingle().Which.Title.Should().Be("Album Track");
         }
@@ -334,7 +332,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
             });
             using var context = _dbHelper.ContextFactory.CreateDbContext();
 
-            _queryBuilder.BuildQuery(context, playlist).Select(song => song.Id).ToList()
+            SmartPlaylistQueryBuilder.BuildQuery(context, playlist).Select(song => song.Id).ToList()
                 .Should().BeEquivalentTo(new[] { _song2.Id, _song5.Id });
         }
         finally
@@ -366,7 +364,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
     {
         using var context = _dbHelper.ContextFactory.CreateDbContext();
 
-        _queryBuilder.BuildQuery(context, new SmartPlaylist { SortOrder = sortOrder })
+        SmartPlaylistQueryBuilder.BuildQuery(context, new SmartPlaylist { SortOrder = sortOrder })
             .Select(song => song.Title).ToList().Should().Equal(expectedTitles);
     }
 
@@ -388,7 +386,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
             });
 
         using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+        var results = SmartPlaylistQueryBuilder.BuildQuery(context, playlist).ToList();
 
         results.Should().HaveCount(2);
         results.Should().OnlyContain(s => s.IsLoved && s.ArtistName == "The Beatles");
@@ -413,7 +411,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
             });
 
         using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+        var results = SmartPlaylistQueryBuilder.BuildQuery(context, playlist).ToList();
 
         results.Should().HaveCount(2);
     }
@@ -431,7 +429,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         });
         using var context = _dbHelper.ContextFactory.CreateDbContext();
 
-        _queryBuilder.BuildQuery(context, playlist).Count().Should().Be(5);
+        SmartPlaylistQueryBuilder.BuildQuery(context, playlist).Count().Should().Be(5);
     }
 
     [Fact]
@@ -445,7 +443,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         });
 
         using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist, searchTerm: "beatles").ToList();
+        var results = SmartPlaylistQueryBuilder.BuildQuery(context, playlist, searchTerm: "beatles").ToList();
 
         results.Should().HaveCount(2);
         results.Should().OnlyContain(s => s.ArtistName.Contains("Beatles", StringComparison.OrdinalIgnoreCase));
@@ -474,11 +472,11 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         var playlist = CreatePlaylist();
         using var context = _dbHelper.ContextFactory.CreateDbContext();
 
-        _queryBuilder.BuildQuery(context, playlist, searchTerm: "%").Select(song => song.Title)
+        SmartPlaylistQueryBuilder.BuildQuery(context, playlist, searchTerm: "%").Select(song => song.Title)
             .Should().Equal("100% Real");
-        _queryBuilder.BuildQuery(context, playlist, searchTerm: "_").Select(song => song.Title)
+        SmartPlaylistQueryBuilder.BuildQuery(context, playlist, searchTerm: "_").Select(song => song.Title)
             .Should().Equal("Under_score");
-        _queryBuilder.BuildQuery(context, playlist, searchTerm: "!").Select(song => song.Title)
+        SmartPlaylistQueryBuilder.BuildQuery(context, playlist, searchTerm: "!").Select(song => song.Title)
             .Should().Equal("Bang! Now");
     }
 
@@ -493,7 +491,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         });
 
         using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+        var results = SmartPlaylistQueryBuilder.BuildQuery(context, playlist).ToList();
 
         results.Select(song => song.Title).Should().BeEquivalentTo(
             "Something", "Another Brick in the Wall", "Let It Be", "Fly Me to the Moon");
@@ -518,7 +516,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
             });
 
         using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+        var results = SmartPlaylistQueryBuilder.BuildQuery(context, playlist).ToList();
 
         results.Should().HaveCount(3);
     }
@@ -529,7 +527,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         var playlist = new SmartPlaylist { SortOrder = SmartPlaylistSortOrder.Random };
 
         using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+        var results = SmartPlaylistQueryBuilder.BuildQuery(context, playlist).ToList();
         results.Should().HaveCount(5);
     }
 
@@ -544,7 +542,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         });
 
         using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+        var results = SmartPlaylistQueryBuilder.BuildQuery(context, playlist).ToList();
 
         results.Should().HaveCount(5);
     }
@@ -562,7 +560,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         using var context = _dbHelper.ContextFactory.CreateDbContext();
         foreach (var searchTerm in new string?[] { null, "", "   " })
         {
-            var titles = _queryBuilder.BuildQuery(context, playlist, searchTerm)
+            var titles = SmartPlaylistQueryBuilder.BuildQuery(context, playlist, searchTerm)
                 .Select(song => song.Title).ToList();
 
             titles.Should().BeEquivalentTo("Come Together", "Something", "Another Brick in the Wall");
@@ -581,7 +579,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         });
 
         using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+        var results = SmartPlaylistQueryBuilder.BuildQuery(context, playlist).ToList();
 
         results.Should().ContainSingle().Which.Title.Should().Be("Come Together");
     }
@@ -605,7 +603,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
             });
 
         using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+        var results = SmartPlaylistQueryBuilder.BuildQuery(context, playlist).ToList();
 
         results.Should().ContainSingle().Which.Title.Should().Be("Something");
     }
@@ -616,7 +614,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         var playlist = new SmartPlaylist { SortOrder = SmartPlaylistSortOrder.AlbumAsc };
 
         using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+        var results = SmartPlaylistQueryBuilder.BuildQuery(context, playlist).ToList();
 
         results.Should().HaveCount(5);
         // Null albums (sorted by track number, nulls first)
@@ -635,7 +633,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         var playlist = new SmartPlaylist { SortOrder = SmartPlaylistSortOrder.LastPlayedDesc };
 
         using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+        var results = SmartPlaylistQueryBuilder.BuildQuery(context, playlist).ToList();
 
         results.Should().HaveCount(5);
         results[0].Title.Should().Be("Come Together");
@@ -697,7 +695,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         });
 
         using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist, sortOrderOverride: SongSortOrder.TrackNumberAsc).ToList();
+        var results = SmartPlaylistQueryBuilder.BuildQuery(context, playlist, sortOrderOverride: SongSortOrder.TrackNumberAsc).ToList();
 
         results.Select(s => s.Title).Should().ContainInOrder("Compilation Track 1", "Compilation Track 2");
     }
@@ -709,7 +707,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         var playlist = new SmartPlaylist { SortOrder = SmartPlaylistSortOrder.LastPlayedAsc };
 
         using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+        var results = SmartPlaylistQueryBuilder.BuildQuery(context, playlist).ToList();
 
         results.Last().Title.Should().Be("Come Together", "played most recently (-1 day) comes last in ascending");
     }
@@ -726,7 +724,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         });
 
         using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+        var results = SmartPlaylistQueryBuilder.BuildQuery(context, playlist).ToList();
 
         results.Should().HaveCount(3);
         results.Should().NotContain(s => s.Title == "Come Together");
@@ -752,7 +750,32 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
             new SmartPlaylistRule { Field = SmartPlaylistField.Title, Operator = SmartPlaylistOperator.StartsWith, Value = "éNO" });
         using var context = fileDb.ContextFactory.CreateDbContext();
 
-        _queryBuilder.BuildQuery(context, playlist).Select(s => s.Title).ToList().Should().Equal("Énorme");
+        SmartPlaylistQueryBuilder.BuildQuery(context, playlist).Select(s => s.Title).ToList().Should().Equal("Énorme");
+    }
+
+    [Fact]
+    public void EveryOperatorTheEditorOffers_BuildsAFilter()
+    {
+        foreach (var field in Enum.GetValues<SmartPlaylistField>())
+        {
+            var kind = SmartPlaylistFields.KindOf(field);
+            foreach (var ruleOperator in SmartPlaylistFields.OperatorsFor(kind))
+            {
+                var (value, secondValue) = kind switch
+                {
+                    SmartPlaylistFieldKind.Text => ("a", "b"),
+                    SmartPlaylistFieldKind.Integer => ("1", "2"),
+                    SmartPlaylistFieldKind.Decimal => ("1.5", "2.5"),
+                    SmartPlaylistFieldKind.Date when ruleOperator is SmartPlaylistOperator.IsInTheLast
+                        or SmartPlaylistOperator.IsNotInTheLast => ("7", null),
+                    SmartPlaylistFieldKind.Date => ("2025-01-01T00:00:00.0000000Z", "2025-02-01T00:00:00.0000000Z"),
+                    _ => ((string?)null, (string?)null)
+                };
+                var rule = new SmartPlaylistRule { Field = field, Operator = ruleOperator, Value = value, SecondValue = secondValue };
+
+                SmartPlaylistQueryBuilder.BuildRulePredicate(rule).Should().NotBeNull($"{field} offers {ruleOperator}");
+            }
+        }
     }
 
     private static SmartPlaylist CreatePlaylist(params SmartPlaylistRule[] rules) => CreatePlaylist(true, rules);

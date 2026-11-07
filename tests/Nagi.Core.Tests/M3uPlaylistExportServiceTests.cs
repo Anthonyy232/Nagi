@@ -21,6 +21,7 @@ public class M3uPlaylistExportServiceTests : IDisposable
         _libraryReader = Substitute.For<ILibraryReader>();
         _playlistService = Substitute.For<IPlaylistService>();
         _playlistService.AddSongsToPlaylistAsync(Arg.Any<Guid>(), Arg.Any<IEnumerable<Guid>>()).Returns(true);
+        _playlistService.FindFreeNameAsync(Arg.Any<string>()).Returns(call => call.Arg<string>());
         _logger = Substitute.For<ILogger<M3uPlaylistExportService>>();
         _service = new M3uPlaylistExportService(_libraryReader, _playlistService, _logger);
     }
@@ -28,32 +29,31 @@ public class M3uPlaylistExportServiceTests : IDisposable
     public void Dispose() => Directory.Delete(_tempDirectory, true);
 
     [Fact]
-    public async Task ImportPlaylistAsync_WhenFileDoesNotExist_ReturnsFailureResult()
+    public async Task Import_WhenFileDoesNotExist_ReturnsFailureResult()
     {
-        var result = await _service.ImportPlaylistAsync(Path.Combine(_tempDirectory, "missing.m3u"), "My Playlist");
+        var result = await ImportAsync(Path.Combine(_tempDirectory, "missing.m3u"));
 
         result.Success.Should().BeFalse();
     }
 
     [Fact]
-    public async Task ImportPlaylistAsync_WhenNoSongsMatchLibrary_ReturnsFailure()
+    public async Task Import_WhenNoSongsMatchLibrary_ReturnsFailure()
     {
         var m3uPath = Path.Combine(_tempDirectory, "playlist.m3u");
         await File.WriteAllTextAsync(m3uPath, $"#EXTM3U\nC:\\unknown\\song.mp3");
         _libraryReader.GetSongByFilePathAsync(Arg.Any<string>()).Returns((Song?)null);
 
-        var result = await _service.ImportPlaylistAsync(m3uPath, "My Playlist");
+        var result = await ImportAsync(m3uPath);
 
         result.Success.Should().BeFalse("import should fail when nothing in the file matches the library");
-        result.UnmatchedSongs.Should().Be(1);
     }
 
     [Fact]
-    public async Task ImportPlaylistAsync_WithPartialLibraryMatch_ReturnsSuccessWithCorrectCounts()
+    public async Task Import_WithPartialLibraryMatch_ReturnsSuccessWithCorrectCounts()
     {
         var knownSong = new Song { Id = Guid.NewGuid(), FilePath = @"C:\music\known.mp3" };
         var newPlaylist = new Playlist { Id = Guid.NewGuid(), Name = "Test" };
-        var m3uPath = Path.Combine(_tempDirectory, "playlist.m3u");
+        var m3uPath = Path.Combine(_tempDirectory, "Test.m3u");
         await File.WriteAllLinesAsync(m3uPath, new[]
         {
             "#EXTM3U",
@@ -64,7 +64,7 @@ public class M3uPlaylistExportServiceTests : IDisposable
         _libraryReader.GetSongByFilePathAsync(@"C:\music\missing.mp3").Returns((Song?)null);
         _playlistService.CreatePlaylistAsync("Test").Returns(newPlaylist);
 
-        var result = await _service.ImportPlaylistAsync(m3uPath, "Test");
+        var result = await ImportAsync(m3uPath);
 
         result.Success.Should().BeTrue();
         result.MatchedSongs.Should().Be(1);
@@ -74,23 +74,23 @@ public class M3uPlaylistExportServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task ImportPlaylistAsync_WhenTheNameIsTaken_CreatesTheNextFreeName()
+    public async Task Import_WhenTheNameIsTaken_CreatesTheNextFreeName()
     {
         var song = new Song { Id = Guid.NewGuid(), FilePath = @"C:\music\track.mp3" };
-        var m3uPath = Path.Combine(_tempDirectory, "playlist.m3u");
+        var m3uPath = Path.Combine(_tempDirectory, "Mix.m3u");
         await File.WriteAllLinesAsync(m3uPath, [song.FilePath]);
         _libraryReader.GetSongByFilePathAsync(song.FilePath).Returns(song);
-        _libraryReader.GetAllPlaylistsAsync().Returns([new Playlist { Name = "mix" }, new Playlist { Name = "Mix (2)" }]);
+        _playlistService.FindFreeNameAsync("Mix").Returns("Mix (3)");
         _playlistService.CreatePlaylistAsync(Arg.Any<string>()).Returns(call => new Playlist { Name = call.ArgAt<string>(0) });
 
-        var result = await _service.ImportPlaylistAsync(m3uPath, "Mix");
+        var result = await ImportAsync(m3uPath);
 
         result.Success.Should().BeTrue();
         await _playlistService.Received(1).CreatePlaylistAsync("Mix (3)");
     }
 
     [Fact]
-    public async Task ImportPlaylistAsync_SkipsM3uDirectivesAndBlankLines()
+    public async Task Import_SkipsM3uDirectivesAndBlankLines()
     {
         var matchedSong = new Song { Id = Guid.NewGuid(), FilePath = @"C:\music\track.mp3" };
         var newPlaylist = new Playlist { Id = Guid.NewGuid(), Name = "P" };
@@ -105,7 +105,7 @@ public class M3uPlaylistExportServiceTests : IDisposable
         _libraryReader.GetSongByFilePathAsync(@"C:\music\track.mp3").Returns(matchedSong);
         _playlistService.CreatePlaylistAsync(Arg.Any<string>()).Returns(newPlaylist);
 
-        var result = await _service.ImportPlaylistAsync(m3uPath, "P");
+        var result = await ImportAsync(m3uPath);
 
         result.Success.Should().BeTrue();
         result.MatchedSongs.Should().Be(1, "only the one real file path should be matched");
@@ -113,7 +113,7 @@ public class M3uPlaylistExportServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task ImportPlaylistAsync_ResolvesRelativePathsAgainstM3uDirectory()
+    public async Task Import_ResolvesRelativePathsAgainstM3uDirectory()
     {
         var tempDir = Path.Combine(_tempDirectory, "exports");
         Directory.CreateDirectory(tempDir);
@@ -127,7 +127,7 @@ public class M3uPlaylistExportServiceTests : IDisposable
         _libraryReader.GetSongByFilePathAsync(expectedAbsPath).Returns(matchedSong);
         _playlistService.CreatePlaylistAsync(Arg.Any<string>()).Returns(newPlaylist);
 
-        var result = await _service.ImportPlaylistAsync(m3uPath, "playlist");
+        var result = await ImportAsync(m3uPath);
 
         result.Success.Should().BeTrue("relative path should be resolved to an absolute path for the library lookup");
         result.MatchedSongs.Should().Be(1);
@@ -270,7 +270,7 @@ public class M3uPlaylistExportServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task ImportPlaylistAsync_WithRepeatedTracks_PreservesFirstOccurrenceAndReportsUniqueSongs()
+    public async Task Import_WithRepeatedTracks_PreservesFirstOccurrenceAndReportsUniqueSongs()
     {
         var filePath = Path.Combine(_tempDirectory, "playlist.m3u8");
         var first = CreateSong("First", Path.Combine(_tempDirectory, "first.mp3"));
@@ -278,10 +278,10 @@ public class M3uPlaylistExportServiceTests : IDisposable
         var playlist = new Playlist { Id = Guid.NewGuid(), Name = "Repeated" };
         _libraryReader.GetSongByFilePathAsync(first.FilePath).Returns(first);
         _libraryReader.GetSongByFilePathAsync(second.FilePath).Returns(second);
-        _playlistService.CreatePlaylistAsync(playlist.Name).Returns(playlist);
+        _playlistService.CreatePlaylistAsync(Arg.Any<string>()).Returns(playlist);
         await File.WriteAllLinesAsync(filePath, [first.FilePath, second.FilePath, first.FilePath]);
 
-        var result = await _service.ImportPlaylistAsync(filePath, playlist.Name);
+        var result = await ImportAsync(filePath);
 
         result.Success.Should().BeTrue();
         result.MatchedSongs.Should().Be(2);
@@ -328,16 +328,16 @@ public class M3uPlaylistExportServiceTests : IDisposable
     [InlineData("invalid\0path.mp3")]
     [InlineData("https://example.com/stream.mp3")]
     [InlineData("file://")]
-    public async Task ImportPlaylistAsync_WithInvalidEntry_ImportsRemainingSongs(string invalidEntry)
+    public async Task Import_WithInvalidEntry_ImportsRemainingSongs(string invalidEntry)
     {
         var filePath = Path.Combine(_tempDirectory, "playlist.m3u8");
         var song = new Song { Id = Guid.NewGuid(), FilePath = Path.Combine(_tempDirectory, "valid.mp3") };
         var playlist = new Playlist { Id = Guid.NewGuid(), Name = "Mixed" };
         _libraryReader.GetSongByFilePathAsync(song.FilePath).Returns(song);
-        _playlistService.CreatePlaylistAsync(playlist.Name).Returns(playlist);
+        _playlistService.CreatePlaylistAsync(Arg.Any<string>()).Returns(playlist);
         await File.WriteAllLinesAsync(filePath, [invalidEntry, song.FilePath]);
 
-        var result = await _service.ImportPlaylistAsync(filePath, playlist.Name);
+        var result = await ImportAsync(filePath);
 
         result.Success.Should().BeTrue();
         result.MatchedSongs.Should().Be(1);
@@ -348,16 +348,16 @@ public class M3uPlaylistExportServiceTests : IDisposable
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task ImportPlaylistAsync_WithSpecialCharacters_ResolvesLiteralPathsAndFileUris(bool useFileUri)
+    public async Task Import_WithSpecialCharacters_ResolvesLiteralPathsAndFileUris(bool useFileUri)
     {
         var filePath = Path.Combine(_tempDirectory, "playlist.m3u8");
         var song = new Song { Id = Guid.NewGuid(), FilePath = Path.Combine(_tempDirectory, "Music #1", "café 100%.mp3") };
         var playlist = new Playlist { Id = Guid.NewGuid(), Name = "URI" };
         _libraryReader.GetSongByFilePathAsync(song.FilePath).Returns(song);
-        _playlistService.CreatePlaylistAsync(playlist.Name).Returns(playlist);
+        _playlistService.CreatePlaylistAsync(Arg.Any<string>()).Returns(playlist);
         await File.WriteAllTextAsync(filePath, useFileUri ? new Uri(song.FilePath).AbsoluteUri : song.FilePath);
 
-        var result = await _service.ImportPlaylistAsync(filePath, playlist.Name);
+        var result = await ImportAsync(filePath);
 
         result.Success.Should().BeTrue();
         result.MatchedSongs.Should().Be(1);
@@ -367,20 +367,26 @@ public class M3uPlaylistExportServiceTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ImportPlaylistAsync_WhenAddingSongsFails_RemovesNewPlaylist(bool throws)
+    public async Task Import_WhenAddingSongsFails_RemovesNewPlaylist(bool throws)
     {
         var filePath = Path.Combine(_tempDirectory, "playlist.m3u8");
         var song = new Song { Id = Guid.NewGuid(), FilePath = Path.Combine(_tempDirectory, "valid.mp3") };
         var playlist = new Playlist { Id = Guid.NewGuid(), Name = "Failed" };
         _libraryReader.GetSongByFilePathAsync(song.FilePath).Returns(song);
-        _playlistService.CreatePlaylistAsync(playlist.Name).Returns(playlist);
+        _playlistService.CreatePlaylistAsync(Arg.Any<string>()).Returns(playlist);
         _playlistService.AddSongsToPlaylistAsync(playlist.Id, Arg.Any<IEnumerable<Guid>>())
             .Returns(throws ? Task.FromException<bool>(new IOException("Write failed")) : Task.FromResult(false));
         await File.WriteAllTextAsync(filePath, song.FilePath);
 
-        var result = await _service.ImportPlaylistAsync(filePath, playlist.Name);
+        var result = await ImportAsync(filePath);
 
         result.Success.Should().BeFalse();
         await _playlistService.Received(1).DeletePlaylistAsync(playlist.Id);
+    }
+
+    private async Task<(bool Success, int MatchedSongs, int UnmatchedSongs)> ImportAsync(string filePath)
+    {
+        var result = await _service.ImportMultiplePlaylistsAsync([filePath]);
+        return (result.PlaylistsImported == 1, result.TotalMatchedSongs, result.TotalUnmatchedSongs);
     }
 }

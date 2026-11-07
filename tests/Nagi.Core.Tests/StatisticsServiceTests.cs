@@ -14,7 +14,8 @@ public class StatisticsServiceTests : IDisposable
 
     public StatisticsServiceTests()
     {
-        _dbHelper = new DbContextFactoryTestHelper();
+        // Search folds case with Nagi's Unicode lower(), which EF can't register on the already-open in-memory database.
+        _dbHelper = new DbContextFactoryTestHelper(useFileDatabase: true);
         _statisticsService = new StatisticsService(_dbHelper.ContextFactory);
     }
 
@@ -50,7 +51,7 @@ public class StatisticsServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var result = (await _statisticsService.GetTopSongsAsync(new TimeRange(null, null), 10, SortMetric.PlayCount)).ToList();
+        var result = (await _statisticsService.GetTopSongsAsync(new TimeRange(null, null), SortMetric.PlayCount, 0, 10)).Items;
 
         if (countsAsPlay)
         {
@@ -66,7 +67,7 @@ public class StatisticsServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetTopAlbumsPageAsync_AlbumlessListensDoNotConsumePageSlots()
+    public async Task GetTopAlbumsAsync_AlbumlessListensDoNotConsumePageSlots()
     {
         var folder = new Folder { Name = "Test Folder", Path = "C:\\Music" };
         var artist = new Artist { Name = "Artist A" };
@@ -110,8 +111,8 @@ public class StatisticsServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var result = await _statisticsService.GetTopAlbumsPageAsync(
-            new TimeRange(null, null), 2, SortMetric.PlayCount, 0, null);
+        var result = await _statisticsService.GetTopAlbumsAsync(
+            new TimeRange(null, null), SortMetric.PlayCount, 0, 2);
 
         result.Items.Select(item => item.Album.Id).Should().BeEquivalentTo(new[] { firstAlbum.Id, secondAlbum.Id });
         result.TotalCount.Should().Be(2);
@@ -152,7 +153,7 @@ public class StatisticsServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var topArtists = (await _statisticsService.GetTopArtistsAsync(new TimeRange(null, null), 10, SortMetric.Duration)).ToList();
+        var topArtists = (await _statisticsService.GetTopArtistsAsync(new TimeRange(null, null), SortMetric.Duration, 0, 10)).Items;
 
         topArtists.Select(a => a.Artist.Id).Should().Contain(activeArtist.Id);
         topArtists.Select(a => a.Artist.Id).Should().NotContain(abandonedArtist.Id);
@@ -182,7 +183,7 @@ public class StatisticsServiceTests : IDisposable
         }
 
         var range = boundaryIsStart ? new TimeRange(boundary, null) : new TimeRange(null, boundary);
-        var result = (await _statisticsService.GetTopSongsAsync(range, 10, SortMetric.PlayCount)).ToList();
+        var result = (await _statisticsService.GetTopSongsAsync(range, SortMetric.PlayCount, 0, 10)).Items;
 
         result.Should().ContainSingle().Which.Song.Id.Should().Be(boundaryIsStart ? newSong.Id : oldSong.Id);
     }
@@ -211,17 +212,18 @@ public class StatisticsServiceTests : IDisposable
         }
 
         var range = new TimeRange(null, null);
-        (await _statisticsService.GetTopSongsAsync(range, 10, SortMetric.PlayCount)).First().Song.Id.Should().Be(highPlaysSong.Id);
-        (await _statisticsService.GetTopSongsAsync(range, 10, SortMetric.Duration)).First().Song.Id.Should().Be(longDurationSong.Id);
-        (await _statisticsService.GetTopAlbumsAsync(range, 10, SortMetric.PlayCount)).First().Album.Id.Should().Be(highPlaysAlbum.Id);
-        (await _statisticsService.GetTopAlbumsAsync(range, 10, SortMetric.Duration)).First().Album.Id.Should().Be(longDurationAlbum.Id);
-        (await _statisticsService.GetTopGenresAsync(range, 10, SortMetric.PlayCount)).First().Genre.Id.Should().Be(highPlaysGenre.Id);
-        (await _statisticsService.GetTopGenresAsync(range, 10, SortMetric.Duration)).First().Genre.Id.Should().Be(longDurationGenre.Id);
+        (await _statisticsService.GetTopSongsAsync(range, SortMetric.PlayCount, 0, 10)).Items[0].Song.Id.Should().Be(highPlaysSong.Id);
+        (await _statisticsService.GetTopSongsAsync(range, SortMetric.Duration, 0, 10)).Items[0].Song.Id.Should().Be(longDurationSong.Id);
+        (await _statisticsService.GetTopAlbumsAsync(range, SortMetric.PlayCount, 0, 10)).Items[0].Album.Id.Should().Be(highPlaysAlbum.Id);
+        (await _statisticsService.GetTopAlbumsAsync(range, SortMetric.Duration, 0, 10)).Items[0].Album.Id.Should().Be(longDurationAlbum.Id);
+        (await _statisticsService.GetTopGenresAsync(range, SortMetric.PlayCount, 0, 10)).Items[0].Genre.Id.Should().Be(highPlaysGenre.Id);
+        (await _statisticsService.GetTopGenresAsync(range, SortMetric.Duration, 0, 10)).Items[0].Genre.Id.Should().Be(longDurationGenre.Id);
     }
 
     [Theory]
     [InlineData(null, 3, "Other")]
     [InlineData("mätch", 2, "MÄTCH A")]
+    [InlineData("mätch", 2, "MÄTCH A")]
     public async Task TopItemPages_FilterAndCountDistinctQualifyingEntitiesBeyondPageSize(
         string? search, int expectedCount, string expectedTopName)
     {
@@ -258,16 +260,16 @@ public class StatisticsServiceTests : IDisposable
         }
 
         var range = new TimeRange(null, null);
-        var songPage = await _statisticsService.GetTopSongsPageAsync(range, 1, SortMetric.PlayCount, 0, search);
+        var songPage = await _statisticsService.GetTopSongsAsync(range, SortMetric.PlayCount, 0, 1, search);
         songPage.TotalCount.Should().Be(expectedCount);
         songPage.Items.Should().ContainSingle().Which.Song.Title.Should().Be(expectedTopName);
-        var artistPage = await _statisticsService.GetTopArtistsPageAsync(range, 1, SortMetric.PlayCount, 0, search);
+        var artistPage = await _statisticsService.GetTopArtistsAsync(range, SortMetric.PlayCount, 0, 1, search);
         artistPage.TotalCount.Should().Be(expectedCount);
         artistPage.Items.Should().ContainSingle().Which.Artist.Name.Should().Be(expectedTopName);
-        var albumPage = await _statisticsService.GetTopAlbumsPageAsync(range, 1, SortMetric.PlayCount, 0, search);
+        var albumPage = await _statisticsService.GetTopAlbumsAsync(range, SortMetric.PlayCount, 0, 1, search);
         albumPage.TotalCount.Should().Be(expectedCount);
         albumPage.Items.Should().ContainSingle().Which.Album.Title.Should().Be(expectedTopName);
-        var genrePage = await _statisticsService.GetTopGenresPageAsync(range, 1, SortMetric.PlayCount, 0, search);
+        var genrePage = await _statisticsService.GetTopGenresAsync(range, SortMetric.PlayCount, 0, 1, search);
         genrePage.TotalCount.Should().Be(expectedCount);
         genrePage.Items.Should().ContainSingle().Which.Genre.Name.Should().Be(expectedTopName);
     }
@@ -390,15 +392,48 @@ public class StatisticsServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var page2 = (await _statisticsService.GetTopSongsAsync(new TimeRange(null, null), limit: 2, metric: SortMetric.PlayCount, offset: 2)).ToList();
+        var page2 = (await _statisticsService.GetTopSongsAsync(new TimeRange(null, null), SortMetric.PlayCount, offset: 2, limit: 2)).Items;
 
         page2.Should().HaveCount(2);
         page2[0].GlobalRank.Should().Be(3, "first item on page 2 (offset=2) should have global rank 3");
         page2[1].GlobalRank.Should().Be(4, "second item on page 2 should have global rank 4");
     }
 
+    [Theory]
+    [InlineData(SortMetric.PlayCount)]
+    [InlineData(SortMetric.Duration)]
+    public async Task GetTopSongsAsync_BreaksTiesById(SortMetric metric)
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var artist = new Artist { Name = "A" };
+        var songs = new[] { 3, 1, 2 }.Select(i =>
+        {
+            var song = CreateSong(folder, artist, $"Song {i}", null, TimeSpan.FromMinutes(3));
+            song.Id = Guid.Parse($"00000000-0000-0000-0000-00000000000{i}");
+            return song;
+        }).ToArray();
+
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Songs.AddRange(songs);
+            context.ListenHistory.AddRange(songs.Select(song => new ListenHistory
+            {
+                Song = song,
+                ListenTimestampUtc = DateTime.UtcNow,
+                EndReason = PlaybackEndReason.Finished,
+                ListenDurationTicks = song.DurationTicks
+            }));
+            await context.SaveChangesAsync();
+        }
+
+        var result = await _statisticsService.GetTopSongsAsync(new TimeRange(null, null), metric, 0, 10);
+
+        result.Items.Select(item => (item.Song.Title, item.GlobalRank))
+            .Should().Equal(("Song 1", 1), ("Song 2", 2), ("Song 3", 3));
+    }
+
     [Fact]
-    public async Task GetTopSongsPageAsync_SearchReturnsCountAndPreservesGlobalRank()
+    public async Task GetTopSongsAsync_SearchReturnsCountAndPreservesGlobalRank()
     {
         var folder = new Folder { Name = "F", Path = "C:\\Music" };
         var artist = new Artist { Name = "A" };
@@ -420,7 +455,7 @@ public class StatisticsServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var result = await _statisticsService.GetTopSongsPageAsync(
+        var result = await _statisticsService.GetTopSongsAsync(
             new TimeRange(null, null),
             limit: 1,
             metric: SortMetric.PlayCount,

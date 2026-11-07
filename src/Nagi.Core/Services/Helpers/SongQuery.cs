@@ -1,5 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Nagi.Core.Data;
+using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
 
@@ -7,6 +9,37 @@ namespace Nagi.Core.Services.Helpers;
 
 internal static class SongQuery
 {
+    /// <summary>
+    ///     The <paramref name="songs" /> whose title, artists, album, year or genres contain
+    ///     <paramref name="normalizedTerm" />.
+    /// </summary>
+    public static IQueryable<Song> Search(MusicDbContext context, IQueryable<Song> songs, string normalizedTerm)
+    {
+        var term = LikePatternHelper.CreateContainsPattern(normalizedTerm);
+        var artistIds = context.Artists
+            .Where(artist => EF.Functions.Like(artist.Name, term, LikePatternHelper.EscapeCharacter))
+            .Select(artist => artist.Id);
+        var songArtistIds = context.SongArtists.Where(sa => artistIds.Contains(sa.ArtistId)).Select(sa => sa.SongId);
+        var albumIds = context.Albums
+            .Where(album => EF.Functions.Like(album.Title, term, LikePatternHelper.EscapeCharacter)
+                            || EF.Functions.Like(album.ArtistName, term, LikePatternHelper.EscapeCharacter))
+            .Select(album => (Guid?)album.Id)
+            .Union(context.AlbumArtists.Where(aa => artistIds.Contains(aa.ArtistId)).Select(aa => (Guid?)aa.AlbumId));
+        var genreSongIds = context.Genres
+            .Where(genre => EF.Functions.Like(genre.Name, term, LikePatternHelper.EscapeCharacter))
+            .SelectMany(genre => genre.Songs).Select(song => song.Id);
+
+        return songs
+            .Where(s =>
+                EF.Functions.Like(s.Title, term, LikePatternHelper.EscapeCharacter)
+                || EF.Functions.Like(s.ArtistName, term, LikePatternHelper.EscapeCharacter)
+                || songArtistIds.Contains(s.Id)
+                || albumIds.Contains(s.AlbumId)
+                || (s.Year != null && EF.Functions.Like(s.Year.ToString(), term, LikePatternHelper.EscapeCharacter))
+                || genreSongIds.Contains(s.Id)
+            );
+    }
+
     public static IOrderedQueryable<Song> Sort(IQueryable<Song> query, SongSortOrder sortOrder, bool ignoreArticles = false)
     {
         Expression<Func<Song, string>> title = ignoreArticles ? s => s.SortTitle : s => s.Title;

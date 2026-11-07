@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using System.Globalization;
 using Nagi.Presentation.ViewModels;
@@ -9,12 +10,12 @@ namespace Nagi.Presentation.Tests;
 public class RuleViewModelTests
 {
     [Theory]
-    [InlineData(SmartPlaylistField.IsLoved, SmartPlaylistOperator.IsTrue, "", null)]
+    [InlineData(SmartPlaylistField.IsLoved, SmartPlaylistOperator.IsTrue, null, null)]
     [InlineData(SmartPlaylistField.Grouping, SmartPlaylistOperator.Contains, "live", null)]
     [InlineData(SmartPlaylistField.Year, SmartPlaylistOperator.IsInRange, "1990", "1999")]
     [InlineData(SmartPlaylistField.DateAdded, SmartPlaylistOperator.IsInRange, "2025-01-01T00:00:00.0000000", "2025-12-31T00:00:00.0000000")]
     public void ExistingRule_RoundTripsWithoutChangingItsMeaning(
-        SmartPlaylistField field, SmartPlaylistOperator ruleOperator, string value, string? secondValue)
+        SmartPlaylistField field, SmartPlaylistOperator ruleOperator, string? value, string? secondValue)
     {
         var viewModel = new RuleViewModel(new SmartPlaylistRule
         {
@@ -24,7 +25,7 @@ public class RuleViewModelTests
             SecondValue = secondValue
         });
 
-        var saved = viewModel.ToSmartPlaylistRule();
+        var saved = Stored(viewModel.ToSmartPlaylistRule());
 
         saved.Field.Should().Be(field);
         saved.Operator.Should().Be(ruleOperator);
@@ -85,7 +86,7 @@ public class RuleViewModelTests
         viewModel.SelectedField = null!;
         viewModel.SelectedOperator = null!;
 
-        var saved = viewModel.ToSmartPlaylistRule();
+        var saved = Stored(viewModel.ToSmartPlaylistRule());
         saved.Field.Should().Be(original.Field);
         saved.Operator.Should().Be(original.Operator);
         saved.Value.Should().Be(original.Value);
@@ -108,12 +109,12 @@ public class RuleViewModelTests
                 Value = value,
                 SecondValue = upper
             });
-            var saved = editor.ToSmartPlaylistRule();
+            var saved = Stored(editor.ToSmartPlaylistRule());
             saved.Value.Should().Be(storedValue);
             saved.SecondValue.Should().Be(storedUpper);
 
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
-            var reopened = new RuleViewModel(saved).ToSmartPlaylistRule();
+            var reopened = Stored(new RuleViewModel(saved).ToSmartPlaylistRule());
             reopened.Value.Should().Be(storedValue);
             reopened.SecondValue.Should().Be(storedUpper);
         }
@@ -122,4 +123,13 @@ public class RuleViewModelTests
             CultureInfo.CurrentCulture = originalCulture;
         }
     }
+
+    // What the smart playlist service saves for a rule from the editor.
+    private static SmartPlaylistRule Stored(SmartPlaylistRule rule) => new()
+    {
+        Field = rule.Field,
+        Operator = rule.Operator,
+        Value = SmartPlaylistRuleValue.ToStoredValue(rule.Field, rule.Operator, rule.Value),
+        SecondValue = SmartPlaylistRuleValue.ToStoredValue(rule.Field, rule.Operator, rule.SecondValue)
+    };
 }

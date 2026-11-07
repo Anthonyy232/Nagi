@@ -71,7 +71,7 @@ public class SmartPlaylistEditorViewModelTests : IDisposable
     {
         _service.CreateSmartPlaylistAsync(Arg.Any<SmartPlaylist>()).Returns(call => call.Arg<SmartPlaylist>());
         _viewModel.Initialize(null);
-        _viewModel.Name = " Favourites ";
+        _viewModel.Name = "Favourites";
         _viewModel.AddRuleCommand.Execute(null);
         _viewModel.AddRuleCommand.Execute(null);
         _viewModel.Rules[1].SelectedField = RuleViewModel.AvailableFields.Single(f => f.Field == SmartPlaylistField.Album);
@@ -115,7 +115,7 @@ public class SmartPlaylistEditorViewModelTests : IDisposable
     [Fact]
     public async Task EditingRules_RecountsMatchesAfterTheDebounce()
     {
-        _service.GetMatchingSongCountAsync(Arg.Any<SmartPlaylist>(), token: Arg.Any<CancellationToken>()).Returns(7);
+        _service.GetMatchingSongCountAsync(Arg.Any<SmartPlaylist>(), Arg.Any<CancellationToken>()).Returns(7);
         _viewModel.Initialize(new SmartPlaylist { Name = "Mix" });
         _time.Advance(TimeSpan.FromMilliseconds(300));
         await _viewModel.PendingMatchCount.WaitAsync(TimeSpan.FromSeconds(5));

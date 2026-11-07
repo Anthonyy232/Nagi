@@ -170,12 +170,27 @@ public class SmartPlaylistServiceTests : IDisposable
         (await _service.UpdateSmartPlaylistCoverAsync(id, @"C:\cover.jpg")).Should().BeFalse();
         (await _service.SetSortOrderAsync(id, SmartPlaylistSortOrder.PlayCountDesc)).Should().BeFalse();
         (await _service.UpdateSmartPlaylistAsync(new SmartPlaylist { Id = id, Name = "Missing" })).Should().BeNull();
-        (await _service.GetMatchingSongCountAsync(id)).Should().Be(0);
+        (await CountAsync(id)).Should().Be(0);
         (await _service.GetMatchingSongIdsAsync(id)).Should().BeEmpty();
         var page = await _service.GetMatchingSongsPagedAsync(id, 1, 10);
         page.Items.Should().BeEmpty();
         page.TotalCount.Should().Be(0);
         (await _service.GetAllMatchingSongCountsAsync()).Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task SetSortOrderAsync_TellsPlaylistListsAboutTheNewModificationDate()
+    {
+        var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Sorted" });
+        var changed = false;
+        PlaylistUpdatedEventArgs? update = null;
+        _service.PlaylistsChanged += (_, _) => changed = true;
+        _service.PlaylistUpdated += (_, args) => update = args;
+
+        (await _service.SetSortOrderAsync(playlist.Id, SmartPlaylistSortOrder.PlayCountDesc)).Should().BeTrue();
+
+        changed.Should().BeTrue();
+        update!.DateModified.Should().Be((await _service.GetSmartPlaylistByIdAsync(playlist.Id))!.DateModified);
     }
 
     [Fact]
@@ -320,6 +335,16 @@ public class SmartPlaylistServiceTests : IDisposable
         songs.Should().ContainSingle().Which.Title.Should().Be("Song One");
     }
 
+    [Fact]
+    public async Task GetMatchingSongsPagedAsync_SearchMatchesGenresLikeTheLibrary()
+    {
+        var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Genre Search" });
+
+        var songs = (await _service.GetMatchingSongsPagedAsync(playlist.Id, 1, 50, "pop")).Items;
+
+        songs.Should().ContainSingle().Which.Title.Should().Be("Song Two");
+    }
+
     [Theory]
     [InlineData(1, "Song One", "Song Three")]
     [InlineData(2, "Song Two")]
@@ -344,31 +369,11 @@ public class SmartPlaylistServiceTests : IDisposable
         var result = await _service.GetMatchingSongsPagedAsync(playlist!.Id, 0, -5);
 
         result.PageNumber.Should().Be(1);
-        result.PageSize.Should().Be(50);
+        result.PageSize.Should().Be(1);
     }
 
     [Fact]
-    public async Task GetMatchingSongCountAsync_ById_ReturnsCorrectCount()
-    {
-        var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist
-        {
-            Name = "Count Test",
-            Rules =
-            [
-                new SmartPlaylistRule { Field = SmartPlaylistField.PlayCount, Operator = SmartPlaylistOperator.GreaterThan, Value = "75" }
-            ]
-        });
-
-        var cancelledCount = () => _service.GetMatchingSongCountAsync(playlist.Id, token: new CancellationToken(true));
-        await cancelledCount.Should().ThrowAsync<OperationCanceledException>();
-
-        var count = await _service.GetMatchingSongCountAsync(playlist.Id);
-
-        count.Should().Be(2);
-    }
-
-    [Fact]
-    public async Task GetMatchingSongCountAsync_ByObject_ReturnsCorrectCount()
+    public async Task GetMatchingSongCountAsync_ReturnsCorrectCount()
     {
         var playlist = new SmartPlaylist
         {
@@ -477,7 +482,7 @@ public class SmartPlaylistServiceTests : IDisposable
         saved.Rules.First().Value.Should().Be("Rock");
         draft.Rules.First().Id.Should().Be(originalRuleId);
         draft.Rules.First().Value.Should().Be(" Rock ");
-        (await _service.GetMatchingSongCountAsync(saved.Id)).Should().Be(2);
+        (await CountAsync(saved.Id)).Should().Be(2);
     }
 
     [Theory]
@@ -556,7 +561,23 @@ public class SmartPlaylistServiceTests : IDisposable
         update!.DateModified.Should().Be(fetched.DateModified);
         using var context = _dbHelper.ContextFactory.CreateDbContext();
         (await context.SmartPlaylistRules.AnyAsync(rule => rule.Id == oldRuleId)).Should().BeFalse();
-        (await _service.GetMatchingSongCountAsync(saved.Id)).Should().Be(1);
+        (await CountAsync(saved.Id)).Should().Be(1);
+    }
+
+    [Fact]
+    public async Task GetMatchingSongCountAsync_DraftCountsWhatTheSavedPlaylistMatches()
+    {
+        var draft = new SmartPlaylist
+        {
+            Name = "Draft",
+            Rules = [new SmartPlaylistRule { Field = SmartPlaylistField.Title, Operator = SmartPlaylistOperator.Is, Value = "  Song One " }]
+        };
+
+        var draftCount = await _service.GetMatchingSongCountAsync(draft);
+        var saved = await _service.CreateSmartPlaylistAsync(draft);
+
+        draftCount.Should().Be(1);
+        (await _service.GetMatchingSongsPagedAsync(saved.Id, 1, 50)).TotalCount.Should().Be(draftCount);
     }
 
     [Fact]
@@ -581,7 +602,7 @@ public class SmartPlaylistServiceTests : IDisposable
             reloaded.Rules.First().Value.Should().Be("180.5");
             SmartPlaylistRuleValue.TryParseDate(reloaded.Rules.Last().Value, out var date).Should().BeTrue();
             date.Should().Be(new DateTime(2020, 2, 1));
-            (await _service.GetMatchingSongCountAsync(saved.Id)).Should().Be(3);
+            (await CountAsync(saved.Id)).Should().Be(3);
 
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de-DE");
             var display = SmartPlaylistRuleValue.ToDisplayValue(SmartPlaylistField.Duration, SmartPlaylistOperator.LessThan, reloaded.Rules.First().Value);
@@ -608,11 +629,13 @@ public class SmartPlaylistServiceTests : IDisposable
             stored!.CoverImageUri = existingPath;
             await context.SaveChangesAsync();
         }
-        const string missingPath = @"C:\missing.jpg";
-        _fileSystem.ReadAllBytesAsync(missingPath).Returns(Task.FromException<byte[]>(new FileNotFoundException()));
-        var update = () => _service.UpdateSmartPlaylistCoverAsync(playlist.Id, missingPath);
+        const string unreadablePath = @"C:\locked.jpg";
+        _fileSystem.FileExists(unreadablePath).Returns(true);
+        _fileSystem.ReadAllBytesAsync(unreadablePath).Returns(Task.FromException<byte[]>(new IOException()));
+        var update = () => _service.UpdateSmartPlaylistCoverAsync(playlist.Id, unreadablePath);
 
-        await update.Should().ThrowAsync<FileNotFoundException>();
+        await update.Should().ThrowAsync<IOException>();
+        (await _service.UpdateSmartPlaylistCoverAsync(playlist.Id, @"C:\missing.jpg")).Should().BeFalse();
 
         (await _service.GetSmartPlaylistByIdAsync(playlist.Id))!.CoverImageUri.Should().Be(existingPath);
         _fileSystem.DidNotReceive().DeleteFile(Arg.Any<string>());
@@ -670,7 +693,7 @@ public class SmartPlaylistServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetMatchingSongCountAsync_WithSearchTerm_FiltersCount()
+    public async Task GetMatchingSongsPagedAsync_WithSearchTerm_CountsOnlyMatches()
     {
         var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist
         {
@@ -681,11 +704,13 @@ public class SmartPlaylistServiceTests : IDisposable
             ]
         });
 
-        var countWithSearch = await _service.GetMatchingSongCountAsync(playlist.Id, "One");
-        var countWithoutSearch = await _service.GetMatchingSongCountAsync(playlist.Id);
+        var countWithSearch = (await _service.GetMatchingSongsPagedAsync(playlist.Id, 1, 1, "One")).TotalCount;
+        var countWithoutSearch = await CountAsync(playlist.Id);
 
         countWithSearch.Should().Be(1);
         countWithoutSearch.Should().Be(2);
     }
 
+    private async Task<int> CountAsync(Guid smartPlaylistId) =>
+        (await _service.GetMatchingSongsPagedAsync(smartPlaylistId, 1, 1)).TotalCount;
 }
