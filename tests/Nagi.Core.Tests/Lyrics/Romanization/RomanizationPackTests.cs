@@ -76,7 +76,7 @@ public sealed class RomanizationPackTests : IDisposable
         {
             SendAsyncFunc = (request, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
             {
-                Content = request.RequestUri!.AbsoluteUri == RomanizationPackManager.DefaultCatalogUrl
+                Content = request.RequestUri!.AbsoluteUri == RomanizationPackManager.CatalogUrl
                     ? new StringContent(CreateCatalogJson(CreateEntry("hindi", "devanagari-v1", packBytes)))
                     : new StreamContent(body)
             })
@@ -434,7 +434,7 @@ public sealed class RomanizationPackTests : IDisposable
     {
         var responses = new Dictionary<string, byte[]>
         {
-            [RomanizationPackManager.DefaultCatalogUrl] = Encoding.UTF8.GetBytes(catalogJson),
+            [RomanizationPackManager.CatalogUrl] = Encoding.UTF8.GetBytes(catalogJson),
             ["https://packs.test/hindi.nagipack"] = packBytes,
             ["https://packs.test/unknown.nagipack"] = packBytes
         };

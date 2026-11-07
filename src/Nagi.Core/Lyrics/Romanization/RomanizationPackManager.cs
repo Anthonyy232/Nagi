@@ -9,7 +9,14 @@ namespace Nagi.Core.Lyrics.Romanization;
 
 public sealed class RomanizationPackManager : IRomanizationPackManager
 {
-    public const string DefaultCatalogUrl = AppLinks.Repository + "/releases/download/romanization-packs/catalog.json";
+    /// <summary>The release that holds the signed catalog and every pack it lists.</summary>
+    public const string ReleaseFolderUrl = AppLinks.Repository + "/releases/download/romanization-packs";
+
+    internal const string CatalogUrl = ReleaseFolderUrl + "/catalog.json";
+
+    // Directories being extracted or replaced end with this, so listing the installed packs skips them.
+    private const string StagingExtension = ".tmp";
+
     private static readonly HashSet<string> AllowedPackExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
         ".csv",
@@ -78,7 +85,7 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
         {
             cancellationToken.ThrowIfCancellationRequested();
             var directoryName = Path.GetFileName(directory);
-            if (directoryName.EndsWith(".tmp", StringComparison.OrdinalIgnoreCase)) continue;
+            if (directoryName.EndsWith(StagingExtension, StringComparison.OrdinalIgnoreCase)) continue;
 
             var manifestPath = Path.Combine(directory, "manifest.json");
             if (!_fileSystem.FileExists(manifestPath)) continue;
@@ -121,7 +128,7 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
                 return Rejected("Pack download URL must use HTTPS.");
 
             var tempArchivePath = Path.Combine(PackRoot, $"{Guid.NewGuid():N}.nagipack");
-            var tempExtractPath = Path.Combine(PackRoot, $"{Guid.NewGuid():N}.tmp");
+            var tempExtractPath = StagingPath(Path.Combine(PackRoot, "install"));
 
             try
             {
@@ -199,7 +206,7 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
         if (!forceRefresh && _cachedCatalog is not null) return _cachedCatalog;
 
         var envelope = await _httpClient.GetFromJsonAsync<RomanizationCatalogEnvelope>(
-                           DefaultCatalogUrl, RomanizationJson.Options, cancellationToken).ConfigureAwait(false)
+                           CatalogUrl, RomanizationJson.Options, cancellationToken).ConfigureAwait(false)
                        ?? throw new InvalidOperationException("Catalog response was empty.");
 
         if (!_catalogVerifier.Verify(envelope))
@@ -210,6 +217,8 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
     }
 
     private string PackRoot => _pathConfig.RomanizationPacksPath;
+
+    private static string StagingPath(string path) => $"{path}.{Guid.NewGuid():N}{StagingExtension}";
 
     private async Task<RomanizationPackManifest?> ReadManifestAsync(string path) =>
         JsonSerializer.Deserialize<RomanizationPackManifest>(
@@ -257,7 +266,7 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
             return;
         }
 
-        var backupPath = installedPath + $".{Guid.NewGuid():N}.tmp";
+        var backupPath = StagingPath(installedPath);
         _fileSystem.MoveDirectory(installedPath, backupPath);
         try
         {

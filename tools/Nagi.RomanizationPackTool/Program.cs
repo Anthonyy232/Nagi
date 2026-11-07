@@ -150,7 +150,7 @@ internal sealed record PackToolOptions
 {
     public string SourceDirectory { get; private init; } = Path.Combine("tools", "romanization-packs", "src");
     public string OutputDirectory { get; private init; } = Path.Combine("tools", "romanization-packs", "dist");
-    public string BaseDownloadUrl { get; private init; } = "https://github.com/Anthonyy232/Nagi/releases/download/romanization-packs";
+    public string BaseDownloadUrl { get; private init; } = RomanizationPackManager.ReleaseFolderUrl;
 
     public static PackToolOptions Parse(string[] args)
     {
