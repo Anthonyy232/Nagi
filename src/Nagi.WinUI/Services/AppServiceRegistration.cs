@@ -44,7 +44,8 @@ public static class AppServiceRegistration
         services.AddSingleton<IAutoLaunchService, StartupTaskAutoLaunchService>();
 
         services.AddSingleton<IWindowService, WindowService>();
-        services.AddSingleton<IUIService, UIService>();
+        services.AddSingleton<UIService>();
+        services.AddSingleton<IUIService>(sp => sp.GetRequiredService<UIService>());
         services.AddSingleton<IDispatcherService, DispatcherService>();
         services.AddSingleton<IThemeService, ThemeService>();
         services.AddSingleton<IApplicationLifecycle, ApplicationLifecycle>();

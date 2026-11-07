@@ -5,13 +5,6 @@ using Nagi.Presentation.Models;
 
 namespace Nagi.Presentation.Services.Abstractions;
 
-public enum CrashReportResult
-{
-    Close,
-
-    Reset
-}
-
 /// <summary>
 ///     Dialogs, pickers and shell actions. Implementations don't throw: when the platform can't show a dialog or
 ///     picker, the call returns what a cancel would, and the failure is logged.
@@ -48,11 +41,6 @@ public interface IUIService
     ///     Shows a simple message dialog with a single "OK" button.
     /// </summary>
     Task ShowMessageDialogAsync(string title, string message);
-
-    /// <summary>
-    ///     Tells the user the app crashed, shows <paramref name="report" /> for an issue report, and offers a data reset.
-    /// </summary>
-    Task<CrashReportResult> ShowCrashReportDialogAsync(string report);
 
     /// <param name="fileTypes">The file extensions to filter by (e.g., ".zip").</param>
     /// <returns>The path of the selected file, or null if the user cancelled.</returns>

@@ -156,12 +156,11 @@ public partial class App : Application
             Log.Fatal(ex, "A critical error occurred. Application will now terminate. Logs are in {LogsDirectory}",
                 _logsDirectory);
             var fullCrashReport = AppLogging.BuildCrashReport(ex);
-            if (Services?.GetService<IUIService>() is not { } uiService) return;
+            if (Services?.GetService<UIService>() is not { } uiService) return;
 
             await Services.GetRequiredService<IDispatcherService>().EnqueueAsync(async () =>
             {
-                var result = await uiService.ShowCrashReportDialogAsync(fullCrashReport);
-                if (result == CrashReportResult.Reset) await ResetApplicationDataAsync();
+                if (await uiService.ShowCrashReportDialogAsync(fullCrashReport)) await ResetApplicationDataAsync();
             });
         }
         catch (Exception dialogEx)
