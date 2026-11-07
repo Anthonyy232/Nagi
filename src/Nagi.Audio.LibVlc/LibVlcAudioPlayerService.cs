@@ -10,18 +10,12 @@ using Nagi.Core.Settings;
 
 namespace Nagi.Audio.LibVlc;
 
-/// <summary>
-///     Implements <see cref="IAudioPlayer" /> using LibVLCSharp, and reports what is playing to the
-///     <see cref="ISystemMediaControls" />.
-///     Uses lazy initialization to avoid blocking app startup.
-/// </summary>
 public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable, IAsyncDisposable
 {
     private static readonly TimeSpan NativeStopTimeout = TimeSpan.FromSeconds(5);
 
     private readonly IAppInfoService _appInfoService;
     private readonly IDispatcherService _dispatcherService;
-    private readonly ISystemMediaControls _mediaControls;
     private readonly ISettingsService _settingsService;
     private readonly ILogger<LibVlcAudioPlayerService> _logger;
     private readonly CancellationTokenSource _disposeCts = new();
@@ -63,13 +57,11 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     public LibVlcAudioPlayerService(
         IDispatcherService dispatcherService,
-        ISystemMediaControls mediaControls,
         IAppInfoService appInfoService,
         ISettingsService settingsService,
         ILogger<LibVlcAudioPlayerService> logger)
     {
         _dispatcherService = dispatcherService;
-        _mediaControls = mediaControls;
         _appInfoService = appInfoService;
         _settingsService = settingsService;
         _logger = logger;
@@ -461,7 +453,6 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             _vlcOperationLock.Release();
         }
 
-        if (!_isDisposed) _mediaControls.Clear();
     }
 
     private async Task StopNativePlaybackAsync(MediaPlayer player)

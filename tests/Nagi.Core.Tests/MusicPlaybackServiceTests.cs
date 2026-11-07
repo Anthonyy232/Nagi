@@ -1370,15 +1370,23 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task MediaControlsTimeline_IsNotReportedAfterStop()
+    public async Task MediaControls_FollowThePlayerAndStayClearedAfterStop()
     {
         await _service.InitializeAsync();
         await _service.PlayAsync(_testSongs[0]);
-        await _service.StopAsync();
-        _mediaControls.ClearReceivedCalls();
+        _audioPlayer.MediaOpened += Raise.Event<Action>();
+        _audioPlayer.IsPlaying.Returns(true);
+        _audioPlayer.StateChanged += Raise.Event<Action>();
+        await _mediaControls.Received(1).SetNowPlayingAsync(_testSongs[0]);
+        _mediaControls.Received(1).SetPlaybackStatus(SystemMediaPlaybackStatus.Playing);
 
+        await _service.StopAsync();
+        _mediaControls.Received(1).Clear();
+        _mediaControls.ClearReceivedCalls();
+        // The player can report its last state change after the stop.
         _audioPlayer.StateChanged += Raise.Event<Action>();
 
+        _mediaControls.DidNotReceive().SetPlaybackStatus(Arg.Any<SystemMediaPlaybackStatus>());
         _mediaControls.DidNotReceive().SetTimeline(Arg.Any<TimeSpan>(), Arg.Any<TimeSpan>());
     }
 

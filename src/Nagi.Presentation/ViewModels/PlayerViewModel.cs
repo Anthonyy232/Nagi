@@ -676,6 +676,8 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
             _lastReportedPosition = 0;
             _lastDisplayedSecond = -1;
             UpdateTrackDetails(_playbackService.CurrentTrack);
+            // A song loaded paused reports no duration of its own, so take the library's until it plays.
+            TotalDuration = Math.Max(0, _playbackService.Duration.TotalSeconds);
             CurrentPosition = 0;
             UpdateCurrentQueueDisplay();
             SidebarQueue.Refresh();

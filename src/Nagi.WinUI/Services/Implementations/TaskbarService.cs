@@ -5,9 +5,9 @@ using Microsoft.Graphics.Canvas.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;
+using Nagi.Presentation.ViewModels;
 using Windows.Foundation;
 using Windows.UI;
 using static Nagi.WinUI.Helpers.TaskbarNativeMethods;
@@ -15,15 +15,8 @@ using static Nagi.WinUI.Helpers.TaskbarNativeMethods;
 namespace Nagi.WinUI.Services.Implementations;
 
 /// <summary>
-///     Provides Windows taskbar thumbnail toolbar integration for media playback controls.
-///     This service creates and manages the previous, play/pause, and next buttons that appear
-///     in the taskbar thumbnail preview when hovering over the application icon.
+///     The previous, play/pause and next buttons in the taskbar thumbnail preview.
 /// </summary>
-/// <remarks>
-///     This service uses native Win32 interop via ITaskbarList4 to register thumbnail buttons
-///     and handle button click events through window message processing. Icons are rendered
-///     using Win2D for reliable, GPU-accelerated rendering without visual tree dependencies.
-/// </remarks>
 public sealed class TaskbarService : IDisposable
 {
     private const int PreviousButtonId = 1;
@@ -48,6 +41,7 @@ public sealed class TaskbarService : IDisposable
 
     private readonly ILogger<TaskbarService> _logger;
     private readonly IMusicPlaybackService _playbackService;
+    private readonly PlayerViewModel _player;
     private readonly IDispatcherService _dispatcherService;
     private readonly Win32InteropService _win32InteropService;
 
@@ -70,11 +64,13 @@ public sealed class TaskbarService : IDisposable
     public TaskbarService(
         ILogger<TaskbarService> logger,
         IMusicPlaybackService playbackService,
+        PlayerViewModel player,
         IDispatcherService dispatcherService,
         Win32InteropService win32InteropService)
     {
         _logger = logger;
         _playbackService = playbackService;
+        _player = player;
         _dispatcherService = dispatcherService;
         _win32InteropService = win32InteropService;
     }
@@ -124,24 +120,21 @@ public sealed class TaskbarService : IDisposable
         if ((uint)msg == _wmTaskbarButtonCreated)
         {
             _logger.LogDebug("TaskbarButtonCreated received, reinitializing buttons");
-            _buttons = null; // Force re-creation
+            _buttons = null;
             _ = RefreshIconsAsync();
             return;
         }
         if (_taskbarList is null || msg != WM_COMMAND || HIWORD(wParam) != THBN_CLICKED) return;
 
-        switch (LOWORD(wParam))
+        // The same commands as the player's own buttons, so failures are handled the same way.
+        var command = LOWORD(wParam) switch
         {
-            case PreviousButtonId:
-                _ = _playbackService.PreviousAsync();
-                break;
-            case PlayPauseButtonId:
-                _ = _playbackService.PlayPauseAsync();
-                break;
-            case NextButtonId:
-                _ = _playbackService.NextAsync();
-                break;
-        }
+            PreviousButtonId => _player.PreviousCommand,
+            PlayPauseButtonId => _player.PlayPauseCommand,
+            NextButtonId => _player.NextCommand,
+            _ => null
+        };
+        if (command?.CanExecute(null) == true) command.Execute(null);
     }
 
     /// <summary>Redraws the button icons in the current accent color; rapid calls are debounced.</summary>
@@ -263,7 +256,6 @@ public sealed class TaskbarService : IDisposable
     {
         try
         {
-            // Get shared GPU device (thread-safe, automatically handles device loss)
             var device = CanvasDevice.GetSharedDevice();
             using var renderTarget = new CanvasRenderTarget(device, size, size, 96f);
             using var textFormat = new CanvasTextFormat
@@ -279,7 +271,6 @@ public sealed class TaskbarService : IDisposable
                 ds.DrawText(glyph, new Rect(0, 0, size, size), foreground, textFormat);
             }
 
-            // Extract pixel data (BGRA8 format, same as RenderTargetBitmap)
             var pixels = renderTarget.GetPixelBytes();
             return CreateIconFromPixels(pixels, size, size);
         }
@@ -361,7 +352,7 @@ public sealed class TaskbarService : IDisposable
                     dwMask = THB.ICON | THB.TOOLTIP | THB.FLAGS,
                     hIcon = _prevIcon,
                     szTip = Strings.Player_PreviousButton_ToolTip,
-                    dwFlags = CanGoPrevious() ? THBF.ENABLED : THBF.DISABLED
+                    dwFlags = _playbackService.CanGoPrevious ? THBF.ENABLED : THBF.DISABLED
                 },
                 new THUMBBUTTON
                 {
@@ -377,7 +368,7 @@ public sealed class TaskbarService : IDisposable
                     dwMask = THB.ICON | THB.TOOLTIP | THB.FLAGS,
                     hIcon = _nextIcon,
                     szTip = Strings.Player_NextButton_ToolTip,
-                    dwFlags = CanGoNext() ? THBF.ENABLED : THBF.DISABLED
+                    dwFlags = _playbackService.CanGoNext ? THBF.ENABLED : THBF.DISABLED
                 }
             ];
             var hResult = _taskbarList.ThumbBarAddButtons(_windowHandle, (uint)_buttons.Length, _buttons);
@@ -395,7 +386,7 @@ public sealed class TaskbarService : IDisposable
         lock (_iconLock)
         {
             _buttons[0].hIcon = _prevIcon;
-            _buttons[0].dwFlags = CanGoPrevious() ? THBF.ENABLED : THBF.DISABLED;
+            _buttons[0].dwFlags = _playbackService.CanGoPrevious ? THBF.ENABLED : THBF.DISABLED;
             if (_playbackService.IsPlaying)
             {
                 _buttons[1].hIcon = _pauseIcon;
@@ -408,35 +399,13 @@ public sealed class TaskbarService : IDisposable
             }
             _buttons[1].dwFlags = THBF.ENABLED;
             _buttons[2].hIcon = _nextIcon;
-            _buttons[2].dwFlags = CanGoNext() ? THBF.ENABLED : THBF.DISABLED;
+            _buttons[2].dwFlags = _playbackService.CanGoNext ? THBF.ENABLED : THBF.DISABLED;
             var hResult = _taskbarList.ThumbBarUpdateButtons(_windowHandle, (uint)_buttons.Length, _buttons);
             if (hResult < 0)
             {
                 _logger.LogError("Failed to update thumbnail buttons: HRESULT 0x{HResult:X}", hResult);
             }
         }
-    }
-
-    private bool CanGoPrevious()
-    {
-        var index = _playbackService.IsShuffleEnabled
-            ? _playbackService.CurrentShuffledIndex
-            : _playbackService.CurrentQueueIndex;
-        return _playbackService.PlaybackQueue.Count > 0 &&
-               (_playbackService.CurrentTrack != null || index > 0 ||
-                _playbackService.CurrentRepeatMode != RepeatMode.Off);
-    }
-
-    private bool CanGoNext()
-    {
-        var queue = _playbackService.IsShuffleEnabled
-            ? _playbackService.ShuffledQueue
-            : _playbackService.PlaybackQueue;
-        var index = _playbackService.IsShuffleEnabled
-            ? _playbackService.CurrentShuffledIndex
-            : _playbackService.CurrentQueueIndex;
-        return queue.Count > 0 &&
-               (index < queue.Count - 1 || _playbackService.CurrentRepeatMode != RepeatMode.Off);
     }
 
     public void Dispose()

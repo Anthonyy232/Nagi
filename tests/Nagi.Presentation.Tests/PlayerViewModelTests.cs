@@ -62,6 +62,16 @@ public partial class PlayerViewModelTests : IDisposable
     }
 
     [Fact]
+    public void ASongRestoredAfterThePlayerIsCreated_ShowsItsDurationBeforeItPlays()
+    {
+        _playback.CurrentTrack.Returns(new Song { Title = "Restored" });
+        _playback.Duration.Returns(TimeSpan.FromSeconds(248));
+        _playback.TrackChanged += Raise.Event<Action>();
+
+        _viewModel.TotalDuration.Should().Be(248);
+    }
+
+    [Fact]
     public void ServiceVolumeChanges_UpdateBothIconsAndMuteTooltip()
     {
         var volumeButton = _viewModel.MainTransportButtons.Single();

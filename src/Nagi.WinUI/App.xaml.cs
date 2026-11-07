@@ -423,20 +423,6 @@ public partial class App : Application
 
     private void EnqueuePostLaunchTasks()
     {
-        MainDispatcherQueue?.TryEnqueue(DispatcherQueuePriority.Normal, () =>
-        {
-            try
-            {
-                if (_isExiting || Services is null) return;
-
-                Services.GetRequiredService<ISystemMediaControls>().Initialize();
-            }
-            catch (Exception ex)
-            {
-                _logger?.LogError(ex, "Failed to initialize System Media Transport Controls");
-            }
-        });
-
         MainDispatcherQueue?.TryEnqueue(DispatcherQueuePriority.Low, async () =>
         {
             if (_isExiting || Services is null) return;

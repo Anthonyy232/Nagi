@@ -34,16 +34,11 @@ public sealed partial class LibVlcAudioPlayerService
 
     private void OnMediaPlayerMediaChanged(object? sender, MediaPlayerMediaChangedEventArgs e)
     {
-        if (_isDisposed) return;
-        if (e.Media is not null)
+        if (_isDisposed || e.Media is null) return;
+        _dispatcherService.TryEnqueue(() =>
         {
-            _dispatcherService.TryEnqueue(() =>
-            {
-                if (_isDisposed) return;
-                MediaOpened?.Invoke();
-            });
-            ReportNowPlaying();
-        }
+            if (!_isDisposed) MediaOpened?.Invoke();
+        });
     }
 
     private void OnMediaPlayerLengthChanged(object? sender, MediaPlayerLengthChangedEventArgs e)
@@ -102,7 +97,6 @@ public sealed partial class LibVlcAudioPlayerService
                 _isPausing = false;
             }
         });
-        ReportPlaybackStatus();
     }
 
     private void SetOpening(bool isOpening)

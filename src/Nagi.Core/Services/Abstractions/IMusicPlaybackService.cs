@@ -77,6 +77,12 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
 
     RepeatMode CurrentRepeatMode { get; }
 
+    /// <summary>Whether <see cref="NextAsync" /> has a track to go to. Changes come with the queue, track, shuffle and repeat events.</summary>
+    bool CanGoNext { get; }
+
+    /// <summary>Whether <see cref="PreviousAsync" /> has a track to go to or restart.</summary>
+    bool CanGoPrevious { get; }
+
     /// <summary>
     ///     Occurs when the current track changes or playback stops.
     /// </summary>

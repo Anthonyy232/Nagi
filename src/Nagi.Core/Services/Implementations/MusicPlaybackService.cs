@@ -419,6 +419,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         _isTransitioningTrack = false;
         TrackChanged?.Invoke();
         PositionChanged?.Invoke();
+        _mediaControls.Clear();
         UpdateMediaControlsNavigation();
     }
 
@@ -747,39 +748,29 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         _settingsService.SettingChanged -= OnSettingChanged;
     }
 
-    private void UpdateMediaControlsNavigation()
+    public bool CanGoNext => _queue.Order.Count > 0 &&
+                             (CurrentRepeatMode != RepeatMode.Off || ActivePosition < ActiveOrderCount - 1);
+
+    // A playing track can always go back, to its start or to the track before it.
+    public bool CanGoPrevious => _queue.Order.Count > 0 &&
+                                 (CurrentRepeatMode != RepeatMode.Off || CurrentTrack != null || ActivePosition > 0);
+
+    private int ActivePosition => IsShuffleEnabled ? CurrentShuffledIndex : CurrentQueueIndex;
+    private int ActiveOrderCount => IsShuffleEnabled ? _queue.Shuffled.Count : _queue.Order.Count;
+
+    private void UpdateMediaControlsNavigation() => _mediaControls.SetNavigationEnabled(CanGoNext, CanGoPrevious);
+
+    private void UpdateMediaControlsStatus()
     {
-        var canGoNext = false;
-        var canGoPrevious = false;
-
-        if (_queue.Order.Any())
-        {
-            if (CurrentRepeatMode != RepeatMode.Off)
-            {
-                canGoNext = true;
-                canGoPrevious = true;
-            }
-            else if (IsShuffleEnabled)
-            {
-                canGoNext = CurrentShuffledIndex < _queue.Shuffled.Count - 1;
-                canGoPrevious = CurrentShuffledIndex > 0;
-            }
-            else
-            {
-                canGoNext = CurrentQueueIndex < _queue.Order.Count - 1;
-                canGoPrevious = CurrentQueueIndex > 0;
-            }
-
-            // If a track is active, you can always go "previous" to either restart the track or go to the prior one.
-            if (CurrentTrack != null) canGoPrevious = true;
-        }
-
-        _mediaControls.SetNavigationEnabled(canGoNext, canGoPrevious);
+        if (CurrentTrack is null) return;
+        _mediaControls.SetPlaybackStatus(IsOpening ? SystemMediaPlaybackStatus.Changing
+            : IsPlaying ? SystemMediaPlaybackStatus.Playing
+            : SystemMediaPlaybackStatus.Paused);
     }
 
+    // Stopping clears the media controls, so they only follow a loaded track.
     private void UpdateMediaControlsTimeline(TimeSpan position)
     {
-        // Without a track the audio player has already cleared the media controls, timeline included.
         if (CurrentTrack != null) _mediaControls.SetTimeline(position, Duration);
     }
 

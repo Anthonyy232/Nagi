@@ -34,6 +34,7 @@ public partial class MusicPlaybackService
     private void OnAudioPlayerStateChanged()
     {
         PlaybackStateChanged?.Invoke();
+        UpdateMediaControlsStatus();
         UpdateMediaControlsTimeline(CurrentPosition);
     }
 
@@ -107,6 +108,8 @@ public partial class MusicPlaybackService
     private void OnAudioPlayerMediaOpened()
     {
         TrackChanged?.Invoke();
+        if (CurrentTrack is { } song)
+            FireAndForgetSafe(() => _mediaControls.SetNowPlayingAsync(song), "Media controls now playing");
         UpdateMediaControlsNavigation();
         UpdateMediaControlsTimeline(CurrentPosition);
     }
