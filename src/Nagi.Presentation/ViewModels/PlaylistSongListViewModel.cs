@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
@@ -124,6 +125,8 @@ public partial class PlaylistSongListViewModel : DetailSongListViewModelBase<Pla
             if (success && !_isDisposed && !token.IsCancellationRequested)
                 await LoadAsync(CancellationToken.None);
         });
+
+    public override ICommand RemoveSelectionCommand => RemoveSelectedSongsFromPlaylistCommand;
 
     private bool CanRemoveSongs()
     {

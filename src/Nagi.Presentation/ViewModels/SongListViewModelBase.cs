@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
@@ -173,6 +174,15 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     ///     The chosen columns, less any that every row would repeat, such as the album on an album's page.
     /// </summary>
     public virtual SongListColumns VisibleColumns => ChosenColumns;
+
+    /// <summary>Whether a song's menu offers its album; not on the album's own page.</summary>
+    public virtual bool ShowsGoToAlbum => true;
+
+    /// <summary>Whether a song's menu offers its artists; not on an artist's own page.</summary>
+    public virtual bool ShowsGoToArtist => true;
+
+    /// <summary>Removes the selected songs from this list, for a list the user can remove songs from.</summary>
+    public virtual ICommand? RemoveSelectionCommand => null;
 
     private void OnSettingChanged(Setting setting)
     {

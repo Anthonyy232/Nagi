@@ -76,12 +76,7 @@ public abstract class SongListPage : SearchablePage
 
     private static SongRow CreateColumnHeader(SongListViewModelBase viewModel)
     {
-        var header = new SongRow(isHeader: true);
-        header.SetBinding(SongRow.ColumnsProperty, new Binding
-        {
-            Source = viewModel,
-            Path = new PropertyPath(nameof(SongListViewModelBase.VisibleColumns))
-        });
+        var header = new SongRow(isHeader: true) { ViewModel = viewModel };
         header.SetBinding(VisibilityProperty, new Binding
         {
             Source = viewModel,

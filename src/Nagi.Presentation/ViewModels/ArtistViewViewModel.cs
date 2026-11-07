@@ -145,6 +145,8 @@ public partial class ArtistViewViewModel : DetailSongListViewModelBase<ArtistVie
 
     public override SongListColumns VisibleColumns => ChosenColumns & ~SongListColumns.Artist;
 
+    public override bool ShowsGoToArtist => false;
+
     protected override PlaybackContext GetPlaybackContext() =>
         _artistId != Guid.Empty ? new(PlaybackContextType.Artist, _artistId) : base.GetPlaybackContext();
 

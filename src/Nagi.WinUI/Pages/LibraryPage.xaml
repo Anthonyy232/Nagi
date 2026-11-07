@@ -147,7 +147,7 @@
                 DoubleTapped="SongsListView_DoubleTapped">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="models:Song">
-                        <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" Columns="{Binding DataContext.VisibleColumns, ElementName=pageRoot}" />
+                        <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

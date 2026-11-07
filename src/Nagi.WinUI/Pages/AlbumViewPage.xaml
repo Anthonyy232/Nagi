@@ -197,7 +197,7 @@
                         </uihelpers:HeaderedListTemplateSelector.HeaderTemplate>
                         <uihelpers:HeaderedListTemplateSelector.SongTemplate>
                             <DataTemplate x:DataType="models:Song">
-                                <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" Columns="{Binding DataContext.VisibleColumns, ElementName=pageRoot}" ShowDiscNumber="False" ShowGoToAlbum="False" />
+                                <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" ShowDiscNumber="False" />
                             </DataTemplate>
                         </uihelpers:HeaderedListTemplateSelector.SongTemplate>
                     </uihelpers:HeaderedListTemplateSelector>
@@ -217,7 +217,7 @@
                 Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="models:Song">
-                        <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" Columns="{Binding DataContext.VisibleColumns, ElementName=pageRoot}" ShowGoToAlbum="False" />
+                        <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

@@ -204,6 +204,8 @@ public partial class AlbumViewViewModel : DetailSongListViewModelBase<AlbumViewN
     public override SongListColumns VisibleColumns =>
         (ChosenColumns & ~(SongListColumns.Artist | SongListColumns.Album | SongListColumns.Year)) | SongListColumns.TrackNumber;
 
+    public override bool ShowsGoToAlbum => false;
+
     protected override PlaybackContext GetPlaybackContext() =>
         _albumId != Guid.Empty ? new(PlaybackContextType.Album, _albumId) : base.GetPlaybackContext();
 

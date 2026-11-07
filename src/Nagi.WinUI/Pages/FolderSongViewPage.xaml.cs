@@ -59,9 +59,8 @@ public sealed partial class FolderSongViewPage : SongListPage
             && !FolderContentsListView.SelectedItems.Contains(contentItem))
             FolderContentsListView.SelectedItem = contentItem;
 
-        if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
-                .FirstOrDefault(item => item.Name == "FolderAddToPlaylistSubMenu") is { } addToPlaylistSubMenu)
-            PlaylistMenuFlyoutHelper.Populate(addToPlaylistSubMenu, ViewModel.AvailablePlaylists,
-                ViewModel.AddSelectedSongsToPlaylistCommand);
+        // The folder menu's one submenu is Add to playlist.
+        PlaylistMenuFlyoutHelper.Populate(menuFlyout.Items.OfType<MenuFlyoutSubItem>().Single(), ViewModel.AvailablePlaylists,
+            ViewModel.AddSelectedSongsToPlaylistCommand);
     }
 }

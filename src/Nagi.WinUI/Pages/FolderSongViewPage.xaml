@@ -25,7 +25,7 @@
                                     Text="{x:Bind resources:Strings.FolderSongViewPage_FolderMenu_Play, Mode=OneTime}"
                                     Command="{Binding DataContext.PlaySubfolderCommand, ElementName=pageRoot}"
                                     CommandParameter="{x:Bind Folder}" />
-                                <MenuFlyoutSubItem x:Name="FolderAddToPlaylistSubMenu" Text="{x:Bind resources:Strings.FolderSongViewPage_FolderMenu_AddToPlaylist, Mode=OneTime}" />
+                                <MenuFlyoutSubItem Text="{x:Bind resources:Strings.FolderSongViewPage_FolderMenu_AddToPlaylist, Mode=OneTime}" />
                             </MenuFlyout>
                         </Grid.ContextFlyout>
 
@@ -52,7 +52,7 @@
 
             <uihelpers:FolderContentItemTemplateSelector.SongTemplate>
                 <DataTemplate x:DataType="local:FolderContentItem">
-                    <uicontrols:SongRow Song="{x:Bind Song}" ViewModel="{Binding DataContext, ElementName=pageRoot}" Columns="{Binding DataContext.VisibleColumns, ElementName=pageRoot}" />
+                    <uicontrols:SongRow Song="{x:Bind Song}" ViewModel="{Binding DataContext, ElementName=pageRoot}" />
                 </DataTemplate>
             </uihelpers:FolderContentItemTemplateSelector.SongTemplate>
         </uihelpers:FolderContentItemTemplateSelector>
