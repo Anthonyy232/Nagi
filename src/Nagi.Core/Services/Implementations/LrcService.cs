@@ -63,7 +63,7 @@ public class LrcService : ILrcService, IDisposable
         if (LyricsParser.Parse(song.Lyrics) is { } embeddedLyrics) return embeddedLyrics;
 
         // Like lyrics embedded in a file, a server song's own lyrics come first and don't need online lyrics turned on.
-        if (song.IsRemote && (forceOnlineRefresh || song.LyricsLastCheckedUtc == null))
+        if (song.IsFromServer && (forceOnlineRefresh || song.LyricsLastCheckedUtc == null))
         {
             string? serverLyrics;
             try
@@ -167,7 +167,7 @@ public class LrcService : ILrcService, IDisposable
 
         var cachedPath = song.LrcFilePath!;
         // A server song has no folder of its own to hold an .lrc file.
-        var sidecarPath = song.IsRemote ? null : new MediaFileFinder(_fileSystemService, _logger).FindSidecarLyrics(song.FilePath);
+        var sidecarPath = song.IsFromServer ? null : new MediaFileFinder(_fileSystemService, _logger).FindSidecarLyrics(song.FilePath);
         if (_fileSystemService.FileExists(cachedPath)) _fileSystemService.DeleteFile(cachedPath);
 
         song.LrcFilePath = sidecarPath;

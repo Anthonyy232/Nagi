@@ -30,7 +30,7 @@ public class MusicServerPresenceService : IPresenceService
 
     // The play is already queued, so reporting the server's queue sends it along with any that failed earlier.
     public Task OnTrackEligibleForScrobblingAsync(Song song, long listenHistoryId, DateTime listenStartedUtc) =>
-        song.IsRemote ? _musicServers.ReportPlaysAsync(song.FolderId) : Task.CompletedTask;
+        song.IsFromServer ? _musicServers.ReportPlaysAsync(song.FolderId) : Task.CompletedTask;
 
     public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }

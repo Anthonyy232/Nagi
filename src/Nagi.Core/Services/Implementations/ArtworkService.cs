@@ -589,11 +589,11 @@ public sealed class ArtworkService : IArtworkService
     private static async Task<Dictionary<Guid, IReadOnlyList<string?>>> LoadSongDirectoriesByArtistAsync(
         MusicDbContext context, List<Guid> artistIds, CancellationToken ct)
     {
-        var rows = await context.SongArtists
+        var rows = await context.Songs
             .AsNoTracking()
-            // A server song's directory is its server's library key, not a folder to look in.
-            .Where(sa => artistIds.Contains(sa.ArtistId) && sa.Song.RemoteId == null)
-            .Select(sa => new { sa.ArtistId, sa.Song.DirectoryPath })
+            .OnDisk()
+            .SelectMany(s => s.SongArtists.Where(sa => artistIds.Contains(sa.ArtistId)),
+                (s, sa) => new { sa.ArtistId, s.DirectoryPath })
             .Distinct()
             .ToListAsync(ct)
             .ConfigureAwait(false);

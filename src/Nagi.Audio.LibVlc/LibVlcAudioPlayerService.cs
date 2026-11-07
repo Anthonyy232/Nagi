@@ -245,8 +245,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
                 DisposeCurrentMedia("replacement load");
 
-                // A server song's path ends in its file's extension, so its stream is read like the file would be.
-                var extension = System.IO.Path.GetExtension(song.FilePath).ToLowerInvariant();
+                var extension = song.FileExtension;
                 _currentMedia = streamUri is null ? new Media(song.FilePath, FromType.FromPath) : new Media(streamUri);
 
                 // Native Ogg and Matroska demuxers integrate more safely with VLC's player clock.

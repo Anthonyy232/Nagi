@@ -101,9 +101,9 @@ public class ReplayGainService : IReplayGainService
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
 
-        var songsWithoutReplayGain = await context.Songs
-            // A server song has no file to analyze; its gain comes from the server, when the server knows it.
-            .Where(s => s.ReplayGainTrackGain == null && s.RemoteId == null)
+        // A server song's gain comes from its server, when the server knows it.
+        var songsWithoutReplayGain = await context.Songs.OnDisk()
+            .Where(s => s.ReplayGainTrackGain == null)
             .Select(s => s.Id)
             .ToListAsync(cancellationToken).ConfigureAwait(false);
 

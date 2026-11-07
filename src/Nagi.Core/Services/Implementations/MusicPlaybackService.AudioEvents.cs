@@ -90,7 +90,7 @@ public partial class MusicPlaybackService
         // Read before stopping, which clears the current track.
         var song = CurrentTrack;
         RunInBackground(StopAsync, "Error recovery");
-        if (song is { IsRemote: true }) ServerSongFailed?.Invoke(song);
+        if (song is { IsFromServer: true }) ServerSongFailed?.Invoke(song);
     }
 
     private void OnAudioPlayerMediaOpened()

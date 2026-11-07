@@ -186,7 +186,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
             var foldersFromDb = await _libraryReader.GetRootFoldersWithCountsAsync(cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
             var newItems = foldersFromDb
-                .Select(item => new FolderViewModelItem(item.Folder, item.SongCount, item.IsServer))
+                .Select(item => new FolderViewModelItem(item.Folder, item.SongCount, item.IsFromServer))
                 .OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(item => item.Id)
                 .ToList();

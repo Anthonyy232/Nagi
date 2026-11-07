@@ -152,7 +152,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
             {
                 // A server song has no file other players could open, and its stream URL would give away the sign-in.
                 var songs = (await _libraryReader.GetSongsInPlaylistOrderedAsync(playlist.Id).ConfigureAwait(false))
-                    .Where(song => !song.IsRemote)
+                    .Where(song => !song.IsFromServer)
                     .ToList();
 
                 if (songs.Count == 0)

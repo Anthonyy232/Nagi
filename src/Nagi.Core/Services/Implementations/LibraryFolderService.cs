@@ -117,9 +117,9 @@ public sealed class LibraryFolderService : ILibraryFolderService
         await _writeLock.WaitAsync(_writeLock.ShutdownToken).ConfigureAwait(false);
         try
         {
-            if (await IsMusicServerFolderAsync(folderId, _writeLock.ShutdownToken).ConfigureAwait(false))
+            if (!await IsFolderOnDiskAsync(folderId, _writeLock.ShutdownToken).ConfigureAwait(false))
             {
-                _logger.LogWarning("Not removing folder {FolderId}: it is a music server, which is removed with its sign-in.", folderId);
+                _logger.LogWarning("Not removing folder {FolderId}: it isn't a folder on disk in the library.", folderId);
                 return false;
             }
 
@@ -258,15 +258,11 @@ public sealed class LibraryFolderService : ILibraryFolderService
     {
         Folder? folder;
         await using (var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false))
-            folder = await context.Folders.AsNoTracking().Include(f => f.MusicServer)
+            folder = await context.Folders.AsNoTracking().OnDisk()
                 .FirstOrDefaultAsync(f => f.Id == folderId, token).ConfigureAwait(false);
         if (folder is null)
-            return Fail(new InvalidOperationException($"Folder {folderId} was not found."),
+            return Fail(new InvalidOperationException($"Folder {folderId} isn't a folder on disk in the library."),
                 string.Format(Resources.Strings.Format_NotFound, Resources.Strings.Label_Folder));
-        // A server root has no directory, so scanning it would remove it from the library.
-        if (folder.MusicServer is not null)
-            return Fail(new InvalidOperationException($"Folder {folderId} is a music server, which is synced instead."),
-                Resources.Strings.Status_ScanFailed);
 
         _logger.LogInformation("Scanning folder '{FolderName}' (path={FolderPath}, network={IsNetwork}, kind={Kind}).",
             folder.Name, folder.Path, _fileSystem.IsNetworkPath(folder.Path), kind);
@@ -403,19 +399,18 @@ public sealed class LibraryFolderService : ILibraryFolderService
     private async Task<List<Folder>> GetRootFoldersAsync(CancellationToken token)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
-        // Server roots aren't directories; they are synced instead of scanned.
-        return await context.Folders.AsNoTracking()
-            .Where(f => f.ParentFolderId == null && f.MusicServer == null)
+        return await context.Folders.AsNoTracking().OnDisk()
+            .Where(f => f.ParentFolderId == null)
             .OrderBy(f => f.Name)
             .ThenBy(f => f.Path)
             .ThenBy(f => f.Id)
             .ToListAsync(token).ConfigureAwait(false);
     }
 
-    private async Task<bool> IsMusicServerFolderAsync(Guid folderId, CancellationToken cancellationToken)
+    private async Task<bool> IsFolderOnDiskAsync(Guid folderId, CancellationToken cancellationToken)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
-        return await context.MusicServers.AnyAsync(s => s.FolderId == folderId, cancellationToken).ConfigureAwait(false);
+        return await context.Folders.OnDisk().AnyAsync(f => f.Id == folderId, cancellationToken).ConfigureAwait(false);
     }
 
     /// <param name="Added">Files on disk that aren't in the library.</param>
@@ -688,8 +683,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
 
     private async Task<int> CollapseDuplicateFoldersAsync(MusicDbContext context, CancellationToken ct)
     {
-        // A server root's path is a key, not a file path, which normalizing would rewrite.
-        var folders = await context.Folders.AsNoTracking().Where(f => f.MusicServer == null).ToListAsync(ct).ConfigureAwait(false);
+        var folders = await context.Folders.AsNoTracking().OnDisk().ToListAsync(ct).ConfigureAwait(false);
         var groups = folders
             .GroupBy(f => _fileSystem.NormalizePath(f.Path), StringComparer.OrdinalIgnoreCase);
 
@@ -735,8 +729,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
     {
         var songs = await context.Songs
             .AsNoTracking()
-            // A server song's path is a key that normalizing would rewrite.
-            .Where(s => s.RemoteId == null)
+            .OnDisk()
             .Select(s => new
             {
                 s.Id,

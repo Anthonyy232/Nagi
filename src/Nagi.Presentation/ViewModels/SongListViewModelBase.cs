@@ -513,13 +513,15 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
             await _playlistService.AddSongsToPlaylistAsync(playlist.Id, ids);
         });
 
-    [RelayCommand(CanExecute = nameof(CanExecuteSingleSongCommands))]
+    [RelayCommand(CanExecute = nameof(CanShowInFolder))]
     private async Task ShowInFolderAsync(Song? song)
     {
-        var targetSong = song ?? SelectedSongs.FirstOrDefault();
-        if (targetSong?.FilePath is null) return;
-        await _uiService.ShowInFolderAsync(targetSong.FilePath);
+        if ((song ?? SelectedSongs.FirstOrDefault()) is { IsFromServer: false } targetSong)
+            await _uiService.ShowInFolderAsync(targetSong.FilePath);
     }
+
+    private bool CanShowInFolder(Song? song) =>
+        IsSingleSongSelected && (song ?? SelectedSongs.FirstOrDefault()) is { IsFromServer: false };
 
     [RelayCommand(CanExecute = nameof(CanExecuteSingleSongCommands))]
     private async Task ShowSongInfoAsync(Song? song)

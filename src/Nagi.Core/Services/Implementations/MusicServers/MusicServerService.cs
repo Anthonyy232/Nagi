@@ -198,7 +198,7 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
 
     public async Task<Uri?> GetStreamUriAsync(Song song)
     {
-        if (!song.IsRemote) return null;
+        if (!song.IsFromServer) return null;
         try
         {
             var client = await GetClientAsync(song.FolderId, CancellationToken.None).ConfigureAwait(false);
@@ -220,7 +220,7 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
 
     public async Task<string?> GetLyricsAsync(Song song, CancellationToken cancellationToken = default)
     {
-        if (!song.IsRemote) return null;
+        if (!song.IsFromServer) return null;
         try
         {
             var client = await GetClientAsync(song.FolderId, cancellationToken).ConfigureAwait(false);
