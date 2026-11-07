@@ -189,20 +189,7 @@ public class SmartPlaylistService : ISmartPlaylistService
         };
     }
 
-    public async Task<int> GetMatchingSongCountAsync(Guid smartPlaylistId, string? searchTerm = null, CancellationToken token = default)
-    {
-        await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
-        var smartPlaylist = await context.SmartPlaylists.AsNoTracking()
-            .Include(sp => sp.Rules)
-            .FirstOrDefaultAsync(sp => sp.Id == smartPlaylistId, token).ConfigureAwait(false);
-
-        if (smartPlaylist is null)
-            return 0;
-
-        return await SmartPlaylistQueryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm).CountAsync(token).ConfigureAwait(false);
-    }
-
-    public async Task<int> GetMatchingSongCountAsync(SmartPlaylist smartPlaylist, string? searchTerm = null, CancellationToken token = default)
+    public async Task<int> GetMatchingSongCountAsync(SmartPlaylist smartPlaylist, CancellationToken token = default)
     {
         var stored = new SmartPlaylist
         {
@@ -210,7 +197,7 @@ public class SmartPlaylistService : ISmartPlaylistService
             Rules = ToStoredRules(smartPlaylist.Rules, smartPlaylist.Id)
         };
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
-        return await SmartPlaylistQueryBuilder.BuildCountQuery(context, stored, searchTerm).CountAsync(token).ConfigureAwait(false);
+        return await SmartPlaylistQueryBuilder.BuildCountQuery(context, stored).CountAsync(token).ConfigureAwait(false);
     }
 
     public async Task<List<Guid>> GetMatchingSongIdsAsync(Guid smartPlaylistId, string? searchTerm = null, SongSortOrder? sortOrder = null, CancellationToken token = default)

@@ -115,7 +115,7 @@ public class SmartPlaylistEditorViewModelTests : IDisposable
     [Fact]
     public async Task EditingRules_RecountsMatchesAfterTheDebounce()
     {
-        _service.GetMatchingSongCountAsync(Arg.Any<SmartPlaylist>(), token: Arg.Any<CancellationToken>()).Returns(7);
+        _service.GetMatchingSongCountAsync(Arg.Any<SmartPlaylist>(), Arg.Any<CancellationToken>()).Returns(7);
         _viewModel.Initialize(new SmartPlaylist { Name = "Mix" });
         _time.Advance(TimeSpan.FromMilliseconds(300));
         await _viewModel.PendingMatchCount.WaitAsync(TimeSpan.FromSeconds(5));

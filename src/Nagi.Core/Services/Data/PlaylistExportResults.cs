@@ -1,6 +1,6 @@
 namespace Nagi.Core.Services.Data;
 
-public record PlaylistImportResult(bool Success, int MatchedSongs, int UnmatchedSongs);
+internal record PlaylistImportResult(bool Success, int MatchedSongs, int UnmatchedSongs);
 
 public record BatchExportResult(bool Success, int PlaylistsExported, int TotalSongs, string? ErrorMessage = null);
 
