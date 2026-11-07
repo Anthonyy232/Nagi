@@ -724,34 +724,50 @@ public sealed class ArtworkService : IArtworkService
             new AlbumCoverQuery(album.Title, album.ArtistName, album.ReleaseId, album.ReleaseGroupId), token).ConfigureAwait(false);
         if (result is null) return null;
 
-        (string? Uri, string? LightSwatchId, string? DarkSwatchId) cover = default;
-        if (result.Data is not null)
-        {
-            var imageBytes = await DownloadImageBytesAsync(new Uri(result.Data), token).ConfigureAwait(false);
-            if (imageBytes is not null)
-                cover = await _imageProcessor.SaveCoverArtAndExtractColorsAsync(imageBytes).ConfigureAwait(false);
-        }
-
+        var imageBytes = result.Data is null
+            ? null
+            : await DownloadImageBytesAsync(new Uri(result.Data), token).ConfigureAwait(false);
         // A cover that failed to download stays retryable, like a source that failed.
-        if (cover.Uri is null && (result.Data is not null || !result.IsConclusive)) return false;
+        if (imageBytes is null && (result.Data is not null || !result.IsConclusive)) return false;
+
+        // Covers are shared by content, so a scan deleting an unused cover could delete the one stored here.
+        await _writeLock.WaitAsync(token).ConfigureAwait(false);
+        try
+        {
+            return await StoreAlbumCoverAsync(album.Id, imageBytes, token).ConfigureAwait(false);
+        }
+        finally
+        {
+            _writeLock.Release();
+        }
+    }
+
+    private async Task<bool> StoreAlbumCoverAsync(Guid albumId, byte[]? imageBytes, CancellationToken token)
+    {
+        (string? Uri, string? LightSwatchId, string? DarkSwatchId) cover = default;
+        if (imageBytes is not null)
+        {
+            cover = await _imageProcessor.SaveCoverArtAndExtractColorsAsync(imageBytes).ConfigureAwait(false);
+            if (cover.Uri is null) return false;
+        }
 
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
         var checkedAt = DateTime.UtcNow;
         // Art a scan found in the meantime wins, so only an album still without a cover takes the online one.
-        var stored = cover.Uri is not null && await context.Albums.Where(a => a.Id == album.Id && a.CoverArtUri == null)
+        var stored = cover.Uri is not null && await context.Albums.Where(a => a.Id == albumId && a.CoverArtUri == null)
             .ExecuteUpdateAsync(setters => setters
                 .SetProperty(a => a.CoverArtUri, cover.Uri)
                 .SetProperty(a => a.CoverArtLastCheckedUtc, checkedAt), token)
             .ConfigureAwait(false) > 0;
         if (!stored)
         {
-            await context.Albums.Where(a => a.Id == album.Id)
+            await context.Albums.Where(a => a.Id == albumId)
                 .ExecuteUpdateAsync(setters => setters.SetProperty(a => a.CoverArtLastCheckedUtc, checkedAt), token)
                 .ConfigureAwait(false);
             return false;
         }
 
-        await context.Songs.Where(s => s.AlbumId == album.Id && s.AlbumArtUriFromTrack == null)
+        await context.Songs.Where(s => s.AlbumId == albumId && s.AlbumArtUriFromTrack == null)
             .ExecuteUpdateAsync(setters => setters
                 .SetProperty(s => s.AlbumArtUriFromTrack, cover.Uri)
                 .SetProperty(s => s.LightSwatchId, cover.LightSwatchId)
