@@ -16,25 +16,25 @@ public partial class LibraryReader
     public async Task<PagedResult<Song>> GetAllSongsPagedAsync(int pageNumber, int pageSize,
         SongSortOrder sortOrder = SongSortOrder.TitleAsc, CancellationToken token = default)
     {
-        SanitizePaging(ref pageNumber, ref pageSize);
+        Paging.Sanitize(ref pageNumber, ref pageSize);
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
         return await ReadSongPageAsync(context.Songs, pageNumber, pageSize, sortOrder, token).ConfigureAwait(false);
     }
 
     public async Task<PagedResult<Song>> SearchSongsPagedAsync(string searchTerm, int pageNumber, int pageSize, CancellationToken token = default)
     {
-        SanitizePaging(ref pageNumber, ref pageSize);
+        Paging.Sanitize(ref pageNumber, ref pageSize);
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
         var query = string.IsNullOrWhiteSpace(searchTerm)
             ? context.Songs
-            : BuildSongSearchQuery(context, NormalizeString(searchTerm) ?? searchTerm);
+            : SongQuery.Search(context, context.Songs, NormalizeString(searchTerm) ?? searchTerm);
         return await ReadSongPageAsync(query, pageNumber, pageSize, SongSortOrder.TitleAsc, token).ConfigureAwait(false);
     }
 
     public async Task<PagedResult<Song>> GetSongsByAlbumIdPagedAsync(Guid albumId, int pageNumber, int pageSize,
         SongSortOrder sortOrder, CancellationToken token = default)
     {
-        SanitizePaging(ref pageNumber, ref pageSize);
+        Paging.Sanitize(ref pageNumber, ref pageSize);
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
         return await ReadSongPageAsync(context.Songs.Where(s => s.AlbumId == albumId), pageNumber, pageSize, sortOrder, token).ConfigureAwait(false);
     }
@@ -42,7 +42,7 @@ public partial class LibraryReader
     public async Task<PagedResult<Song>> GetSongsByArtistIdPagedAsync(Guid artistId, int pageNumber, int pageSize,
         SongSortOrder sortOrder, CancellationToken token = default)
     {
-        SanitizePaging(ref pageNumber, ref pageSize);
+        Paging.Sanitize(ref pageNumber, ref pageSize);
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
         return await ReadSongPageAsync(context.Songs.Where(s => s.SongArtists.Any(sa => sa.ArtistId == artistId)), pageNumber, pageSize, sortOrder, token).ConfigureAwait(false);
     }
@@ -50,14 +50,14 @@ public partial class LibraryReader
     public async Task<PagedResult<Song>> GetSongsByGenreIdPagedAsync(Guid genreId, int pageNumber, int pageSize,
         SongSortOrder sortOrder, CancellationToken token = default)
     {
-        SanitizePaging(ref pageNumber, ref pageSize);
+        Paging.Sanitize(ref pageNumber, ref pageSize);
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
         return await ReadSongPageAsync(context.Songs.Where(s => s.Genres.Any(g => g.Id == genreId)), pageNumber, pageSize, sortOrder, token).ConfigureAwait(false);
     }
 
     public async Task<PagedResult<Song>> GetSongsByPlaylistPagedAsync(Guid playlistId, int pageNumber, int pageSize, SongSortOrder sortOrder, CancellationToken token = default)
     {
-        SanitizePaging(ref pageNumber, ref pageSize);
+        Paging.Sanitize(ref pageNumber, ref pageSize);
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = context.PlaylistSongs.AsNoTracking()
@@ -100,7 +100,7 @@ public partial class LibraryReader
     public async Task<PagedResult<Artist>> GetAllArtistsPagedAsync(int pageNumber, int pageSize,
         ArtistSortOrder sortOrder = ArtistSortOrder.NameAsc, CancellationToken token = default)
     {
-        SanitizePaging(ref pageNumber, ref pageSize);
+        Paging.Sanitize(ref pageNumber, ref pageSize);
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = context.Artists.AsNoTracking();
@@ -137,7 +137,7 @@ public partial class LibraryReader
 
     public async Task<PagedResult<Artist>> SearchArtistsPagedAsync(string searchTerm, int pageNumber, int pageSize, CancellationToken token = default)
     {
-        SanitizePaging(ref pageNumber, ref pageSize);
+        Paging.Sanitize(ref pageNumber, ref pageSize);
 
         var normalizedTerm = NormalizeString(searchTerm) ?? string.Empty;
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -158,7 +158,7 @@ public partial class LibraryReader
     public async Task<PagedResult<Album>> GetAllAlbumsPagedAsync(int pageNumber, int pageSize,
         AlbumSortOrder sortOrder = AlbumSortOrder.ArtistAsc, CancellationToken token = default)
     {
-        SanitizePaging(ref pageNumber, ref pageSize);
+        Paging.Sanitize(ref pageNumber, ref pageSize);
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = context.Albums.AsNoTracking().Include(al => al.AlbumArtists).ThenInclude(aa => aa.Artist);
@@ -174,7 +174,7 @@ public partial class LibraryReader
 
     public async Task<PagedResult<Album>> SearchAlbumsPagedAsync(string searchTerm, int pageNumber, int pageSize, CancellationToken token = default)
     {
-        SanitizePaging(ref pageNumber, ref pageSize);
+        Paging.Sanitize(ref pageNumber, ref pageSize);
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
         var query = string.IsNullOrWhiteSpace(searchTerm)
             ? context.Albums
@@ -200,7 +200,7 @@ public partial class LibraryReader
         if (string.IsNullOrWhiteSpace(searchTerm)) return await GetAllSongIdsAsync(sortOrder, token).ConfigureAwait(false);
 
         var normalizedTerm = NormalizeString(searchTerm) ?? string.Empty;
-        var query = BuildSongSearchQuery(context, normalizedTerm);
+        var query = SongQuery.Search(context, context.Songs, normalizedTerm);
         return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync(token).ConfigureAwait(false);
     }
 
@@ -299,7 +299,7 @@ public partial class LibraryReader
     public async Task<PagedResult<Song>> SearchSongsInAlbumPagedAsync(Guid albumId, string searchTerm, int pageNumber,
         int pageSize, CancellationToken token = default)
     {
-        SanitizePaging(ref pageNumber, ref pageSize);
+        Paging.Sanitize(ref pageNumber, ref pageSize);
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
         var baseQuery = context.Songs.AsNoTracking()
@@ -314,7 +314,7 @@ public partial class LibraryReader
     public async Task<PagedResult<Song>> SearchSongsInArtistPagedAsync(Guid artistId, string searchTerm, int pageNumber,
         int pageSize, CancellationToken token = default)
     {
-        SanitizePaging(ref pageNumber, ref pageSize);
+        Paging.Sanitize(ref pageNumber, ref pageSize);
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
         var baseQuery = context.Songs.AsNoTracking()
@@ -329,7 +329,7 @@ public partial class LibraryReader
     public async Task<PagedResult<Song>> SearchSongsInPlaylistPagedAsync(Guid playlistId, string searchTerm,
         int pageNumber, int pageSize, SongSortOrder sortOrder, CancellationToken token = default)
     {
-        SanitizePaging(ref pageNumber, ref pageSize);
+        Paging.Sanitize(ref pageNumber, ref pageSize);
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
         var query = context.PlaylistSongs.AsNoTracking()
@@ -342,7 +342,7 @@ public partial class LibraryReader
     public async Task<PagedResult<Song>> SearchSongsInGenrePagedAsync(Guid genreId, string searchTerm, int pageNumber,
         int pageSize, CancellationToken token = default)
     {
-        SanitizePaging(ref pageNumber, ref pageSize);
+        Paging.Sanitize(ref pageNumber, ref pageSize);
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
         var baseQuery = context.Songs.AsNoTracking()
@@ -471,33 +471,6 @@ public partial class LibraryReader
         return query;
     }
 
-    private IQueryable<Song> BuildSongSearchQuery(MusicDbContext context, string searchTerm)
-    {
-        var term = LikePatternHelper.CreateContainsPattern(searchTerm);
-        var artistIds = context.Artists
-            .Where(artist => EF.Functions.Like(artist.Name, term, LikePatternHelper.EscapeCharacter))
-            .Select(artist => artist.Id);
-        var songArtistIds = context.SongArtists.Where(sa => artistIds.Contains(sa.ArtistId)).Select(sa => sa.SongId);
-        var albumIds = context.Albums
-            .Where(album => EF.Functions.Like(album.Title, term, LikePatternHelper.EscapeCharacter)
-                            || EF.Functions.Like(album.ArtistName, term, LikePatternHelper.EscapeCharacter))
-            .Select(album => (Guid?)album.Id)
-            .Union(context.AlbumArtists.Where(aa => artistIds.Contains(aa.ArtistId)).Select(aa => (Guid?)aa.AlbumId));
-        var genreSongIds = context.Genres
-            .Where(genre => EF.Functions.Like(genre.Name, term, LikePatternHelper.EscapeCharacter))
-            .SelectMany(genre => genre.Songs).Select(song => song.Id);
-
-        return context.Songs
-            .Where(s =>
-                EF.Functions.Like(s.Title, term, LikePatternHelper.EscapeCharacter)
-                || EF.Functions.Like(s.ArtistName, term, LikePatternHelper.EscapeCharacter)
-                || songArtistIds.Contains(s.Id)
-                || albumIds.Contains(s.AlbumId)
-                || (s.Year != null && EF.Functions.Like(s.Year.ToString(), term, LikePatternHelper.EscapeCharacter))
-                || genreSongIds.Contains(s.Id)
-            );
-    }
-
     private IQueryable<Artist> BuildArtistSearchQuery(MusicDbContext context, string searchTerm)
     {
         var term = LikePatternHelper.CreateContainsPattern(searchTerm);
@@ -511,11 +484,5 @@ public partial class LibraryReader
             .Where(al => EF.Functions.Like(al.Title, term, LikePatternHelper.EscapeCharacter)
                          || EF.Functions.Like(al.ArtistName, term, LikePatternHelper.EscapeCharacter)
                          || al.AlbumArtists.Any(aa => EF.Functions.Like(aa.Artist.Name, term, LikePatternHelper.EscapeCharacter)));
-    }
-
-    private static void SanitizePaging(ref int pageNumber, ref int pageSize)
-    {
-        pageNumber = Math.Max(1, pageNumber);
-        pageSize = Math.Max(1, pageSize);
     }
 }

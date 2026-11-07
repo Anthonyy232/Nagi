@@ -154,7 +154,7 @@ public class SmartPlaylistService : ISmartPlaylistService
 
     public async Task<PagedResult<Song>> GetMatchingSongsPagedAsync(Guid smartPlaylistId, int pageNumber, int pageSize, string? searchTerm = null, SongSortOrder? sortOrder = null, CancellationToken token = default)
     {
-        SanitizePaging(ref pageNumber, ref pageSize);
+        Paging.Sanitize(ref pageNumber, ref pageSize);
 
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
         var smartPlaylist = await context.SmartPlaylists.AsNoTracking()
@@ -276,12 +276,4 @@ public class SmartPlaylistService : ISmartPlaylistService
         if (replaced) playlist.CoverImageUri = cover;
         return replaced;
     }
-
-    private static void SanitizePaging(ref int pageNumber, ref int pageSize)
-    {
-        if (pageNumber < 1) pageNumber = 1;
-        if (pageSize < 1) pageSize = 50;
-        if (pageSize > 500) pageSize = 500;
-    }
-
 }

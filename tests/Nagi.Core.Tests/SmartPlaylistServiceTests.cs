@@ -335,6 +335,16 @@ public class SmartPlaylistServiceTests : IDisposable
         songs.Should().ContainSingle().Which.Title.Should().Be("Song One");
     }
 
+    [Fact]
+    public async Task GetMatchingSongsPagedAsync_SearchMatchesGenresLikeTheLibrary()
+    {
+        var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Genre Search" });
+
+        var songs = (await _service.GetMatchingSongsPagedAsync(playlist.Id, 1, 50, "pop")).Items;
+
+        songs.Should().ContainSingle().Which.Title.Should().Be("Song Two");
+    }
+
     [Theory]
     [InlineData(1, "Song One", "Song Three")]
     [InlineData(2, "Song Two")]
@@ -359,7 +369,7 @@ public class SmartPlaylistServiceTests : IDisposable
         var result = await _service.GetMatchingSongsPagedAsync(playlist!.Id, 0, -5);
 
         result.PageNumber.Should().Be(1);
-        result.PageSize.Should().Be(50);
+        result.PageSize.Should().Be(1);
     }
 
     [Fact]

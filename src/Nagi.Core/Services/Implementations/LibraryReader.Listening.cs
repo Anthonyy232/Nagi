@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Data;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Services.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -21,7 +22,7 @@ public partial class LibraryReader
     public async Task<PagedResult<Song>> GetFavoritesPagedAsync(string searchTerm, int pageNumber, int pageSize,
         SongSortOrder sortOrder, CancellationToken token = default)
     {
-        SanitizePaging(ref pageNumber, ref pageSize);
+        Paging.Sanitize(ref pageNumber, ref pageSize);
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
         return await ReadSongPageAsync(FavoriteQuery(context, searchTerm), pageNumber, pageSize, sortOrder, token).ConfigureAwait(false);
     }
@@ -33,7 +34,7 @@ public partial class LibraryReader
     }
 
     private IQueryable<Song> FavoriteQuery(MusicDbContext context, string searchTerm) =>
-        (string.IsNullOrWhiteSpace(searchTerm) ? context.Songs : BuildSongSearchQuery(context, NormalizeString(searchTerm) ?? searchTerm))
+        (string.IsNullOrWhiteSpace(searchTerm) ? context.Songs : SongQuery.Search(context, context.Songs, NormalizeString(searchTerm) ?? searchTerm))
         .Where(s => s.IsLoved);
 
     public async Task<IReadOnlyList<RecentListen>> GetRecentListensAsync(string searchTerm, int skip, int take, CancellationToken token = default)
@@ -42,11 +43,11 @@ public partial class LibraryReader
         var query = context.ListenHistory.AsNoTracking();
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var songs = BuildSongSearchQuery(context, NormalizeString(searchTerm) ?? searchTerm).Select(s => s.Id);
+            var songs = SongQuery.Search(context, context.Songs, NormalizeString(searchTerm) ?? searchTerm).Select(s => s.Id);
             query = query.Where(h => songs.Contains(h.SongId));
         }
         return await query.OrderByDescending(h => h.ListenTimestampUtc).ThenByDescending(h => h.Id)
-            .Skip(Math.Max(0, skip)).Take(Math.Clamp(take, 1, 100))
+            .Skip(Math.Max(0, skip)).Take(Math.Clamp(take, 1, RecentListen.MaxPageSize))
             .Select(h => new RecentListen(h.Id, h.SongId, h.Song.Title, h.Song.ArtistName, h.ListenTimestampUtc))
             .ToListAsync(token).ConfigureAwait(false);
     }

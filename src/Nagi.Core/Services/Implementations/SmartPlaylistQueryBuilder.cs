@@ -28,7 +28,7 @@ internal static class SmartPlaylistQueryBuilder
         query = ApplyRuleFilters(query, smartPlaylist);
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
-            query = ApplySearchFilter(query, searchTerm);
+            query = SongQuery.Search(context, query, ArtistNameHelper.NormalizeStringCore(searchTerm)!);
 
         return query;
     }
@@ -316,16 +316,4 @@ internal static class SmartPlaylistQueryBuilder
         var rightBody = ReplacingExpressionVisitor.Replace(right.Parameters[0], left.Parameters[0], right.Body);
         return Expression.Lambda<Func<Song, bool>>(Expression.OrElse(left.Body, rightBody), left.Parameters);
     }
-
-    private static IQueryable<Song> ApplySearchFilter(IQueryable<Song> query, string searchTerm)
-    {
-        var normalizedTerm = ArtistNameHelper.NormalizeStringCore(searchTerm) ?? searchTerm;
-        var term = LikePatternHelper.CreateContainsPattern(normalizedTerm);
-        return query.Where(s =>
-            EF.Functions.Like(s.Title, term, LikePatternHelper.EscapeCharacter)
-            || EF.Functions.Like(s.ArtistName, term, LikePatternHelper.EscapeCharacter)
-            || s.SongArtists.Any(sa => EF.Functions.Like(sa.Artist.Name, term, LikePatternHelper.EscapeCharacter))
-            || (s.Album != null && (EF.Functions.Like(s.Album.Title, term, LikePatternHelper.EscapeCharacter) || EF.Functions.Like(s.Album.ArtistName, term, LikePatternHelper.EscapeCharacter) || s.Album.AlbumArtists.Any(aa => EF.Functions.Like(aa.Artist.Name, term, LikePatternHelper.EscapeCharacter)))));
-    }
-
 }
