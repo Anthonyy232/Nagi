@@ -278,12 +278,14 @@ public sealed class ArtworkService : IArtworkService
 
     internal void DeleteArtistImages(IEnumerable<Guid> artistIds)
     {
+        if (!_fileSystem.DirectoryExists(_pathConfig.ArtistImageCachePath)) return;
         foreach (var artistId in artistIds)
         {
             try
             {
-                foreach (var suffix in Enum.GetValues<CachedImageKind>().Select(kind => kind.Suffix()).Append(""))
-                    ImageStorageHelper.DeleteImage(_fileSystem, _pathConfig.ArtistImageCachePath, artistId.ToString(), suffix);
+                // Every kind, plus the {id}.jpg images versions before the kinds saved.
+                foreach (var path in _fileSystem.GetFiles(_pathConfig.ArtistImageCachePath, $"{artistId}.*"))
+                    _fileSystem.DeleteFile(path);
             }
             catch (Exception ex)
             {

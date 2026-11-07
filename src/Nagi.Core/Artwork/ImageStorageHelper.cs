@@ -6,10 +6,10 @@ using Nagi.Core.Platform;
 namespace Nagi.Core.Artwork;
 
 /// <summary>
-///     Where a cached artist or playlist image came from. Its file name, <c>{id}{suffix}{extension}</c>, records the
-///     kind, so an online lookup never replaces an image the user picked or one from the music folder.
+///     Where a cached image came from. Its file name, <c>{id}{suffix}{extension}</c>, records the kind, so an online
+///     lookup never replaces an image the user picked or one from the music folder.
 /// </summary>
-public enum CachedImageKind
+internal enum CachedImageKind
 {
     Fetched,
     Folder,
@@ -18,7 +18,9 @@ public enum CachedImageKind
 
 public static class ImageStorageHelper
 {
-    public static string Suffix(this CachedImageKind kind) => kind switch
+    private const string SavedExtension = ".jpg";
+
+    internal static string Suffix(this CachedImageKind kind) => kind switch
     {
         CachedImageKind.Fetched => ".fetched",
         CachedImageKind.Folder => ".local",
@@ -30,7 +32,7 @@ public static class ImageStorageHelper
     public static bool IsCustomImage(string? path) => IsOfKind(path, CachedImageKind.Custom);
 
     /// <summary>Whether a cached artist image came from the user or the music folder rather than an online provider.</summary>
-    public static bool IsUserOrFolderImage(string? path) =>
+    internal static bool IsUserOrFolderImage(string? path) =>
         IsCustomImage(path) || IsOfKind(path, CachedImageKind.Folder);
 
     /// <summary>
@@ -51,70 +53,36 @@ public static class ImageStorageHelper
     private static string Marker(CachedImageKind kind) => kind.Suffix() + ".";
 
     /// <returns>The image of that kind with any supported extension, or null if there is none.</returns>
-    public static string? FindImage(IFileSystemService fs, string directory, string baseFileName, CachedImageKind kind) =>
-        FindImage(fs, directory, baseFileName, kind.Suffix());
+    internal static string? FindImage(IFileSystemService fs, string directory, string baseFileName, CachedImageKind kind) =>
+        fs.DirectoryExists(directory) ? ImagePaths(directory, baseFileName, kind).FirstOrDefault(fs.FileExists) : null;
 
-    /// <summary>
-    ///     Finds the first existing image file matching the pattern {baseFileName}{suffix}.*
-    ///     checks against all supported image extensions.
-    /// </summary>
-    public static string? FindImage(IFileSystemService fs, string directory, string baseFileName, string suffix)
-    {
-        if (!fs.DirectoryExists(directory)) return null;
-
-        foreach (var ext in FileExtensions.ImageFileExtensions)
-        {
-            var path = Path.Combine(directory, $"{baseFileName}{suffix}{ext}");
-            if (fs.FileExists(path))
-            {
-                return path;
-            }
-        }
-
-        return null;
-    }
-
-    public static void DeleteImage(IFileSystemService fs, string directory, string baseFileName, CachedImageKind kind) =>
-        DeleteImage(fs, directory, baseFileName, kind.Suffix());
-
-    public static void DeleteImage(IFileSystemService fs, string directory, string baseFileName, string suffix,
-        string? exceptExtension = null)
+    internal static void DeleteImage(IFileSystemService fs, string directory, string baseFileName, CachedImageKind kind)
     {
         if (!fs.DirectoryExists(directory)) return;
-
-        foreach (var ext in FileExtensions.ImageFileExtensions)
-        {
-            if (string.Equals(ext, exceptExtension, StringComparison.OrdinalIgnoreCase)) continue;
-            var path = Path.Combine(directory, $"{baseFileName}{suffix}{ext}");
-            if (fs.FileExists(path))
-            {
-                fs.DeleteFile(path);
-            }
-        }
+        foreach (var path in ImagePaths(directory, baseFileName, kind).Where(fs.FileExists))
+            fs.DeleteFile(path);
     }
 
-    public static Task<string?> SaveImageBytesAsync(IFileSystemService fs, string directory, string baseFileName,
-        CachedImageKind kind, byte[] imageBytes) =>
-        SaveImageBytesAsync(fs, directory, baseFileName, kind.Suffix(), imageBytes);
-
     /// <summary>
-    ///     Replaces the destination only after the new image has been written successfully.
+    ///     Saves the image as <c>{baseFileName}{suffix}.jpg</c> and removes the previous one of that kind only after the
+    ///     new one has been written.
     /// </summary>
-    public static async Task<string?> SaveImageBytesAsync(IFileSystemService fs, string directory,
-        string baseFileName, string suffix, byte[] imageBytes, string extension = ".jpg")
+    internal static async Task<string?> SaveImageBytesAsync(IFileSystemService fs, string directory,
+        string baseFileName, CachedImageKind kind, byte[] imageBytes)
     {
         if (imageBytes.Length == 0) return null;
 
         fs.CreateDirectory(directory);
 
-        var newFileName = $"{baseFileName}{suffix}{extension}";
-        var destinationPath = Path.Combine(directory, newFileName);
-        var temporaryPath = Path.Combine(directory, $"{newFileName}.{Guid.NewGuid():N}.tmp");
+        var destinationPath = Path.Combine(directory, $"{baseFileName}{kind.Suffix()}{SavedExtension}");
+        var temporaryPath = $"{destinationPath}.{Guid.NewGuid():N}.tmp";
         try
         {
             await fs.WriteAllBytesAsync(temporaryPath, imageBytes).ConfigureAwait(false);
             fs.MoveFile(temporaryPath, destinationPath, true);
-            DeleteImage(fs, directory, baseFileName, suffix, exceptExtension: extension);
+            foreach (var path in ImagePaths(directory, baseFileName, kind)
+                         .Where(path => path != destinationPath && fs.FileExists(path)))
+                fs.DeleteFile(path);
             return destinationPath;
         }
         finally
@@ -122,4 +90,8 @@ public static class ImageStorageHelper
             if (fs.FileExists(temporaryPath)) fs.DeleteFile(temporaryPath);
         }
     }
+
+    private static IEnumerable<string> ImagePaths(string directory, string baseFileName, CachedImageKind kind) =>
+        FileExtensions.ImageFileExtensions.Select(extension =>
+            Path.Combine(directory, $"{baseFileName}{kind.Suffix()}{extension}"));
 }

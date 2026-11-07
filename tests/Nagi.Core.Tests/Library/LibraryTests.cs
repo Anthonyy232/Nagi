@@ -550,7 +550,7 @@ public partial class LibraryTests : IDisposable
         }
         var imagePath = Path.Combine(_pathConfig.ArtistImageCachePath, $"{artist.Id}.local.jpg");
         _fileSystem.DirectoryExists(_pathConfig.ArtistImageCachePath).Returns(true);
-        _fileSystem.FileExists(imagePath).Returns(true);
+        _fileSystem.GetFiles(_pathConfig.ArtistImageCachePath, $"{artist.Id}.*").Returns([imagePath]);
         if (imageLocked)
             _fileSystem.When(fs => fs.DeleteFile(imagePath)).Do(_ => throw new IOException("File is locked"));
 
