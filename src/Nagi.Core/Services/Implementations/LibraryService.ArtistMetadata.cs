@@ -4,9 +4,10 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Constants;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http;
 using Nagi.Core.Models;
+using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
-using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Implementations;
@@ -17,7 +18,7 @@ namespace Nagi.Core.Services.Implementations;
 /// </summary>
 public partial class LibraryService
 {
-    public async Task<Artist?> GetArtistDetailsAsync(Guid artistId, bool allowOnlineFetch, CancellationToken cancellationToken = default)
+    public async Task<Artist?> GetArtistDetailsAsync(Guid artistId, CancellationToken cancellationToken = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
         var artist = await context.Artists.AsTracking().FirstOrDefaultAsync(a => a.Id == artistId, cancellationToken).ConfigureAwait(false);
@@ -28,7 +29,7 @@ public partial class LibraryService
                           string.IsNullOrWhiteSpace(artist.LocalImageCachePath);
         // Only fetch if never checked before. Once checked, respect the result.
         var neverChecked = artist.MetadataLastCheckedUtc == null;
-        if (allowOnlineFetch && needsUpdate && neverChecked)
+        if (needsUpdate && neverChecked)
         {
             try
             {
@@ -59,20 +60,8 @@ public partial class LibraryService
         try
         {
             var token = runCts.Token;
-            await Task.Run(async () =>
-            {
-                var enabledProviders = _settingsService.Get(CoreSettings.MetadataProviders).Where(p => p.IsEnabled).ToList();
-
-                if (enabledProviders.Count == 0)
-                {
-                    _logger.LogDebug("Metadata background fetch: no providers enabled, exiting.");
-                    return;
-                }
-
-                await Task.WhenAll(
-                    FetchMissingArtistMetadataAsync(enabledProviders, token),
-                    FetchMissingAlbumCoversAsync(enabledProviders, token)).ConfigureAwait(false);
-            }, token).ConfigureAwait(false);
+            await Task.Run(() => Task.WhenAll(FetchMissingArtistMetadataAsync(token), FetchMissingAlbumCoversAsync(token)),
+                token).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
@@ -89,12 +78,12 @@ public partial class LibraryService
         }
     }
 
-    private async Task FetchMissingArtistMetadataAsync(IReadOnlyList<ServiceProviderSetting> enabledProviders,
-        CancellationToken token)
+    private async Task FetchMissingArtistMetadataAsync(CancellationToken token)
     {
         const int batchSize = 50;
         Guid? afterId = null;
-        while (!token.IsCancellationRequested)
+        var lookupsOff = false;
+        while (!lookupsOff && !token.IsCancellationRequested)
         {
             await using var batchContext = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
             var query = batchContext.Artists.Where(a => a.MetadataLastCheckedUtc == null);
@@ -120,14 +109,19 @@ public partial class LibraryService
                     if (!directoriesByArtist.TryGetValue(artist.Id, out var artistDirectories))
                         artistDirectories = Array.Empty<string?>();
 
-                    var (updated, newImagePath) = await FetchAndUpdateArtistFromRemoteAsync(
+                    var (lookedUp, updated, newImagePath) = await FetchAndUpdateArtistFromRemoteAsync(
                         batchContext, artist, token, saveChanges: false, suppressEvents: true,
-                        preloadedEnabledProviders: enabledProviders,
                         preloadedSongDirectories: artistDirectories).ConfigureAwait(false);
-
                     if (updated)
                     {
                         pendingUpdates.Add(new ArtistMetadataUpdatedEventArgs(artist.Id, newImagePath));
+                    }
+
+                    if (!lookedUp)
+                    {
+                        _logger.LogDebug("Online metadata was turned off or has no source; stopping the artist pass.");
+                        lookupsOff = true;
+                        break;
                     }
 
                     if (++processedCount >= 10 || stopwatch.Elapsed.TotalSeconds >= 5)
@@ -200,20 +194,13 @@ public partial class LibraryService
         return artistIds.Count;
     }
 
-    /// <summary>
-    ///     Finds artists linked to songs in the given folder that have no local or custom image,
-    ///     then searches their associated directories for artist image files (e.g., artist.jpg).
-    ///     Updates each artist's <see cref="Artist.LocalImageCachePath"/> and fires
-    ///     <see cref="ArtistMetadataUpdated"/> when an image is found.
-    /// </summary>
+    /// <summary>Looks for an artist image (such as artist.jpg) beside the songs in the folder.</summary>
     /// <returns>The number of artists updated with newly found local images.</returns>
     private async Task<int> UpdateMissingArtistImagesFromFoldersAsync(Guid folderId, CancellationToken cancellationToken)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
-        // Find distinct artists linked to songs in this folder.
-        // Skip if a custom image or a previously-found local folder image is already cached.
-        // We DO NOT skip if they only have a .fetched (external) image, as local files take precedence.
+        // A folder image replaces a fetched one, but never a custom image or an earlier folder image.
         var artistsNeedingImages = await context.Artists
             .Where(a => a.SongArtists.Any(sa => sa.Song.FolderId == folderId))
             .Where(a => a.LocalImageCachePath == null ||
@@ -263,7 +250,6 @@ public partial class LibraryService
         {
             await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             _logger.LogInformation("Updated {Count} artists with local folder images.", pendingEvents.Count);
-            // Fire events only after the DB write succeeds to keep UI state consistent with persisted data.
             foreach (var eventArgs in pendingEvents)
                 ArtistMetadataUpdated?.Invoke(this, eventArgs);
         }
@@ -287,11 +273,6 @@ public partial class LibraryService
         }
     }
 
-    /// <summary>
-    ///     Searches for an artist image file in the folders associated with the artist's songs.
-    ///     Queries the database for song directories, then delegates to
-    ///     <see cref="FindArtistImageInDirectoriesAsync"/>. Used by single-artist code paths.
-    /// </summary>
     private async Task<byte[]?> FindArtistImageInFoldersAsync(Artist artist, MusicDbContext context, CancellationToken ct)
     {
         var songDirectories = (await LoadSongDirectoriesByArtistAsync(context, [artist.Id], ct).ConfigureAwait(false))
@@ -426,20 +407,21 @@ public partial class LibraryService
         }
     }
 
-    private async Task<(bool Updated, string? NewImagePath)> FetchAndUpdateArtistFromRemoteAsync(
+    /// <returns>
+    ///     LookedUp is false when online metadata is off or has no source, so only a folder image was looked for.
+    /// </returns>
+    private async Task<(bool LookedUp, bool Updated, string? NewImagePath)> FetchAndUpdateArtistFromRemoteAsync(
         MusicDbContext context,
         Artist artist,
         CancellationToken cancellationToken = default,
         bool saveChanges = true,
         bool suppressEvents = false,
-        IReadOnlyList<ServiceProviderSetting>? preloadedEnabledProviders = null,
         IReadOnlyList<string?>? preloadedSongDirectories = null)
     {
         var wasMetadataFoundAndUpdated = false;
 
-        // Navidrome priority: local folder images first (artist.*, album/artist.*), then external providers.
-        // Skip if a custom image or a previously-found local folder image is already cached.
-        // We DO NOT skip if they only have a .fetched (external) image, as local files take precedence.
+        // As in Navidrome, a folder image (artist.*, album/artist.*) comes before the online sources, and replaces a
+        // fetched image but never a custom image or an earlier folder image.
         if (!ImageStorageHelper.IsUserOrFolderImage(artist.LocalImageCachePath))
         {
             var localImageBytes = preloadedSongDirectories is not null
@@ -466,23 +448,32 @@ public partial class LibraryService
             }
         }
 
-        // Get enabled metadata providers in priority order. Callers in batch paths preload this
-        // once for the whole run to avoid repeated settings-store reads + list rebuilds per artist.
-        var enabledProviders = preloadedEnabledProviders
-            ?? _settingsService.Get(CoreSettings.MetadataProviders).Where(p => p.IsEnabled).ToList();
-
-        if (enabledProviders.Count == 0)
+        var found = await _artistMetadataService.FindAsync(artist.Name, artist.MusicBrainzId, cancellationToken)
+            .ConfigureAwait(false);
+        var stampChecked = false;
+        if (found is not null)
         {
-            _logger.LogDebug("No metadata providers enabled. Skipping remote fetch for artist '{ArtistName}'.", artist.Name);
-            if (wasMetadataFoundAndUpdated && saveChanges)
-                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-            if (!suppressEvents && wasMetadataFoundAndUpdated)
-                ArtistMetadataUpdated?.Invoke(this, new ArtistMetadataUpdatedEventArgs(artist.Id, artist.LocalImageCachePath));
-            return (wasMetadataFoundAndUpdated, artist.LocalImageCachePath);
+            (var updated, stampChecked) = await ApplyOnlineMetadataAsync(artist, found, cancellationToken).ConfigureAwait(false);
+            wasMetadataFoundAndUpdated |= updated;
         }
 
-        var found = await _artistMetadataService
-            .FindAsync(artist.Name, artist.MusicBrainzId, enabledProviders, cancellationToken).ConfigureAwait(false);
+        if (saveChanges && (wasMetadataFoundAndUpdated || stampChecked))
+        {
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        if (!suppressEvents && wasMetadataFoundAndUpdated)
+        {
+            ArtistMetadataUpdated?.Invoke(this, new ArtistMetadataUpdatedEventArgs(artist.Id, artist.LocalImageCachePath));
+        }
+
+        return (found is not null, wasMetadataFoundAndUpdated, artist.LocalImageCachePath);
+    }
+
+    private async Task<(bool Updated, bool StampChecked)> ApplyOnlineMetadataAsync(Artist artist, ArtistMetadataResult found,
+        CancellationToken cancellationToken)
+    {
+        var wasMetadataFoundAndUpdated = false;
         var isConclusive = found.IsConclusive;
 
         if (found.MusicBrainzId is not null)
@@ -497,8 +488,6 @@ public partial class LibraryService
             wasMetadataFoundAndUpdated = true;
         }
 
-        // Download and cache the best image found from external providers.
-        // Skip if a local folder image or custom image is already set.
         if (!string.IsNullOrEmpty(found.ImageUrl) &&
             !ImageStorageHelper.IsUserOrFolderImage(artist.LocalImageCachePath))
         {
@@ -529,17 +518,7 @@ public partial class LibraryService
                 artist.Name);
         }
 
-        if (saveChanges && (wasMetadataFoundAndUpdated || stampChecked))
-        {
-            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-        }
-
-        if (!suppressEvents && wasMetadataFoundAndUpdated)
-        {
-            ArtistMetadataUpdated?.Invoke(this, new ArtistMetadataUpdatedEventArgs(artist.Id, artist.LocalImageCachePath));
-        }
-
-        return (wasMetadataFoundAndUpdated, artist.LocalImageCachePath);
+        return (wasMetadataFoundAndUpdated, stampChecked);
     }
 
     private async Task<string?> DownloadAndCacheArtistImageAsync(Artist artist, Uri imageUrl, CancellationToken cancellationToken)
@@ -583,38 +562,8 @@ public partial class LibraryService
             artistId.ToString(), ".fetched", processedBytes).ConfigureAwait(false);
     }
 
-    private async Task<byte[]?> DownloadImageBytesAsync(Uri imageUrl, CancellationToken cancellationToken)
-    {
-        using var httpClient = _httpClientFactory.CreateClient("ImageDownloader");
-
-        return await _pipelines.ExecuteWithFallbackAsync<byte[]?>(
-            ServiceProviderIds.ImageDownload,
-            async ct =>
-            {
-                _logger.LogDebug("Downloading image: {ImageUrl}", imageUrl);
-                return await httpClient.GetAsync(imageUrl, ct).ConfigureAwait(false);
-            },
-            async (response, ct) =>
-            {
-                if (!response.IsSuccessStatusCode)
-                {
-                    _logger.LogDebug("Image download returned {Status} for {ImageUrl}", response.StatusCode, imageUrl);
-                    return null;
-                }
-
-                return await response.Content.ReadAsByteArrayAsync(ct).ConfigureAwait(false);
-            },
-            fallback: null,
-            _logger,
-            $"image download {imageUrl}",
-            cancellationToken).ConfigureAwait(false);
-    }
-
-    private void OnSettingChanged(Setting setting)
-    {
-        if (setting == CoreSettings.FetchOnlineMetadata && !_settingsService.Get(CoreSettings.FetchOnlineMetadata))
-            CancelMetadataFetch();
-    }
+    private async Task<byte[]?> DownloadImageBytesAsync(Uri imageUrl, CancellationToken cancellationToken) =>
+        (await _imageDownloads.GetBytesAsync(imageUrl, $"image download {imageUrl}", cancellationToken).ConfigureAwait(false)).Data;
 
     private void CancelMetadataFetch()
     {

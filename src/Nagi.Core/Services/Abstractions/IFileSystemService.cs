@@ -9,6 +9,8 @@ public interface IFileSystemService
     bool DirectoryExists(string path);
     void CreateDirectory(string path);
     void DeleteDirectory(string path, bool recursive);
+    IEnumerable<string> EnumerateDirectories(string path);
+    void MoveDirectory(string sourceDirName, string destDirName);
     IEnumerable<string> EnumerateFiles(string path, string searchPattern, SearchOption searchOption);
     IEnumerable<(string Path, DateTime LastWriteTimeUtc)> EnumerateFilesWithLastWriteTime(string path, string searchPattern, SearchOption searchOption);
     string[] GetFiles(string path, string searchPattern);
@@ -16,6 +18,8 @@ public interface IFileSystemService
     Task WriteAllTextAsync(string path, string contents);
     Task<string> ReadAllTextAsync(string path);
     Task<byte[]> ReadAllBytesAsync(string path);
+    Stream OpenRead(string path);
+    Stream CreateFile(string path);
 
     bool FileExists(string path);
     void DeleteFile(string path);

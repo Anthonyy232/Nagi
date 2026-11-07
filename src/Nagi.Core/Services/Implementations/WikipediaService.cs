@@ -1,10 +1,9 @@
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
-using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
-using Nagi.Core.Services.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -17,18 +16,14 @@ public class WikipediaService : IWikipediaService
     private const string WikidataApiUrl = "https://www.wikidata.org/w/api.php";
     private const string FallbackLanguage = "en";
 
-    private readonly HttpClient _httpClient;
-    private readonly IProviderPipelineProvider _pipelines;
-    private readonly ILogger<WikipediaService> _logger;
+    private readonly ProviderClient _client;
 
     public WikipediaService(
         IHttpClientFactory httpClientFactory,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         ILogger<WikipediaService> logger)
     {
-        _httpClient = httpClientFactory.CreateClient();
-        _pipelines = pipelines;
-        _logger = logger;
+        _client = new ProviderClient(ProviderCatalog.Wikipedia.Policy, httpClientFactory.CreateClient(), pipelines, logger);
     }
 
     public async Task<ServiceResult<string>> GetArtistBiographyAsync(
@@ -82,8 +77,8 @@ public class WikipediaService : IWikipediaService
     private Task<ServiceResult<TResult>> GetAsync<TResponse, TResult>(
         string url, Func<TResponse, TResult?> select, string operation, CancellationToken cancellationToken)
         where TResult : class =>
-        _pipelines.GetJsonAsync<TResponse, TResult>(_httpClient, ServiceProviderIds.Wikipedia, url,
-            body => ServiceResult<TResult>.FromSuccessOrNotFound(select(body)), _logger, operation, cancellationToken);
+        _client.GetJsonAsync<TResponse, TResult>(url,
+            body => ServiceResult<TResult>.FromSuccessOrNotFound(select(body)), operation, cancellationToken);
 
     private sealed record Article(string Language, string Title);
 

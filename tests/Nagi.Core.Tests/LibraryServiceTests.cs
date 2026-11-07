@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -67,7 +68,7 @@ public partial class LibraryServiceTests : IDisposable
         _pathConfig.PlaylistImageCachePath.Returns("C:\\cache\\playlistimages");
         _pathConfig.LrcCachePath.Returns("C:\\cache\\lrc");
 
-        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
+        _pipelines = TestProviderPipeline.Build(ProviderCatalog.ImageDownload.ProviderId);
 
         _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, _settingsService);
 
@@ -83,6 +84,7 @@ public partial class LibraryServiceTests : IDisposable
                 _theAudioDbService,
                 Substitute.For<IDeezerService>(),
                 Substitute.For<IWikipediaService>(),
+                _settingsService,
                 _artistMetadataLogger),
             Substitute.For<IAlbumCoverService>(),
             _httpClientFactory,
@@ -107,7 +109,7 @@ public partial class LibraryServiceTests : IDisposable
     private LibraryService CreateLibraryService(DbContextFactoryTestHelper database, LibraryReader reader) =>
         new(database.ContextFactory, reader, _fileSystem, _metadataService,
             new ArtistMetadataService(_lastFmService, _musicBrainzService, _fanartTvService, _theAudioDbService,
-                Substitute.For<IDeezerService>(), Substitute.For<IWikipediaService>(), _artistMetadataLogger),
+                Substitute.For<IDeezerService>(), Substitute.For<IWikipediaService>(), _settingsService, _artistMetadataLogger),
             Substitute.For<IAlbumCoverService>(), _httpClientFactory, _pathConfig, _settingsService, _replayGainService,
             _imageProcessor, _pipelines, _logger);
 
@@ -118,6 +120,7 @@ public partial class LibraryServiceTests : IDisposable
     [InlineData(ServiceProviderIds.MusicBrainz)]
     public async Task ArtistMetadata_TemporaryProviderFailure_RemainsRetryable(string providerId)
     {
+        _settingsService.Set(CoreSettings.FetchOnlineMetadata, true);
         var artist = new Artist
         {
             Name = "Retry artist",
@@ -138,18 +141,40 @@ public partial class LibraryServiceTests : IDisposable
         _musicBrainzService.SearchArtistAsync(artist.Name, Arg.Any<CancellationToken>()).Returns(
             ServiceResult<string>.FromTemporaryError(), ServiceResult<string>.FromSuccessNotFound());
 
-        var failed = await _libraryService.GetArtistDetailsAsync(artist.Id, true);
+        var failed = await _libraryService.GetArtistDetailsAsync(artist.Id);
         failed!.MetadataLastCheckedUtc.Should().BeNull();
 
-        var retried = await _libraryService.GetArtistDetailsAsync(artist.Id, true);
+        var retried = await _libraryService.GetArtistDetailsAsync(artist.Id);
         retried!.MetadataLastCheckedUtc.Should().NotBeNull();
+    }
+
+    [Theory]
+    [InlineData(ServiceProviderIds.MusicBrainz)]
+    [InlineData(ServiceProviderIds.CoverArtArchive, ServiceProviderIds.AppleMusic)]
+    public async Task ArtistMetadata_WithoutAnEnabledSourceThatCanLookTheArtistUp_MarksTheArtistChecked(
+        params string[] providerIds)
+    {
+        _settingsService.Set(CoreSettings.FetchOnlineMetadata, true);
+        var artist = new Artist { Name = "Known artist", MusicBrainzId = Guid.NewGuid().ToString() };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Artists.Add(artist);
+            await context.SaveChangesAsync();
+        }
+        _settingsService.EnableOnly(CoreSettings.MetadataProviders, providerIds);
+
+        var result = await _libraryService.GetArtistDetailsAsync(artist.Id);
+
+        result!.MetadataLastCheckedUtc.Should().NotBeNull();
+        await _musicBrainzService.DidNotReceive().SearchArtistAsync(Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 
     [Theory]
     [InlineData(ServiceProviderIds.TheAudioDb)]
     [InlineData(ServiceProviderIds.MusicBrainz)]
-    public async Task ArtistMetadata_ProviderTimeout_UsesLowerPriorityBiography(string providerId)
+    public async Task ArtistMetadata_ProviderFailure_UsesLowerPriorityBiography(string providerId)
     {
+        _settingsService.Set(CoreSettings.FetchOnlineMetadata, true);
         var artist = new Artist
         {
             Name = "Fallback artist",
@@ -162,58 +187,22 @@ public partial class LibraryServiceTests : IDisposable
         }
         _settingsService.EnableOnly(CoreSettings.MetadataProviders, providerId, ServiceProviderIds.LastFm);
         _theAudioDbService.GetArtistMetadataAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
-            .Returns(Task.FromException<ServiceResult<TheAudioDbArtistInfo>>(new TaskCanceledException("Timed out")));
+            .Returns(ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError());
         _musicBrainzService.SearchArtistAsync(artist.Name, Arg.Any<CancellationToken>())
-            .Returns(Task.FromException<ServiceResult<string>>(new TaskCanceledException("Timed out")));
+            .Returns(ServiceResult<string>.FromTemporaryError());
         _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccess(new ArtistInfo { Biography = "Fallback biography" }));
 
-        var result = await _libraryService.GetArtistDetailsAsync(artist.Id, true);
+        var result = await _libraryService.GetArtistDetailsAsync(artist.Id);
 
         result!.Biography.Should().Be("Fallback biography");
         result.MetadataLastCheckedUtc.Should().BeNull();
     }
 
     [Fact]
-    public async Task ArtistMetadata_CancellationDuringIdentityLookup_StillObservesOtherProviderFailures()
-    {
-        var artist = new Artist { Name = "Cancelled lookup" };
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Artists.Add(artist);
-            await context.SaveChangesAsync();
-        }
-        _settingsService.EnableOnly(CoreSettings.MetadataProviders, ServiceProviderIds.MusicBrainz, ServiceProviderIds.LastFm);
-        var identity = new TaskCompletionSource<ServiceResult<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var metadata = new TaskCompletionSource<ServiceResult<ArtistInfo>>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var observed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var failure = new HttpRequestException("Late provider failure");
-        _musicBrainzService.SearchArtistAsync(artist.Name, Arg.Any<CancellationToken>()).Returns(identity.Task);
-        _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>()).Returns(_ =>
-        {
-            started.TrySetResult();
-            return metadata.Task;
-        });
-        _artistMetadataLogger.When(logger => logger.Log(LogLevel.Debug, Arg.Any<EventId>(), Arg.Any<Arg.AnyType>(),
-                Arg.Is<Exception?>(exception => ReferenceEquals(exception, failure)),
-                Arg.Any<Func<Arg.AnyType, Exception?, string>>()))
-            .Do(_ => observed.TrySetResult());
-        using var cancellation = new CancellationTokenSource();
-
-        var lookup = _libraryService.GetArtistDetailsAsync(artist.Id, true, cancellation.Token);
-        await started.Task.WaitAsync(TimeSpan.FromSeconds(2));
-        cancellation.Cancel();
-        identity.SetCanceled(cancellation.Token);
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => lookup);
-        metadata.SetException(failure);
-
-        await observed.Task.WaitAsync(TimeSpan.FromSeconds(2));
-    }
-
-    [Fact]
     public async Task ArtistMetadata_FailedImageDownload_RetriesWithoutLosingBiography()
     {
+        _settingsService.Set(CoreSettings.FetchOnlineMetadata, true);
         var artist = new Artist { Name = "Image retry artist" };
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
@@ -230,7 +219,7 @@ public partial class LibraryServiceTests : IDisposable
         _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(_ => new HttpClient(_httpMessageHandler, disposeHandler: false));
         _httpMessageHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.ServiceUnavailable));
 
-        var failed = await _libraryService.GetArtistDetailsAsync(artist.Id, true);
+        var failed = await _libraryService.GetArtistDetailsAsync(artist.Id);
         failed!.Biography.Should().Be("Biography");
         failed.LocalImageCachePath.Should().BeNull();
         failed.MetadataLastCheckedUtc.Should().BeNull();
@@ -240,7 +229,7 @@ public partial class LibraryServiceTests : IDisposable
             Content = new ByteArrayContent([1, 2, 3])
         });
         _imageProcessor.ProcessImageBytesAsync(Arg.Any<byte[]>()).Returns(new byte[] { 4, 5, 6 });
-        var retried = await _libraryService.GetArtistDetailsAsync(artist.Id, true);
+        var retried = await _libraryService.GetArtistDetailsAsync(artist.Id);
 
         retried!.Biography.Should().Be("Biography");
         retried.LocalImageCachePath.Should().NotBeNullOrEmpty();
@@ -852,6 +841,7 @@ public partial class LibraryServiceTests : IDisposable
     [Fact]
     public async Task GetArtistDetailsAsync_WithMissingMetadataAndFetchAllowed_FetchesAndUpdatesArtist()
     {
+        _settingsService.Set(CoreSettings.FetchOnlineMetadata, true);
         var artist = new Artist
         { Id = Guid.NewGuid(), Name = "Remote Artist", Biography = null, LocalImageCachePath = null };
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
@@ -885,7 +875,7 @@ public partial class LibraryServiceTests : IDisposable
             args.NewLocalImageCachePath.Should().Be(expectedImagePath);
         };
 
-        var result = await _libraryService.GetArtistDetailsAsync(artist.Id, true);
+        var result = await _libraryService.GetArtistDetailsAsync(artist.Id);
 
         result.Should().NotBeNull();
         result!.Biography.Should().Be("A cool bio.");
@@ -897,8 +887,9 @@ public partial class LibraryServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetArtistDetailsAsync_WithFetchDisallowed_DoesNotCallRemoteServices()
+    public async Task GetArtistDetailsAsync_WithOnlineMetadataOff_DoesNotCallRemoteServices()
     {
+        _settingsService.Set(CoreSettings.FetchOnlineMetadata, false);
         var artist = new Artist { Id = Guid.NewGuid(), Name = "Local Artist", Biography = null };
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
@@ -906,7 +897,7 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var result = await _libraryService.GetArtistDetailsAsync(artist.Id, false);
+        var result = await _libraryService.GetArtistDetailsAsync(artist.Id);
 
         result.Should().NotBeNull();
         result!.Biography.Should().BeNull();

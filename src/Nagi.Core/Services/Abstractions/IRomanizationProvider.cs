@@ -1,14 +1,19 @@
-using Nagi.Core.Models.Romanization;
-
 namespace Nagi.Core.Services.Abstractions;
 
+/// <summary>Romanizes one script with the rules a romanization pack supplies.</summary>
 public interface IRomanizationProvider
 {
     string EngineId { get; }
 
+    /// <summary>The rules file in the data folder of the provider's packs.</summary>
+    string RulesFileName { get; }
+
     bool Supports(string text);
 
-    Task<string?> RomanizeAsync(string text, InstalledRomanizationPack pack, CancellationToken cancellationToken = default);
+    /// <summary>Reads the rules file.</summary>
+    /// <returns>The rules, to pass to <see cref="Romanize" />.</returns>
+    object ParseRules(string json);
 
-    Task<bool> ValidatePackAsync(InstalledRomanizationPack pack, CancellationToken cancellationToken = default);
+    /// <summary>Romanizes text this provider <see cref="Supports" />.</summary>
+    string Romanize(string text, object rules);
 }

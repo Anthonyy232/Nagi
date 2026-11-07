@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
+using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -33,14 +34,14 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
 
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly HttpClient _httpClient;
-    private readonly IProviderPipelineProvider _pipelines;
+    private readonly ProviderPipelineProvider _pipelines;
     private readonly ILogger<ListenBrainzScrobblerService> _logger;
     private readonly ISettingsService _settingsService;
     private readonly IAppInfoService _appInfoService;
 
     public ListenBrainzScrobblerService(
         IHttpClientFactory httpClientFactory,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         IDbContextFactory<MusicDbContext> contextFactory,
         ISettingsService settingsService,
         IAppInfoService appInfoService,
@@ -257,7 +258,7 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
         var url = $"{baseUrl}{SubmitListensPath}";
 
         return await _pipelines.ExecuteWithFallbackAsync(
-            ServiceProviderIds.ListenBrainz,
+            ProviderCatalog.ListenBrainz.ProviderId,
             async ct =>
             {
                 using var request = new HttpRequestMessage(HttpMethod.Post, url);

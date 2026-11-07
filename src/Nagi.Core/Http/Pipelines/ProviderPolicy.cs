@@ -5,38 +5,35 @@ namespace Nagi.Core.Http.Pipelines;
 /// </summary>
 public sealed record ChannelPolicy
 {
-    /// <summary>Permits granted per <see cref="Window"/>. Combined with <see cref="Window"/> this defines the sustained rate.</summary>
+    /// <summary>Permits granted per <see cref="Window"/>, which together define the sustained rate.</summary>
     public required int PermitsPerWindow { get; init; }
 
     /// <summary>
-    ///     Replenishment window. Defaults to 1 second; set to a larger window for sub-1-RPS rates
-    ///     (e.g., TheAudioDB's 30/min is expressed as 1 permit per 2-second window).
+    ///     Replenishment window. Use a larger window for rates under one request a second, for example 1 permit per
+    ///     2 seconds for 30 a minute.
     /// </summary>
     public TimeSpan Window { get; init; } = TimeSpan.FromSeconds(1);
 
-    /// <summary>Maximum concurrent in-flight requests for this channel.</summary>
     public required int MaxConcurrent { get; init; }
 
-    /// <summary>Maximum retry attempts for transient failures (5xx, 429, network errors).</summary>
+    /// <summary>Retries for transient failures (5xx, 429, network errors).</summary>
     public int MaxRetries { get; init; } = 3;
 
-    /// <summary>Base delay used for exponential backoff between retries (before jitter).</summary>
+    /// <summary>Base of the exponential backoff between retries, before jitter.</summary>
     public TimeSpan BaseRetryDelay { get; init; } = TimeSpan.FromSeconds(2);
 
     /// <summary>
-    ///     Hard cap for any single retry delay. Provider <c>Retry-After</c> headers longer
-    ///     than this will be clamped to avoid blocking forever on a misbehaving service.
+    ///     Cap for any single retry delay. Longer <c>Retry-After</c> headers are clamped so a misbehaving service
+    ///     can't block calls indefinitely.
     /// </summary>
     public TimeSpan MaxRetryDelay { get; init; } = TimeSpan.FromMinutes(1);
 }
 
 /// <summary>
-///     Provider-scoped resilience policy. One rate-limit/retry pipeline plus a circuit
-///     breaker per provider id.
+///     One rate-limit/retry pipeline plus a circuit breaker, shared by every call that uses the same id.
 /// </summary>
 public sealed record ProviderPolicy
 {
-    /// <summary>Stable provider id; matches <see cref="Models.ServiceProviderIds"/>.</summary>
     public required string ProviderId { get; init; }
 
     public required ChannelPolicy Channel { get; init; }
@@ -50,17 +47,15 @@ public sealed record ProviderPolicy
 public sealed record CircuitBreakerSettings
 {
     /// <summary>
-    ///     Minimum number of calls within the sampling window required before the breaker
-    ///     evaluates the failure ratio. Set low to trip aggressively on consecutive failures.
+    ///     Calls needed within the sampling window before the failure ratio is evaluated. Low, so consecutive
+    ///     failures trip the breaker quickly.
     /// </summary>
     public int MinimumThroughput { get; init; } = 3;
 
-    /// <summary>Window over which failure ratio is computed.</summary>
     public TimeSpan SamplingDuration { get; init; } = TimeSpan.FromSeconds(60);
 
-    /// <summary>Failure ratio that trips the breaker (0.0–1.0).</summary>
+    /// <summary>Failure ratio that trips the breaker, from 0 to 1.</summary>
     public double FailureRatio { get; init; } = 1.0;
 
-    /// <summary>How long the breaker stays open before allowing a half-open trial.</summary>
     public TimeSpan BreakDuration { get; init; } = TimeSpan.FromMinutes(10);
 }

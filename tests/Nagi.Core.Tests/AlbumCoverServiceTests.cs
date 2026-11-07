@@ -2,6 +2,8 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Settings;
+using Nagi.Core.Tests.Utils;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
 using NSubstitute;
@@ -18,6 +20,7 @@ public class AlbumCoverServiceTests
     private readonly IAppleMusicService _appleMusic = Substitute.For<IAppleMusicService>();
     private readonly IDeezerService _deezer = Substitute.For<IDeezerService>();
     private readonly ILastFmMetadataService _lastFm = Substitute.For<ILastFmMetadataService>();
+    private readonly SettingsService _settings = TestSettings.Create();
     private readonly AlbumCoverService _service;
 
     public AlbumCoverServiceTests()
@@ -28,12 +31,16 @@ public class AlbumCoverServiceTests
         _appleMusic.GetAlbumCoverUrlAsync(default!, default!, default).ReturnsForAnyArgs(NotFound);
         _deezer.GetAlbumCoverUrlAsync(default!, default!, default).ReturnsForAnyArgs(NotFound);
         _lastFm.GetAlbumCoverUrlAsync(default!, default!, default).ReturnsForAnyArgs(NotFound);
-        _service = new AlbumCoverService(_coverArtArchive, _musicBrainz, _appleMusic, _deezer, _lastFm,
+        _settings.Set(CoreSettings.FetchOnlineMetadata, true);
+        _service = new AlbumCoverService(_coverArtArchive, _musicBrainz, _appleMusic, _deezer, _lastFm, _settings,
             NullLogger<AlbumCoverService>.Instance);
     }
 
-    private static List<ServiceProviderSetting> Providers(params string[] ids) =>
-        ids.Select(id => new ServiceProviderSetting { Id = id }).ToList();
+    private async Task<ServiceResult<string>> FindAsync(AlbumCoverQuery album, params string[] providerIds)
+    {
+        _settings.EnableOnly(CoreSettings.MetadataProviders, providerIds);
+        return (await _service.FindCoverUrlAsync(album))!;
+    }
 
     [Fact]
     public async Task FindCoverUrlAsync_StopsAtTheFirstSourceInPriorityOrderThatHasACover()
@@ -41,8 +48,8 @@ public class AlbumCoverServiceTests
         _deezer.GetAlbumCoverUrlAsync("Album", "Artist", default).ReturnsForAnyArgs(ServiceResult<string>.FromSuccess("deezer"));
         _appleMusic.GetAlbumCoverUrlAsync("Album", "Artist", default).ReturnsForAnyArgs(ServiceResult<string>.FromSuccess("apple"));
 
-        var result = await _service.FindCoverUrlAsync(new AlbumCoverQuery("Album", "Artist"),
-            Providers(ServiceProviderIds.LastFm, ServiceProviderIds.Deezer, ServiceProviderIds.AppleMusic));
+        var result = await FindAsync(new AlbumCoverQuery("Album", "Artist"),
+            ServiceProviderIds.LastFm, ServiceProviderIds.Deezer, ServiceProviderIds.AppleMusic);
 
         result.Data.Should().Be("deezer");
         await _appleMusic.DidNotReceiveWithAnyArgs().GetAlbumCoverUrlAsync(default!, default!, default);
@@ -54,8 +61,8 @@ public class AlbumCoverServiceTests
         _coverArtArchive.GetReleaseGroupCoverUrlAsync("group-id", Arg.Any<CancellationToken>())
             .Returns(ServiceResult<string>.FromSuccess("group-cover"));
 
-        var result = await _service.FindCoverUrlAsync(new AlbumCoverQuery("Album", "Artist", "release-id", "group-id"),
-            Providers(ServiceProviderIds.MusicBrainz, ServiceProviderIds.CoverArtArchive));
+        var result = await FindAsync(new AlbumCoverQuery("Album", "Artist", "release-id", "group-id"),
+            ServiceProviderIds.MusicBrainz, ServiceProviderIds.CoverArtArchive);
 
         result.Data.Should().Be("group-cover");
         await _coverArtArchive.Received(1).GetReleaseCoverUrlAsync("release-id", Arg.Any<CancellationToken>());
@@ -71,11 +78,11 @@ public class AlbumCoverServiceTests
             .Returns(ServiceResult<string>.FromSuccess("found-group"));
         _coverArtArchive.GetReleaseGroupCoverUrlAsync("found-group", Arg.Any<CancellationToken>())
             .Returns(ServiceResult<string>.FromSuccess("searched-cover"));
-        var providers = musicBrainzEnabled
-            ? Providers(ServiceProviderIds.MusicBrainz, ServiceProviderIds.CoverArtArchive)
-            : Providers(ServiceProviderIds.CoverArtArchive);
+        string[] providers = musicBrainzEnabled
+            ? [ServiceProviderIds.MusicBrainz, ServiceProviderIds.CoverArtArchive]
+            : [ServiceProviderIds.CoverArtArchive];
 
-        var result = await _service.FindCoverUrlAsync(new AlbumCoverQuery("Album (Remastered 2011)", "Artist"), providers);
+        var result = await FindAsync(new AlbumCoverQuery("Album (Remastered 2011)", "Artist"), providers);
 
         result.Data.Should().Be(musicBrainzEnabled ? "searched-cover" : null);
         result.IsConclusive.Should().BeTrue();
@@ -84,9 +91,9 @@ public class AlbumCoverServiceTests
     [Fact]
     public async Task FindCoverUrlAsync_NeverSearchesByNameForAnUnknownAlbum()
     {
-        var result = await _service.FindCoverUrlAsync(new AlbumCoverQuery(Album.UnknownAlbumName, "Artist"),
-            Providers(ServiceProviderIds.MusicBrainz, ServiceProviderIds.CoverArtArchive, ServiceProviderIds.AppleMusic,
-                ServiceProviderIds.Deezer, ServiceProviderIds.LastFm));
+        var result = await FindAsync(new AlbumCoverQuery(Album.UnknownAlbumName, "Artist"),
+            ServiceProviderIds.MusicBrainz, ServiceProviderIds.CoverArtArchive, ServiceProviderIds.AppleMusic,
+            ServiceProviderIds.Deezer, ServiceProviderIds.LastFm);
 
         result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
         _musicBrainz.ReceivedCalls().Should().BeEmpty();
@@ -105,8 +112,8 @@ public class AlbumCoverServiceTests
         if (laterSourceHasCover)
             _deezer.GetAlbumCoverUrlAsync("Album", "Artist", default).ReturnsForAnyArgs(ServiceResult<string>.FromSuccess("deezer"));
 
-        var result = await _service.FindCoverUrlAsync(new AlbumCoverQuery("Album", "Artist"),
-            Providers(ServiceProviderIds.AppleMusic, ServiceProviderIds.Deezer));
+        var result = await FindAsync(new AlbumCoverQuery("Album", "Artist"),
+            ServiceProviderIds.AppleMusic, ServiceProviderIds.Deezer);
 
         result.Status.Should().Be(expected);
     }

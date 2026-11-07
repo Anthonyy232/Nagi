@@ -168,12 +168,12 @@ public class ImageSharpProcessorTests
     {
         var imageData = CreateTestImageBytes(width: 1200, height: 600);
 
-        var result = await _imageProcessor.ProcessImageBytesAsync(imageData, maxDimension: 300);
+        var result = await _imageProcessor.ProcessImageBytesAsync(imageData);
 
         result.Should().NotEqual(imageData);
         using var image = Image.Load<Rgba32>(result);
-        image.Width.Should().Be(300);
-        image.Height.Should().Be(150);
+        image.Width.Should().Be(600);
+        image.Height.Should().Be(300);
     }
 
     private static byte[] CreateTestImageBytes()

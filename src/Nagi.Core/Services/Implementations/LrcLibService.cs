@@ -1,77 +1,76 @@
-using System.Net;
 using System.Globalization;
-using System.Net.Http.Json;
 using System.Web;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
-using Polly.CircuitBreaker;
+using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
-///     Implementation of <see cref="IOnlineLyricsService" /> using the LRCLIB API.
-///     See: https://lrclib.net/docs
+///     Looks lyrics up on LRCLIB (https://lrclib.net/docs), preferring synchronized lyrics over plain text.
 /// </summary>
-public class LrcLibService : IOnlineLyricsService
+public class LrcLibService : ILyricsProvider
 {
     private const string BaseUrl = "https://lrclib.net/api/get";
     private const string SearchUrl = "https://lrclib.net/api/search";
 
-    private readonly HttpClient _httpClient;
-    private readonly IProviderPipelineProvider _pipelines;
+    private readonly ProviderClient _client;
     private readonly ILogger<LrcLibService> _logger;
 
     public LrcLibService(
         IHttpClientFactory httpClientFactory,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         ILogger<LrcLibService> logger)
     {
-        _httpClient = httpClientFactory.CreateClient();
-        _pipelines = pipelines;
+        _client = new ProviderClient(ProviderCatalog.LrcLib.Policy, httpClientFactory.CreateClient(), pipelines, logger);
         _logger = logger;
     }
 
-    public async Task<string?> GetLyricsAsync(string trackName, string? artistName, string? albumName, TimeSpan duration, CancellationToken cancellationToken = default)
-    {
-        if (string.IsNullOrWhiteSpace(trackName))
-            return null;
+    public string Id => ServiceProviderIds.LrcLib;
 
-        trackName = ArtistNameHelper.NormalizeStringCore(trackName)!;
-        artistName = ArtistNameHelper.NormalizeStringCore(artistName);
-        albumName = ArtistNameHelper.NormalizeStringCore(albumName);
+    public async Task<ServiceResult<string>> GetLyricsAsync(Song song, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(song.Title))
+            return ServiceResult<string>.FromSuccessNotFound();
+
+        var trackName = ArtistNameHelper.NormalizeStringCore(song.Title)!;
+        var artistName = ArtistNameHelper.NormalizeStringCore(song.PrimaryArtistName);
+        var albumName = ArtistNameHelper.NormalizeStringCore(song.Album?.Title);
         if (string.Equals(artistName, Artist.UnknownArtistName, StringComparison.OrdinalIgnoreCase)) artistName = null;
         if (string.Equals(albumName, Album.UnknownAlbumName, StringComparison.OrdinalIgnoreCase)) albumName = null;
-
-        if (_pipelines.IsCircuitOpen(ServiceProviderIds.LrcLib))
-        {
-            _logger.LogDebug("LRCLIB circuit is open; skipping lyrics fetch.");
-            throw new BrokenCircuitException("LRCLIB is temporarily unavailable.");
-        }
 
         LrcLibResponse? strictResult = null;
         if (artistName is not null && albumName is not null)
         {
-            strictResult = await TryStrictLookupAsync(trackName, artistName, albumName, duration, cancellationToken)
+            var strict = await GetStrictMatchAsync(trackName, artistName, albumName, song.Duration, cancellationToken)
                 .ConfigureAwait(false);
+            if (!strict.IsConclusive) return ServiceResult<string>.FromTemporaryError();
+            strictResult = strict.Data;
             if (!string.IsNullOrWhiteSpace(strictResult?.SyncedLyrics))
-                return strictResult.SyncedLyrics;
+                return ServiceResult<string>.FromSuccess(strictResult.SyncedLyrics);
         }
         else
         {
             _logger.LogDebug("Strict lookup skipped (missing artist or album). Using search for: {Track}", trackName);
         }
 
-        var searchResult = await SearchLyricsAsync(trackName, artistName, albumName, duration, cancellationToken).ConfigureAwait(false);
-        if (!string.IsNullOrWhiteSpace(searchResult?.SyncedLyrics)) return searchResult.SyncedLyrics;
-        return !string.IsNullOrWhiteSpace(strictResult?.PlainLyrics)
-            ? strictResult.PlainLyrics
-            : searchResult?.PlainLyrics;
+        var search = await SearchAsync(trackName, artistName, albumName, song.Duration, cancellationToken)
+            .ConfigureAwait(false);
+        if (!search.IsConclusive) return ServiceResult<string>.FromTemporaryError();
+
+        var searchResult = search.Data;
+        if (!string.IsNullOrWhiteSpace(searchResult?.SyncedLyrics))
+            return ServiceResult<string>.FromSuccess(searchResult.SyncedLyrics);
+        return ServiceResult<string>.FromSuccessOrNotFound(
+            !string.IsNullOrWhiteSpace(strictResult?.PlainLyrics) ? strictResult.PlainLyrics : searchResult?.PlainLyrics);
     }
 
-    private async Task<LrcLibResponse?> TryStrictLookupAsync(string trackName, string artistName, string albumName, TimeSpan duration, CancellationToken cancellationToken)
+    private Task<ServiceResult<LrcLibResponse>> GetStrictMatchAsync(string trackName, string artistName,
+        string albumName, TimeSpan duration, CancellationToken cancellationToken)
     {
         var query = HttpUtility.ParseQueryString(string.Empty);
         query["track_name"] = trackName;
@@ -79,71 +78,34 @@ public class LrcLibService : IOnlineLyricsService
         query["album_name"] = albumName;
         query["duration"] = duration.TotalSeconds.ToString("F0", CultureInfo.InvariantCulture);
 
-        var requestUrl = $"{BaseUrl}?{query}";
-
-        using var response = await _pipelines.ExecuteAsync(
-            ServiceProviderIds.LrcLib,
-            async ct =>
-            {
-                _logger.LogDebug("Fetching lyrics strict lookup from LRCLIB for: {Artist} - {Track}", artistName, trackName);
-                return await _httpClient.GetAsync(requestUrl, ct).ConfigureAwait(false);
-            },
-            cancellationToken).ConfigureAwait(false);
-
-        if (response.StatusCode == HttpStatusCode.NotFound)
-            return null;
-
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<LrcLibResponse>(cancellationToken: cancellationToken)
-            .ConfigureAwait(false);
+        return _client.GetJsonAsync<LrcLibResponse, LrcLibResponse>($"{BaseUrl}?{query}",
+            ServiceResult<LrcLibResponse>.FromSuccess, $"lyrics for {artistName} - {trackName}", cancellationToken);
     }
 
-    private async Task<LrcLibResponse?> SearchLyricsAsync(string trackName, string? artistName, string? albumName, TimeSpan duration, CancellationToken cancellationToken)
+    private Task<ServiceResult<LrcLibResponse>> SearchAsync(string trackName, string? artistName, string? albumName,
+        TimeSpan duration, CancellationToken cancellationToken)
     {
         var query = HttpUtility.ParseQueryString(string.Empty);
         query["track_name"] = trackName;
         if (artistName is not null) query["artist_name"] = artistName;
         // Not sending album_name to search to be more permissive; filter locally below.
 
-        var requestUrl = $"{SearchUrl}?{query}";
-
-        using var response = await _pipelines.ExecuteAsync(
-            ServiceProviderIds.LrcLib,
-            async ct =>
-            {
-                _logger.LogDebug("Searching lyrics on LRCLIB for: {Artist} - {Track}", artistName, trackName);
-                return await _httpClient.GetAsync(requestUrl, ct).ConfigureAwait(false);
-            },
-            cancellationToken).ConfigureAwait(false);
-
-        response.EnsureSuccessStatusCode();
-        var searchResults = await response.Content.ReadFromJsonAsync<List<LrcLibResponse>>(cancellationToken: cancellationToken)
-            .ConfigureAwait(false);
-
-        if (searchResults is null || searchResults.Count == 0)
+        return _client.GetJsonAsync<List<LrcLibResponse>, LrcLibResponse>($"{SearchUrl}?{query}", results =>
         {
-            _logger.LogDebug("No search results found for: {Artist} - {Track}", artistName, trackName);
-            return null;
-        }
+            // Prefer synchronized lyrics, then album match and closest duration within ±30s.
+            var targetDurationSeconds = duration.TotalSeconds;
+            var bestMatch = results
+                .Where(r => !string.IsNullOrWhiteSpace(r.SyncedLyrics) || !string.IsNullOrWhiteSpace(r.PlainLyrics))
+                .Where(r => Math.Abs(r.Duration - targetDurationSeconds) <= 30)
+                .OrderByDescending(r => !string.IsNullOrWhiteSpace(r.SyncedLyrics))
+                .ThenByDescending(r => albumName is not null && string.Equals(r.AlbumName, albumName, StringComparison.OrdinalIgnoreCase))
+                .ThenBy(r => Math.Abs(r.Duration - targetDurationSeconds))
+                .FirstOrDefault();
 
-        // Prefer synchronized lyrics, then album match and closest duration within ±30s.
-        var targetDurationSeconds = duration.TotalSeconds;
-        var bestMatch = searchResults
-            .Where(r => !string.IsNullOrWhiteSpace(r.SyncedLyrics) || !string.IsNullOrWhiteSpace(r.PlainLyrics))
-            .Where(r => Math.Abs(r.Duration - targetDurationSeconds) <= 30)
-            .OrderByDescending(r => !string.IsNullOrWhiteSpace(r.SyncedLyrics))
-            .ThenByDescending(r => albumName is not null && string.Equals(r.AlbumName, albumName, StringComparison.OrdinalIgnoreCase))
-            .ThenBy(r => Math.Abs(r.Duration - targetDurationSeconds))
-            .FirstOrDefault();
-
-        if (bestMatch != null)
-        {
-            _logger.LogDebug("Found fallback lyrics via search for: {Artist} - {Track}", artistName, trackName);
-            return bestMatch;
-        }
-
-        _logger.LogDebug("Search results found but none matched criteria for: {Artist} - {Track}", artistName, trackName);
-        return null;
+            if (bestMatch is null)
+                _logger.LogDebug("No LRCLIB search result matched {Artist} - {Track}", artistName, trackName);
+            return ServiceResult<LrcLibResponse>.FromSuccessOrNotFound(bestMatch);
+        }, $"lyrics search for {artistName} - {trackName}", cancellationToken);
     }
 
     private sealed class LrcLibResponse

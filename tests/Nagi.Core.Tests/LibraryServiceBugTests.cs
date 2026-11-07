@@ -2,6 +2,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -39,7 +40,7 @@ public class LibraryServiceBugTests : IDisposable
         _logger = Substitute.For<ILogger<LibraryService>>();
 
         _dbHelper = new DbContextFactoryTestHelper(useFileDatabase: true);
-        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
+        _pipelines = TestProviderPipeline.Build(ProviderCatalog.ImageDownload.ProviderId);
 
         _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, _settingsService);
 

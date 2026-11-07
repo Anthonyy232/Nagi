@@ -1,6 +1,7 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
 using Nagi.Core.Http;
@@ -53,168 +54,8 @@ public static class CoreServiceRegistration
 
         services.AddSingleton<IApiKeyService, ApiKeyService>();
 
-        services.AddProviderPipelines(
-        [
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.MusicBrainz,
-                // MusicBrainz mandates 1 req/s per IP with a UA identifying the client.
-                // Excess traffic returns 503 until the rate falls back under 1 RPS.
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 1,
-                    MaxConcurrent = 1,
-                    BaseRetryDelay = TimeSpan.FromSeconds(1),
-                },
-            },
-
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.TheAudioDb,
-                // Free tier: 30 req/min. Once breached, the key is locked out for a full
-                // minute — short retry delays just waste calls. Wait the full minute, once.
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 1,
-                    Window = TimeSpan.FromSeconds(2),
-                    MaxConcurrent = 2,
-                    MaxRetries = 1,
-                    BaseRetryDelay = TimeSpan.FromSeconds(60),
-                    MaxRetryDelay = TimeSpan.FromSeconds(75),
-                },
-            },
-
-            // Last.fm: metadata, auth, and scrobbling all run through a single provider so an
-            // auth-trip on one of them pauses the others (shared breaker). Last.fm's limits
-            // are undisclosed/dynamic; 5 RPS/IP is the long-standing convention.
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.LastFm,
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 5,
-                    MaxConcurrent = 4,
-                    BaseRetryDelay = TimeSpan.FromSeconds(5),
-                },
-            },
-
-            // Fanart.tv: effectively unlimited for normal use (token bucket, 429 rare). The
-            // pipeline auto-honors Retry-After if the service ever pushes back.
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.FanartTv,
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 10,
-                    MaxConcurrent = 8,
-                },
-            },
-
-            // Deezer: 50 requests per 5 seconds per IP; past that it answers 200 with a quota error.
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.Deezer,
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 8,
-                    MaxConcurrent = 4,
-                },
-            },
-
-            // Wikimedia: no fixed limit for reads, but clients are asked to keep requests serial and modest.
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.Wikipedia,
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 5,
-                    MaxConcurrent = 2,
-                },
-            },
-
-            // Cover Art Archive: served from the Internet Archive with no published limit; stay modest.
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.CoverArtArchive,
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 5,
-                    MaxConcurrent = 4,
-                },
-            },
-
-            // iTunes Search API: about 20 requests a minute per IP. Past that it answers 403 for a while,
-            // which leaves the album retryable on a later run.
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.AppleMusic,
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 1,
-                    Window = TimeSpan.FromSeconds(3),
-                    MaxConcurrent = 1,
-                },
-            },
-
-            // LRCLIB: no rate limit documented. Keep concurrency reasonable to be polite.
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.LrcLib,
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 20,
-                    MaxConcurrent = 8,
-                },
-            },
-
-            // NetEase: unofficial API; treat aggressively-rate-limited and back off fast.
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.NetEase,
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 2,
-                    MaxConcurrent = 2,
-                    BaseRetryDelay = TimeSpan.FromSeconds(3),
-                },
-            },
-
-            // ListenBrainz: dynamic limit advertised via X-RateLimit-* headers. The pipeline
-            // honors X-RateLimit-Reset-In on 429 (alongside Retry-After), so we can run at a
-            // healthy steady-state and let the server tell us when to back off.
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.ListenBrainz,
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 5,
-                    MaxConcurrent = 4,
-                },
-            },
-
-            // Nagi's own API server (key bootstrap). Internal infra; conservative retry.
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.NagiApi,
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 5,
-                    MaxConcurrent = 4,
-                },
-            },
-
-            // Generic CDN image downloads. Provider id is shared by all artist/album image
-            // fetches because the source CDN isn't always knowable from the URL.
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.ImageDownload,
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 10,
-                    MaxConcurrent = 4,
-                },
-            },
-        ]);
+        services.AddSingleton(sp => new ProviderPipelineProvider(ProviderCatalog.Policies,
+            sp.GetRequiredService<ILogger<ProviderPipelineProvider>>()));
 
         services.AddSingleton<ILastFmMetadataService, LastFmMetadataService>();
         services.AddSingleton<ILastFmAuthService, LastFmAuthService>();
@@ -227,7 +68,6 @@ public static class CoreServiceRegistration
         services.AddSingleton<IAppleMusicService, AppleMusicService>();
         services.AddSingleton<IArtistMetadataService, ArtistMetadataService>();
         services.AddSingleton<IAlbumCoverService, AlbumCoverService>();
-        services.AddSingleton<INetEaseLyricsService, NetEaseLyricsService>();
         services.AddSingleton<LastFmScrobblerService>();
         services.AddSingleton<ILastFmScrobblerService>(sp => sp.GetRequiredService<LastFmScrobblerService>());
         services.AddSingleton<IListenSubmitter>(sp => sp.GetRequiredService<LastFmScrobblerService>());
@@ -241,7 +81,8 @@ public static class CoreServiceRegistration
         services.AddSingleton<IMusicServerService, MusicServerService>();
         services.AddSingleton<IPresenceService, MusicServerPresenceService>();
         services.AddSingleton<ISmartPlaylistService, SmartPlaylistService>();
-        services.AddSingleton<IOnlineLyricsService, LrcLibService>();
+        services.AddSingleton<ILyricsProvider, LrcLibService>();
+        services.AddSingleton<ILyricsProvider, NetEaseLyricsService>();
         services.AddSingleton<IRomanizationProvider, JapaneseRomanizationProvider>();
         services.AddSingleton<IRomanizationProvider, DevanagariRomanizationProvider>();
         services.AddSingleton<IRomanizationProvider, KoreanRomanizationProvider>();
@@ -275,32 +116,31 @@ public static class CoreServiceRegistration
             builder.ConfigureHttpClient(client => client.DefaultRequestHeaders.UserAgent.ParseAdd(ProviderUserAgent.Value)));
         services.AddHttpClient("")
             .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(20))
-            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+            .ConfigurePrimaryHttpMessageHandler(() =>
             {
-                PooledConnectionLifetime = TimeSpan.FromMinutes(2),
-                ConnectTimeout = TimeSpan.FromSeconds(10),
-                KeepAlivePingPolicy = HttpKeepAlivePingPolicy.Always,
-                KeepAlivePingDelay = TimeSpan.FromSeconds(30),
-                KeepAlivePingTimeout = TimeSpan.FromSeconds(5)
+                var handler = CreateHandler();
+                handler.KeepAlivePingPolicy = HttpKeepAlivePingPolicy.Always;
+                handler.KeepAlivePingDelay = TimeSpan.FromSeconds(30);
+                handler.KeepAlivePingTimeout = TimeSpan.FromSeconds(5);
+                return handler;
             });
 
         // A sync makes thousands of requests, which would crowd everything else out of the log kept for crash reports.
         services.AddHttpClient(MusicServerService.HttpClientName)
             .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(30))
-            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
-            {
-                PooledConnectionLifetime = TimeSpan.FromMinutes(2),
-                ConnectTimeout = TimeSpan.FromSeconds(10),
-            })
+            .ConfigurePrimaryHttpMessageHandler(CreateHandler)
             .RemoveAllLoggers();
 
         // Image downloads are larger payloads and tolerate slower CDNs; use a longer timeout.
-        services.AddHttpClient("ImageDownloader")
+        services.AddHttpClient(LibraryService.ImageHttpClientName)
             .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(30))
-            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
-            {
-                PooledConnectionLifetime = TimeSpan.FromMinutes(2),
-                ConnectTimeout = TimeSpan.FromSeconds(10),
-            });
+            .ConfigurePrimaryHttpMessageHandler(CreateHandler);
     }
+
+    // Clients live as long as the app, so pooled connections are recycled to pick up DNS changes.
+    private static SocketsHttpHandler CreateHandler() => new()
+    {
+        PooledConnectionLifetime = TimeSpan.FromMinutes(2),
+        ConnectTimeout = TimeSpan.FromSeconds(10)
+    };
 }

@@ -1,10 +1,9 @@
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
-using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
-using Nagi.Core.Services.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -15,18 +14,14 @@ public class CoverArtArchiveService : ICoverArtArchiveService
 {
     private const string BaseUrl = "https://coverartarchive.org";
 
-    private readonly HttpClient _httpClient;
-    private readonly IProviderPipelineProvider _pipelines;
-    private readonly ILogger<CoverArtArchiveService> _logger;
+    private readonly ProviderClient _client;
 
     public CoverArtArchiveService(
         IHttpClientFactory httpClientFactory,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         ILogger<CoverArtArchiveService> logger)
     {
-        _httpClient = httpClientFactory.CreateClient();
-        _pipelines = pipelines;
-        _logger = logger;
+        _client = new ProviderClient(ProviderCatalog.CoverArtArchive.Policy, httpClientFactory.CreateClient(), pipelines, logger);
     }
 
     public Task<ServiceResult<string>> GetReleaseCoverUrlAsync(string releaseId, CancellationToken cancellationToken = default) =>
@@ -40,8 +35,7 @@ public class CoverArtArchiveService : ICoverArtArchiveService
         if (string.IsNullOrWhiteSpace(id))
             return Task.FromResult(ServiceResult<string>.FromSuccessNotFound());
 
-        return _pipelines.GetJsonAsync<CoverArtListing, string>(_httpClient, ServiceProviderIds.CoverArtArchive,
-            $"{BaseUrl}/{entity}/{Uri.EscapeDataString(id)}",
+        return _client.GetJsonAsync<CoverArtListing, string>($"{BaseUrl}/{entity}/{Uri.EscapeDataString(id)}",
             listing =>
             {
                 var front = listing.Images?.FirstOrDefault(image => image.Front);
@@ -55,7 +49,7 @@ public class CoverArtArchiveService : ICoverArtArchiveService
                 return ServiceResult<string>.FromSuccess(
                     new UriBuilder(imageUrl) { Scheme = Uri.UriSchemeHttps, Port = -1 }.Uri.AbsoluteUri);
             },
-            _logger, $"Cover Art Archive cover for {entity} {id}", cancellationToken);
+            $"Cover Art Archive cover for {entity} {id}", cancellationToken);
     }
 
     private sealed class CoverArtListing

@@ -4,8 +4,9 @@ using System.Text.Json;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
-using Nagi.Core.Models;
+using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
@@ -29,11 +30,10 @@ public class ApiKeyServiceTests : IDisposable
         _httpMessageHandler = new TestHttpMessageHandler();
         _logger = Substitute.For<ILogger<ApiKeyService>>();
 
-        // Must create a new HttpClient for each call - production code disposes HttpClient after use
         _httpClientFactory.CreateClient(Arg.Any<string>())
             .Returns(_ => new HttpClient(_httpMessageHandler, disposeHandler: false));
 
-        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.NagiApi);
+        _pipelines = TestProviderPipeline.Build(ProviderCatalog.NagiApi.ProviderId);
         _apiKeyService = new ApiKeyService(_httpClientFactory, _pipelines, _configuration, _logger);
     }
 
@@ -46,7 +46,7 @@ public class ApiKeyServiceTests : IDisposable
     [Fact]
     public async Task GetApiKeyAsync_FirstCall_FetchesKeyFromServerSuccessfully()
     {
-        const string keyName = ServiceProviderIds.TheAudioDb;
+        const string keyName = ApiKeyNames.TheAudioDb;
         const string expectedApiKey = "12345-abcde";
         SetupValidConfiguration();
         SetupHttpResponse(HttpStatusCode.OK, new { Value = expectedApiKey });
@@ -65,7 +65,7 @@ public class ApiKeyServiceTests : IDisposable
     [Fact]
     public async Task RefreshApiKeyAsync_ForcesNewFetchFromServer_AndUpdatesCache()
     {
-        const string keyName = ServiceProviderIds.TheAudioDb;
+        const string keyName = ApiKeyNames.TheAudioDb;
         const string initialApiKey = "initial-key";
         const string refreshedApiKey = "refreshed-key";
         SetupValidConfiguration();
@@ -92,8 +92,8 @@ public class ApiKeyServiceTests : IDisposable
             (HttpStatusCode.InternalServerError, "{}"),
             (HttpStatusCode.OK, JsonSerializer.Serialize(new { Value = expectedApiKey })));
 
-        var failedResult = await _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFm);
-        var recoveredResult = await _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFm);
+        var failedResult = await _apiKeyService.GetApiKeyAsync(ApiKeyNames.LastFm);
+        var recoveredResult = await _apiKeyService.GetApiKeyAsync(ApiKeyNames.LastFm);
 
         failedResult.Should().BeNull();
         recoveredResult.Should().Be(expectedApiKey);
@@ -106,7 +106,7 @@ public class ApiKeyServiceTests : IDisposable
     [InlineData("   ")]
     public async Task GetApiKeyAsync_WhenApiResponseValueIsInvalid_ReturnsNull(string? invalidValue)
     {
-        const string keyName = ServiceProviderIds.FanartTv;
+        const string keyName = ApiKeyNames.FanartTv;
         SetupValidConfiguration();
         SetupHttpResponse(HttpStatusCode.OK, new { Value = invalidValue });
 
@@ -121,7 +121,7 @@ public class ApiKeyServiceTests : IDisposable
         _configuration["NagiApiServer:Url"].Returns(string.Empty);
         _configuration["NagiApiServer:ApiKey"].Returns("some-key");
 
-        var result = await _apiKeyService.GetApiKeyAsync(ServiceProviderIds.TheAudioDb);
+        var result = await _apiKeyService.GetApiKeyAsync(ApiKeyNames.TheAudioDb);
 
         result.Should().BeNull();
         _httpMessageHandler.Requests.Should().BeEmpty();
@@ -136,8 +136,8 @@ public class ApiKeyServiceTests : IDisposable
         var tcs = new TaskCompletionSource<HttpResponseMessage>(TaskCreationOptions.RunContinuationsAsynchronously);
         _httpMessageHandler.SendAsyncFunc = (_, _) => tcs.Task;
 
-        var apiTask = _apiKeyService.GetApiKeyAsync(ServiceProviderIds.TheAudioDb, cts.Token);
-        var otherCaller = _apiKeyService.GetApiKeyAsync(ServiceProviderIds.TheAudioDb);
+        var apiTask = _apiKeyService.GetApiKeyAsync(ApiKeyNames.TheAudioDb, cts.Token);
+        var otherCaller = _apiKeyService.GetApiKeyAsync(ApiKeyNames.TheAudioDb);
         cts.Cancel();
 
         await apiTask.Awaiting(t => t).Should().ThrowAsync<OperationCanceledException>();
@@ -147,7 +147,7 @@ public class ApiKeyServiceTests : IDisposable
         });
 
         (await otherCaller).Should().Be("shared-key");
-        (await _apiKeyService.GetApiKeyAsync(ServiceProviderIds.TheAudioDb)).Should().Be("shared-key");
+        (await _apiKeyService.GetApiKeyAsync(ApiKeyNames.TheAudioDb)).Should().Be("shared-key");
         _httpMessageHandler.Requests.Should().HaveCount(1);
     }
 
@@ -157,7 +157,7 @@ public class ApiKeyServiceTests : IDisposable
         SetupValidConfiguration();
         _httpMessageHandler.SendAsyncFunc = (_, _) => throw new HttpRequestException("Simulated network failure");
 
-        var result = await _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFm);
+        var result = await _apiKeyService.GetApiKeyAsync(ApiKeyNames.LastFm);
 
         result.Should().BeNull();
     }
@@ -177,7 +177,8 @@ public class ApiKeyServiceTests : IDisposable
             return new HttpResponseMessage(HttpStatusCode.OK);
         };
 
-        var result = await _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFm);
+        var apiKeyService = new ApiKeyService(_httpClientFactory, _pipelines, _configuration, _logger);
+        var result = await apiKeyService.GetApiKeyAsync(ApiKeyNames.LastFm);
 
         result.Should().BeNull();
         _httpMessageHandler.Requests.Should().HaveCount(1);
@@ -194,7 +195,7 @@ public class ApiKeyServiceTests : IDisposable
         SetupValidConfiguration(configuredUrl);
         SetupHttpResponse(HttpStatusCode.OK, new { Value = "some-key" });
 
-        await _apiKeyService.GetApiKeyAsync(ServiceProviderIds.FanartTv);
+        await _apiKeyService.GetApiKeyAsync(ApiKeyNames.FanartTv);
 
         _httpMessageHandler.Requests.Should().HaveCount(1);
         var request = _httpMessageHandler.Requests[0];
@@ -210,7 +211,7 @@ public class ApiKeyServiceTests : IDisposable
         SetupValidConfiguration(subscriptionKey: subscriptionKey);
         SetupHttpResponse(HttpStatusCode.OK, new { Value = "some-key" });
 
-        await _apiKeyService.GetApiKeyAsync(ServiceProviderIds.TheAudioDb);
+        await _apiKeyService.GetApiKeyAsync(ApiKeyNames.TheAudioDb);
 
         _httpMessageHandler.Requests.Should().HaveCount(1);
         var request = _httpMessageHandler.Requests[0];

@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Helpers;
 using Nagi.Core.Models.Lyrics;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -37,7 +37,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
     private LyricLine? _optimisticallySetLine;
     private long _optimisticSetTimestamp;
-    private ParsedLrc? _parsedLrc;
+    private IReadOnlyList<LyricLine>? _syncedLines;
     private Song? _currentSong;
     private bool _canRemoveLyrics;
 
@@ -77,16 +77,11 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
     [ObservableProperty] public partial string SongTitle { get; set; } = Strings.Lyrics_NoSongSelected;
 
-    /// <summary>
-    ///     True when synchronized (timed) lyrics are available and being displayed.
-    /// </summary>
+    /// <summary>Synchronized lyrics are shown; plain text sets <see cref="HasUnsyncedLyrics" /> instead.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowNoLyricsMessage))]
     public partial bool HasLyrics { get; set; }
 
-    /// <summary>
-    ///     True when only unsynchronized (plain text) lyrics are available.
-    /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowNoLyricsMessage))]
     public partial bool HasUnsyncedLyrics { get; set; }
@@ -220,14 +215,14 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
     private void UpdateCurrentLineFromPosition(TimeSpan position)
     {
-        var parsedLrc = _parsedLrc;
-        if (parsedLrc is null || !HasLyrics) return;
+        var syncedLines = _syncedLines;
+        if (syncedLines is null || !HasLyrics) return;
 
         _dispatcherService.TryEnqueue(() =>
         {
-            if (_isDisposed || !ReferenceEquals(parsedLrc, _parsedLrc)) return;
+            if (_isDisposed || !ReferenceEquals(syncedLines, _syncedLines)) return;
             CurrentPosition = position;
-            var newCurrentLine = _lrcService.GetCurrentLine(parsedLrc, position, ref _lrcSearchHint);
+            var newCurrentLine = LyricsParser.GetCurrentLine(syncedLines, position, ref _lrcSearchHint);
 
             if (_optimisticallySetLine != null)
             {
@@ -273,7 +268,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             LyricLines.Clear();
             UnsyncedLyricLines.Clear();
             CurrentLine = null;
-            _parsedLrc = null;
+            _syncedLines = null;
             _lrcSearchHint = 0;
             _optimisticallySetLine = null;
             SongDuration = TimeSpan.Zero;
@@ -306,50 +301,30 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
         try
         {
-            var fullSongTask = _libraryReader.GetSongByIdAsync(song.Id);
-            var localLrcTask = !string.IsNullOrWhiteSpace(song.LrcFilePath)
-                ? _lrcService.GetLyricsAsync(song.LrcFilePath)
-                : Task.FromResult<ParsedLrc?>(null);
-            await Task.WhenAll(fullSongTask, localLrcTask).WaitAsync(cancellationToken).ConfigureAwait(false);
-
-            var fullSong = await fullSongTask ?? song;
-            var parsedLrc = await localLrcTask;
-            var rawLyrics = parsedLrc?.RawLyrics ?? string.Empty;
-
-            // Prefer sidecars, then embedded tags, and only then the network/cache.
-            if (parsedLrc is not { IsEmpty: false } && string.IsNullOrWhiteSpace(rawLyrics))
+            var fullSong = await _libraryReader.GetSongByIdAsync(song.Id).WaitAsync(cancellationToken).ConfigureAwait(false) ?? song;
+            lock (_lyricsFetchLock)
             {
-                if (!string.IsNullOrWhiteSpace(fullSong.Lyrics))
-                {
-                    rawLyrics = fullSong.Lyrics;
-                    parsedLrc = _lrcService.ParseLyrics(rawLyrics);
-                }
-                else
-                {
-                    parsedLrc = await _lrcService.GetLyricsAsync(song, cancellationToken).ConfigureAwait(false);
-                    rawLyrics = parsedLrc?.RawLyrics ?? string.Empty;
-                }
+                // The lookup records where it cached the lyrics on the song it is given, which edits and removals read.
+                if (ReferenceEquals(_currentSong, song)) _currentSong = fullSong;
             }
+
+            var lyrics = await _lrcService.GetLyricsAsync(fullSong, cancellationToken).ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
 
-            var hasTimedLyrics = parsedLrc is { IsEmpty: false };
-            IReadOnlyList<LyricLine> displayLines = [];
-            if (hasTimedLyrics)
-                displayLines = await _lyricRomanizationService.ApplyRomanizationAsync(parsedLrc!.Lines, cancellationToken).ConfigureAwait(false);
-            else if (!string.IsNullOrWhiteSpace(rawLyrics))
-                displayLines = await _lyricRomanizationService.ApplyRomanizationAsync(
-                    ParseUnsyncedLyricsToLines(rawLyrics), cancellationToken).ConfigureAwait(false);
+            var displayLines = lyrics is null
+                ? []
+                : await _lyricRomanizationService.ApplyRomanizationAsync(lyrics.Lines, cancellationToken).ConfigureAwait(false);
 
             _dispatcherService.TryEnqueue(() =>
             {
                 if (cancellationToken.IsCancellationRequested || _isDisposed) return;
-                EditableLyrics = rawLyrics;
+                EditableLyrics = lyrics?.RawLyrics ?? string.Empty;
                 CanEditLyrics = true;
-                _canRemoveLyrics = _lrcService.HasCachedLyrics(song);
+                _canRemoveLyrics = _lrcService.HasCachedLyrics(fullSong);
                 IsLoading = false;
-                if (hasTimedLyrics)
+                if (lyrics is { IsSynced: true })
                 {
-                    _parsedLrc = new ParsedLrc(displayLines, rawLyrics);
+                    _syncedLines = displayLines;
                     LyricLines.ReplaceRange(displayLines);
                     HasLyrics = true;
                     UpdateCurrentLineFromPosition(_playbackService.CurrentPosition);
@@ -378,24 +353,6 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
         if (!cancellationToken.IsCancellationRequested)
             PendingPrefetch = PrefetchNextTrackLyrics(cancellationToken);
-    }
-
-    /// <summary>
-    ///     Parses unsynchronized lyrics text into individual lines for display,
-    ///     normalizing line breaks and preserving verse structure with blank lines.
-    /// </summary>
-    private static string[] ParseUnsyncedLyricsToLines(string rawLyrics)
-    {
-        // Strip language prefixes like "eng||" or "jpn||" at the start of the text
-        rawLyrics = LanguagePrefixRegex().Replace(rawLyrics, string.Empty);
-
-        var normalized = rawLyrics.ReplaceLineEndings("\n");
-
-        // Collapse multiple consecutive blank lines into double line breaks
-        // This preserves verse separation while cleaning up excessive spacing
-        normalized = MultipleNewlines().Replace(normalized, "\n\n");
-
-        return normalized.Split('\n', StringSplitOptions.TrimEntries);
     }
 
     private void OnPlaybackServiceTrackChanged()
@@ -432,17 +389,13 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         });
     }
 
-    /// <summary>
-    ///     Pre-fetches lyrics for the next track in the queue to reduce perceived latency.
-    ///     This is fire-and-forget - failures are silently logged and don't affect current playback.
-    /// </summary>
+    // Looks the next track's lyrics up ahead of time; the lyrics service decides whether that needs the network.
     private async Task PrefetchNextTrackLyrics(CancellationToken cancellationToken)
     {
         try
         {
             var nextSong = await GetNextSongInQueueAsync().WaitAsync(cancellationToken).ConfigureAwait(false);
-            if (nextSong is null || nextSong.LyricsLastCheckedUtc.HasValue ||
-                !string.IsNullOrWhiteSpace(nextSong.LrcFilePath) || !string.IsNullOrWhiteSpace(nextSong.Lyrics)) return;
+            if (nextSong is null) return;
 
             using var prefetchCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             prefetchCts.CancelAfter(TimeSpan.FromSeconds(15));
@@ -454,12 +407,6 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             _logger.LogDebug(ex, "Pre-fetch failed for next track");
         }
     }
-
-    [GeneratedRegex(@"\n{3,}")]
-    private static partial Regex MultipleNewlines();
-
-    [GeneratedRegex(@"^[a-z]{2,3}\|\|", RegexOptions.IgnoreCase)]
-    private static partial Regex LanguagePrefixRegex();
 
     private Task<Song?> GetNextSongInQueueAsync()
     {

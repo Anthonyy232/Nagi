@@ -2,6 +2,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -34,7 +35,7 @@ public class MultiArtistTests : IDisposable
         pathConfig.ArtistImageCachePath.Returns("C:\\cache\\artistimages");
         pathConfig.LrcCachePath.Returns("C:\\cache\\lrc");
 
-        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
+        _pipelines = TestProviderPipeline.Build(ProviderCatalog.ImageDownload.ProviderId);
 
         _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, settingsService);
 

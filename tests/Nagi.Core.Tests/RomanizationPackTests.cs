@@ -9,6 +9,7 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Models.Lyrics;
 using Nagi.Core.Models.Romanization;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Services.Implementations;
 using Nagi.Core.Services.Implementations.Romanization;
 using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
@@ -89,7 +90,8 @@ public sealed class RomanizationPackTests : IDisposable
         var verifier = Substitute.For<IRomanizationCatalogVerifier>();
         verifier.Verify(Arg.Any<RomanizationCatalogEnvelope>()).Returns(true);
         var manager = new RomanizationPackManager(factory, CreatePathConfiguration(),
-            [new DevanagariRomanizationProvider()], verifier, NullLogger<RomanizationPackManager>.Instance);
+            [new DevanagariRomanizationProvider()], verifier, new FileSystemService(), AppInfo(),
+            NullLogger<RomanizationPackManager>.Instance);
         await manager.GetAvailablePacksAsync();
 
         var result = await manager.InstallPackAsync("hindi").WaitAsync(TimeSpan.FromSeconds(5));
@@ -106,17 +108,9 @@ public sealed class RomanizationPackTests : IDisposable
         var installedPath = Path.Combine(_tempRoot, "RomanizationPacks", "hindi");
         ExtractArchive(originalBytes, installedPath);
         var replacement = CreateDevanagariPack(("replacement.txt", "new"));
-        var provider = Substitute.For<IRomanizationProvider>();
-        provider.EngineId.Returns("devanagari-v1");
-        provider.ValidatePackAsync(Arg.Any<InstalledRomanizationPack>(), Arg.Any<CancellationToken>())
-            .Returns(call =>
-            {
-                // Simulate the staging directory becoming unavailable before the final move.
-                var stagedPath = call.Arg<InstalledRomanizationPack>().DirectoryPath;
-                stagedPath.Should().StartWith(Path.Combine(_tempRoot, "RomanizationPacks") + Path.DirectorySeparatorChar);
-                Directory.Delete(stagedPath, true);
-                return true;
-            });
+        // Simulate the staging directory becoming unavailable before the final move.
+        var provider = DevanagariProviderThat(beforeValidation: () =>
+            Directory.Delete(Directory.EnumerateDirectories(Path.GetDirectoryName(installedPath)!, "*.tmp").Single(), true));
         var manager = CreateManager(CreateCatalogJson(CreateEntry("hindi", "devanagari-v1", replacement)),
             replacement, validationProvider: provider);
 
@@ -135,14 +129,7 @@ public sealed class RomanizationPackTests : IDisposable
         var installedPath = Path.Combine(_tempRoot, "RomanizationPacks", "hindi");
         ExtractArchive(packBytes, installedPath);
         using var cancellation = new CancellationTokenSource();
-        var provider = Substitute.For<IRomanizationProvider>();
-        provider.EngineId.Returns("devanagari-v1");
-        provider.ValidatePackAsync(Arg.Any<InstalledRomanizationPack>(), Arg.Any<CancellationToken>())
-            .Returns(_ =>
-            {
-                cancellation.Cancel();
-                return true;
-            });
+        var provider = DevanagariProviderThat(beforeValidation: cancellation.Cancel);
         var replacement = CreateDevanagariPack();
         var manager = CreateManager(CreateCatalogJson(CreateEntry("hindi", "devanagari-v1", replacement)),
             replacement, validationProvider: provider);
@@ -297,10 +284,11 @@ public sealed class RomanizationPackTests : IDisposable
             [new JapaneseRomanizationProvider(), new DevanagariRomanizationProvider(), new KoreanRomanizationProvider()];
         var provider = providers.Single(p => p.EngineId == pack.Manifest.EngineId);
 
-        (await provider.ValidatePackAsync(pack)).Should().BeTrue();
+        (await RomanizationPackFiles.ValidateAsync(new FileSystemService(), provider, pack, CancellationToken.None))
+            .Should().BeTrue();
     }
     [Fact]
-    public async Task JapaneseProvider_WithOverlappingRules_SelectsLongestPhraseAndNormalizedSequence()
+    public void JapaneseProvider_WithOverlappingRules_SelectsLongestPhraseAndNormalizedSequence()
     {
         var rules = new
         {
@@ -312,13 +300,9 @@ public sealed class RomanizationPackTests : IDisposable
             },
             Sequences = new Dictionary<string, string> { ["き"] = "ki", ["きゃ"] = "kya" }
         };
-        var manifest = new RomanizationPackManifest { Id = "japanese", EngineId = "japanese-v1" };
-        var directory = Path.Combine(_tempRoot, "japanese");
-        ExtractArchive(CreatePackArchive(manifest, "japanese-rules.json", rules,
-            Array.Empty<RomanizationGoldenCase>(), Array.Empty<(string, string)>()), directory);
-        var pack = new InstalledRomanizationPack { Manifest = manifest, DirectoryPath = directory };
+        var provider = new JapaneseRomanizationProvider();
 
-        var result = await new JapaneseRomanizationProvider().RomanizeAsync("愛情歌 キャ 愛情 愛", pack);
+        var result = provider.Romanize("愛情歌 キャ 愛情 愛", provider.ParseRules(JsonSerializer.Serialize(rules)));
 
         result.Should().Be("aijouka kya aijou ai");
     }
@@ -355,6 +339,26 @@ public sealed class RomanizationPackTests : IDisposable
 
         lines.Should().ContainSingle();
         lines[0].RomanizedText.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task LyricRomanizationService_ReadsAPacksRulesOnceAcrossLyrics()
+    {
+        var pack = CreateInstalledDevanagariPack();
+        var fileSystem = Substitute.For<IFileSystemService>();
+        fileSystem.ReadAllTextAsync(Arg.Any<string>()).Returns(call => File.ReadAllTextAsync(call.Arg<string>()));
+        var settings = TestSettings.Create();
+        settings.Set(CoreSettings.LyricsRomanization, true);
+        var packManager = Substitute.For<IRomanizationPackManager>();
+        packManager.GetInstalledPacksAsync(Arg.Any<CancellationToken>()).Returns([pack]);
+        var service = new LyricRomanizationService(settings, packManager, [new DevanagariRomanizationProvider()], fileSystem);
+
+        var first = await service.ApplyRomanizationAsync([new LyricLine(TimeSpan.Zero, HindiText)]);
+        var second = await service.ApplyRomanizationAsync([new LyricLine(TimeSpan.Zero, $"{HindiText}!")]);
+
+        first[0].RomanizedText.Should().Be("hindi");
+        second[0].RomanizedText.Should().Be("hindi!");
+        await fileSystem.Received(1).ReadAllTextAsync(Arg.Any<string>());
     }
 
     [Fact]
@@ -460,7 +464,34 @@ public sealed class RomanizationPackTests : IDisposable
             pathConfig,
             new IRomanizationProvider[] { validationProvider ?? new DevanagariRomanizationProvider(), new JapaneseRomanizationProvider(), new KoreanRomanizationProvider() },
             verifier,
+            new FileSystemService(),
+            AppInfo(),
             NullLogger<RomanizationPackManager>.Instance);
+    }
+
+    private static IAppInfoService AppInfo()
+    {
+        var appInfo = Substitute.For<IAppInfoService>();
+        appInfo.GetAppVersion().Returns("2.7.0");
+        return appInfo;
+    }
+
+    // A real Devanagari provider that runs an action when a pack's rules are read for validation.
+    private static IRomanizationProvider DevanagariProviderThat(Action beforeValidation)
+    {
+        var real = new DevanagariRomanizationProvider();
+        var provider = Substitute.For<IRomanizationProvider>();
+        provider.EngineId.Returns(real.EngineId);
+        provider.RulesFileName.Returns(real.RulesFileName);
+        provider.Supports(Arg.Any<string>()).Returns(call => real.Supports(call.Arg<string>()));
+        provider.Romanize(Arg.Any<string>(), Arg.Any<object>())
+            .Returns(call => real.Romanize(call.Arg<string>(), call.Arg<object>()));
+        provider.ParseRules(Arg.Any<string>()).Returns(call =>
+        {
+            beforeValidation();
+            return real.ParseRules(call.Arg<string>());
+        });
+        return provider;
     }
 
     private ILyricRomanizationService CreateLyricService(
@@ -483,7 +514,8 @@ public sealed class RomanizationPackTests : IDisposable
         return new LyricRomanizationService(
             settings,
             packManager,
-            new IRomanizationProvider[] { new DevanagariRomanizationProvider(), new JapaneseRomanizationProvider(), new KoreanRomanizationProvider() });
+            new IRomanizationProvider[] { new DevanagariRomanizationProvider(), new JapaneseRomanizationProvider(), new KoreanRomanizationProvider() },
+            new FileSystemService());
     }
 
     private InstalledRomanizationPack CreateInstalledDevanagariPack()

@@ -1,12 +1,9 @@
 using System.Text;
-using Nagi.Core.Models.Romanization;
-using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.Core.Services.Implementations.Romanization;
 
-public sealed class KoreanRomanizationProvider : IRomanizationProvider
+internal sealed class KoreanRomanizationProvider : RomanizationProvider<KoreanRomanizationProvider.HangulRuleSet>
 {
-    private const string RulesFileName = "hangul-rules.json";
     private const int HangulBase = 0xAC00;
     private const int HangulEnd = 0xD7A3;
     private const int InitialCount = 19;
@@ -15,28 +12,16 @@ public sealed class KoreanRomanizationProvider : IRomanizationProvider
     private const int SilentInitialIndex = 11;
     private const int FinalIeungIndex = 21;
 
-    public string EngineId => "hangul-v1";
+    public override string RulesFileName => "hangul-rules.json";
 
-    public bool Supports(string text)
+    public override string EngineId => "hangul-v1";
+
+    public override bool Supports(string text)
     {
         return text.Any(c => IsHangulSyllable(c) || c is >= '\u3130' and <= '\u318F');
     }
 
-    public async Task<string?> RomanizeAsync(string text, InstalledRomanizationPack pack, CancellationToken cancellationToken = default)
-    {
-        if (string.IsNullOrWhiteSpace(text) || !Supports(text)) return null;
-
-        var rules = await RomanizationProviderHelpers.LoadRulesAsync<HangulRuleSet>(pack, RulesFileName, cancellationToken).ConfigureAwait(false);
-        var result = Romanize(text, rules);
-        return string.Equals(result, text, StringComparison.Ordinal) ? null : result;
-    }
-
-    public Task<bool> ValidatePackAsync(InstalledRomanizationPack pack, CancellationToken cancellationToken = default)
-    {
-        return RomanizationProviderHelpers.ValidatePackAsync(pack, RulesFileName, RomanizeAsync, cancellationToken);
-    }
-
-    private static string Romanize(string text, HangulRuleSet rules)
+    protected override string Romanize(string text, HangulRuleSet rules)
     {
         if (!HasCompleteTables(rules)) return text;
         if (rules.Phrases.TryGetValue(text, out var wholePhrase)) return wholePhrase;
@@ -46,7 +31,7 @@ public sealed class KoreanRomanizationProvider : IRomanizationProvider
 
         while (index < text.Length)
         {
-            if (RomanizationProviderHelpers.TryMatchLongest(text, index, rules.Phrases, out var phraseLength, out var phraseReplacement))
+            if (TryMatchLongest(text, index, rules.Phrases, out var phraseLength, out var phraseReplacement))
             {
                 builder.Append(phraseReplacement);
                 index += phraseLength;
@@ -73,7 +58,7 @@ public sealed class KoreanRomanizationProvider : IRomanizationProvider
             index++;
         }
 
-        return RomanizationProviderHelpers.NormalizePunctuationSpacing(builder.ToString());
+        return NormalizePunctuationSpacing(builder.ToString());
     }
 
     private static bool TryAppendHangulSyllable(string text, int index, HangulRuleSet rules, StringBuilder builder)
@@ -129,7 +114,7 @@ public sealed class KoreanRomanizationProvider : IRomanizationProvider
                && rules.FinalConsonantsBeforeVowel.Count == FinalCount;
     }
 
-    private sealed class HangulRuleSet
+    internal sealed class HangulRuleSet
     {
         public Dictionary<string, string> Phrases { get; set; } = new();
         public List<string> InitialConsonants { get; set; } = new();

@@ -11,3 +11,10 @@ public interface ILastFmMetadataService
     Task<ServiceResult<string>> GetAlbumCoverUrlAsync(string albumTitle, string artistName,
         CancellationToken cancellationToken = default);
 }
+
+public sealed record ArtistInfo
+{
+    public string? Biography { get; init; }
+
+    public string? ImageUrl { get; init; }
+}

@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -44,7 +45,7 @@ public class ServiceProviderIntegrationTests : IDisposable
         var httpClientFactory = Substitute.For<IHttpClientFactory>();
         httpClientFactory.CreateClient(Arg.Any<string>()).Returns(_ => new HttpClient(_httpHandler, disposeHandler: false));
 
-        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
+        _pipelines = TestProviderPipeline.Build(ProviderCatalog.ImageDownload.ProviderId);
 
         _libraryReader = new LibraryReader(_dbHelper.ContextFactory, Substitute.For<IFileSystemService>(), _settingsService);
 
@@ -60,6 +61,7 @@ public class ServiceProviderIntegrationTests : IDisposable
                 _theAudioDbService,
                 _deezerService,
                 _wikipediaService,
+                _settingsService,
                 Substitute.For<ILogger<ArtistMetadataService>>()),
             _albumCoverService,
             httpClientFactory,
@@ -94,7 +96,7 @@ public class ServiceProviderIntegrationTests : IDisposable
 
         _settingsService.EnableOnly(CoreSettings.MetadataProviders);
 
-        await _libraryService.GetArtistDetailsAsync(artist.Id, true);
+        await _libraryService.GetArtistDetailsAsync(artist.Id);
 
         using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         var assertArtist = await assertContext.Artists.FindAsync(artist.Id);
@@ -116,7 +118,7 @@ public class ServiceProviderIntegrationTests : IDisposable
         _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccess(new ArtistInfo { Biography = "Available biography" }));
 
-        var result = await _libraryService.GetArtistDetailsAsync(artist.Id, true);
+        var result = await _libraryService.GetArtistDetailsAsync(artist.Id);
         result!.Biography.Should().Be("Available biography");
 
         await _theAudioDbService.DidNotReceive().GetArtistMetadataAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
@@ -144,7 +146,7 @@ public class ServiceProviderIntegrationTests : IDisposable
                 ImageUrl = "https://lastfm.test/artist.jpg"
             }));
 
-        var result = await _libraryService.GetArtistDetailsAsync(artist.Id, true);
+        var result = await _libraryService.GetArtistDetailsAsync(artist.Id);
 
         result!.Biography.Should().Be("Last.fm biography");
         _httpHandler.Requests.Select(request => request.RequestUri!.AbsoluteUri)
@@ -174,7 +176,7 @@ public class ServiceProviderIntegrationTests : IDisposable
         _settingsService.EnableOnly(CoreSettings.MetadataProviders, ServiceProviderIds.CoverArtArchive);
         _albumCoverService.FindCoverUrlAsync(
                 Arg.Is<AlbumCoverQuery>(q => q.Title == "Album" && q.ArtistName == "Artist" && q.ReleaseId == "release-id"),
-                Arg.Any<IReadOnlyList<ServiceProviderSetting>>(), Arg.Any<CancellationToken>())
+                Arg.Any<CancellationToken>())
             .Returns(status switch
             {
                 ServiceResultStatus.Success => ServiceResult<string>.FromSuccess("https://covers.test/front.jpg"),
@@ -222,7 +224,7 @@ public class ServiceProviderIntegrationTests : IDisposable
         }
 
         _settingsService.EnableOnly(CoreSettings.MetadataProviders, ServiceProviderIds.CoverArtArchive);
-        _albumCoverService.FindCoverUrlAsync(default!, default!, default).ReturnsForAnyArgs(_ =>
+        _albumCoverService.FindCoverUrlAsync(default!, default).ReturnsForAnyArgs(_ =>
         {
             using var scanContext = _dbHelper.ContextFactory.CreateDbContext();
             scanContext.Albums.Single().CoverArtUri = scannedCover;

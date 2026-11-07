@@ -1,35 +1,19 @@
 using System.Text;
-using Nagi.Core.Models.Romanization;
-using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.Core.Services.Implementations.Romanization;
 
-public sealed class DevanagariRomanizationProvider : IRomanizationProvider
+internal sealed class DevanagariRomanizationProvider : RomanizationProvider<DevanagariRomanizationProvider.DevanagariRuleSet>
 {
-    private const string RulesFileName = "devanagari-rules.json";
+    public override string RulesFileName => "devanagari-rules.json";
 
-    public string EngineId => "devanagari-v1";
+    public override string EngineId => "devanagari-v1";
 
-    public bool Supports(string text)
+    public override bool Supports(string text)
     {
         return text.Any(c => c is >= '\u0900' and <= '\u097F');
     }
 
-    public async Task<string?> RomanizeAsync(string text, InstalledRomanizationPack pack, CancellationToken cancellationToken = default)
-    {
-        if (string.IsNullOrWhiteSpace(text) || !Supports(text)) return null;
-
-        var rules = await RomanizationProviderHelpers.LoadRulesAsync<DevanagariRuleSet>(pack, RulesFileName, cancellationToken).ConfigureAwait(false);
-        var result = Romanize(text, rules);
-        return string.Equals(result, text, StringComparison.Ordinal) ? null : result;
-    }
-
-    public Task<bool> ValidatePackAsync(InstalledRomanizationPack pack, CancellationToken cancellationToken = default)
-    {
-        return RomanizationProviderHelpers.ValidatePackAsync(pack, RulesFileName, RomanizeAsync, cancellationToken);
-    }
-
-    private static string Romanize(string text, DevanagariRuleSet rules)
+    protected override string Romanize(string text, DevanagariRuleSet rules)
     {
         if (rules.Phrases.TryGetValue(text, out var wholePhrase)) return wholePhrase;
 
@@ -38,7 +22,7 @@ public sealed class DevanagariRomanizationProvider : IRomanizationProvider
 
         while (index < text.Length)
         {
-            if (RomanizationProviderHelpers.TryMatchLongest(text, index, rules.Phrases, out var phraseLength, out var phraseReplacement))
+            if (TryMatchLongest(text, index, rules.Phrases, out var phraseLength, out var phraseReplacement))
             {
                 builder.Append(phraseReplacement);
                 index += phraseLength;
@@ -96,7 +80,7 @@ public sealed class DevanagariRomanizationProvider : IRomanizationProvider
             index++;
         }
 
-        return RomanizationProviderHelpers.NormalizePunctuationSpacing(builder.ToString());
+        return NormalizePunctuationSpacing(builder.ToString());
     }
 
     private static bool TryReadConsonant(
@@ -144,7 +128,7 @@ public sealed class DevanagariRomanizationProvider : IRomanizationProvider
         return index >= text.Length || text[index] is < '\u0900' or > '\u097F';
     }
 
-    private sealed class DevanagariRuleSet
+    internal sealed class DevanagariRuleSet
     {
         public Dictionary<string, string> Phrases { get; set; } = new();
         public Dictionary<string, string> IndependentVowels { get; set; } = new();

@@ -12,16 +12,14 @@ namespace Nagi.Core.Services.Implementations;
 /// </summary>
 public partial class LibraryService
 {
-    private async Task FetchMissingAlbumCoversAsync(IReadOnlyList<ServiceProviderSetting> enabledProviders,
-        CancellationToken token)
+    private async Task FetchMissingAlbumCoversAsync(CancellationToken token)
     {
-        if (!enabledProviders.Any(p => AlbumCoverService.SourceIds.Contains(p.Id))) return;
-
         const int batchSize = 50;
         // "Unknown Album" groups unrelated tracks, so no single cover is right for it.
         var unknownAlbum = Album.UnknownAlbumName;
         Guid? afterId = null;
-        while (!token.IsCancellationRequested)
+        var lookupsOff = false;
+        while (!lookupsOff && !token.IsCancellationRequested)
         {
             List<AlbumCoverCandidate> albums;
             await using (var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false))
@@ -46,8 +44,15 @@ public partial class LibraryService
                 if (token.IsCancellationRequested) break;
                 try
                 {
-                    if (await FetchAlbumCoverAsync(album, enabledProviders, token).ConfigureAwait(false))
-                        updatedCount++;
+                    var updated = await FetchAlbumCoverAsync(album, token).ConfigureAwait(false);
+                    if (updated is null)
+                    {
+                        _logger.LogDebug("Online metadata was turned off or has no cover source; stopping the album pass.");
+                        lookupsOff = true;
+                        break;
+                    }
+
+                    if (updated.Value) updatedCount++;
                 }
                 catch (Exception ex) when (ex is not OperationCanceledException)
                 {
@@ -63,12 +68,12 @@ public partial class LibraryService
         }
     }
 
-    private async Task<bool> FetchAlbumCoverAsync(AlbumCoverCandidate album,
-        IReadOnlyList<ServiceProviderSetting> enabledProviders, CancellationToken token)
+    /// <returns>Whether the album got a cover, or null when online metadata is off or has no cover source.</returns>
+    private async Task<bool?> FetchAlbumCoverAsync(AlbumCoverCandidate album, CancellationToken token)
     {
         var result = await _albumCoverService.FindCoverUrlAsync(
-            new AlbumCoverQuery(album.Title, album.ArtistName, album.ReleaseId, album.ReleaseGroupId),
-            enabledProviders, token).ConfigureAwait(false);
+            new AlbumCoverQuery(album.Title, album.ArtistName, album.ReleaseId, album.ReleaseGroupId), token).ConfigureAwait(false);
+        if (result is null) return null;
 
         (string? Uri, string? LightSwatchId, string? DarkSwatchId) cover = default;
         if (result.Data is not null)

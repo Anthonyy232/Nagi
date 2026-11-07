@@ -1,24 +1,16 @@
-﻿namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.Services.Abstractions;
 
 public interface IImageProcessor
 {
     /// <summary>
-    ///     Saves cover art from a byte array to local storage and extracts primary color swatches.
-    ///     Uses content-based hashing to deduplicate identical images across multiple songs.
-    ///     Images larger than 600x600 are resized to reduce disk usage.
+    ///     Saves cover art to the cache and extracts the theme colors of its primary color. Identical images share one
+    ///     file, and images larger than 600x600 are scaled down.
     /// </summary>
-    /// <returns>
-    ///     A tuple containing the local file URI of the saved image, and hex color codes for the
-    ///     light and dark theme primary colors. All values can be null if processing fails.
-    /// </returns>
+    /// <returns>The saved file and the light and dark theme colors as hex, all null if processing fails.</returns>
     Task<(string? uri, string? lightSwatchId, string? darkSwatchId)> SaveCoverArtAndExtractColorsAsync(
         byte[] pictureData);
 
-    /// <summary>
-    ///     Processes image bytes: resizes if larger than max dimension, converts to JPEG.
-    ///     Preserves aspect ratio using ResizeMode.Max (fits within bounds without distortion).
-    /// </summary>
-    /// <param name="maxDimension">Maximum width or height.</param>
-    /// <returns>Processed image bytes as JPEG, or original bytes if no resizing needed.</returns>
-    Task<byte[]> ProcessImageBytesAsync(byte[] imageData, int maxDimension = 600);
+    /// <summary>Scales an image larger than 600x600 down to fit, keeping its aspect ratio, and encodes it as JPEG.</summary>
+    /// <returns>The JPEG, or the original bytes when they need no scaling or can't be read.</returns>
+    Task<byte[]> ProcessImageBytesAsync(byte[] imageData);
 }

@@ -1,24 +1,23 @@
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http;
 using Nagi.Core.Models;
+using Nagi.Core.Settings;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Services.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
-public class AlbumCoverService : IAlbumCoverService
+public class AlbumCoverService : IAlbumCoverService, IDisposable
 {
-    /// <summary>The sources <see cref="FindCoverUrlAsync" /> can ask; keep in step with its switch.</summary>
-    public static readonly IReadOnlySet<string> SourceIds = new HashSet<string>
-    {
-        ServiceProviderIds.CoverArtArchive, ServiceProviderIds.AppleMusic, ServiceProviderIds.Deezer, ServiceProviderIds.LastFm
-    };
-
+    private readonly OnlineLookupCancellation _onlineLookups = new();
     private readonly ICoverArtArchiveService _coverArtArchive;
     private readonly IMusicBrainzService _musicBrainz;
     private readonly IAppleMusicService _appleMusic;
     private readonly IDeezerService _deezer;
     private readonly ILastFmMetadataService _lastFm;
+    private readonly ISettingsService _settingsService;
     private readonly ILogger<AlbumCoverService> _logger;
 
     public AlbumCoverService(
@@ -27,6 +26,7 @@ public class AlbumCoverService : IAlbumCoverService
         IAppleMusicService appleMusic,
         IDeezerService deezer,
         ILastFmMetadataService lastFm,
+        ISettingsService settingsService,
         ILogger<AlbumCoverService> logger)
     {
         _coverArtArchive = coverArtArchive;
@@ -34,43 +34,82 @@ public class AlbumCoverService : IAlbumCoverService
         _appleMusic = appleMusic;
         _deezer = deezer;
         _lastFm = lastFm;
+        _settingsService = settingsService;
         _logger = logger;
+        _settingsService.SettingChanged += OnSettingChanged;
     }
 
-    public async Task<ServiceResult<string>> FindCoverUrlAsync(AlbumCoverQuery album,
-        IReadOnlyList<ServiceProviderSetting> enabledProviders, CancellationToken cancellationToken = default)
+    public async Task<ServiceResult<string>?> FindCoverUrlAsync(AlbumCoverQuery album,
+        CancellationToken cancellationToken = default)
+    {
+        var turnedOff = _onlineLookups.Token;
+        if (!_settingsService.Get(CoreSettings.FetchOnlineMetadata)) return null;
+        var enabledProviders = _settingsService.Get(CoreSettings.MetadataProviders).Where(p => p.IsEnabled).ToList();
+        if (!enabledProviders.Any(p => ProviderCatalog.Can(p.Id, ProviderCapabilities.AlbumCover))) return null;
+
+        using var linked = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, turnedOff);
+        try
+        {
+            return await AskSourcesAsync(album, enabledProviders, linked.Token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+        {
+            return null;
+        }
+    }
+
+    public void Dispose()
+    {
+        _settingsService.SettingChanged -= OnSettingChanged;
+        _onlineLookups.CancelRunning();
+    }
+
+    private async Task<ServiceResult<string>> AskSourcesAsync(AlbumCoverQuery album,
+        IReadOnlyList<ServiceProviderSetting> enabledProviders, CancellationToken cancellationToken)
     {
         // A name search for an unknown title or artist would return some unrelated album.
         var canSearchByName = album.Title != Album.UnknownAlbumName && album.ArtistName != Artist.UnknownArtistName;
         var canSearchMusicBrainz = canSearchByName && enabledProviders.Any(p => p.Id == ServiceProviderIds.MusicBrainz);
-        var allConclusive = true;
 
-        foreach (var provider in enabledProviders)
+        string? coverUrl = null;
+        // Enumerated lazily, so the sources are asked one at a time and the search stops at the first cover.
+        var isFinal = await ProviderPriority.TakeInOrderAsync(
+            enabledProviders
+                .Where(p => ProviderCatalog.Can(p.Id, ProviderCapabilities.AlbumCover) &&
+                            (canSearchByName || p.Id == ServiceProviderIds.CoverArtArchive))
+                .Select(p => AskSourceAsync(p.Id, album, canSearchMusicBrainz, cancellationToken)),
+            url =>
+            {
+                coverUrl = url;
+                return true;
+            }, cancellationToken).ConfigureAwait(false);
+
+        return coverUrl is not null ? ServiceResult<string>.FromSuccess(coverUrl)
+            : isFinal ? ServiceResult<string>.FromSuccessNotFound()
+            : ServiceResult<string>.FromTemporaryError();
+    }
+
+    private async Task<ServiceResult<string>> AskSourceAsync(string providerId, AlbumCoverQuery album,
+        bool canSearchMusicBrainz, CancellationToken cancellationToken)
+    {
+        var result = await (providerId switch
         {
-            var result = provider.Id switch
-            {
-                ServiceProviderIds.CoverArtArchive =>
-                    await FindInCoverArtArchiveAsync(album, canSearchMusicBrainz, cancellationToken).ConfigureAwait(false),
-                ServiceProviderIds.AppleMusic when canSearchByName =>
-                    await _appleMusic.GetAlbumCoverUrlAsync(album.Title, album.ArtistName, cancellationToken).ConfigureAwait(false),
-                ServiceProviderIds.Deezer when canSearchByName =>
-                    await _deezer.GetAlbumCoverUrlAsync(album.Title, album.ArtistName, cancellationToken).ConfigureAwait(false),
-                ServiceProviderIds.LastFm when canSearchByName =>
-                    await _lastFm.GetAlbumCoverUrlAsync(album.Title, album.ArtistName, cancellationToken).ConfigureAwait(false),
-                _ => null
-            };
-            if (result is null) continue;
+            ServiceProviderIds.CoverArtArchive => FindInCoverArtArchiveAsync(album, canSearchMusicBrainz, cancellationToken),
+            ServiceProviderIds.AppleMusic => _appleMusic.GetAlbumCoverUrlAsync(album.Title, album.ArtistName, cancellationToken),
+            ServiceProviderIds.Deezer => _deezer.GetAlbumCoverUrlAsync(album.Title, album.ArtistName, cancellationToken),
+            ServiceProviderIds.LastFm => _lastFm.GetAlbumCoverUrlAsync(album.Title, album.ArtistName, cancellationToken),
+            _ => throw new NotSupportedException($"No album cover lookup for provider '{providerId}'.")
+        }).ConfigureAwait(false);
 
-            if (result.Data is not null)
-            {
-                _logger.LogDebug("Using {Provider} cover for album '{AlbumTitle}'.", provider.Id, album.Title);
-                return result;
-            }
+        if (result.Data is not null)
+            _logger.LogDebug("Using {Provider} cover for album '{AlbumTitle}'.", providerId, album.Title);
+        return result;
+    }
 
-            allConclusive &= result.IsConclusive;
-        }
-
-        return allConclusive ? ServiceResult<string>.FromSuccessNotFound() : ServiceResult<string>.FromTemporaryError();
+    private void OnSettingChanged(Setting setting)
+    {
+        if (setting == CoreSettings.FetchOnlineMetadata && !_settingsService.Get(CoreSettings.FetchOnlineMetadata))
+            _onlineLookups.CancelRunning();
     }
 
     private async Task<ServiceResult<string>> FindInCoverArtArchiveAsync(AlbumCoverQuery album, bool canSearchMusicBrainz,

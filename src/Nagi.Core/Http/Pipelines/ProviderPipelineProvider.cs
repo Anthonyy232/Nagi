@@ -11,7 +11,7 @@ namespace Nagi.Core.Http.Pipelines;
 ///     Builds a rate-limit/retry pipeline and a circuit breaker for each provider.
 ///     The breaker sees every retry attempt, not just the final outcome.
 /// </summary>
-internal sealed class ProviderPipelineProvider : IProviderPipelineProvider, IAsyncDisposable
+public sealed class ProviderPipelineProvider : IAsyncDisposable
 {
     private readonly ILogger<ProviderPipelineProvider> _logger;
     private readonly Dictionary<string, ProviderEntry> _providers;
@@ -36,6 +36,11 @@ internal sealed class ProviderPipelineProvider : IProviderPipelineProvider, IAsy
         _rateLimiters.Clear();
     }
 
+    /// <summary>
+    ///     Runs an HTTP call through the provider's pipeline. The call returns the response itself so the pipeline can
+    ///     base its retry and breaker decisions on the status.
+    /// </summary>
+    /// <exception cref="BrokenCircuitException">The provider's circuit breaker is open.</exception>
     public ValueTask<HttpResponseMessage> ExecuteAsync(
         string providerId,
         Func<CancellationToken, ValueTask<HttpResponseMessage>> httpCall,
@@ -51,6 +56,7 @@ internal sealed class ProviderPipelineProvider : IProviderPipelineProvider, IAsy
             cancellationToken);
     }
 
+    /// <summary>Lets callers skip a failing provider without waiting for a rate-limit permit.</summary>
     public bool IsCircuitOpen(string providerId)
         => _providers.TryGetValue(providerId, out var entry)
            && entry.CircuitBreakerStateProvider.CircuitState
@@ -141,7 +147,6 @@ internal sealed class ProviderPipelineProvider : IProviderPipelineProvider, IAsy
             });
         }
 
-        // Concurrency cap. Holds a slot for the duration of the call.
         builder.AddConcurrencyLimiter(new ConcurrencyLimiterOptions
         {
             PermitLimit = channelPolicy.MaxConcurrent,
@@ -164,10 +169,7 @@ internal sealed class ProviderPipelineProvider : IProviderPipelineProvider, IAsy
         return builder.Build();
     }
 
-    /// <summary>
-    ///     Exception types treated as transient by both the retry strategy and the circuit
-    ///     breaker. Kept in one place so the two predicates can never silently diverge.
-    /// </summary>
+    // Shared by the retry strategy and the circuit breaker so the two can't diverge.
     private static PredicateBuilder<HttpResponseMessage> TransientNetworkPredicate()
         => new PredicateBuilder<HttpResponseMessage>()
             .Handle<HttpRequestException>()

@@ -1,33 +1,26 @@
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
-using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
-using Nagi.Core.Services.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
-/// <summary>
-///     Rate limiting (1 req/s as MusicBrainz requires), retry, and circuit-breaker policy
-///     are handled by <see cref="IProviderPipelineProvider"/>.
-/// </summary>
 public class MusicBrainzService : IMusicBrainzService
 {
     private const string BaseUrl = "https://musicbrainz.org/ws/2";
 
-    private readonly HttpClient _httpClient;
-    private readonly IProviderPipelineProvider _pipelines;
+    private readonly ProviderClient _client;
     private readonly ILogger<MusicBrainzService> _logger;
 
     public MusicBrainzService(
         IHttpClientFactory httpClientFactory,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         ILogger<MusicBrainzService> logger)
     {
-        _httpClient = httpClientFactory.CreateClient();
-        _httpClient.DefaultRequestHeaders.Accept.ParseAdd("application/json");
-        _pipelines = pipelines;
+        _client = new ProviderClient(ProviderCatalog.MusicBrainz.Policy, httpClientFactory.CreateClient(), pipelines, logger);
+        _client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
         _logger = logger;
     }
 
@@ -59,8 +52,7 @@ public class MusicBrainzService : IMusicBrainzService
     private Task<ServiceResult<string>> SearchAsync(string pathAndQuery,
         Func<MusicBrainzSearchResult, List<MusicBrainzMatch>?> selectMatches, int minimumScore, string subject,
         CancellationToken cancellationToken) =>
-        _pipelines.GetJsonAsync<MusicBrainzSearchResult, string>(_httpClient, ServiceProviderIds.MusicBrainz,
-            $"{BaseUrl}/{pathAndQuery}&limit=1&fmt=json",
+        _client.GetJsonAsync<MusicBrainzSearchResult, string>($"{BaseUrl}/{pathAndQuery}&limit=1&fmt=json",
             result =>
             {
                 var match = selectMatches(result)?.FirstOrDefault();
@@ -79,7 +71,7 @@ public class MusicBrainzService : IMusicBrainzService
                 _logger.LogInformation("Found MusicBrainz ID {MBID} for {Subject}", match.Id, subject);
                 return ServiceResult<string>.FromSuccess(match.Id);
             },
-            _logger, $"MusicBrainz search for {subject}", cancellationToken);
+            $"MusicBrainz search for {subject}", cancellationToken);
 
     private sealed class MusicBrainzSearchResult
     {

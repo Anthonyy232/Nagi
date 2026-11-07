@@ -1,6 +1,5 @@
 using System.IO.Compression;
 using System.Net.Http.Json;
-using System.Reflection;
 using System.Security.Cryptography;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
@@ -29,6 +28,8 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
     private readonly IPathConfiguration _pathConfig;
     private readonly Dictionary<string, IRomanizationProvider> _providers;
     private readonly IRomanizationCatalogVerifier _catalogVerifier;
+    private readonly IFileSystemService _fileSystem;
+    private readonly IAppInfoService _appInfo;
     private RomanizationPackCatalog? _cachedCatalog;
 
     public event Action? PacksChanged;
@@ -38,12 +39,16 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
         IPathConfiguration pathConfig,
         IEnumerable<IRomanizationProvider> providers,
         IRomanizationCatalogVerifier catalogVerifier,
+        IFileSystemService fileSystem,
+        IAppInfoService appInfo,
         ILogger<RomanizationPackManager> logger)
     {
         _httpClient = httpClientFactory.CreateClient();
         _pathConfig = pathConfig;
         _providers = providers.ToDictionary(p => p.EngineId, StringComparer.OrdinalIgnoreCase);
         _catalogVerifier = catalogVerifier;
+        _fileSystem = fileSystem;
+        _appInfo = appInfo;
         _logger = logger;
     }
 
@@ -52,11 +57,11 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
         var catalog = await GetCatalogAsync(forceRefresh, cancellationToken).ConfigureAwait(false);
         var installed = await GetInstalledPacksAsync(cancellationToken).ConfigureAwait(false);
         var installedById = installed.ToDictionary(p => p.Manifest.Id, StringComparer.OrdinalIgnoreCase);
-        var appVersion = Assembly.GetEntryAssembly()?.GetName().Version ?? typeof(RomanizationPackManager).Assembly.GetName().Version ?? new Version(0, 0);
+        var appVersion = ToFourPartVersion(_appInfo.GetAppVersion()) ?? new Version(0, 0, 0, 0);
 
         return catalog.Packs
             .Where(p => _providers.ContainsKey(p.EngineId))
-            .Where(p => IsCompatibleWithAppVersion(p.MinAppVersion, appVersion))
+            .Where(p => ToFourPartVersion(p.MinAppVersion) is not { } required || appVersion >= required)
             .Select(p => new RomanizationPackView
             {
                 CatalogEntry = p,
@@ -66,24 +71,23 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
             .ToList();
     }
 
-    public Task<IReadOnlyList<InstalledRomanizationPack>> GetInstalledPacksAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<InstalledRomanizationPack>> GetInstalledPacksAsync(CancellationToken cancellationToken = default)
     {
-        Directory.CreateDirectory(PackRoot);
+        _fileSystem.CreateDirectory(PackRoot);
         var packs = new List<InstalledRomanizationPack>();
 
-        foreach (var directory in Directory.EnumerateDirectories(PackRoot))
+        foreach (var directory in _fileSystem.EnumerateDirectories(PackRoot))
         {
             cancellationToken.ThrowIfCancellationRequested();
             var directoryName = Path.GetFileName(directory);
             if (directoryName.EndsWith(".tmp", StringComparison.OrdinalIgnoreCase)) continue;
 
             var manifestPath = Path.Combine(directory, "manifest.json");
-            if (!File.Exists(manifestPath)) continue;
+            if (!_fileSystem.FileExists(manifestPath)) continue;
 
             try
             {
-                using var stream = File.OpenRead(manifestPath);
-                var manifest = JsonSerializer.Deserialize<RomanizationPackManifest>(stream, RomanizationJson.Options);
+                var manifest = await ReadManifestAsync(manifestPath).ConfigureAwait(false);
 
                 if (manifest is null || string.IsNullOrWhiteSpace(manifest.Id)) continue;
                 if (!string.Equals(directoryName, SanitizePackId(manifest.Id), StringComparison.OrdinalIgnoreCase)) continue;
@@ -96,7 +100,7 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
             }
         }
 
-        return Task.FromResult<IReadOnlyList<InstalledRomanizationPack>>(packs);
+        return packs;
     }
 
     public async Task<RomanizationPackOperationResult> InstallPackAsync(string packId, CancellationToken cancellationToken = default)
@@ -128,7 +132,7 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
                 downloadCts.CancelAfter(_httpClient.Timeout);
                 var downloadToken = downloadCts.Token;
                 await using (var download = await _httpClient.GetStreamAsync(downloadUri, downloadToken).ConfigureAwait(false))
-                await using (var archive = File.Create(tempArchivePath))
+                await using (var archive = _fileSystem.CreateFile(tempArchivePath))
                 {
                     await download.CopyToAsync(archive, downloadToken).ConfigureAwait(false);
                     archive.Position = 0;
@@ -139,18 +143,14 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
                 ExtractZipSafely(tempArchivePath, tempExtractPath);
 
                 var manifestPath = Path.Combine(tempExtractPath, "manifest.json");
-                if (!File.Exists(manifestPath)) return Rejected("Pack does not contain a manifest.");
+                if (!_fileSystem.FileExists(manifestPath)) return Rejected("Pack does not contain a manifest.");
 
-                RomanizationPackManifest? manifest;
-                await using (var stream = File.OpenRead(manifestPath))
-                    manifest = await JsonSerializer.DeserializeAsync<RomanizationPackManifest>(
-                        stream, RomanizationJson.Options, cancellationToken).ConfigureAwait(false);
-
+                var manifest = await ReadManifestAsync(manifestPath).ConfigureAwait(false);
                 if (manifest is null) return Rejected("Pack manifest could not be read.");
                 if (!MatchesCatalogEntry(pack, manifest)) return Rejected("Pack manifest does not match the signed catalog.");
 
                 var installedPack = new InstalledRomanizationPack { Manifest = manifest, DirectoryPath = tempExtractPath };
-                if (!await provider.ValidatePackAsync(installedPack, cancellationToken).ConfigureAwait(false))
+                if (!await RomanizationPackFiles.ValidateAsync(_fileSystem, provider, installedPack, cancellationToken).ConfigureAwait(false))
                     return Rejected("Pack self-test failed.");
 
                 cancellationToken.ThrowIfCancellationRequested();
@@ -182,9 +182,9 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
         try
         {
             var path = GetPackDirectory(packId);
-            if (Directory.Exists(path))
+            if (_fileSystem.DirectoryExists(path))
             {
-                Directory.Delete(path, true);
+                _fileSystem.DeleteDirectory(path, true);
                 PacksChanged?.Invoke();
             }
             return Task.FromResult(RomanizationPackOperationResult.Success());
@@ -213,6 +213,10 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
 
     private string PackRoot => _pathConfig.RomanizationPacksPath;
 
+    private async Task<RomanizationPackManifest?> ReadManifestAsync(string path) =>
+        JsonSerializer.Deserialize<RomanizationPackManifest>(
+            await _fileSystem.ReadAllTextAsync(path).ConfigureAwait(false), RomanizationJson.Options);
+
     private string GetPackDirectory(string packId)
     {
         return Path.GetFullPath(Path.Combine(PackRoot, SanitizePackId(packId)));
@@ -234,10 +238,11 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
         return packId;
     }
 
-    private static bool IsCompatibleWithAppVersion(string minAppVersion, Version appVersion)
-    {
-        return !Version.TryParse(minAppVersion, out var requiredVersion) || appVersion >= requiredVersion;
-    }
+    // The app reports three parts and catalogs may give four, which Version would rank below them when equal.
+    private static Version? ToFourPartVersion(string? version) =>
+        Version.TryParse(version, out var parsed)
+            ? new Version(parsed.Major, parsed.Minor, Math.Max(parsed.Build, 0), Math.Max(parsed.Revision, 0))
+            : null;
 
     private static bool MatchesCatalogEntry(RomanizationPackCatalogEntry entry, RomanizationPackManifest manifest)
     {
@@ -246,32 +251,33 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
                && string.Equals(entry.Version, manifest.Version, StringComparison.OrdinalIgnoreCase);
     }
 
-    private static void ReplacePackDirectory(string stagedPath, string installedPath)
+    private void ReplacePackDirectory(string stagedPath, string installedPath)
     {
-        if (!Directory.Exists(installedPath))
+        if (!_fileSystem.DirectoryExists(installedPath))
         {
-            Directory.Move(stagedPath, installedPath);
+            _fileSystem.MoveDirectory(stagedPath, installedPath);
             return;
         }
 
         var backupPath = installedPath + $".{Guid.NewGuid():N}.tmp";
-        Directory.Move(installedPath, backupPath);
+        _fileSystem.MoveDirectory(installedPath, backupPath);
         try
         {
-            Directory.Move(stagedPath, installedPath);
+            _fileSystem.MoveDirectory(stagedPath, installedPath);
         }
         catch
         {
-            Directory.Move(backupPath, installedPath);
+            _fileSystem.MoveDirectory(backupPath, installedPath);
             throw;
         }
 
         TryDeleteDirectory(backupPath);
     }
 
-    private static void ExtractZipSafely(string archivePath, string destinationPath)
+    private void ExtractZipSafely(string archivePath, string destinationPath)
     {
-        using var archive = ZipFile.OpenRead(archivePath);
+        using var stream = _fileSystem.OpenRead(archivePath);
+        using var archive = new ZipArchive(stream);
         foreach (var entry in archive.Entries)
             EnsureDataOnlyEntry(entry);
         archive.ExtractToDirectory(destinationPath, overwriteFiles: true);
@@ -294,22 +300,22 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
             throw new InvalidOperationException("Pack contains a non-data file.");
     }
 
-    private static void TryDeleteFile(string path)
+    private void TryDeleteFile(string path)
     {
         try
         {
-            File.Delete(path);
+            _fileSystem.DeleteFile(path);
         }
         catch
         {
         }
     }
 
-    private static void TryDeleteDirectory(string path)
+    private void TryDeleteDirectory(string path)
     {
         try
         {
-            if (Directory.Exists(path)) Directory.Delete(path, true);
+            if (_fileSystem.DirectoryExists(path)) _fileSystem.DeleteDirectory(path, true);
         }
         catch
         {

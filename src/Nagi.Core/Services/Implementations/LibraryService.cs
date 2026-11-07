@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -18,12 +19,14 @@ namespace Nagi.Core.Services.Implementations;
 /// </summary>
 public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposable
 {
+    internal const string ImageHttpClientName = "ImageDownloader";
+
     private readonly ConcurrentDictionary<Guid, Lazy<Task<string?>>> _artistImageProcessingTasks = new();
 
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly ILibraryReader _libraryReader;
     private readonly IFileSystemService _fileSystem;
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ProviderClient _imageDownloads;
     private readonly IArtistMetadataService _artistMetadataService;
     private readonly IAlbumCoverService _albumCoverService;
     private readonly ILogger<LibraryService> _logger;
@@ -34,7 +37,6 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
     private readonly ISettingsService _settingsService;
     private readonly IReplayGainService _replayGainService;
     private readonly IImageProcessor _imageProcessor;
-    private readonly IProviderPipelineProvider _pipelines;
     private int _disposeState;
     private volatile CancellationTokenSource? _metadataFetchCts;
     private CancellationTokenSource? _activeScanCts;
@@ -52,7 +54,7 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         ISettingsService settingsService,
         IReplayGainService replayGainService,
         IImageProcessor imageProcessor,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         ILogger<LibraryService> logger)
     {
         _contextFactory = contextFactory;
@@ -61,14 +63,13 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         _metadataService = metadataService;
         _artistMetadataService = artistMetadataService;
         _albumCoverService = albumCoverService;
-        _httpClientFactory = httpClientFactory;
+        _imageDownloads = new ProviderClient(ProviderCatalog.ImageDownload, httpClientFactory.CreateClient(ImageHttpClientName),
+            pipelines, logger);
         _pathConfig = pathConfig;
         _settingsService = settingsService;
         _replayGainService = replayGainService;
         _imageProcessor = imageProcessor;
-        _pipelines = pipelines;
         _logger = logger;
-        _settingsService.SettingChanged += OnSettingChanged;
     }
 
     private void CancelActiveScan(string reason)
@@ -410,7 +411,8 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
             .ConfigureAwait(false) > 0;
     }
 
-    private bool IsPathInLrcCache(string? filePath) => IsExistingCacheFile(filePath, _pathConfig.LrcCachePath);
+    private bool IsPathInLrcCache(string? filePath) =>
+        LrcCache.Contains(_pathConfig.LrcCachePath, filePath) && _fileSystem.FileExists(filePath!);
 
     // Only files in Nagi's own cache: an LRC that sits next to the song belongs to the user.
     private void DeleteCachedLrcFiles(IEnumerable<string> lrcPaths)
@@ -551,7 +553,6 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
     public void Dispose()
     {
         if (Interlocked.Exchange(ref _disposeState, 1) != 0) return;
-        _settingsService.SettingChanged -= OnSettingChanged;
         _shutdownCts.Cancel();
         // These managed gates have no wait handles. Keep them usable while cancelled runs unwind.
         GC.SuppressFinalize(this);

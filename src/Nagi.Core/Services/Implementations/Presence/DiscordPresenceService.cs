@@ -20,7 +20,6 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     private readonly ILogger<DiscordPresenceService> _logger;
     private readonly IMusicPlaybackService _playbackService;
     private readonly IAlbumCoverService _albumCoverService;
-    private readonly ISettingsService _settingsService;
     private readonly Func<string, DiscordRpcClient> _createClient;
     private readonly object _clientLock = new();
     private DiscordRpcClient? _client;
@@ -37,21 +36,20 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     private Timer? _debounceTimer;
 
     public DiscordPresenceService(IConfiguration configuration, ILogger<DiscordPresenceService> logger,
-        IMusicPlaybackService playbackService, IAlbumCoverService albumCoverService, ISettingsService settingsService)
-        : this(configuration, logger, playbackService, albumCoverService, settingsService, appId => new DiscordRpcClient(appId, pipe: -1,
+        IMusicPlaybackService playbackService, IAlbumCoverService albumCoverService)
+        : this(configuration, logger, playbackService, albumCoverService, appId => new DiscordRpcClient(appId, pipe: -1,
             logger: new DiscordLoggerAdapter(logger), autoEvents: true,
             client: new SandboxAwareDiscordPipeClient { Logger = new DiscordLoggerAdapter(logger) }))
     {
     }
 
     internal DiscordPresenceService(IConfiguration configuration, ILogger<DiscordPresenceService> logger,
-        IMusicPlaybackService playbackService, IAlbumCoverService albumCoverService, ISettingsService settingsService,
+        IMusicPlaybackService playbackService, IAlbumCoverService albumCoverService,
         Func<string, DiscordRpcClient> createClient)
     {
         _logger = logger;
         _playbackService = playbackService;
         _albumCoverService = albumCoverService;
-        _settingsService = settingsService;
         _createClient = createClient;
         _discordAppId = configuration["Discord:AppId"];
 
@@ -144,12 +142,11 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     {
         if (song.Album is not { } album) return null;
         if (_coverUrls.TryGetValue(album.Id, out var cachedUrl)) return cachedUrl;
-        if (!_settingsService.Get(CoreSettings.FetchOnlineMetadata)) return null;
 
-        var providers = _settingsService.Get(CoreSettings.MetadataProviders).Where(p => p.IsEnabled).ToList();
         var result = await _albumCoverService.FindCoverUrlAsync(
-            new AlbumCoverQuery(album.Title, album.PrimaryArtistName, song.MusicBrainzReleaseId, song.MusicBrainzReleaseGroupId),
-            providers).ConfigureAwait(false);
+            new AlbumCoverQuery(album.Title, album.PrimaryArtistName, song.MusicBrainzReleaseId, song.MusicBrainzReleaseGroupId))
+            .ConfigureAwait(false);
+        if (result is null) return null;
 
         // Discord rejects image URLs longer than 256 characters.
         var url = result.Data is { Length: <= 256 } data ? data : null;

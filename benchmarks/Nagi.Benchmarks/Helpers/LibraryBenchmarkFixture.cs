@@ -49,7 +49,7 @@ internal sealed class LibraryBenchmarkFixture : IDisposable
         services.AddSingleton<ISettingsService>(settingsService);
 
         services.AddSingleton<IReplayGainService>(Substitute.For<IReplayGainService>());
-        services.AddSingleton<IProviderPipelineProvider>(Substitute.For<IProviderPipelineProvider>());
+        services.AddSingleton(new ProviderPipelineProvider([], NullLogger<ProviderPipelineProvider>.Instance));
         services.AddSingleton<IMetadataService, AtlMetadataService>();
         services.AddSingleton<ILibraryReader, LibraryReader>();
         services.AddHttpClient();
@@ -79,6 +79,10 @@ internal sealed class LibraryBenchmarkFixture : IDisposable
         public void DeleteDirectory(string path, bool recursive) => Directory.Delete(path, recursive);
         public void DeleteFile(string path) => File.Delete(path);
         public bool DirectoryExists(string path) => Directory.Exists(path);
+        public IEnumerable<string> EnumerateDirectories(string path) => Directory.EnumerateDirectories(path);
+        public void MoveDirectory(string source, string dest) => Directory.Move(source, dest);
+        public Stream OpenRead(string path) => File.OpenRead(path);
+        public Stream CreateFile(string path) => File.Create(path);
         public IEnumerable<string> EnumerateFiles(string path, string searchPattern, SearchOption searchOption) => Directory.EnumerateFiles(path, searchPattern, searchOption);
         public IEnumerable<(string Path, DateTime LastWriteTimeUtc)> EnumerateFilesWithLastWriteTime(string path, string searchPattern, SearchOption searchOption) =>
             new DirectoryInfo(path).EnumerateFiles(searchPattern, searchOption).Select(fi => (fi.FullName, fi.LastWriteTimeUtc));

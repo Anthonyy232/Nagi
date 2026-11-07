@@ -2,6 +2,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -70,7 +71,7 @@ public class LibraryServiceArtistImageTests : IDisposable
 
         _settingsService.EnableOnly(CoreSettings.MetadataProviders);
 
-        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
+        _pipelines = TestProviderPipeline.Build(ProviderCatalog.ImageDownload.ProviderId);
 
         _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, _settingsService);
 
@@ -397,7 +398,7 @@ public class LibraryServiceArtistImageTests : IDisposable
 
         var expectedPath = Path.Combine(ArtistImageCachePath, $"{artist.Id}.local.jpg");
 
-        var result = await _libraryService.GetArtistDetailsAsync(artist.Id, allowOnlineFetch: true);
+        var result = await _libraryService.GetArtistDetailsAsync(artist.Id);
 
         result.Should().NotBeNull();
         result!.LocalImageCachePath.Should().Be(expectedPath,
@@ -414,7 +415,7 @@ public class LibraryServiceArtistImageTests : IDisposable
         var (_, artist, _) = await SeedUpToDateSongAsync(localImageCachePath: existingLocal);
         SetupArtistImageAt(ArtistImagePath);
 
-        await _libraryService.GetArtistDetailsAsync(artist.Id, allowOnlineFetch: true);
+        await _libraryService.GetArtistDetailsAsync(artist.Id);
 
         await _imageProcessor.DidNotReceive().ProcessImageBytesAsync(Arg.Any<byte[]>());
     }

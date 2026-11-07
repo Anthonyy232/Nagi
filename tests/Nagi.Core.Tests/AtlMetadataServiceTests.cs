@@ -255,8 +255,7 @@ public class AtlMetadataServiceTests : IDisposable
         });
         var audioFileTime = new DateTime(2023, 1, 1, 12, 0, 0, DateTimeKind.Utc);
         File.SetLastWriteTimeUtc(audioFilePath, audioFileTime);
-        var cachePath = Path.Combine(LrcCachePath,
-            FileNameHelper.GenerateLrcCacheFileName(audioFilePath, "Cache Artist", null, "Cached Song"));
+        var cachePath = LrcCache.CachedPath(LrcCachePath, audioFilePath, "Cache Artist", null, "Cached Song");
         _fileSystem.FileExists(cachePath).Returns(true);
         _fileSystem.GetLastWriteTimeUtc(cachePath).Returns(audioFileTime.AddHours(cacheAgeHours));
 
@@ -274,9 +273,8 @@ public class AtlMetadataServiceTests : IDisposable
             track.Title = "Override Song";
             track.Artist = "Override Artist";
         });
-        var overridePath = Path.Combine(LrcCachePath, FileNameHelper.GenerateLrcOverrideFileName(audioFilePath));
-        var cachePath = Path.Combine(LrcCachePath,
-            FileNameHelper.GenerateLrcCacheFileName(audioFilePath, "Override Artist", null, "Override Song"));
+        var overridePath = LrcCache.OverridePath(LrcCachePath, audioFilePath);
+        var cachePath = LrcCache.CachedPath(LrcCachePath, audioFilePath, "Override Artist", null, "Override Song");
         _fileSystem.FileExists(overridePath).Returns(true);
         _fileSystem.FileExists(cachePath).Returns(true);
         _fileSystem.GetLastWriteTimeUtc(cachePath).Returns(DateTime.UtcNow.AddDays(1));
@@ -393,8 +391,7 @@ public class AtlMetadataServiceTests : IDisposable
                 ]
             });
         });
-        var expectedPath = Path.Combine(LrcCachePath,
-            FileNameHelper.GenerateLrcCacheFileName(audioPath, "Synced Artist", null, "Synced Song"));
+        var expectedPath = LrcCache.CachedPath(LrcCachePath, audioPath, "Synced Artist", null, "Synced Song");
         string? writtenContent = null;
         _fileSystem.WriteAllTextAsync(Arg.Any<string>(), Arg.Any<string>()).Returns(call =>
         {
@@ -483,9 +480,7 @@ public class AtlMetadataServiceTests : IDisposable
 
         _settingsService.Set(CoreSettings.ArtistSplitCharacters, ";/\\");
 
-        var expectedCacheFileName = FileNameHelper.GenerateLrcCacheFileName(
-            filePath, "Artist A", "Multi Album", "Multi Artist Song");
-        var expectedCachePath = Path.Combine(LrcCachePath, expectedCacheFileName);
+        var expectedCachePath = LrcCache.CachedPath(LrcCachePath, filePath, "Artist A", "Multi Album", "Multi Artist Song");
 
         _fileSystem.FileExists(expectedCachePath).Returns(true);
         _fileSystem.GetLastWriteTimeUtc(expectedCachePath).Returns(DateTime.UtcNow.AddHours(1));

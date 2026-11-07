@@ -4,10 +4,12 @@ using System.Net;
 using System.Globalization;
 using System.Xml.Linq;
 using Nagi.Core.Data;
+using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Settings;
+using Nagi.Core.Services.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -18,18 +20,16 @@ namespace Nagi.Core.Services.Implementations;
 /// </summary>
 public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter
 {
-    private const string LastFmApiBaseUrl = "https://ws.audioscrobbler.com/2.0/";
-
     private readonly IApiKeyService _apiKeyService;
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly HttpClient _httpClient;
-    private readonly IProviderPipelineProvider _pipelines;
+    private readonly ProviderPipelineProvider _pipelines;
     private readonly ILogger<LastFmScrobblerService> _logger;
     private readonly ISettingsService _settingsService;
 
     public LastFmScrobblerService(
         IHttpClientFactory httpClientFactory,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         IApiKeyService apiKeyService,
         ISettingsService settingsService,
         IDbContextFactory<MusicDbContext> contextFactory,
@@ -178,16 +178,16 @@ public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter
         string apiSecret,
         CancellationToken cancellationToken = default)
     {
-        parameters["api_sig"] = Helpers.LastFmApiHelper.CreateSignature(parameters, apiSecret);
+        parameters["api_sig"] = LastFmApiHelper.CreateSignature(parameters, apiSecret);
         var method = parameters["method"];
 
         return await _pipelines.ExecuteWithFallbackAsync(
-            ServiceProviderIds.LastFm,
+            ProviderCatalog.LastFm.Policy.ProviderId,
             async ct =>
             {
                 using var formContent = new FormUrlEncodedContent(parameters);
                 _logger.LogDebug("Calling Last.fm method '{Method}'.", method);
-                return await _httpClient.PostAsync(LastFmApiBaseUrl, formContent, ct).ConfigureAwait(false);
+                return await _httpClient.PostAsync(LastFmApiHelper.BaseUrl, formContent, ct).ConfigureAwait(false);
             },
             async (response, ct) =>
             {
@@ -236,23 +236,18 @@ public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter
     private async Task<(string? ApiKey, string? ApiSecret, string? SessionKey)> GetApiCredentialsAsync(
         CancellationToken cancellationToken = default)
     {
-        var apiKeyTask = _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFm, cancellationToken);
-        var apiSecretTask = _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFmSecret, cancellationToken);
+        var keysTask = LastFmApiHelper.GetKeyAndSecretAsync(_apiKeyService, cancellationToken);
         var credentialsTask = _settingsService.GetLastFmCredentialsAsync();
 
-        await Task.WhenAll(apiKeyTask, apiSecretTask, credentialsTask).ConfigureAwait(false);
+        var keys = await keysTask.ConfigureAwait(false);
+        var credentials = await credentialsTask.ConfigureAwait(false);
 
-        var apiKey = apiKeyTask.Result;
-        var apiSecret = apiSecretTask.Result;
-        var credentials = credentialsTask.Result;
-
-        if (string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiSecret) ||
-            string.IsNullOrEmpty(credentials?.SessionKey))
+        if (keys is null || string.IsNullOrEmpty(credentials?.SessionKey))
         {
             _logger.LogError("Cannot perform Last.fm action; API key, secret, or session key is unavailable.");
             return (null, null, null);
         }
 
-        return (apiKey, apiSecret, credentials.Value.SessionKey);
+        return (keys.Value.ApiKey, keys.Value.ApiSecret, credentials.Value.SessionKey);
     }
 }
