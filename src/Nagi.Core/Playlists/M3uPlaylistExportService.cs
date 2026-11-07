@@ -176,7 +176,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to batch export playlists to {DirectoryPath}", directoryPath);
-            return new BatchExportResult(false, 0, 0, ex.Message);
+            return new BatchExportResult(false, 0, 0, Resources.Strings.Error_PlaylistsExportFailed);
         }
     }
 
