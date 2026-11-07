@@ -560,6 +560,22 @@ public class SmartPlaylistServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task GetMatchingSongCountAsync_DraftCountsWhatTheSavedPlaylistMatches()
+    {
+        var draft = new SmartPlaylist
+        {
+            Name = "Draft",
+            Rules = [new SmartPlaylistRule { Field = SmartPlaylistField.Title, Operator = SmartPlaylistOperator.Is, Value = "  Song One " }]
+        };
+
+        var draftCount = await _service.GetMatchingSongCountAsync(draft);
+        var saved = await _service.CreateSmartPlaylistAsync(draft);
+
+        draftCount.Should().Be(1);
+        (await _service.GetMatchingSongsPagedAsync(saved.Id, 1, 50)).TotalCount.Should().Be(draftCount);
+    }
+
+    [Fact]
     public async Task SaveSmartPlaylistAsync_LocalizedRules_RemainStableAfterCultureChange()
     {
         var originalCulture = CultureInfo.CurrentCulture;

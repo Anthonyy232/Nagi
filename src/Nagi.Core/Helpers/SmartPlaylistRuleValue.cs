@@ -5,29 +5,33 @@ namespace Nagi.Core.Helpers;
 
 public static class SmartPlaylistRuleValue
 {
-    public static string? ToStoredValue(SmartPlaylistField field, SmartPlaylistOperator ruleOperator, string? value)
+    private enum Format
     {
-        if (field is SmartPlaylistField.Bpm or SmartPlaylistField.Duration &&
-            TryParseNumber(value, out var number))
-            return number.ToString("R", CultureInfo.InvariantCulture);
-
-        if (IsAbsoluteDate(field, ruleOperator) && TryParseDate(value, out var date))
-            return date.ToString("O", CultureInfo.InvariantCulture);
-
-        return value;
+        Plain,
+        Number,
+        Date
     }
 
-    public static string ToDisplayValue(SmartPlaylistField field, SmartPlaylistOperator ruleOperator, string? value)
-    {
-        if (field is SmartPlaylistField.Bpm or SmartPlaylistField.Duration &&
-            TryParseNumber(value, out var number))
-            return number.ToString("R", CultureInfo.CurrentCulture);
+    /// <summary>
+    ///     Converts a value typed in the editor to the culture-invariant form a rule is stored and matched with:
+    ///     round-trip numbers, ISO 8601 dates, and otherwise NFC-normalized, trimmed text (null when blank).
+    /// </summary>
+    public static string? ToStoredValue(SmartPlaylistField field, SmartPlaylistOperator ruleOperator, string? value) =>
+        FormatOf(field, ruleOperator) switch
+        {
+            Format.Number when TryParseNumber(value, out var number) => number.ToString("R", CultureInfo.InvariantCulture),
+            Format.Date when TryParseDate(value, out var date) => date.ToString("O", CultureInfo.InvariantCulture),
+            _ => ArtistNameHelper.NormalizeStringCore(value)
+        };
 
-        if (IsAbsoluteDate(field, ruleOperator) && TryParseDate(value, out var date))
-            return date.ToString(date.TimeOfDay == TimeSpan.Zero ? "d" : "g", CultureInfo.CurrentCulture);
-
-        return value ?? string.Empty;
-    }
+    public static string ToDisplayValue(SmartPlaylistField field, SmartPlaylistOperator ruleOperator, string? value) =>
+        FormatOf(field, ruleOperator) switch
+        {
+            Format.Number when TryParseNumber(value, out var number) => number.ToString("R", CultureInfo.CurrentCulture),
+            Format.Date when TryParseDate(value, out var date) =>
+                date.ToString(date.TimeOfDay == TimeSpan.Zero ? "d" : "g", CultureInfo.CurrentCulture),
+            _ => value ?? string.Empty
+        };
 
     public static bool TryParseNumber(string? value, out double number) =>
         (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out number) ||
@@ -42,8 +46,12 @@ public static class SmartPlaylistRuleValue
         return parsed;
     }
 
-    private static bool IsAbsoluteDate(SmartPlaylistField field, SmartPlaylistOperator ruleOperator) =>
-        field is SmartPlaylistField.DateAdded or SmartPlaylistField.LastPlayed or
-            SmartPlaylistField.FileCreatedDate or SmartPlaylistField.FileModifiedDate &&
-        ruleOperator is SmartPlaylistOperator.GreaterThan or SmartPlaylistOperator.LessThan or SmartPlaylistOperator.IsInRange;
+    private static Format FormatOf(SmartPlaylistField field, SmartPlaylistOperator ruleOperator) =>
+        SmartPlaylistFields.KindOf(field) switch
+        {
+            SmartPlaylistFieldKind.Decimal => Format.Number,
+            SmartPlaylistFieldKind.Date when ruleOperator is SmartPlaylistOperator.GreaterThan
+                or SmartPlaylistOperator.LessThan or SmartPlaylistOperator.IsInRange => Format.Date,
+            _ => Format.Plain
+        };
 }

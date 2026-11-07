@@ -16,7 +16,6 @@ public class SmartPlaylistService : ISmartPlaylistService
     private readonly IPathConfiguration _pathConfig;
     private readonly ILogger<SmartPlaylistService> _logger;
     private readonly IImageProcessor _imageProcessor;
-    private readonly SmartPlaylistQueryBuilder _queryBuilder;
 
     public event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;
 
@@ -34,7 +33,6 @@ public class SmartPlaylistService : ISmartPlaylistService
         _pathConfig = pathConfig;
         _imageProcessor = imageProcessor;
         _logger = logger;
-        _queryBuilder = new SmartPlaylistQueryBuilder();
     }
 
     public async Task<SmartPlaylist> CreateSmartPlaylistAsync(SmartPlaylist playlist) =>
@@ -61,15 +59,7 @@ public class SmartPlaylistService : ISmartPlaylistService
             await SetCoverAsync(playlist, draft.CoverImageUri).ConfigureAwait(false);
 
         context.SmartPlaylistRules.RemoveRange(playlist.Rules);
-        playlist.Rules = draft.Rules.Select((rule, order) => new SmartPlaylistRule
-        {
-            SmartPlaylistId = playlist.Id,
-            Field = rule.Field,
-            Operator = rule.Operator,
-            Value = ArtistNameHelper.NormalizeStringCore(SmartPlaylistRuleValue.ToStoredValue(rule.Field, rule.Operator, rule.Value)),
-            SecondValue = ArtistNameHelper.NormalizeStringCore(SmartPlaylistRuleValue.ToStoredValue(rule.Field, rule.Operator, rule.SecondValue)),
-            Order = order
-        }).ToList();
+        playlist.Rules = ToStoredRules(draft.Rules, playlist.Id);
         if (isNew)
             context.SmartPlaylists.Add(playlist);
         else
@@ -202,8 +192,8 @@ public class SmartPlaylistService : ISmartPlaylistService
             };
         }
 
-        var query = SongQuery.ExcludeHeavyFields(_queryBuilder.BuildQuery(context, smartPlaylist, searchTerm, sortOrder));
-        var totalCount = await _queryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm).CountAsync(token).ConfigureAwait(false);
+        var query = SongQuery.ExcludeHeavyFields(SmartPlaylistQueryBuilder.BuildQuery(context, smartPlaylist, searchTerm, sortOrder));
+        var totalCount = await SmartPlaylistQueryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm).CountAsync(token).ConfigureAwait(false);
 
         var pagedData = await query
             .Skip((pageNumber - 1) * pageSize)
@@ -229,13 +219,18 @@ public class SmartPlaylistService : ISmartPlaylistService
         if (smartPlaylist is null)
             return 0;
 
-        return await _queryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm).CountAsync(token).ConfigureAwait(false);
+        return await SmartPlaylistQueryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm).CountAsync(token).ConfigureAwait(false);
     }
 
     public async Task<int> GetMatchingSongCountAsync(SmartPlaylist smartPlaylist, string? searchTerm = null, CancellationToken token = default)
     {
+        var stored = new SmartPlaylist
+        {
+            MatchAllRules = smartPlaylist.MatchAllRules,
+            Rules = ToStoredRules(smartPlaylist.Rules, smartPlaylist.Id)
+        };
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
-        return await _queryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm).CountAsync(token).ConfigureAwait(false);
+        return await SmartPlaylistQueryBuilder.BuildCountQuery(context, stored, searchTerm).CountAsync(token).ConfigureAwait(false);
     }
 
     public async Task<List<Guid>> GetMatchingSongIdsAsync(Guid smartPlaylistId, string? searchTerm = null, SongSortOrder? sortOrder = null, CancellationToken token = default)
@@ -248,7 +243,7 @@ public class SmartPlaylistService : ISmartPlaylistService
         if (smartPlaylist is null)
             return new List<Guid>();
 
-        return await _queryBuilder.BuildQuery(context, smartPlaylist, searchTerm, sortOrder)
+        return await SmartPlaylistQueryBuilder.BuildQuery(context, smartPlaylist, searchTerm, sortOrder)
             .Select(s => s.Id)
             .ToListAsync(token).ConfigureAwait(false);
     }
@@ -263,11 +258,22 @@ public class SmartPlaylistService : ISmartPlaylistService
         var counts = new Dictionary<Guid, int>(smartPlaylists.Count);
         foreach (var smartPlaylist in smartPlaylists)
         {
-            counts[smartPlaylist.Id] = await _queryBuilder.BuildCountQuery(context, smartPlaylist)
+            counts[smartPlaylist.Id] = await SmartPlaylistQueryBuilder.BuildCountQuery(context, smartPlaylist)
                 .CountAsync().ConfigureAwait(false);
         }
         return counts;
     }
+
+    private static List<SmartPlaylistRule> ToStoredRules(IEnumerable<SmartPlaylistRule> rules, Guid smartPlaylistId) =>
+        rules.Select((rule, order) => new SmartPlaylistRule
+        {
+            SmartPlaylistId = smartPlaylistId,
+            Field = rule.Field,
+            Operator = rule.Operator,
+            Value = SmartPlaylistRuleValue.ToStoredValue(rule.Field, rule.Operator, rule.Value),
+            SecondValue = SmartPlaylistRuleValue.ToStoredValue(rule.Field, rule.Operator, rule.SecondValue),
+            Order = order
+        }).ToList();
 
     // Name is NOCASE-collated, so this matches the unique index rather than waiting for SaveChanges to fail.
     private static async Task ThrowIfNameTakenAsync(MusicDbContext context, string name, Guid? exceptId)

@@ -36,61 +36,32 @@ public class RuleViewModel : ObservableObject
         new(SmartPlaylistField.FileModifiedDate, CoreStrings.Label_DateModified)
     };
 
-    private static readonly IReadOnlyList<OperatorOption> TextOperators = new List<OperatorOption>
-    {
-        new(SmartPlaylistOperator.Contains, Strings.Operator_Contains),
-        new(SmartPlaylistOperator.DoesNotContain, Strings.Operator_DoesNotContain),
-        new(SmartPlaylistOperator.Is, Strings.Operator_Is),
-        new(SmartPlaylistOperator.IsNot, Strings.Operator_IsNot),
-        new(SmartPlaylistOperator.StartsWith, Strings.Operator_StartsWith),
-        new(SmartPlaylistOperator.EndsWith, Strings.Operator_EndsWith)
-    };
-
-    private static readonly IReadOnlyList<OperatorOption> NumericOperators = new List<OperatorOption>
-    {
-        new(SmartPlaylistOperator.Equals, Strings.Operator_Equals),
-        new(SmartPlaylistOperator.NotEquals, Strings.Operator_NotEquals),
-        new(SmartPlaylistOperator.GreaterThan, Strings.Operator_GreaterThan),
-        new(SmartPlaylistOperator.LessThan, Strings.Operator_LessThan),
-        new(SmartPlaylistOperator.GreaterThanOrEqual, Strings.Operator_GreaterThanOrEqual),
-        new(SmartPlaylistOperator.LessThanOrEqual, Strings.Operator_LessThanOrEqual),
-        new(SmartPlaylistOperator.IsInRange, Strings.Operator_IsInRange)
-    };
-
-    private static readonly IReadOnlyList<OperatorOption> DateOperators = new List<OperatorOption>
-    {
-        new(SmartPlaylistOperator.IsInTheLast, Strings.Operator_IsInTheLast),
-        new(SmartPlaylistOperator.IsNotInTheLast, Strings.Operator_IsNotInTheLast),
-        new(SmartPlaylistOperator.GreaterThan, Strings.Operator_IsAfter),
-        new(SmartPlaylistOperator.LessThan, Strings.Operator_IsBefore),
-        new(SmartPlaylistOperator.IsInRange, Strings.Operator_IsInRange)
-    };
-
-    private static readonly IReadOnlyList<OperatorOption> BooleanOperators = new List<OperatorOption>
-    {
-        new(SmartPlaylistOperator.IsTrue, Strings.Operator_IsTrue),
-        new(SmartPlaylistOperator.IsFalse, Strings.Operator_IsFalse)
-    };
+    // One list per kind, so switching between fields of the same kind keeps the same items.
+    private static readonly IReadOnlyDictionary<SmartPlaylistFieldKind, IReadOnlyList<OperatorOption>> OperatorsByKind =
+        Enum.GetValues<SmartPlaylistFieldKind>().ToDictionary(kind => kind, kind => (IReadOnlyList<OperatorOption>)
+            SmartPlaylistFields.OperatorsFor(kind).Select(op => new OperatorOption(op, GetLabel(op, kind))).ToList());
 
     private FieldOption _selectedField = AvailableFields[0];
-    private OperatorOption _selectedOperator = TextOperators[0];
+    private OperatorOption _selectedOperator;
     private string _value = string.Empty;
     private string _secondValue = string.Empty;
 
     public RuleViewModel()
     {
+        AvailableOperators = OperatorsFor(_selectedField.Field);
+        _selectedOperator = AvailableOperators[0];
     }
 
     public RuleViewModel(SmartPlaylistRule rule)
     {
         _selectedField = AvailableFields.First(f => f.Field == rule.Field);
-        UpdateOperatorsForField();
+        AvailableOperators = OperatorsFor(rule.Field);
         _selectedOperator = AvailableOperators.First(o => o.Operator == rule.Operator);
         _value = SmartPlaylistRuleValue.ToDisplayValue(rule.Field, rule.Operator, rule.Value);
         _secondValue = SmartPlaylistRuleValue.ToDisplayValue(rule.Field, rule.Operator, rule.SecondValue);
     }
 
-    public IReadOnlyList<OperatorOption> AvailableOperators { get; private set; } = TextOperators;
+    public IReadOnlyList<OperatorOption> AvailableOperators { get; private set; }
 
     public FieldOption SelectedField
     {
@@ -133,39 +104,49 @@ public class RuleViewModel : ObservableObject
 
     private void UpdateOperatorsForField()
     {
-        AvailableOperators = _selectedField.Field switch
-        {
-            SmartPlaylistField.Year or SmartPlaylistField.PlayCount or SmartPlaylistField.SkipCount or
-            SmartPlaylistField.Rating or SmartPlaylistField.Duration or SmartPlaylistField.Bpm or
-            SmartPlaylistField.TrackNumber or SmartPlaylistField.DiscNumber or SmartPlaylistField.Bitrate or
-            SmartPlaylistField.SampleRate => NumericOperators,
-
-            SmartPlaylistField.DateAdded or SmartPlaylistField.LastPlayed or
-            SmartPlaylistField.FileCreatedDate or SmartPlaylistField.FileModifiedDate => DateOperators,
-
-            SmartPlaylistField.IsLoved or SmartPlaylistField.HasLyrics => BooleanOperators,
-
-            _ => TextOperators
-        };
-
+        AvailableOperators = OperatorsFor(_selectedField.Field);
         OnPropertyChanged(nameof(AvailableOperators));
         SelectedOperator = AvailableOperators.FirstOrDefault(o => o.Operator == _selectedOperator.Operator)
                            ?? AvailableOperators[0];
     }
 
-    public SmartPlaylistRule ToSmartPlaylistRule()
+    /// <summary>
+    ///     The rule as typed; the smart playlist service converts its values to their stored form.
+    /// </summary>
+    public SmartPlaylistRule ToSmartPlaylistRule() => new()
     {
-        return new SmartPlaylistRule
-        {
-            Field = _selectedField.Field,
-            Operator = _selectedOperator.Operator,
-            Value = SmartPlaylistRuleValue.ToStoredValue(_selectedField.Field, _selectedOperator.Operator, _value),
-            SecondValue = string.IsNullOrWhiteSpace(_secondValue) ? null
-                : SmartPlaylistRuleValue.ToStoredValue(_selectedField.Field, _selectedOperator.Operator, _secondValue)
-        };
-    }
+        Field = _selectedField.Field,
+        Operator = _selectedOperator.Operator,
+        Value = _value,
+        SecondValue = _secondValue
+    };
 
     public override string ToString() => $"{SelectedField.DisplayName} {SelectedOperator.DisplayName} {Value}".TrimEnd();
+
+    private static IReadOnlyList<OperatorOption> OperatorsFor(SmartPlaylistField field) =>
+        OperatorsByKind[SmartPlaylistFields.KindOf(field)];
+
+    private static string GetLabel(SmartPlaylistOperator op, SmartPlaylistFieldKind kind) => op switch
+    {
+        SmartPlaylistOperator.Contains => Strings.Operator_Contains,
+        SmartPlaylistOperator.DoesNotContain => Strings.Operator_DoesNotContain,
+        SmartPlaylistOperator.Is => Strings.Operator_Is,
+        SmartPlaylistOperator.IsNot => Strings.Operator_IsNot,
+        SmartPlaylistOperator.StartsWith => Strings.Operator_StartsWith,
+        SmartPlaylistOperator.EndsWith => Strings.Operator_EndsWith,
+        SmartPlaylistOperator.Equals => Strings.Operator_Equals,
+        SmartPlaylistOperator.NotEquals => Strings.Operator_NotEquals,
+        SmartPlaylistOperator.GreaterThan => kind == SmartPlaylistFieldKind.Date ? Strings.Operator_IsAfter : Strings.Operator_GreaterThan,
+        SmartPlaylistOperator.LessThan => kind == SmartPlaylistFieldKind.Date ? Strings.Operator_IsBefore : Strings.Operator_LessThan,
+        SmartPlaylistOperator.GreaterThanOrEqual => Strings.Operator_GreaterThanOrEqual,
+        SmartPlaylistOperator.LessThanOrEqual => Strings.Operator_LessThanOrEqual,
+        SmartPlaylistOperator.IsInRange => Strings.Operator_IsInRange,
+        SmartPlaylistOperator.IsInTheLast => Strings.Operator_IsInTheLast,
+        SmartPlaylistOperator.IsNotInTheLast => Strings.Operator_IsNotInTheLast,
+        SmartPlaylistOperator.IsTrue => Strings.Operator_IsTrue,
+        SmartPlaylistOperator.IsFalse => Strings.Operator_IsFalse,
+        _ => op.ToString()
+    };
 }
 
 public record FieldOption(SmartPlaylistField Field, string DisplayName);
