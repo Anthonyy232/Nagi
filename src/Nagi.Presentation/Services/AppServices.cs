@@ -42,14 +42,14 @@ public static class AppServices
         var appInfoTask = services.GetRequiredService<IAppInfoService>().InitializeAsync();
         var equalizerTask = services.GetRequiredService<IEqualizerService>().InitializeAsync();
 
-        // Playback and settings both need EF ready. Offline scrobbling queries ListenHistory, including columns
+        // Playback and settings both need EF ready. Scrobbling queries ListenHistory, including columns
         // added by recent migrations, so start it only after database migration/backfill has completed.
         await dbTask;
-        var offlineScrobbleService = services.GetRequiredService<OfflineScrobbleService>();
-        offlineScrobbleService.Start();
+        var scrobbleCoordinator = services.GetRequiredService<ScrobbleCoordinator>();
+        scrobbleCoordinator.Start();
         services.GetRequiredService<LibraryFolderWatcher>().Start();
         _ = Task.Run(services.GetRequiredService<ILibraryFolderService>().RefreshOnStartupAsync);
-        var scrobbleTask = offlineScrobbleService.ProcessQueueAsync();
+        var scrobbleTask = scrobbleCoordinator.SubmitPendingAsync();
         var playbackTask = services.GetRequiredService<IMusicPlaybackService>().InitializeAsync(restoreSession);
         var settingsTask = services.GetRequiredService<SettingsViewModel>().LoadSettingsAsync();
 

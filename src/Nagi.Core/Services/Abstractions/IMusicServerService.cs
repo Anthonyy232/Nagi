@@ -4,8 +4,8 @@ using Nagi.Core.Services.Data;
 namespace Nagi.Core.Services.Abstractions;
 
 /// <summary>
-///     The user's music servers: adding and syncing them, streaming their songs, and reporting plays. Each server is
-///     a root folder in the library, identified by the folder's ID.
+///     The user's music servers: adding and syncing them and streaming their songs. Each server is a root folder in
+///     the library, identified by the folder's ID. Plays are reported to them as an <see cref="IListenSubmitter" />.
 /// </summary>
 public interface IMusicServerService
 {
@@ -81,12 +81,6 @@ public interface IMusicServerService
     ///     a server reach the library while Nagi runs.
     /// </summary>
     void StartPeriodicSync();
-
-    /// <summary>
-    ///     Reports the server's plays that reached the scrobble threshold and haven't been reported, oldest first.
-    ///     Plays that can't be reported stay queued.
-    /// </summary>
-    Task ReportPlaysAsync(Guid folderId, CancellationToken cancellationToken = default);
 
     /// <returns>
     ///     A URL that streams the song, or null for a song on disk or when its server is gone or has no saved sign-in.

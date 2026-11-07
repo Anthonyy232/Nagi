@@ -15,30 +15,28 @@ namespace Nagi.Core.Tests;
 public class PresenceManagerTests : IAsyncDisposable
 {
     private readonly IMusicPlaybackService _playbackService;
-    private readonly ICredentialLockerService _credentials;
     private readonly SettingsService _settingsService;
     private readonly ILogger<PresenceManager> _logger;
     private readonly IPresenceService _discordService;
-    private readonly IPresenceService _lastFmService;
+    private readonly IPresenceService _otherService;
     private readonly PresenceManager _manager;
 
     public PresenceManagerTests()
     {
         _playbackService = Substitute.For<IMusicPlaybackService>();
-        _credentials = Substitute.For<ICredentialLockerService>();
-        _settingsService = TestSettings.Create(credentials: _credentials);
+        _settingsService = TestSettings.Create();
         _logger = Substitute.For<ILogger<PresenceManager>>();
         _discordService = Substitute.For<IPresenceService>();
-        _lastFmService = Substitute.For<IPresenceService>();
+        _otherService = Substitute.For<IPresenceService>();
 
-        _discordService.Name.Returns("Discord");
-        _lastFmService.Name.Returns("Last.fm");
+        _discordService.IsEnabled.Returns(_ => _settingsService.Get(CoreSettings.DiscordRichPresence));
+        // Stands in for another service with a setting of its own.
+        _otherService.IsEnabled.Returns(_ => _settingsService.Get(CoreSettings.LastFmNowPlaying));
 
-        _credentials.RetrieveCredential("Nagi/LastFm").Returns(("user", "key"));
 
         _manager = new PresenceManager(
             _playbackService,
-            new[] { _discordService, _lastFmService },
+            new[] { _discordService, _otherService },
             _settingsService,
             _logger);
     }
@@ -56,7 +54,7 @@ public class PresenceManagerTests : IAsyncDisposable
         var statesReceived = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var firstCallStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var firstCallGate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var updates = new System.Collections.Concurrent.ConcurrentQueue<(Song Song, long Session)>();
+        var updates = new System.Collections.Concurrent.ConcurrentQueue<Song>();
         var states = new System.Collections.Concurrent.ConcurrentQueue<bool>();
         var callsInFlight = 0;
         var overlapped = false;
@@ -65,11 +63,11 @@ public class PresenceManagerTests : IAsyncDisposable
             initializing.TrySetResult();
             return release.Task;
         });
-        // The first Last.fm call stays open; any other Last.fm call starting meanwhile would be out of order.
-        _lastFmService.OnTrackChangedAsync(Arg.Any<Song>(), Arg.Any<long>()).Returns(async call =>
+        // The first call stays open; any other call starting meanwhile would be out of order.
+        _otherService.OnTrackChangedAsync(Arg.Any<Song>()).Returns(async call =>
         {
             if (Interlocked.Increment(ref callsInFlight) > 1) overlapped = true;
-            updates.Enqueue((call.Arg<Song>(), call.Arg<long>()));
+            updates.Enqueue(call.Arg<Song>());
             if (updates.Count == 1)
             {
                 firstCallStarted.TrySetResult();
@@ -78,7 +76,7 @@ public class PresenceManagerTests : IAsyncDisposable
             Interlocked.Decrement(ref callsInFlight);
             if (updates.Count == 2) received.TrySetResult();
         });
-        _lastFmService.OnPlaybackStateChangedAsync(Arg.Any<bool>()).Returns(call =>
+        _otherService.OnPlaybackStateChangedAsync(Arg.Any<bool>()).Returns(call =>
         {
             if (Interlocked.Increment(ref callsInFlight) > 1) overlapped = true;
             states.Enqueue(call.Arg<bool>());
@@ -112,7 +110,7 @@ public class PresenceManagerTests : IAsyncDisposable
             await statesReceived.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
             overlapped.Should().BeFalse();
-            updates.Should().Equal((first, 1L), (second, 2L));
+            updates.Should().Equal(first, second);
             states.Should().Equal(false, true);
         }
         finally
@@ -180,7 +178,7 @@ public class PresenceManagerTests : IAsyncDisposable
 
         await _manager.InitializeAsync();
 
-        await _discordService.Received(1).OnTrackChangedAsync(song, 0);
+        await _discordService.Received(1).OnTrackChangedAsync(song);
         await _discordService.Received(1).OnPlaybackStateChangedAsync(false);
     }
 
@@ -198,7 +196,7 @@ public class PresenceManagerTests : IAsyncDisposable
         release.SetResult();
         await initialization.WaitAsync(TimeSpan.FromSeconds(5));
 
-        await _discordService.Received(1).OnTrackChangedAsync(song, 5L);
+        await _discordService.Received(1).OnTrackChangedAsync(song);
     }
 
     [Fact]
@@ -211,21 +209,16 @@ public class PresenceManagerTests : IAsyncDisposable
         await _discordService.DidNotReceive().InitializeAsync();
     }
 
-    [Theory]
-    [InlineData(false, true, true, 0)]
-    [InlineData(true, false, false, 0)]
-    [InlineData(true, true, false, 1)]
-    [InlineData(true, false, true, 1)]
-    public async Task InitializeAsync_ActivatesLastFmOnlyWithCredentialsAndAFeatureEnabled(
-        bool hasCredentials, bool scrobbling, bool nowPlaying, int activations)
+    [Fact]
+    public async Task InitializeAsync_ActivatesOnlyTheServicesThatAreOn()
     {
-        _credentials.RetrieveCredential("Nagi/LastFm").Returns(hasCredentials ? ("user", "key") : null);
-        _settingsService.Set(CoreSettings.LastFmScrobbling, scrobbling);
-        _settingsService.Set(CoreSettings.LastFmNowPlaying, nowPlaying);
+        _settingsService.Set(CoreSettings.DiscordRichPresence, false);
+        _settingsService.Set(CoreSettings.LastFmNowPlaying, true);
 
         await _manager.InitializeAsync();
 
-        await _lastFmService.Received(activations).InitializeAsync();
+        await _discordService.DidNotReceive().InitializeAsync();
+        await _otherService.Received(1).InitializeAsync();
     }
 
     [Fact]
@@ -253,16 +246,15 @@ public class PresenceManagerTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task LastFmScrobblingEnabled_ActivatesLastFmService()
+    public async Task SettingThatTurnsAServiceOn_ActivatesIt()
     {
-        _settingsService.Set(CoreSettings.LastFmScrobbling, false);
         _settingsService.Set(CoreSettings.LastFmNowPlaying, false);
         await _manager.InitializeAsync();
-        _lastFmService.ClearReceivedCalls();
+        _otherService.ClearReceivedCalls();
 
-        _settingsService.Set(CoreSettings.LastFmScrobbling, true);
+        _settingsService.Set(CoreSettings.LastFmNowPlaying, true);
 
-        await _lastFmService.Received(1).InitializeAsync();
+        await _otherService.Received(1).InitializeAsync();
     }
 
     [Fact]
@@ -285,33 +277,18 @@ public class PresenceManagerTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task OnScrobbleEligibilityReached_BroadcastsEligibilityToActiveServices()
-    {
-        _settingsService.Set(CoreSettings.DiscordRichPresence, true);
-        await _manager.InitializeAsync();
-
-        var song = new Song { Title = "Eligible Song" };
-        var listenStartedUtc = new DateTime(2025, 1, 2, 3, 4, 5, DateTimeKind.Utc);
-        _playbackService.ScrobbleEligibilityReached +=
-            Raise.Event<Action<Song, long, DateTime>>(song, 42L, listenStartedUtc);
-
-        await _discordService.Received(1)
-            .OnTrackEligibleForScrobblingAsync(song, 42L, listenStartedUtc);
-    }
-
-    [Fact]
     public async Task ShutdownAsync_DisposesEveryActiveService()
     {
         _settingsService.Set(CoreSettings.DiscordRichPresence, true);
-        _settingsService.Set(CoreSettings.LastFmScrobbling, true);
+        _settingsService.Set(CoreSettings.LastFmNowPlaying, true);
         await _manager.InitializeAsync();
 
         await _manager.ShutdownAsync();
 
         await _discordService.Received(1).OnPlaybackStoppedAsync();
-        await _lastFmService.Received(1).OnPlaybackStoppedAsync();
+        await _otherService.Received(1).OnPlaybackStoppedAsync();
         await _discordService.Received(1).DisposeAsync();
-        await _lastFmService.Received(1).DisposeAsync();
+        await _otherService.Received(1).DisposeAsync();
     }
 
     [Fact]
@@ -338,27 +315,11 @@ public class PresenceManagerTests : IAsyncDisposable
         await _discordService.Received(2).OnTrackProgressAsync(position, duration);
     }
 
-    [Theory]
-    [InlineData("token", 1)]
-    [InlineData(null, 0)]
-    public async Task ListenBrainzScrobblingEnabled_RequiresTokenForActivation(string? token, int activations)
-    {
-        var service = Substitute.For<IPresenceService>();
-        service.Name.Returns("ListenBrainz");
-        await using var manager = new PresenceManager(_playbackService, [service], _settingsService, _logger);
-        await manager.InitializeAsync();
-        _credentials.RetrieveCredential("Nagi/ListenBrainz").Returns(token is null ? null : ("token", token));
-
-        _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
-
-        await service.Received(activations).InitializeAsync();
-    }
-
     [Fact]
     public async Task InitializeAsync_WhenServiceFails_CleansItUpAndActivatesOthers()
     {
         _settingsService.Set(CoreSettings.DiscordRichPresence, true);
-        _settingsService.Set(CoreSettings.LastFmScrobbling, true);
+        _settingsService.Set(CoreSettings.LastFmNowPlaying, true);
         _discordService.InitializeAsync().ThrowsAsync(new InvalidOperationException("Initialization failed"));
 
         await _manager.InitializeAsync();
@@ -366,15 +327,15 @@ public class PresenceManagerTests : IAsyncDisposable
 
         await _discordService.Received(1).DisposeAsync();
         await _discordService.DidNotReceive().OnPlaybackStateChangedAsync(Arg.Any<bool>());
-        await _lastFmService.Received(1).InitializeAsync();
-        await _lastFmService.Received(1).OnPlaybackStateChangedAsync(false);
+        await _otherService.Received(1).InitializeAsync();
+        await _otherService.Received(1).OnPlaybackStateChangedAsync(false);
     }
 
     [Fact]
     public async Task Broadcast_WhenOneServiceFails_StillReachesOthers()
     {
         _settingsService.Set(CoreSettings.DiscordRichPresence, true);
-        _settingsService.Set(CoreSettings.LastFmScrobbling, true);
+        _settingsService.Set(CoreSettings.LastFmNowPlaying, true);
         await _manager.InitializeAsync();
         _discordService.OnPlaybackStateChangedAsync(true).ThrowsAsync(new InvalidOperationException("Provider failed"));
 
@@ -382,6 +343,6 @@ public class PresenceManagerTests : IAsyncDisposable
         _playbackService.PlaybackStateChanged += Raise.Event<Action>();
 
         await _discordService.Received(1).OnPlaybackStateChangedAsync(true);
-        await _lastFmService.Received(1).OnPlaybackStateChangedAsync(true);
+        await _otherService.Received(1).OnPlaybackStateChangedAsync(true);
     }
 }

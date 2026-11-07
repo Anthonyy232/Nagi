@@ -12,7 +12,7 @@ namespace Nagi.Core.Services.Implementations.MusicServers;
 ///     Keeps the library in step with the user's music servers: their sign-ins, syncs and removal. The library side of a
 ///     sync lives in <see cref="ServerLibrarySync" />.
 /// </summary>
-public sealed class MusicServerService : IMusicServerService, IDisposable
+public sealed class MusicServerService : IMusicServerService, IListenSubmitter, IDisposable
 {
     internal const string HttpClientName = "MusicServer";
     private const string CredentialResourcePrefix = "Nagi/MusicServer/";
@@ -33,7 +33,7 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
     private readonly ConcurrentDictionary<Guid, CancellationTokenSource> _runningSyncs = new();
     // One push at a time, so an older favorite can't reach the server after a newer one.
     private readonly SemaphoreSlim _favoritesLock = new(1, 1);
-    // Plays are reported live and before each sync; one at a time keeps a play from being counted twice.
+    // Plays are reported as they happen, by the retry loop and before each sync; one at a time keeps a play from being counted twice.
     private readonly SemaphoreSlim _playsLock = new(1, 1);
     private readonly CancellationTokenSource _shutdownCts = new();
 
@@ -197,42 +197,59 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
     // In the background, so a slow or unreachable server can't hold up startup.
     public void StartPeriodicSync() => _ = Task.Run(() => SyncPeriodicallyAsync(_shutdownCts.Token));
 
-    public async Task ReportPlaysAsync(Guid folderId, CancellationToken cancellationToken = default)
+    public string Name => "music servers";
+
+    // A server sees what is playing from what it streams.
+    public Task UpdateNowPlayingAsync(Song song) => Task.CompletedTask;
+
+    // Servers always hear about plays of their songs, so their play counts match the user's other apps.
+    public Task SubmitPendingAsync(CancellationToken cancellationToken) => ReportPlaysAsync(null, cancellationToken);
+
+    /// <param name="folderId">The one server to report to, or null for all of them.</param>
+    private async Task ReportPlaysAsync(Guid? folderId, CancellationToken cancellationToken)
     {
         await _playsLock.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
             await using var context = await _contextFactory.CreateDbContextAsync(CancellationToken.None).ConfigureAwait(false);
             var pending = await context.ListenHistory
-                .Where(lh => lh.Song.FolderId == folderId && lh.IsEligibleForScrobbling && !lh.IsSubmittedToServer)
+                .Where(lh => lh.Song.RemoteId != null && (folderId == null || lh.Song.FolderId == folderId)
+                             && lh.IsEligibleForScrobbling && !lh.IsSubmittedToServer)
                 .OrderBy(lh => lh.ListenTimestampUtc)
-                .Select(lh => new { lh.Id, lh.SongId, RemoteId = lh.Song.RemoteId!, lh.ListenTimestampUtc })
+                .Select(lh => new { lh.Id, lh.SongId, lh.Song.FolderId, RemoteId = lh.Song.RemoteId!, lh.ListenTimestampUtc })
                 .ToListAsync(cancellationToken).ConfigureAwait(false);
-            if (pending.Count == 0) return;
 
-            var client = await GetClientAsync(folderId, cancellationToken).ConfigureAwait(false);
-            if (client is null) return;
-            foreach (var play in pending)
+            foreach (var server in pending.GroupBy(play => play.FolderId))
             {
                 try
                 {
-                    await client.ReportPlayedAsync(play.RemoteId, play.ListenTimestampUtc, cancellationToken).ConfigureAwait(false);
-                }
-                catch (MusicServerException ex) when (ex.Error == MusicServerError.NotFound)
-                {
-                    _logger.LogWarning("Dropping a play of song {SongId}: it is no longer on its server.", play.SongId);
-                }
+                    var client = await GetClientAsync(server.Key, cancellationToken).ConfigureAwait(false);
+                    if (client is null) continue;
+                    foreach (var play in server)
+                    {
+                        try
+                        {
+                            await client.ReportPlayedAsync(play.RemoteId, play.ListenTimestampUtc, cancellationToken)
+                                .ConfigureAwait(false);
+                        }
+                        catch (MusicServerException ex) when (ex.Error == MusicServerError.NotFound)
+                        {
+                            _logger.LogWarning("Dropping a play of song {SongId}: it is no longer on its server.", play.SongId);
+                        }
 
-                // Marked at once, so a play already counted isn't sent again if a later one fails or shutdown cancels.
-                await context.ListenHistory.Where(lh => lh.Id == play.Id)
-                    .ExecuteUpdateAsync(setters => setters.SetProperty(lh => lh.IsSubmittedToServer, true), CancellationToken.None)
-                    .ConfigureAwait(false);
+                        // Marked at once, so a play already counted isn't sent again if a later one fails or shutdown cancels.
+                        await context.ListenHistory.Where(lh => lh.Id == play.Id)
+                            .ExecuteUpdateAsync(setters => setters.SetProperty(lh => lh.IsSubmittedToServer, true),
+                                CancellationToken.None)
+                            .ConfigureAwait(false);
+                    }
+                }
+                catch (MusicServerException ex)
+                {
+                    // The rest stay queued in order; the next attempt starts from the play that failed.
+                    _logger.LogWarning(ex, "Couldn't report plays to server folder {FolderId}; will retry.", server.Key);
+                }
             }
-        }
-        catch (MusicServerException ex)
-        {
-            // The rest stay queued in order; the next attempt starts from the play that failed.
-            _logger.LogWarning(ex, "Couldn't report plays to server folder {FolderId}; will retry.", folderId);
         }
         finally
         {

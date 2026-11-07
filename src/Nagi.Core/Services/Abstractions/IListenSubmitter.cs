@@ -1,28 +1,27 @@
+using Nagi.Core.Models;
+
 namespace Nagi.Core.Services.Abstractions;
 
 /// <summary>
-///     An abstraction for "something that can submit past listens" to a scrobbling service.
-///     Consumed by <see cref="Implementations.OfflineScrobbleService" /> to fan out queue processing across
-///     multiple scrobbling destinations (e.g. Last.fm, ListenBrainz).
+///     A place listens are sent to, such as Last.fm, ListenBrainz or the music servers songs stream from. Each one
+///     decides from its own settings and sign-in whether it is turned on, and does nothing when it isn't.
 /// </summary>
 public interface IListenSubmitter
 {
     /// <summary>
-    ///     Stable identifier for the submitter (e.g. "lastfm", "listenbrainz").
+    ///     A name for logs.
     /// </summary>
-    string Id { get; }
+    string Name { get; }
 
     /// <summary>
-    ///     Returns true if this submitter is currently enabled by user settings and has the
-    ///     credentials/configuration needed to submit.
+    ///     Says what is playing now, when that is turned on. Failures are logged.
     /// </summary>
-    Task<bool> IsEnabledAsync();
+    Task UpdateNowPlayingAsync(Song song);
 
     /// <summary>
-    ///     Processes this submitter's pending listen queue: queries the DB for listens that are
-    ///     eligible and not yet submitted to this destination, submits each in timestamp order,
-    ///     marks successes in the DB, and stops on the first failure to preserve order.
-    ///     Callers check <see cref="IsEnabledAsync" /> first.
+    ///     Sends the listens that reached the scrobble threshold and haven't been sent, oldest first, marking each as it
+    ///     goes. A listen the destination rejects for good is dropped; after any other failure the rest wait for the
+    ///     next run, in order. Runs one at a time, so a listen is never sent twice.
     /// </summary>
-    Task ProcessPendingListensAsync(CancellationToken cancellationToken);
+    Task SubmitPendingAsync(CancellationToken cancellationToken);
 }

@@ -44,6 +44,10 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
         _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
 
         SetToken(Token);
+        _appInfoService.GetAppName().Returns("Nagi");
+        _settingsService.Set(CoreSettings.ListenBrainzNowPlaying, true);
+        _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
+        _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc));
 
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ListenBrainz);
     }
@@ -67,7 +71,7 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task SubmitListenAsync_SendsMusicBrainzIdsAndClientDetails()
+    public async Task SubmitPendingAsync_SendsMusicBrainzIdsAndClientDetails()
     {
         SetupHttpResponse(HttpStatusCode.OK, "{\"status\":\"ok\"}");
         _appInfoService.GetAppVersion().Returns("2.3.0");
@@ -76,7 +80,7 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
         song.MusicBrainzReleaseId = "44444444-4444-4444-4444-444444444444";
         song.TrackNumber = 4;
 
-        await CreateService().SubmitListenAsync(song, DateTime.UtcNow);
+        await SubmitAsync(song, DateTime.UtcNow);
 
         var info = JsonSerializer.Deserialize<ListenBrainzSubmitPayload>(_capturedRequestBody!)!
             .Payload[0].TrackMetadata.AdditionalInfo;
@@ -94,16 +98,14 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task SubmitListenAsync_PostsCorrectJsonAndAuthHeader()
+    public async Task SubmitPendingAsync_OneListen_PostsCorrectJsonAndAuthHeader()
     {
-
         SetupHttpResponse(HttpStatusCode.OK, "{\"status\":\"ok\"}");
-        var started = new DateTime(2026, 4, 22, 12, 0, 0, DateTimeKind.Utc);
+        // Stored without a time zone, as SQLite keeps it.
+        var started = new DateTime(2026, 4, 22, 12, 0, 0, DateTimeKind.Unspecified);
 
-        var service = CreateService();
-        var ok = await service.SubmitListenAsync(CreateTestSong(), started);
+        await SubmitAsync(CreateTestSong(), started);
 
-        ok.Should().BeTrue();
         _httpMessageHandler.Requests.Should().HaveCount(1);
         var req = _httpMessageHandler.Requests[0];
         req.Method.Should().Be(HttpMethod.Post);
@@ -126,13 +128,10 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     [Fact]
     public async Task UpdateNowPlayingAsync_UsesPlayingNowListenTypeAndOmitsListenedAt()
     {
-
         SetupHttpResponse(HttpStatusCode.OK, "{\"status\":\"ok\"}");
 
-        var service = CreateService();
-        var ok = await service.UpdateNowPlayingAsync(CreateTestSong());
+        await CreateService().UpdateNowPlayingAsync(CreateTestSong());
 
-        ok.Should().BeTrue();
         _capturedRequestBody.Should().NotBeNull();
         var body = JsonSerializer.Deserialize<ListenBrainzSubmitPayload>(_capturedRequestBody!);
         body!.ListenType.Should().Be("playing_now");
@@ -142,43 +141,27 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task SubmitListenAsync_On401_ReturnsFalse()
+    public async Task SubmitPendingAsync_ListenWithoutATitle_IsDroppedWithoutHttpCall()
     {
-
-        SetupHttpResponse(HttpStatusCode.Unauthorized, "{\"error\":\"invalid token\"}");
-
-        var service = CreateService();
-        var ok = await service.SubmitListenAsync(CreateTestSong(), DateTime.UtcNow);
-
-        ok.Should().BeFalse();
-        _httpMessageHandler.Requests.Should().HaveCount(1);
-    }
-
-    [Fact]
-    public async Task SubmitListenAsync_WithMissingRequiredMetadata_ReturnsFalseWithoutHttpCall()
-    {
-
         var artist = new Artist { Name = "Some Artist" };
         var song = new Song { Title = string.Empty };
         song.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
         song.SyncDenormalizedFields();
 
-        var service = CreateService();
-        var ok = await service.SubmitListenAsync(song, DateTime.UtcNow);
+        await SubmitAsync(song, DateTime.UtcNow);
 
-        ok.Should().BeFalse();
         _httpMessageHandler.Requests.Should().BeEmpty();
+        await using var verify = _dbHelper.ContextFactory.CreateDbContext();
+        (await verify.ListenHistory.SingleAsync()).IsSubmittedToListenBrainz.Should().BeTrue();
     }
 
     [Fact]
-    public async Task SubmitListenAsync_RespectsCustomServerUrl()
+    public async Task SubmitPendingAsync_RespectsCustomServerUrl()
     {
-
         _settingsService.Set(CoreSettings.ListenBrainzServerUrl, "https://lb.example.com");
         SetupHttpResponse(HttpStatusCode.OK, "{\"status\":\"ok\"}");
 
-        var service = CreateService();
-        await service.SubmitListenAsync(CreateTestSong(), DateTime.UtcNow);
+        await SubmitAsync(CreateTestSong(), DateTime.UtcNow);
 
         _httpMessageHandler.Requests.Should().HaveCount(1);
         _httpMessageHandler.Requests[0].RequestUri!.ToString()
@@ -217,34 +200,33 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
         result.Error.Should().ContainEquivalentOf("invalid");
     }
 
-    [Fact]
-    public async Task IListenSubmitter_IsEnabledAsync_RequiresTokenAndScrobblingToggle()
+
+    [Theory]
+    [InlineData("tok", false)]
+    [InlineData(null, true)]
+    public async Task SubmitPendingAsync_WithoutTheTokenOrScrobbling_SendsNothing(string? token, bool scrobbling)
     {
-        SetToken("tok");
-        _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
-        IListenSubmitter sut = CreateService();
-        (await sut.IsEnabledAsync()).Should().BeTrue();
+        SetToken(token);
+        _settingsService.Set(CoreSettings.ListenBrainzScrobbling, scrobbling);
+        SetupHttpResponse(HttpStatusCode.OK, "{}");
 
-        _settingsService.Set(CoreSettings.ListenBrainzScrobbling, false);
-        (await sut.IsEnabledAsync()).Should().BeFalse();
+        await SubmitAsync(CreateTestSong(), DateTime.UtcNow);
 
-        _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
-        SetToken(null);
-        (await sut.IsEnabledAsync()).Should().BeFalse();
+        _httpMessageHandler.Requests.Should().BeEmpty();
     }
 
     [Fact]
-    public async Task ProcessPendingListensAsync_BatchesPendingListensIntoOneRequest()
+    public async Task SubmitPendingAsync_BatchesPendingListensIntoOneRequest()
     {
         SetToken("tok");
         _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
-        _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, DateTime.UtcNow.AddDays(-1));
+        _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc));
         SetupHttpResponse(HttpStatusCode.OK, "{\"status\":\"ok\"}");
 
         await SeedPendingListensAsync((1, DateTime.UtcNow.AddMinutes(-10)), (2, DateTime.UtcNow.AddMinutes(-5)));
 
-        IListenSubmitter sut = CreateService();
-        await sut.ProcessPendingListensAsync(CancellationToken.None);
+        var sut = CreateService();
+        await sut.SubmitPendingAsync(CancellationToken.None);
 
         await using var verify = _dbHelper.ContextFactory.CreateDbContext();
         (await verify.ListenHistory.FindAsync(1L))!.IsSubmittedToListenBrainz.Should().BeTrue();
@@ -258,7 +240,7 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task ProcessPendingListensAsync_SkipsListensBeforeEnabledSince()
+    public async Task SubmitPendingAsync_SkipsListensBeforeEnabledSince()
     {
         SetToken("tok");
         _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
@@ -267,8 +249,8 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
 
         await SeedPendingListensAsync((10, cutoff.AddHours(-1)));
 
-        IListenSubmitter sut = CreateService();
-        await sut.ProcessPendingListensAsync(CancellationToken.None);
+        var sut = CreateService();
+        await sut.SubmitPendingAsync(CancellationToken.None);
 
         _httpMessageHandler.Requests.Should().BeEmpty();
         await using var verify = _dbHelper.ContextFactory.CreateDbContext();
@@ -278,18 +260,18 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     [Theory]
     [InlineData(HttpStatusCode.InternalServerError)]
     [InlineData(HttpStatusCode.Unauthorized)]
-    public async Task ProcessPendingListensAsync_RecoverableBatchFailurePreservesListensForRetry(HttpStatusCode status)
+    public async Task SubmitPendingAsync_RecoverableBatchFailurePreservesListensForRetry(HttpStatusCode status)
     {
         SetToken("tok");
         _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
-        _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, DateTime.UtcNow.AddDays(-1));
+        _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc));
 
         SetupHttpResponse(status, "{}");
 
         await SeedPendingListensAsync((100, DateTime.UtcNow.AddMinutes(-30)), (101, DateTime.UtcNow.AddMinutes(-20)), (102, DateTime.UtcNow.AddMinutes(-10)));
 
-        IListenSubmitter sut = CreateService();
-        await sut.ProcessPendingListensAsync(CancellationToken.None);
+        var sut = CreateService();
+        await sut.SubmitPendingAsync(CancellationToken.None);
 
         await using var verify = _dbHelper.ContextFactory.CreateDbContext();
         (await verify.ListenHistory.FindAsync(100L))!.IsSubmittedToListenBrainz.Should().BeFalse();
@@ -299,15 +281,15 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
             _httpMessageHandler.Requests.Should().ContainSingle();
 
         SetupHttpResponse(HttpStatusCode.OK, "{}");
-        await sut.ProcessPendingListensAsync(CancellationToken.None);
+        await sut.SubmitPendingAsync(CancellationToken.None);
         (await verify.ListenHistory.AllAsync(listen => listen.IsSubmittedToListenBrainz)).Should().BeTrue();
     }
 
     [Fact]
-    public async Task ProcessPendingListensAsync_RejectedBatch_IsolatesBadListenAndKeepsUnacknowledgedListens()
+    public async Task SubmitPendingAsync_RejectedBatch_IsolatesBadListenAndKeepsUnacknowledgedListens()
     {
         _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
-        _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, DateTime.UtcNow.AddDays(-1));
+        _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc));
         _httpMessageHandler.RespondSequence(
             (HttpStatusCode.BadRequest, "{}"),
             (HttpStatusCode.BadRequest, "{}"),
@@ -327,9 +309,9 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
             }));
             await context.SaveChangesAsync();
         }
-        IListenSubmitter service = CreateService();
+        var service = CreateService();
 
-        await service.ProcessPendingListensAsync(CancellationToken.None);
+        await service.SubmitPendingAsync(CancellationToken.None);
 
         using var verify = _dbHelper.ContextFactory.CreateDbContext();
         (await verify.ListenHistory.OrderBy(listen => listen.Id).Select(listen => listen.IsSubmittedToListenBrainz).ToListAsync())
@@ -337,16 +319,25 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
         _httpMessageHandler.Requests.Should().HaveCount(4);
 
         SetupHttpResponse(HttpStatusCode.OK, "{}");
-        await service.ProcessPendingListensAsync(CancellationToken.None);
+        await service.SubmitPendingAsync(CancellationToken.None);
 
         (await verify.ListenHistory.AllAsync(listen => listen.IsSubmittedToListenBrainz)).Should().BeTrue();
         _httpMessageHandler.Requests.Should().HaveCount(5);
     }
 
-    private async Task SeedPendingListensAsync(params (long Id, DateTime Timestamp)[] listens)
+    // A listen reaching the threshold is sent through the queue, as the coordinator does.
+    private async Task SubmitAsync(Song song, DateTime startTime)
+    {
+        await SeedPendingListensAsync(song, (1, startTime));
+        await CreateService().SubmitPendingAsync(CancellationToken.None);
+    }
+
+    private Task SeedPendingListensAsync(params (long Id, DateTime Timestamp)[] listens) =>
+        SeedPendingListensAsync(CreateTestSong(), listens);
+
+    private async Task SeedPendingListensAsync(Song song, params (long Id, DateTime Timestamp)[] listens)
     {
         using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var song = CreateTestSong();
         song.FilePath = "C:/Music/song.mp3";
         song.Folder = new Folder { Name = "Music", Path = "C:/Music" };
         context.ListenHistory.AddRange(listens.Select(listen => new ListenHistory

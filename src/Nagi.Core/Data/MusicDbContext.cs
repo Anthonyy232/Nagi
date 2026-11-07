@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nagi.Core.Models;
 
 namespace Nagi.Core.Data;
@@ -250,6 +251,13 @@ public class MusicDbContext : DbContext
             entity.HasIndex(aa => new { aa.AlbumId, aa.Order });
             entity.HasIndex(aa => aa.ArtistId);
         });
+
+        // SQLite stores no time zone, so a time reads back as Unspecified; the ones named for UTC say so again.
+        var utc = new ValueConverter<DateTime, DateTime>(value => value, value => DateTime.SpecifyKind(value, DateTimeKind.Utc));
+        foreach (var property in modelBuilder.Model.GetEntityTypes().SelectMany(entity => entity.GetProperties())
+                     .Where(property => property.Name.EndsWith("Utc", StringComparison.Ordinal) &&
+                                        (property.ClrType == typeof(DateTime) || property.ClrType == typeof(DateTime?))))
+            property.SetValueConverter(utc);
     }
 
 }

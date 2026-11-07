@@ -151,7 +151,7 @@ internal sealed class OpenSubsonicClient : IMusicServerClient
 
     public Task ReportPlayedAsync(string songId, DateTime playedUtc, CancellationToken cancellationToken)
     {
-        var time = new DateTimeOffset(DateTime.SpecifyKind(playedUtc, DateTimeKind.Utc)).ToUnixTimeMilliseconds();
+        var time = new DateTimeOffset(playedUtc).ToUnixTimeMilliseconds();
         return SendAsync("scrobble",
             [("id", songId), ("time", time.ToString(CultureInfo.InvariantCulture)), ("submission", "true")],
             cancellationToken);

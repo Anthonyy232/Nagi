@@ -141,7 +141,7 @@ internal sealed class JellyfinClient : IMusicServerClient
 
     public async Task ReportPlayedAsync(string songId, DateTime playedUtc, CancellationToken cancellationToken)
     {
-        var datePlayed = DateTime.SpecifyKind(playedUtc, DateTimeKind.Utc).ToString("O", CultureInfo.InvariantCulture);
+        var datePlayed = playedUtc.ToString("O", CultureInfo.InvariantCulture);
         using var response = await SendCoreAsync(HttpMethod.Post,
             $"/UserPlayedItems/{Uri.EscapeDataString(songId)}?userId={_userId}&datePlayed={Uri.EscapeDataString(datePlayed)}",
             null, cancellationToken).ConfigureAwait(false);

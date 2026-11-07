@@ -319,14 +319,14 @@ public class MusicServerServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task ReportPlaysAsync_SendsEligiblePlaysInOrderAndStopsAtAFailure()
+    public async Task SubmitPendingAsync_SendsEligiblePlaysInOrderAndStopsAtAFailure()
     {
-        var (server, song) = await SeedServerAsync();
+        var (_, song) = await SeedServerAsync();
         var first = new DateTime(2026, 10, 1, 8, 0, 0, DateTimeKind.Utc);
         await SeedListensAsync(song, (first.AddHours(-1), false), (first.AddHours(1), true), (first, true), (first.AddHours(2), true));
         _handler.RespondSequence((HttpStatusCode.OK, OkResponse), (HttpStatusCode.InternalServerError, ""));
 
-        await _service.ReportPlaysAsync(server.FolderId);
+        await _service.SubmitPendingAsync(CancellationToken.None);
 
         HttpUtility.ParseQueryString(_handler.Requests[0].RequestUri!.Query)["time"]
             .Should().Be(new DateTimeOffset(first).ToUnixTimeMilliseconds().ToString());
@@ -335,25 +335,25 @@ public class MusicServerServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task ReportPlaysAsync_PlayOfASongGoneFromTheServer_IsDroppedSoTheNextOnesAreSent()
+    public async Task SubmitPendingAsync_PlayOfASongGoneFromTheServer_IsDroppedSoTheNextOnesAreSent()
     {
-        var (server, song) = await SeedServerAsync();
+        var (_, song) = await SeedServerAsync();
         var first = new DateTime(2026, 10, 1, 8, 0, 0, DateTimeKind.Utc);
         await SeedListensAsync(song, (first, true), (first.AddHours(1), true));
         _handler.RespondSequence(
             (HttpStatusCode.OK, """{"subsonic-response":{"status":"failed","error":{"code":70,"message":"Song not found"}}}"""),
             (HttpStatusCode.OK, OkResponse));
 
-        await _service.ReportPlaysAsync(server.FolderId);
+        await _service.SubmitPendingAsync(CancellationToken.None);
 
         _handler.Requests.Should().HaveCount(2);
         (await SubmittedFlagsAsync()).Should().Equal(true, true);
     }
 
     [Fact]
-    public async Task ReportPlaysAsync_CancelledHalfway_KeepsTheReportedPlayMarked()
+    public async Task SubmitPendingAsync_CancelledHalfway_KeepsTheReportedPlayMarked()
     {
-        var (server, song) = await SeedServerAsync();
+        var (_, song) = await SeedServerAsync();
         var first = new DateTime(2026, 10, 1, 8, 0, 0, DateTimeKind.Utc);
         await SeedListensAsync(song, (first, true), (first.AddHours(1), true));
         using var cancellation = new CancellationTokenSource();
@@ -365,7 +365,7 @@ public class MusicServerServiceTests : IDisposable
             { Content = new StringContent(OkResponse, Encoding.UTF8, "application/json") });
         };
 
-        var report = () => _service.ReportPlaysAsync(server.FolderId, cancellation.Token);
+        var report = () => _service.SubmitPendingAsync(cancellation.Token);
 
         await report.Should().ThrowAsync<OperationCanceledException>();
         (await SubmittedFlagsAsync()).Should().Equal(true, false);

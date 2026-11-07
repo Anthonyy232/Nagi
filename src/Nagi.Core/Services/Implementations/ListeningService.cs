@@ -120,22 +120,6 @@ public sealed class ListeningService : IListeningService
         return true;
     }
 
-    public async Task<bool> MarkListenAsScrobbledAsync(long listenHistoryId)
-    {
-        await using var dbContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        return await dbContext.ListenHistory.Where(history => history.Id == listenHistoryId)
-            .ExecuteUpdateAsync(setters => setters.SetProperty(history => history.IsScrobbled, true))
-            .ConfigureAwait(false) > 0;
-    }
-
-    public async Task<bool> MarkListenAsSubmittedToListenBrainzAsync(long listenHistoryId)
-    {
-        await using var dbContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        return await dbContext.ListenHistory.Where(history => history.Id == listenHistoryId)
-            .ExecuteUpdateAsync(setters => setters.SetProperty(history => history.IsSubmittedToListenBrainz, true))
-            .ConfigureAwait(false) > 0;
-    }
-
     public async Task ClearListenHistoryAsync()
     {
         _logger.LogInformation("Clearing all listen history.");
