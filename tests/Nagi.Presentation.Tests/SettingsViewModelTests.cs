@@ -55,7 +55,7 @@ public class SettingsViewModelTests : IDisposable
                 NullLogger<AudioSettingsViewModel>.Instance, _timeProvider),
             new LibrarySettingsViewModel(_settings, _ui, _library.Folders, Substitute.For<IMusicServerService>(), _operation, _dispatcher,
                 NullLogger<LibrarySettingsViewModel>.Instance, _timeProvider),
-            new ScrobblingSettingsViewModel(_settings, _ui, _lastFm, _listenBrainz, _dispatcher,
+            new ScrobblingSettingsViewModel(_settings, _ui, _lastFm, _listenBrainz, new ScrobblingAccounts(_settings), _dispatcher,
                 NullLogger<ScrobblingSettingsViewModel>.Instance),
             new RomanizationPacksSettingsViewModel(Substitute.For<IRomanizationPackManager>(), _dispatcher,
                 NullLogger<RomanizationPacksSettingsViewModel>.Instance),
@@ -315,7 +315,7 @@ public class SettingsViewModelTests : IDisposable
     public async Task ListenBrainz_ValidTokenTheCredentialStoreRefusedIsNotConnected()
     {
         _credentials.SaveCredential(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(false);
-        _listenBrainz.ValidateTokenAsync("token", null).Returns(new ValidateTokenResult(true, "user", null));
+        _listenBrainz.ValidateTokenAsync("token", string.Empty).Returns(new ValidateTokenResult(true, "user", null));
         _viewModel.Scrobbling.ListenBrainzUserToken = "token";
 
         await _viewModel.Scrobbling.TestListenBrainzConnectionCommand.ExecuteAsync(null);
@@ -331,7 +331,7 @@ public class SettingsViewModelTests : IDisposable
     public async Task ListenBrainz_LateValidationCannotRestoreDisconnectedOrReplacedToken(bool disconnect)
     {
         var validation = new TaskCompletionSource<ValidateTokenResult>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _listenBrainz.ValidateTokenAsync("old", null).Returns(validation.Task);
+        _listenBrainz.ValidateTokenAsync("old", string.Empty).Returns(validation.Task);
         _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(true);
         _viewModel.Scrobbling.ListenBrainzUserToken = "old";
         var checking = _viewModel.Scrobbling.TestListenBrainzConnectionCommand.ExecuteAsync(null);

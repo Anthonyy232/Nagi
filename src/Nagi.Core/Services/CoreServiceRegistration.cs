@@ -82,6 +82,7 @@ public static class CoreServiceRegistration
         services.AddSingleton<IListenSubmitter>(sp => sp.GetRequiredService<LastFmScrobblerService>());
         services.AddSingleton<ListenBrainzScrobblerService>();
         services.AddSingleton<IListenBrainzScrobblerService>(sp => sp.GetRequiredService<ListenBrainzScrobblerService>());
+        services.AddSingleton<IScrobblingAccounts, ScrobblingAccounts>();
         services.AddSingleton<IListenSubmitter>(sp => sp.GetRequiredService<ListenBrainzScrobblerService>());
         services.AddSingleton<PresenceManager>();
         services.AddSingleton<IPresenceService, DiscordPresenceService>();

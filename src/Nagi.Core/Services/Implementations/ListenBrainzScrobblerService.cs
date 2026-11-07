@@ -71,9 +71,14 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
 
     public async Task SubmitPendingAsync(CancellationToken cancellationToken)
     {
-        // Set when scrobbling is turned on; without it scrobbling was never turned on.
-        if (!_settingsService.Get(CoreSettings.ListenBrainzScrobbling) ||
-            _settingsService.Get(CoreSettings.ListenBrainzEnabledSinceUtc) is not { } enabledSince) return;
+        if (!_settingsService.Get(CoreSettings.ListenBrainzScrobbling)) return;
+        // Connecting sets it; a token saved before that existed starts from the first time scrobbling runs, so the
+        // user's whole history isn't sent.
+        if (_settingsService.Get(CoreSettings.ListenBrainzEnabledSinceUtc) is not { } enabledSince)
+        {
+            enabledSince = DateTime.UtcNow;
+            _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, enabledSince);
+        }
 
         await _submitLock.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
@@ -134,7 +139,7 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
         return true;
     }
 
-    public async Task<ValidateTokenResult> ValidateTokenAsync(string token, string? serverUrl = null)
+    public async Task<ValidateTokenResult> ValidateTokenAsync(string token, string? serverUrl)
     {
         if (string.IsNullOrWhiteSpace(token))
             return new ValidateTokenResult(false, null, Resources.Strings.ListenBrainz_EmptyToken);

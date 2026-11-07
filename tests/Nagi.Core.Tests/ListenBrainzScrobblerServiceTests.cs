@@ -175,7 +175,7 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
         SetupHttpResponse(HttpStatusCode.OK, "{\"valid\":true,\"user_name\":\"alice\"}");
 
         var service = CreateService();
-        var result = await service.ValidateTokenAsync("tok-abc");
+        var result = await service.ValidateTokenAsync("tok-abc", null);
 
         result.IsValid.Should().BeTrue();
         result.Username.Should().Be("alice");
@@ -192,7 +192,7 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
         SetupHttpResponse(HttpStatusCode.OK, "{\"valid\":false,\"message\":\"Token invalid\"}");
 
         var service = CreateService();
-        var result = await service.ValidateTokenAsync("bad");
+        var result = await service.ValidateTokenAsync("bad", null);
 
         result.IsValid.Should().BeFalse();
         result.Username.Should().BeNull();
