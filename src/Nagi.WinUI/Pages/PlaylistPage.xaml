@@ -1,5 +1,6 @@
 <Page
     x:Class="Nagi.WinUI.Pages.PlaylistPage"
+    NavigationCacheMode="Enabled"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
