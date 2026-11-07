@@ -1,4 +1,4 @@
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Scrobbling;
 
 /// <summary>
 ///     How a scrobbling service answered a listen.

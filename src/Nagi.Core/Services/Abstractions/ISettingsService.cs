@@ -1,4 +1,5 @@
-﻿using Nagi.Core.Settings;
+﻿using Nagi.Core.Scrobbling;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Abstractions;
 

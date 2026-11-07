@@ -5,6 +5,7 @@ using Nagi.Core.Library;
 using Nagi.Core.Models;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
+using Nagi.Core.Scrobbling;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;

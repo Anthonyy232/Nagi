@@ -11,10 +11,9 @@ using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Library;
 using Nagi.Core.Listening;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Data;
 using Nagi.Core.Settings;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Scrobbling;
 
 /// <summary>
 ///     Sends listens and "now playing" to ListenBrainz, for a user token with scrobbling or "now playing" turned on,

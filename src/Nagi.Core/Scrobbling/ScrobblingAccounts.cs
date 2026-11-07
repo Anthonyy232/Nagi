@@ -1,7 +1,7 @@
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Settings;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Scrobbling;
 
 public sealed class ScrobblingAccounts : IScrobblingAccounts
 {

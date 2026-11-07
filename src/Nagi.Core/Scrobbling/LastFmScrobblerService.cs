@@ -12,7 +12,7 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Helpers;
 using Nagi.Core.Settings;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Scrobbling;
 
 /// <summary>
 ///     Sends listens and "now playing" to Last.fm, for an account signed in with scrobbling or "now playing" turned on.

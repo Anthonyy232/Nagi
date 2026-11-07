@@ -1,4 +1,4 @@
-﻿namespace Nagi.Core.Services.Abstractions;
+﻿namespace Nagi.Core.Scrobbling;
 
 public interface ILastFmAuthService
 {

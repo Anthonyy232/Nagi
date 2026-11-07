@@ -1,6 +1,6 @@
 using Nagi.Core.Library;
 
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.Scrobbling;
 
 /// <summary>
 ///     A place listens are sent to, such as Last.fm, ListenBrainz or the music servers songs stream from. Each one

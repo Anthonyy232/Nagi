@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Nagi.Core.Scrobbling;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
 using Nagi.Core.Settings;

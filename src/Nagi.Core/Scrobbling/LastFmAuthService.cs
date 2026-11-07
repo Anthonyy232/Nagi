@@ -5,7 +5,7 @@ using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Helpers;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Scrobbling;
 
 public class LastFmAuthService : ILastFmAuthService
 {

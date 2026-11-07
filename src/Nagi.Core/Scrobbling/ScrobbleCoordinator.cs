@@ -4,7 +4,7 @@ using Nagi.Core.Playback;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Settings;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Scrobbling;
 
 /// <summary>
 ///     Tells every <see cref="IListenSubmitter" /> what is playing and sends them the listens that count: as soon as a

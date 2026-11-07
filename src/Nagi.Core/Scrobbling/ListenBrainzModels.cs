@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Nagi.Core.Services.Data;
+namespace Nagi.Core.Scrobbling;
 
 /// <summary>
 ///     Payload for POST /1/submit-listens. See https://listenbrainz.readthedocs.io/en/latest/users/api/core.html

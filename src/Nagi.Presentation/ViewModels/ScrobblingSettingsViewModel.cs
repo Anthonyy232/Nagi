@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Scrobbling;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Resources;

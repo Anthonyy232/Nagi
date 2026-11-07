@@ -1,4 +1,4 @@
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.Scrobbling;
 
 /// <summary>
 ///     Connects and disconnects the scrobbling accounts, Last.fm and ListenBrainz, keeping their settings in step with
