@@ -21,7 +21,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
 {
     internal const int EqualizerDebounceDelayMilliseconds = 300;
 
-    private readonly IMusicPlaybackService _playbackService;
+    private readonly IEqualizerService _equalizer;
     private readonly IAudioPlayer _audioPlayer;
     private readonly IUIService _uiService;
     private readonly IFFmpegService _ffmpegService;
@@ -36,7 +36,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
     private CancellationTokenSource? _replayGainScanCts;
 
     public AudioSettingsViewModel(
-        IMusicPlaybackService playbackService,
+        IEqualizerService equalizer,
         IAudioPlayer audioPlayer,
         ISettingsService settingsService,
         IUIService uiService,
@@ -48,7 +48,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         TimeProvider? timeProvider = null)
         : base(settingsService, dispatcherService, logger)
     {
-        _playbackService = playbackService;
+        _equalizer = equalizer;
         _audioPlayer = audioPlayer;
         _uiService = uiService;
         _ffmpegService = ffmpegService;
@@ -57,8 +57,8 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         _timeProvider = timeProvider ?? TimeProvider.System;
         _preampDebouncer = new Debouncer(TimeSpan.FromMilliseconds(EqualizerDebounceDelayMilliseconds), _timeProvider);
 
-        _playbackService.EqualizerChanged += OnPlaybackService_EqualizerChanged;
-        AvailableEqualizerPresets = _playbackService.AvailablePresets;
+        _equalizer.SettingsChanged += OnEqualizerSettingsChanged;
+        AvailableEqualizerPresets = _equalizer.Presets;
     }
 
     public bool IsVolumeNormalizationEnabled
@@ -109,14 +109,18 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
     internal Task PendingSettingsSaves => _preampDebouncer.PendingInvocation;
 
     /// <summary>
-    ///     Rebuilds the equalizer bands from the playback service without writing anything back.
+    ///     Rebuilds the equalizer bands from the equalizer service without writing anything back.
     /// </summary>
-    public void Load() => ApplyWithoutSaving(LoadEqualizerState);
+    public async Task LoadAsync()
+    {
+        await _equalizer.InitializeAsync();
+        if (!_isDisposed) ApplyWithoutSaving(LoadEqualizerState);
+    }
 
     protected override void OnDisposing()
     {
         _replayGainScanCts?.Cancel();
-        _playbackService.EqualizerChanged -= OnPlaybackService_EqualizerChanged;
+        _equalizer.SettingsChanged -= OnEqualizerSettingsChanged;
         foreach (var bandVm in EqualizerBands)
         {
             bandVm.GainChanged -= OnBandGainChanged;
@@ -202,13 +206,13 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
     {
         _preampDebouncer.Cancel();
         foreach (var band in EqualizerBands) band.CancelPendingGain();
-        await _playbackService.ResetEqualizerAsync();
+        await _equalizer.ResetAsync();
     }
 
     private void LoadEqualizerState()
     {
         _logger.LogDebug("Loading Equalizer State...");
-        var eqSettings = _playbackService.CurrentEqualizerSettings;
+        var eqSettings = _equalizer.CurrentSettings;
         if (eqSettings == null)
         {
             _logger.LogWarning("Equalizer settings are null.");
@@ -227,7 +231,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         }
         EqualizerBands.Clear();
 
-        foreach (var bandInfo in _playbackService.EqualizerBands)
+        foreach (var bandInfo in _equalizer.Bands)
         {
             var gain = eqSettings.BandGains.ElementAtOrDefault((int)bandInfo.Index);
             var bandVm = new EqualizerBandViewModel(bandInfo.Index, bandInfo.Frequency, gain, _dispatcherService, _timeProvider);
@@ -244,7 +248,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         if (_isInitializing) return;
         try
         {
-            await _playbackService.SetEqualizerBandAsync(sender.Index, gain);
+            await _equalizer.SetBandGainAsync(sender.Index, gain);
         }
         catch (Exception ex)
         {
@@ -260,7 +264,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
 
         var currentGains = EqualizerBands.Select(b => b.Gain).ToArray();
 
-        var matchingPreset = _playbackService.GetMatchingPreset(currentGains);
+        var matchingPreset = _equalizer.GetMatchingPreset(currentGains);
 
         if (SelectedEqualizerPreset != matchingPreset)
         {
@@ -277,7 +281,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         foreach (var band in EqualizerBands) band.CancelPendingGain();
         try
         {
-            await _playbackService.SetEqualizerGainsAsync(value.Gains);
+            await _equalizer.SetBandGainsAsync(value.Gains);
         }
         catch (Exception ex)
         {
@@ -285,7 +289,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         }
     }
 
-    private void OnPlaybackService_EqualizerChanged()
+    private void OnEqualizerSettingsChanged()
     {
         _dispatcherService.TryEnqueue(() =>
         {
@@ -293,7 +297,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
 
             ApplyWithoutSaving(() =>
             {
-                var eqSettings = _playbackService.CurrentEqualizerSettings;
+                var eqSettings = _equalizer.CurrentSettings;
                 if (eqSettings != null)
                 {
                     EqualizerPreamp = eqSettings.Preamp;
@@ -308,7 +312,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
     partial void OnEqualizerPreampChanged(float value)
     {
         if (_isInitializing) return;
-        QueueSettingsSave(_preampDebouncer, _ => _playbackService.SetEqualizerPreampAsync(value), nameof(EqualizerPreamp));
+        QueueSettingsSave(_preampDebouncer, _ => _equalizer.SetPreampAsync(value), nameof(EqualizerPreamp));
     }
 
     private void DisableVolumeNormalization()

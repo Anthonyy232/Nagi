@@ -81,12 +81,6 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         _disposeTask = new Lazy<Task>(DisposeCoreAsync);
     }
 
-    private void EnsureInitialized()
-    {
-        if (_isInitialized || _isDisposed) return;
-        EnsureInitializedAsync().GetAwaiter().GetResult();
-    }
-
     public async Task EnsureInitializedAsync()
     {
         if (_isInitialized || _isDisposed) return;
@@ -116,10 +110,6 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     {
         _logger.LogDebug("Initializing LibVLC core (deferred).");
 
-        // Register the native library resolver in the same serialized path that creates
-        // LibVLC. Callers can reach this method before the background audio warm-up runs
-        // (for example, while DI constructs MusicPlaybackService for the taskbar service),
-        // so initialization cannot safely live in App.InitializeCoreServicesAsync.
         LibVLCSharp.Core.Initialize();
 
         // LibVLC explicitly does not guarantee compatibility for constructor options.

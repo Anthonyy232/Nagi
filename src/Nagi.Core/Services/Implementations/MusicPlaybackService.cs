@@ -78,8 +78,6 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         _mediaControls.SeekRequested += OnMediaControlsSeekRequested;
 
         _settingsService.SettingChanged += OnSettingChanged;
-
-        EqualizerBands = _audioPlayer.GetEqualizerBands();
     }
 
     public Song? CurrentTrack { get; private set; }
@@ -100,24 +98,6 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     public RepeatMode CurrentRepeatMode { get; private set; } = RepeatMode.Off;
     public double PlaybackRate { get; private set; } = 1.0;
     private bool _isTransitioningTrack;
-    public IReadOnlyList<(uint Index, float Frequency)> EqualizerBands { get; }
-    public IReadOnlyList<EqualizerPreset> AvailablePresets { get; } = new List<EqualizerPreset>
-    {
-        new(Resources.Strings.EqPreset_None, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
-        new(Resources.Strings.EqPreset_Classical, [0, 0, 0, 0, 0, 0, -3.2f, -3.2f, -3.2f, -4.0f]),
-        new(Resources.Strings.EqPreset_Dance, [3.2f, 2.4f, 0.8f, 0, 0, -1.6f, -2.4f, -2.4f, 0, 0]),
-        new(Resources.Strings.EqPreset_FullBass, [3.2f, 3.2f, 3.2f, 1.6f, 0, -1.6f, -3.2f, -3.2f, -3.2f, -4.0f]),
-        new(Resources.Strings.EqPreset_FullTreble, [-3.2f, -3.2f, -3.2f, -1.6f, 0, 1.6f, 3.2f, 3.2f, 3.2f, 4.0f]),
-        new(Resources.Strings.EqPreset_Jazz, [1.6f, 0.8f, 0, 0.8f, -0.8f, -0.8f, -1.6f, 0, 0.8f, 1.6f]),
-        new(Resources.Strings.EqPreset_Pop, [-1.6f, 1.6f, 2.4f, 2.4f, 1.6f, 0, -0.8f, -0.8f, -1.6f, -1.6f]),
-        new(Resources.Strings.EqPreset_Rock, [3.2f, 2.4f, -1.6f, -2.4f, -0.8f, 1.6f, 2.4f, 3.2f, 3.2f, 3.2f]),
-        new(Resources.Strings.EqPreset_Soft, [1.6f, 0.8f, 0, -0.8f, -0.8f, 0, 0.8f, 1.6f, 2.4f, 3.2f]),
-        new(Resources.Strings.EqPreset_Techno, [3.2f, 2.4f, 0, -1.6f, -1.6f, 0, 1.6f, 2.4f, 2.4f, 3.2f]),
-        new(Resources.Strings.EqPreset_Vocal, [-0.8f, -2.4f, -2.4f, 0, 1.6f, 1.6f, 1.6f, 0.8f, 0, -0.8f])
-    };
-
-    public EqualizerSettings? CurrentEqualizerSettings { get; private set; }
-
     public event Action? TrackChanged;
     public event Action? PlaybackStateChanged;
     public event Action? VolumeStateChanged;
@@ -126,7 +106,6 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     public event Action? QueueChanged;
     public event Action? PositionChanged;
     public event Action? DurationChanged;
-    public event Action? EqualizerChanged;
     public event Action<Song, long, DateTime>? ScrobbleEligibilityReached;
     public event Action<Song>? ServerSongFailed;
 
@@ -157,27 +136,6 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             _audioPlayer.SetFadeOutDuration(_settingsService.Get(CoreSettings.FadeOutDurationMs));
             IsShuffleEnabled = _settingsService.Get(CoreSettings.IsShuffleEnabled);
             CurrentRepeatMode = _settingsService.Get(CoreSettings.RepeatMode);
-
-            CurrentEqualizerSettings = _settingsService.Get(CoreSettings.Equalizer);
-            if (CurrentEqualizerSettings != null && CurrentEqualizerSettings.BandGains.Count != EqualizerBands.Count)
-            {
-                _logger.LogWarning("Equalizer settings band count ({SavedCount}) does not match available bands ({AvailableCount}). Resetting equalizer to default.",
-                    CurrentEqualizerSettings.BandGains.Count, EqualizerBands.Count);
-
-                CurrentEqualizerSettings = null; // Force recreation below
-            }
-
-            if (CurrentEqualizerSettings == null)
-            {
-                CurrentEqualizerSettings = new EqualizerSettings
-                {
-                    Preamp = EqualizerSettings.DefaultPreampDb,
-                    BandGains = Enumerable.Repeat(0.0f, EqualizerBands.Count).ToList()
-                };
-
-                _settingsService.Set(CoreSettings.Equalizer, CurrentEqualizerSettings);
-            }
-            _audioPlayer.ApplyEqualizerSettings(CurrentEqualizerSettings);
 
             var restoredSuccessfully = false;
             if (restoreLastSession && _settingsService.Get(CoreSettings.RestorePlaybackState) && savedState != null)

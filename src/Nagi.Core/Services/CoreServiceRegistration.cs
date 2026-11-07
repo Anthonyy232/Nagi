@@ -48,6 +48,7 @@ public static class CoreServiceRegistration
 
         services.AddSingleton<IPlaybackStateStore, PlaybackStateStore>();
         services.AddSingleton<IMusicPlaybackService, MusicPlaybackService>();
+        services.AddSingleton<IEqualizerService, EqualizerService>();
         services.AddSingleton<OfflineScrobbleService>();
         services.AddSingleton<IImageProcessor, ImageSharpProcessor>();
         services.AddSingleton<IMetadataService, AtlMetadataService>();

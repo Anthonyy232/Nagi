@@ -41,8 +41,6 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _settingsService.Set(CoreSettings.RestorePlaybackState, false);
         _playbackStateStore.LoadAsync().Returns((PlaybackState?)null);
 
-        _audioPlayer.GetEqualizerBands().Returns(new List<(uint, float)> { (0, 60f), (1, 170f) });
-
         _service = new MusicPlaybackService(
             _settingsService, _playbackStateStore,
             _audioPlayer,
@@ -312,13 +310,11 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
             service.ShuffleModeChanged += () => ShuffleModeChangedCount++;
             service.RepeatModeChanged += () => RepeatModeChangedCount++;
             service.QueueChanged += () => QueueChangedCount++;
-            service.EqualizerChanged += () => EqualizerChangedCount++;
         }
 
         public int ShuffleModeChangedCount { get; private set; }
         public int RepeatModeChangedCount { get; private set; }
         public int QueueChangedCount { get; private set; }
-        public int EqualizerChangedCount { get; private set; }
     }
 
     [Fact]
@@ -1244,48 +1240,6 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         ));
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task SettingABandOrThePreamp_ChangesOnlyThatValueAndSavesIt(bool preamp)
-    {
-        await _service.InitializeAsync();
-        var bandsBefore = _service.CurrentEqualizerSettings!.BandGains.ToList();
-        var preampBefore = _service.CurrentEqualizerSettings.Preamp;
-        _audioPlayer.ClearReceivedCalls();
-        var eventTracker = new EventTracker(_service);
-
-        if (preamp) await _service.SetEqualizerPreampAsync(5.0f);
-        else await _service.SetEqualizerBandAsync(1, 3.5f);
-
-        var after = _service.CurrentEqualizerSettings!;
-        after.Preamp.Should().Be(preamp ? 5.0f : preampBefore);
-        after.BandGains.Should().Equal(preamp ? bandsBefore : bandsBefore.Select((gain, i) => i == 1 ? 3.5f : gain));
-        _audioPlayer.Received(1).ApplyEqualizerSettings(after);
-        _settingsService.Get(CoreSettings.Equalizer).Should().BeEquivalentTo(after);
-        eventTracker.EqualizerChangedCount.Should().Be(1);
-    }
-
-    [Fact]
-    public async Task ResetEqualizerAsync_WhenCalled_ResetsAllGainsToDefault()
-    {
-        await _service.InitializeAsync();
-        await _service.SetEqualizerBandAsync(0, 5.0f);
-        await _service.SetEqualizerPreampAsync(2.0f);
-        _audioPlayer.ClearReceivedCalls();
-
-        await _service.ResetEqualizerAsync();
-
-        _service.CurrentEqualizerSettings!.Preamp.Should().Be(EqualizerSettings.DefaultPreampDb);
-        _service.CurrentEqualizerSettings.BandGains.Should().AllSatisfy(g => g.Should().Be(0.0f));
-        _audioPlayer.Received(1)
-            .ApplyEqualizerSettings(
-                Arg.Is<EqualizerSettings>(s => s != null &&
-                                                     s.Preamp == EqualizerSettings.DefaultPreampDb &&
-                                                     s.BandGains.All(g => g == 0.0f)));
-        _settingsService.Get(CoreSettings.Equalizer).Should().BeEquivalentTo(_service.CurrentEqualizerSettings);
-    }
-
     [Fact]
     public async Task OnAudioPlayerErrorOccurred_ShouldStopPlayback()
     {
@@ -1634,7 +1588,6 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         await Task.WhenAll(initialization, disposal);
 
         await _audioPlayer.DidNotReceive().SetVolumeAsync(Arg.Any<double>());
-        _audioPlayer.DidNotReceive().ApplyEqualizerSettings(Arg.Any<EqualizerSettings>());
     }
 
     [Fact]

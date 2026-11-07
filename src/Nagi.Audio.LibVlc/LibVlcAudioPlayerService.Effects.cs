@@ -105,7 +105,8 @@ public sealed partial class LibVlcAudioPlayerService
 
     public async Task SetMuteAsync(bool isMuted)
     {
-        if (_isDisposed || !_isInitialized) return;
+        if (_isDisposed) return;
+        await EnsureInitializedAsync().ConfigureAwait(false);
         await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
         try
         {
@@ -135,18 +136,11 @@ public sealed partial class LibVlcAudioPlayerService
         }
     }
 
-    public IReadOnlyList<(uint Index, float Frequency)> GetEqualizerBands()
+    public async Task<IReadOnlyList<(uint Index, float Frequency)>> GetEqualizerBandsAsync()
     {
         if (_isDisposed) return Array.Empty<(uint, float)>();
-        EnsureInitialized();
-
-        if (_isDisposed || _equalizer is null)
-        {
-            _logger.LogWarning("GetEqualizerBands called but equalizer is unavailable (disposed: {IsDisposed}, initialized: {IsInitialized}).", _isDisposed, _isInitialized);
-            return Array.Empty<(uint, float)>();
-        }
-
-        _vlcOperationLock.Wait();
+        await EnsureInitializedAsync().ConfigureAwait(false);
+        await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
         try
         {
             if (_isDisposed || _equalizer is null) return Array.Empty<(uint, float)>();
@@ -161,20 +155,21 @@ public sealed partial class LibVlcAudioPlayerService
         }
     }
 
-    public bool ApplyEqualizerSettings(EqualizerSettings settings)
+    public async Task ApplyEqualizerSettingsAsync(EqualizerSettings settings)
     {
-        if (_isDisposed || !_isInitialized) return false;
-        _vlcOperationLock.Wait();
+        if (_isDisposed) return;
+        await EnsureInitializedAsync().ConfigureAwait(false);
+        await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
         try
         {
-            if (_isDisposed || _equalizer is null || _mediaPlayer is null) return false;
+            if (_isDisposed || _equalizer is null || _mediaPlayer is null) return;
             _basePreamp = settings.Preamp;
             ApplyCombinedPreamp();
             var bandCount = Math.Min(settings.BandGains.Count, (int)_equalizer.BandCount);
             for (var i = 0; i < bandCount; i++)
                 _equalizer.SetAmp(Math.Clamp(settings.BandGains[i], EqualizerSettings.MinGainDb, EqualizerSettings.MaxGainDb), (uint)i);
 
-            return _mediaPlayer.SetEqualizer(_equalizer);
+            _mediaPlayer.SetEqualizer(_equalizer);
         }
         finally
         {
@@ -184,7 +179,8 @@ public sealed partial class LibVlcAudioPlayerService
 
     public async Task SetReplayGainAsync(double gainDb)
     {
-        if (_isDisposed || !_isInitialized) return;
+        if (_isDisposed) return;
+        await EnsureInitializedAsync().ConfigureAwait(false);
         await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
         try
         {

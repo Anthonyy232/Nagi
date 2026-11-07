@@ -23,6 +23,7 @@ public class SettingsViewModelTests : IDisposable
     private readonly ISettingsService _resetSettings = Substitute.For<ISettingsService>();
     private readonly IThemeService _theme = Substitute.For<IThemeService>();
     private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
+    private readonly IEqualizerService _equalizer = Substitute.For<IEqualizerService>();
     private readonly IAudioPlayer _audioPlayer = Substitute.For<IAudioPlayer>();
     private readonly IAppInfoService _appInfo = Substitute.For<IAppInfoService>();
     private readonly IUIService _ui = Substitute.For<IUIService>();
@@ -43,14 +44,14 @@ public class SettingsViewModelTests : IDisposable
     {
         _settings = TestSettings.Create(credentials: _credentials, autoLaunch: _autoLaunch);
         _credentials.SaveCredential(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(true);
-        _playback.AvailablePresets.Returns(Array.Empty<EqualizerPreset>());
+        _equalizer.Presets.Returns(Array.Empty<EqualizerPreset>());
         _dispatcher.HasThreadAccess.Returns(true);
         _dispatcher.TryEnqueue(Arg.Any<Action>()).Returns(call => { call.Arg<Action>()(); return true; });
         _dispatcher.EnqueueAsync(Arg.Any<Func<Task>>()).Returns(call => call.Arg<Func<Task>>()());
         _viewModel = new SettingsViewModel(_settings, _appInfo, _autoLaunch, _dispatcher,
             new AppearanceSettingsViewModel(_settings, _theme, _ui, _appInfo, _lifecycle, _dispatcher,
                 NullLogger<AppearanceSettingsViewModel>.Instance, _timeProvider),
-            new AudioSettingsViewModel(_playback, _audioPlayer, _settings, _ui, _ffmpeg, _replayGain, _operation, _dispatcher,
+            new AudioSettingsViewModel(_equalizer, _audioPlayer, _settings, _ui, _ffmpeg, _replayGain, _operation, _dispatcher,
                 NullLogger<AudioSettingsViewModel>.Instance, _timeProvider),
             new LibrarySettingsViewModel(_settings, _ui, _library.Scanner, Substitute.For<IMusicServerService>(), _operation, _dispatcher,
                 NullLogger<LibrarySettingsViewModel>.Instance, _timeProvider),
@@ -633,10 +634,10 @@ public class SettingsViewModelTests : IDisposable
         band.GainCommitted += (_, gain) => commits.Add(gain);
         band.Gain = 3;
 
-        _playback.SetEqualizerGainsAsync(Arg.Any<IEnumerable<float>>()).Returns(call =>
+        _equalizer.SetBandGainsAsync(Arg.Any<IEnumerable<float>>()).Returns(call =>
         {
-            _playback.CurrentEqualizerSettings.Returns(new EqualizerSettings { BandGains = call.Arg<IEnumerable<float>>().ToList() });
-            _playback.EqualizerChanged += Raise.Event<Action>();
+            _equalizer.CurrentSettings.Returns(new EqualizerSettings { BandGains = call.Arg<IEnumerable<float>>().ToList() });
+            _equalizer.SettingsChanged += Raise.Event<Action>();
             return Task.CompletedTask;
         });
 
@@ -661,8 +662,8 @@ public class SettingsViewModelTests : IDisposable
         await AdvanceDebouncesAsync();
 
         commits.Should().BeEmpty();
-        await _playback.DidNotReceive().SetEqualizerPreampAsync(Arg.Any<float>());
-        await _playback.Received(1).ResetEqualizerAsync();
+        await _equalizer.DidNotReceive().SetPreampAsync(Arg.Any<float>());
+        await _equalizer.Received(1).ResetAsync();
     }
 
     [Fact]
@@ -715,14 +716,14 @@ public class SettingsViewModelTests : IDisposable
         if (dispose)
         {
             tintChanges.Should().Be(0);
-            await _playback.DidNotReceive().SetEqualizerPreampAsync(Arg.Any<float>());
+            await _equalizer.DidNotReceive().SetPreampAsync(Arg.Any<float>());
         }
         else
         {
             tintChanges.Should().Be(1);
             _settings.Get(AppSettings.PlayerTintIntensity).Should().Be(.3);
-            await _playback.Received(1).SetEqualizerPreampAsync(2);
-            await _playback.DidNotReceive().SetEqualizerPreampAsync(1);
+            await _equalizer.Received(1).SetPreampAsync(2);
+            await _equalizer.DidNotReceive().SetPreampAsync(1);
         }
     }
 

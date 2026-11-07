@@ -33,8 +33,6 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
         var metadataService = Substitute.For<IMetadataService>();
         var logger = Substitute.For<ILogger<MusicPlaybackService>>();
 
-        _audioPlayer.GetEqualizerBands().Returns(new List<(uint, float)> { (0, 60f), (1, 170f) });
-
         _service = new MusicPlaybackService(
             settingsService,
             Substitute.For<IPlaybackStateStore>(),

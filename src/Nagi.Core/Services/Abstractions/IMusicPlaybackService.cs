@@ -77,10 +77,6 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
 
     RepeatMode CurrentRepeatMode { get; }
 
-    IReadOnlyList<(uint Index, float Frequency)> EqualizerBands { get; }
-
-    EqualizerSettings? CurrentEqualizerSettings { get; }
-
     /// <summary>
     ///     Occurs when the current track changes or playback stops.
     /// </summary>
@@ -99,8 +95,6 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     event Action? PositionChanged;
 
     event Action? DurationChanged;
-
-    event Action? EqualizerChanged;
 
     /// <summary>
     ///     Occurs once per listening session when the current track has been played
@@ -307,35 +301,4 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     ///     Saves the current playback state (queue, track, position) to persistent storage.
     /// </summary>
     Task SavePlaybackStateAsync();
-
-    /// <summary>
-    ///     Sets the gain for a specific band index.
-    /// </summary>
-    /// <param name="gain">In decibels, from <see cref="EqualizerSettings.MinGainDb" /> to <see cref="EqualizerSettings.MaxGainDb" />.</param>
-    Task SetEqualizerBandAsync(uint bandIndex, float gain);
-
-    /// <summary>
-    ///     Sets the gain values for all equalizer bands at once.
-    /// </summary>
-    /// <param name="gains">A collection of gain values in decibels, one for each band.</param>
-    Task SetEqualizerGainsAsync(IEnumerable<float> gains);
-
-    IReadOnlyList<EqualizerPreset> AvailablePresets { get; }
-
-    /// <summary>
-    ///     Finds a preset that matches the given band gain values.
-    /// </summary>
-    /// <returns>The matching preset, or null if no preset matches the current settings.</returns>
-    EqualizerPreset? GetMatchingPreset(IEnumerable<float> bandGains);
-
-    /// <summary>
-    ///     Sets the pre-amplification level for the equalizer.
-    /// </summary>
-    /// <param name="gain">In decibels, from <see cref="EqualizerSettings.MinGainDb" /> to <see cref="EqualizerSettings.MaxGainDb" />.</param>
-    Task SetEqualizerPreampAsync(float gain);
-
-    /// <summary>
-    ///     Resets the equalizer to a flat state (all gains at 0).
-    /// </summary>
-    Task ResetEqualizerAsync();
 }
