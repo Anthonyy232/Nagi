@@ -1,7 +1,6 @@
 using FluentAssertions;
-using Nagi.Core.Helpers;
 using Nagi.Core.Library;
-using Nagi.Core.Models;
+using Nagi.Core.Playlists;
 using System.Globalization;
 using Nagi.Presentation.ViewModels;
 using Xunit;

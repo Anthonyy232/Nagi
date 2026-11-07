@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
 using Nagi.Core.Playback;
+using Nagi.Core.Playlists;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;

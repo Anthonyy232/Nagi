@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Nagi.Core.Models;
+namespace Nagi.Core.Playlists;
 
 public class SmartPlaylistRule
 {
@@ -18,7 +18,7 @@ public class SmartPlaylistRule
     public SmartPlaylistOperator Operator { get; set; }
 
     /// <summary>
-    ///     In the form <see cref="Helpers.SmartPlaylistRuleValue.ToStoredValue" /> gives. <see cref="SecondValue" /> is
+    ///     In the form <see cref="SmartPlaylistRuleValue.ToStoredValue" /> gives. <see cref="SecondValue" /> is
     ///     the upper bound of a range.
     /// </summary>
     [MaxLength(1000)]

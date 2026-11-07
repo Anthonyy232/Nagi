@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nagi.Core.Library;
-using Nagi.Core.Models;
+using Nagi.Core.Playlists;
 using Nagi.Presentation.Models;
 
 namespace Nagi.Presentation.Services.Abstractions;

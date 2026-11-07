@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nagi.Core.Library;
 using Nagi.Core.Models;
+using Nagi.Core.Playlists;
 
 namespace Nagi.Core.Data;
 

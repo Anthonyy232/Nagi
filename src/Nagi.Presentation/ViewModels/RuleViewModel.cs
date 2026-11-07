@@ -1,8 +1,7 @@
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Nagi.Core.Helpers;
 using Nagi.Core.Library;
-using Nagi.Core.Models;
+using Nagi.Core.Playlists;
 using Nagi.Presentation.Resources;
 using CoreStrings = Nagi.Core.Resources.Strings;
 

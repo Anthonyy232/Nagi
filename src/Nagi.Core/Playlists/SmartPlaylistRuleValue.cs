@@ -1,7 +1,7 @@
 using System.Globalization;
-using Nagi.Core.Models;
+using Nagi.Core.Helpers;
 
-namespace Nagi.Core.Helpers;
+namespace Nagi.Core.Playlists;
 
 public static class SmartPlaylistRuleValue
 {

@@ -1,4 +1,4 @@
-namespace Nagi.Core.Services.Data;
+namespace Nagi.Core.Playlists;
 
 public enum PlaylistSortOrder
 {

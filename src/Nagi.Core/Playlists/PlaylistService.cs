@@ -5,10 +5,8 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Library;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Data;
-using Nagi.Core.Services.Helpers;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Playlists;
 
 /// <summary>
 ///     Creates, edits, and reorders user playlists. Playlist reads live in <see cref="LibraryReader" />.

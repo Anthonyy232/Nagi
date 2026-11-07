@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Nagi.Core.Models;
+namespace Nagi.Core.Playlists;
 
 public class SmartPlaylist
 {

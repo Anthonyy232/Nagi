@@ -1,6 +1,6 @@
 using System.Windows.Input;
 using Microsoft.UI.Xaml.Controls;
-using Nagi.Core.Models;
+using Nagi.Core.Playlists;
 using Nagi.Presentation.Resources;
 
 namespace Nagi.WinUI.Helpers;

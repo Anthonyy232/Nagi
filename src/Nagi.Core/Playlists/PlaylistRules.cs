@@ -2,9 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Data;
 
-namespace Nagi.Core.Services.Helpers;
+namespace Nagi.Core.Playlists;
 
 /// <summary>
 ///     The naming and cover rules that playlists and smart playlists share.

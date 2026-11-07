@@ -1,4 +1,4 @@
-namespace Nagi.Core.Services.Data;
+namespace Nagi.Core.Playlists;
 
 internal record PlaylistImportResult(bool Success, int MatchedSongs, int UnmatchedSongs);
 

@@ -1,6 +1,4 @@
-﻿using Nagi.Core.Services.Data;
-
-namespace Nagi.Core.Services.Abstractions;
+﻿namespace Nagi.Core.Playlists;
 
 public interface IPlaylistExportService
 {

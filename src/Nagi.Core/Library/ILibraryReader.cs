@@ -1,4 +1,5 @@
 using Nagi.Core.Models;
+using Nagi.Core.Playlists;
 
 namespace Nagi.Core.Library;
 

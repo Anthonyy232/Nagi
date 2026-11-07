@@ -1,9 +1,8 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Library;
-using Nagi.Core.Models;
 using Nagi.Core.Playback;
-using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Playlists;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;

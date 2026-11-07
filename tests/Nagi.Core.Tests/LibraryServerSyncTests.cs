@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Library;
 using Nagi.Core.Models;
+using Nagi.Core.Playlists;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Settings;
 using NSubstitute;

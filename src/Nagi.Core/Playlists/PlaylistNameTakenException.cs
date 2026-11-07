@@ -1,4 +1,4 @@
-namespace Nagi.Core.Services.Data;
+namespace Nagi.Core.Playlists;
 
 /// <summary>
 ///     Thrown when creating or renaming a playlist would give it the name of another playlist of the same kind.

@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
-using Nagi.Core.Models;
+using Nagi.Core.Playlists;
 using Nagi.Core.Settings;
 
 namespace Nagi.Core.Library;

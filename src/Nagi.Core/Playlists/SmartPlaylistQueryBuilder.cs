@@ -2,11 +2,9 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Nagi.Core.Data;
-using Nagi.Core.Helpers;
 using Nagi.Core.Library;
-using Nagi.Core.Models;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Playlists;
 
 internal static class SmartPlaylistQueryBuilder
 {

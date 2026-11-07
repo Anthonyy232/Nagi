@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Data;
 using Nagi.Core.Models;
+using Nagi.Core.Playlists;
 using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.Core.Library;
