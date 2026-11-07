@@ -1,6 +1,6 @@
 using Nagi.Core.Services.Abstractions;
 
-namespace Nagi.Core.Helpers;
+namespace Nagi.Core.Lyrics;
 
 internal static class LyricsStorageHelper
 {

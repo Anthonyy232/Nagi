@@ -1,9 +1,8 @@
 using System.Text.RegularExpressions;
 using ModernLrc;
 using ModernLrc.Model;
-using Nagi.Core.Models.Lyrics;
 
-namespace Nagi.Core.Helpers;
+namespace Nagi.Core.Lyrics;
 
 public static partial class LyricsParser
 {

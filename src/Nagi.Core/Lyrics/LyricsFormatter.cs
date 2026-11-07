@@ -1,6 +1,7 @@
 using ModernLrc;
+using Nagi.Core.Helpers;
 
-namespace Nagi.Core.Helpers;
+namespace Nagi.Core.Lyrics;
 
 internal static class LyricsFormatter
 {

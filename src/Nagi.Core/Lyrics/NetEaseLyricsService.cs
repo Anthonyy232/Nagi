@@ -5,10 +5,9 @@ using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Library;
 using Nagi.Core.Models;
-using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Lyrics;
 
 /// <summary>
 ///     Finds synchronized lyrics on NetEase Cloud Music through the unofficial endpoints open-source players use. It

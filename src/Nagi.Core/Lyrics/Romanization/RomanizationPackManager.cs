@@ -5,10 +5,9 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Constants;
 using Nagi.Core.Helpers;
-using Nagi.Core.Models.Romanization;
 using Nagi.Core.Services.Abstractions;
 
-namespace Nagi.Core.Services.Implementations.Romanization;
+namespace Nagi.Core.Lyrics.Romanization;
 
 public sealed class RomanizationPackManager : IRomanizationPackManager
 {

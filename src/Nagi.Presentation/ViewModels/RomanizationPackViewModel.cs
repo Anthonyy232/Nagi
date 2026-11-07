@@ -1,5 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using Nagi.Core.Models.Romanization;
+using Nagi.Core.Lyrics.Romanization;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Helpers;
 

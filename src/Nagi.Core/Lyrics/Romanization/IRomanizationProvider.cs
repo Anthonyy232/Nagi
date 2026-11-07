@@ -1,4 +1,4 @@
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.Lyrics.Romanization;
 
 /// <summary>Romanizes one script with the rules a romanization pack supplies.</summary>
 public interface IRomanizationProvider

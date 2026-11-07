@@ -1,8 +1,9 @@
 using System.Security.Cryptography;
 using System.Text;
+using Nagi.Core.Helpers;
 using Nagi.Core.Library;
 
-namespace Nagi.Core.Helpers;
+namespace Nagi.Core.Lyrics;
 
 /// <summary>
 ///     Names the lyrics files in Nagi's cache. A file belongs to its song through a hash of the audio file's identity,

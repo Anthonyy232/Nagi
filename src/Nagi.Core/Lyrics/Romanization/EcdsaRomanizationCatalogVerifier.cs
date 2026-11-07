@@ -1,9 +1,7 @@
 using System.Security.Cryptography;
 using System.Text.Json;
-using Nagi.Core.Models.Romanization;
-using Nagi.Core.Services.Abstractions;
 
-namespace Nagi.Core.Services.Implementations.Romanization;
+namespace Nagi.Core.Lyrics.Romanization;
 
 public sealed class EcdsaRomanizationCatalogVerifier : IRomanizationCatalogVerifier
 {

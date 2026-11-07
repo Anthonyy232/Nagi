@@ -1,4 +1,4 @@
-namespace Nagi.Core.Models.Romanization;
+namespace Nagi.Core.Lyrics.Romanization;
 
 // The catalog signature is checked against these types serialized again, so RomanizationPackCatalog and
 // RomanizationPackCatalogEntry must keep exactly the properties, names and order the signing tool wrote. Removing one,

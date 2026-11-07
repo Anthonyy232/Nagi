@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Nagi.Core.Services.Implementations.Romanization;
+namespace Nagi.Core.Lyrics.Romanization;
 
 internal sealed class JapaneseRomanizationProvider : RomanizationProvider<JapaneseRomanizationProvider.JapaneseRuleSet>
 {

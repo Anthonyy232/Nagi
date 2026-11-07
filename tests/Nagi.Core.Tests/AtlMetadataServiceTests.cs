@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Library;
+using Nagi.Core.Lyrics;
 using Nagi.Core.Models;
 using Nagi.Core.Playback;
 using Nagi.Core.Services.Abstractions;

@@ -8,6 +8,8 @@ using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Library;
 using Nagi.Core.Listening;
+using Nagi.Core.Lyrics;
+using Nagi.Core.Lyrics.Romanization;
 using Nagi.Core.MusicServers;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
@@ -15,7 +17,6 @@ using Nagi.Core.Presence;
 using Nagi.Core.Scrobbling;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
-using Nagi.Core.Services.Implementations.Romanization;
 using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services;

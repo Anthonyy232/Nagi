@@ -1,7 +1,6 @@
 using Nagi.Core.Library;
-using Nagi.Core.Models.Lyrics;
 
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.Lyrics;
 
 public interface ILrcService
 {

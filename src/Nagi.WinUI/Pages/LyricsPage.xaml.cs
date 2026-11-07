@@ -6,7 +6,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
-using Nagi.Core.Models.Lyrics;
+using Nagi.Core.Lyrics;
 using Nagi.Presentation.Services.Implementations;
 using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;

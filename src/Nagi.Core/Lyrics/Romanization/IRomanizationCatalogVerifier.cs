@@ -1,6 +1,4 @@
-using Nagi.Core.Models.Romanization;
-
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.Lyrics.Romanization;
 
 public interface IRomanizationCatalogVerifier
 {

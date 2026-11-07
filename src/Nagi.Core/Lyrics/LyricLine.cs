@@ -1,4 +1,4 @@
-namespace Nagi.Core.Models.Lyrics;
+namespace Nagi.Core.Lyrics;
 
 public class LyricLine
 {

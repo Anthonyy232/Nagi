@@ -1,7 +1,6 @@
 using System.Text.Json;
-using Nagi.Core.Services.Abstractions;
 
-namespace Nagi.Core.Services.Implementations.Romanization;
+namespace Nagi.Core.Lyrics.Romanization;
 
 internal abstract class RomanizationProvider<TRules> : IRomanizationProvider where TRules : class
 {

@@ -1,6 +1,4 @@
-using Nagi.Core.Models.Lyrics;
-
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.Lyrics.Romanization;
 
 public interface ILyricRomanizationService
 {

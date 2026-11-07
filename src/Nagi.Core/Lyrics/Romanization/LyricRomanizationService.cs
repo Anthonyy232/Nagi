@@ -1,10 +1,8 @@
 using System.Collections.Concurrent;
-using Nagi.Core.Models.Lyrics;
-using Nagi.Core.Models.Romanization;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Settings;
 
-namespace Nagi.Core.Services.Implementations.Romanization;
+namespace Nagi.Core.Lyrics.Romanization;
 
 public sealed class LyricRomanizationService : ILyricRomanizationService
 {

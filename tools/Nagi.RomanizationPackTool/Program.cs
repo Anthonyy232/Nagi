@@ -1,7 +1,7 @@
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text.Json;
-using Nagi.Core.Models.Romanization;
+using Nagi.Core.Lyrics.Romanization;
 
 var jsonOptions = new JsonSerializerOptions
 {

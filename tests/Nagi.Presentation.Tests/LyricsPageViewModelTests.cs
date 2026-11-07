@@ -1,9 +1,9 @@
 using System.Threading.Channels;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
-using Nagi.Core.Helpers;
 using Nagi.Core.Library;
-using Nagi.Core.Models.Lyrics;
+using Nagi.Core.Lyrics;
+using Nagi.Core.Lyrics.Romanization;
 using Nagi.Core.Playback;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Models;

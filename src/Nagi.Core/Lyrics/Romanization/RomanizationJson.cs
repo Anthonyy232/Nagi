@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace Nagi.Core.Services.Implementations.Romanization;
+namespace Nagi.Core.Lyrics.Romanization;
 
 internal static class RomanizationJson
 {
