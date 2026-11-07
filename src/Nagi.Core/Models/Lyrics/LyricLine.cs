@@ -2,10 +2,6 @@ namespace Nagi.Core.Models.Lyrics;
 
 public class LyricLine
 {
-    public LyricLine()
-    {
-    }
-
     public LyricLine(TimeSpan startTime, string text)
     {
         StartTime = startTime;

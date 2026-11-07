@@ -103,32 +103,31 @@ public static class CoreServiceRegistration
             builder.ConfigureHttpClient(client => client.DefaultRequestHeaders.UserAgent.ParseAdd(ProviderUserAgent.Value)));
         services.AddHttpClient("")
             .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(20))
-            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+            .ConfigurePrimaryHttpMessageHandler(() =>
             {
-                PooledConnectionLifetime = TimeSpan.FromMinutes(2),
-                ConnectTimeout = TimeSpan.FromSeconds(10),
-                KeepAlivePingPolicy = HttpKeepAlivePingPolicy.Always,
-                KeepAlivePingDelay = TimeSpan.FromSeconds(30),
-                KeepAlivePingTimeout = TimeSpan.FromSeconds(5)
+                var handler = CreateHandler();
+                handler.KeepAlivePingPolicy = HttpKeepAlivePingPolicy.Always;
+                handler.KeepAlivePingDelay = TimeSpan.FromSeconds(30);
+                handler.KeepAlivePingTimeout = TimeSpan.FromSeconds(5);
+                return handler;
             });
 
         // A sync makes thousands of requests, which would crowd everything else out of the log kept for crash reports.
         services.AddHttpClient(MusicServerService.HttpClientName)
             .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(30))
-            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
-            {
-                PooledConnectionLifetime = TimeSpan.FromMinutes(2),
-                ConnectTimeout = TimeSpan.FromSeconds(10),
-            })
+            .ConfigurePrimaryHttpMessageHandler(CreateHandler)
             .RemoveAllLoggers();
 
         // Image downloads are larger payloads and tolerate slower CDNs; use a longer timeout.
-        services.AddHttpClient("ImageDownloader")
+        services.AddHttpClient(LibraryService.ImageHttpClientName)
             .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(30))
-            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
-            {
-                PooledConnectionLifetime = TimeSpan.FromMinutes(2),
-                ConnectTimeout = TimeSpan.FromSeconds(10),
-            });
+            .ConfigurePrimaryHttpMessageHandler(CreateHandler);
     }
+
+    // Clients live as long as the app, so pooled connections are recycled to pick up DNS changes.
+    private static SocketsHttpHandler CreateHandler() => new()
+    {
+        PooledConnectionLifetime = TimeSpan.FromMinutes(2),
+        ConnectTimeout = TimeSpan.FromSeconds(10)
+    };
 }

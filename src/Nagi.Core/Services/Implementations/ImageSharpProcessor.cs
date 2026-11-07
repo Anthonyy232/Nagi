@@ -158,21 +158,8 @@ public class ImageSharpProcessor : IImageProcessor
         var safeDark = darkHex ?? "000000";
         var baseFileName = $"{contentHash}.{safeLight}.{safeDark}";
 
-        if (image.Width > CachedImageMaxDimension || image.Height > CachedImageMaxDimension)
-        {
-            image.Mutate(x => x.Resize(new ResizeOptions
-            {
-                Size = new Size(CachedImageMaxDimension, CachedImageMaxDimension),
-                Mode = ResizeMode.Max
-            }));
-
-            _logger.LogTrace("Resized album art to {Width}x{Height} for caching.", image.Width, image.Height);
-        }
-
-        using var memoryStream = new MemoryStream();
-        await image.SaveAsJpegAsync(memoryStream).ConfigureAwait(false);
         return (await ImageStorageHelper.SaveImageBytesAsync(_fileSystem, _albumArtStoragePath,
-            baseFileName, ".fetched", memoryStream.ToArray()).ConfigureAwait(false))!;
+            baseFileName, ".fetched", await EncodeCachedJpegAsync(image).ConfigureAwait(false)).ConfigureAwait(false))!;
     }
 
     /// <summary>
@@ -216,40 +203,44 @@ public class ImageSharpProcessor : IImageProcessor
         }
     }
 
-    public async Task<byte[]> ProcessImageBytesAsync(byte[] imageData, int maxDimension = 600)
+    public async Task<byte[]> ProcessImageBytesAsync(byte[] imageData)
     {
-        if (imageData.Length == 0 || maxDimension <= 0) return imageData;
+        if (imageData.Length == 0) return imageData;
 
         try
         {
             var imageInfo = Image.Identify(CreateDecoderOptions(), imageData);
-            if (imageInfo.Width <= maxDimension && imageInfo.Height <= maxDimension)
+            if (imageInfo.Width <= CachedImageMaxDimension && imageInfo.Height <= CachedImageMaxDimension)
                 return imageData;
 
-            using var image = await LoadImageAsync(imageData, maxDimension).ConfigureAwait(false);
-
-            // TargetSize is a decode hint. Keep this guard for formats that still decode full-size.
-            if (image.Width > maxDimension || image.Height > maxDimension)
-            {
-                image.Mutate(x => x.Resize(new ResizeOptions
-                {
-                    Size = new Size(maxDimension, maxDimension),
-                    Mode = ResizeMode.Max
-                }));
-            }
-
+            using var image = await LoadImageAsync(imageData, CachedImageMaxDimension).ConfigureAwait(false);
+            var resized = await EncodeCachedJpegAsync(image).ConfigureAwait(false);
             _logger.LogDebug("Resized image from {OrigWidth}x{OrigHeight} to {Width}x{Height}",
                 imageInfo.Width, imageInfo.Height, image.Width, image.Height);
-
-            using var memoryStream = new MemoryStream();
-            await image.SaveAsJpegAsync(memoryStream).ConfigureAwait(false);
-            return memoryStream.ToArray();
+            return resized;
         }
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Failed to process image, returning original bytes.");
             return imageData;
         }
+    }
+
+    private static async Task<byte[]> EncodeCachedJpegAsync(Image<Bgra32> image)
+    {
+        // The decoder's target size is only a hint, and some formats still decode at full size.
+        if (image.Width > CachedImageMaxDimension || image.Height > CachedImageMaxDimension)
+        {
+            image.Mutate(x => x.Resize(new ResizeOptions
+            {
+                Size = new Size(CachedImageMaxDimension, CachedImageMaxDimension),
+                Mode = ResizeMode.Max
+            }));
+        }
+
+        using var memoryStream = new MemoryStream();
+        await image.SaveAsJpegAsync(memoryStream).ConfigureAwait(false);
+        return memoryStream.ToArray();
     }
 
     private static async Task<Image<Bgra32>> LoadImageAsync(byte[] imageData, int maxDimension)

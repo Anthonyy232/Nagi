@@ -52,7 +52,7 @@ public class CoreServiceRegistrationTests
 
     [Theory]
     [InlineData("")]
-    [InlineData("ImageDownloader")]
+    [InlineData(LibraryService.ImageHttpClientName)]
     [InlineData(MusicServerService.HttpClientName)]
     public async Task AddNagiCore_IdentifiesNagiOnceOnEveryHttpClient(string clientName)
     {

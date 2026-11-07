@@ -19,6 +19,8 @@ namespace Nagi.Core.Services.Implementations;
 /// </summary>
 public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposable
 {
+    internal const string ImageHttpClientName = "ImageDownloader";
+
     private readonly ConcurrentDictionary<Guid, Lazy<Task<string?>>> _artistImageProcessingTasks = new();
 
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
@@ -61,7 +63,7 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         _metadataService = metadataService;
         _artistMetadataService = artistMetadataService;
         _albumCoverService = albumCoverService;
-        _imageDownloads = new ProviderClient(ProviderCatalog.ImageDownload, httpClientFactory.CreateClient("ImageDownloader"),
+        _imageDownloads = new ProviderClient(ProviderCatalog.ImageDownload, httpClientFactory.CreateClient(ImageHttpClientName),
             pipelines, logger);
         _pathConfig = pathConfig;
         _settingsService = settingsService;
