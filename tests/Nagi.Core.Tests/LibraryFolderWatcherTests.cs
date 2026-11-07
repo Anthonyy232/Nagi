@@ -1,4 +1,6 @@
+using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Time.Testing;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -10,31 +12,22 @@ namespace Nagi.Core.Tests;
 
 public sealed class LibraryFolderWatcherTests : IDisposable
 {
-    private static readonly TimeSpan QuietPeriod = TimeSpan.FromMilliseconds(200);
-    private static readonly TimeSpan Settle = TimeSpan.FromSeconds(1);
+    private static readonly TimeSpan EventTimeout = TimeSpan.FromSeconds(10);
 
     private readonly string _root = Directory.CreateTempSubdirectory("nagi-watch-").FullName;
     private readonly ILibraryReader _reader = Substitute.For<ILibraryReader>();
     private readonly ILibraryNotifier _notifier = Substitute.For<ILibraryNotifier>();
     private readonly ILibraryFolderService _folderService = Substitute.For<ILibraryFolderService>();
+    private readonly SchedulingTimeProvider _time = new();
     private readonly List<Folder> _folders = new();
     private readonly LibraryFolderWatcher _watcher;
-    private readonly TaskCompletionSource _refreshed = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
     public LibraryFolderWatcherTests()
     {
         _reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>())
             .Returns(_ => _folders.Select(f => new FolderSummary(f, 0, IsServer: false)).ToList());
-        // File system events arrive on their own thread, so tests wait for this signal rather than a fixed time.
-        _folderService.RefreshFolderInBackgroundAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(_ =>
-        {
-            _refreshed.TrySetResult();
-            return true;
-        });
-        _watcher = new LibraryFolderWatcher(_reader, _notifier, _folderService, NullLogger<LibraryFolderWatcher>.Instance)
-        {
-            QuietPeriod = QuietPeriod
-        };
+        _folderService.RefreshFolderInBackgroundAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(true);
+        _watcher = new LibraryFolderWatcher(_reader, _notifier, _folderService, NullLogger<LibraryFolderWatcher>.Instance, _time);
     }
 
     public void Dispose()
@@ -50,23 +43,26 @@ public sealed class LibraryFolderWatcherTests : IDisposable
 
         for (var i = 0; i < 5; i++)
             await File.WriteAllTextAsync(Path.Combine(_root, $"song{i}.mp3"), "audio");
+        // File system events arrive on their own thread; the first one schedules the refresh.
+        await _time.Scheduled.WaitAsync(EventTimeout);
 
-        await _refreshed.Task.WaitAsync(TimeSpan.FromSeconds(10));
-        await _folderService.Received(1).RefreshFolderInBackgroundAsync(folder.Id, Arg.Any<CancellationToken>());
-        await Task.Delay(QuietPeriod * 2);
+        _time.Advance(LibraryFolderWatcher.QuietPeriod - TimeSpan.FromTicks(1));
+        await _folderService.DidNotReceiveWithAnyArgs().RefreshFolderInBackgroundAsync(default);
+        _time.Advance(LibraryFolderWatcher.QuietPeriod);
         await _folderService.Received(1).RefreshFolderInBackgroundAsync(folder.Id, Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task ChangingNonAudioFiles_DoesNotRefresh()
+    public async Task ChangingNonAudioFiles_DoesNotScheduleARefresh()
     {
         StartWatching(_root);
 
         await File.WriteAllTextAsync(Path.Combine(_root, "notes.txt"), "text");
         await File.WriteAllTextAsync(Path.Combine(_root, "cover.jpg"), "image");
-        await Task.Delay(Settle);
+        // Nothing signals that an event was ignored, so the test gives the events time to arrive.
+        await Task.Delay(TimeSpan.FromSeconds(1));
 
-        await _folderService.DidNotReceiveWithAnyArgs().RefreshFolderInBackgroundAsync(default);
+        _time.Scheduled.IsCompleted.Should().BeFalse();
     }
 
     [Fact]
@@ -76,8 +72,9 @@ public sealed class LibraryFolderWatcherTests : IDisposable
         var folder = StartWatching(_root);
 
         album.Delete();
+        await _time.Scheduled.WaitAsync(EventTimeout);
+        _time.Advance(LibraryFolderWatcher.QuietPeriod);
 
-        await _refreshed.Task.WaitAsync(TimeSpan.FromSeconds(10));
         await _folderService.Received(1).RefreshFolderInBackgroundAsync(folder.Id, Arg.Any<CancellationToken>());
     }
 
@@ -92,8 +89,9 @@ public sealed class LibraryFolderWatcherTests : IDisposable
             _folders.Add(added);
             _notifier.Changed += Raise.Event<EventHandler<LibraryChange>>(_notifier, new LibraryChange(LibraryChangeKind.RootAdded, added.Id));
             await File.WriteAllTextAsync(Path.Combine(second, "song.flac"), "audio");
+            await _time.Scheduled.WaitAsync(EventTimeout);
+            _time.Advance(LibraryFolderWatcher.QuietPeriod);
 
-            await _refreshed.Task.WaitAsync(TimeSpan.FromSeconds(10));
             await _folderService.Received(1).RefreshFolderInBackgroundAsync(added.Id, Arg.Any<CancellationToken>());
         }
         finally
@@ -112,4 +110,30 @@ public sealed class LibraryFolderWatcherTests : IDisposable
         return folder;
     }
 
+    /// <summary>
+    ///     A fake clock that tells when the watcher schedules a refresh, which a file system event on another thread does.
+    /// </summary>
+    private sealed class SchedulingTimeProvider : FakeTimeProvider
+    {
+        private readonly TaskCompletionSource _scheduled = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public Task Scheduled => _scheduled.Task;
+
+        public override ITimer CreateTimer(TimerCallback callback, object? state, TimeSpan dueTime, TimeSpan period) =>
+            new SignallingTimer(base.CreateTimer(callback, state, dueTime, period), _scheduled);
+
+        private sealed class SignallingTimer(ITimer timer, TaskCompletionSource scheduled) : ITimer
+        {
+            public bool Change(TimeSpan dueTime, TimeSpan period)
+            {
+                var changed = timer.Change(dueTime, period);
+                scheduled.TrySetResult();
+                return changed;
+            }
+
+            public void Dispose() => timer.Dispose();
+
+            public ValueTask DisposeAsync() => timer.DisposeAsync();
+        }
+    }
 }

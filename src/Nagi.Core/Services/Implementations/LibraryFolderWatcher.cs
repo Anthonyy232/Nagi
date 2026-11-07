@@ -15,25 +15,27 @@ public sealed class LibraryFolderWatcher : IDisposable
     private readonly ILibraryNotifier _libraryNotifier;
     private readonly ILibraryFolderService _folderService;
     private readonly ILogger<LibraryFolderWatcher> _logger;
+    private readonly TimeProvider _timeProvider;
     private readonly CancellationTokenSource _shutdownCts = new();
     private readonly CancellationToken _shutdownToken;
     private readonly Lock _lock = new();
     private readonly Dictionary<Guid, WatchedFolder> _folders = new();
 
     public LibraryFolderWatcher(ILibraryReader libraryReader, ILibraryNotifier libraryNotifier, ILibraryFolderService folders,
-        ILogger<LibraryFolderWatcher> logger)
+        ILogger<LibraryFolderWatcher> logger, TimeProvider? timeProvider = null)
     {
         _libraryReader = libraryReader;
         _libraryNotifier = libraryNotifier;
         _folderService = folders;
         _logger = logger;
+        _timeProvider = timeProvider ?? TimeProvider.System;
         _shutdownToken = _shutdownCts.Token;
     }
 
     /// <summary>
     ///     How long the folder must stay quiet before it is refreshed, so a large copy triggers one scan.
     /// </summary>
-    internal TimeSpan QuietPeriod { get; init; } = TimeSpan.FromSeconds(3);
+    internal static readonly TimeSpan QuietPeriod = TimeSpan.FromSeconds(3);
 
     public void Start()
     {
@@ -105,7 +107,8 @@ public sealed class LibraryFolderWatcher : IDisposable
                 NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite | NotifyFilters.Size,
                 InternalBufferSize = 64 * 1024
             };
-            var watched = new WatchedFolder(watcher, new Timer(_ => _ = RefreshAsync(folderId)));
+            var watched = new WatchedFolder(watcher,
+                _timeProvider.CreateTimer(_ => _ = RefreshAsync(folderId), null, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan));
 
             watcher.Created += (_, e) => OnFileSystemEvent(watched, e.FullPath, includeFolders: true);
             watcher.Deleted += (_, e) => OnFileSystemEvent(watched, e.FullPath, includeFolders: true);
@@ -161,7 +164,7 @@ public sealed class LibraryFolderWatcher : IDisposable
         }
     }
 
-    private sealed class WatchedFolder(FileSystemWatcher watcher, Timer timer) : IDisposable
+    private sealed class WatchedFolder(FileSystemWatcher watcher, ITimer timer) : IDisposable
     {
         public void ScheduleRefresh(TimeSpan quietPeriod)
         {
