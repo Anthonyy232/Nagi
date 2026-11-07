@@ -115,7 +115,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private readonly ISettingsService _settingsService;
     private readonly TransparencyEffectsMonitor _transparencyEffects;
     private readonly IThemeService _themeService;
-    private readonly Win32InteropService _win32InteropService;
 
     private SplitViewContentMotion? _queueContentMotion;
     private SplitViewContentMotion? _navigationContentMotion;
@@ -133,7 +132,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     public MainPage(PlayerViewModel viewModel,
         GlobalOperationViewModel globalOperation, ISettingsService settingsService, IThemeService themeService,
-        IDispatcherService dispatcherService, Win32InteropService win32InteropService,
+        IDispatcherService dispatcherService,
         NavigationService navigationService, TransparencyEffectsMonitor transparencyEffects, ILogger<MainPage> logger)
     {
         ViewModel = viewModel;
@@ -142,7 +141,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         _transparencyEffects = transparencyEffects;
         _themeService = themeService;
         _dispatcherService = dispatcherService;
-        _win32InteropService = win32InteropService;
         _logger = logger;
 
         InitializeComponent();
@@ -415,7 +413,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         var material = _settingsService.Get(AppSettings.PlayerBackgroundMaterial);
         var brushKey = !isAcrylicEnabled || material == PlayerBackgroundMaterial.Solid
             ? "PlayerBackgroundBrush"
-            : _win32InteropService.IsWindows11OrNewer ? "Win11AcrylicBrush" : "Win10AcrylicBrush";
+            : NativeMethods.IsWindows11OrNewer ? "Win11AcrylicBrush" : "Win10AcrylicBrush";
         FloatingPlayerContainer.Background = (Brush)Application.Current.Resources[brushKey];
     }
 

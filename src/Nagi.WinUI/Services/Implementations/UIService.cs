@@ -22,20 +22,16 @@ namespace Nagi.WinUI.Services.Implementations;
 
 public partial class UIService : IUIService
 {
-    private const uint MB_OK = 0x00000000;
-    private const uint MB_ICONERROR = 0x00000010;
     private const string IssuesUrl = "https://github.com/Anthonyy232/Nagi/issues";
 
-    private readonly Win32InteropService _win32InteropService;
     private readonly ViewModelFactory _viewModelFactory;
     private readonly ILogger<UIService> _logger;
     private readonly MainWindow _window;
 
-    public UIService(MainWindow window, Win32InteropService win32InteropService, ViewModelFactory viewModelFactory,
+    public UIService(MainWindow window, ViewModelFactory viewModelFactory,
         ILogger<UIService> logger)
     {
         _window = window;
-        _win32InteropService = win32InteropService;
         _viewModelFactory = viewModelFactory;
         _logger = logger;
     }
@@ -152,7 +148,7 @@ public partial class UIService : IUIService
             // Fallback to Win32 MessageBox if ContentDialog fails (e.g. another dialog is open)
             var hwnd = WindowNative.GetWindowHandle(_window);
             var message = $"{Strings.CrashReport_Message}\n\n{report}";
-            _win32InteropService.ShowMessageBox(hwnd, message, Strings.CrashReport_Title, MB_ICONERROR | MB_OK);
+            NativeMethods.MessageBox(hwnd, message, Strings.CrashReport_Title, NativeMethods.MB_ICONERROR | NativeMethods.MB_OK);
             return CrashReportResult.Close;
         }
     }

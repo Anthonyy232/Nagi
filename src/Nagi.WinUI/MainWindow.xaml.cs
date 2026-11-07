@@ -90,7 +90,7 @@ public sealed partial class MainWindow : Window
         if (_oldWndProc != 0)
         {
             var windowHandle = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            TaskbarNativeMethods.SetWindowLongPtr(windowHandle, TaskbarNativeMethods.GWLP_WNDPROC, _oldWndProc);
+            NativeMethods.SetWindowLongPtr(windowHandle, NativeMethods.GWLP_WNDPROC, _oldWndProc);
             _oldWndProc = 0;
             _wndProcDelegate = null;
         }
@@ -324,7 +324,7 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private TaskbarNativeMethods.WindowProc? _wndProcDelegate;
+    private NativeMethods.WindowProc? _wndProcDelegate;
     private nint _oldWndProc;
 
     private void InitializeWndProc()
@@ -332,13 +332,13 @@ public sealed partial class MainWindow : Window
         var windowHandle = WindowNative.GetWindowHandle(this);
         _wndProcDelegate = WndProc;
         var wndProcPtr = System.Runtime.InteropServices.Marshal.GetFunctionPointerForDelegate(_wndProcDelegate);
-        _oldWndProc = TaskbarNativeMethods.SetWindowLongPtr(windowHandle, TaskbarNativeMethods.GWLP_WNDPROC, wndProcPtr);
+        _oldWndProc = NativeMethods.SetWindowLongPtr(windowHandle, NativeMethods.GWLP_WNDPROC, wndProcPtr);
     }
 
     private nint WndProc(nint hWnd, int msg, nint wParam, nint lParam)
     {
         _taskbarService?.HandleWindowMessage(msg, wParam, lParam);
-        return TaskbarNativeMethods.CallWindowProc(_oldWndProc, hWnd, msg, wParam, lParam);
+        return NativeMethods.CallWindowProc(_oldWndProc, hWnd, msg, wParam, lParam);
     }
 }
 
@@ -352,7 +352,6 @@ public sealed class MiniPlayerWindow : Window
     private const int InitialWindowSizeDips = 350;
     private const int MinWindowSizeDips = 200;
     private const int MaxWindowSizeDips = 640;
-    private const float BaseDpi = 96.0f;
     private static readonly string AppIconPath = System.IO.Path.Combine(AppContext.BaseDirectory, "Assets/AppLogo.ico");
 
     private const int HorizontalScreenMargin = 10;
@@ -361,13 +360,11 @@ public sealed class MiniPlayerWindow : Window
     private readonly AppWindow _appWindow;
     private readonly ILogger<MiniPlayerWindow> _logger;
     private readonly MiniPlayerView _view;
-    private readonly Win32InteropService _win32InteropService;
 
     public MiniPlayerWindow(PlayerViewModel playerViewModel, IThemeService themeService,
-        Win32InteropService win32InteropService, ILogger<MiniPlayerWindow> logger)
+        ILogger<MiniPlayerWindow> logger)
     {
         _logger = logger;
-        _win32InteropService = win32InteropService;
         _view = new MiniPlayerView(this, playerViewModel);
         Content = _view;
         _appWindow = AppWindow;
@@ -468,23 +465,7 @@ public sealed class MiniPlayerWindow : Window
         window.Changed += OnAppWindowChanged;
     }
 
-    /// <summary>
-    ///     Computed on demand because the DPI changes when the window moves between monitors.
-    /// </summary>
-    private float GetDpiScale()
-    {
-        try
-        {
-            var windowHandle = WindowNative.GetWindowHandle(this);
-            var dpi = _win32InteropService.GetDpiForWindow(windowHandle);
-            return dpi / BaseDpi;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to get DPI, using default scale of 1.0");
-            return 1.0f;
-        }
-    }
+    private double GetDpiScale() => NativeMethods.GetDpiScale(WindowNative.GetWindowHandle(this));
 
     private void OnRestoreButtonClicked(object? sender, EventArgs e)
     {

@@ -1,13 +1,10 @@
 ﻿using System.ComponentModel;
-using System.Runtime.InteropServices;
 using Windows.Foundation;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
-using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Services.Implementations;
 using WinRT.Interop;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Services;
@@ -18,17 +15,14 @@ namespace Nagi.WinUI.Popups;
 public sealed partial class TrayPopup : Window
 {
     private readonly ISettingsService _settingsService;
-    private readonly Win32InteropService _win32InteropService;
     private bool _isClosed;
 
-    public TrayPopup(ElementTheme initialTheme, PlayerViewModel viewModel, ISettingsService settingsService,
-        Win32InteropService win32InteropService)
+    public TrayPopup(ElementTheme initialTheme, PlayerViewModel viewModel, ISettingsService settingsService)
     {
         InitializeComponent();
 
         ViewModel = viewModel;
         _settingsService = settingsService;
-        _win32InteropService = win32InteropService;
 
         OuterBorder.RequestedTheme = initialTheme;
         OuterBorder.DataContext = ViewModel;
@@ -50,7 +44,13 @@ public sealed partial class TrayPopup : Window
     public void SetWindowOpacity(byte alpha)
     {
         var hwnd = WindowNative.GetWindowHandle(this);
-        SetLayeredWindowAttributes(hwnd, 0, alpha, LWA_ALPHA);
+        NativeMethods.SetLayeredWindowAttributes(hwnd, 0, alpha, NativeMethods.LWA_ALPHA);
+    }
+
+    public void ShowInForeground()
+    {
+        AppWindow.Show();
+        NativeMethods.SetForegroundWindow(WindowNative.GetWindowHandle(this));
     }
 
     public async Task<double> ShowAndMeasureAsync(double targetWidthDips)
@@ -93,14 +93,14 @@ public sealed partial class TrayPopup : Window
 
         var windowHandle = WindowNative.GetWindowHandle(this);
 
-        var exStyle = (int)GetWindowLongPtr(windowHandle, GWL_EXSTYLE);
-        exStyle |= WS_EX_LAYERED;
-        SetWindowLongPtr(windowHandle, GWL_EXSTYLE, (IntPtr)exStyle);
+        var exStyle = NativeMethods.GetWindowLongPtr(windowHandle, NativeMethods.GWL_EXSTYLE);
+        NativeMethods.SetWindowLongPtr(windowHandle, NativeMethods.GWL_EXSTYLE, exStyle | NativeMethods.WS_EX_LAYERED);
 
-        if (_win32InteropService.IsWindows11OrNewer)
+        if (NativeMethods.IsWindows11OrNewer)
         {
-            var preference = DWMWCP_ROUND; // DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_ROUND
-            DwmSetWindowAttribute(windowHandle, DWMWA_WINDOW_CORNER_PREFERENCE, ref preference, sizeof(uint));
+            var preference = NativeMethods.DWMWCP_ROUND;
+            NativeMethods.DwmSetWindowAttribute(windowHandle, NativeMethods.DWMWA_WINDOW_CORNER_PREFERENCE,
+                ref preference, sizeof(uint));
         }
     }
 
@@ -138,23 +138,4 @@ public sealed partial class TrayPopup : Window
 
     private void VolumeButton_PointerWheelChanged(object sender, PointerRoutedEventArgs e) =>
         PlayerInputHelper.StepVolumeWithWheel(sender, e, ViewModel);
-
-    private const int GWL_EXSTYLE = -20;
-    private const int WS_EX_LAYERED = 0x00080000;
-    private const uint LWA_ALPHA = 0x00000002;
-    private const uint DWMWA_WINDOW_CORNER_PREFERENCE = 33;
-    private const uint DWMWCP_ROUND = 2;
-
-    [DllImport("user32.dll", EntryPoint = "GetWindowLongPtrW")]
-    private static extern IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);
-
-    [DllImport("user32.dll", EntryPoint = "SetWindowLongPtrW")]
-    private static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
-
-    [DllImport("user32.dll")]
-    private static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
-
-    [DllImport("dwmapi.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
-    private static extern void DwmSetWindowAttribute(IntPtr hwnd, uint attribute, ref uint pvAttribute,
-        uint cbAttribute);
 }

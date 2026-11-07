@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using H.NotifyIcon;
 using H.NotifyIcon.EfficiencyMode;
 using Microsoft.Extensions.Logging;
@@ -17,7 +17,6 @@ public sealed class WindowService : IWindowService, IDisposable
     private readonly IDispatcherService _dispatcherService;
     private readonly ILogger<WindowService> _logger;
     private readonly ISettingsService _settingsService;
-    private readonly Win32InteropService _win32InteropService;
     private AppWindow? _appWindow;
     private bool _isClosingMiniPlayerProgrammatically;
     private bool _isDisposed;
@@ -28,12 +27,11 @@ public sealed class WindowService : IWindowService, IDisposable
     private MiniPlayerWindow? _miniPlayerWindow;
 
     public WindowService(MainWindow mainWindow, Func<MiniPlayerWindow> createMiniPlayerWindow,
-        Win32InteropService win32InteropService, ISettingsService settingsService,
+        ISettingsService settingsService,
         IDispatcherService dispatcherService, ILogger<WindowService> logger)
     {
         _createMiniPlayerWindow = createMiniPlayerWindow;
         _mainWindow = mainWindow;
-        _win32InteropService = win32InteropService;
         _settingsService = settingsService;
         _dispatcherService = dispatcherService;
         _logger = logger;
@@ -80,7 +78,6 @@ public sealed class WindowService : IWindowService, IDisposable
             });
         }
 
-        GC.SuppressFinalize(this);
     }
 
     public event Action<WindowClosingEventArgs>? Closing;
@@ -126,7 +123,7 @@ public sealed class WindowService : IWindowService, IDisposable
         SetEfficiencyMode(false);
 
         var windowHandle = WinRT.Interop.WindowNative.GetWindowHandle(_mainWindow);
-        var foregroundHandle = _win32InteropService.GetForegroundWindow();
+        var foregroundHandle = NativeMethods.GetForegroundWindow();
 
         if (windowHandle == foregroundHandle && IsVisible && !IsMinimized && !IsMiniPlayerActive)
         {
@@ -136,7 +133,35 @@ public sealed class WindowService : IWindowService, IDisposable
 
         HideMiniPlayer();
         _appWindow.IsShownInSwitchers = true;
-        WindowActivator.ShowAndActivate(_mainWindow, _win32InteropService);
+        BringToForeground(windowHandle);
+    }
+
+    public void ShowMinimized()
+    {
+        _mainWindow.AppWindow.Show(false);
+        ((FrameworkElement)_mainWindow.Content).UpdateLayout();
+        ((OverlappedPresenter)_mainWindow.AppWindow.Presenter).Minimize(false);
+    }
+
+    // Windows only lets the foreground process take the foreground, so borrow its input thread while activating.
+    private void BringToForeground(nint windowHandle)
+    {
+        var foregroundThreadId = NativeMethods.GetWindowThreadProcessId(NativeMethods.GetForegroundWindow(), 0);
+        var currentThreadId = NativeMethods.GetCurrentThreadId();
+        var attached = foregroundThreadId != 0 && foregroundThreadId != currentThreadId &&
+                       NativeMethods.AttachThreadInput(foregroundThreadId, currentThreadId, true);
+        try
+        {
+            NativeMethods.BringWindowToTop(windowHandle);
+            // SW_RESTORE also un-maximizes, so only use it to bring the window back from minimized.
+            if (IsMinimized) NativeMethods.ShowWindow(windowHandle, NativeMethods.SW_RESTORE);
+            _mainWindow.AppWindow.Show();
+            NativeMethods.SetForegroundWindow(windowHandle);
+        }
+        finally
+        {
+            if (attached) NativeMethods.AttachThreadInput(foregroundThreadId, currentThreadId, false);
+        }
     }
 
     public void Exit()

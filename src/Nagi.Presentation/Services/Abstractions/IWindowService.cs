@@ -41,6 +41,11 @@ public interface IWindowService
     void ShowAndActivate();
 
     /// <summary>
+    ///     Shows the main window minimized to the taskbar, without activating it.
+    /// </summary>
+    void ShowMinimized();
+
+    /// <summary>
     ///     Closes the main window and exits the app, bypassing hide-to-tray.
     /// </summary>
     void Exit();

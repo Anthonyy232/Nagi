@@ -417,7 +417,7 @@ public partial class App : Application
         }
         else if (!hideToTray)
         {
-            WindowActivator.ShowMinimized(_window);
+            windowService.ShowMinimized();
         }
     }
 

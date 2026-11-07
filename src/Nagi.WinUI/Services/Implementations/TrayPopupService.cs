@@ -1,6 +1,7 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Windows.Graphics;
 using Microsoft.Extensions.Logging;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Services.Abstractions;
@@ -15,25 +16,23 @@ public class TrayPopupService : ITrayPopupService, IDisposable
     private const int VERTICAL_OFFSET = 24;
     private const int DEACTIVATION_DEBOUNCE_MS = 200;
     private const int POPUP_WIDTH_DIPS = 384;
-    private const float BASE_DPI = 96.0f;
     private readonly IDispatcherService _dispatcherService;
     private readonly ILogger<TrayPopupService> _logger;
     private readonly MainWindow _mainWindow;
     private readonly Func<ElementTheme, TrayPopup> _createPopup;
 
-    private readonly Win32InteropService _win32;
+    private readonly TrayPopupAnimation _animation;
     private bool _isAnimating;
     private bool _isDisposed;
     private long _lastDeactivatedTime;
     private TrayPopup? _popupWindow;
 
     public TrayPopupService(MainWindow mainWindow, Func<ElementTheme, TrayPopup> createPopup,
-        Win32InteropService win32InteropService,
         IDispatcherService dispatcherService, ILogger<TrayPopupService> logger)
     {
         _mainWindow = mainWindow;
         _createPopup = createPopup;
-        _win32 = win32InteropService;
+        _animation = new TrayPopupAnimation(logger);
         _dispatcherService = dispatcherService;
         _logger = logger;
     }
@@ -44,7 +43,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         _logger.LogDebug("Disposing TrayPopupService.");
 
         // Cancel any ongoing animations first to prevent TaskCanceledException
-        PopupAnimation.CancelAllAnimations();
+        _animation.Cancel();
 
         // Explicitly unsubscribe before closing to prevent callbacks during disposal
         if (_popupWindow is not null)
@@ -62,7 +61,6 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         }
 
         _isDisposed = true;
-        GC.SuppressFinalize(this);
     }
 
     public void TogglePopup()
@@ -97,7 +95,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         _logger.LogDebug("Hiding tray popup.");
         if (_isAnimating)
         {
-            PopupAnimation.CancelAllAnimations();
+            _animation.Cancel();
             _popupWindow.AppWindow.Hide();
             _popupWindow.SetWindowOpacity(255);
             _isAnimating = false;
@@ -105,7 +103,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         }
 
         _isAnimating = true;
-        await PopupAnimation.AnimateOut(_popupWindow);
+        await _animation.AnimateOutAsync(_popupWindow);
         _isAnimating = false;
     }
 
@@ -117,7 +115,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         popup.ViewModel.ShowPlayerViewCommand.Execute(null);
 
         var windowHandle = WindowNative.GetWindowHandle(popup);
-        var scale = _win32.GetDpiForWindow(windowHandle) / BASE_DPI;
+        var scale = NativeMethods.GetDpiScale(windowHandle);
 
         var contentHeight = await popup.ShowAndMeasureAsync(POPUP_WIDTH_DIPS);
         if (_popupWindow != popup)
@@ -133,19 +131,19 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         var finalWidth = popup.AppWindow.Size.Width;
         var finalHeight = popup.AppWindow.Size.Height;
 
-        var cursorPosition = _win32.GetCursorPos();
-        var workArea = _win32.GetWorkAreaForPoint(cursorPosition);
+        var cursorPosition = NativeMethods.GetCursorPosition();
+        var workArea = DisplayArea.GetFromPoint(cursorPosition, DisplayAreaFallback.Nearest).WorkArea;
 
         var finalX = cursorPosition.X - finalWidth / 2;
-        finalX = (int)Math.Max(workArea.Left, Math.Min(workArea.Right - finalWidth, finalX));
+        finalX = Math.Max(workArea.X, Math.Min(workArea.X + workArea.Width - finalWidth, finalX));
 
         var finalY = cursorPosition.Y - finalHeight - VERTICAL_OFFSET;
-        if (finalY < workArea.Top) finalY = cursorPosition.Y + VERTICAL_OFFSET;
+        if (finalY < workArea.Y) finalY = cursorPosition.Y + VERTICAL_OFFSET;
 
         var finalRect = new RectInt32(finalX, finalY, finalWidth, finalHeight);
         _logger.LogDebug("Calculated popup position: {PopupRect}", finalRect);
 
-        await PopupAnimation.AnimateIn(popup, finalRect);
+        await _animation.AnimateInAsync(popup, finalRect);
         _isAnimating = false;
     }
 

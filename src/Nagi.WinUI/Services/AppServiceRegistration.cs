@@ -40,7 +40,6 @@ public static class AppServiceRegistration
         services.AddSingleton<ICredentialLockerService, CredentialLockerService>();
         services.AddSingleton<IAutoLaunchService, StartupTaskAutoLaunchService>();
 
-        services.AddSingleton<Win32InteropService>();
         services.AddSingleton<IWindowService, WindowService>();
         services.AddSingleton<IUIService, UIService>();
         services.AddSingleton<IDispatcherService, DispatcherService>();

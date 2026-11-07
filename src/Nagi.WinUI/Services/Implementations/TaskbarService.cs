@@ -10,7 +10,8 @@ using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;
 using Windows.Foundation;
 using Windows.UI;
-using static Nagi.WinUI.Helpers.TaskbarNativeMethods;
+using Nagi.WinUI.Helpers;
+using static Nagi.WinUI.Helpers.NativeMethods;
 
 namespace Nagi.WinUI.Services.Implementations;
 
@@ -31,7 +32,6 @@ public sealed class TaskbarService : IDisposable
     private const int NextButtonId = 3;
     private const int IconRefreshDebounceMs = 100;
     private const int DefaultIconSize = 16;
-    private const double BaseDpi = 96.0;
     // Windows 11+ uses Segoe Fluent Icons (filled/bolder variants).
     // Windows 10 falls back to Segoe MDL2 Assets.
     private const string PreviousGlyphFluent = "\uF8AC";
@@ -49,7 +49,6 @@ public sealed class TaskbarService : IDisposable
     private readonly ILogger<TaskbarService> _logger;
     private readonly IMusicPlaybackService _playbackService;
     private readonly IDispatcherService _dispatcherService;
-    private readonly Win32InteropService _win32InteropService;
 
     private readonly object _iconLock = new();
 
@@ -70,13 +69,11 @@ public sealed class TaskbarService : IDisposable
     public TaskbarService(
         ILogger<TaskbarService> logger,
         IMusicPlaybackService playbackService,
-        IDispatcherService dispatcherService,
-        Win32InteropService win32InteropService)
+        IDispatcherService dispatcherService)
     {
         _logger = logger;
         _playbackService = playbackService;
         _dispatcherService = dispatcherService;
-        _win32InteropService = win32InteropService;
     }
 
     /// <summary>Call once the window has a native handle.</summary>
@@ -186,7 +183,7 @@ public sealed class TaskbarService : IDisposable
         try
         {
             var iconSize = GetIconSizeForDpi();
-            var isWin11 = _win32InteropService.IsWindows11OrNewer;
+            var isWin11 = IsWindows11OrNewer;
             var fontFamily = isWin11 ? FluentIconFontFamily : Mdl2IconFontFamily;
             var prevGlyph = isWin11 ? PreviousGlyphFluent : PreviousGlyphMdl2;
             var playGlyph = isWin11 ? PlayGlyphFluent : PlayGlyphMdl2;
@@ -247,8 +244,8 @@ public sealed class TaskbarService : IDisposable
 
     private int GetIconSizeForDpi()
     {
-        var dpi = _win32InteropService.GetDpiForWindow(_windowHandle);
-        return Math.Max(DefaultIconSize, (int)(DefaultIconSize * dpi / BaseDpi));
+        var scale = GetDpiScale(_windowHandle);
+        return Math.Max(DefaultIconSize, (int)(DefaultIconSize * scale));
     }
 
     // The accent brush is a top-level app resource, so it is always there. Read it on the UI thread.
