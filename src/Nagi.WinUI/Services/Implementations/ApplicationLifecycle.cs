@@ -27,6 +27,8 @@ public class ApplicationLifecycle : IApplicationLifecycle
         _logger = logger;
     }
 
+    public bool IsShowingOnboarding { get; private set; }
+
     public async Task NavigateToMainContentAsync()
     {
         if (_windowService.IsExiting) return;
@@ -36,10 +38,12 @@ public class ApplicationLifecycle : IApplicationLifecycle
         if (_windowService.IsExiting) return;
         if (hasFolders)
         {
+            IsShowingOnboarding = false;
             if (_window.Content is not MainPage) _window.SetContent(_createMainPage());
         }
         else
         {
+            IsShowingOnboarding = true;
             if (_window.Content is not OnboardingPage) _window.SetContent(_createOnboardingPage());
         }
     }

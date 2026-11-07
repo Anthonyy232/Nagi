@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using H.NotifyIcon;
 using H.NotifyIcon.EfficiencyMode;
 using Microsoft.Extensions.Logging;
@@ -8,125 +7,96 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;
-using Nagi.Core.Settings;
-using Nagi.Presentation.Services;
+using WinRT.Interop;
 
 namespace Nagi.WinUI.Services.Implementations;
 
 public sealed class WindowService : IWindowService, IDisposable
 {
+    private readonly MainWindow _mainWindow;
+    private readonly AppWindow _appWindow;
+    private readonly Func<MiniPlayerWindow> _createMiniPlayerWindow;
     private readonly IDispatcherService _dispatcherService;
     private readonly ILogger<WindowService> _logger;
-    private readonly ISettingsService _settingsService;
-    private AppWindow? _appWindow;
-    private bool _isClosingMiniPlayerProgrammatically;
+    private MiniPlayerWindow? _miniPlayerWindow;
     private bool _isDisposed;
     private bool? _lastEfficiencyMode;
 
-    private readonly MainWindow _mainWindow;
-    private readonly Func<MiniPlayerWindow> _createMiniPlayerWindow;
-    private MiniPlayerWindow? _miniPlayerWindow;
-
     public WindowService(MainWindow mainWindow, Func<MiniPlayerWindow> createMiniPlayerWindow,
-        ISettingsService settingsService,
         IDispatcherService dispatcherService, ILogger<WindowService> logger)
     {
-        _createMiniPlayerWindow = createMiniPlayerWindow;
         _mainWindow = mainWindow;
-        _settingsService = settingsService;
+        _appWindow = mainWindow.AppWindow;
+        _createMiniPlayerWindow = createMiniPlayerWindow;
         _dispatcherService = dispatcherService;
         _logger = logger;
-    }
 
-    public void Dispose()
-    {
-        if (_isDisposed) return;
-        _isDisposed = true; // Set FIRST to prevent race conditions in dispatched lambdas
-
-        _logger.LogDebug("Disposing and cleaning up resources.");
-
-        SetEfficiencyMode(false);
-
-        if (_appWindow is not null)
-        {
-            _appWindow.Closing -= OnAppWindowClosing;
-            _mainWindow.Closed -= OnWindowClosed;
-            _appWindow.Changed -= OnAppWindowChanged;
-            _appWindow.IsShownInSwitchers = true;
-        }
-
-        // Synchronous cleanup of mini player state. Capture and null the reference
-        // to prevent any in-flight operations from using a stale window.
-        var window = _miniPlayerWindow;
-        _miniPlayerWindow = null;
-
-        // Attempt graceful close via dispatcher. If the dispatcher is unavailable
-        // (shutdown), TryEnqueue will return false and the window will be cleaned
-        // up when the process terminates.
-        if (window is not null)
-        {
-            window.Closed -= OnMiniPlayerClosed;
-            _dispatcherService.TryEnqueue(() =>
-            {
-                try
-                {
-                    window.Close();
-                }
-                catch
-                {
-                    // Ignore exceptions during shutdown
-                }
-            });
-        }
-
+        _appWindow.Closing += OnAppWindowClosing;
+        _mainWindow.Closed += OnWindowClosed;
+        _appWindow.Changed += OnAppWindowChanged;
     }
 
     public event Action<WindowClosingEventArgs>? Closing;
 
+    public event Action? Minimized;
+
     public event Action? UIStateChanged;
 
-    public bool IsVisible => _appWindow?.IsVisible ?? false;
+    public bool IsVisible => _appWindow.IsVisible;
 
     public bool IsMiniPlayerActive => _miniPlayerWindow is not null;
 
-    public bool IsMinimized => _appWindow?.Presenter is OverlappedPresenter
+    public bool IsMinimized => _appWindow.Presenter is OverlappedPresenter
     {
         State: OverlappedPresenterState.Minimized
     };
 
     public bool IsExiting { get; private set; }
 
-    public bool IsShowingOnboarding => _mainWindow.Content is Pages.OnboardingPage;
-
-    private bool IsMiniPlayerEnabled => _settingsService.Get(AppSettings.MinimizeToMiniPlayer);
-
-    public Task InitializeAsync()
+    public void Dispose()
     {
-        _appWindow = _mainWindow.AppWindow;
+        if (_isDisposed) return;
+        _isDisposed = true;
 
-        _appWindow.Closing += OnAppWindowClosing;
-        _mainWindow.Closed += OnWindowClosed;
-        _appWindow.Changed += OnAppWindowChanged;
-        return Task.CompletedTask;
+        _logger.LogDebug("Disposing and cleaning up resources.");
+
+        SetEfficiencyMode(false);
+
+        _appWindow.Closing -= OnAppWindowClosing;
+        _mainWindow.Closed -= OnWindowClosed;
+        _appWindow.Changed -= OnAppWindowChanged;
+        _appWindow.IsShownInSwitchers = true;
+
+        var miniPlayer = _miniPlayerWindow;
+        _miniPlayerWindow = null;
+        if (miniPlayer is not null)
+        {
+            miniPlayer.RestoreRequested -= ShowAndActivate;
+            miniPlayer.Closed -= OnMiniPlayerClosed;
+            // During shutdown the dispatcher may refuse this or the close may fail; the window then goes with the process.
+            _dispatcherService.TryEnqueue(() =>
+            {
+                try
+                {
+                    miniPlayer.Close();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogDebug(ex, "Could not close the mini player during shutdown.");
+                }
+            });
+        }
     }
 
-    public void Hide()
-    {
-        if (_appWindow is null) return;
-        _mainWindow.Hide(false);
-    }
+    public void Hide() => _mainWindow.Hide(false);
 
     public void ShowAndActivate()
     {
-        if (_appWindow is null) return;
-
         // Force high priority immediately to prevent black screen lag during activation
         SetEfficiencyMode(false);
 
-        var windowHandle = WinRT.Interop.WindowNative.GetWindowHandle(_mainWindow);
-        var foregroundHandle = NativeMethods.GetForegroundWindow();
-
-        if (windowHandle == foregroundHandle && IsVisible && !IsMinimized && !IsMiniPlayerActive)
+        var windowHandle = WindowNative.GetWindowHandle(_mainWindow);
+        if (windowHandle == NativeMethods.GetForegroundWindow() && IsVisible && !IsMinimized && !IsMiniPlayerActive)
         {
             _logger.LogDebug("Window is already foreground and active, skipping redundant activation.");
             return;
@@ -139,9 +109,50 @@ public sealed class WindowService : IWindowService, IDisposable
 
     public void ShowMinimized()
     {
-        _mainWindow.AppWindow.Show(false);
+        _appWindow.Show(false);
         ((FrameworkElement)_mainWindow.Content).UpdateLayout();
-        ((OverlappedPresenter)_mainWindow.AppWindow.Presenter).Minimize(false);
+        ((OverlappedPresenter)_appWindow.Presenter).Minimize(false);
+    }
+
+    public void ShowMiniPlayer()
+    {
+        if (_miniPlayerWindow is not null) return;
+        _appWindow.IsShownInSwitchers = false;
+
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (_isDisposed || _miniPlayerWindow is not null) return;
+
+            try
+            {
+                _miniPlayerWindow = _createMiniPlayerWindow();
+                _miniPlayerWindow.RestoreRequested += ShowAndActivate;
+                _miniPlayerWindow.Closed += OnMiniPlayerClosed;
+                _miniPlayerWindow.Activate();
+
+                UIStateChanged?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "Failed to show Mini Player.");
+                _miniPlayerWindow = null;
+            }
+        });
+    }
+
+    public void Exit()
+    {
+        IsExiting = true;
+        _dispatcherService.TryEnqueue(_mainWindow.Close);
+    }
+
+    public void SetEfficiencyMode(bool isEnabled)
+    {
+        if (_lastEfficiencyMode == isEnabled) return;
+
+        _logger.LogDebug("Setting efficiency mode to: {IsEnabled}", isEnabled);
+        EfficiencyModeUtilities.SetEfficiencyMode(isEnabled);
+        _lastEfficiencyMode = isEnabled;
     }
 
     // Windows only lets the foreground process take the foreground, so borrow its input thread while activating.
@@ -156,55 +167,13 @@ public sealed class WindowService : IWindowService, IDisposable
             NativeMethods.BringWindowToTop(windowHandle);
             // SW_RESTORE also un-maximizes, so only use it to bring the window back from minimized.
             if (IsMinimized) NativeMethods.ShowWindow(windowHandle, NativeMethods.SW_RESTORE);
-            _mainWindow.AppWindow.Show();
+            _appWindow.Show();
             NativeMethods.SetForegroundWindow(windowHandle);
         }
         finally
         {
             if (attached) NativeMethods.AttachThreadInput(foregroundThreadId, currentThreadId, false);
         }
-    }
-
-    public void Exit()
-    {
-        IsExiting = true;
-        _dispatcherService.TryEnqueue(() => { if (_appWindow is not null) _mainWindow.Close(); });
-    }
-
-    public void SetEfficiencyMode(bool isEnabled)
-    {
-        if (_lastEfficiencyMode == isEnabled) return;
-
-        _logger.LogDebug("Setting efficiency mode to: {IsEnabled}", isEnabled);
-        EfficiencyModeUtilities.SetEfficiencyMode(isEnabled);
-        _lastEfficiencyMode = isEnabled;
-    }
-
-    public void ShowMiniPlayer()
-    {
-        if (!IsMiniPlayerEnabled || _miniPlayerWindow is not null) return;
-
-        _dispatcherService.TryEnqueue(() =>
-        {
-            if (_isDisposed) return;
-
-            try
-            {
-                // Re-check inside the dispatched action to handle race conditions.
-                if (!IsMiniPlayerEnabled || _miniPlayerWindow is not null) return;
-
-                _miniPlayerWindow = _createMiniPlayerWindow();
-                _miniPlayerWindow.Closed += OnMiniPlayerClosed;
-                _miniPlayerWindow.Activate();
-
-                UIStateChanged?.Invoke();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical(ex, "Failed to show Mini Player.");
-                _miniPlayerWindow = null;
-            }
-        });
     }
 
     private void OnAppWindowClosing(AppWindow sender, AppWindowClosingEventArgs args)
@@ -220,19 +189,11 @@ public sealed class WindowService : IWindowService, IDisposable
 
     private void OnAppWindowChanged(AppWindow sender, AppWindowChangedEventArgs args)
     {
-        var didPresenterChange = args.DidPresenterChange;
-
-        if (didPresenterChange && _appWindow?.Presenter is OverlappedPresenter presenter)
+        if (args.DidPresenterChange && _appWindow.Presenter is OverlappedPresenter presenter)
             switch (presenter.State)
             {
                 case OverlappedPresenterState.Minimized:
-                    // Nothing can be playing during onboarding, so minimizing it stays an ordinary minimize.
-                    if (IsMiniPlayerEnabled && !IsShowingOnboarding)
-                    {
-                        _appWindow.IsShownInSwitchers = false;
-                        ShowMiniPlayer();
-                    }
-
+                    Minimized?.Invoke();
                     break;
 
                 case OverlappedPresenterState.Restored:
@@ -241,29 +202,22 @@ public sealed class WindowService : IWindowService, IDisposable
                     break;
             }
 
-        if (args.DidVisibilityChange || didPresenterChange) UIStateChanged?.Invoke();
+        if (args.DidVisibilityChange || args.DidPresenterChange) UIStateChanged?.Invoke();
     }
 
     private void HideMiniPlayer()
     {
         _dispatcherService.TryEnqueue(() =>
         {
-            if (_isDisposed) return;
+            if (_isDisposed || _miniPlayerWindow is null) return;
 
             try
             {
-                if (_miniPlayerWindow is null) return;
-
-                _isClosingMiniPlayerProgrammatically = true;
                 _miniPlayerWindow.Close();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Exception while hiding Mini Player.");
-            }
-            finally
-            {
-                _isClosingMiniPlayerProgrammatically = false;
                 _miniPlayerWindow = null;
             }
         });
@@ -271,10 +225,14 @@ public sealed class WindowService : IWindowService, IDisposable
 
     private void OnMiniPlayerClosed(object? sender, WindowEventArgs args)
     {
-        if (sender is MiniPlayerWindow window) window.Closed -= OnMiniPlayerClosed;
+        var miniPlayer = (MiniPlayerWindow)sender!;
+        miniPlayer.RestoreRequested -= ShowAndActivate;
+        miniPlayer.Closed -= OnMiniPlayerClosed;
         _miniPlayerWindow = null;
 
-        if (!_isClosingMiniPlayerProgrammatically) ShowAndActivate();
+        // Closing the mini player any other way than restoring, such as with Alt+F4, must not leave the main
+        // window hidden or minimized out of the taskbar.
+        if (!IsExiting && (!IsVisible || IsMinimized)) ShowAndActivate();
 
         UIStateChanged?.Invoke();
     }

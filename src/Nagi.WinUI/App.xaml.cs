@@ -75,17 +75,8 @@ public partial class App : Application
             _window.Closed += OnWindowClosed;
             Services.GetRequiredService<TaskbarService>().Start();
             mainWindow.SetContent(new Pages.SplashPage());
-            // Before doing heavy blocking initialization, show the window to the user
-            var isStartupLaunch = Environment.GetCommandLineArgs()
-                .Any(arg => arg.Equals("--startup", StringComparison.OrdinalIgnoreCase));
-            var startMinimized = Services!.GetRequiredService<ISettingsService>().Get(AppSettings.StartMinimized);
-
-            if (!isStartupLaunch && !startMinimized)
-            {
-                _window?.AppWindow?.Show();
-                _window?.Activate();
-                if (_window?.AppWindow is not null) _window.AppWindow.IsShownInSwitchers = true;
-            }
+            var windowBehavior = Services.GetRequiredService<WindowBehavior>();
+            windowBehavior.ShowWhileLoading();
             HandleInitialActivation(args.UWPLaunchActivatedEventArgs);
 
             var restoreSession = _fileActivationQueue.IsEmpty;
@@ -98,7 +89,7 @@ public partial class App : Application
 
             _ = ProcessFileActivationQueueAsync();
 
-            HandleWindowActivation(isStartupLaunch);
+            windowBehavior.ShowWhenLoaded(_hasExternalActivation);
             await RunPendingJumpListTaskAsync();
 
             EnqueuePostLaunchTasks();
@@ -194,8 +185,8 @@ public partial class App : Application
             switch (task)
             {
                 case JumpListTask.MiniPlayer:
-                    // Minimizing swaps in the mini-player, the same as the window's own minimize button.
-                    if (_window?.AppWindow.Presenter is OverlappedPresenter presenter) presenter.Minimize();
+                    // The window behaviour swaps a minimized main window for the mini player.
+                    Services!.GetRequiredService<IWindowService>().ShowMinimized();
                     break;
                 case JumpListTask.ShuffleAll:
                     await Services!.GetRequiredService<IMusicPlaybackService>().ShuffleLibraryAsync();
@@ -349,32 +340,6 @@ public partial class App : Application
         finally
         {
             await ExitAsync(0);
-        }
-    }
-
-    private void HandleWindowActivation(bool isStartupLaunch = false)
-    {
-        if (_isExiting || _window is null || Services is null) return;
-
-        var settingsService = Services.GetRequiredService<ISettingsService>();
-        var startMinimized = settingsService.Get(AppSettings.StartMinimized);
-        var minimizeToMiniPlayer = settingsService.Get(AppSettings.MinimizeToMiniPlayer);
-        var hideToTray = settingsService.Get(AppSettings.HideToTray);
-        var windowService = Services.GetRequiredService<IWindowService>();
-
-        // A launch received during initialization takes precedence over startup minimization.
-        if (_hasExternalActivation || !(isStartupLaunch || startMinimized))
-        {
-            windowService.ShowAndActivate();
-        }
-        else if (minimizeToMiniPlayer)
-        {
-            windowService.ShowMiniPlayer();
-            _window.AppWindow.IsShownInSwitchers = false;
-        }
-        else if (!hideToTray)
-        {
-            windowService.ShowMinimized();
         }
     }
 

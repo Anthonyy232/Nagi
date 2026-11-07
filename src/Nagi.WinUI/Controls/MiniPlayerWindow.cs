@@ -47,6 +47,12 @@ public sealed class MiniPlayerWindow : Window
         SubscribeToEvents();
     }
 
+    /// <summary>
+    ///     Raised when the restore button asks for the main window back. The mini player is hidden but stays open
+    ///     until it is closed.
+    /// </summary>
+    public event Action? RestoreRequested;
+
     private void ApplyTheme() =>
         _view.RequestedTheme = _themeService.IsLightTheme ? ElementTheme.Light : ElementTheme.Dark;
 
@@ -140,13 +146,13 @@ public sealed class MiniPlayerWindow : Window
 
     private void OnRestoreButtonClicked(object? sender, EventArgs e)
     {
-        // Closing during the click event can crash WinUI with E_UNEXPECTED;
-        // a dispatcher enqueue alone does not avoid it, so defer closure briefly.
+        // Restoring closes this window, and closing during the click event can crash WinUI with E_UNEXPECTED;
+        // a dispatcher enqueue alone does not avoid it, so defer the restore briefly.
         _appWindow.Hide();
 
         Task.Delay(50).ContinueWith(_ =>
         {
-            DispatcherQueue.TryEnqueue(() => Close());
+            DispatcherQueue.TryEnqueue(() => RestoreRequested?.Invoke());
         });
     }
 

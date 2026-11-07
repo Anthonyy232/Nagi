@@ -36,11 +36,8 @@ public static class AppServices
         });
 
         var dbTask = InitializeDatabaseAsync(services);
-        var windowTask = services.GetRequiredService<IWindowService>().InitializeAsync();
 
         // Start non-EF services while database migration is still running.
-        await windowTask;
-
         var presenceTask = services.GetRequiredService<PresenceManager>().InitializeAsync();
         services.GetRequiredService<TrayIconViewModel>().Initialize();
         var appInfoTask = services.GetRequiredService<IAppInfoService>().InitializeAsync();
