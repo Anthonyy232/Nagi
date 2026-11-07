@@ -136,7 +136,7 @@ public partial class UIService : IUIService
             XamlRoot = xamlRoot
         };
 
-        DialogThemeHelper.ApplyThemeOverrides(dialog);
+        DialogThemeHelper.ApplyThemeOverrides(dialog, _window.Content as FrameworkElement);
 
         try
         {
@@ -264,7 +264,7 @@ public partial class UIService : IUIService
     /// </summary>
     private async Task<ContentDialogResult> ShowDialogAsync(ContentDialog dialog)
     {
-        DialogThemeHelper.ApplyThemeOverrides(dialog);
+        DialogThemeHelper.ApplyThemeOverrides(dialog, _window.Content as FrameworkElement);
         try
         {
             return await dialog.ShowAsync();
