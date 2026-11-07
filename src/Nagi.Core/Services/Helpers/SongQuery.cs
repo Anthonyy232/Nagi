@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
@@ -89,55 +90,29 @@ internal static class SongQuery
             query.OrderByDescending(key).ThenByDescending(artist).ThenByDescending(title).ThenByDescending(s => s.Id);
     }
 
-    // List rows omit lyrics and collection navigations; fetch full entities for playback or editing.
-    public static IQueryable<Song> ExcludeHeavyFields(IQueryable<Song> query)
+    // Long free-text tags that list rows leave out; playback and editing read the full song.
+    private static readonly string[] HeavyFields = [nameof(Song.Lyrics), nameof(Song.Comment)];
+
+    private static Expression<Func<Song, Song>>? _listRow;
+
+    /// <summary>
+    ///     Songs as list rows: every mapped column except <see cref="HeavyFields" />, with the album and folder but
+    ///     without collection navigations.
+    /// </summary>
+    public static IQueryable<Song> ExcludeHeavyFields(MusicDbContext context, IQueryable<Song> query) =>
+        query.Select(_listRow ??= BuildListRow(context));
+
+    // Built from the model, so a new column reaches list rows without being listed here.
+    private static Expression<Func<Song, Song>> BuildListRow(MusicDbContext context)
     {
-        return query.Select(s => new Song
-        {
-            Id = s.Id,
-            Title = s.Title,
-            AlbumId = s.AlbumId,
-            Album = s.Album,
-            Composer = s.Composer,
-            FolderId = s.FolderId,
-            Folder = s.Folder,
-            DurationTicks = s.DurationTicks,
-            AlbumArtUriFromTrack = s.AlbumArtUriFromTrack,
-            FilePath = s.FilePath,
-            RemoteId = s.RemoteId,
-            DirectoryPath = s.DirectoryPath,
-            Year = s.Year,
-            TrackNumber = s.TrackNumber,
-            TrackCount = s.TrackCount,
-            DiscNumber = s.DiscNumber,
-            DiscCount = s.DiscCount,
-            SampleRate = s.SampleRate,
-            Bitrate = s.Bitrate,
-            Channels = s.Channels,
-            DateAddedToLibrary = s.DateAddedToLibrary,
-            FileCreatedDate = s.FileCreatedDate,
-            FileModifiedDate = s.FileModifiedDate,
-            LightSwatchId = s.LightSwatchId,
-            DarkSwatchId = s.DarkSwatchId,
-            Rating = s.Rating,
-            IsLoved = s.IsLoved,
-            PlayCount = s.PlayCount,
-            SkipCount = s.SkipCount,
-            LastPlayedDate = s.LastPlayedDate,
-            LrcFilePath = s.LrcFilePath,
-            LyricsLastCheckedUtc = s.LyricsLastCheckedUtc,
-            Bpm = s.Bpm,
-            ReplayGainTrackGain = s.ReplayGainTrackGain,
-            ReplayGainTrackPeak = s.ReplayGainTrackPeak,
-            Grouping = s.Grouping,
-            Conductor = s.Conductor,
-            MusicBrainzTrackId = s.MusicBrainzTrackId,
-            MusicBrainzReleaseId = s.MusicBrainzReleaseId,
-            MusicBrainzReleaseGroupId = s.MusicBrainzReleaseGroupId,
-            ArtistName = s.ArtistName,
-            PrimaryArtistName = s.PrimaryArtistName,
-            SortTitle = s.SortTitle,
-            PrimaryArtistSortName = s.PrimaryArtistSortName
-        });
+        var song = Expression.Parameter(typeof(Song), "s");
+        var columns = context.Model.FindEntityType(typeof(Song))!.GetProperties()
+            .Select(property => property.PropertyInfo)
+            .OfType<PropertyInfo>()
+            .Where(property => !HeavyFields.Contains(property.Name));
+        var bindings = columns
+            .Concat([typeof(Song).GetProperty(nameof(Song.Album))!, typeof(Song).GetProperty(nameof(Song.Folder))!])
+            .Select(property => Expression.Bind(property, Expression.Property(song, property)));
+        return Expression.Lambda<Func<Song, Song>>(Expression.MemberInit(Expression.New(typeof(Song)), bindings), song);
     }
 }

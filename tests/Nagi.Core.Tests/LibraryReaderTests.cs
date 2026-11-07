@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -27,6 +28,49 @@ public class LibraryReaderTests : IDisposable
     public void Dispose()
     {
         _dbHelper.Dispose();
+    }
+
+    [Fact]
+    public async Task SongListRows_CarryEveryMappedColumnButTheLongTexts()
+    {
+        var folder = new Folder { Name = "Music", Path = @"C:\Music" };
+        var song = new Song { Folder = folder, FilePath = @"C:\Music\song.flac", DirectoryPath = folder.Path };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            // A value other than the default for every column a test can set directly, so a column a row leaves out shows.
+            foreach (var property in context.Model.FindEntityType(typeof(Song))!.GetProperties()
+                         .Where(p => !p.IsKey() && !p.IsForeignKey() && p.PropertyInfo is { CanWrite: true }))
+            {
+                var type = Nullable.GetUnderlyingType(property.ClrType) ?? property.ClrType;
+                object? value = type == typeof(string) ? property.Name
+                    : type == typeof(bool) ? true
+                    : type == typeof(DateTime) ? new DateTime(2024, 5, 6, 7, 8, 9, DateTimeKind.Utc)
+                    : type.IsPrimitive ? Convert.ChangeType(7, type)
+                    : null;
+                if (value is not null) property.PropertyInfo!.SetValue(song, value);
+            }
+
+            song.FilePath = @"C:\Music\song.flac";
+            song.DirectoryPath = folder.Path;
+            context.Songs.Add(song);
+            await context.SaveChangesAsync();
+        }
+
+        var row = (await _libraryReader.GetSongsAsync(SongScope.Library, null, SongSortOrder.TitleAsc, 1, 10)).Items.Single();
+
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            var stored = await context.Songs.SingleAsync();
+            foreach (var property in context.Model.FindEntityType(typeof(Song))!.GetProperties())
+            {
+                var expected = property.Name is nameof(Song.Lyrics) or nameof(Song.Comment)
+                    ? null
+                    : property.PropertyInfo!.GetValue(stored);
+                property.PropertyInfo!.GetValue(row).Should().Be(expected, $"a list row carries {property.Name}");
+            }
+        }
+
+        row.Folder.Path.Should().Be(folder.Path);
     }
 
     [Fact]

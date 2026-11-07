@@ -178,7 +178,7 @@ public class SmartPlaylistService : ISmartPlaylistService
             };
         }
 
-        var query = SongQuery.ExcludeHeavyFields(SmartPlaylistQueryBuilder.BuildQuery(context, smartPlaylist, IgnoreArticles, searchTerm, sortOrder));
+        var query = SongQuery.ExcludeHeavyFields(context, SmartPlaylistQueryBuilder.BuildQuery(context, smartPlaylist, IgnoreArticles, searchTerm, sortOrder));
         var totalCount = await SmartPlaylistQueryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm).CountAsync(token).ConfigureAwait(false);
 
         var pagedData = await query

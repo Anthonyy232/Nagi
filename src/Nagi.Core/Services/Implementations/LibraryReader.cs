@@ -99,7 +99,7 @@ public partial class LibraryReader : ILibraryReader
                 .Where(s => chunk.Contains(s.Id))
                 .Include(s => s.Album);
 
-            var batch = await SongQuery.ExcludeHeavyFields(query)
+            var batch = await SongQuery.ExcludeHeavyFields(context, query)
                 .AsSplitQuery()
                 .ToListAsync().ConfigureAwait(false);
 
@@ -216,7 +216,7 @@ public partial class LibraryReader : ILibraryReader
             .OrderBy(ps => ps.Order).ThenBy(ps => ps.SongId)
             .Select(ps => ps.Song!);
 
-        return await SongQuery.ExcludeHeavyFields(query)
+        return await SongQuery.ExcludeHeavyFields(context, query)
             .AsSplitQuery()
             .ToListAsync(token).ConfigureAwait(false);
     }

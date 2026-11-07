@@ -110,7 +110,7 @@ public partial class LibraryReader
             if (scope is SongScope.Playlist playlist && sortOrder == SongSortOrder.PlaylistOrder)
             {
                 var rows = await PlaylistEntries(context, playlist, searchTerm)
-                    .Join(SongQuery.ExcludeHeavyFields(context.Songs.AsNoTracking()),
+                    .Join(SongQuery.ExcludeHeavyFields(context, context.Songs.AsNoTracking()),
                         entry => entry.SongId, song => song.Id,
                         (entry, song) => new { Song = song, entry.Order })
                     .OrderBy(row => row.Order).ThenBy(row => row.Song.Id)
@@ -122,7 +122,7 @@ public partial class LibraryReader
             }
             else
             {
-                items = await SortSongs(SongQuery.ExcludeHeavyFields(songs), sortOrder)
+                items = await SortSongs(SongQuery.ExcludeHeavyFields(context, songs), sortOrder)
                     .Skip(skip).Take(take).AsSplitQuery().ToListAsync(token).ConfigureAwait(false);
             }
         }
