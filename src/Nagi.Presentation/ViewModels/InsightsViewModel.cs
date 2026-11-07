@@ -322,16 +322,15 @@ public partial class InsightsViewModel : ObservableObject
 
             // Fire independent queries in parallel.
             var totalTimeTask = _statisticsService.GetTotalListenTimeAsync(range, ct);
-            var uniqueTask = _statisticsService.GetUniqueSongsPlayedAsync(range, ct);
             var listeningPatternsTask = _statisticsService.GetListeningPatternsAsync(range, ct);
-            var topSongsTask = _statisticsService.GetTopSongsAsync(range, 10, metric: SongsSortMetric, ct: ct);
-            var topArtistsTask = _statisticsService.GetTopArtistsAsync(range, 10, metric: ArtistsSortMetric, ct: ct);
-            var topAlbumsTask = _statisticsService.GetTopAlbumsAsync(range, 10, metric: AlbumsSortMetric, ct: ct);
-            var topGenresTask = _statisticsService.GetTopGenresAsync(range, 10, metric: GenresSortMetric, ct: ct);
+            var topSongsTask = _statisticsService.GetTopSongsAsync(range, SongsSortMetric, 0, 10, ct: ct);
+            var topArtistsTask = _statisticsService.GetTopArtistsAsync(range, ArtistsSortMetric, 0, 10, ct: ct);
+            var topAlbumsTask = _statisticsService.GetTopAlbumsAsync(range, AlbumsSortMetric, 0, 10, ct: ct);
+            var topGenresTask = _statisticsService.GetTopGenresAsync(range, GenresSortMetric, 0, 10, ct: ct);
             var sourcesTask = _statisticsService.GetPlaybackSourceDistributionAsync(range, ct);
 
             await Task.WhenAll(
-                totalTimeTask, uniqueTask, listeningPatternsTask,
+                totalTimeTask, listeningPatternsTask,
                 topSongsTask, topArtistsTask, topAlbumsTask, topGenresTask,
                 sourcesTask).ConfigureAwait(false);
 
@@ -341,17 +340,17 @@ public partial class InsightsViewModel : ObservableObject
             {
                 ct.ThrowIfCancellationRequested();
                 TotalListenTimeText = FormatListenTime(totalTimeTask.Result);
-                UniqueSongsPlayed = uniqueTask.Result;
+                UniqueSongsPlayed = topSongsTask.Result.TotalCount;
                 PeakHourText = FormatHour(listeningPatternsTask.Result.PeakHour);
                 MostActiveDayText = CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(listeningPatternsTask.Result.MostActiveDay);
 
-                TopSongs.ReplaceRange(topSongsTask.Result.Select(CreateSongItem));
+                TopSongs.ReplaceRange(topSongsTask.Result.Items.Select(CreateSongItem));
 
-                TopArtists.ReplaceRange(topArtistsTask.Result.Select(CreateArtistItem));
+                TopArtists.ReplaceRange(topArtistsTask.Result.Items.Select(CreateArtistItem));
 
-                TopAlbums.ReplaceRange(topAlbumsTask.Result.Select(CreateAlbumItem));
+                TopAlbums.ReplaceRange(topAlbumsTask.Result.Items.Select(CreateAlbumItem));
 
-                TopGenres.ReplaceRange(topGenresTask.Result.Select(CreateGenreItem));
+                TopGenres.ReplaceRange(topGenresTask.Result.Items.Select(CreateGenreItem));
 
                 var sources = sourcesTask.Result.ToList();
                 var totalCount = sources.Sum(s => s.Count);
@@ -484,13 +483,13 @@ public partial class InsightsViewModel : ObservableObject
                     int? totalCount = null;
                     if (refreshTotalCount)
                     {
-                        var result = await _statisticsService.GetTopSongsPageAsync(range, SeeAllPageSize, SongsSortMetric, offset, SearchTerm, ct);
+                        var result = await _statisticsService.GetTopSongsAsync(range, SongsSortMetric, offset, SeeAllPageSize, SearchTerm, ct);
                         songs = result.Items;
                         totalCount = result.TotalCount;
                     }
                     else
                     {
-                        songs = await _statisticsService.GetTopSongsAsync(range, SeeAllPageSize, metric: SongsSortMetric, offset: offset, searchTerm: SearchTerm, ct: ct);
+                        songs = (await _statisticsService.GetTopSongsAsync(range, SongsSortMetric, offset, SeeAllPageSize, SearchTerm, ct)).Items;
                     }
                     await _dispatcherService.EnqueueAsync(() =>
                     {
@@ -508,13 +507,13 @@ public partial class InsightsViewModel : ObservableObject
                     int? totalCount = null;
                     if (refreshTotalCount)
                     {
-                        var result = await _statisticsService.GetTopArtistsPageAsync(range, SeeAllPageSize, ArtistsSortMetric, offset, SearchTerm, ct);
+                        var result = await _statisticsService.GetTopArtistsAsync(range, ArtistsSortMetric, offset, SeeAllPageSize, SearchTerm, ct);
                         artists = result.Items;
                         totalCount = result.TotalCount;
                     }
                     else
                     {
-                        artists = await _statisticsService.GetTopArtistsAsync(range, SeeAllPageSize, metric: ArtistsSortMetric, offset: offset, searchTerm: SearchTerm, ct: ct);
+                        artists = (await _statisticsService.GetTopArtistsAsync(range, ArtistsSortMetric, offset, SeeAllPageSize, SearchTerm, ct)).Items;
                     }
                     await _dispatcherService.EnqueueAsync(() =>
                     {
@@ -532,13 +531,13 @@ public partial class InsightsViewModel : ObservableObject
                     int? totalCount = null;
                     if (refreshTotalCount)
                     {
-                        var result = await _statisticsService.GetTopAlbumsPageAsync(range, SeeAllPageSize, AlbumsSortMetric, offset, SearchTerm, ct);
+                        var result = await _statisticsService.GetTopAlbumsAsync(range, AlbumsSortMetric, offset, SeeAllPageSize, SearchTerm, ct);
                         albums = result.Items;
                         totalCount = result.TotalCount;
                     }
                     else
                     {
-                        albums = await _statisticsService.GetTopAlbumsAsync(range, SeeAllPageSize, metric: AlbumsSortMetric, offset: offset, searchTerm: SearchTerm, ct: ct);
+                        albums = (await _statisticsService.GetTopAlbumsAsync(range, AlbumsSortMetric, offset, SeeAllPageSize, SearchTerm, ct)).Items;
                     }
                     await _dispatcherService.EnqueueAsync(() =>
                     {
@@ -556,13 +555,13 @@ public partial class InsightsViewModel : ObservableObject
                     int? totalCount = null;
                     if (refreshTotalCount)
                     {
-                        var result = await _statisticsService.GetTopGenresPageAsync(range, SeeAllPageSize, GenresSortMetric, offset, SearchTerm, ct);
+                        var result = await _statisticsService.GetTopGenresAsync(range, GenresSortMetric, offset, SeeAllPageSize, SearchTerm, ct);
                         genres = result.Items;
                         totalCount = result.TotalCount;
                     }
                     else
                     {
-                        genres = await _statisticsService.GetTopGenresAsync(range, SeeAllPageSize, metric: GenresSortMetric, offset: offset, searchTerm: SearchTerm, ct: ct);
+                        genres = (await _statisticsService.GetTopGenresAsync(range, GenresSortMetric, offset, SeeAllPageSize, SearchTerm, ct)).Items;
                     }
                     await _dispatcherService.EnqueueAsync(() =>
                     {
@@ -628,12 +627,12 @@ public partial class InsightsViewModel : ObservableObject
         try
         {
             var range = BuildTimeRange();
-            var songs = await _statisticsService.GetTopSongsAsync(range, 10, SongsSortMetric, ct: ct);
+            var songs = await _statisticsService.GetTopSongsAsync(range, SongsSortMetric, 0, 10, ct: ct);
             ct.ThrowIfCancellationRequested();
             await _dispatcherService.EnqueueAsync(() =>
             {
                 ct.ThrowIfCancellationRequested();
-                TopSongs.ReplaceRange(songs.Select(CreateSongItem));
+                TopSongs.ReplaceRange(songs.Items.Select(CreateSongItem));
                 return Task.CompletedTask;
             });
         }
@@ -651,12 +650,12 @@ public partial class InsightsViewModel : ObservableObject
         try
         {
             var range = BuildTimeRange();
-            var artists = await _statisticsService.GetTopArtistsAsync(range, 10, ArtistsSortMetric, ct: ct);
+            var artists = await _statisticsService.GetTopArtistsAsync(range, ArtistsSortMetric, 0, 10, ct: ct);
             ct.ThrowIfCancellationRequested();
             await _dispatcherService.EnqueueAsync(() =>
             {
                 ct.ThrowIfCancellationRequested();
-                TopArtists.ReplaceRange(artists.Select(CreateArtistItem));
+                TopArtists.ReplaceRange(artists.Items.Select(CreateArtistItem));
                 return Task.CompletedTask;
             });
         }
@@ -674,12 +673,12 @@ public partial class InsightsViewModel : ObservableObject
         try
         {
             var range = BuildTimeRange();
-            var albums = await _statisticsService.GetTopAlbumsAsync(range, 10, AlbumsSortMetric, ct: ct);
+            var albums = await _statisticsService.GetTopAlbumsAsync(range, AlbumsSortMetric, 0, 10, ct: ct);
             ct.ThrowIfCancellationRequested();
             await _dispatcherService.EnqueueAsync(() =>
             {
                 ct.ThrowIfCancellationRequested();
-                TopAlbums.ReplaceRange(albums.Select(CreateAlbumItem));
+                TopAlbums.ReplaceRange(albums.Items.Select(CreateAlbumItem));
                 return Task.CompletedTask;
             });
         }
@@ -697,12 +696,12 @@ public partial class InsightsViewModel : ObservableObject
         try
         {
             var range = BuildTimeRange();
-            var genres = await _statisticsService.GetTopGenresAsync(range, 10, GenresSortMetric, ct: ct);
+            var genres = await _statisticsService.GetTopGenresAsync(range, GenresSortMetric, 0, 10, ct: ct);
             ct.ThrowIfCancellationRequested();
             await _dispatcherService.EnqueueAsync(() =>
             {
                 ct.ThrowIfCancellationRequested();
-                TopGenres.ReplaceRange(genres.Select(CreateGenreItem));
+                TopGenres.ReplaceRange(genres.Items.Select(CreateGenreItem));
                 return Task.CompletedTask;
             });
         }

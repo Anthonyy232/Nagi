@@ -22,30 +22,22 @@ public class InsightsViewModelTests
         {
             CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(culture);
             var statistics = Substitute.For<IStatisticsService>();
-            SongStats[] songs = [new(new Song { Title = "Song" }, count, TimeSpan.FromMinutes(2), 0)];
-            ArtistStats[] artists = [new(new Artist { Name = "Artist" }, count, TimeSpan.FromMinutes(2))];
-            AlbumStats[] albums = [new(new Album { Title = "Album" }, count, TimeSpan.FromMinutes(2))];
-            GenreStats[] genres = [new(new Genre { Name = "Genre" }, count, TimeSpan.FromMinutes(2))];
+            SongStats[] songs = [new(new Song { Title = "Song" }, count, TimeSpan.FromMinutes(2), 1)];
+            ArtistStats[] artists = [new(new Artist { Name = "Artist" }, count, TimeSpan.FromMinutes(2), 1)];
+            AlbumStats[] albums = [new(new Album { Title = "Album" }, count, TimeSpan.FromMinutes(2), 1)];
+            GenreStats[] genres = [new(new Genre { Name = "Genre" }, count, TimeSpan.FromMinutes(2), 1)];
             statistics.GetListeningPatternsAsync(Arg.Any<TimeRange>(), Arg.Any<CancellationToken>())
                 .Returns(new ListeningPatternStats(DayOfWeek.Monday, 12));
-            statistics.GetTopSongsAsync(Arg.Any<TimeRange>(), Arg.Any<int>(), Arg.Any<SortMetric>(),
-                Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>()).Returns(songs);
-            statistics.GetTopArtistsAsync(Arg.Any<TimeRange>(), Arg.Any<int>(), Arg.Any<SortMetric>(),
-                Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>()).Returns(artists);
-            statistics.GetTopAlbumsAsync(Arg.Any<TimeRange>(), Arg.Any<int>(), Arg.Any<SortMetric>(),
-                Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>()).Returns(albums);
-            statistics.GetTopGenresAsync(Arg.Any<TimeRange>(), Arg.Any<int>(), Arg.Any<SortMetric>(),
-                Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>()).Returns(genres);
-            statistics.GetTopSongsPageAsync(Arg.Any<TimeRange>(), Arg.Any<int>(), Arg.Any<SortMetric>(),
+            statistics.GetTopSongsAsync(Arg.Any<TimeRange>(), Arg.Any<SortMetric>(), Arg.Any<int>(),
                 Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
                 .Returns(new StatisticsPage<SongStats>(songs, 1));
-            statistics.GetTopArtistsPageAsync(Arg.Any<TimeRange>(), Arg.Any<int>(), Arg.Any<SortMetric>(),
+            statistics.GetTopArtistsAsync(Arg.Any<TimeRange>(), Arg.Any<SortMetric>(), Arg.Any<int>(),
                 Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
                 .Returns(new StatisticsPage<ArtistStats>(artists, 1));
-            statistics.GetTopAlbumsPageAsync(Arg.Any<TimeRange>(), Arg.Any<int>(), Arg.Any<SortMetric>(),
+            statistics.GetTopAlbumsAsync(Arg.Any<TimeRange>(), Arg.Any<SortMetric>(), Arg.Any<int>(),
                 Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
                 .Returns(new StatisticsPage<AlbumStats>(albums, 1));
-            statistics.GetTopGenresPageAsync(Arg.Any<TimeRange>(), Arg.Any<int>(), Arg.Any<SortMetric>(),
+            statistics.GetTopGenresAsync(Arg.Any<TimeRange>(), Arg.Any<SortMetric>(), Arg.Any<int>(),
                 Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
                 .Returns(new StatisticsPage<GenreStats>(genres, 1));
             var viewModel = CreateViewModel(statistics);
@@ -84,7 +76,7 @@ public class InsightsViewModelTests
         var currentResponse = new TaskCompletionSource<TimeSpan>(TaskCreationOptions.RunContinuationsAsynchronously);
         statistics.GetTotalListenTimeAsync(Arg.Any<TimeRange>(), Arg.Any<CancellationToken>())
             .Returns(oldResponse.Task, currentResponse.Task);
-        statistics.GetUniqueSongsPlayedAsync(Arg.Any<TimeRange>(), Arg.Any<CancellationToken>()).Returns(1);
+        StubRankings(statistics, playedSongs: 1);
         statistics.GetListeningPatternsAsync(Arg.Any<TimeRange>(), Arg.Any<CancellationToken>())
             .Returns(new ListeningPatternStats(DayOfWeek.Monday, 12));
         var viewModel = CreateViewModel(statistics);
@@ -126,9 +118,9 @@ public class InsightsViewModelTests
         var statistics = Substitute.For<IStatisticsService>();
         var songs = new TaskCompletionSource<StatisticsPage<SongStats>>(TaskCreationOptions.RunContinuationsAsynchronously);
         var artists = new TaskCompletionSource<StatisticsPage<ArtistStats>>(TaskCreationOptions.RunContinuationsAsynchronously);
-        statistics.GetTopSongsPageAsync(Arg.Any<TimeRange>(), Arg.Any<int>(), Arg.Any<SortMetric>(),
+        statistics.GetTopSongsAsync(Arg.Any<TimeRange>(), Arg.Any<SortMetric>(), Arg.Any<int>(),
             Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>()).Returns(songs.Task);
-        statistics.GetTopArtistsPageAsync(Arg.Any<TimeRange>(), Arg.Any<int>(), Arg.Any<SortMetric>(),
+        statistics.GetTopArtistsAsync(Arg.Any<TimeRange>(), Arg.Any<SortMetric>(), Arg.Any<int>(),
             Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>()).Returns(artists.Task);
         var viewModel = CreateViewModel(statistics);
 
@@ -157,14 +149,14 @@ public class InsightsViewModelTests
     {
         var statistics = Substitute.For<IStatisticsService>();
         var response = new TaskCompletionSource<StatisticsPage<SongStats>>(TaskCreationOptions.RunContinuationsAsynchronously);
-        statistics.GetTopSongsPageAsync(Arg.Any<TimeRange>(), Arg.Any<int>(), Arg.Any<SortMetric>(),
+        statistics.GetTopSongsAsync(Arg.Any<TimeRange>(), Arg.Any<SortMetric>(), Arg.Any<int>(),
             Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>()).Returns(response.Task);
         var viewModel = CreateViewModel(statistics);
 
         var load = viewModel.OpenSeeAllSongsCommand.ExecuteAsync(null);
         await viewModel.CloseSeeAllCommand.ExecuteAsync(null);
         response.SetResult(new StatisticsPage<SongStats>(
-            new[] { new SongStats(new Song { Title = "Stale song" }, 1, TimeSpan.Zero, 0) }, 200));
+            new[] { new SongStats(new Song { Title = "Stale song" }, 1, TimeSpan.Zero, 1) }, 200));
         await load;
 
         viewModel.IsSeeAllOpen.Should().BeFalse();
@@ -177,14 +169,14 @@ public class InsightsViewModelTests
     public async Task FailedNextPage_PreservesDisplayedPageAndAllowsRetryAndPreviousPage()
     {
         var statistics = Substitute.For<IStatisticsService>();
-        var first = new SongStats(new Song { Title = "First page" }, 1, TimeSpan.Zero, 0);
-        var second = new SongStats(new Song { Title = "Second page" }, 1, TimeSpan.Zero, 0);
-        statistics.GetTopSongsPageAsync(Arg.Any<TimeRange>(), Arg.Any<int>(), Arg.Any<SortMetric>(),
+        var first = new SongStats(new Song { Title = "First page" }, 1, TimeSpan.Zero, 1);
+        var second = new SongStats(new Song { Title = "Second page" }, 1, TimeSpan.Zero, 26);
+        statistics.GetTopSongsAsync(Arg.Any<TimeRange>(), Arg.Any<SortMetric>(), Arg.Is(0),
             Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(new StatisticsPage<SongStats>(new[] { first }, 50));
-        statistics.GetTopSongsAsync(Arg.Any<TimeRange>(), Arg.Any<int>(), Arg.Any<SortMetric>(),
+        statistics.GetTopSongsAsync(Arg.Any<TimeRange>(), Arg.Any<SortMetric>(), Arg.Is<int>(offset => offset > 0),
             Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
-            .Returns(Task.FromException<IEnumerable<SongStats>>(new IOException("Page unavailable")));
+            .Returns(Task.FromException<StatisticsPage<SongStats>>(new IOException("Page unavailable")));
         var viewModel = CreateViewModel(statistics);
         await viewModel.OpenSeeAllSongsCommand.ExecuteAsync(null);
 
@@ -194,9 +186,9 @@ public class InsightsViewModelTests
         viewModel.SeeAllSongs.Should().ContainSingle().Which.Title.Should().Be("First page");
         viewModel.IsSeeAllLoading.Should().BeFalse();
 
-        statistics.GetTopSongsAsync(Arg.Any<TimeRange>(), Arg.Any<int>(), Arg.Any<SortMetric>(),
+        statistics.GetTopSongsAsync(Arg.Any<TimeRange>(), Arg.Any<SortMetric>(), Arg.Is<int>(offset => offset > 0),
             Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
-            .Returns(call => new[] { call.ArgAt<int>(3) == 0 ? first : second });
+            .Returns(new StatisticsPage<SongStats>(new[] { second }, 50));
         await viewModel.SeeAllNextPageCommand.ExecuteAsync(null);
         viewModel.SeeAllCurrentPage.Should().Be(2);
         viewModel.SeeAllSongs.Should().ContainSingle().Which.Title.Should().Be("Second page");
@@ -204,6 +196,22 @@ public class InsightsViewModelTests
         await viewModel.SeeAllPreviousPageCommand.ExecuteAsync(null);
         viewModel.SeeAllCurrentPage.Should().Be(1);
         viewModel.SeeAllSongs.Should().ContainSingle().Which.Title.Should().Be("First page");
+    }
+
+    private static void StubRankings(IStatisticsService statistics, int playedSongs)
+    {
+        statistics.GetTopSongsAsync(Arg.Any<TimeRange>(), Arg.Any<SortMetric>(), Arg.Any<int>(),
+            Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
+            .Returns(new StatisticsPage<SongStats>([], playedSongs));
+        statistics.GetTopArtistsAsync(Arg.Any<TimeRange>(), Arg.Any<SortMetric>(), Arg.Any<int>(),
+            Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
+            .Returns(new StatisticsPage<ArtistStats>([], 0));
+        statistics.GetTopAlbumsAsync(Arg.Any<TimeRange>(), Arg.Any<SortMetric>(), Arg.Any<int>(),
+            Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
+            .Returns(new StatisticsPage<AlbumStats>([], 0));
+        statistics.GetTopGenresAsync(Arg.Any<TimeRange>(), Arg.Any<SortMetric>(), Arg.Any<int>(),
+            Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
+            .Returns(new StatisticsPage<GenreStats>([], 0));
     }
 
     private static InsightsViewModel CreateViewModel(IStatisticsService statistics) =>
