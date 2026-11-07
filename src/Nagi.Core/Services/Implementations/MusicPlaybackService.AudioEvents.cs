@@ -98,9 +98,9 @@ public partial class MusicPlaybackService
         UpdateMediaControlsTimeline(CurrentPosition);
     }
 
-    private void OnAudioPlayerErrorOccurred(string errorMessage)
+    private void OnAudioPlayerErrorOccurred()
     {
-        _logger.LogWarning("Audio playback failed: {Message}", errorMessage);
+        _logger.LogWarning("Audio playback failed. Stopping playback.");
         // Read before stopping, which clears the current track.
         var song = CurrentTrack;
         FireAndForgetSafe(StopAsync, "Error recovery");

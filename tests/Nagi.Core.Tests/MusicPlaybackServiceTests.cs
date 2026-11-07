@@ -1292,7 +1292,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         await _service.InitializeAsync();
         await _service.PlayAsync(_testSongs[0]);
 
-        _audioPlayer.ErrorOccurred += Raise.Event<Action<string>>("File not found");
+        _audioPlayer.ErrorOccurred += Raise.Event<Action>();
 
         await _service.FlushPendingFinalizationAsync();
         _service.CurrentTrack.Should().BeNull();

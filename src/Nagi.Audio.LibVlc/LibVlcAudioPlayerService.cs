@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Resources;
 using Nagi.Core.Settings;
 
 namespace Nagi.Audio.LibVlc;
@@ -210,8 +209,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         };
     }
 
-    public event Action? PlaybackEnded, PositionChanged, StateChanged, VolumeChanged, MediaOpened, DurationChanged;
-    public event Action<string>? ErrorOccurred;
+    public event Action? PlaybackEnded, PositionChanged, StateChanged, VolumeChanged, MediaOpened, DurationChanged, ErrorOccurred;
 
     public bool IsPlaying => !_isPausing && ReadNative(() => _mediaPlayer?.State == VLCState.Playing, false);
     public bool IsOpening => _isOpening;
@@ -303,9 +301,8 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         }
         catch (Exception ex)
         {
-            var errorMessage = string.Format(Strings.Player_Error_LoadFailed, song.Title);
             _logger.LogError(ex, "Failed to load song '{SongTitle}' from path: {FilePath}", song.Title, song.FilePath);
-            _dispatcherService.TryEnqueue(() => ErrorOccurred?.Invoke(errorMessage));
+            _dispatcherService.TryEnqueue(() => ErrorOccurred?.Invoke());
             _currentSong = null;
 
             try

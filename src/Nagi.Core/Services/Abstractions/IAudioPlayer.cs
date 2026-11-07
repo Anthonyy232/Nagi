@@ -18,7 +18,10 @@ public interface IAudioPlayer : IDisposable
 
     event Action? VolumeChanged;
 
-    event Action<string>? ErrorOccurred;
+    /// <summary>
+    ///     Occurs when the current song can't be loaded or played. The player logs the reason itself.
+    /// </summary>
+    event Action? ErrorOccurred;
 
     event Action? MediaOpened;
 

@@ -315,15 +315,6 @@
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Valittu tiedosto ei ole kelvollinen Nagi-varmuuskopio.</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC kohtasi määrittämättömän virheen.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC-virhe: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Kohteen '{0}' lataaminen epäonnistui.</value>
-  </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>Selaa musiikkikirjastoa</value>
   </data>

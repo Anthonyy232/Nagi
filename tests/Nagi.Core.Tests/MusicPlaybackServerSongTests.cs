@@ -33,14 +33,14 @@ public partial class MusicPlaybackServiceTests
         var failed = new List<Song>();
         _service.ServerSongFailed += failed.Add;
         await _service.PlayAsync(_testSongs[0]);
-        _audioPlayer.ErrorOccurred += Raise.Event<Action<string>>("File not found");
+        _audioPlayer.ErrorOccurred += Raise.Event<Action>();
         await _service.FlushPendingFinalizationAsync();
 
         var song = _testSongs[1];
         song.RemoteId = "s1";
         _musicServers.GetStreamUriAsync(song).Returns(new Uri("https://music.example.com/rest/stream.view?id=s1"));
         await _service.PlayAsync(song);
-        _audioPlayer.ErrorOccurred += Raise.Event<Action<string>>("Your media can't be opened");
+        _audioPlayer.ErrorOccurred += Raise.Event<Action>();
 
         failed.Should().ContainSingle().Which.Should().BeSameAs(song);
     }

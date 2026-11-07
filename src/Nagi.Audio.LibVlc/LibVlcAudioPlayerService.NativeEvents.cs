@@ -1,7 +1,6 @@
 using LibVLCSharp;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
-using Nagi.Core.Resources;
 
 namespace Nagi.Audio.LibVlc;
 
@@ -64,16 +63,13 @@ public sealed partial class LibVlcAudioPlayerService
         _isExplicitStop = true;
         SetOpening(false);
 
-        // Also shown to the user, so redacted like VLC's log.
+        // Redacted like VLC's log: a server stream's URL carries the sign-in.
         var lastVlcError = UrlRedaction.RemoveQueries(ReadNative(() => _libVlc?.LastLibVLCError, null));
-        var errorMessage = string.IsNullOrEmpty(lastVlcError)
-            ? Strings.Player_Error_LibVLC_Unspecified
-            : string.Format(Strings.Player_Error_LibVLC_WithDetails, lastVlcError);
-        _logger.LogError("Playback error occurred. {ErrorMessage}", errorMessage);
+        _logger.LogError("Playback error occurred. LibVLC error: {LastError}", lastVlcError);
         _dispatcherService.TryEnqueue(() =>
         {
             if (_isDisposed) return;
-            ErrorOccurred?.Invoke(errorMessage);
+            ErrorOccurred?.Invoke();
         });
     }
 
