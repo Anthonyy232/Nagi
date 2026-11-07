@@ -9,9 +9,9 @@ namespace Nagi.Presentation.Logging;
 public static class AppLogging
 {
     /// <summary>
-    ///     Configures the global Serilog logger. Returns the path of the log file.
+    ///     Configures the global Serilog logger, writing a log file per day to <paramref name="logsDirectory" />.
     /// </summary>
-    public static string Configure(string logsDirectory)
+    public static void Configure(string logsDirectory)
     {
         var logFilePath = Path.Combine(logsDirectory, "log.txt");
 
@@ -33,8 +33,6 @@ public static class AppLogging
                 "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] [{ThreadId}] {Message:lj}{NewLine}{Exception}")
             .WriteTo.Sink(MemoryLog.Instance)
             .CreateLogger();
-
-        return logFilePath;
     }
 
     public static string BuildCrashReport(Exception exception) =>
