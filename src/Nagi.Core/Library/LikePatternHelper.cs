@@ -3,7 +3,7 @@ namespace Nagi.Core.Library;
 /// <summary>
 /// Builds SQL LIKE patterns that treat user-entered wildcard characters literally.
 /// </summary>
-public static class LikePatternHelper
+internal static class LikePatternHelper
 {
     public const string EscapeCharacter = "!";
 

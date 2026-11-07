@@ -6,7 +6,7 @@ namespace Nagi.Core.OnlineProviders;
 /// <summary>
 ///     Decides whether a name from an online catalog refers to the same thing as a library name.
 /// </summary>
-public static partial class NameMatch
+internal static partial class NameMatch
 {
     // Catalogs and tags disagree on case, accents, punctuation and full-width forms ("Beyoncé", "AC/DC").
     private const CompareOptions LooseOptions = CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace |

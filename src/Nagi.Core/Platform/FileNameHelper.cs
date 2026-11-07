@@ -1,6 +1,6 @@
 ﻿namespace Nagi.Core.Platform;
 
-public static class FileNameHelper
+internal static class FileNameHelper
 {
     /// <summary>
     ///     Sanitizes a string for use as a file name by removing characters that are

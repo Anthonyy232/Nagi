@@ -1,7 +1,7 @@
 ﻿namespace Nagi.Core.OnlineProviders;
 
 /// <summary>The keys Nagi's API server hands out.</summary>
-public static class ApiKeyNames
+internal static class ApiKeyNames
 {
     public const string LastFm = "lastfm";
 

@@ -6,7 +6,7 @@ namespace Nagi.Core.Library;
 ///     Produces normalized sort keys for titles and names. Leading English articles ("the", "a", "an")
 ///     are removed so "The Beatles" sorts under "B".
 /// </summary>
-public static class SortKeyHelper
+internal static class SortKeyHelper
 {
     private static readonly string[] LeadingArticles = { "the ", "a ", "an " };
 

@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Nagi.Core.OnlineProviders;
 
-public static class LastFmApiHelper
+internal static class LastFmApiHelper
 {
     public const string BaseUrl = "https://ws.audioscrobbler.com/2.0/";
 

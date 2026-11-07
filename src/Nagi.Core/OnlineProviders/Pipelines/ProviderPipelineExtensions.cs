@@ -6,7 +6,7 @@ namespace Nagi.Core.OnlineProviders.Pipelines;
 /// <summary>
 ///     Runs provider calls with a fallback result and disposes their responses.
 /// </summary>
-public static class ProviderPipelineExtensions
+internal static class ProviderPipelineExtensions
 {
     /// <summary>
     ///     Executes <paramref name="httpCall"/> through the provider's pipeline, feeds the

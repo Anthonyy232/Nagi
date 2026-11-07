@@ -2,7 +2,7 @@ using Nagi.Core.Platform;
 
 namespace Nagi.Core.Library;
 
-public static class ArtistNameHelper
+internal static class ArtistNameHelper
 {
     public static string Normalize(string? name) => TextNormalizer.Normalize(name) ?? Artist.UnknownArtistName;
 

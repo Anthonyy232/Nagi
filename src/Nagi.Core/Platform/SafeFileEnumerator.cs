@@ -4,7 +4,7 @@ namespace Nagi.Core.Platform;
 ///     Enumerates files without allowing an inaccessible directory, transient filesystem error,
 ///     or directory reparse-point cycle to abort or hang the whole traversal.
 /// </summary>
-public static class SafeFileEnumerator
+internal static class SafeFileEnumerator
 {
     private static readonly HashSet<string> ExcludedDirectoryNames = new(StringComparer.OrdinalIgnoreCase)
     {

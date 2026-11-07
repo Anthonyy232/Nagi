@@ -85,7 +85,7 @@ public sealed class RomanizationPackOperationResult
     public static RomanizationPackOperationResult Failure(string message) => new(false, message);
 }
 
-public static class RomanizationVersionComparer
+internal static class RomanizationVersionComparer
 {
     public static int CompareVersions(string? left, string? right)
     {
