@@ -209,12 +209,11 @@ public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposabl
     /// </summary>
     private SmartPlaylist? BuildPlaylist()
     {
-        var name = Name.Trim();
-        if (string.IsNullOrWhiteSpace(name)) return null;
+        if (string.IsNullOrWhiteSpace(Name)) return null;
 
         var playlist = new SmartPlaylist
         {
-            Name = name,
+            Name = Name,
             MatchAllRules = MatchAllRules,
             SortOrder = SelectedSortOption.SortOrder,
             CoverImageUri = CoverImageUri,

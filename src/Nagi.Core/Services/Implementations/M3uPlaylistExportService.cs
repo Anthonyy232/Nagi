@@ -75,13 +75,8 @@ public class M3uPlaylistExportService : IPlaylistExportService
             }
 
             // Nagi's playlist names are unique, so re-importing a file adds "Name (2)" rather than failing.
-            var takenNames = (await _libraryReader.GetAllPlaylistsAsync().ConfigureAwait(false))
-                .Where(existing => !existing.IsFromServer).Select(existing => existing.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
-            var baseName = ArtistNameHelper.NormalizeStringCore(playlistName) ?? playlistName;
-            var uniqueName = baseName;
-            for (var suffix = 2; takenNames.Contains(uniqueName); suffix++) uniqueName = $"{baseName} ({suffix})";
-
-            var playlist = await _playlistService.CreatePlaylistAsync(uniqueName).ConfigureAwait(false);
+            var name = await _playlistService.FindFreeNameAsync(playlistName).ConfigureAwait(false);
+            var playlist = await _playlistService.CreatePlaylistAsync(name).ConfigureAwait(false);
             var songsAdded = false;
             try
             {

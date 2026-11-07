@@ -21,6 +21,7 @@ public class M3uPlaylistExportServiceTests : IDisposable
         _libraryReader = Substitute.For<ILibraryReader>();
         _playlistService = Substitute.For<IPlaylistService>();
         _playlistService.AddSongsToPlaylistAsync(Arg.Any<Guid>(), Arg.Any<IEnumerable<Guid>>()).Returns(true);
+        _playlistService.FindFreeNameAsync(Arg.Any<string>()).Returns(call => call.Arg<string>());
         _logger = Substitute.For<ILogger<M3uPlaylistExportService>>();
         _service = new M3uPlaylistExportService(_libraryReader, _playlistService, _logger);
     }
@@ -80,7 +81,7 @@ public class M3uPlaylistExportServiceTests : IDisposable
         var m3uPath = Path.Combine(_tempDirectory, "playlist.m3u");
         await File.WriteAllLinesAsync(m3uPath, [song.FilePath]);
         _libraryReader.GetSongByFilePathAsync(song.FilePath).Returns(song);
-        _libraryReader.GetAllPlaylistsAsync().Returns([new Playlist { Name = "mix" }, new Playlist { Name = "Mix (2)" }]);
+        _playlistService.FindFreeNameAsync("Mix").Returns("Mix (3)");
         _playlistService.CreatePlaylistAsync(Arg.Any<string>()).Returns(call => new Playlist { Name = call.ArgAt<string>(0) });
 
         var result = await _service.ImportPlaylistAsync(m3uPath, "Mix");

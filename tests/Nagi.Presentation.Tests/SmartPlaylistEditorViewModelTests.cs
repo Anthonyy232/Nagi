@@ -71,7 +71,7 @@ public class SmartPlaylistEditorViewModelTests : IDisposable
     {
         _service.CreateSmartPlaylistAsync(Arg.Any<SmartPlaylist>()).Returns(call => call.Arg<SmartPlaylist>());
         _viewModel.Initialize(null);
-        _viewModel.Name = " Favourites ";
+        _viewModel.Name = "Favourites";
         _viewModel.AddRuleCommand.Execute(null);
         _viewModel.AddRuleCommand.Execute(null);
         _viewModel.Rules[1].SelectedField = RuleViewModel.AvailableFields.Single(f => f.Field == SmartPlaylistField.Album);

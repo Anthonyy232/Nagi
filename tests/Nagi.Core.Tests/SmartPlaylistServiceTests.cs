@@ -179,6 +179,21 @@ public class SmartPlaylistServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task SetSortOrderAsync_TellsPlaylistListsAboutTheNewModificationDate()
+    {
+        var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Sorted" });
+        var changed = false;
+        PlaylistUpdatedEventArgs? update = null;
+        _service.PlaylistsChanged += (_, _) => changed = true;
+        _service.PlaylistUpdated += (_, args) => update = args;
+
+        (await _service.SetSortOrderAsync(playlist.Id, SmartPlaylistSortOrder.PlayCountDesc)).Should().BeTrue();
+
+        changed.Should().BeTrue();
+        update!.DateModified.Should().Be((await _service.GetSmartPlaylistByIdAsync(playlist.Id))!.DateModified);
+    }
+
+    [Fact]
     public async Task GetSmartPlaylistByIdAsync_IncludesRulesOrderedByOrder()
     {
         var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "With Ordered Rules" });
@@ -624,11 +639,13 @@ public class SmartPlaylistServiceTests : IDisposable
             stored!.CoverImageUri = existingPath;
             await context.SaveChangesAsync();
         }
-        const string missingPath = @"C:\missing.jpg";
-        _fileSystem.ReadAllBytesAsync(missingPath).Returns(Task.FromException<byte[]>(new FileNotFoundException()));
-        var update = () => _service.UpdateSmartPlaylistCoverAsync(playlist.Id, missingPath);
+        const string unreadablePath = @"C:\locked.jpg";
+        _fileSystem.FileExists(unreadablePath).Returns(true);
+        _fileSystem.ReadAllBytesAsync(unreadablePath).Returns(Task.FromException<byte[]>(new IOException()));
+        var update = () => _service.UpdateSmartPlaylistCoverAsync(playlist.Id, unreadablePath);
 
-        await update.Should().ThrowAsync<FileNotFoundException>();
+        await update.Should().ThrowAsync<IOException>();
+        (await _service.UpdateSmartPlaylistCoverAsync(playlist.Id, @"C:\missing.jpg")).Should().BeFalse();
 
         (await _service.GetSmartPlaylistByIdAsync(playlist.Id))!.CoverImageUri.Should().Be(existingPath);
         _fileSystem.DidNotReceive().DeleteFile(Arg.Any<string>());

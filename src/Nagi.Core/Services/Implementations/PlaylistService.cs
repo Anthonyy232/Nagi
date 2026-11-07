@@ -5,19 +5,17 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Services.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
 ///     Creates, edits, and reorders user playlists. Playlist reads live in <see cref="LibraryReader" />.
-///     This service is designed to be a singleton and is internally thread-safe.
 /// </summary>
 public class PlaylistService : IPlaylistService
 {
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
-    private readonly IFileSystemService _fileSystem;
-    private readonly IImageProcessor _imageProcessor;
-    private readonly IPathConfiguration _pathConfig;
+    private readonly PlaylistRules _rules;
     private readonly ILogger<PlaylistService> _logger;
 
     public PlaylistService(
@@ -28,9 +26,7 @@ public class PlaylistService : IPlaylistService
         ILogger<PlaylistService> logger)
     {
         _contextFactory = contextFactory;
-        _fileSystem = fileSystem;
-        _imageProcessor = imageProcessor;
-        _pathConfig = pathConfig;
+        _rules = new PlaylistRules(fileSystem, imageProcessor, pathConfig, logger);
         _logger = logger;
     }
 
@@ -41,12 +37,9 @@ public class PlaylistService : IPlaylistService
     public async Task<Playlist> CreatePlaylistAsync(string name, string? description = null,
         string? coverImageUri = null)
     {
-        if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException(Resources.Strings.Error_PlaylistNameEmpty, nameof(name));
-
+        var normalizedName = PlaylistRules.NormalizeName(name);
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var normalizedName = NormalizeString(name) ?? name;
-        await ThrowIfNameTakenAsync(context, normalizedName, exceptId: null).ConfigureAwait(false);
+        await PlaylistRules.ThrowIfNameTakenAsync(OwnNames(context, exceptId: null), normalizedName).ConfigureAwait(false);
         var playlist = new Playlist
         {
             Name = normalizedName,
@@ -55,19 +48,19 @@ public class PlaylistService : IPlaylistService
             DateModified = DateTime.UtcNow
         };
 
-        if (!string.IsNullOrEmpty(coverImageUri) && _fileSystem.FileExists(coverImageUri))
-        {
-            var cachePath = _pathConfig.PlaylistImageCachePath;
-            var originalBytes = await _fileSystem.ReadAllBytesAsync(coverImageUri).ConfigureAwait(false);
-            var processedBytes = await _imageProcessor.ProcessImageBytesAsync(originalBytes).ConfigureAwait(false);
-            playlist.CoverImageUri = await ImageStorageHelper.SaveImageBytesAsync(_fileSystem, cachePath,
-                playlist.Id.ToString(), ".custom", processedBytes).ConfigureAwait(false);
-        }
+        if (!string.IsNullOrEmpty(coverImageUri))
+            (_, playlist.CoverImageUri) = await _rules.ReplaceCoverAsync(playlist.Id, coverImageUri).ConfigureAwait(false);
 
         context.Playlists.Add(playlist);
         await context.SaveChangesAsync().ConfigureAwait(false);
         PlaylistsChanged?.Invoke(this, EventArgs.Empty);
         return playlist;
+    }
+
+    public async Task<string> FindFreeNameAsync(string name)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await PlaylistRules.FindFreeNameAsync(OwnNames(context, exceptId: null), name).ConfigureAwait(false);
     }
 
     public async Task<bool> DeletePlaylistAsync(Guid playlistId)
@@ -79,34 +72,21 @@ public class PlaylistService : IPlaylistService
 
         context.Playlists.Remove(playlist);
         await context.SaveChangesAsync().ConfigureAwait(false);
-        try
-        {
-            ImageStorageHelper.DeleteImage(_fileSystem, _pathConfig.PlaylistImageCachePath, playlistId.ToString(), ".custom");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to delete cached cover for deleted playlist {PlaylistId}.", playlistId);
-        }
+        _rules.DeleteCoverOfRemovedPlaylist(playlistId);
         PlaylistsChanged?.Invoke(this, EventArgs.Empty);
         return true;
     }
 
     public async Task<bool> RenamePlaylistAsync(Guid playlistId, string newName)
     {
-        if (string.IsNullOrWhiteSpace(newName))
-            throw new ArgumentException(Resources.Strings.Error_PlaylistNameEmpty, nameof(newName));
-
+        var normalizedName = PlaylistRules.NormalizeName(newName);
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var playlist = await FindOwnPlaylistAsync(context, playlistId).ConfigureAwait(false);
         if (playlist is null) return false;
 
-        var normalizedName = NormalizeString(newName) ?? newName;
-        await ThrowIfNameTakenAsync(context, normalizedName, playlistId).ConfigureAwait(false);
+        await PlaylistRules.ThrowIfNameTakenAsync(OwnNames(context, playlistId), normalizedName).ConfigureAwait(false);
         playlist.Name = normalizedName;
-        playlist.DateModified = DateTime.UtcNow;
-        await context.SaveChangesAsync().ConfigureAwait(false);
-        PlaylistUpdated?.Invoke(this, new PlaylistUpdatedEventArgs(playlist.Id, playlist.CoverImageUri, playlist.DateModified));
-        PlaylistsChanged?.Invoke(this, EventArgs.Empty);
+        await SaveChangesAsync(context, playlist).ConfigureAwait(false);
         return true;
     }
 
@@ -116,27 +96,11 @@ public class PlaylistService : IPlaylistService
         var playlist = await FindOwnPlaylistAsync(context, playlistId).ConfigureAwait(false);
         if (playlist is null) return false;
 
-        if (!string.IsNullOrEmpty(newCoverImageUri))
-        {
-            if (!_fileSystem.FileExists(newCoverImageUri)) return false;
-            var cachePath = _pathConfig.PlaylistImageCachePath;
-            var originalBytes = await _fileSystem.ReadAllBytesAsync(newCoverImageUri).ConfigureAwait(false);
-            var processedBytes = await _imageProcessor.ProcessImageBytesAsync(originalBytes).ConfigureAwait(false);
-            var newPath = await ImageStorageHelper.SaveImageBytesAsync(_fileSystem, cachePath,
-                playlistId.ToString(), ".custom", processedBytes).ConfigureAwait(false);
-            if (newPath is null) return false;
-            playlist.CoverImageUri = newPath;
-        }
-        else
-        {
-            var cachePath = _pathConfig.PlaylistImageCachePath;
-            ImageStorageHelper.DeleteImage(_fileSystem, cachePath, playlistId.ToString(), ".custom");
-            playlist.CoverImageUri = null;
-        }
+        var (replaced, cover) = await _rules.ReplaceCoverAsync(playlistId, newCoverImageUri).ConfigureAwait(false);
+        if (!replaced) return false;
 
-        playlist.DateModified = DateTime.UtcNow;
-        await context.SaveChangesAsync().ConfigureAwait(false);
-        PlaylistUpdated?.Invoke(this, new PlaylistUpdatedEventArgs(playlist.Id, playlist.CoverImageUri, playlist.DateModified));
+        playlist.CoverImageUri = cover;
+        await SaveChangesAsync(context, playlist).ConfigureAwait(false);
         return true;
     }
 
@@ -171,9 +135,7 @@ public class PlaylistService : IPlaylistService
         });
 
         context.PlaylistSongs.AddRange(playlistSongsToAdd);
-        playlist.DateModified = DateTime.UtcNow;
-        await context.SaveChangesAsync().ConfigureAwait(false);
-        PlaylistsChanged?.Invoke(this, EventArgs.Empty);
+        await SaveChangesAsync(context, playlist).ConfigureAwait(false);
         return true;
     }
 
@@ -186,16 +148,11 @@ public class PlaylistService : IPlaylistService
         var playlist = await FindOwnPlaylistAsync(context, playlistId).ConfigureAwait(false);
         if (playlist is null) return false;
 
-        var rowsDeleted = await context.PlaylistSongs
+        await context.PlaylistSongs
             .Where(ps => ps.PlaylistId == playlistId && uniqueSongIds.Contains(ps.SongId))
             .ExecuteDeleteAsync().ConfigureAwait(false);
 
-        playlist.DateModified = DateTime.UtcNow;
-        await context.SaveChangesAsync().ConfigureAwait(false);
-        if (rowsDeleted > 0)
-        {
-            PlaylistsChanged?.Invoke(this, EventArgs.Empty);
-        }
+        await SaveChangesAsync(context, playlist).ConfigureAwait(false);
         return true;
     }
 
@@ -229,8 +186,7 @@ public class PlaylistService : IPlaylistService
 
         if (updated)
         {
-            playlist.DateModified = DateTime.UtcNow;
-            await context.SaveChangesAsync().ConfigureAwait(false);
+            await SaveChangesAsync(context, playlist).ConfigureAwait(false);
             _logger.LogInformation("Successfully normalized order for playlist {PlaylistId}", playlistId);
         }
         else
@@ -255,24 +211,27 @@ public class PlaylistService : IPlaylistService
         playlistSong.Order = newOrder;
         _logger.LogDebug("Saving new order {Order} for song {SongId} in playlist {PlaylistId}", newOrder, songId, playlistId);
 
-        playlistSong.Playlist.DateModified = DateTime.UtcNow;
-
-        await context.SaveChangesAsync().ConfigureAwait(false);
+        await SaveChangesAsync(context, playlistSong.Playlist).ConfigureAwait(false);
         _logger.LogDebug("Successfully moved song {SongId} in playlist {PlaylistId} to order {Order}", songId, playlistId, newOrder);
         return true;
+    }
+
+    /// <summary>
+    ///     Saves a change to the playlist or its songs, stamping it as modified, and tells listeners.
+    /// </summary>
+    private async Task SaveChangesAsync(MusicDbContext context, Playlist playlist)
+    {
+        playlist.DateModified = DateTime.UtcNow;
+        await context.SaveChangesAsync().ConfigureAwait(false);
+        PlaylistUpdated?.Invoke(this, new PlaylistUpdatedEventArgs(playlist.Id, playlist.CoverImageUri, playlist.DateModified));
+        PlaylistsChanged?.Invoke(this, EventArgs.Empty);
     }
 
     /// <returns>The playlist, or null when it doesn't exist or comes from a music server.</returns>
     private static Task<Playlist?> FindOwnPlaylistAsync(MusicDbContext context, Guid playlistId) =>
         context.Playlists.FirstOrDefaultAsync(p => p.Id == playlistId && p.ServerFolderId == null);
 
-    private static string? NormalizeString(string? s) => ArtistNameHelper.NormalizeStringCore(s);
-
-    // Name is NOCASE-collated, so this matches the unique index, which covers only Nagi's own playlists, rather than
-    // waiting for SaveChanges to fail.
-    private static async Task ThrowIfNameTakenAsync(MusicDbContext context, string name, Guid? exceptId)
-    {
-        if (await context.Playlists.AnyAsync(p => p.Id != exceptId && p.ServerFolderId == null && p.Name == name).ConfigureAwait(false))
-            throw new PlaylistNameTakenException(name);
-    }
+    // The unique name index covers only Nagi's own playlists.
+    private static IQueryable<string> OwnNames(MusicDbContext context, Guid? exceptId) =>
+        context.Playlists.Where(p => p.Id != exceptId && p.ServerFolderId == null).Select(p => p.Name);
 }
