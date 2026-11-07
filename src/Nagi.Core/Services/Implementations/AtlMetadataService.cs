@@ -45,7 +45,7 @@ public partial class AtlMetadataService : IMetadataService
             var fileInfo = _fileSystem.GetFileInfo(filePath);
             metadata.FileCreatedDate = fileInfo.CreationTimeUtc;
             metadata.FileModifiedDate = fileInfo.LastWriteTimeUtc;
-            metadata.Title = ArtistNameHelper.NormalizeStringCore(Path.GetFileNameWithoutExtension(filePath)) ?? Path.GetFileNameWithoutExtension(filePath);
+            metadata.Title = TextNormalizer.Normalize(Path.GetFileNameWithoutExtension(filePath)) ?? Path.GetFileNameWithoutExtension(filePath);
 
             // ATL parsing is synchronous, so enforce the timeout while awaiting it.
             var track = await Task.Run(() => new Track(filePath)).WaitAsync(TimeSpan.FromSeconds(30)).ConfigureAwait(false);
@@ -117,15 +117,15 @@ public partial class AtlMetadataService : IMetadataService
 
     private static void PopulateMetadataFromTrack(SongFileMetadata metadata, Track track, string splitCharacters, string genreSplitCharacters)
     {
-        var rawArtist = ArtistNameHelper.NormalizeStringCore(track.Artist) ?? Artist.UnknownArtistName;
-        var rawAlbumArtist = ArtistNameHelper.NormalizeStringCore(track.AlbumArtist) ?? rawArtist;
+        var rawArtist = TextNormalizer.Normalize(track.Artist) ?? Artist.UnknownArtistName;
+        var rawAlbumArtist = TextNormalizer.Normalize(track.AlbumArtist) ?? rawArtist;
 
         var artists = SplitMetadataList(rawArtist, splitCharacters);
         var albumArtists = SplitMetadataList(rawAlbumArtist, splitCharacters);
 
-        var album = ArtistNameHelper.NormalizeStringCore(track.Album) ?? Album.UnknownAlbumName;
+        var album = TextNormalizer.Normalize(track.Album) ?? Album.UnknownAlbumName;
 
-        metadata.Title = ArtistNameHelper.NormalizeStringCore(track.Title) ?? metadata.Title;
+        metadata.Title = TextNormalizer.Normalize(track.Title) ?? metadata.Title;
         metadata.Artists = artists;
         metadata.Album = album;
         metadata.AlbumArtists = albumArtists;
@@ -140,19 +140,19 @@ public partial class AtlMetadataService : IMetadataService
         metadata.Bitrate = track.Bitrate > 0 ? track.Bitrate : null;
         metadata.Channels = track.ChannelsArrangement?.NbChannels > 0 ? track.ChannelsArrangement.NbChannels : null;
 
-        var lyrics = ArtistNameHelper.NormalizeStringCore(track.Lyrics?.FirstOrDefault()?.UnsynchronizedLyrics);
+        var lyrics = TextNormalizer.Normalize(track.Lyrics?.FirstOrDefault()?.UnsynchronizedLyrics);
         metadata.Lyrics = lyrics is null
             ? null
-            : ArtistNameHelper.NormalizeStringCore(LyricsLanguagePrefix().Replace(lyrics, string.Empty));
+            : TextNormalizer.Normalize(LyricsLanguagePrefix().Replace(lyrics, string.Empty));
 
-        metadata.Composer = ArtistNameHelper.NormalizeStringCore(track.Composer);
-        metadata.Copyright = ArtistNameHelper.NormalizeStringCore(track.Copyright);
-        metadata.Comment = ArtistNameHelper.NormalizeStringCore(track.Comment);
-        metadata.Conductor = ArtistNameHelper.NormalizeStringCore(track.Conductor);
+        metadata.Composer = TextNormalizer.Normalize(track.Composer);
+        metadata.Copyright = TextNormalizer.Normalize(track.Copyright);
+        metadata.Comment = TextNormalizer.Normalize(track.Comment);
+        metadata.Conductor = TextNormalizer.Normalize(track.Conductor);
 
         PopulateMusicBrainzIds(metadata, track);
 
-        var genreString = ArtistNameHelper.NormalizeStringCore(track.Genre);
+        var genreString = TextNormalizer.Normalize(track.Genre);
         metadata.Genres = SplitMetadataList(genreString, genreSplitCharacters);
 
         // ATL doesn't have a direct Grouping property, check additional fields
@@ -160,7 +160,7 @@ public partial class AtlMetadataService : IMetadataService
             track.AdditionalFields.TryGetValue("CONTENTGROUP", out grouping) ||
             track.AdditionalFields.TryGetValue("GROUPING", out grouping) ||
             track.AdditionalFields.TryGetValue("TIT1", out grouping))
-            metadata.Grouping = ArtistNameHelper.NormalizeStringCore(grouping);
+            metadata.Grouping = TextNormalizer.Normalize(grouping);
 
         var gainKey = track.AdditionalFields.Keys
             .FirstOrDefault(k => k.Equals("REPLAYGAIN_TRACK_GAIN", StringComparison.OrdinalIgnoreCase));
@@ -215,7 +215,7 @@ public partial class AtlMetadataService : IMetadataService
 
         if (string.IsNullOrEmpty(splitCharacters))
         {
-            var normalized = ArtistNameHelper.NormalizeStringCore(
+            var normalized = TextNormalizer.Normalize(
                 input.Replace(AtlMultiValueSeparator, CombinedValueSeparator));
             return normalized != null ? [normalized] : [];
         }

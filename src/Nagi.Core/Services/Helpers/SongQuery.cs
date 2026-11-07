@@ -16,7 +16,7 @@ internal static class SongQuery
     /// </summary>
     public static IQueryable<Song> Matching(MusicDbContext context, IQueryable<Song> songs, string? searchTerm)
     {
-        if (ArtistNameHelper.NormalizeStringCore(searchTerm) is not { } normalizedTerm) return songs;
+        if (TextNormalizer.Normalize(searchTerm) is not { } normalizedTerm) return songs;
 
         var term = LikePatternHelper.CreateContainsPattern(normalizedTerm);
         var artistIds = context.Artists

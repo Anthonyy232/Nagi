@@ -15,6 +15,6 @@ public static class FileNameHelper
 
         var invalidChars = Path.GetInvalidFileNameChars();
         var sanitized = new string(name.Where(c => !invalidChars.Contains(c)).ToArray());
-        return ArtistNameHelper.NormalizeStringCore(sanitized) ?? fallback;
+        return TextNormalizer.Normalize(sanitized) ?? fallback;
     }
 }

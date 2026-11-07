@@ -19,7 +19,7 @@ internal static class LyricsFormatter
         var builder = new LrcDocumentBuilder();
         foreach (var (start, text) in lines)
         {
-            var normalized = ArtistNameHelper.NormalizeStringCore(text);
+            var normalized = TextNormalizer.Normalize(text);
             if (normalized is not null) builder.AddLine(start!.Value, normalized);
         }
 

@@ -21,7 +21,7 @@ public static class SmartPlaylistRuleValue
         {
             Format.Number when TryParseNumber(value, out var number) => number.ToString("R", CultureInfo.InvariantCulture),
             Format.Date when TryParseDate(value, out var date) => date.ToString("O", CultureInfo.InvariantCulture),
-            _ => ArtistNameHelper.NormalizeStringCore(value)
+            _ => TextNormalizer.Normalize(value)
         };
 
     public static string ToDisplayValue(SmartPlaylistField field, SmartPlaylistOperator ruleOperator, string? value) =>

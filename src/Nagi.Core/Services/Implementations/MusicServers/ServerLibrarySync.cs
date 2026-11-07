@@ -206,8 +206,8 @@ public sealed class ServerLibrarySync : IServerLibrarySync
             // Cleaned up and defaulted like tags read from files, with the user's split characters applied on top of the
             // server's own lists of names. This comes before hashing, so changing the split characters updates the
             // songs on the next sync.
-            song.Title = ArtistNameHelper.NormalizeStringCore(song.Title) ?? Song.UnknownTitle;
-            song.Album = ArtistNameHelper.NormalizeStringCore(song.Album) ?? Album.UnknownAlbumName;
+            song.Title = TextNormalizer.Normalize(song.Title) ?? Song.UnknownTitle;
+            song.Album = TextNormalizer.Normalize(song.Album) ?? Album.UnknownAlbumName;
             var artists = ArtistNameHelper.SplitNames(song.Artists, artistSplitCharacters);
             song.Artists = artists.Count > 0 ? artists : [Artist.UnknownArtistName];
             song.AlbumArtists = ArtistNameHelper.SplitNames(song.AlbumArtists, artistSplitCharacters);

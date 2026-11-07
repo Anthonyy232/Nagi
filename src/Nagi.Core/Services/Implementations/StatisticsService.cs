@@ -99,7 +99,7 @@ public class StatisticsService : IStatisticsService
             : totals.OrderByDescending(row => row.DurationTicks).ThenBy(row => row.Id);
 
         // A search filters the full ranking rather than ranking only the matches, so each item keeps its place.
-        var normalizedTerm = ArtistNameHelper.NormalizeStringCore(searchTerm);
+        var normalizedTerm = TextNormalizer.Normalize(searchTerm);
         var matching = normalizedTerm is null
             ? null
             : kind.Matching(dbContext, LikePatternHelper.CreateContainsPattern(normalizedTerm.ToLowerInvariant()));

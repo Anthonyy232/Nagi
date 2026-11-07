@@ -181,7 +181,7 @@ public partial class LibraryReader
     }
 
     private static string? SearchPattern(string? searchTerm) =>
-        ArtistNameHelper.NormalizeStringCore(searchTerm) is { } term ? LikePatternHelper.CreateContainsPattern(term) : null;
+        TextNormalizer.Normalize(searchTerm) is { } term ? LikePatternHelper.CreateContainsPattern(term) : null;
 
     private bool IgnoreArticles => _settingsService.Get(CoreSettings.IgnoreLeadingArticlesOnSort);
 

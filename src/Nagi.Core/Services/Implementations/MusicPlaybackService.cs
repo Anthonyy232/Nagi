@@ -295,7 +295,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             }).ToList(),
             Album = new Album
             {
-                Title = ArtistNameHelper.NormalizeStringCore(metadata.Album) ?? Album.UnknownAlbumName,
+                Title = TextNormalizer.Normalize(metadata.Album) ?? Album.UnknownAlbumName,
 
                 ArtistName = Artist.GetDisplayName(validAlbumArtists),
                 PrimaryArtistName = validAlbumArtists.First(),

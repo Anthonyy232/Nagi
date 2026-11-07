@@ -20,7 +20,7 @@ internal sealed class PlaylistRules(
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException(Resources.Strings.Error_PlaylistNameEmpty, nameof(name));
-        return ArtistNameHelper.NormalizeStringCore(name) ?? name;
+        return TextNormalizer.Normalize(name) ?? name;
     }
 
     /// <param name="otherNames">The names the playlist must not share, which excludes its own.</param>

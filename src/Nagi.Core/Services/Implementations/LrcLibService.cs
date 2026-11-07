@@ -37,9 +37,9 @@ public class LrcLibService : ILyricsProvider
         if (string.IsNullOrWhiteSpace(song.Title))
             return ServiceResult<string>.FromSuccessNotFound();
 
-        var trackName = ArtistNameHelper.NormalizeStringCore(song.Title)!;
-        var artistName = ArtistNameHelper.NormalizeStringCore(song.PrimaryArtistName);
-        var albumName = ArtistNameHelper.NormalizeStringCore(song.Album?.Title);
+        var trackName = TextNormalizer.Normalize(song.Title)!;
+        var artistName = TextNormalizer.Normalize(song.PrimaryArtistName);
+        var albumName = TextNormalizer.Normalize(song.Album?.Title);
         if (string.Equals(artistName, Artist.UnknownArtistName, StringComparison.OrdinalIgnoreCase)) artistName = null;
         if (string.Equals(albumName, Album.UnknownAlbumName, StringComparison.OrdinalIgnoreCase)) albumName = null;
 

@@ -368,7 +368,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 
         try
         {
-            var normalizedName = ArtistNameHelper.NormalizeStringCore(playlistName) ?? playlistName;
+            var normalizedName = TextNormalizer.Normalize(playlistName) ?? playlistName;
             var newPlaylist = await _playlistService.CreatePlaylistAsync(normalizedName, coverImageUri: coverImageUri);
             _allPlaylists.Add(new PlaylistViewModelItem(newPlaylist));
             ApplyFilter();
@@ -466,7 +466,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         try
         {
             bool success;
-            var normalizedName = ArtistNameHelper.NormalizeStringCore(newName) ?? newName;
+            var normalizedName = TextNormalizer.Normalize(newName) ?? newName;
 
             if (isSmart)
                 success = await _smartPlaylistService.RenameSmartPlaylistAsync(playlistId, normalizedName);

@@ -285,7 +285,7 @@ internal sealed class SongImport(
             artistNames.Add(Artist.UnknownArtistName);
 
         var genreNames = batch.SelectMany(m => m.Genres)
-            .Select(ArtistNameHelper.NormalizeStringCore)
+            .Select(TextNormalizer.Normalize)
             .OfType<string>()
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
@@ -320,7 +320,7 @@ internal sealed class SongImport(
     /// </summary>
     private static (string Title, List<string> ArtistNames)? AlbumOf(SongFileMetadata metadata)
     {
-        var title = ArtistNameHelper.NormalizeStringCore(metadata.Album);
+        var title = TextNormalizer.Normalize(metadata.Album);
         if (title is null) return null;
 
         var artistNames = metadata.AlbumArtists.Select(ArtistNameHelper.Normalize).ToList();
@@ -533,7 +533,7 @@ internal sealed class SongImport(
             albumLookup.TryGetValue(AlbumKey(albumTitle, albumArtistNames[0]), out album);
 
         var genres = metadata.Genres
-            .Select(ArtistNameHelper.NormalizeStringCore)
+            .Select(TextNormalizer.Normalize)
             .OfType<string>()
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .Select(name => genreLookup[name])

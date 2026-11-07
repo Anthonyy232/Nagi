@@ -105,7 +105,7 @@ public class LastFmMetadataService : ILastFmMetadataService
     {
         if (string.IsNullOrWhiteSpace(rawBio)) return null;
         var linkIndex = rawBio.IndexOf("<a href=\"https://www.last.fm", StringComparison.Ordinal);
-        return ArtistNameHelper.NormalizeStringCore(linkIndex >= 0 ? rawBio[..linkIndex] : rawBio);
+        return TextNormalizer.Normalize(linkIndex >= 0 ? rawBio[..linkIndex] : rawBio);
     }
 
     private static string? SelectBestImageUrl(IEnumerable<LastFmImage>? images)

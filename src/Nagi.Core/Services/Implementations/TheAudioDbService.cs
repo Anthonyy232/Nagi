@@ -51,11 +51,11 @@ public class TheAudioDbService : ITheAudioDbService
                     return ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound();
 
                 var info = new TheAudioDbArtistInfo(
-                    Biography: ArtistNameHelper.NormalizeStringCore(GetLocalizedBiography(artist.ExtensionData, languageCode) ?? artist.BiographyEN),
-                    ThumbUrl: ArtistNameHelper.NormalizeStringCore(artist.ArtistThumb),
-                    FanartUrl: ArtistNameHelper.NormalizeStringCore(artist.ArtistFanart)
-                               ?? ArtistNameHelper.NormalizeStringCore(artist.ArtistFanart2)
-                               ?? ArtistNameHelper.NormalizeStringCore(artist.ArtistFanart3));
+                    Biography: TextNormalizer.Normalize(GetLocalizedBiography(artist.ExtensionData, languageCode) ?? artist.BiographyEN),
+                    ThumbUrl: TextNormalizer.Normalize(artist.ArtistThumb),
+                    FanartUrl: TextNormalizer.Normalize(artist.ArtistFanart)
+                               ?? TextNormalizer.Normalize(artist.ArtistFanart2)
+                               ?? TextNormalizer.Normalize(artist.ArtistFanart3));
 
                 return info.Biography is null && info.ThumbUrl is null && info.FanartUrl is null
                     ? ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound()
@@ -71,7 +71,7 @@ public class TheAudioDbService : ITheAudioDbService
 
         return extensionData.TryGetValue($"strBiography{fieldCode}", out var biography) &&
                biography.ValueKind == JsonValueKind.String
-            ? ArtistNameHelper.NormalizeStringCore(biography.GetString())
+            ? TextNormalizer.Normalize(biography.GetString())
             : null;
     }
 

@@ -41,8 +41,8 @@ public class NetEaseLyricsService : ILyricsProvider
         if (string.IsNullOrWhiteSpace(song.Title))
             return ServiceResult<string>.FromSuccessNotFound();
 
-        var trackName = ArtistNameHelper.NormalizeStringCore(song.Title)!;
-        var artistName = ArtistNameHelper.NormalizeStringCore(song.PrimaryArtistName);
+        var trackName = TextNormalizer.Normalize(song.Title)!;
+        var artistName = TextNormalizer.Normalize(song.PrimaryArtistName);
         if (string.Equals(artistName, Artist.UnknownArtistName, StringComparison.OrdinalIgnoreCase)) artistName = null;
 
         var query = artistName is null ? trackName : $"{trackName} {artistName}";
@@ -83,13 +83,13 @@ public class NetEaseLyricsService : ILyricsProvider
         result.Result?.Songs?
             .Select(s =>
             {
-                var normalizedSongName = ArtistNameHelper.NormalizeStringCore(s.Name);
+                var normalizedSongName = TextNormalizer.Normalize(s.Name);
                 var trackScore = string.Equals(normalizedSongName, trackName, StringComparison.OrdinalIgnoreCase) ? 4
                     : normalizedSongName?.Contains(trackName, StringComparison.OrdinalIgnoreCase) == true ? 2 : 0;
                 var artistMatch = artistName is not null &&
                                   s.Artists?.Any(a =>
                                   {
-                                      var name = ArtistNameHelper.NormalizeStringCore(a.Name);
+                                      var name = TextNormalizer.Normalize(a.Name);
                                       return name?.Contains(artistName, StringComparison.OrdinalIgnoreCase) == true;
                                   }) == true;
 
