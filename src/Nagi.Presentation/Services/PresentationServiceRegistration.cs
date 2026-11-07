@@ -23,6 +23,7 @@ public static class PresentationServiceRegistration
         services.AddSingleton<MusicServerPrompts>();
         services.AddSingleton<ThemeCoordinator>();
         services.AddSingleton<WindowBehavior>();
+        services.AddSingleton<LaunchCoordinator>();
 
         services.AddSingleton<PlayerViewModel>();
         services.AddSingleton<GlobalOperationViewModel>();

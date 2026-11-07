@@ -55,6 +55,7 @@ public static class AppServiceRegistration
         services.AddSingleton<ISystemMediaControls, SmtcMediaControls>();
         services.AddSingleton<IAudioPlayer, LibVlcAudioPlayerService>();
         services.AddSingleton<TaskbarService>();
+        services.AddSingleton<JumpListService>();
     }
 
     /// <summary>

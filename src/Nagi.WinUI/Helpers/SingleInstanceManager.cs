@@ -2,6 +2,7 @@ using System.IO;
 using System.IO.Pipes;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Nagi.Presentation.Services;
 using Serilog;
 
 namespace Nagi.WinUI.Helpers;
@@ -40,13 +41,13 @@ internal sealed class SingleInstanceManager : IDisposable
         }
     }
 
-    public async Task<bool> SendActivationAsync(string? filePath, JumpListTask task, CancellationToken cancellationToken = default)
+    public async Task<bool> SendActivationAsync(string? filePath, LaunchCommand command, CancellationToken cancellationToken = default)
     {
         try
         {
             await using var pipe = new NamedPipeClientStream(".", _pipeName, PipeDirection.Out);
             await pipe.ConnectAsync(3000, cancellationToken);
-            await JsonSerializer.SerializeAsync(pipe, new ActivationMessage { FilePath = filePath, JumpListTask = task },
+            await JsonSerializer.SerializeAsync(pipe, new ActivationMessage { FilePath = filePath, Command = command },
                 cancellationToken: cancellationToken);
             return true;
         }
@@ -57,15 +58,15 @@ internal sealed class SingleInstanceManager : IDisposable
         }
     }
 
-    // Start only after the App exists. Secondary instances wait in ConnectAsync until then.
-    public void StartListening(Action<string?, JumpListTask> onActivation)
+    // Start once the activation can be handled. Secondary instances wait in ConnectAsync until then.
+    public void StartListening(Action<string?, LaunchCommand> onActivation)
     {
         _pipeServerCts = new CancellationTokenSource();
         var token = _pipeServerCts.Token;
         _pipeServerTask = Task.Run(() => RunPipeServerAsync(onActivation, token));
     }
 
-    private async Task RunPipeServerAsync(Action<string?, JumpListTask> onActivation, CancellationToken cancellationToken)
+    private async Task RunPipeServerAsync(Action<string?, LaunchCommand> onActivation, CancellationToken cancellationToken)
     {
         try
         {
@@ -78,7 +79,7 @@ internal sealed class SingleInstanceManager : IDisposable
                     await pipe.WaitForConnectionAsync(cancellationToken);
                     var message = await JsonSerializer.DeserializeAsync<ActivationMessage>(pipe,
                         cancellationToken: cancellationToken);
-                    if (message is not null) onActivation(message.FilePath, message.JumpListTask);
+                    if (message is not null) onActivation(message.FilePath, message.Command);
                 }
                 catch (Exception ex) when (ex is IOException or JsonException)
                 {
@@ -109,6 +110,6 @@ internal sealed class SingleInstanceManager : IDisposable
     private sealed class ActivationMessage
     {
         public string? FilePath { get; set; }
-        public JumpListTask JumpListTask { get; set; }
+        public LaunchCommand Command { get; set; }
     }
 }
