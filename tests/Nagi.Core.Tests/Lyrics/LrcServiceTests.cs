@@ -145,6 +145,23 @@ public class LrcServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task GetLyricsAsync_ServerSongWithoutLyricsAndOnlineLyricsOff_AsksTheServerOnceAndOnlineWhenTurnedOn()
+    {
+        var song = await SeedAsync(new Song { Title = "Undertow", FilePath = @"nagi-server:0123\s2", RemoteId = "s2" });
+        _musicServers.GetLyricsAsync(song, Arg.Any<CancellationToken>()).Returns((string?)null);
+        _pathConfig.LrcCachePath.Returns(@"C:\LyricsCache");
+        _lrcLib.GetLyricsAsync(Arg.Any<Song>(), Arg.Any<CancellationToken>()).Returns(Found("[00:02.00]From LRCLIB"));
+
+        (await _lrcService.GetLyricsAsync(song)).Should().BeNull();
+        (await _lrcService.GetLyricsAsync(song)).Should().BeNull();
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
+        var result = await _lrcService.GetLyricsAsync(song);
+
+        await _musicServers.Received(1).GetLyricsAsync(song, Arg.Any<CancellationToken>());
+        result!.Lines.Should().ContainSingle().Which.Text.Should().Be("From LRCLIB");
+    }
+
+    [Fact]
     public async Task GetLyricsAsync_ServerSongWhileTheServerIsDown_IsAskedAgainLater()
     {
         var song = await SeedAsync(new Song { Title = "Breakwater", FilePath = @"nagi-server:0123\s1", RemoteId = "s1" });
