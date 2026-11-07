@@ -44,25 +44,11 @@ public static class CoreSettings
 
     /// <summary>Every lyrics provider in priority order, enabled or not.</summary>
     public static readonly Setting<List<ServiceProviderSetting>> LyricsProviders =
-        ServiceProviders("LyricsServiceProviders", ServiceCategory.Lyrics,
-        [
-            (ServiceProviderIds.LrcLib, "LRCLIB"),
-            (ServiceProviderIds.NetEase, "NetEase")
-        ]);
+        ServiceProviders("LyricsServiceProviders", ProviderCatalog.All.Where(p => p.Can(ProviderCapabilities.Lyrics)));
 
     /// <summary>Every metadata provider in priority order, enabled or not.</summary>
     public static readonly Setting<List<ServiceProviderSetting>> MetadataProviders =
-        ServiceProviders("MetadataServiceProviders", ServiceCategory.Metadata,
-        [
-            (ServiceProviderIds.MusicBrainz, "MusicBrainz"),
-            (ServiceProviderIds.Wikipedia, "Wikipedia"),
-            (ServiceProviderIds.CoverArtArchive, "Cover Art Archive"),
-            (ServiceProviderIds.FanartTv, "Fanart.tv"),
-            (ServiceProviderIds.TheAudioDb, "TheAudioDB"),
-            (ServiceProviderIds.Deezer, "Deezer"),
-            (ServiceProviderIds.AppleMusic, "Apple Music"),
-            (ServiceProviderIds.LastFm, "Last.fm")
-        ]);
+        ServiceProviders("MetadataServiceProviders", ProviderCatalog.All.Where(p => !p.Can(ProviderCapabilities.Lyrics)));
 
     public static readonly Setting<bool> DiscordRichPresence = Setting.Value("DiscordRichPresenceEnabled", false);
 
@@ -87,39 +73,31 @@ public static class CoreSettings
         stored => stored is long ticks and not 0 ? new DateTime(ticks, DateTimeKind.Utc) : null,
         timestamp => timestamp?.ToUniversalTime().Ticks ?? 0L);
 
-    // List position is the default priority.
-    private static Setting<List<ServiceProviderSetting>> ServiceProviders(string key, ServiceCategory category,
-        (string Id, string DisplayName)[] definitions)
+    // Older versions also saved each provider's name, category and position, which are ignored now; they wrote the
+    // list in priority order too.
+    private static Setting<List<ServiceProviderSetting>> ServiceProviders(string key, IEnumerable<OnlineProvider> providers)
     {
-        List<ServiceProviderSetting> Defaults() => definitions
-            .Select(definition => new ServiceProviderSetting
-            { Id = definition.Id, DisplayName = definition.DisplayName, Category = category })
-            .ToList();
+        var defaultOrder = providers.Select(provider => provider.Id).ToList();
+        List<ServiceProviderSetting> Defaults() => defaultOrder.Select(id => new ServiceProviderSetting(id)).ToList();
 
         return Setting.Json(key, Defaults, saved =>
         {
-            var defaults = Defaults();
-            var providers = saved.DistinctBy(p => p.Id, StringComparer.OrdinalIgnoreCase)
-                .OrderBy(p => p.Order)
-                .Join(defaults, p => p.Id, p => p.Id, (configuration, definition) =>
-                {
-                    definition.IsEnabled = configuration.IsEnabled;
-                    return definition;
-                }, StringComparer.OrdinalIgnoreCase)
+            var ranked = saved.DistinctBy(p => p.Id, StringComparer.OrdinalIgnoreCase)
+                .Join(defaultOrder, p => p.Id, id => id, (configuration, id) => configuration with { Id = id },
+                    StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
             // A source added by an update goes below every source ranked above it by default, wherever the user
             // moved those, so it never outranks a source the user already preferred.
-            for (var i = 0; i < defaults.Count; i++)
+            for (var i = 0; i < defaultOrder.Count; i++)
             {
-                if (providers.Any(p => string.Equals(p.Id, defaults[i].Id, StringComparison.OrdinalIgnoreCase))) continue;
-                var higherRanked = defaults.Take(i).Select(d => d.Id).ToHashSet(StringComparer.OrdinalIgnoreCase);
-                var insertAt = providers.FindLastIndex(p => higherRanked.Contains(p.Id)) + 1;
-                providers.Insert(insertAt, defaults[i]);
+                if (ranked.Any(p => p.Id == defaultOrder[i])) continue;
+                var higherRanked = defaultOrder.Take(i).ToHashSet();
+                var insertAt = ranked.FindLastIndex(p => higherRanked.Contains(p.Id)) + 1;
+                ranked.Insert(insertAt, new ServiceProviderSetting(defaultOrder[i]));
             }
 
-            for (var i = 0; i < providers.Count; i++) providers[i].Order = i;
-            return providers;
+            return ranked;
         });
     }
 }

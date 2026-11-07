@@ -551,8 +551,8 @@ public class SettingsViewModelTests : IDisposable
     {
         _settings.Set(CoreSettings.MetadataProviders, new List<ServiceProviderSetting>
         {
-            new() { Id = ServiceProviderIds.TheAudioDb, Category = ServiceCategory.Metadata, Order = 0 },
-            new() { Id = ServiceProviderIds.MusicBrainz, Category = ServiceCategory.Metadata, Order = 1 }
+            new(ServiceProviderIds.TheAudioDb),
+            new(ServiceProviderIds.MusicBrainz)
         });
         var changed = new List<Setting>();
         _settings.SettingChanged += changed.Add;

@@ -6,7 +6,7 @@ namespace Nagi.Core.Lyrics;
 /// <summary>An online source of lyrics.</summary>
 public interface ILyricsProvider
 {
-    /// <summary>The provider's id in <see cref="ServiceProviderIds" />, as the lyrics provider settings name it.</summary>
+    /// <summary>The provider's id in <see cref="ProviderCatalog" />.</summary>
     string Id { get; }
 
     /// <returns>Raw LRC or plain text.</returns>

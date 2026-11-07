@@ -38,11 +38,6 @@ public static class TestSettings
         params string[] ids) =>
         settings.Set(providers, providers.Default
             .OrderBy(provider => Array.IndexOf(ids, provider.Id) is var index and >= 0 ? index : ids.Length)
-            .Select((provider, order) =>
-            {
-                provider.IsEnabled = ids.Contains(provider.Id);
-                provider.Order = order;
-                return provider;
-            })
+            .Select(provider => provider with { IsEnabled = ids.Contains(provider.Id) })
             .ToList());
 }
