@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} 首歌曲</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>正在启动播放列表……</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>没有歌曲符合此智能播放列表的规则。</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>此播放列表启动播放出错。</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>正在随机选择播放列表……</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>未找到播放列表。</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>播放随机播放列表出错。</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>正在加载播放列表……</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>加载播放列表出错。</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>正在创建新播放列表……</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>创建播放列表时发生错误。</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>正在更新播放列表封面……</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>更新播放列表封面失败。</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>更新播放列表封面时发生错误。</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>正在移除播放列表图片……</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>移除播放列表图片失败。</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>移除播放列表图片时发生错误。</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>正在重命名播放列表……</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>重命名播放列表失败。</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>重命名播放列表时发生错误。</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>正在删除播放列表……</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>删除播放列表失败。</value>

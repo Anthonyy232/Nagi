@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} آهنگ</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>در حال شروع لیست پخش…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>هیچ آهنگی با قوانین این لیست پخش هوشمند مطابقت ندارد.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>خطا در شروع پخش برای این لیست پخش.</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>در حال انتخاب یک لیست پخش تصادفی…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>هیچ لیست پخشی یافت نشد.</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>خطا در پخش لیست پخش تصادفی.</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>در حال بارگیری لیست‌های پخش…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>خطا در بارگذاری لیست‌های پخش.</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>در حال ایجاد لیست پخش جدید…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>هنگام ایجاد لیست پخش خطایی رخ داد.</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>در حال به‌روزرسانی کاور لیست پخش…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>به‌روزرسانی کاور لیست پخش ناموفق بود.</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>هنگام به‌روزرسانی کاور لیست پخش خطایی رخ داد.</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>در حال حذف تصویر لیست پخش…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>حذف تصویر لیست پخش ناموفق بود.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>هنگام حذف تصویر لیست پخش خطایی رخ داد.</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>در حال تغییر نام لیست پخش…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>تغییر نام لیست پخش ناموفق بود.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>هنگام تغییر نام لیست پخش خطایی رخ داد.</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>در حال حذف لیست پخش…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>حذف لیست پخش ناموفق بود.</value>

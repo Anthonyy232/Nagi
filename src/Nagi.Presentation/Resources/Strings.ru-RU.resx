@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0, plural, one {# песня} few {# песни} many {# песен} other {# песен}}</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Запуск плейлиста…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Ни одна песня не соответствует правилам этого умного плейлиста.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>Ошибка при начале воспроизведения для этого плейлиста.</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Выбор случайного плейлиста…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Плейлисты не найдены.</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>Ошибка при воспроизведении случайного плейлиста.</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Загрузка плейлистов…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>Ошибка загрузки плейлистов.</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Создание нового плейлиста…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Произошла ошибка при создании плейлиста.</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Обновление обложки плейлиста…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Не удалось обновить обложку плейлиста.</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>Произошла ошибка при обновлении обложки плейлиста.</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Удаление обложки плейлиста…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Не удалось удалить изображение плейлиста.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>Произошла ошибка при удалении изображения плейлиста.</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Переименование плейлиста…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Не удалось переименовать плейлист.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>Произошла ошибка при переименовании плейлиста.</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Удаление плейлиста…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Не удалось удалить плейлист.</value>

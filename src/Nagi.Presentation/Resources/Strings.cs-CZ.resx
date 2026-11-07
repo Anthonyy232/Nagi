@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Spouštění seznamu skladeb…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Žádné skladby neodpovídají pravidlům tohoto chytrého seznamu skladeb.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>Chyba při spouštění přehrávání pro tento seznam skladeb.</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Výběr náhodného seznamu skladeb…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Nebyly nalezeny žádné seznamy skladeb.</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>Chyba při přehrávání náhodného seznamu skladeb.</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Načítání seznamů skladeb…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>Chyba při načítání seznamů skladeb.</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Vytváření nového seznamu skladeb…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Při vytváření seznamu skladeb došlo k chybě.</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Aktualizace obalu seznamu skladeb…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Nepodařilo se aktualizovat obal seznamu skladeb.</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>Při aktualizaci obalu seznamu skladeb došlo k chybě.</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Odebrání obrázku seznamu skladeb…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Nepodařilo se odstranit obrázek seznamu skladeb.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>Při odstraňování obrázku seznamu skladeb došlo k chybě.</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Přejmenování seznamu skladeb…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Nepodařilo se přejmenovat seznam skladeb.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>Při přejmenování seznamu skladeb došlo k chybě.</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Mazání seznamu skladeb…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Nepodařilo se smazat seznam skladeb.</value>

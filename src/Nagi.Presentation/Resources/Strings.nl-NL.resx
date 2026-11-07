@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} nummers</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Afspeellijst starten…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Geen nummers voldoen aan de regels van deze slimme afspeellijst.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>Fout bij starten afspelen voor deze afspeellijst.</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Willekeurige afspeellijst kiezen…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Geen afspeellijsten gevonden.</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>Fout bij afspelen willekeurige afspeellijst.</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Afspeellijsten laden…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>Fout bij laden afspeellijsten.</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Nieuwe afspeellijst maken…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Er is een fout opgetreden bij het aanmaken van de afspeellijst.</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Afspeellijsthoes bijwerken…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Bijwerken afspeellijsthoes mislukt.</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>Er is een fout opgetreden bij het bijwerken van de afspeellijsthoes.</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Afspeellijstafbeelding verwijderen…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Verwijderen afspeellijstafbeelding mislukt.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>Er is een fout opgetreden bij het verwijderen van de afspeellijstafbeelding.</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Naam van afspeellijst wijzigen…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Hernoemen afspeellijst mislukt.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>Er is een fout opgetreden bij het hernoemen van de afspeellijst.</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Afspeellijst verwijderen…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Verwijderen afspeellijst mislukt.</value>

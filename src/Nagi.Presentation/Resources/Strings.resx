@@ -374,17 +374,11 @@
     <value>{0} • {1}</value>
     <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Starting playlist…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>No songs match this smart playlist's rules.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>Error starting playback for this playlist.</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Picking a random playlist…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>No playlists found.</value>
@@ -395,20 +389,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>Error playing random playlist.</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Loading playlists…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>Error loading playlists.</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Creating new playlist…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>An error occurred while creating the playlist.</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Updating playlist cover…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Failed to update playlist cover.</value>
@@ -416,26 +398,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>An error occurred while updating the playlist cover.</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Removing playlist image…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Failed to remove playlist image.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>An error occurred while removing the playlist image.</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Renaming playlist…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Failed to rename playlist.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>An error occurred while renaming the playlist.</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Deleting playlist…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Failed to delete playlist.</value>

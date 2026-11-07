@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} liedjies</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Begin tans snitlys…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Geen liedjies pas by hierdie slim snitlys se reëls nie.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>Fout met begin van terugspeel vir hierdie snitlys.</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Kies tans 'n ewekansige snitlys…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Geen snitlyste gevind nie.</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>Fout met speel van ewekansige snitlys.</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Laai tans snitlyste…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>Fout met laai van snitlyste.</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Skep tans nuwe snitlys…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>'n Fout het voorgekom terwyl die snitlys geskep is.</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Opdateer tans snitlysomslag…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Kon nie snitlysomslag opdateer nie.</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>'n Fout het voorgekom terwyl die snitlysomslag opgedateer is.</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Verwyder tans snitlysbeeld…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Kon nie snitlysprent verwyder nie.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>'n Fout het voorgekom terwyl die snitlysprent verwyder is.</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Hernoem tans snitlys…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Kon nie snitlys hernoem nie.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>'n Fout het voorgekom terwyl die snitlys hernoem is.</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Skrap tans snitlys…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Kon nie snitlys uitvee nie.</value>

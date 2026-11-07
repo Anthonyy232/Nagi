@@ -22,7 +22,7 @@ public sealed partial class GenrePage : SearchablePage
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        await ViewModel.LoadGenresCommand.ExecuteAsync(null);
+        await ViewModel.LoadAsync(CancellationToken.None);
     }
 
     protected override void OnNavigatedFrom(NavigationEventArgs e)

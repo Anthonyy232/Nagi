@@ -104,9 +104,9 @@
             <GridView uihelpers:ScrollEdgeFade.IsEnabled="True"
                 IsItemClickEnabled="True"
                 ItemClick="GenresGridView_ItemClick"
-                ItemsSource="{x:Bind ViewModel.Genres, Mode=OneWay}"
+                ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
                 SelectionMode="None"
-                Visibility="{x:Bind ViewModel.HasGenres, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
+                Visibility="{x:Bind ViewModel.HasItems, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
                 Padding="{StaticResource PageContentPadding}"
                 ItemContainerStyle="{StaticResource AnimatedGridViewItemStyle}">
                 <GridView.ItemsPanel>
@@ -151,7 +151,7 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Spacing="16"
-                Visibility="{x:Bind ViewModel.HasGenres, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
+                Visibility="{x:Bind ViewModel.HasItems, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
                 <StackPanel.ChildrenTransitions>
                     <TransitionCollection>
                         <EntranceThemeTransition FromVerticalOffset="20" />

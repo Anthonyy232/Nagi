@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} amhrán</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Liosta seinm á thosú…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Níl aon amhráin ag teacht le rialacha an tseinmliosta chliste seo.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>Earráid ag tosú athsheinm don seinmliosta seo.</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Liosta seinm randamach á roghnú…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Níor aimsíodh aon seinmliostaí.</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>Earráid ag seinm seinmliosta randamach.</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Liostaí seinm á lódáil…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>Earráid ag luchtú seinmliostaí.</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Liosta seinm nua á chruthú…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Tharla earráid agus an seinmliosta á chruthú.</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Clúdach an liosta seinm á nuashonrú…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Theip ar chlúdach seinmliosta a nuashonrú.</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>Tharla earráid agus an clúdach seinmliosta á nuashonrú.</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Íomhá an liosta seinm á baint…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Theip ar íomhá seinmliosta a bhaint.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>Tharla earráid agus an íomhá seinmliosta á baint.</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Liosta seinm á athainmniú…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Theip ar an seinmliosta a athainmniú.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>Tharla earráid agus an seinmliosta á athainmniú.</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Liosta seinm á scriosadh…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Theip ar an seinmliosta a scriosadh.</value>

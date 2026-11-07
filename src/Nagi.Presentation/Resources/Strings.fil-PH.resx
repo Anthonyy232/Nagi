@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} kanta</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Sinisimulan ang playlist…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Walang kantang tumutugma sa mga panuntunan ng smart playlist na ito.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>Error sa pagsisimula ng playback para sa playlist na ito.</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Pumipili ng random na playlist…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Walang nakitang playlist.</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>Error sa pag-play ng random na playlist.</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Naglo-load ng mga playlist…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>Error sa pag-load ng mga playlist.</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Gumagawa ng bagong playlist…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>May error na naganap habang ginagawa ang playlist.</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Ina-update ang cover ng playlist…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Nabigo ang pag-update ng cover ng playlist.</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>May error na naganap habang ina-update ang cover ng playlist.</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Inaalis ang larawan ng playlist…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Nabigo ang pagtanggal ng larawan ng playlist.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>May error na naganap habang tinatanggal ang larawan ng playlist.</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Binabago ang pangalan ng playlist…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Nabigo ang pagpalit ng pangalan ng playlist.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>May error na naganap habang pinapalitan ang pangalan ng playlist.</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Binubura ang playlist…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Nabigo ang pagbura ng playlist.</value>

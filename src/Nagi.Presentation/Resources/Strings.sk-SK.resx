@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0, plural, one {# skladba} few {# skladby} many {# skladby} other {# skladieb}}</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Spúšťa sa zoznam skladieb…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Žiadne skladby nezodpovedajú pravidlám tohto inteligentného zoznamu skladieb.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>Chyba pri spustení prehrávania pre tento zoznam skladieb.</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Vyberá sa náhodný zoznam skladieb…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Nenašli sa žiadne zoznamy skladieb.</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>Chyba pri prehrávaní náhodného zoznamu skladieb.</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Načítavajú sa zoznamy skladieb…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>Chyba pri načítaní zoznamov skladieb.</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Vytvára sa nový zoznam skladieb…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Počas vytvárania zoznamu skladieb došlo k chybe.</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Aktualizuje sa obal zoznamu skladieb…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Nepodarilo sa aktualizovať obal zoznamu skladieb.</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>Počas aktualizácie obalu zoznamu skladieb došlo k chybe.</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Odstraňuje sa obrázok zoznamu skladieb…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Nepodarilo sa odstrániť obrázok zoznamu skladieb.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>Počas odstraňovania obrázka zoznamu skladieb došlo k chybe.</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Premenúva sa zoznam skladieb…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Nepodarilo sa premenovať zoznam skladieb.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>Počas premenovávania zoznamu skladieb došlo k chybe.</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Odstraňuje sa zoznam skladieb…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Nepodarilo sa odstrániť zoznam skladieb.</value>

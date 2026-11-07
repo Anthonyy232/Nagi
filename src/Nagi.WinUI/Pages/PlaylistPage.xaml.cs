@@ -21,7 +21,7 @@ public sealed partial class PlaylistPage : SearchablePage
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        await ViewModel.LoadPlaylistsCommand.ExecuteAsync(null);
+        await ViewModel.LoadAsync(CancellationToken.None);
     }
 
     protected override void OnNavigatedFrom(NavigationEventArgs e)

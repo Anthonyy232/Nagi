@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} เพลง</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>กำลังเริ่มเพลย์ลิสต์…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>ไม่มีเพลงใดตรงตามกฎของเพลย์ลิสต์อัจฉริยะนี้</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>ข้อผิดพลาดในการเริ่มเล่นเพลงสำหรับเพลย์ลิสต์นี้</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>กำลังสุ่มเลือกเพลย์ลิสต์…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>ไม่พบเพลย์ลิสต์</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>ข้อผิดพลาดในการเล่นเพลย์ลิสต์แบบสุ่ม</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>กำลังโหลดเพลย์ลิสต์…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>ข้อผิดพลาดในการโหลดเพลย์ลิสต์</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>กำลังสร้างเพลย์ลิสต์ใหม่…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>เกิดข้อผิดพลาดขณะสร้างเพลย์ลิสต์</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>กำลังอัปเดตปกเพลย์ลิสต์…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>ไม่สามารถอัปเดตปกเพลย์ลิสต์ได้</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>เกิดข้อผิดพลาดขณะอัปเดตปกเพลย์ลิสต์</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>กำลังลบรูปภาพเพลย์ลิสต์…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>ไม่สามารถลบรูปภาพเพลย์ลิสต์ได้</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>เกิดข้อผิดพลาดขณะลบรูปภาพเพลย์ลิสต์</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>กำลังเปลี่ยนชื่อเพลย์ลิสต์…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>ไม่สามารถเปลี่ยนชื่อเพลย์ลิสต์ได้</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>เกิดข้อผิดพลาดขณะเปลี่ยนชื่อเพลย์ลิสต์</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>กำลังลบเพลย์ลิสต์…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>ไม่สามารถลบเพลย์ลิสต์ได้</value>

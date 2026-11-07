@@ -45,71 +45,49 @@ public sealed class FolderViewModelItem
 ///     Manages the library's folders and music servers: adding and removing them, rescanning folders and syncing
 ///     servers.
 /// </summary>
-public partial class FolderViewModel : ObservableObject, IDisposable
+public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderViewModelItem>
 {
     private readonly ILibraryReader _libraryReader;
     private readonly ILibraryFolderService _libraryFolders;
-    private readonly ILibraryNotifier _libraryNotifier;
     private readonly IMusicServerService _musicServers;
-    private readonly ILogger<FolderViewModel> _logger;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly IMusicNavigationService _navigationService;
     private readonly IUIService _uiService;
-    private readonly IDispatcherService _dispatcherService;
     private readonly GlobalOperationViewModel _globalOperation;
-    private readonly Debouncer _debouncer = new(TimeSpan.FromSeconds(1));
 
     public FolderViewModel(ILibraryReader libraryReader, ILibraryFolderService libraryFolders, ILibraryNotifier libraryNotifier,
         IMusicServerService musicServers, GlobalOperationViewModel globalOperation,
         IMusicPlaybackService musicPlaybackService, IMusicNavigationService navigationService, IUIService uiService,
         IDispatcherService dispatcherService, ILogger<FolderViewModel> logger)
+        : base(libraryNotifier, dispatcherService, logger)
     {
         _libraryReader = libraryReader;
         _libraryFolders = libraryFolders;
-        _libraryNotifier = libraryNotifier;
         _musicServers = musicServers;
         _globalOperation = globalOperation;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
         _uiService = uiService;
-        _dispatcherService = dispatcherService;
-        _logger = logger;
 
-        Folders.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasFolders));
-
-        _libraryNotifier.Changed += OnLibraryChanged;
         _globalOperation.PropertyChanged += OnGlobalOperationPropertyChanged;
     }
 
-    private void OnLibraryChanged(object? sender, LibraryChange change)
-    {
-        if (change.Kind is LibraryChangeKind.RootAdded or LibraryChangeKind.RootRemoved or LibraryChangeKind.FolderRescanned
-            or LibraryChangeKind.LibraryRescanned or LibraryChangeKind.LibraryCleared)
-        {
-            _debouncer.Trigger(async token =>
-            {
-                try
-                {
-                    await _dispatcherService.EnqueueAsync(() => token.IsCancellationRequested
-                        ? Task.CompletedTask : LoadFoldersAsync(token));
-                }
-                catch (Exception ex) when (ex is not OperationCanceledException)
-                {
-                    _logger.LogError(ex, "Error executing debounced folder refresh");
-                }
-            });
-        }
-    }
+    protected override bool ShouldReloadOnLibraryChange(LibraryChangeKind kind) =>
+        kind is LibraryChangeKind.RootAdded or LibraryChangeKind.RootRemoved or LibraryChangeKind.FolderRescanned
+            or LibraryChangeKind.LibraryRescanned or LibraryChangeKind.LibraryCleared;
 
-    public void Dispose()
+    protected override async Task<IEnumerable<FolderViewModelItem>> LoadItemsAsync(CancellationToken token) =>
+        (await _libraryReader.GetRootFoldersWithCountsAsync(token))
+        .Select(item => new FolderViewModelItem(item.Folder, item.SongCount, item.IsServer));
+
+    protected override IEnumerable<FolderViewModelItem> Arrange(IEnumerable<FolderViewModelItem> folders) =>
+        folders.OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase).ThenBy(item => item.Id);
+
+    public override void Dispose()
     {
-        _libraryNotifier.Changed -= OnLibraryChanged;
         _globalOperation.PropertyChanged -= OnGlobalOperationPropertyChanged;
-        _debouncer.Dispose();
-        LoadFoldersCommand.Cancel();
+        base.Dispose();
     }
-
-    public ObservableRangeCollection<FolderViewModelItem> Folders { get; } = new();
 
     /// <summary>
     ///     Disables folder actions while any library operation runs, including scans started from Settings.
@@ -122,71 +100,27 @@ public partial class FolderViewModel : ObservableObject, IDisposable
             OnPropertyChanged(nameof(IsAnyOperationInProgress));
     }
 
-    public bool HasFolders => Folders.Any();
-
     public void OpenFolder(FolderViewModelItem folder) => _navigationService.OpenFolder(folder.Id, folder.Name, folder.IsServer);
 
     [RelayCommand]
     private async Task PlayFolderAsync(Guid folderId)
     {
         if (IsAnyOperationInProgress || folderId == Guid.Empty) return;
-
-        try
-        {
-            await _musicPlaybackService.PlayFolderAsync(folderId);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error playing folder {FolderId}", folderId);
-            await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, Strings.Folders_Error_Playback);
-        }
+        await UserAction.RunAsync(() => _musicPlaybackService.PlayFolderAsync(folderId), _logger, _uiService,
+            failureMessage: Strings.Folders_Error_Playback);
     }
 
     [RelayCommand]
     private async Task PlayRandomFolderAsync()
     {
         if (IsAnyOperationInProgress) return;
-
-        try
+        await UserAction.RunAsync(async () =>
         {
-            // The service method already filters for folders that contain songs
-            var randomFolderId = await _libraryReader.GetRandomFolderIdAsync();
-            if (randomFolderId.HasValue)
-            {
-                await _musicPlaybackService.PlayFolderAsync(randomFolderId.Value);
-            }
+            if (await _libraryReader.GetRandomFolderIdAsync() is { } folderId)
+                await _musicPlaybackService.PlayFolderAsync(folderId);
             else
-            {
                 await _uiService.ShowMessageDialogAsync(Strings.FolderPage_Title, Strings.Folders_Empty_NoMusicFound);
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error playing random folder");
-            await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, Strings.Folders_Error_RandomPlayback);
-        }
-    }
-
-    [RelayCommand]
-    private async Task LoadFoldersAsync(CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            var foldersFromDb = await _libraryReader.GetRootFoldersWithCountsAsync(cancellationToken);
-            cancellationToken.ThrowIfCancellationRequested();
-            var newItems = foldersFromDb
-                .Select(item => new FolderViewModelItem(item.Folder, item.SongCount, item.IsServer))
-                .OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(item => item.Id)
-                .ToList();
-
-            Folders.ReplaceRange(newItems);
-        }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to load folders");
-        }
+        }, _logger, _uiService, failureMessage: Strings.Folders_Error_RandomPlayback);
     }
 
     /// <summary>
@@ -206,7 +140,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
 
         // Adding a folder that is already in the library hands it back, so say so here rather than rescanning it.
         var canonicalNew = PathCanonicalizer.Normalize(folderPath);
-        if (Folders.Any(f => PathCanonicalizer.Normalize(f.Path).Equals(canonicalNew, StringComparison.OrdinalIgnoreCase)))
+        if (AllItems.Any(f => PathCanonicalizer.Normalize(f.Path).Equals(canonicalNew, StringComparison.OrdinalIgnoreCase)))
         {
             await _uiService.ShowMessageDialogAsync(Strings.FolderPage_AddFolder_Label, Strings.Folders_AddFolder_Exists);
             return;
@@ -242,7 +176,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     {
         if (IsAnyOperationInProgress) return;
 
-        var folderToDelete = Folders.FirstOrDefault(f => f.Id == folderId);
+        var folderToDelete = AllItems.FirstOrDefault(f => f.Id == folderId);
         if (folderToDelete == null) return;
 
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
@@ -277,7 +211,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     {
         if (IsAnyOperationInProgress) return;
 
-        var folderItem = Folders.FirstOrDefault(f => f.Id == folderId);
+        var folderItem = AllItems.FirstOrDefault(f => f.Id == folderId);
         if (folderItem == null) return;
 
         string? error = null;
@@ -313,14 +247,14 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private async Task SyncServerAsync(Guid folderId)
     {
-        if (IsAnyOperationInProgress || Folders.FirstOrDefault(f => f.Id == folderId) is not { } server) return;
+        if (IsAnyOperationInProgress || AllItems.FirstOrDefault(f => f.Id == folderId) is not { } server) return;
         await RunServerSyncAsync(server.Id, server.Name);
     }
 
     [RelayCommand]
     private async Task SignInToServerAsync(Guid folderId)
     {
-        if (IsAnyOperationInProgress || Folders.FirstOrDefault(f => f.Id == folderId) is not { } server) return;
+        if (IsAnyOperationInProgress || AllItems.FirstOrDefault(f => f.Id == folderId) is not { } server) return;
         if (await _uiService.ShowMusicServerSignInDialogAsync(folderId)) await RunServerSyncAsync(server.Id, server.Name);
     }
 

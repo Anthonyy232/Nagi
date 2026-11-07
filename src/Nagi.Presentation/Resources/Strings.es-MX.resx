@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} canciones</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Iniciando lista de reproducción…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Ninguna canción coincide con las reglas de esta lista de reproducción inteligente.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>Error al iniciar la reproducción para esta lista de reproducción.</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Eligiendo una lista de reproducción al azar…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>No se encontraron listas de reproducción.</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>Error al reproducir lista de reproducción aleatoria.</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Cargando listas de reproducción…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>Error al cargar las listas de reproducción.</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Creando nueva lista de reproducción…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Ocurrió un error al crear la lista de reproducción.</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Actualizando la portada de la lista de reproducción…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Error al actualizar la portada de la lista de reproducción.</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>Ocurrió un error al actualizar la portada de la lista de reproducción.</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Quitando la imagen de la lista de reproducción…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Error al eliminar la imagen de la lista de reproducción.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>Ocurrió un error al eliminar la imagen de la lista de reproducción.</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Cambiando el nombre de la lista de reproducción…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Error al cambiar el nombre de la lista de reproducción.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>Ocurrió un error al cambiar el nombre de la lista de reproducción.</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Eliminando lista de reproducción…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Error al eliminar la lista de reproducción.</value>

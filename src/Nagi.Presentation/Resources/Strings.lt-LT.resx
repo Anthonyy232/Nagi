@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0, plural, one {# kūrinys} few {# kūriniai} many {# kūrinio} other {# kūrinių}}</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Paleidžiamas grojaraštis…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Nėra kūrinių, atitinkančių šio išmaniojo grojaraščio taisykles.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>Klaida pradedant grojimą iš šio grojaraščio.</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Renkamas atsitiktinis grojaraštis…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Grojaraščių nerasta.</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>Klaida paleidžiant atsitiktinį grojaraštį.</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Įkeliami grojaraščiai…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>Klaida įkeliant grojaraščius.</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Kuriamas naujas grojaraštis…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Įvyko klaida kuriant grojaraštį.</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Atnaujinamas grojaraščio viršelis…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Nepavyko atnaujinti grojaraščio viršelio.</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>Įvyko klaida atnaujinant grojaraščio viršelį.</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Šalinamas grojaraščio paveikslėlis…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Nepavyko pašalinti grojaraščio paveikslėlio.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>Įvyko klaida šalinant grojaraščio paveikslėlį.</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Keičiamas grojaraščio pavadinimas…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Nepavyko pervadinti grojaraščio.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>Įvyko klaida pervadinant grojaraštį.</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Trinamas grojaraštis…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Nepavyko ištrinti grojaraščio.</value>

@@ -18,11 +18,11 @@ public class GenreViewModelTests
         library.Reader.GetGenreSummariesAsync(Arg.Any<CancellationToken>())
             .Returns(new[] { new GenreSummary(Guid.NewGuid(), "Jazz", 1), new GenreSummary(Guid.NewGuid(), "Rock", 1) });
         using var viewModel = CreateViewModel(library);
-        await viewModel.LoadGenresAsync(CancellationToken.None);
+        await viewModel.LoadAsync(CancellationToken.None);
 
         await viewModel.Sort.ChangeCommand.ExecuteAsync(GenreSortOrder.NameDesc);
 
-        viewModel.Genres.Select(genre => genre.Name).Should().Equal("Rock", "Jazz");
+        viewModel.Items.Select(genre => genre.Name).Should().Equal("Rock", "Jazz");
         viewModel.Sort.Current.Should().Be(GenreSortOrder.NameDesc);
     }
 
@@ -42,14 +42,14 @@ public class GenreViewModelTests
         });
         using var viewModel = CreateViewModel(library);
         using var cancellation = new CancellationTokenSource();
-        var first = viewModel.LoadGenresAsync(cancellation.Token);
+        var first = viewModel.LoadAsync(cancellation.Token);
         await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
-        var replacement = viewModel.LoadGenresAsync(CancellationToken.None);
+        var replacement = viewModel.LoadAsync(CancellationToken.None);
         cancellation.Cancel();
         await Task.WhenAll(first, replacement).WaitAsync(TimeSpan.FromSeconds(5));
 
-        viewModel.Genres.Should().ContainSingle().Which.Name.Should().Be("Rock");
+        viewModel.Items.Should().ContainSingle().Which.Name.Should().Be("Rock");
         viewModel.IsLoading.Should().BeFalse();
         viewModel.HasLoadError.Should().BeFalse();
     }
@@ -90,16 +90,16 @@ public class GenreViewModelTests
         library.Reader.GetGenreSummariesAsync(Arg.Any<CancellationToken>())
             .Returns(new[] { new GenreSummary(Guid.NewGuid(), "Rock", 1) });
         using var viewModel = CreateViewModel(library);
-        await viewModel.LoadGenresAsync(CancellationToken.None);
-        viewModel.Genres.Should().ContainSingle();
+        await viewModel.LoadAsync(CancellationToken.None);
+        viewModel.Items.Should().ContainSingle();
         library.Reader.GetGenreSummariesAsync(Arg.Any<CancellationToken>())
             .Returns(Task.FromException<IEnumerable<GenreSummary>>(new IOException("Library unavailable")));
 
-        await viewModel.LoadGenresAsync(CancellationToken.None);
+        await viewModel.LoadAsync(CancellationToken.None);
         await viewModel.SearchAsync();
 
         viewModel.HasLoadError.Should().BeTrue();
-        viewModel.Genres.Should().BeEmpty();
+        viewModel.Items.Should().BeEmpty();
         viewModel.ResetState();
     }
 
@@ -127,7 +127,7 @@ public class GenreViewModelTests
         using var viewModel = CreateViewModel(library);
         using var cancellation = new CancellationTokenSource();
 
-        var load = viewModel.LoadGenresAsync(cancellation.Token);
+        var load = viewModel.LoadAsync(cancellation.Token);
         cancellation.Cancel();
         try
         {

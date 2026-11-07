@@ -67,10 +67,10 @@
             IsItemClickEnabled="True"
             ItemClick="FoldersGridView_ItemClick"
             ItemContainerStyle="{StaticResource AnimatedGridViewItemStyle}"
-            ItemsSource="{x:Bind ViewModel.Folders, Mode=OneWay}"
+            ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
             SelectionMode="None"
             Padding="{StaticResource PageContentPadding}"
-            Visibility="{x:Bind ViewModel.HasFolders, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+            Visibility="{x:Bind ViewModel.HasItems, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsWrapGrid ItemWidth="{StaticResource CollectionGridItemWidth}" Orientation="Horizontal" />
@@ -157,7 +157,7 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Spacing="16"
-            Visibility="{x:Bind ViewModel.HasFolders, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
+            Visibility="{x:Bind ViewModel.HasItems, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
             <StackPanel.ChildrenTransitions>
                 <TransitionCollection>
                     <EntranceThemeTransition FromVerticalOffset="20" />

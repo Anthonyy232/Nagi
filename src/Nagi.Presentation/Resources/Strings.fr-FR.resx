@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} morceaux</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Lancement de la liste de lecture…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Aucun morceau ne correspond aux règles de cette liste de lecture intelligente.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>Erreur au démarrage de la lecture pour cette liste de lecture.</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Choix d'une liste de lecture aléatoire…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Aucune liste de lecture trouvée.</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>Erreur lors de la lecture aléatoire d'une liste de lecture.</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Chargement des listes de lecture…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>Erreur de chargement des listes de lecture.</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Création d'une nouvelle liste de lecture…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Une erreur est survenue lors de la création de la liste de lecture.</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Mise à jour de la pochette de la liste de lecture…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Échec de la mise à jour de la pochette de la liste de lecture.</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>Une erreur est survenue lors de la mise à jour de la pochette de la liste de lecture.</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Suppression de l'image de la liste de lecture…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Échec de la suppression de l'image de la liste de lecture.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>Une erreur est survenue lors de la suppression de l'image de la liste de lecture.</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Renommage de la liste de lecture…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Échec du renommage de la liste de lecture.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>Une erreur est survenue lors du renommage de la liste de lecture.</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Suppression de la liste de lecture…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Échec de la suppression de la liste de lecture.</value>

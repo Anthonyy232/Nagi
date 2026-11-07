@@ -20,7 +20,7 @@ public sealed partial class FolderPage : Page
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        await ViewModel.LoadFoldersCommand.ExecuteAsync(null);
+        await ViewModel.LoadAsync(CancellationToken.None);
     }
 
     private void FoldersGridView_ItemClick(object sender, ItemClickEventArgs e)

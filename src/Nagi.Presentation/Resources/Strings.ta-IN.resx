@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} பாடல்கள்</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>பாடல் பட்டியல் தொடங்குகிறது…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>இந்த ஸ்மார்ட் பிளேலிஸ்ட்டின் விதிகளுடன் எந்த பாடல்களும் பொருந்தவில்லை.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>இந்த பிளேலிஸ்ட்டில் பிளேபேக்கை தொடங்குவதில் பிழை.</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>தற்செயலான ஒரு பாடல் பட்டியல் தேர்ந்தெடுக்கப்படுகிறது…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>பிளேலிஸ்ட்கள் எதுவும் காணப்படவில்லை.</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>சீரற்ற பிளேலிஸ்ட்டை இயக்கும்போது பிழை.</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>பாடல் பட்டியல்கள் ஏற்றப்படுகின்றன…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>பிளேலிஸ்ட்களை ஏற்றுவதில் பிழை.</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>புதிய பாடல் பட்டியல் உருவாக்கப்படுகிறது…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>பிளேலிஸ்ட்டை உருவாக்கும்போது பிழை ஏற்பட்டது.</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>பாடல் பட்டியலின் அட்டைப் படம் புதுப்பிக்கப்படுகிறது…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>பிளேலிஸ்ட் கவரை புதுப்பிக்கத் தவறிவிட்டது.</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>பிளேலிஸ்ட் கவரை புதுப்பிக்கும்போது பிழை ஏற்பட்டது.</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>பாடல் பட்டியலின் படம் அகற்றப்படுகிறது…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>பிளேலிஸ்ட் படத்தை நீக்கத் தவறிவிட்டது.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>பிளேலிஸ்ட் படத்தை நீக்கும்போது பிழை ஏற்பட்டது.</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>பாடல் பட்டியலின் பெயர் மாற்றப்படுகிறது…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>பிளேலிஸ்ட் பெயரை மாற்றத் தவறிவிட்டது.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>பிளேலிஸ்ட் பெயரை மாற்றும்போது பிழை ஏற்பட்டது.</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>பாடல் பட்டியல் நீக்கப்படுகிறது…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>பிளேலிஸ்ட்டை நீக்கத் தவறிவிட்டது.</value>

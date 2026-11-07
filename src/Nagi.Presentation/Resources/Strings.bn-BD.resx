@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} গান</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>প্লেলিস্ট শুরু করা হচ্ছে…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>এই স্মার্ট প্লেলিস্টের নিয়মের সাথে কোনো গান মিলছে না।</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>এই প্লেলিস্টের জন্য প্লেব্যাক শুরু করতে ত্রুটি।</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>একটি এলোমেলো প্লেলিস্ট নির্বাচন করা হচ্ছে…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>কোনো প্লেলিস্ট পাওয়া যায়নি।</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>র্যান্ডম প্লেলিস্ট চালাতে ত্রুটি।</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>প্লেলিস্ট লোড করা হচ্ছে…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>প্লেলিস্ট লোড করতে ত্রুটি।</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>নতুন প্লেলিস্ট তৈরি করা হচ্ছে…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>প্লেলিস্ট তৈরির সময় একটি ত্রুটি ঘটেছে।</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>প্লেলিস্ট কভার আপডেট করা হচ্ছে…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>প্লেলিস্ট কভার আপডেট করতে ব্যর্থ হয়েছে।</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>প্লেলিস্ট কভার আপডেটের সময় একটি ত্রুটি ঘটেছে।</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>প্লেলিস্ট ছবি সরানো হচ্ছে…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>প্লেলিস্টের ছবি সরাতে ব্যর্থ হয়েছে।</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>প্লেলিস্টের ছবি সরানোর সময় একটি ত্রুটি ঘটেছে।</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>প্লেলিস্টের নাম পরিবর্তন করা হচ্ছে…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>প্লেলিস্টের নাম পরিবর্তন করতে ব্যর্থ হয়েছে।</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>প্লেলিস্টের নাম পরিবর্তনের সময় একটি ত্রুটি ঘটেছে।</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>প্লেলিস্ট মুছে ফেলা হচ্ছে…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>প্লেলিস্ট মুছে ফেলতে ব্যর্থ হয়েছে।</value>

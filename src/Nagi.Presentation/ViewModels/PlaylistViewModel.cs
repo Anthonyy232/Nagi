@@ -90,25 +90,27 @@ public partial class PlaylistViewModelItem : ObservableObject
     public override string ToString() => Name;
 }
 
-public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
+public partial class PlaylistViewModel : ClientFilteredListViewModelBase<PlaylistViewModelItem>
 {
-    private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
+    private static readonly PlaylistSortOrder[] SortOrders =
+    [
+        PlaylistSortOrder.NameAsc, PlaylistSortOrder.NameDesc, PlaylistSortOrder.DateCreatedAsc,
+        PlaylistSortOrder.DateCreatedDesc, PlaylistSortOrder.DateModifiedAsc, PlaylistSortOrder.DateModifiedDesc
+    ];
+
     private readonly ILibraryReader _libraryReader;
     private readonly IPlaylistService _playlistService;
     private readonly ISmartPlaylistService _smartPlaylistService;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly IMusicNavigationService _navigationService;
-    private readonly ISettingsService _settingsService;
     private readonly IUIService _uiService;
-    private readonly List<PlaylistViewModelItem> _allPlaylists = new();
-    private int _isMutating;
-    private int _loadVersion;
-    private bool _isDisposed;
+    private int _busyCount;
 
-    public PlaylistViewModel(ILibraryReader libraryReader, IPlaylistService playlistService, ISmartPlaylistService smartPlaylistService,
-        IMusicPlaybackService musicPlaybackService, IMusicNavigationService navigationService, IUIService uiService,
-        ISettingsService settingsService, IDispatcherService dispatcherService, ILogger<PlaylistViewModel> logger)
-        : base(dispatcherService, logger)
+    public PlaylistViewModel(ILibraryReader libraryReader, ILibraryNotifier libraryNotifier, IPlaylistService playlistService,
+        ISmartPlaylistService smartPlaylistService, IMusicPlaybackService musicPlaybackService,
+        IMusicNavigationService navigationService, IUIService uiService, ISettingsService settingsService,
+        IDispatcherService dispatcherService, ILogger<PlaylistViewModel> logger)
+        : base(libraryNotifier, dispatcherService, logger)
     {
         _libraryReader = libraryReader;
         _playlistService = playlistService;
@@ -116,59 +118,54 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
         _uiService = uiService;
-        _settingsService = settingsService;
-
-        _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasPlaylists));
-        Playlists.CollectionChanged += _collectionChangedHandler;
-
-        _playlistService.PlaylistUpdated += OnPlaylistUpdated;
-        _smartPlaylistService.PlaylistUpdated += OnPlaylistUpdated;
-
-        _playlistService.PlaylistsChanged += OnPlaylistsChanged;
-        _smartPlaylistService.PlaylistsChanged += OnPlaylistsChanged;
         Sort = new SortOrderSelection<PlaylistSortOrder>(SortOrders, AppSettings.PlaylistsSortOrder, settingsService, () =>
         {
             ApplyFilter();
             return Task.CompletedTask;
         }, logger);
-    }
 
-    private static readonly PlaylistSortOrder[] SortOrders =
-    [
-        PlaylistSortOrder.NameAsc, PlaylistSortOrder.NameDesc, PlaylistSortOrder.DateCreatedAsc,
-        PlaylistSortOrder.DateCreatedDesc, PlaylistSortOrder.DateModifiedAsc, PlaylistSortOrder.DateModifiedDesc
-    ];
+        _playlistService.PlaylistUpdated += OnPlaylistUpdated;
+        _smartPlaylistService.PlaylistUpdated += OnPlaylistUpdated;
+        _playlistService.PlaylistsChanged += OnPlaylistsChanged;
+        _smartPlaylistService.PlaylistsChanged += OnPlaylistsChanged;
+    }
 
     public SortOrderSelection<PlaylistSortOrder> Sort { get; }
 
-    public ObservableRangeCollection<PlaylistViewModelItem> Playlists { get; } = new();
+    /// <summary>Whether the list is loading or a playlist is being changed, so other changes must wait.</summary>
+    public bool IsAnyOperationInProgress => IsLoading || _busyCount > 0;
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
-    public partial bool IsCreatingPlaylist { get; set; }
+    protected override void OnLoadingChanged() => OnPropertyChanged(nameof(IsAnyOperationInProgress));
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
-    public partial bool IsRenamingPlaylist { get; set; }
+    // Playlists follow their own change events, not the library's.
+    protected override bool ShouldReloadOnLibraryChange(LibraryChangeKind kind) => false;
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
-    public partial bool IsDeletingPlaylist { get; set; }
+    protected override async Task<IEnumerable<PlaylistViewModelItem>> LoadItemsAsync(CancellationToken token)
+    {
+        var playlistsTask = _libraryReader.GetAllPlaylistsAsync();
+        var smartPlaylistsTask = _smartPlaylistService.GetAllSmartPlaylistsAsync();
+        var matchCountsTask = _smartPlaylistService.GetAllMatchingSongCountsAsync();
+        await Task.WhenAll(playlistsTask, smartPlaylistsTask, matchCountsTask);
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
-    public partial bool IsUpdatingCover { get; set; }
+        var matchCounts = matchCountsTask.Result;
+        return playlistsTask.Result.Select(playlist => new PlaylistViewModelItem(playlist))
+            .Concat(smartPlaylistsTask.Result.Select(playlist =>
+                new PlaylistViewModelItem(playlist, matchCounts.GetValueOrDefault(playlist.Id))))
+            .ToList();
+    }
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
-    public partial bool IsLoadingPlaylists { get; set; }
+    protected override bool MatchesSearch(PlaylistViewModelItem playlist, string searchTerm) =>
+        playlist.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
 
-    [ObservableProperty] public partial string StatusMessage { get; set; } = string.Empty;
-
-    public bool IsAnyOperationInProgress =>
-        IsLoadingPlaylists || IsCreatingPlaylist || IsRenamingPlaylist || IsDeletingPlaylist || IsUpdatingCover;
-
-    public bool HasPlaylists => Playlists.Count > 0;
+    protected override IEnumerable<PlaylistViewModelItem> Arrange(IEnumerable<PlaylistViewModelItem> playlists) => Sort.Current switch
+    {
+        PlaylistSortOrder.NameDesc => playlists.OrderByDescending(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
+        PlaylistSortOrder.DateCreatedDesc => playlists.OrderByDescending(p => p.DateCreated).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
+        PlaylistSortOrder.DateCreatedAsc => playlists.OrderBy(p => p.DateCreated).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
+        PlaylistSortOrder.DateModifiedDesc => playlists.OrderByDescending(p => p.DateModified).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
+        PlaylistSortOrder.DateModifiedAsc => playlists.OrderBy(p => p.DateModified).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
+        _ => playlists.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id)
+    };
 
     public void OpenPlaylist(PlaylistViewModelItem playlist)
     {
@@ -178,93 +175,54 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             _navigationService.OpenPlaylist(playlist.Id, playlist.Name, playlist.CoverImageUri, playlist.IsFromServer);
     }
 
-    /// <summary>
-    ///     Clears the current queue and starts playing the selected playlist (regular or smart).
-    /// </summary>
     [RelayCommand]
     private async Task PlayPlaylistAsync(PlaylistViewModelItem? playlist)
     {
         if (playlist is null || IsAnyOperationInProgress || playlist.Id == Guid.Empty) return;
         var (playlistId, isSmart) = (playlist.Id, playlist.IsSmart);
 
-        StatusMessage = Strings.Playlist_Status_Starting;
-        try
+        await RunAsync(async () =>
         {
-            if (isSmart)
-            {
-                if (!await _musicPlaybackService.PlaySmartPlaylistAsync(playlistId))
-                {
-                    StatusMessage = Strings.Playlist_Status_SmartEmpty;
-                    _logger.LogDebug("Smart playlist {PlaylistId} has no matching songs", playlistId);
-                    return;
-                }
-            }
-            else
-            {
+            if (!isSmart)
                 await _musicPlaybackService.PlayPlaylistAsync(playlistId);
-            }
-            StatusMessage = string.Empty;
-        }
-        catch (Exception ex)
-        {
-            StatusMessage = Strings.Playlist_Status_ErrorPlayback;
-            _logger.LogError(ex, "Error playing playlist {PlaylistId}", playlistId);
-        }
+            else if (!await _musicPlaybackService.PlaySmartPlaylistAsync(playlistId))
+                await ShowMessageAsync(Strings.PlaylistPage_Title, Strings.Playlist_Status_SmartEmpty);
+        }, Strings.Playlist_Status_ErrorPlayback);
     }
 
     /// <summary>
-    ///     Selects a random playlist (Regular or Smart) based on the total counts of each type and starts playback.
+    ///     Picks a regular or smart playlist with odds in proportion to how many of each there are, and plays it.
     /// </summary>
     [RelayCommand]
     private async Task PlayRandomPlaylistAsync()
     {
         if (IsAnyOperationInProgress) return;
-        StatusMessage = Strings.Playlist_Status_PickingRandom;
 
-        try
+        await RunAsync(async () =>
         {
             var regularCountTask = _libraryReader.GetPlaylistCountAsync();
             var smartCountTask = _smartPlaylistService.GetSmartPlaylistCountAsync();
             await Task.WhenAll(regularCountTask, smartCountTask);
-            var regularCount = await regularCountTask;
-            var smartCount = await smartCountTask;
+            var regularCount = regularCountTask.Result;
+            var totalCount = regularCount + smartCountTask.Result;
 
-            var totalCount = regularCount + smartCount;
-            if (totalCount == 0)
+            if (totalCount > 0 && Random.Shared.Next(totalCount) < regularCount)
             {
-                StatusMessage = Strings.Playlist_Status_NoPlaylists;
+                if (await _libraryReader.GetRandomPlaylistIdAsync() is { } id)
+                {
+                    await _musicPlaybackService.PlayPlaylistAsync(id);
+                    return;
+                }
+            }
+            else if (totalCount > 0 && await _smartPlaylistService.GetRandomSmartPlaylistIdAsync() is { } smartId)
+            {
+                if (!await _musicPlaybackService.PlaySmartPlaylistAsync(smartId))
+                    await ShowMessageAsync(Strings.PlaylistPage_Title, Strings.Playlist_Status_SmartSelectedEmpty);
                 return;
             }
 
-            var randomTicket = Random.Shared.Next(totalCount);
-
-            if (randomTicket < regularCount)
-            {
-                var id = await _libraryReader.GetRandomPlaylistIdAsync();
-                if (id.HasValue)
-                {
-                    await _musicPlaybackService.PlayPlaylistAsync(id.Value);
-                    StatusMessage = string.Empty;
-                }
-                else StatusMessage = Strings.Playlist_Status_NoPlaylists;
-            }
-            else
-            {
-                var id = await _smartPlaylistService.GetRandomSmartPlaylistIdAsync();
-                if (id.HasValue)
-                {
-                    StatusMessage = await _musicPlaybackService.PlaySmartPlaylistAsync(id.Value)
-                        ? string.Empty
-                        : Strings.Playlist_Status_SmartSelectedEmpty;
-                }
-                else StatusMessage = Strings.Playlist_Status_NoPlaylists;
-            }
-        }
-        catch (Exception ex)
-        {
-            StatusMessage = Strings.Playlist_Status_ErrorRandom;
-            _logger.LogError(ex, "Error playing random playlist");
-        }
+            await ShowMessageAsync(Strings.PlaylistPage_Title, Strings.Playlist_Status_NoPlaylists);
+        }, Strings.Playlist_Status_ErrorRandom);
     }
 
     /// <summary>
@@ -276,46 +234,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         if (_isDisposed || IsAnyOperationInProgress) return;
 
         var created = await _uiService.ShowSmartPlaylistEditorAsync();
-        if (created is not null && !_isDisposed) await LoadPlaylistsAsync();
-    }
-
-    [RelayCommand]
-    private async Task LoadPlaylistsAsync()
-    {
-        if (_isDisposed || IsAnyOperationInProgress && !IsLoadingPlaylists) return;
-        var loadVersion = ++_loadVersion;
-        IsLoadingPlaylists = true;
-        try
-        {
-            StatusMessage = Strings.Playlist_Status_Loading;
-            var playlistsTask = _libraryReader.GetAllPlaylistsAsync();
-            var smartPlaylistsTask = _smartPlaylistService.GetAllSmartPlaylistsAsync();
-            var matchCountsTask = _smartPlaylistService.GetAllMatchingSongCountsAsync();
-
-            await Task.WhenAll(playlistsTask, smartPlaylistsTask, matchCountsTask);
-
-            if (_isDisposed || loadVersion != _loadVersion) return;
-
-            _allPlaylists.Clear();
-
-            _allPlaylists.AddRange(playlistsTask.Result.Select(playlist => new PlaylistViewModelItem(playlist)));
-            var matchCounts = matchCountsTask.Result;
-            _allPlaylists.AddRange(smartPlaylistsTask.Result.Select(playlist =>
-                new PlaylistViewModelItem(playlist, matchCounts.GetValueOrDefault(playlist.Id))));
-            ApplyFilter();
-
-            StatusMessage = string.Empty;
-        }
-        catch (Exception ex)
-        {
-            if (_isDisposed || loadVersion != _loadVersion) return;
-            StatusMessage = Strings.Playlist_Status_ErrorLoadingPlaylists;
-            _logger.LogError(ex, "Error loading playlists");
-        }
-        finally
-        {
-            if (loadVersion == _loadVersion) IsLoadingPlaylists = false;
-        }
+        if (created is not null && !_isDisposed) await LoadAsync(CancellationToken.None);
     }
 
     /// <summary>
@@ -332,32 +251,20 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         var (playlistName, coverImageUri) = (request.Name, request.CoverImagePath);
         if (string.IsNullOrWhiteSpace(playlistName) || IsAnyOperationInProgress) return;
 
-        IsCreatingPlaylist = true;
-        Interlocked.Increment(ref _isMutating);
-        StatusMessage = Strings.Playlist_Status_Creating;
-
-        try
+        await MutateAsync(async () =>
         {
             var normalizedName = TextNormalizer.Normalize(playlistName) ?? playlistName;
-            var newPlaylist = await _playlistService.CreatePlaylistAsync(normalizedName, coverImageUri: coverImageUri);
-            _allPlaylists.Add(new PlaylistViewModelItem(newPlaylist));
-            ApplyFilter();
-            StatusMessage = string.Empty;
-        }
-        catch (PlaylistNameTakenException)
-        {
-            StatusMessage = Strings.SmartPlaylist_Error_DuplicateName;
-        }
-        catch (Exception ex)
-        {
-            StatusMessage = Strings.Playlist_Status_CreateError;
-            _logger.LogError(ex, "Error creating playlist");
-        }
-        finally
-        {
-            Interlocked.Decrement(ref _isMutating);
-            IsCreatingPlaylist = false;
-        }
+            try
+            {
+                var newPlaylist = await _playlistService.CreatePlaylistAsync(normalizedName, coverImageUri: coverImageUri);
+                AllItems.Add(new PlaylistViewModelItem(newPlaylist));
+                ApplyFilter();
+            }
+            catch (PlaylistNameTakenException)
+            {
+                await ShowMessageAsync(Strings.Generic_Error, Strings.SmartPlaylist_Error_DuplicateName);
+            }
+        }, Strings.Playlist_Status_CreateError);
     }
 
     /// <summary>
@@ -369,11 +276,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         if (playlist is null || IsAnyOperationInProgress) return;
 
         var newCoverImageUri = await _uiService.PickSingleFileAsync(FileExtensions.ImageFileExtensions);
-        if (string.IsNullOrWhiteSpace(newCoverImageUri))
-        {
-            _logger.LogDebug("User cancelled cover image selection.");
-            return;
-        }
+        if (string.IsNullOrWhiteSpace(newCoverImageUri)) return;
 
         await SetPlaylistCoverAsync(playlist.Id, playlist.IsSmart, newCoverImageUri);
     }
@@ -386,35 +289,17 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     {
         if (IsAnyOperationInProgress || playlistId == Guid.Empty) return;
 
-        IsUpdatingCover = true;
-        Interlocked.Increment(ref _isMutating);
-        StatusMessage = coverImageUri is null
-            ? Strings.Playlist_Status_RemovingCover
-            : Strings.Playlist_Status_UpdatingCover;
-
-        try
+        // PlaylistUpdated supplies the persisted cache path, not the selected source image.
+        await MutateAsync(async () =>
         {
             var success = isSmart
                 ? await _smartPlaylistService.UpdateSmartPlaylistCoverAsync(playlistId, coverImageUri)
                 : await _playlistService.UpdatePlaylistCoverAsync(playlistId, coverImageUri);
-
-            // PlaylistUpdated supplies the persisted cache path, not the selected source image.
-            StatusMessage = success ? string.Empty : coverImageUri is null
-                ? Strings.Playlist_Status_RemoveCoverFailed
-                : Strings.Playlist_Status_UpdateCoverFailed;
-        }
-        catch (Exception ex)
-        {
-            StatusMessage = coverImageUri is null
-                ? Strings.Playlist_Status_RemoveCoverError
-                : Strings.Playlist_Status_UpdateCoverError;
-            _logger.LogError(ex, "Error updating playlist cover for {PlaylistId}", playlistId);
-        }
-        finally
-        {
-            Interlocked.Decrement(ref _isMutating);
-            IsUpdatingCover = false;
-        }
+            if (!success)
+                await ShowMessageAsync(Strings.Generic_Error, coverImageUri is null
+                    ? Strings.Playlist_Status_RemoveCoverFailed
+                    : Strings.Playlist_Status_UpdateCoverFailed);
+        }, coverImageUri is null ? Strings.Playlist_Status_RemoveCoverError : Strings.Playlist_Status_UpdateCoverError);
     }
 
     /// <summary>
@@ -429,48 +314,28 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         var (playlistId, isSmart) = (playlist.Id, playlist.IsSmart);
         if (string.IsNullOrWhiteSpace(newName) || _isDisposed || IsAnyOperationInProgress) return;
 
-        IsRenamingPlaylist = true;
-        Interlocked.Increment(ref _isMutating);
-        StatusMessage = Strings.Playlist_Status_Renaming;
-
-        try
+        await MutateAsync(async () =>
         {
-            bool success;
             var normalizedName = TextNormalizer.Normalize(newName) ?? newName;
-
-            if (isSmart)
-                success = await _smartPlaylistService.RenameSmartPlaylistAsync(playlistId, normalizedName);
-            else
-                success = await _playlistService.RenamePlaylistAsync(playlistId, normalizedName);
-
-            if (success)
+            try
             {
-                var backingItem = _allPlaylists.FirstOrDefault(p => p.Id == playlistId);
-                if (backingItem != null) backingItem.Name = normalizedName;
+                var success = isSmart
+                    ? await _smartPlaylistService.RenameSmartPlaylistAsync(playlistId, normalizedName)
+                    : await _playlistService.RenamePlaylistAsync(playlistId, normalizedName);
+                if (!success)
+                {
+                    await ShowMessageAsync(Strings.Generic_Error, Strings.Playlist_Status_RenameFailed);
+                    return;
+                }
 
+                if (AllItems.FirstOrDefault(p => p.Id == playlistId) is { } item) item.Name = normalizedName;
                 ApplyFilter();
-
-                StatusMessage = string.Empty;
             }
-            else
+            catch (PlaylistNameTakenException)
             {
-                StatusMessage = Strings.Playlist_Status_RenameFailed;
+                await ShowMessageAsync(Strings.Generic_Error, Strings.SmartPlaylist_Error_DuplicateName);
             }
-        }
-        catch (PlaylistNameTakenException)
-        {
-            StatusMessage = Strings.SmartPlaylist_Error_DuplicateName;
-        }
-        catch (Exception ex)
-        {
-            StatusMessage = Strings.Playlist_Status_RenameError;
-            _logger.LogError(ex, "Error renaming playlist {PlaylistId}", playlistId);
-        }
-        finally
-        {
-            Interlocked.Decrement(ref _isMutating);
-            IsRenamingPlaylist = false;
-        }
+        }, Strings.Playlist_Status_RenameError);
     }
 
     /// <summary>
@@ -490,78 +355,51 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         var (playlistId, isSmart) = (playlist.Id, playlist.IsSmart);
         if (!confirmed || _isDisposed || IsAnyOperationInProgress) return;
 
-        IsDeletingPlaylist = true;
-        Interlocked.Increment(ref _isMutating);
-        StatusMessage = Strings.Playlist_Status_Deleting;
+        await MutateAsync(async () =>
+        {
+            var success = isSmart
+                ? await _smartPlaylistService.DeleteSmartPlaylistAsync(playlistId)
+                : await _playlistService.DeletePlaylistAsync(playlistId);
+            if (!success)
+            {
+                await ShowMessageAsync(Strings.Generic_Error, Strings.Playlist_Status_DeleteFailed);
+                return;
+            }
 
+            AllItems.RemoveAll(p => p.Id == playlistId);
+            ApplyFilter();
+        }, Strings.Playlist_Status_DeleteError);
+    }
+
+    private Task RunAsync(Func<Task> action, string failureMessage) =>
+        UserAction.RunAsync(action, _logger, _uiService, () => _isDisposed, failureMessage);
+
+    // The playlist services report this view model's own changes too; they are already applied, so no reload follows.
+    private async Task MutateAsync(Func<Task> action, string failureMessage)
+    {
+        _busyCount++;
+        OnPropertyChanged(nameof(IsAnyOperationInProgress));
         try
         {
-            bool success;
-            if (isSmart)
-                success = await _smartPlaylistService.DeleteSmartPlaylistAsync(playlistId);
-            else
-                success = await _playlistService.DeletePlaylistAsync(playlistId);
-
-            if (success)
-            {
-                _allPlaylists.RemoveAll(p => p.Id == playlistId);
-                ApplyFilter();
-                StatusMessage = string.Empty;
-            }
-            else
-            {
-                StatusMessage = Strings.Playlist_Status_DeleteFailed;
-            }
-        }
-        catch (Exception ex)
-        {
-            StatusMessage = Strings.Playlist_Status_DeleteError;
-            _logger.LogError(ex, "Error deleting playlist {PlaylistId}", playlistId);
+            await RunAsync(action, failureMessage);
         }
         finally
         {
-            Interlocked.Decrement(ref _isMutating);
-            IsDeletingPlaylist = false;
+            _busyCount--;
+            OnPropertyChanged(nameof(IsAnyOperationInProgress));
         }
     }
 
-    protected override Task ExecuteSearchAsync(CancellationToken token) =>
-        _dispatcherService.EnqueueAsync(() =>
-        {
-            if (!token.IsCancellationRequested && !_isDisposed) ApplyFilter();
-            return Task.CompletedTask;
-        });
+    private Task ShowMessageAsync(string title, string message) =>
+        _isDisposed ? Task.CompletedTask : _uiService.ShowMessageDialogAsync(title, message);
 
-    private void ApplyFilter()
+    public override void Dispose()
     {
-        IEnumerable<PlaylistViewModelItem> filtered = _allPlaylists;
-        if (IsSearchActive)
-            filtered = _allPlaylists.Where(p =>
-                p.Name.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase));
-
-        var sorted = Sort.Current switch
-        {
-            PlaylistSortOrder.NameDesc => filtered.OrderByDescending(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
-            PlaylistSortOrder.DateCreatedDesc => filtered.OrderByDescending(p => p.DateCreated).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
-            PlaylistSortOrder.DateCreatedAsc => filtered.OrderBy(p => p.DateCreated).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
-            PlaylistSortOrder.DateModifiedDesc => filtered.OrderByDescending(p => p.DateModified).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
-            PlaylistSortOrder.DateModifiedAsc => filtered.OrderBy(p => p.DateModified).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
-            _ => filtered.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id)
-        };
-
-        Playlists.ReplaceRange(sorted);
-
-    }
-
-    public void Dispose()
-    {
-        _isDisposed = true;
-        CancelPendingSearch();
-        Playlists.CollectionChanged -= _collectionChangedHandler;
         _playlistService.PlaylistUpdated -= OnPlaylistUpdated;
         _smartPlaylistService.PlaylistUpdated -= OnPlaylistUpdated;
         _playlistService.PlaylistsChanged -= OnPlaylistsChanged;
         _smartPlaylistService.PlaylistsChanged -= OnPlaylistsChanged;
+        base.Dispose();
     }
 
     private void OnPlaylistUpdated(object? sender, PlaylistUpdatedEventArgs e)
@@ -571,30 +409,23 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             if (_isDisposed) return;
             // Visible entries share these instances. Also update hidden entries so changing
             // the search filter cannot bring back stale artwork or modification dates.
-            var backingItem = _allPlaylists.FirstOrDefault(p => p.Id == e.PlaylistId);
-            if (backingItem != null)
-            {
-                backingItem.CoverImageUri = null;
-                backingItem.CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(e.CoverImageUri, e.DateModified);
-                backingItem.DateModified = e.DateModified;
-                if (Sort.Current is PlaylistSortOrder.DateModifiedAsc or PlaylistSortOrder.DateModifiedDesc)
-                    ApplyFilter();
-            }
+            if (AllItems.FirstOrDefault(p => p.Id == e.PlaylistId) is not { } item) return;
+            item.CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(e.CoverImageUri, e.DateModified);
+            item.DateModified = e.DateModified;
+            if (Sort.Current is PlaylistSortOrder.DateModifiedAsc or PlaylistSortOrder.DateModifiedDesc)
+                ApplyFilter();
         });
     }
 
     private void OnPlaylistsChanged(object? sender, EventArgs e)
     {
-        // Ignore synchronous service events from our own mutations.
-        if (_isMutating > 0) return;
+        if (_busyCount > 0) return;
 
         _dispatcherService.TryEnqueue(() =>
         {
-            if (!_isDisposed && (!IsAnyOperationInProgress || IsLoadingPlaylists))
-            {
-                _logger.LogDebug("External playlist change detected. Reloading playlists...");
-                _ = LoadPlaylistsCommand.ExecuteAsync(null);
-            }
+            if (_isDisposed || _busyCount > 0) return;
+            _logger.LogDebug("External playlist change detected. Reloading playlists...");
+            _ = LoadAsync(CancellationToken.None);
         });
     }
 }

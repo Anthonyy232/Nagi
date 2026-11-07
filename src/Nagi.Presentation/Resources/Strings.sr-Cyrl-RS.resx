@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0, plural, one {# песма} few {# песме} other {# песама}}</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Покретање плејлисте…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Ниједна песма не одговара правилима ове паметне плејлисте.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>Грешка при покретању репродукције за ову плејлисту.</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Бирање насумичне плејлисте…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Нису пронађене плејлисте.</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>Грешка при репродукцији насумичне плејлисте.</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Учитавање плејлисти…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>Грешка при учитавању плејлиста.</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Прављење нове плејлисте…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Дошло је до грешке при креирању плејлисте.</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Ажурирање омота плејлисте…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Ажурирање омота плејлисте није успело.</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>Дошло је до грешке при ажурирању омота плејлисте.</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Уклањање слике плејлисте…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Уклањање слике плејлисте није успело.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>Дошло је до грешке при уклањању слике плејлисте.</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Преименовање плејлисте…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Преименовање плејлисте није успело.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>Дошло је до грешке при преименовању плејлисте.</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Брисање плејлисте…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Брисање плејлисте није успело.</value>

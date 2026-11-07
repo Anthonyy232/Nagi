@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} Lieder</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Wiedergabeliste wird gestartet…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Keine Lieder stimmen mit den Regeln dieser intelligenten Wiedergabeliste überein.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>Fehler beim Starten der Wiedergabe für diese Wiedergabeliste.</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Zufällige Wiedergabeliste wird ausgewählt…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Keine Wiedergabelisten gefunden.</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>Fehler beim Abspielen einer zufälligen Wiedergabeliste.</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Wiedergabelisten werden geladen…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>Fehler beim Laden der Wiedergabelisten.</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Neue Wiedergabeliste wird erstellt…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Beim Erstellen der Wiedergabeliste ist ein Fehler aufgetreten.</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Cover der Wiedergabeliste wird aktualisiert…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Wiedergabelisten-Cover konnte nicht aktualisiert werden.</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>Beim Aktualisieren des Wiedergabelisten-Covers ist ein Fehler aufgetreten.</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Bild der Wiedergabeliste wird entfernt…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Wiedergabelistenbild konnte nicht entfernt werden.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>Beim Entfernen des Wiedergabelistenbildes ist ein Fehler aufgetreten.</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Wiedergabeliste wird umbenannt…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Wiedergabeliste konnte nicht umbenannt werden.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>Beim Umbenennen der Wiedergabeliste ist ein Fehler aufgetreten.</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Wiedergabeliste wird gelöscht…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Wiedergabeliste konnte nicht gelöscht werden.</value>

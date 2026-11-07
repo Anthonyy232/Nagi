@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} ਗੀਤ</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>ਪਲੇਅਲਿਸਟ ਸ਼ੁਰੂ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>ਇਸ ਸਮਾਰਟ ਪਲੇਲਿਸਟ ਦੇ ਨਿਯਮਾਂ ਨਾਲ ਕੋਈ ਗੀਤ ਮੇਲ ਨਹੀਂ ਖਾਂਦੇ।</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>ਇਸ ਪਲੇਲਿਸਟ ਲਈ ਪਲੇਬੈਕ ਸ਼ੁਰੂ ਕਰਨ ਵਿੱਚ ਗਲਤੀ।</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>ਇੱਕ ਰੈਂਡਮ ਪਲੇਅਲਿਸਟ ਚੁਣੀ ਜਾ ਰਹੀ ਹੈ…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>ਕੋਈ ਪਲੇਲਿਸਟ ਨਹੀਂ ਮਿਲੀ।</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>ਰੈਂਡਮ ਪਲੇਲਿਸਟ ਚਲਾਉਣ ਵਿੱਚ ਗਲਤੀ।</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>ਪਲੇਅਲਿਸਟਾਂ ਲੋਡ ਕੀਤੀਆਂ ਜਾ ਰਹੀਆਂ ਹਨ…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟਾਂ ਲੋਡ ਕਰਨ ਵਿੱਚ ਗਲਤੀ।</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>ਨਵੀਂ ਪਲੇਅਲਿਸਟ ਬਣਾਈ ਜਾ ਰਹੀ ਹੈ…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟ ਬਣਾਉਣ ਦੌਰਾਨ ਇੱਕ ਗਲਤੀ ਹੋਈ।</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>ਪਲੇਅਲਿਸਟ ਕਵਰ ਅੱਪਡੇਟ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟ ਕਵਰ ਅਪਡੇਟ ਕਰਨ ਵਿੱਚ ਅਸਫਲ।</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟ ਕਵਰ ਅਪਡੇਟ ਕਰਨ ਦੌਰਾਨ ਇੱਕ ਗਲਤੀ ਹੋਈ।</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>ਪਲੇਅਲਿਸਟ ਚਿੱਤਰ ਹਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟ ਚਿੱਤਰ ਹਟਾਉਣ ਵਿੱਚ ਅਸਫਲ।</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟ ਚਿੱਤਰ ਹਟਾਉਣ ਦੌਰਾਨ ਇੱਕ ਗਲਤੀ ਹੋਈ।</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>ਪਲੇਅਲਿਸਟ ਦਾ ਨਾਂ ਬਦਲਿਆ ਜਾ ਰਿਹਾ ਹੈ…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟ ਦਾ ਨਾਮ ਬਦਲਣ ਵਿੱਚ ਅਸਫਲ।</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟ ਦਾ ਨਾਮ ਬਦਲਣ ਦੌਰਾਨ ਇੱਕ ਗਲਤੀ ਹੋਈ।</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>ਪਲੇਅਲਿਸਟ ਹਟਾਈ ਜਾ ਰਹੀ ਹੈ…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟ ਮਿਟਾਉਣ ਵਿੱਚ ਅਸਫਲ।</value>
