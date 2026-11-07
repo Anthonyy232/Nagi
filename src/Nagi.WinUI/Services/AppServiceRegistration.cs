@@ -1,40 +1,43 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Nagi.Audio.LibVlc;
 using Nagi.Core.Helpers;
+using Nagi.Core.Services;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Presentation.Services;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Popups;
 using Nagi.WinUI.Services.Implementations;
+using Serilog;
 
 namespace Nagi.WinUI.Services;
 
 /// <summary>
-///     Registers the WinUI host's services: the Windows implementations of the Core and
-///     Presentation abstractions, and the window and page factories.
+///     Composes the whole app: Core, Presentation and the WinUI host's services, windows and pages.
 /// </summary>
 public static class AppServiceRegistration
 {
     /// <summary>
-    ///     Registers <paramref name="mainWindow" /> and its dispatcher queue, which the window, theme,
-    ///     dialog and dispatcher services work with.
+    ///     Resolve the <see cref="MainWindow" /> first, on the UI thread: the dispatcher queue that the window, theme,
+    ///     dialog and dispatcher services work with is the window's.
     /// </summary>
-    public static IServiceCollection AddNagiMainWindow(this IServiceCollection services, MainWindow mainWindow)
+    public static IServiceCollection AddNagiApp(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddSingleton(mainWindow);
-        services.AddSingleton(mainWindow.DispatcherQueue);
+        services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog());
+        services.AddSingleton(configuration);
+        services.AddNagiCore();
+        services.AddNagiPresentation();
+        AddPlatformServices(services);
+        AddShell(services);
         return services;
     }
 
-    /// <summary>
-    ///     Adds the Windows implementations of the Core and Presentation abstractions: storage, window,
-    ///     theme, navigation, dialogs, dispatcher, tray and audio. They need the window registered by
-    ///     <see cref="AddNagiMainWindow" />.
-    /// </summary>
-    public static IServiceCollection AddNagiPlatformServices(this IServiceCollection services)
+    private static void AddPlatformServices(IServiceCollection services)
     {
         services.AddSingleton<IPathConfiguration>(_ => PackagedAppData.CreatePathConfiguration());
         services.AddSingleton<ISettingsStore, ApplicationDataSettingsStore>();
@@ -52,23 +55,22 @@ public static class AppServiceRegistration
         services.AddSingleton<ITrayPopupService, TrayPopupService>();
         services.AddSingleton<ISystemMediaControls, SmtcMediaControls>();
         services.AddSingleton<IAudioPlayer, LibVlcAudioPlayerService>();
-        services.AddTransient<TaskbarService>();
-
-        return services;
+        services.AddSingleton<TaskbarService>();
     }
 
     /// <summary>
-    ///     Registers factories for the windows and pages that services create at runtime: the main shell,
-    ///     onboarding, the mini player and the tray popup. Each call builds a new instance with its
-    ///     dependencies from the container, which does not keep it, so closing it releases it.
+    ///     The main window, plus factories for the pages and windows that services create at runtime: the main shell,
+    ///     onboarding, the mini player and the tray popup. Each factory call builds a new instance, which the container
+    ///     does not keep, so closing it releases it.
     /// </summary>
-    public static IServiceCollection AddNagiShell(this IServiceCollection services)
+    private static void AddShell(IServiceCollection services)
     {
+        services.AddSingleton<MainWindow>();
+        services.AddSingleton<DispatcherQueue>(sp => sp.GetRequiredService<MainWindow>().DispatcherQueue);
         services.AddSingleton<Func<MainPage>>(sp => () => ActivatorUtilities.CreateInstance<MainPage>(sp));
         services.AddSingleton<Func<OnboardingPage>>(sp => () => ActivatorUtilities.CreateInstance<OnboardingPage>(sp));
         services.AddSingleton<Func<MiniPlayerWindow>>(sp => () => ActivatorUtilities.CreateInstance<MiniPlayerWindow>(sp));
         services.AddSingleton<Func<ElementTheme, TrayPopup>>(sp =>
             theme => ActivatorUtilities.CreateInstance<TrayPopup>(sp, theme));
-        return services;
     }
 }

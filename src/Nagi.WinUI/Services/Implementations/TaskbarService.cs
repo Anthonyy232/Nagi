@@ -10,6 +10,7 @@ using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;
 using Windows.Foundation;
 using Windows.UI;
+using WinRT.Interop;
 using Nagi.WinUI.Helpers;
 using static Nagi.WinUI.Helpers.NativeMethods;
 
@@ -46,6 +47,7 @@ public sealed class TaskbarService : IDisposable
     private const string FluentIconFontFamily = "Segoe Fluent Icons";
     private const string Mdl2IconFontFamily = "Segoe MDL2 Assets";
 
+    private readonly MainWindow _window;
     private readonly ILogger<TaskbarService> _logger;
     private readonly IMusicPlaybackService _playbackService;
     private readonly IDispatcherService _dispatcherService;
@@ -64,28 +66,38 @@ public sealed class TaskbarService : IDisposable
     private nint _playIcon;
     private nint _pauseIcon;
 
+    private WindowProc? _wndProcDelegate;
+    private nint _oldWndProc;
+    private long _accentColorCallbackToken;
+
     private readonly Debouncer _iconRefreshDebouncer = new(TimeSpan.FromMilliseconds(IconRefreshDebounceMs));
 
     public TaskbarService(
+        MainWindow window,
         ILogger<TaskbarService> logger,
         IMusicPlaybackService playbackService,
         IDispatcherService dispatcherService)
     {
+        _window = window;
         _logger = logger;
         _playbackService = playbackService;
         _dispatcherService = dispatcherService;
     }
 
-    /// <summary>Call once the window has a native handle.</summary>
-    public void Initialize(nint windowHandle)
-    {
-        if (_isInitialized)
-        {
-            _logger.LogWarning("TaskbarService is already initialized");
-            return;
-        }
+    // The accent brush is a top-level app resource, so it is always there.
+    private static SolidColorBrush AccentBrush => (SolidColorBrush)Application.Current.Resources["AppPrimaryColorBrush"];
 
-        _windowHandle = windowHandle;
+    /// <summary>
+    ///     Adds the buttons once the main window is first activated.
+    /// </summary>
+    public void Start() => _window.Activated += OnWindowActivated;
+
+    private void OnWindowActivated(object sender, WindowActivatedEventArgs args)
+    {
+        _window.Activated -= OnWindowActivated;
+        if (_isDisposed) return;
+
+        _windowHandle = WindowNative.GetWindowHandle(_window);
 
         try
         {
@@ -107,15 +119,26 @@ public sealed class TaskbarService : IDisposable
         _playbackService.QueueChanged += OnPlaybackChanged;
         _playbackService.ShuffleModeChanged += OnPlaybackChanged;
         _playbackService.RepeatModeChanged += OnPlaybackChanged;
+        _accentColorCallbackToken = AccentBrush.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty,
+            (_, _) => _ = RefreshIconsAsync());
+
+        // The thumbnail button clicks arrive as window messages.
+        _wndProcDelegate = WndProc;
+        _oldWndProc = SetWindowLongPtr(_windowHandle, GWLP_WNDPROC, Marshal.GetFunctionPointerForDelegate(_wndProcDelegate));
 
         _isInitialized = true;
         _ = RefreshIconsAsync();
     }
 
-    /// <summary>Call from the window's message handler, which receives the thumbnail button clicks.</summary>
-    public void HandleWindowMessage(int msg, nint wParam, nint lParam)
+    private nint WndProc(nint hWnd, int msg, nint wParam, nint lParam)
     {
-        if (!_isInitialized || _isDisposed) return;
+        HandleWindowMessage(msg, wParam);
+        return CallWindowProc(_oldWndProc, hWnd, msg, wParam, lParam);
+    }
+
+    private void HandleWindowMessage(int msg, nint wParam)
+    {
+        if (_isDisposed) return;
 
         // Handle the TaskbarButtonCreated message to re-add buttons after explorer restarts
         if ((uint)msg == _wmTaskbarButtonCreated)
@@ -142,7 +165,7 @@ public sealed class TaskbarService : IDisposable
     }
 
     /// <summary>Redraws the button icons in the current accent color; rapid calls are debounced.</summary>
-    public Task RefreshIconsAsync()
+    private Task RefreshIconsAsync()
     {
         if (!_isInitialized || _isDisposed) return Task.CompletedTask;
 
@@ -151,7 +174,7 @@ public sealed class TaskbarService : IDisposable
             try
             {
                 var foregroundColor = await _dispatcherService.EnqueueAsync(() =>
-                    token.IsCancellationRequested || _isDisposed ? default : GetAccentColor()).ConfigureAwait(false);
+                    token.IsCancellationRequested || _isDisposed ? default : AccentBrush.Color).ConfigureAwait(false);
 
                 // Win2D icon generation can run off the UI thread.
                 await Task.Run(() =>
@@ -247,9 +270,6 @@ public sealed class TaskbarService : IDisposable
         var scale = GetDpiScale(_windowHandle);
         return Math.Max(DefaultIconSize, (int)(DefaultIconSize * scale));
     }
-
-    // The accent brush is a top-level app resource, so it is always there. Read it on the UI thread.
-    private static Color GetAccentColor() => ((SolidColorBrush)Application.Current.Resources["AppPrimaryColorBrush"]).Color;
 
     /// <summary>
     ///     Renders a glyph to an HICON using Win2D.
@@ -440,8 +460,13 @@ public sealed class TaskbarService : IDisposable
     {
         if (_isDisposed) return;
         _isDisposed = true;
+        _window.Activated -= OnWindowActivated;
         if (_isInitialized)
         {
+            // Put the window's own procedure back before the delegate it calls can be collected.
+            SetWindowLongPtr(_windowHandle, GWLP_WNDPROC, _oldWndProc);
+            _wndProcDelegate = null;
+            AccentBrush.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _accentColorCallbackToken);
             _playbackService.PlaybackStateChanged -= OnPlaybackChanged;
             _playbackService.TrackChanged -= OnPlaybackChanged;
             _playbackService.QueueChanged -= OnPlaybackChanged;

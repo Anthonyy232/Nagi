@@ -41,7 +41,6 @@ public class ThemeService : IThemeService
 
             rootElement.RequestedTheme = theme.ToElementTheme();
             _ = ReapplyCurrentDynamicThemeAsync();
-            _window.InitializeCustomTitleBar();
         });
     }
 
@@ -66,7 +65,7 @@ public class ThemeService : IThemeService
 
     private void SetAppColors(ThemePalette palette)
     {
-        SetBrushColor("AppPrimaryColorBrush", palette.Primary, refreshTaskbarIcons: true);
+        SetBrushColor("AppPrimaryColorBrush", palette.Primary);
         SetBrushColor("MediaOnImageAccentBrush", palette.MediaOnImageAccent);
         SetBrushColor("PlayerTintColorBrush", palette.PlayerTint);
         SetBrushColor("PlayerBackgroundBrush", palette.PlayerBackground);
@@ -77,7 +76,7 @@ public class ThemeService : IThemeService
     ///     Updates the color of the app-level <see cref="SolidColorBrush" /> resource
     ///     <paramref name="resourceKey" />, which every bound element picks up.
     /// </summary>
-    private void SetBrushColor(string resourceKey, ArgbColor color, bool refreshTaskbarIcons = false)
+    private void SetBrushColor(string resourceKey, ArgbColor color)
     {
         var newColor = color.ToWindowsColor();
         RunOnUIThread(() =>
@@ -88,7 +87,6 @@ public class ThemeService : IThemeService
                 if (brush.Color == newColor) return;
 
                 brush.Color = newColor;
-                if (refreshTaskbarIcons) _ = _window.TaskbarService?.RefreshIconsAsync();
             }
             else
             {

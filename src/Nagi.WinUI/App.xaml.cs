@@ -66,18 +66,15 @@ public partial class App : Application
 
         try
         {
-            InitializeWindowAndServices(configuration);
-            _logger = Services!.GetRequiredService<ILogger<App>>();
+            Services = new ServiceCollection().AddNagiApp(configuration).BuildServiceProvider();
+            _logger = Services.GetRequiredService<ILogger<App>>();
             _logger.LogInformation("Application starting up.");
 
-            InitializeSystemIntegration();
-
-            if (_window is MainWindow mainWindow)
-            {
-                mainWindow.Content = new Pages.SplashPage();
-                mainWindow.InitializeCustomTitleBar();
-                mainWindow.RestoreWindowState();
-            }
+            var mainWindow = Services.GetRequiredService<MainWindow>();
+            _window = mainWindow;
+            _window.Closed += OnWindowClosed;
+            Services.GetRequiredService<TaskbarService>().Start();
+            mainWindow.SetContent(new Pages.SplashPage());
             // Before doing heavy blocking initialization, show the window to the user
             var isStartupLaunch = Environment.GetCommandLineArgs()
                 .Any(arg => arg.Equals("--startup", StringComparison.OrdinalIgnoreCase));
@@ -235,46 +232,6 @@ public partial class App : Application
         }
     }
 
-    private static IServiceProvider ConfigureServices(MainWindow mainWindow, IConfiguration configuration)
-    {
-        var services = new ServiceCollection();
-
-        services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog());
-        services.AddSingleton(configuration);
-        services.AddNagiMainWindow(mainWindow);
-        services.AddNagiPlatformServices();
-        services.AddNagiCore();
-        services.AddNagiPresentation();
-        services.AddNagiShell();
-
-        return services.BuildServiceProvider();
-    }
-
-    private void InitializeWindowAndServices(IConfiguration configuration)
-    {
-        var mainWindow = new MainWindow();
-        _window = mainWindow;
-        _window.Closed += OnWindowClosed;
-
-        Services = ConfigureServices(mainWindow, configuration);
-
-        mainWindow.InitializeDependencies(Services.GetRequiredService<ISettingsService>(),
-            Services.GetRequiredService<TaskbarService>(),
-            Services.GetRequiredService<ILogger<MainWindow>>());
-    }
-
-    private void InitializeSystemIntegration()
-    {
-        try
-        {
-            _window!.AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/AppLogo.ico"));
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError(ex, "Failed to set window icon");
-        }
-    }
-
     private bool _isExiting;
 
     private async void OnWindowClosed(object sender, WindowEventArgs args)
@@ -290,7 +247,6 @@ public partial class App : Application
             {
                 _logger?.LogDebug("Saving window state...");
                 mainWindow.SaveWindowState();
-                mainWindow.Cleanup();
             }
 
             if (Services is not null)

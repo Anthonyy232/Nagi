@@ -47,17 +47,15 @@ public class ApplicationLifecycle : IApplicationLifecycle
         if (_windowService.IsExiting) return;
         if (hasFolders)
         {
-            if (_window.Content is not MainPage) _window.Content = _createMainPage();
+            if (_window.Content is not MainPage) _window.SetContent(_createMainPage());
         }
         else
         {
-            if (_window.Content is not OnboardingPage) _window.Content = _createOnboardingPage();
+            if (_window.Content is not OnboardingPage) _window.SetContent(_createOnboardingPage());
         }
 
         _themeService.ApplyTheme(_settingsService.Get(AppSettings.Theme));
 
-        _window.NotifyContentLoaded();
-        _window.InitializeCustomTitleBar();
     }
 
     public void Restart() => AppInstance.Restart("");
