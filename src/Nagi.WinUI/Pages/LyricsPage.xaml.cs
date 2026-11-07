@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Numerics;
-using Windows.UI.ViewManagement;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -56,11 +55,11 @@ public sealed partial class LyricsPage : Page
 
     private void OnPageLoaded(object sender, RoutedEventArgs e)
     {
-        CompositionAnimationHelper.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
+        SystemVisualSettings.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
         if (Resources["PageLoadStoryboard"] is Storyboard storyboard)
         {
             storyboard.Begin();
-            if (!CompositionAnimationHelper.AreAnimationsEnabled) storyboard.SkipToFill();
+            if (!SystemVisualSettings.AnimationsEnabled) storyboard.SkipToFill();
         }
         UpdateProgressBarForCurrentLine();
 
@@ -82,22 +81,18 @@ public sealed partial class LyricsPage : Page
     private void OnPageUnloaded(object sender, RoutedEventArgs e)
     {
         _isUnloaded = true;
-        CompositionAnimationHelper.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
+        SystemVisualSettings.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
         Unloaded -= OnPageUnloaded;
         _progressBarStoryboard.Stop();
         ViewModel.Dispose();
     }
 
-    private void OnAnimationsEnabledChanged(UISettings sender, UISettingsAnimationsEnabledChangedEventArgs args)
+    private void OnAnimationsEnabledChanged(bool isEnabled)
     {
-        DispatcherQueue.TryEnqueue(() =>
-        {
-            if (_isUnloaded) return;
-            ApplyAllLineVisuals();
-            ScrollToCurrentLine(disableAnimation: true);
-            UpdateProgressBarForCurrentLine();
-        });
+        ApplyAllLineVisuals();
+        ScrollToCurrentLine(disableAnimation: true);
+        UpdateProgressBarForCurrentLine();
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -194,7 +189,7 @@ public sealed partial class LyricsPage : Page
         var maxOffset = LyricsScrollViewer.ScrollableHeight;
         targetOffset = Math.Clamp(targetOffset, 0, maxOffset);
 
-        LyricsScrollViewer.ChangeView(null, targetOffset, null, disableAnimation || !CompositionAnimationHelper.AreAnimationsEnabled);
+        LyricsScrollViewer.ChangeView(null, targetOffset, null, disableAnimation || !SystemVisualSettings.AnimationsEnabled);
     }
 
     private void LyricsScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -303,7 +298,7 @@ public sealed partial class LyricsPage : Page
 
         var (fraction, remaining) = ViewModel.GetCurrentLineProgress();
         LyricsProgressBar.Value = fraction * 100;
-        if (remaining <= TimeSpan.Zero || !CompositionAnimationHelper.AreAnimationsEnabled) return;
+        if (remaining <= TimeSpan.Zero || !SystemVisualSettings.AnimationsEnabled) return;
 
         _progressBarAnimation.Duration = remaining;
         _progressBarStoryboard.Begin();

@@ -259,7 +259,7 @@ public partial class App : Application
         Services = ConfigureServices(mainWindow, configuration);
 
         mainWindow.InitializeDependencies(Services.GetRequiredService<ISettingsService>(),
-            Services.GetRequiredService<TaskbarService>(), Services.GetRequiredService<TransparencyEffectsMonitor>(),
+            Services.GetRequiredService<TaskbarService>(),
             Services.GetRequiredService<ILogger<MainWindow>>());
     }
 

@@ -44,7 +44,6 @@ public sealed partial class MainWindow : Window
     private FrameworkElement? _rootElement;
     private ISettingsService? _settingsService;
     private TaskbarService? _taskbarService;
-    private TransparencyEffectsMonitor? _transparencyEffects;
 
     internal TaskbarService? TaskbarService => _taskbarService;
 
@@ -58,11 +57,10 @@ public sealed partial class MainWindow : Window
     }
 
     public void InitializeDependencies(ISettingsService settingsService, TaskbarService taskbarService,
-        TransparencyEffectsMonitor transparencyEffects, ILogger<MainWindow> logger)
+        ILogger<MainWindow> logger)
     {
         _settingsService = settingsService;
         _taskbarService = taskbarService;
-        _transparencyEffects = transparencyEffects;
         _logger = logger;
         _appWindow = AppWindow;
         _lastWindowSize = _appWindow.Size;
@@ -70,7 +68,7 @@ public sealed partial class MainWindow : Window
         _appWindow.Changed += OnWindowGeometryChanged;
         Activated += OnWindowActivated;
         _settingsService.SettingChanged += OnSettingChanged;
-        _transparencyEffects.Changed += OnTransparencyEffectsChanged;
+        SystemVisualSettings.TransparencyEffectsEnabledChanged += OnTransparencyEffectsChanged;
     }
 
     public void Cleanup()
@@ -83,7 +81,7 @@ public sealed partial class MainWindow : Window
         if (_rootElement != null) _rootElement.ActualThemeChanged -= OnActualThemeChanged;
         if (_settingsService != null) _settingsService.SettingChanged -= OnSettingChanged;
 
-        if (_transparencyEffects != null) _transparencyEffects.Changed -= OnTransparencyEffectsChanged;
+        SystemVisualSettings.TransparencyEffectsEnabledChanged -= OnTransparencyEffectsChanged;
 
         // Restore original WndProc before window destruction to prevent crashes
         // from callbacks to a deallocated delegate.
@@ -211,13 +209,13 @@ public sealed partial class MainWindow : Window
 
     private void TrySetBackdrop()
     {
-        if (_settingsService is null || _transparencyEffects is null) return;
+        if (_settingsService is null) return;
 
         try
         {
             // Use the high-level XAML MicaBackdrop and DesktopAcrylicBackdrop objects.
             // The framework handles the controllers and configuration automatically.
-            if (_transparencyEffects.IsEnabled)
+            if (SystemVisualSettings.TransparencyEffectsEnabled)
             {
                 switch (_settingsService.Get(AppSettings.BackdropMaterial))
                 {

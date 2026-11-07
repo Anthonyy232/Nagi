@@ -8,7 +8,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Media;
-using Windows.UI.ViewManagement;
 
 namespace Nagi.WinUI.Helpers;
 
@@ -17,8 +16,6 @@ public static class ScrollEdgeFade
     private const float FadeHeight = 24;
     private const float BlurAmount = 3;
     private const float BlurPadding = 3 * BlurAmount;
-    private static readonly AccessibilitySettings Accessibility = new();
-    private static readonly UISettings UI = new();
 
     public static readonly DependencyProperty IsEnabledProperty = DependencyProperty.RegisterAttached(
         "IsEnabled", typeof(bool), typeof(ScrollEdgeFade), new PropertyMetadata(false, OnIsEnabledChanged));
@@ -124,8 +121,8 @@ public static class ScrollEdgeFade
             ElementCompositionPreview.SetElementChildVisual(_overlay, _root);
 
             viewer.ViewChanged += OnViewChanged;
-            UI.ColorValuesChanged += OnSettingsChanged;
-            UI.AdvancedEffectsEnabledChanged += OnSettingsChanged;
+            SystemVisualSettings.HighContrastChanged += OnSettingsChanged;
+            SystemVisualSettings.TransparencyEffectsEnabledChanged += OnSettingsChanged;
             _lastState = default;
             Update();
         }
@@ -185,7 +182,7 @@ public static class ScrollEdgeFade
             Attach();
             Update();
         }
-        private void OnSettingsChanged(UISettings sender, object args) => _element.DispatcherQueue.TryEnqueue(Update);
+        private void OnSettingsChanged(bool value) => Update();
 
         private void Update()
         {
@@ -195,7 +192,7 @@ public static class ScrollEdgeFade
             var top = Math.Clamp(_viewer.VerticalOffset / FadeHeight, 0, 1);
             var bottom = Math.Clamp((_viewer.ScrollableHeight - _viewer.VerticalOffset) / FadeHeight, 0, 1);
             var scale = _element.XamlRoot.RasterizationScale;
-            var effectsAllowed = !Accessibility.HighContrast && UI.AdvancedEffectsEnabled &&
+            var effectsAllowed = !SystemVisualSettings.HighContrast && SystemVisualSettings.TransparencyEffectsEnabled &&
                                  _effectFactory!.LoadStatus == CompositionEffectFactoryLoadStatus.Success;
             var state = (width, height, top, bottom, scale, effectsAllowed);
             if (state == _lastState) return;
@@ -232,8 +229,8 @@ public static class ScrollEdgeFade
         {
             if (_viewer is null) return;
             _viewer.ViewChanged -= OnViewChanged;
-            UI.ColorValuesChanged -= OnSettingsChanged;
-            UI.AdvancedEffectsEnabledChanged -= OnSettingsChanged;
+            SystemVisualSettings.HighContrastChanged -= OnSettingsChanged;
+            SystemVisualSettings.TransparencyEffectsEnabledChanged -= OnSettingsChanged;
             _sourceVisual!.Opacity = 1;
             ElementCompositionPreview.SetElementChildVisual(_overlay!, null);
             _parent!.Children.Remove(_overlay!);

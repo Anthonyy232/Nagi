@@ -38,7 +38,7 @@ internal sealed class TrayPopupAnimation(ILogger logger)
             var token = _animationCts.Token;
             var fullRect = showRect ?? new RectInt32(window.AppWindow.Position.X, window.AppWindow.Position.Y,
                 window.AppWindow.Size.Width, window.AppWindow.Size.Height);
-            if (!CompositionAnimationHelper.AreAnimationsEnabled)
+            if (!SystemVisualSettings.AnimationsEnabled)
             {
                 window.SetWindowOpacity(255);
                 if (showing)
@@ -65,7 +65,7 @@ internal sealed class TrayPopupAnimation(ILogger logger)
             }
 
             var stopwatch = Stopwatch.StartNew();
-            while (CompositionAnimationHelper.AreAnimationsEnabled && stopwatch.Elapsed.TotalMilliseconds < durationMs)
+            while (SystemVisualSettings.AnimationsEnabled && stopwatch.Elapsed.TotalMilliseconds < durationMs)
             {
                 token.ThrowIfCancellationRequested();
                 var progress = Math.Clamp((float)stopwatch.Elapsed.TotalMilliseconds / durationMs, 0f, 1f);

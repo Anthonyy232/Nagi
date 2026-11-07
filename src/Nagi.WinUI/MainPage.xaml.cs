@@ -113,7 +113,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     };
 
     private readonly ISettingsService _settingsService;
-    private readonly TransparencyEffectsMonitor _transparencyEffects;
     private readonly IThemeService _themeService;
 
     private SplitViewContentMotion? _queueContentMotion;
@@ -133,12 +132,11 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     public MainPage(PlayerViewModel viewModel,
         GlobalOperationViewModel globalOperation, ISettingsService settingsService, IThemeService themeService,
         IDispatcherService dispatcherService,
-        NavigationService navigationService, TransparencyEffectsMonitor transparencyEffects, ILogger<MainPage> logger)
+        NavigationService navigationService, ILogger<MainPage> logger)
     {
         ViewModel = viewModel;
         GlobalOperation = globalOperation;
         _settingsService = settingsService;
-        _transparencyEffects = transparencyEffects;
         _themeService = themeService;
         _dispatcherService = dispatcherService;
         _logger = logger;
@@ -287,7 +285,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         var shouldBeExpanded = ShouldExpandPlayer;
         var stateName = shouldBeExpanded ? "PlayerExpanded" : "PlayerCollapsed";
 
-        useTransitions &= CompositionAnimationHelper.AreAnimationsEnabled;
+        useTransitions &= SystemVisualSettings.AnimationsEnabled;
         VisualStateManager.GoToState(this, stateName, useTransitions);
         if (!useTransitions) PlayerStateGroup.CurrentState?.Storyboard?.SkipToFill();
 
@@ -361,9 +359,9 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         ActualThemeChanged += OnActualThemeChanged;
         ContentFrame.Navigated += OnContentFrameNavigated;
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
-        CompositionAnimationHelper.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
+        SystemVisualSettings.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
         _settingsService.SettingChanged += OnSettingChanged;
-        _transparencyEffects.Changed += OnTransparencyEffectsChanged;
+        SystemVisualSettings.TransparencyEffectsEnabledChanged += OnTransparencyEffectsChanged;
         AddHandler(PointerPressedEvent, new PointerEventHandler(OnGlobalPointerPressed), true);
         KeyDown += OnSelectionKeyDown;
 
@@ -392,9 +390,9 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         ActualThemeChanged -= OnActualThemeChanged;
         ContentFrame.Navigated -= OnContentFrameNavigated;
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
-        CompositionAnimationHelper.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
+        SystemVisualSettings.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
         _settingsService.SettingChanged -= OnSettingChanged;
-        _transparencyEffects.Changed -= OnTransparencyEffectsChanged;
+        SystemVisualSettings.TransparencyEffectsEnabledChanged -= OnTransparencyEffectsChanged;
 
         // Dispose the tray icon control to prevent "Exception Processing Message 0xc0000005" errors on exit.
         AppTrayIconHost?.Dispose();
@@ -409,7 +407,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     /// </summary>
     private void SetPlatformSpecificBrush()
     {
-        var isAcrylicEnabled = _transparencyEffects.IsEnabled;
+        var isAcrylicEnabled = SystemVisualSettings.TransparencyEffectsEnabled;
         var material = _settingsService.Get(AppSettings.PlayerBackgroundMaterial);
         var brushKey = !isAcrylicEnabled || material == PlayerBackgroundMaterial.Solid
             ? "PlayerBackgroundBrush"
@@ -444,25 +442,12 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
     }
 
-    private void OnTransparencyEffectsChanged(bool isEnabled)
-    {
-        _ = UpdateUiAsync(() =>
-        {
-            SetPlatformSpecificBrush();
-            return Task.CompletedTask;
-        });
-    }
+    private void OnTransparencyEffectsChanged(bool isEnabled) => SetPlatformSpecificBrush();
 
-    private void OnAnimationsEnabledChanged(Windows.UI.ViewManagement.UISettings sender,
-        Windows.UI.ViewManagement.UISettingsAnimationsEnabledChangedEventArgs args)
+    private void OnAnimationsEnabledChanged(bool isEnabled)
     {
-        _dispatcherService.TryEnqueue(() =>
-        {
-            if (_isUnloaded) return;
-            UpdatePlayerVisualState(false);
-            if (!CompositionAnimationHelper.AreAnimationsEnabled)
-                PlayerVisibilityStates.CurrentState?.Storyboard?.SkipToFill();
-        });
+        UpdatePlayerVisualState(false);
+        if (!isEnabled) PlayerVisibilityStates.CurrentState?.Storyboard?.SkipToFill();
     }
 
     private void OnActualThemeChanged(FrameworkElement sender, object args)
@@ -531,8 +516,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         pageHeightAnimation.From = pageHeightAnimation.To = Math.Max(0, ContentRegion.ActualHeight - reservedHeight);
         if (isSettingsPage) PlayerSpaceHideAnimation.From = PlayerContentSpace.ActualHeight;
         var stateName = isSettingsPage ? "PlayerHidden" : "PlayerVisible";
-        VisualStateManager.GoToState(this, stateName, CompositionAnimationHelper.AreAnimationsEnabled);
-        if (!CompositionAnimationHelper.AreAnimationsEnabled) PlayerVisibilityStates.CurrentState?.Storyboard?.SkipToFill();
+        VisualStateManager.GoToState(this, stateName, SystemVisualSettings.AnimationsEnabled);
+        if (!SystemVisualSettings.AnimationsEnabled) PlayerVisibilityStates.CurrentState?.Storyboard?.SkipToFill();
     }
 
     private void FloatingPlayerContainer_PointerEntered(object sender, PointerRoutedEventArgs e) =>
