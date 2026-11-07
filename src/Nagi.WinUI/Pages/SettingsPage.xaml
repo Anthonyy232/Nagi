@@ -24,7 +24,6 @@
         </Style>
         <localConverters:ArgbColorToColorConverter x:Key="ArgbColorToColorConverter" />
         <localConverters:FloatToDecimalStringConverter x:Key="FloatToDecimalStringConverter" />
-        <localConverters:PlayerBackgroundMaterialToStringConverter x:Key="PlayerBackgroundMaterialToStringConverter" />
         <localConverters:DoubleToPercentageConverter x:Key="DoubleToPercentageConverter" />
 
         <DataTemplate x:Key="ToggleItemTemplate" x:DataType="models:IToggleItem">
@@ -205,14 +204,9 @@
                     <ComboBox
                         MinWidth="300"
                         HorizontalAlignment="Right"
-                        ItemsSource="{x:Bind ViewModel.Appearance.AvailableThemes}"
-                        SelectedItem="{x:Bind ViewModel.Appearance.SelectedTheme, Mode=TwoWay}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="models:AppTheme">
-                                <TextBlock Text="{x:Bind Converter={StaticResource ThemeToStringConverter}}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
+                        ItemsSource="{x:Bind ViewModel.Appearance.ThemeOptions}"
+                        DisplayMemberPath="DisplayName"
+                        SelectedItem="{x:Bind ViewModel.Appearance.SelectedTheme, Mode=TwoWay}" />
 
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard>
@@ -250,15 +244,9 @@
                     <ComboBox
                         MinWidth="300"
                         HorizontalAlignment="Right"
-                        ItemsSource="{x:Bind ViewModel.Appearance.AvailableBackdropMaterials}"
-                        SelectedItem="{x:Bind ViewModel.Appearance.SelectedBackdropMaterial, Mode=TwoWay}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="models:BackdropMaterial">
-                                <TextBlock
-                                    Text="{x:Bind Converter={StaticResource BackdropMaterialToStringConverter}}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
+                        ItemsSource="{x:Bind ViewModel.Appearance.BackdropMaterialOptions}"
+                        DisplayMemberPath="DisplayName"
+                        SelectedItem="{x:Bind ViewModel.Appearance.SelectedBackdropMaterial, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
@@ -295,15 +283,10 @@
                     <ComboBox
                         MinWidth="300"
                         HorizontalAlignment="Right"
-                        ItemsSource="{x:Bind ViewModel.Appearance.AvailablePlayerBackgroundMaterials}"
+                        ItemsSource="{x:Bind ViewModel.Appearance.PlayerBackgroundMaterialOptions}"
+                        DisplayMemberPath="DisplayName"
                         AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_PlayerStyling_Header, Mode=OneTime}"
-                        SelectedItem="{x:Bind ViewModel.Appearance.SelectedPlayerBackgroundMaterial, Mode=TwoWay}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="models:PlayerBackgroundMaterial">
-                                <TextBlock Text="{x:Bind Converter={StaticResource PlayerBackgroundMaterialToStringConverter}}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
+                        SelectedItem="{x:Bind ViewModel.Appearance.SelectedPlayerBackgroundMaterial, Mode=TwoWay}" />
 
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard>

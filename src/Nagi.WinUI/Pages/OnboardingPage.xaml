@@ -73,14 +73,9 @@
                             <ComboBox
                                 MinWidth="160"
                                 AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_Theme_Header, Mode=OneTime}"
-                                ItemsSource="{x:Bind Settings.Appearance.AvailableThemes}"
-                                SelectedItem="{x:Bind Settings.Appearance.SelectedTheme, Mode=TwoWay}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate x:DataType="models:AppTheme">
-                                        <TextBlock Text="{x:Bind Converter={StaticResource ThemeToStringConverter}}" />
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
+                                ItemsSource="{x:Bind Settings.Appearance.ThemeOptions}"
+                                DisplayMemberPath="DisplayName"
+                                SelectedItem="{x:Bind Settings.Appearance.SelectedTheme, Mode=TwoWay}" />
                         </controls:SettingsCard>
 
                         <controls:SettingsCard
@@ -92,14 +87,9 @@
                             <ComboBox
                                 MinWidth="160"
                                 AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_WindowMaterial_Header, Mode=OneTime}"
-                                ItemsSource="{x:Bind Settings.Appearance.AvailableBackdropMaterials}"
-                                SelectedItem="{x:Bind Settings.Appearance.SelectedBackdropMaterial, Mode=TwoWay}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate x:DataType="models:BackdropMaterial">
-                                        <TextBlock Text="{x:Bind Converter={StaticResource BackdropMaterialToStringConverter}}" />
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
+                                ItemsSource="{x:Bind Settings.Appearance.BackdropMaterialOptions}"
+                                DisplayMemberPath="DisplayName"
+                                SelectedItem="{x:Bind Settings.Appearance.SelectedBackdropMaterial, Mode=TwoWay}" />
                         </controls:SettingsCard>
 
                         <controls:SettingsCard

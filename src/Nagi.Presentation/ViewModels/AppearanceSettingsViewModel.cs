@@ -61,19 +61,20 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         foreach (var setting in SongListColumnSettings) setting.PropertyChanged += OnSongListColumnSettingChanged;
     }
 
-    public AppTheme SelectedTheme
+    public SettingOption<AppTheme> SelectedTheme
     {
-        get => Get(AppSettings.Theme);
+        get => ThemeOptions.First(option => option.Value == Get(AppSettings.Theme));
         set
         {
-            if (value != SelectedTheme && Set(AppSettings.Theme, value)) _themeService.ApplyTheme(value);
+            if (value.Value != Get(AppSettings.Theme) && Set(AppSettings.Theme, value.Value))
+                _themeService.ApplyTheme(value.Value);
         }
     }
 
-    public BackdropMaterial SelectedBackdropMaterial
+    public SettingOption<BackdropMaterial> SelectedBackdropMaterial
     {
-        get => Get(AppSettings.BackdropMaterial);
-        set => Set(AppSettings.BackdropMaterial, value);
+        get => BackdropMaterialOptions.First(option => option.Value == Get(AppSettings.BackdropMaterial));
+        set => Set(AppSettings.BackdropMaterial, value.Value);
     }
 
     public bool IsDynamicThemingEnabled
@@ -105,10 +106,10 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         }
     }
 
-    public PlayerBackgroundMaterial SelectedPlayerBackgroundMaterial
+    public SettingOption<PlayerBackgroundMaterial> SelectedPlayerBackgroundMaterial
     {
-        get => Get(AppSettings.PlayerBackgroundMaterial);
-        set => Set(AppSettings.PlayerBackgroundMaterial, value);
+        get => PlayerBackgroundMaterialOptions.First(option => option.Value == Get(AppSettings.PlayerBackgroundMaterial));
+        set => Set(AppSettings.PlayerBackgroundMaterial, value.Value);
     }
 
     public double PlayerTintIntensity
@@ -154,9 +155,14 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         set => Set(AppSettings.ShowSongListHeader, value);
     }
 
-    public IReadOnlyList<AppTheme> AvailableThemes { get; } = Enum.GetValues<AppTheme>();
-    public IReadOnlyList<BackdropMaterial> AvailableBackdropMaterials { get; } = Enum.GetValues<BackdropMaterial>();
-    public IReadOnlyList<PlayerBackgroundMaterial> AvailablePlayerBackgroundMaterials { get; } = Enum.GetValues<PlayerBackgroundMaterial>();
+    public IReadOnlyList<SettingOption<AppTheme>> ThemeOptions { get; } =
+        SettingOption<AppTheme>.For(Enum.GetValues<AppTheme>(), SettingsText.GetName);
+
+    public IReadOnlyList<SettingOption<BackdropMaterial>> BackdropMaterialOptions { get; } =
+        SettingOption<BackdropMaterial>.For(Enum.GetValues<BackdropMaterial>(), SettingsText.GetName);
+
+    public IReadOnlyList<SettingOption<PlayerBackgroundMaterial>> PlayerBackgroundMaterialOptions { get; } =
+        SettingOption<PlayerBackgroundMaterial>.For(Enum.GetValues<PlayerBackgroundMaterial>(), SettingsText.GetName);
     public ObservableRangeCollection<LanguageModel> AvailableLanguages { get; } = new();
     public ReorderableToggleList<NavigationItemSetting> NavigationItems { get; }
 
