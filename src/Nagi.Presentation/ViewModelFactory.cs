@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Nagi.Presentation.Services.Implementations;
+namespace Nagi.Presentation;
 
 /// <summary>
 ///     Creates page-owned view models that the page is responsible for disposing.

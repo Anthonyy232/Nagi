@@ -5,12 +5,11 @@ using Nagi.Presentation.Lists;
 using Nagi.Presentation.MusicServers;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Player;
-using Nagi.Presentation.Services.Implementations;
 using Nagi.Presentation.Settings;
 using Nagi.Presentation.Shell;
 using Nagi.Presentation.Theme;
 
-namespace Nagi.Presentation.Services;
+namespace Nagi.Presentation;
 
 /// <summary>
 ///     Registers the view models and the app services every UI head shares.
@@ -19,7 +18,8 @@ public static class PresentationServiceRegistration
 {
     /// <summary>
     ///     Adds settings, navigation and view-model services plus the view models. The UI head must register
-    ///     its implementations of the other abstractions in <c>Nagi.Presentation.Services.Abstractions</c>.
+    ///     its implementations of the abstractions it provides, such as <see cref="IUIService" />,
+    ///     <see cref="IWindowService" />, <see cref="IThemeService" /> and <see cref="INavigationService" />.
     /// </summary>
     public static IServiceCollection AddNagiPresentation(this IServiceCollection services)
     {

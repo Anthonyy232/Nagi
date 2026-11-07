@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Nagi.Presentation.Lists;
-using Nagi.Presentation.Services.Implementations;
+using Nagi.Presentation;
 
 namespace Nagi.WinUI.Pages;
 

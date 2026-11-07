@@ -12,7 +12,7 @@ using Nagi.Presentation.Player;
 using Nagi.Presentation.Settings;
 using Nagi.Presentation.Shell;
 
-namespace Nagi.Presentation.Services;
+namespace Nagi.Presentation;
 
 /// <summary>
 ///     Starts and stops the app's services in the order they depend on each other. Every UI head calls these
