@@ -113,7 +113,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     };
 
     private readonly ISettingsService _settingsService;
-    private readonly IThemeService _themeService;
 
     private SplitViewContentMotion? _queueContentMotion;
     private SplitViewContentMotion? _navigationContentMotion;
@@ -127,17 +126,14 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private bool _isUnloaded;
 
-    private ElementTheme _lastKnownTheme;
-
     public MainPage(PlayerViewModel viewModel,
-        GlobalOperationViewModel globalOperation, ISettingsService settingsService, IThemeService themeService,
+        GlobalOperationViewModel globalOperation, ISettingsService settingsService,
         IDispatcherService dispatcherService,
         NavigationService navigationService, ILogger<MainPage> logger)
     {
         ViewModel = viewModel;
         GlobalOperation = globalOperation;
         _settingsService = settingsService;
-        _themeService = themeService;
         _dispatcherService = dispatcherService;
         _logger = logger;
 
@@ -270,12 +266,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
     }
 
-    private Task ApplyDynamicThemeForCurrentTrackAsync()
-    {
-        var song = ViewModel.CurrentPlayingTrack;
-        return _themeService.ApplyDynamicThemeFromSwatchesAsync(song?.LightSwatchId, song?.DarkSwatchId);
-    }
-
     private bool ShouldExpandPlayer =>
         !_settingsService.Get(AppSettings.PlayerAnimation) || _isPointerOverPlayer || ViewModel.IsQueuePanelOpen ||
         ViewModel.CurrentPlayingTrack != null && ViewModel.IsPlaying;
@@ -332,7 +322,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
     }
 
-    private async void OnMainPageLoaded(object sender, RoutedEventArgs e)
+    private void OnMainPageLoaded(object sender, RoutedEventArgs e)
     {
         _isUnloaded = false;
         _queueContentMotion ??= SplitViewContentMotion.Attach(QueueSplitView);
@@ -355,8 +345,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             settingsItem.Content = Strings.NavItem_Settings;
         }
 
-        _lastKnownTheme = ActualTheme;
-        ActualThemeChanged += OnActualThemeChanged;
         ContentFrame.Navigated += OnContentFrameNavigated;
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
         SystemVisualSettings.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
@@ -375,7 +363,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         UpdateNavViewSelection(ContentFrame.CurrentSourcePageType);
 
         UpdatePlayerVisualState(false);
-        await ApplyDynamicThemeForCurrentTrackAsync();
     }
 
     private void OnMainPageUnloaded(object sender, RoutedEventArgs e)
@@ -387,7 +374,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         _isUnloaded = true;
         _hoverTimer.Stop();
         _isPointerOverPlayer = false;
-        ActualThemeChanged -= OnActualThemeChanged;
         ContentFrame.Navigated -= OnContentFrameNavigated;
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
         SystemVisualSettings.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
@@ -417,29 +403,12 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void OnSettingChanged(Setting setting)
     {
-        if (setting == AppSettings.PlayerBackgroundMaterial || setting == AppSettings.PlayerTintIntensity)
-        {
-            _ = UpdateUiAsync(() =>
-            {
-                SetPlatformSpecificBrush();
-                return _themeService.ReapplyCurrentDynamicThemeAsync();
-            });
-        }
+        if (setting == AppSettings.PlayerBackgroundMaterial)
+            UpdateUi(SetPlatformSpecificBrush);
         else if (setting == AppSettings.PlayerAnimation)
-        {
-            _dispatcherService.TryEnqueue(() =>
-            {
-                if (!_isUnloaded) UpdatePlayerVisualState(false);
-            });
-        }
+            UpdateUi(() => UpdatePlayerVisualState(false));
         else if (setting == AppSettings.NavigationItems)
-        {
-            _ = UpdateUiAsync(() =>
-            {
-                PopulateNavigation();
-                return Task.CompletedTask;
-            });
-        }
+            UpdateUi(PopulateNavigation);
     }
 
     private void OnTransparencyEffectsChanged(bool isEnabled) => SetPlatformSpecificBrush();
@@ -450,37 +419,17 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         if (!isEnabled) PlayerVisibilityStates.CurrentState?.Storyboard?.SkipToFill();
     }
 
-    private void OnActualThemeChanged(FrameworkElement sender, object args)
-    {
-        if (ActualTheme == _lastKnownTheme) return;
-        _lastKnownTheme = ActualTheme;
-        _ = UpdateUiAsync(_themeService.ReapplyCurrentDynamicThemeAsync);
-    }
-
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is not (nameof(PlayerViewModel.CurrentPlayingTrack) or
-            nameof(PlayerViewModel.IsPlaying) or nameof(PlayerViewModel.IsQueuePanelOpen))) return;
-
-        _ = UpdateUiAsync(async () =>
-        {
-            UpdatePlayerVisualState();
-            if (e.PropertyName == nameof(PlayerViewModel.CurrentPlayingTrack))
-                await ApplyDynamicThemeForCurrentTrackAsync();
-        });
+        if (e.PropertyName is nameof(PlayerViewModel.CurrentPlayingTrack) or nameof(PlayerViewModel.IsPlaying)
+            or nameof(PlayerViewModel.IsQueuePanelOpen))
+            UpdateUi(() => UpdatePlayerVisualState());
     }
 
-    private async Task UpdateUiAsync(Func<Task> update)
+    private void UpdateUi(Action update) => _dispatcherService.TryEnqueue(() =>
     {
-        try
-        {
-            await _dispatcherService.EnqueueAsync(() => _isUnloaded ? Task.CompletedTask : update());
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to update the main page.");
-        }
-    }
+        if (!_isUnloaded) update();
+    });
 
     private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
     {

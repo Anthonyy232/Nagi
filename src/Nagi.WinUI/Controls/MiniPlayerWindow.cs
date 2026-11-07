@@ -22,33 +22,33 @@ public sealed class MiniPlayerWindow : Window
     private const int InitialWindowSizeDips = 350;
     private const int MinWindowSizeDips = 200;
     private const int MaxWindowSizeDips = 640;
-    private static readonly string AppIconPath = System.IO.Path.Combine(AppContext.BaseDirectory, "Assets/AppLogo.ico");
 
     private const int HorizontalScreenMargin = 10;
     private const int VerticalScreenMargin = 48;
 
     private readonly AppWindow _appWindow;
+    private readonly IThemeService _themeService;
     private readonly ILogger<MiniPlayerWindow> _logger;
     private readonly MiniPlayerView _view;
 
     public MiniPlayerWindow(PlayerViewModel playerViewModel, IThemeService themeService,
         ILogger<MiniPlayerWindow> logger)
     {
+        _themeService = themeService;
         _logger = logger;
         _view = new MiniPlayerView(this, playerViewModel);
         Content = _view;
         _appWindow = AppWindow;
 
         SystemBackdrop = new DesktopAcrylicBackdrop();
-
-        if (Content is FrameworkElement root)
-        {
-            root.RequestedTheme = themeService.CurrentTheme.ToElementTheme();
-        }
+        ApplyTheme();
 
         ConfigureAppWindow();
         SubscribeToEvents();
     }
+
+    private void ApplyTheme() =>
+        _view.RequestedTheme = _themeService.IsLightTheme ? ElementTheme.Light : ElementTheme.Dark;
 
     private void ConfigureAppWindow()
     {
@@ -56,7 +56,7 @@ public sealed class MiniPlayerWindow : Window
         SetTitleBar(_view.TitleBarDragRegion);
 
         _appWindow.Title = Strings.MiniPlayer_Title;
-        _appWindow.SetIcon(AppIconPath);
+        _appWindow.SetIcon(MainWindow.AppIconPath);
 
         // Convert logical pixels to physical pixels for AppWindow.Resize()
         var initialSize = (int)(InitialWindowSizeDips * GetDpiScale());
@@ -97,6 +97,7 @@ public sealed class MiniPlayerWindow : Window
     {
         _view.RestoreButtonClicked += OnRestoreButtonClicked;
         _appWindow.Changed += OnAppWindowChanged;
+        _themeService.ActualThemeChanged += ApplyTheme;
         Closed += OnWindowClosed;
     }
 
@@ -153,5 +154,6 @@ public sealed class MiniPlayerWindow : Window
     {
         _view.RestoreButtonClicked -= OnRestoreButtonClicked;
         _appWindow.Changed -= OnAppWindowChanged;
+        _themeService.ActualThemeChanged -= ApplyTheme;
     }
 }

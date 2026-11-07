@@ -21,7 +21,6 @@ public class SettingsViewModelTests : IDisposable
     private readonly ICredentialLockerService _credentials = Substitute.For<ICredentialLockerService>();
     private readonly SettingsService _settings;
     private readonly ISettingsService _resetSettings = Substitute.For<ISettingsService>();
-    private readonly IThemeService _theme = Substitute.For<IThemeService>();
     private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
     private readonly IAudioPlayer _audioPlayer = Substitute.For<IAudioPlayer>();
     private readonly IAppInfoService _appInfo = Substitute.For<IAppInfoService>();
@@ -48,7 +47,7 @@ public class SettingsViewModelTests : IDisposable
         _dispatcher.TryEnqueue(Arg.Any<Action>()).Returns(call => { call.Arg<Action>()(); return true; });
         _dispatcher.EnqueueAsync(Arg.Any<Func<Task>>()).Returns(call => call.Arg<Func<Task>>()());
         _viewModel = new SettingsViewModel(_settings, _appInfo, _autoLaunch, _dispatcher,
-            new AppearanceSettingsViewModel(_settings, _theme, _ui, _appInfo, _lifecycle, _dispatcher,
+            new AppearanceSettingsViewModel(_settings, _ui, _appInfo, _lifecycle, _dispatcher,
                 NullLogger<AppearanceSettingsViewModel>.Instance, _timeProvider),
             new AudioSettingsViewModel(_playback, _audioPlayer, _settings, _ui, _ffmpeg, _replayGain, _operation, _dispatcher,
                 NullLogger<AudioSettingsViewModel>.Instance, _timeProvider),
@@ -596,7 +595,7 @@ public class SettingsViewModelTests : IDisposable
         var loading = _viewModel.LoadSettingsAsync();
 
         if (playerDesign) _viewModel.Appearance.ResetPlayerDesignSettingsCommand.Execute(null);
-        else await _viewModel.Appearance.ResetAccentColorCommand.ExecuteAsync(null);
+        else _viewModel.Appearance.ResetAccentColorCommand.Execute(null);
         startup.SetResult(true);
         await loading.WaitAsync(TimeSpan.FromSeconds(5));
 
@@ -668,17 +667,13 @@ public class SettingsViewModelTests : IDisposable
     [Fact]
     public async Task ResetAccentColor_CancelsPendingColorSave()
     {
-        _viewModel.Appearance.IsDynamicThemingEnabled = false;
-        _theme.ClearReceivedCalls();
         _viewModel.Appearance.AccentColor = ArgbColor.FromRgb(200, 10, 20);
 
-        await _viewModel.Appearance.ResetAccentColorCommand.ExecuteAsync(null);
+        _viewModel.Appearance.ResetAccentColorCommand.Execute(null);
         await AdvanceDebouncesAsync();
 
         _viewModel.Appearance.AccentColor.Should().Be(ThemePalette.BrandAccentColor);
         _settings.Get(AppSettings.AccentColor).Should().BeNull();
-        await _theme.Received(1).ApplyAccentColorAsync(null);
-        await _theme.DidNotReceive().ApplyAccentColorAsync(Arg.Is<ArgbColor?>(color => color.HasValue));
     }
 
     [Fact]

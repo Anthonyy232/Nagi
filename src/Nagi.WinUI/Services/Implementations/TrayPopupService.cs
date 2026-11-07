@@ -18,8 +18,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
     private const int POPUP_WIDTH_DIPS = 384;
     private readonly IDispatcherService _dispatcherService;
     private readonly ILogger<TrayPopupService> _logger;
-    private readonly MainWindow _mainWindow;
-    private readonly Func<ElementTheme, TrayPopup> _createPopup;
+    private readonly Func<TrayPopup> _createPopup;
 
     private readonly TrayPopupAnimation _animation;
     private bool _isAnimating;
@@ -27,10 +26,9 @@ public class TrayPopupService : ITrayPopupService, IDisposable
     private long _lastDeactivatedTime;
     private TrayPopup? _popupWindow;
 
-    public TrayPopupService(MainWindow mainWindow, Func<ElementTheme, TrayPopup> createPopup,
+    public TrayPopupService(Func<TrayPopup> createPopup,
         IDispatcherService dispatcherService, ILogger<TrayPopupService> logger)
     {
-        _mainWindow = mainWindow;
         _createPopup = createPopup;
         _animation = new TrayPopupAnimation(logger);
         _dispatcherService = dispatcherService;
@@ -149,10 +147,8 @@ public class TrayPopupService : ITrayPopupService, IDisposable
 
     private void CreateWindow()
     {
-        var mainContent = _mainWindow.Content as FrameworkElement;
-        var currentTheme = mainContent?.ActualTheme ?? ElementTheme.Default;
-        _logger.LogDebug("Creating new tray popup window with theme {Theme}.", currentTheme);
-        _popupWindow = _createPopup(currentTheme);
+        _logger.LogDebug("Creating the tray popup window.");
+        _popupWindow = _createPopup();
         _popupWindow.Deactivated += OnPopupDeactivated;
         _popupWindow.Closed += OnPopupWindowClosed;
     }

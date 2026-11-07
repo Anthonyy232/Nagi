@@ -3,6 +3,7 @@ using Windows.Foundation;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
+using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
 using WinRT.Interop;
@@ -14,17 +15,19 @@ namespace Nagi.WinUI.Popups;
 
 public sealed partial class TrayPopup : Window
 {
+    private readonly IThemeService _themeService;
     private readonly ISettingsService _settingsService;
     private bool _isClosed;
 
-    public TrayPopup(ElementTheme initialTheme, PlayerViewModel viewModel, ISettingsService settingsService)
+    public TrayPopup(PlayerViewModel viewModel, IThemeService themeService, ISettingsService settingsService)
     {
         InitializeComponent();
 
         ViewModel = viewModel;
+        _themeService = themeService;
         _settingsService = settingsService;
 
-        OuterBorder.RequestedTheme = initialTheme;
+        ApplyTheme();
         OuterBorder.DataContext = ViewModel;
         PlayerInputHelper.AttachSeekSlider(MediaSeekerSlider, ViewModel);
 
@@ -35,11 +38,16 @@ public sealed partial class TrayPopup : Window
         Closed += OnClosed;
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
         _settingsService.SettingChanged += OnSettingChanged;
+        _themeService.ActualThemeChanged += ApplyTheme;
     }
 
     public PlayerViewModel ViewModel { get; }
 
     public event EventHandler? Deactivated;
+
+    // The popup is kept and reused, so it follows theme changes made while it exists.
+    private void ApplyTheme() =>
+        OuterBorder.RequestedTheme = _themeService.IsLightTheme ? ElementTheme.Light : ElementTheme.Dark;
 
     public void SetWindowOpacity(byte alpha)
     {
@@ -134,6 +142,7 @@ public sealed partial class TrayPopup : Window
         _isClosed = true;
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
         _settingsService.SettingChanged -= OnSettingChanged;
+        _themeService.ActualThemeChanged -= ApplyTheme;
     }
 
     private void VolumeButton_PointerWheelChanged(object sender, PointerRoutedEventArgs e) =>

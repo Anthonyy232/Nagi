@@ -26,7 +26,6 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
     private const int SettingsSaveDebounceMs = 300;
     private const int VisualSettingDebounceMs = 200;
 
-    private readonly IThemeService _themeService;
     private readonly IUIService _uiService;
     private readonly IAppInfoService _appInfoService;
     private readonly IApplicationLifecycle _applicationLifecycle;
@@ -40,7 +39,6 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
 
     public AppearanceSettingsViewModel(
         ISettingsService settingsService,
-        IThemeService themeService,
         IUIService uiService,
         IAppInfoService appInfoService,
         IApplicationLifecycle applicationLifecycle,
@@ -49,7 +47,6 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         TimeProvider? timeProvider = null)
         : base(settingsService, dispatcherService, logger)
     {
-        _themeService = themeService;
         _uiService = uiService;
         _appInfoService = appInfoService;
         _applicationLifecycle = applicationLifecycle;
@@ -66,10 +63,7 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
     public AppTheme SelectedTheme
     {
         get => Get(AppSettings.Theme);
-        set
-        {
-            if (value != SelectedTheme && Set(AppSettings.Theme, value)) _themeService.ApplyTheme(value);
-        }
+        set => Set(AppSettings.Theme, value);
     }
 
     public BackdropMaterial SelectedBackdropMaterial
@@ -81,11 +75,7 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
     public bool IsDynamicThemingEnabled
     {
         get => Get(AppSettings.DynamicTheming);
-        set
-        {
-            if (value != IsDynamicThemingEnabled && Set(AppSettings.DynamicTheming, value))
-                _ = ApplyDynamicThemingAsync(value);
-        }
+        set => Set(AppSettings.DynamicTheming, value);
     }
 
     public ArgbColor AccentColor
@@ -96,13 +86,11 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
             if (value == AccentColor) return;
             _pendingAccentColor = value;
             OnPropertyChanged();
-            QueueSettingsSave(_accentColorSaveDebouncer, async token =>
+            QueueSettingsSave(_accentColorSaveDebouncer, _ =>
             {
                 Set(AppSettings.AccentColor, value);
                 if (_pendingAccentColor == value) _pendingAccentColor = null;
-                token.ThrowIfCancellationRequested();
-                if (!IsDynamicThemingEnabled)
-                    await _themeService.ApplyAccentColorAsync(value);
+                return Task.CompletedTask;
             }, nameof(AccentColor));
         }
     }
@@ -327,29 +315,13 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         Set(AppSettings.SongListColumns, columns, nameof(SongListColumnSettings));
     }
 
-    private async Task ApplyDynamicThemingAsync(bool isEnabled)
-    {
-        try
-        {
-            if (isEnabled)
-                await _themeService.ReapplyCurrentDynamicThemeAsync();
-            else
-                await _themeService.ApplyAccentColorAsync(_settingsService.Get(AppSettings.AccentColor));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error updating dynamic theming to {Value}", isEnabled);
-        }
-    }
-
     [RelayCommand]
-    private async Task ResetAccentColorAsync()
+    private void ResetAccentColor()
     {
         _accentColorSaveDebouncer.Cancel();
         _pendingAccentColor = null;
         Set(AppSettings.AccentColor, null, nameof(AccentColor));
         OnPropertyChanged(nameof(AccentColor));
-        if (!IsDynamicThemingEnabled) await ApplyDynamicThemingAsync(false);
     }
 
     [RelayCommand]

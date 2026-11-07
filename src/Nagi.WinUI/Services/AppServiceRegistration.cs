@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Dispatching;
-using Microsoft.UI.Xaml;
 using Nagi.Audio.LibVlc;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services;
@@ -70,7 +69,6 @@ public static class AppServiceRegistration
         services.AddSingleton<Func<MainPage>>(sp => () => ActivatorUtilities.CreateInstance<MainPage>(sp));
         services.AddSingleton<Func<OnboardingPage>>(sp => () => ActivatorUtilities.CreateInstance<OnboardingPage>(sp));
         services.AddSingleton<Func<MiniPlayerWindow>>(sp => () => ActivatorUtilities.CreateInstance<MiniPlayerWindow>(sp));
-        services.AddSingleton<Func<ElementTheme, TrayPopup>>(sp =>
-            theme => ActivatorUtilities.CreateInstance<TrayPopup>(sp, theme));
+        services.AddSingleton<Func<TrayPopup>>(sp => () => ActivatorUtilities.CreateInstance<TrayPopup>(sp));
     }
 }

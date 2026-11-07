@@ -1,7 +1,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.UI.Xaml;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Popups;
@@ -28,10 +27,8 @@ public class AppServiceRegistrationTests
         await using var provider = BuildProvider();
         var isService = provider.GetRequiredService<IServiceProviderIsService>();
 
-        // The tray popup's theme is passed in by TrayPopupService when it creates the popup.
         var dependencies = shellType.GetConstructors().Should().ContainSingle().Subject.GetParameters()
-            .Select(parameter => parameter.ParameterType)
-            .Where(type => type != typeof(ElementTheme));
+            .Select(parameter => parameter.ParameterType);
 
         dependencies.Should().OnlyContain(type => isService.IsService(type));
     }
