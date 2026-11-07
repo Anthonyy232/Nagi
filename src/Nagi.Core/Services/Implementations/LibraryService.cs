@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -23,7 +24,7 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly ILibraryReader _libraryReader;
     private readonly IFileSystemService _fileSystem;
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ProviderClient _imageDownloads;
     private readonly IArtistMetadataService _artistMetadataService;
     private readonly IAlbumCoverService _albumCoverService;
     private readonly ILogger<LibraryService> _logger;
@@ -34,7 +35,6 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
     private readonly ISettingsService _settingsService;
     private readonly IReplayGainService _replayGainService;
     private readonly IImageProcessor _imageProcessor;
-    private readonly ProviderPipelineProvider _pipelines;
     private int _disposeState;
     private volatile CancellationTokenSource? _metadataFetchCts;
     private CancellationTokenSource? _activeScanCts;
@@ -61,12 +61,12 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         _metadataService = metadataService;
         _artistMetadataService = artistMetadataService;
         _albumCoverService = albumCoverService;
-        _httpClientFactory = httpClientFactory;
+        _imageDownloads = new ProviderClient(ProviderCatalog.ImageDownload, httpClientFactory.CreateClient("ImageDownloader"),
+            pipelines, logger);
         _pathConfig = pathConfig;
         _settingsService = settingsService;
         _replayGainService = replayGainService;
         _imageProcessor = imageProcessor;
-        _pipelines = pipelines;
         _logger = logger;
         _settingsService.FetchOnlineMetadataEnabledChanged += OnFetchOnlineMetadataEnabledChanged;
     }

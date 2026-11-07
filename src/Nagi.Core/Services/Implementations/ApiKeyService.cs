@@ -1,10 +1,12 @@
 using System.Collections.Concurrent;
+using System.Net;
 using System.Net.Http.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -14,14 +16,13 @@ file class ApiKeyResponse
 }
 
 /// <summary>
-///     Manages the retrieval and thread-safe caching of API keys from a secure server endpoint.
+///     Fetches the providers' API keys from Nagi's API server, which serves each at <c>/api/{name}-key</c>.
 /// </summary>
 public class ApiKeyService : IApiKeyService
 {
     private readonly ConcurrentDictionary<string, Lazy<Task<string?>>> _cachedApiKeys = new();
+    private readonly ProviderClient _client;
     private readonly IConfiguration _configuration;
-    private readonly IHttpClientFactory _httpClientFactory;
-    private readonly ProviderPipelineProvider _pipelines;
     private readonly ILogger<ApiKeyService> _logger;
     private volatile bool _globalAuthFailed;
 
@@ -31,8 +32,7 @@ public class ApiKeyService : IApiKeyService
         IConfiguration configuration,
         ILogger<ApiKeyService> logger)
     {
-        _httpClientFactory = httpClientFactory;
-        _pipelines = pipelines;
+        _client = new ProviderClient(ProviderCatalog.NagiApi, httpClientFactory.CreateClient(), pipelines, logger);
         _configuration = configuration;
         _logger = logger;
     }
@@ -83,53 +83,48 @@ public class ApiKeyService : IApiKeyService
         {
             Path = $"{serverUri.AbsolutePath.TrimEnd('/')}/api/{keyName}-key"
         }.Uri;
-        using var httpClient = _httpClientFactory.CreateClient();
 
-        return await _pipelines.ExecuteWithFallbackAsync<string?>(
-            ProviderCatalog.NagiApi.ProviderId,
-            async ct =>
+        // One fetch serves every caller, so no single caller can cancel it.
+        var result = await _client.SendAsync<string>(_ =>
             {
-                using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+                var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
                 request.Headers.Add("X-API-KEY", serverKey);
                 if (!string.IsNullOrEmpty(subscriptionKey))
                     request.Headers.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
-                _logger.LogDebug("Fetching API key '{ApiKeyName}' from server.", keyName);
-                return await httpClient.SendAsync(request, ct).ConfigureAwait(false);
+                return request;
             },
             async (response, ct) =>
             {
                 if (response.IsSuccessStatusCode)
                 {
-                    var apiKeyResponse = await response.Content.ReadFromJsonAsync<ApiKeyResponse>(cancellationToken: ct)
-                        .ConfigureAwait(false);
+                    var apiKeyResponse = await response.Content.ReadFromJsonAsync<ApiKeyResponse>(ct).ConfigureAwait(false);
                     var key = apiKeyResponse?.Value;
 
                     if (string.IsNullOrWhiteSpace(key))
                     {
                         _logger.LogError("API key response for '{ApiKeyName}' is invalid (missing 'Value').", keyName);
-                        return null;
+                        return ServiceResult<string>.FromSuccessNotFound();
                     }
-                    return key;
+                    return ServiceResult<string>.FromSuccess(key);
                 }
 
                 var errorContent = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
 
-                if (response.StatusCode is System.Net.HttpStatusCode.Unauthorized or System.Net.HttpStatusCode.Forbidden)
+                if (response.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
                 {
                     _globalAuthFailed = true;
                     _logger.LogCritical(
                         "Authentication failed for Nagi API Server. All future requests disabled. Status: {StatusCode}. Response: {ErrorContent}",
                         response.StatusCode, errorContent);
-                    return null;
+                    return ServiceResult<string>.FromTemporaryError();
                 }
 
                 _logger.LogError("Error fetching API key '{ApiKeyName}'. Status: {StatusCode}. Response: {ErrorContent}",
                     keyName, response.StatusCode, errorContent);
-                return null;
+                return ServiceResult<string>.FromTemporaryError();
             },
-            fallback: null,
-            _logger,
-            $"fetch API key '{keyName}'",
+            $"API key '{keyName}'",
             CancellationToken.None).ConfigureAwait(false);
+        return result.Data;
     }
 }

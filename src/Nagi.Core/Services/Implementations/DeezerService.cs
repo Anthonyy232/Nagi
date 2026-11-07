@@ -1,17 +1,15 @@
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
-using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
-using Nagi.Core.Services.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
-///     Searches Deezer's public catalog, which needs no API key. Its limit of 50 requests per 5 seconds
-///     is enforced by <see cref="ProviderPipelineProvider" />.
+///     Searches Deezer's public catalog, which needs no API key.
 /// </summary>
 public class DeezerService : IDeezerService
 {
@@ -20,8 +18,7 @@ public class DeezerService : IDeezerService
     // Deezer reports errors in a 200 response; this one means the search found nothing.
     private const int DataNotFoundErrorCode = 800;
 
-    private readonly HttpClient _httpClient;
-    private readonly ProviderPipelineProvider _pipelines;
+    private readonly ProviderClient _client;
     private readonly ILogger<DeezerService> _logger;
 
     public DeezerService(
@@ -29,8 +26,7 @@ public class DeezerService : IDeezerService
         ProviderPipelineProvider pipelines,
         ILogger<DeezerService> logger)
     {
-        _httpClient = httpClientFactory.CreateClient();
-        _pipelines = pipelines;
+        _client = new ProviderClient(ProviderCatalog.Deezer.Policy, httpClientFactory.CreateClient(), pipelines, logger);
         _logger = logger;
     }
 
@@ -71,7 +67,7 @@ public class DeezerService : IDeezerService
 
     private Task<ServiceResult<string>> SearchAsync<T>(
         string url, Func<List<T>, string?> selectUrl, string operation, CancellationToken cancellationToken) =>
-        _pipelines.GetJsonAsync<DeezerSearchResult<T>, string>(_httpClient, ServiceProviderIds.Deezer, url,
+        _client.GetJsonAsync<DeezerSearchResult<T>, string>(url,
             result =>
             {
                 if (result.Error is { } error)
@@ -84,7 +80,7 @@ public class DeezerService : IDeezerService
 
                 return ServiceResult<string>.FromSuccessOrNotFound(result.Data is { } data ? selectUrl(data) : null);
             },
-            _logger, $"Deezer {operation}", cancellationToken);
+            $"Deezer {operation}", cancellationToken);
 
     private sealed class DeezerSearchResult<T>
     {

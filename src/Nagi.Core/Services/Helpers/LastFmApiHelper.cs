@@ -1,15 +1,18 @@
-﻿namespace Nagi.Core.Services.Helpers;
-
 using System.Security.Cryptography;
 using System.Text;
+using Nagi.Core.Services.Abstractions;
+
+namespace Nagi.Core.Services.Helpers;
 
 public static class LastFmApiHelper
 {
+    public const string BaseUrl = "https://ws.audioscrobbler.com/2.0/";
+
     /// <summary>
-    ///     Creates the required MD5 signature for an authenticated Last.fm API call.
-    ///     Parameters are sorted alphabetically, concatenated, and hashed with the secret.
+    ///     Creates the MD5 signature of an authenticated Last.fm call: the parameters sorted by name and
+    ///     concatenated, followed by the secret.
     /// </summary>
-    /// <returns>The MD5 hash signature as a lowercase hex string.</returns>
+    /// <returns>The signature as a lowercase hex string.</returns>
     public static string CreateSignature(IDictionary<string, string> parameters, string secret)
     {
         var sb = new StringBuilder();
@@ -22,9 +25,20 @@ public static class LastFmApiHelper
 
         sb.Append(secret);
 
-        var inputBytes = Encoding.UTF8.GetBytes(sb.ToString());
-        var hashBytes = MD5.HashData(inputBytes);
+        return Convert.ToHexStringLower(MD5.HashData(Encoding.UTF8.GetBytes(sb.ToString())));
+    }
 
-        return Convert.ToHexStringLower(hashBytes);
+    /// <summary>Gets the API key and secret that signed calls need.</summary>
+    /// <returns>Both, or null if either couldn't be fetched.</returns>
+    public static async Task<(string ApiKey, string ApiSecret)?> GetKeyAndSecretAsync(IApiKeyService apiKeys,
+        CancellationToken cancellationToken = default)
+    {
+        var apiKeyTask = apiKeys.GetApiKeyAsync(ApiKeyNames.LastFm, cancellationToken);
+        var apiSecretTask = apiKeys.GetApiKeyAsync(ApiKeyNames.LastFmSecret, cancellationToken);
+        await Task.WhenAll(apiKeyTask, apiSecretTask).ConfigureAwait(false);
+
+        var apiKey = await apiKeyTask.ConfigureAwait(false);
+        var apiSecret = await apiSecretTask.ConfigureAwait(false);
+        return string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiSecret) ? null : (apiKey, apiSecret);
     }
 }

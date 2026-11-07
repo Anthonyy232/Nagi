@@ -1,15 +1,14 @@
 using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
-using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Services.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
 public class LastFmAuthService : ILastFmAuthService
 {
-    private const string LastFmApiBaseUrl = "https://ws.audioscrobbler.com/2.0/";
-
     private readonly IApiKeyService _apiKeyService;
     private readonly HttpClient _httpClient;
     private readonly ProviderPipelineProvider _pipelines;
@@ -29,7 +28,7 @@ public class LastFmAuthService : ILastFmAuthService
 
     public async Task<(string Token, string AuthUrl)?> GetAuthenticationTokenAsync()
     {
-        var credentials = await GetCredentialsAsync().ConfigureAwait(false);
+        var credentials = await LastFmApiHelper.GetKeyAndSecretAsync(_apiKeyService).ConfigureAwait(false);
         if (credentials is null)
         {
             _logger.LogError("Cannot get Last.fm auth token; API key or secret is unavailable.");
@@ -43,11 +42,11 @@ public class LastFmAuthService : ILastFmAuthService
             { "api_key", apiKey }
         };
 
-        var signature = Helpers.LastFmApiHelper.CreateSignature(parameters, apiSecret);
-        var requestUrl = $"{LastFmApiBaseUrl}?method=auth.getToken&api_key={Uri.EscapeDataString(apiKey)}&api_sig={signature}&format=json";
+        var signature = LastFmApiHelper.CreateSignature(parameters, apiSecret);
+        var requestUrl = $"{LastFmApiHelper.BaseUrl}?method=auth.getToken&api_key={Uri.EscapeDataString(apiKey)}&api_sig={signature}&format=json";
 
         return await _pipelines.ExecuteWithFallbackAsync<(string Token, string AuthUrl)?>(
-            ServiceProviderIds.LastFm,
+            ProviderCatalog.LastFm.Policy.ProviderId,
             ct => new ValueTask<HttpResponseMessage>(_httpClient.GetAsync(requestUrl, ct)),
             async (response, ct) =>
             {
@@ -77,7 +76,7 @@ public class LastFmAuthService : ILastFmAuthService
 
     public async Task<(string Username, string SessionKey)?> GetSessionAsync(string token)
     {
-        var credentials = await GetCredentialsAsync().ConfigureAwait(false);
+        var credentials = await LastFmApiHelper.GetKeyAndSecretAsync(_apiKeyService).ConfigureAwait(false);
         if (credentials is null)
         {
             _logger.LogError("Cannot get Last.fm session; API key or secret is unavailable.");
@@ -92,12 +91,12 @@ public class LastFmAuthService : ILastFmAuthService
             { "token", token }
         };
 
-        var signature = Helpers.LastFmApiHelper.CreateSignature(parameters, apiSecret);
+        var signature = LastFmApiHelper.CreateSignature(parameters, apiSecret);
         var requestUrl =
-            $"{LastFmApiBaseUrl}?method=auth.getSession&api_key={Uri.EscapeDataString(apiKey)}&token={Uri.EscapeDataString(token)}&api_sig={signature}&format=json";
+            $"{LastFmApiHelper.BaseUrl}?method=auth.getSession&api_key={Uri.EscapeDataString(apiKey)}&token={Uri.EscapeDataString(token)}&api_sig={signature}&format=json";
 
         return await _pipelines.ExecuteWithFallbackAsync<(string Username, string SessionKey)?>(
-            ServiceProviderIds.LastFm,
+            ProviderCatalog.LastFm.Policy.ProviderId,
             ct => new ValueTask<HttpResponseMessage>(_httpClient.GetAsync(requestUrl, ct)),
             async (response, ct) =>
             {
@@ -125,20 +124,6 @@ public class LastFmAuthService : ILastFmAuthService
             fallback: null,
             _logger,
             "session fetch").ConfigureAwait(false);
-    }
-
-    private async Task<(string ApiKey, string ApiSecret)?> GetCredentialsAsync()
-    {
-        var apiKeyTask = _apiKeyService.GetApiKeyAsync(ApiKeyNames.LastFm);
-        var apiSecretTask = _apiKeyService.GetApiKeyAsync(ApiKeyNames.LastFmSecret);
-
-        await Task.WhenAll(apiKeyTask, apiSecretTask).ConfigureAwait(false);
-        var apiKey = await apiKeyTask.ConfigureAwait(false);
-        var apiSecret = await apiSecretTask.ConfigureAwait(false);
-
-        return string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiSecret)
-            ? null
-            : (apiKey, apiSecret);
     }
 
     private class LastFmTokenResponse

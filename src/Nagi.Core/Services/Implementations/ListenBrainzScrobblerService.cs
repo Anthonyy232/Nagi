@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
+using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -256,7 +257,7 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
         var url = $"{baseUrl}{SubmitListensPath}";
 
         return await _pipelines.ExecuteWithFallbackAsync(
-            ServiceProviderIds.ListenBrainz,
+            ProviderCatalog.ListenBrainz.ProviderId,
             async ct =>
             {
                 using var request = new HttpRequestMessage(HttpMethod.Post, url);

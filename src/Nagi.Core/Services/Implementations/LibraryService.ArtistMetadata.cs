@@ -7,7 +7,6 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Http;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
-using Nagi.Core.Http.Pipelines;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -585,32 +584,8 @@ public partial class LibraryService
             artistId.ToString(), ".fetched", processedBytes).ConfigureAwait(false);
     }
 
-    private async Task<byte[]?> DownloadImageBytesAsync(Uri imageUrl, CancellationToken cancellationToken)
-    {
-        using var httpClient = _httpClientFactory.CreateClient("ImageDownloader");
-
-        return await _pipelines.ExecuteWithFallbackAsync<byte[]?>(
-            ProviderCatalog.ImageDownload.ProviderId,
-            async ct =>
-            {
-                _logger.LogDebug("Downloading image: {ImageUrl}", imageUrl);
-                return await httpClient.GetAsync(imageUrl, ct).ConfigureAwait(false);
-            },
-            async (response, ct) =>
-            {
-                if (!response.IsSuccessStatusCode)
-                {
-                    _logger.LogDebug("Image download returned {Status} for {ImageUrl}", response.StatusCode, imageUrl);
-                    return null;
-                }
-
-                return await response.Content.ReadAsByteArrayAsync(ct).ConfigureAwait(false);
-            },
-            fallback: null,
-            _logger,
-            $"image download {imageUrl}",
-            cancellationToken).ConfigureAwait(false);
-    }
+    private async Task<byte[]?> DownloadImageBytesAsync(Uri imageUrl, CancellationToken cancellationToken) =>
+        (await _imageDownloads.GetBytesAsync(imageUrl, $"image download {imageUrl}", cancellationToken).ConfigureAwait(false)).Data;
 
     private void OnFetchOnlineMetadataEnabledChanged(bool isEnabled)
     {

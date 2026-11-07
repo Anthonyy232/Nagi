@@ -2,34 +2,28 @@ using System.Globalization;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
-using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
-using Nagi.Core.Services.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
-///     Searches the Apple Music catalog through the public iTunes Search API, which needs no key but allows
-///     only about 20 requests a minute.
+///     Searches the Apple Music catalog through the public iTunes Search API, which needs no key.
 /// </summary>
 public class AppleMusicService : IAppleMusicService
 {
     private const string SearchUrl = "https://itunes.apple.com/search";
 
-    private readonly HttpClient _httpClient;
-    private readonly ProviderPipelineProvider _pipelines;
-    private readonly ILogger<AppleMusicService> _logger;
+    private readonly ProviderClient _client;
 
     public AppleMusicService(
         IHttpClientFactory httpClientFactory,
         ProviderPipelineProvider pipelines,
         ILogger<AppleMusicService> logger)
     {
-        _httpClient = httpClientFactory.CreateClient();
-        _pipelines = pipelines;
-        _logger = logger;
+        _client = new ProviderClient(ProviderCatalog.AppleMusic.Policy, httpClientFactory.CreateClient(), pipelines, logger);
     }
 
     public Task<ServiceResult<string>> GetAlbumCoverUrlAsync(string albumTitle, string artistName,
@@ -44,7 +38,7 @@ public class AppleMusicService : IAppleMusicService
         var url = $"{SearchUrl}?term={Uri.EscapeDataString($"{artistName} {albumTitle}")}&entity=album&limit=25" +
                   (country.Length == 2 && country != "IV" ? $"&country={country}" : string.Empty);
 
-        return _pipelines.GetJsonAsync<SearchResult, string>(_httpClient, ServiceProviderIds.AppleMusic, url,
+        return _client.GetJsonAsync<SearchResult, string>(url,
             result =>
             {
                 var album = result.Results?.FirstOrDefault(candidate =>
@@ -55,7 +49,7 @@ public class AppleMusicService : IAppleMusicService
                 return ServiceResult<string>.FromSuccessOrNotFound(
                     album?.ArtworkUrl100?.Replace("100x100bb", "1200x1200bb", StringComparison.Ordinal));
             },
-            _logger, $"Apple Music album search for {albumTitle} by {artistName}", cancellationToken);
+            $"Apple Music album search for {albumTitle} by {artistName}", cancellationToken);
     }
 
     private sealed class SearchResult
