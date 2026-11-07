@@ -64,7 +64,6 @@ public static class CoreServiceRegistration
         services.AddSingleton<IAppleMusicService, AppleMusicService>();
         services.AddSingleton<IArtistMetadataService, ArtistMetadataService>();
         services.AddSingleton<IAlbumCoverService, AlbumCoverService>();
-        services.AddSingleton<INetEaseLyricsService, NetEaseLyricsService>();
         services.AddSingleton<LastFmScrobblerService>();
         services.AddSingleton<ILastFmScrobblerService>(sp => sp.GetRequiredService<LastFmScrobblerService>());
         services.AddSingleton<IListenSubmitter>(sp => sp.GetRequiredService<LastFmScrobblerService>());
@@ -78,7 +77,8 @@ public static class CoreServiceRegistration
         services.AddSingleton<IMusicServerService, MusicServerService>();
         services.AddSingleton<IPresenceService, MusicServerPresenceService>();
         services.AddSingleton<ISmartPlaylistService, SmartPlaylistService>();
-        services.AddSingleton<IOnlineLyricsService, LrcLibService>();
+        services.AddSingleton<ILyricsProvider, LrcLibService>();
+        services.AddSingleton<ILyricsProvider, NetEaseLyricsService>();
         services.AddSingleton<IRomanizationProvider, JapaneseRomanizationProvider>();
         services.AddSingleton<IRomanizationProvider, DevanagariRomanizationProvider>();
         services.AddSingleton<IRomanizationProvider, KoreanRomanizationProvider>();

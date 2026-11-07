@@ -6,6 +6,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Models.Lyrics;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Services.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -13,8 +14,7 @@ public class LrcService : ILrcService, IDisposable
 {
     private readonly IFileSystemService _fileSystemService;
     private readonly ILogger<LrcService> _logger;
-    private readonly IOnlineLyricsService _onlineLyricsService;
-    private readonly INetEaseLyricsService _netEaseLyricsService;
+    private readonly Dictionary<string, ILyricsProvider> _providers;
     private readonly ISettingsService _settingsService;
     private readonly IPathConfiguration _pathConfig;
     private readonly ILibraryWriter _libraryWriter;
@@ -26,8 +26,7 @@ public class LrcService : ILrcService, IDisposable
 
     public LrcService(
         IFileSystemService fileSystemService,
-        IOnlineLyricsService onlineLyricsService,
-        INetEaseLyricsService netEaseLyricsService,
+        IEnumerable<ILyricsProvider> providers,
         ISettingsService settingsService,
         IPathConfiguration pathConfig,
         ILibraryWriter libraryWriter,
@@ -35,8 +34,7 @@ public class LrcService : ILrcService, IDisposable
         ILogger<LrcService> logger)
     {
         _fileSystemService = fileSystemService;
-        _onlineLyricsService = onlineLyricsService;
-        _netEaseLyricsService = netEaseLyricsService;
+        _providers = providers.ToDictionary(provider => provider.Id);
         _settingsService = settingsService;
         _pathConfig = pathConfig;
         _libraryWriter = libraryWriter;
@@ -106,69 +104,34 @@ public class LrcService : ILrcService, IDisposable
             return null;
 
         var enabledProviders = await _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Lyrics).ConfigureAwait(false);
-        if (enabledProviders.Count == 0) return null;
-        var allProvidersSucceeded = true;
-
-        var tasks = new List<Task<string?>>(enabledProviders.Count);
-        foreach (var provider in enabledProviders)
-        {
-            try
-            {
-                tasks.Add(provider.Id switch
-                {
-                    ServiceProviderIds.LrcLib => _onlineLyricsService.GetLyricsAsync(
-                        song.Title, song.PrimaryArtistName, song.Album?.Title, song.Duration, token),
-                    ServiceProviderIds.NetEase => _netEaseLyricsService.SearchLyricsAsync(
-                        song.Title, song.PrimaryArtistName, token),
-                    _ => throw new NotSupportedException($"Unknown lyrics provider: {provider.Id}")
-                });
-            }
-            catch (Exception ex)
-            {
-                allProvidersSucceeded = false;
-                _logger.LogError(ex, "Failed to initiate lyrics fetch for provider {Provider}", provider.DisplayName);
-            }
-        }
+        var lookups = enabledProviders
+            .Where(provider => _providers.ContainsKey(provider.Id))
+            .Select(provider => _providers[provider.Id].GetLyricsAsync(song, token))
+            .ToList();
+        if (lookups.Count == 0) return null;
 
         // Provider order breaks ties; plain text must not hide another provider's timed lyrics.
         ParsedLrc? selectedLyrics = null;
-        foreach (var task in tasks)
+        bool isFinal;
+        try
         {
-            try
+            isFinal = await ProviderPriority.TakeInOrderAsync(lookups, lyrics =>
             {
-                var result = await task.WaitAsync(token).ConfigureAwait(false);
-                if (string.IsNullOrWhiteSpace(result)) continue;
-                var parsed = ParseLyrics(result);
-                if (!parsed.IsEmpty)
+                if (string.IsNullOrWhiteSpace(lyrics)) return false;
+                var parsed = ParseLyrics(lyrics);
+                if (parsed.IsEmpty)
                 {
-                    selectedLyrics = parsed;
-                    break;
+                    selectedLyrics ??= parsed;
+                    return false;
                 }
-                selectedLyrics ??= parsed;
-            }
-            catch (OperationCanceledException)
-            {
-                allProvidersSucceeded = false;
-                // A provider timeout must not prevent a lower-priority provider from succeeding.
-                if (token.IsCancellationRequested) break;
-            }
-            catch (Exception ex)
-            {
-                allProvidersSucceeded = false;
-                _logger.LogDebug(ex, "Lyrics provider failed for '{Title}'.", song.Title);
-            }
-        }
 
-        // Observe failures from providers we stopped awaiting after finding lyrics.
-        foreach (var task in tasks)
+                selectedLyrics = parsed;
+                return true;
+            }, token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (token.IsCancellationRequested)
         {
-            _ = task.ContinueWith(
-                static (t, state) => ((ILogger<LrcService>)state!).LogDebug(
-                    t.Exception!.InnerException, "Lyrics task faulted (ignored, already resolved)"),
-                _logger,
-                CancellationToken.None,
-                TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously,
-                TaskScheduler.Default);
+            return null;
         }
 
         if (token.IsCancellationRequested) return null;
@@ -181,7 +144,7 @@ public class LrcService : ILrcService, IDisposable
 
         // A negative result is conclusive only when every enabled provider completed.
         // Failed requests remain retryable on the next playback.
-        if (allProvidersSucceeded)
+        if (isFinal)
         {
             // All providers completed successfully but returned no lyrics. Remove the invalid local
             // reference now; successful lyric results already replace it in CacheLyricsAsync.

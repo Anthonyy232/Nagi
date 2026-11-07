@@ -38,7 +38,7 @@ public class NetEaseLyricsServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task SearchLyricsAsync_ReplacesTheDefaultUserAgentWithABrowserOne()
+    public async Task GetLyricsAsync_ReplacesTheDefaultUserAgentWithABrowserOne()
     {
         using var handler = new TestHttpMessageHandler();
         var client = new HttpClient(handler);
@@ -47,13 +47,13 @@ public class NetEaseLyricsServiceTests : IAsyncDisposable
         factory.CreateClient(Arg.Any<string>()).Returns(client);
         handler.RespondSequence((HttpStatusCode.OK, "{}"));
 
-        await new NetEaseLyricsService(factory, _pipelines, _logger).SearchLyricsAsync("Track", null);
+        await new NetEaseLyricsService(factory, _pipelines, _logger).GetLyricsAsync(Track("Track", null));
 
         handler.Requests[0].Headers.UserAgent.ToString().Should().StartWith("Mozilla/5.0").And.NotContain("Nagi");
     }
 
     [Fact]
-    public async Task SearchLyricsAsync_PrefersExactTitleThenMatchingArtist()
+    public async Task GetLyricsAsync_PrefersExactTitleThenMatchingArtist()
     {
         _httpHandler.SendAsyncFunc = (request, _) =>
         {
@@ -76,15 +76,15 @@ public class NetEaseLyricsServiceTests : IAsyncDisposable
             });
         };
 
-        var lyrics = await _service.SearchLyricsAsync(" Track ", " The Artist ");
+        var lyrics = await _service.GetLyricsAsync(Track(" Track ", " The Artist "));
 
-        lyrics.Should().Be("[00:01.00]Match");
+        lyrics.Data.Should().Be("[00:01.00]Match");
     }
 
     [Theory]
     [InlineData(null)]
     [InlineData(" Unknown Artist ")]
-    public async Task SearchLyricsAsync_WithMissingArtist_SearchesByTitle(string? artist)
+    public async Task GetLyricsAsync_WithMissingArtist_SearchesByTitle(string? artist)
     {
         var searchResponse = new { result = new { songs = new[] { new { id = 12345L, name = "Track Name" } } } };
         var lyricsResponse = new { lrc = new { lyric = "[00:01.00]Found It" } };
@@ -107,23 +107,23 @@ public class NetEaseLyricsServiceTests : IAsyncDisposable
             };
         };
 
-        var result = await _service.SearchLyricsAsync("Track Name", artist);
+        var result = await _service.GetLyricsAsync(Track("Track Name", artist));
 
-        result.Should().Contain("[00:01.00]Found It");
+        result.Data.Should().Contain("[00:01.00]Found It");
     }
 
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
-    public async Task SearchLyricsAsync_WithBlankTrackName_ReturnsNull(string track)
+    public async Task GetLyricsAsync_WithBlankTrackName_ReturnsNull(string track)
     {
-        var result = await _service.SearchLyricsAsync(track, "Artist");
+        var result = await _service.GetLyricsAsync(Track(track, "Artist"));
 
-        result.Should().BeNull();
+        result.Data.Should().BeNull();
     }
 
     [Fact]
-    public async Task SearchLyricsAsync_WhenSearchReturnsNoResults_ReturnsNull()
+    public async Task GetLyricsAsync_WhenSearchReturnsNoResults_ReturnsNull()
     {
         var searchResponse = new { result = new { songs = Array.Empty<object>() } };
         _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
@@ -131,9 +131,9 @@ public class NetEaseLyricsServiceTests : IAsyncDisposable
             Content = new StringContent(JsonSerializer.Serialize(searchResponse))
         });
 
-        var result = await _service.SearchLyricsAsync("NonExistent Track", "Artist");
+        var result = await _service.GetLyricsAsync(Track("NonExistent Track", "Artist"));
 
-        result.Should().BeNull();
+        result.Data.Should().BeNull();
     }
 
     [Theory]
@@ -141,7 +141,7 @@ public class NetEaseLyricsServiceTests : IAsyncDisposable
     [InlineData("[00:01 broken timestamp", false)]
     [InlineData("[0:01.123]Short minutes", true)]
     [InlineData("[100:01.00]Long minutes", true)]
-    public async Task SearchLyricsAsync_ValidatesLyricsWithPlaybackParser(string lyrics, bool valid)
+    public async Task GetLyricsAsync_ValidatesLyricsWithPlaybackParser(string lyrics, bool valid)
     {
         var searchResponse = new { result = new { songs = new[] { new { id = 12345L, name = "Track" } } } };
         var lyricsResponse = new { lrc = new { lyric = lyrics } };
@@ -162,29 +162,28 @@ public class NetEaseLyricsServiceTests : IAsyncDisposable
             });
         };
 
-        var result = await _service.SearchLyricsAsync("Track", "Artist");
+        var result = await _service.GetLyricsAsync(Track("Track", "Artist"));
 
-        result.Should().Be(valid ? lyrics : null);
+        result.Data.Should().Be(valid ? lyrics : null);
     }
 
     [Fact]
-    public async Task SearchLyricsAsync_WhenRejected_PropagatesFailureAndCanRetry()
+    public async Task GetLyricsAsync_WhenRejected_RemainsRetryable()
     {
         _httpHandler.SendAsyncFunc = (_, _) =>
             Task.FromResult(new HttpResponseMessage(HttpStatusCode.Forbidden));
 
-        var act = () => _service.SearchLyricsAsync("Track1", "Artist");
-        await act.Should().ThrowAsync<HttpRequestException>();
+        (await _service.GetLyricsAsync(Track("Track1", "Artist"))).IsConclusive.Should().BeFalse();
         _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
         {
             Content = new StringContent("{\"result\": {\"songs\": [{\"id\": 123}]}}")
         });
-        var result2 = await _service.SearchLyricsAsync("Track2", "Artist");
-        result2.Should().BeNull();
+        var result2 = await _service.GetLyricsAsync(Track("Track2", "Artist"));
+        result2.Data.Should().BeNull();
     }
 
     [Fact]
-    public async Task SearchLyricsAsync_WhenLyricsFetchReturns403_PropagatesFailure()
+    public async Task GetLyricsAsync_WhenLyricsFetchReturns403_RemainsRetryable()
     {
         var searchResponse = new { result = new { songs = new[] { new { id = 12345L, name = "Track1" } } } };
 
@@ -199,21 +198,20 @@ public class NetEaseLyricsServiceTests : IAsyncDisposable
             }
             return Task.FromResult(new HttpResponseMessage(HttpStatusCode.Forbidden));
         };
-        var act = () => _service.SearchLyricsAsync("Track1", "Artist");
-        await act.Should().ThrowAsync<HttpRequestException>();
+        (await _service.GetLyricsAsync(Track("Track1", "Artist"))).IsConclusive.Should().BeFalse();
     }
 
     [Fact]
-    public async Task SearchLyricsAsync_WhenAlreadyCancelled_ThrowsOperationCanceledException()
+    public async Task GetLyricsAsync_WhenAlreadyCancelled_ThrowsOperationCanceledException()
     {
         using var cts = new CancellationTokenSource();
         cts.Cancel();
         await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => _service.SearchLyricsAsync("Track", "Artist", cts.Token));
+            () => _service.GetLyricsAsync(Track("Track", "Artist"), cts.Token));
     }
 
     [Fact]
-    public async Task SearchLyricsAsync_WhenCancelledDuringLyricsFetch_ThrowsOperationCanceledException()
+    public async Task GetLyricsAsync_WhenCancelledDuringLyricsFetch_ThrowsOperationCanceledException()
     {
         using var cts = new CancellationTokenSource();
         var searchResponse = new { result = new { songs = new[] { new { id = 12345L, name = "Track" } } } };
@@ -231,6 +229,8 @@ public class NetEaseLyricsServiceTests : IAsyncDisposable
             throw new OperationCanceledException(cts.Token);
         };
         await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => _service.SearchLyricsAsync("Track", "Artist", cts.Token));
+            () => _service.GetLyricsAsync(Track("Track", "Artist"), cts.Token));
     }
+
+    private static Song Track(string title, string? artist) => new() { Title = title, PrimaryArtistName = artist ?? string.Empty };
 }

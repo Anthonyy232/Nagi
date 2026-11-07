@@ -1,25 +1,24 @@
-using System.Net.Http.Json;
 using ModernLrc;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
-using Polly.CircuitBreaker;
+using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
-///     Service for fetching synchronized lyrics from NetEase Cloud Music.
-///     Uses unofficial API endpoints commonly used by open-source music players.
+///     Finds synchronized lyrics on NetEase Cloud Music through the unofficial endpoints open-source players use. It
+///     often has lyrics for Asian music (J-Pop, K-Pop, anime) that LRCLIB lacks.
 /// </summary>
-public class NetEaseLyricsService : INetEaseLyricsService
+public class NetEaseLyricsService : ILyricsProvider
 {
     private const string SearchUrl = "https://music.163.com/api/search/get";
     private const string LyricsUrl = "https://music.163.com/api/song/lyric";
 
-    private readonly HttpClient _httpClient;
-    private readonly ProviderPipelineProvider _pipelines;
+    private readonly ProviderClient _client;
     private readonly ILogger<NetEaseLyricsService> _logger;
 
     public NetEaseLyricsService(
@@ -27,81 +26,61 @@ public class NetEaseLyricsService : INetEaseLyricsService
         ProviderPipelineProvider pipelines,
         ILogger<NetEaseLyricsService> logger)
     {
-        _httpClient = httpClientFactory.CreateClient();
-        _httpClient.DefaultRequestHeaders.Add("Referer", "https://music.163.com/");
+        _client = new ProviderClient(ProviderCatalog.NetEase.Policy, httpClientFactory.CreateClient(), pipelines, logger);
+        _client.DefaultRequestHeaders.Add("Referer", "https://music.163.com/");
         // The web API expects a browser, so this replaces the Nagi user agent every client gets by default.
-        _httpClient.DefaultRequestHeaders.UserAgent.Clear();
-        _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
-        _pipelines = pipelines;
+        _client.DefaultRequestHeaders.UserAgent.Clear();
+        _client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
         _logger = logger;
     }
 
-    public async Task<string?> SearchLyricsAsync(string trackName, string? artistName,
-        CancellationToken cancellationToken = default)
+    public string Id => ServiceProviderIds.NetEase;
+
+    public async Task<ServiceResult<string>> GetLyricsAsync(Song song, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(trackName))
-            return null;
+        if (string.IsNullOrWhiteSpace(song.Title))
+            return ServiceResult<string>.FromSuccessNotFound();
 
-        if (_pipelines.IsCircuitOpen(ServiceProviderIds.NetEase))
+        var trackName = ArtistNameHelper.NormalizeStringCore(song.Title)!;
+        var artistName = ArtistNameHelper.NormalizeStringCore(song.PrimaryArtistName);
+        if (string.Equals(artistName, Artist.UnknownArtistName, StringComparison.OrdinalIgnoreCase)) artistName = null;
+
+        var query = artistName is null ? trackName : $"{trackName} {artistName}";
+        var match = await _client.SendJsonAsync<NetEaseSearchResult, NetEaseSong>(_ =>
+                new HttpRequestMessage(HttpMethod.Post, SearchUrl)
+                {
+                    Content = new FormUrlEncodedContent(new Dictionary<string, string>
+                    {
+                        ["s"] = query,
+                        ["type"] = "1", // 1 = songs
+                        ["limit"] = "10",
+                        ["offset"] = "0"
+                    })
+                },
+                result => ServiceResult<NetEaseSong>.FromSuccessOrNotFound(SelectBestMatch(result, trackName, artistName)),
+                $"song search for {query}", cancellationToken)
+            .ConfigureAwait(false);
+        if (match.Data is null)
         {
-            _logger.LogDebug("NetEase circuit is open; skipping search.");
-            throw new BrokenCircuitException("NetEase is temporarily unavailable.");
+            if (match.IsConclusive) _logger.LogDebug("No NetEase match found for: {Query}", query);
+            return match.IsConclusive ? ServiceResult<string>.FromSuccessNotFound() : ServiceResult<string>.FromTemporaryError();
         }
 
-        var normalizedTrack = ArtistNameHelper.NormalizeStringCore(trackName)!;
-        var normalizedArtist = ArtistNameHelper.NormalizeStringCore(artistName);
-        if (string.Equals(normalizedArtist, Artist.UnknownArtistName, StringComparison.OrdinalIgnoreCase)) normalizedArtist = null;
-
-        var query = normalizedArtist is null
-            ? normalizedTrack
-            : $"{normalizedTrack} {normalizedArtist}";
-
-        var songId = await SearchSongAsync(query, normalizedTrack, normalizedArtist, cancellationToken).ConfigureAwait(false);
-        if (songId is null)
-        {
-            _logger.LogDebug("No NetEase match found for: {Query}", query);
-            return null;
-        }
-
-        var lyrics = await GetLyricsAsync(songId.Value, cancellationToken).ConfigureAwait(false);
-        if (string.IsNullOrWhiteSpace(lyrics))
-        {
-            _logger.LogDebug("No lyrics found for NetEase song ID: {SongId}", songId);
-            return null;
-        }
-
-        _logger.LogInformation("Found NetEase lyrics for: {TrackName}", trackName);
+        var lyrics = await _client.GetJsonAsync<NetEaseLyricsResult, string>($"{LyricsUrl}?id={match.Data.Id}&lv=1",
+                result => ServiceResult<string>.FromSuccessOrNotFound(result.Lrc?.Lyric is { } lrc &&
+                                                                        !string.IsNullOrWhiteSpace(lrc) &&
+                                                                        LrcParser.Parse(lrc).Document.Lines.Count > 0
+                    ? lrc
+                    : null),
+                $"lyrics for song {match.Data.Id}", cancellationToken)
+            .ConfigureAwait(false);
+        if (lyrics.Data is not null) _logger.LogInformation("Found NetEase lyrics for: {TrackName}", song.Title);
         return lyrics;
     }
 
-    private async Task<long?> SearchSongAsync(string query, string trackName, string? artistName, CancellationToken cancellationToken)
-    {
-        using var response = await _pipelines.ExecuteAsync(
-            ServiceProviderIds.NetEase,
-            async ct =>
-            {
-                using var content = new FormUrlEncodedContent(new Dictionary<string, string>
-                {
-                    ["s"] = query,
-                    ["type"] = "1", // 1 = songs
-                    ["limit"] = "10",
-                    ["offset"] = "0"
-                });
-                _logger.LogDebug("Searching NetEase for: {Query}", query);
-                return await _httpClient.PostAsync(SearchUrl, content, ct).ConfigureAwait(false);
-            },
-            cancellationToken).ConfigureAwait(false);
-
-        response.EnsureSuccessStatusCode();
-        var result = await response.Content.ReadFromJsonAsync<NetEaseSearchResult>(cancellationToken: cancellationToken)
-            .ConfigureAwait(false);
-
-        var songs = result?.Result?.Songs;
-        if (songs is null || songs.Count == 0)
-            return null;
-
-        // Score breakdown: TrackExact=4, TrackContains=2, ArtistMatch=1
-        var bestMatch = songs
+    // Score: exact title 4, title contained 2, plus 1 for a matching artist.
+    private static NetEaseSong? SelectBestMatch(NetEaseSearchResult result, string trackName, string? artistName) =>
+        result.Result?.Songs?
             .Select(s =>
             {
                 var normalizedSongName = ArtistNameHelper.NormalizeStringCore(s.Name);
@@ -118,53 +97,21 @@ public class NetEaseLyricsService : INetEaseLyricsService
             })
             .Where(x => x.Score > 0)
             .OrderByDescending(x => x.Score)
+            .Select(x => x.Song)
             .FirstOrDefault();
-
-        return bestMatch.Song?.Id;
-    }
-
-    private async Task<string?> GetLyricsAsync(long songId, CancellationToken cancellationToken)
-    {
-        var url = $"{LyricsUrl}?id={songId}&lv=1";
-
-        using var response = await _pipelines.ExecuteAsync(
-            ServiceProviderIds.NetEase,
-            async ct =>
-            {
-                _logger.LogDebug("Fetching NetEase lyrics for song ID: {SongId}", songId);
-                return await _httpClient.GetAsync(url, ct).ConfigureAwait(false);
-            },
-            cancellationToken).ConfigureAwait(false);
-
-        response.EnsureSuccessStatusCode();
-        var result = await response.Content.ReadFromJsonAsync<NetEaseLyricsResult>(cancellationToken: cancellationToken)
-            .ConfigureAwait(false);
-
-        var lrcContent = result?.Lrc?.Lyric;
-        if (string.IsNullOrWhiteSpace(lrcContent))
-            return null;
-
-        if (LrcParser.Parse(lrcContent).Document.Lines.Count == 0)
-            return null;
-
-        return lrcContent;
-    }
 
     private sealed class NetEaseSearchResult
     {
-
         public NetEaseSearchResultData? Result { get; set; }
     }
 
     private sealed class NetEaseSearchResultData
     {
-
         public List<NetEaseSong>? Songs { get; set; }
     }
 
     private sealed class NetEaseSong
     {
-
         public long Id { get; set; }
 
         public string? Name { get; set; }
@@ -174,19 +121,16 @@ public class NetEaseLyricsService : INetEaseLyricsService
 
     private sealed class NetEaseArtist
     {
-
         public string? Name { get; set; }
     }
 
     private sealed class NetEaseLyricsResult
     {
-
         public NetEaseLyric? Lrc { get; set; }
     }
 
     private sealed class NetEaseLyric
     {
-
         public string? Lyric { get; set; }
     }
 }

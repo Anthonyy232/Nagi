@@ -46,9 +46,9 @@ public class LrcLibServiceTests : IAsyncDisposable
             Content = new StringContent(JsonSerializer.Serialize(lrcResponse))
         });
 
-        var result = await _service.GetLyricsAsync("Test Track", "Test Artist", "Test Album", TimeSpan.FromMinutes(3));
+        var result = await _service.GetLyricsAsync(Track("Test Track", "Test Artist", "Test Album", TimeSpan.FromMinutes(3)));
 
-        result.Should().Be("[00:01.00]Hello World");
+        result.Data.Should().Be("[00:01.00]Hello World");
     }
 
     [Theory]
@@ -56,9 +56,9 @@ public class LrcLibServiceTests : IAsyncDisposable
     [InlineData("   ")]
     public async Task GetLyricsAsync_WithBlankTrackName_ReturnsNull(string track)
     {
-        var result = await _service.GetLyricsAsync(track, "Artist", "Album", TimeSpan.FromMinutes(3));
+        var result = await _service.GetLyricsAsync(Track(track, "Artist", "Album", TimeSpan.FromMinutes(3)));
 
-        result.Should().BeNull();
+        result.Data.Should().BeNull();
     }
 
     [Theory]
@@ -87,9 +87,9 @@ public class LrcLibServiceTests : IAsyncDisposable
             });
         };
 
-        var result = await _service.GetLyricsAsync("Test Track", "Test Artist", "Test Album", TimeSpan.FromMinutes(3));
+        var result = await _service.GetLyricsAsync(Track("Test Track", "Test Artist", "Test Album", TimeSpan.FromMinutes(3)));
 
-        result.Should().Be("[00:01.00]Fallback Lyrics");
+        result.Data.Should().Be("[00:01.00]Fallback Lyrics");
         callCount.Should().Be(2);
     }
 
@@ -112,9 +112,9 @@ public class LrcLibServiceTests : IAsyncDisposable
             });
         };
 
-        var result = await _service.GetLyricsAsync("Test Track", "Test Artist", "Test Album", TimeSpan.FromMinutes(3));
+        var result = await _service.GetLyricsAsync(Track("Test Track", "Test Artist", "Test Album", TimeSpan.FromMinutes(3)));
 
-        result.Should().BeNull();
+        result.Data.Should().BeNull();
     }
 
     [Fact]
@@ -140,9 +140,9 @@ public class LrcLibServiceTests : IAsyncDisposable
             });
         };
 
-        var result = await _service.GetLyricsAsync("Test Track", "Test Artist", " Test Album ", TimeSpan.FromMinutes(3));
+        var result = await _service.GetLyricsAsync(Track("Test Track", "Test Artist", " Test Album ", TimeSpan.FromMinutes(3)));
 
-        result.Should().Be("[00:01.00]Correct Match");
+        result.Data.Should().Be("[00:01.00]Correct Match");
     }
 
     [Theory]
@@ -166,19 +166,20 @@ public class LrcLibServiceTests : IAsyncDisposable
                 }))
         });
 
-        var result = await _service.GetLyricsAsync("Track", "Artist", "Test Album", TimeSpan.FromMinutes(3));
+        var result = await _service.GetLyricsAsync(Track("Track", "Artist", "Test Album", TimeSpan.FromMinutes(3)));
 
-        result.Should().Be(expected);
+        result.Data.Should().Be(expected);
     }
 
     [Fact]
-    public async Task GetLyricsAsync_WhenRateLimited_PropagatesFailure()
+    public async Task GetLyricsAsync_WhenRateLimited_RemainsRetryable()
     {
         _httpHandler.SendAsyncFunc = (_, _) =>
             Task.FromResult(new HttpResponseMessage(HttpStatusCode.TooManyRequests));
 
-        var act = () => _service.GetLyricsAsync("Track1", "Artist", "Album", TimeSpan.FromMinutes(3));
-        await act.Should().ThrowAsync<HttpRequestException>();
+        var result = await _service.GetLyricsAsync(Track("Track1", "Artist", "Album", TimeSpan.FromMinutes(3)));
+
+        result.IsConclusive.Should().BeFalse();
     }
 
     [Fact]
@@ -186,7 +187,7 @@ public class LrcLibServiceTests : IAsyncDisposable
     {
         using var cts = new CancellationTokenSource();
         cts.Cancel();
-        var act = () => _service.GetLyricsAsync("Track", "Artist", "Album", TimeSpan.FromMinutes(3), cts.Token);
+        var act = () => _service.GetLyricsAsync(Track("Track", "Artist", "Album", TimeSpan.FromMinutes(3)), cts.Token);
         await act.Should().ThrowAsync<OperationCanceledException>();
     }
 
@@ -204,7 +205,7 @@ public class LrcLibServiceTests : IAsyncDisposable
             cts.Cancel();
             return Task.FromCanceled<HttpResponseMessage>(ct);
         };
-        var act = () => _service.GetLyricsAsync("Track", "Artist", "Album", TimeSpan.FromMinutes(3), cts.Token);
+        var act = () => _service.GetLyricsAsync(Track("Track", "Artist", "Album", TimeSpan.FromMinutes(3)), cts.Token);
         await act.Should().ThrowAsync<OperationCanceledException>();
     }
 
@@ -230,10 +231,17 @@ public class LrcLibServiceTests : IAsyncDisposable
             });
         };
 
-        var result = await _service.GetLyricsAsync("Track", artist, "Album", TimeSpan.FromMinutes(3));
+        var result = await _service.GetLyricsAsync(Track("Track", artist, "Album", TimeSpan.FromMinutes(3)));
 
-        result.Should().Be("[00:01.00]Search Result");
+        result.Data.Should().Be("[00:01.00]Search Result");
         callCount.Should().Be(1);
     }
 
+    private static Song Track(string title, string? artist, string? album, TimeSpan duration) => new()
+    {
+        Title = title,
+        PrimaryArtistName = artist ?? string.Empty,
+        Album = album is null ? null : new Album { Title = album },
+        Duration = duration
+    };
 }
