@@ -344,7 +344,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
             _settingsService.Set(AppSettings.LastPaneOpen, isOpen);
     }
 
-    private bool CanClearQueue() => _playbackService.PlaybackQueue.Count > 0;
+    private bool CanClearQueue() => _playbackService.PlayOrder.Count > 0;
 
     [RelayCommand]
     private void ToggleQueuePanel() => IsQueuePanelOpen = !IsQueuePanelOpen;
@@ -513,32 +513,15 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     {
         try
         {
-            var isShuffleEnabled = _playbackService.IsShuffleEnabled;
-            var repeatMode = _playbackService.CurrentRepeatMode;
-            var sourceQueue = isShuffleEnabled
-                ? _playbackService.ShuffledQueue
-                : _playbackService.PlaybackQueue;
-
-            if (sourceQueue.Count == 0)
+            const int displayWindowSize = 100;
+            var idsToShow = _playbackService.UpcomingQueue.Take(displayWindowSize).ToArray();
+            if (idsToShow.Length == 0)
             {
                 CurrentQueue.Clear();
                 return;
             }
 
-            var currentTrackIndexInSource = isShuffleEnabled
-                ? _playbackService.CurrentShuffledIndex
-                : _playbackService.CurrentQueueIndex;
-
-            const int displayWindowSize = 100;
-            var start = currentTrackIndexInSource >= 0 && currentTrackIndexInSource < sourceQueue.Count
-                ? currentTrackIndexInSource : 0;
-            var upcoming = sourceQueue.Skip(start);
-            if (repeatMode == RepeatMode.RepeatAll) upcoming = upcoming.Concat(sourceQueue.Take(start));
-            var idsToShow = upcoming.Take(displayWindowSize).ToArray();
-
-            if (token.IsCancellationRequested) return;
-
-            var fetchedSongs = await _playbackService.GetQueueTracksAsync(idsToShow);
+            var fetchedSongs = await _playbackService.GetQueueSongsAsync(idsToShow, token);
 
             if (token.IsCancellationRequested) return;
 
@@ -554,7 +537,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         }
         catch (OperationCanceledException)
         {
-            // Expected when a newer queue update supersedes this one
+            // A newer queue update superseded this one.
         }
         catch (Exception ex)
         {

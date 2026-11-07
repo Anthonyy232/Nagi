@@ -91,8 +91,6 @@ public partial class MusicPlaybackService
     private bool ShouldStopAfterTrack()
     {
         if (StopMode == PlaybackStopMode.AfterTrack) return true;
-        var count = IsShuffleEnabled ? _queue.Shuffled.Count : _queue.Order.Count;
-        var index = IsShuffleEnabled ? CurrentShuffledIndex : CurrentQueueIndex;
-        return StopMode == PlaybackStopMode.EndOfQueue && index == count - 1;
+        return StopMode == PlaybackStopMode.EndOfQueue && _queue.CurrentPosition == _queue.Count - 1;
     }
 }

@@ -65,7 +65,7 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
         _library.Writer.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(1L);
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         _audioPlayer.LoadAsync(_testSongs[0]).Returns(release.Task);
-        var playback = _service.PlayAsync(_testSongs[0]);
+        var playback = _service.PlayAsync(_testSongs[0].Id);
         _audioPlayer.Duration.Returns(TimeSpan.FromMinutes(3));
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(91));
         _audioPlayer.IsPlaying.Returns(true);
@@ -88,7 +88,7 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
         _library.Writer.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(1L);
         _library.Writer.MarkListenAsEligibleForScrobblingAsync(1L).Returns(_ =>
             throws ? Task.FromException<bool>(new InvalidOperationException("Database unavailable")) : Task.FromResult(false));
-        await _service.PlayAsync(_testSongs[0]);
+        await _service.PlayAsync(_testSongs[0].Id);
         _audioPlayer.Duration.Returns(TimeSpan.FromMinutes(3));
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(91));
 
@@ -113,7 +113,7 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
     {
         await _service.InitializeAsync();
         _library.Writer.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(1L);
-        await _service.PlayAsync(_testSongs[0]);
+        await _service.PlayAsync(_testSongs[0].Id);
         _audioPlayer.Duration.Returns(TimeSpan.FromSeconds(durationSeconds));
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(playedSeconds));
 
@@ -149,7 +149,7 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
     {
         await _service.InitializeAsync();
         _library.Writer.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(5L);
-        await _service.PlayAsync(_testSongs[0]);
+        await _service.PlayAsync(_testSongs[0].Id);
 
         _audioPlayer.Duration.Returns(TimeSpan.FromMinutes(3));
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(91));
@@ -176,7 +176,7 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
             return releaseMark.Task;
         });
 
-        await _service.PlayAsync(_testSongs, startIndex: 0);
+        await _service.PlayAsync(_testSongs.Select(song => song.Id), startIndex: 0);
         var firstSessionStarted = _time.GetUtcNow().UtcDateTime;
         // Advance by more than the position so the "now minus position" fallback would give a different time.
         _time.Advance(TimeSpan.FromSeconds(120));
@@ -200,7 +200,7 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
         await _service.InitializeAsync();
         _library.Writer.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(10L);
         _library.Writer.StartListenSessionAsync(_testSongs[1].Id, Arg.Any<PlaybackContext>()).Returns(11L);
-        await _service.PlayAsync(_testSongs, startIndex: 0);
+        await _service.PlayAsync(_testSongs.Select(song => song.Id), startIndex: 0);
 
         _audioPlayer.Duration.Returns(TimeSpan.FromMinutes(3));
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(91));

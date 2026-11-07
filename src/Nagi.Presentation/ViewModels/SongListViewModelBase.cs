@@ -492,9 +492,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
     private Task PlaySelectedSongsNextAsync() => RunActionAsync(async () =>
     {
-        var ids = await GetCurrentSelectionIdsAsync();
-        // Reverse the list so songs are added in the selected order after the current track.
-        foreach (var id in ids.AsEnumerable().Reverse()) await _playbackService.PlayNextAsync(id);
+        await _playbackService.PlayNextAsync(await GetCurrentSelectionIdsAsync());
     });
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]

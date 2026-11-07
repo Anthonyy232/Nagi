@@ -36,7 +36,6 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
     public bool ShowEmptyState => _isActive && !IsLoading && !HasLoadError && Count == 0;
     public string TotalDurationText { get; private set; } = string.Empty;
     public string TrackCountText => string.Format(Strings.QueuePanel_TrackCount, _ids.Length);
-    private int FirstMovableIndex => playbackService.CurrentTrack?.Id == _ids.FirstOrDefault() ? 1 : 0;
 
     public void SetActive(bool active)
     {
@@ -71,9 +70,7 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
         _refreshCts.Cancel();
         _refreshCts.Dispose();
         _refreshCts = new CancellationTokenSource();
-        var queue = playbackService.IsShuffleEnabled ? playbackService.ShuffledQueue : playbackService.PlaybackQueue;
-        var currentIndex = playbackService.IsShuffleEnabled ? playbackService.CurrentShuffledIndex : playbackService.CurrentQueueIndex;
-        var ids = queue.Skip(Math.Max(0, currentIndex)).ToArray();
+        var ids = playbackService.UpcomingQueue.ToArray();
         var durationChanged = _reloadMetadata || _ids.Length != ids.Length || !_ids.ToHashSet().SetEquals(ids)
             || (_durationCts.IsCancellationRequested && TotalDurationText.Length == 0);
         _ids = ids;
@@ -199,23 +196,22 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
         catch (Exception ex) { logger.LogError(ex, "Failed to calculate queue duration."); }
     }
 
-    /// <summary>The playing track stays where it is.</summary>
+    /// <summary>Whether a drag can start on the entry: the playing track stays where it is.</summary>
     public bool CanMove(QueueEntry entry) => entry.Id != playbackService.CurrentTrack?.Id;
 
+    /// <summary>Asks the playback service to move a dropped entry, or puts it back when the service refuses.</summary>
     public void CompleteReorder(QueueEntry entry, int version)
     {
-        if (version != Version) { Refresh(); return; }
         var index = IndexOf(entry);
-        if (index < FirstMovableIndex || !CanMove(entry)) { Refresh(); return; }
         Guid? beforeId = index + 1 < Count ? this[index + 1].Id
             : _loadedCount < _ids.Length ? _ids[_loadedCount] : null;
-        playbackService.MoveQueueItem(entry.Id, beforeId);
+        if (version != Version || index < 0 || !playbackService.MoveQueueItem(entry.Id, beforeId)) Refresh();
     }
 
     public void Move(QueueEntry entry, int direction)
     {
         var index = Array.IndexOf(_ids, entry.Id);
-        if (index < FirstMovableIndex || index + direction < FirstMovableIndex || index + direction >= _ids.Length) return;
+        if (index < 0 || index + direction < 0 || index + direction >= _ids.Length) return;
         var beforeIndex = direction < 0 ? index - 1 : index + 2;
         playbackService.MoveQueueItem(entry.Id, beforeIndex < _ids.Length ? _ids[beforeIndex] : null);
     }
@@ -228,14 +224,8 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
 
     public async Task PlayAsync(QueueEntry entry)
     {
-        var queue = playbackService.PlaybackQueue;
-        for (var i = 0; i < queue.Count; i++)
-        {
-            if (queue[i] != entry.Id) continue;
-            try { await playbackService.PlayQueueItemAsync(i); }
-            catch (Exception ex) { logger.LogError(ex, "Failed to play queue entry."); }
-            return;
-        }
+        try { await playbackService.PlayQueueItemAsync(entry.Id); }
+        catch (Exception ex) { logger.LogError(ex, "Failed to play queue entry."); }
     }
 
     public void Dispose()

@@ -16,7 +16,7 @@ public class PlaybackQueueCollectionTests
     {
         var songs = Enumerable.Range(0, 4).Select(index => new Song { Title = $"Song {index}" }).ToArray();
         var playback = Substitute.For<IMusicPlaybackService>();
-        playback.PlaybackQueue.Returns(songs.Select(song => song.Id).ToArray());
+        playback.UpcomingQueue.Returns(songs.Select(song => song.Id).ToArray());
         playback.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
             .Returns(songs.ToDictionary(song => song.Id));
         using var queue = new PlaybackQueueCollection(playback, NullLogger.Instance);
@@ -25,14 +25,14 @@ public class PlaybackQueueCollectionTests
         var changes = new List<NotifyCollectionChangedAction>();
         queue.CollectionChanged += (_, args) => changes.Add(args.Action);
 
-        playback.CurrentQueueIndex.Returns(1);
+        playback.UpcomingQueue.Returns(songs.Skip(1).Select(song => song.Id).ToArray());
         queue.Refresh();
 
         changes.Should().Equal(NotifyCollectionChangedAction.Remove);
         queue.Should().Equal(originalRows.Skip(1));
         changes.Clear();
 
-        playback.CurrentQueueIndex.Returns(0);
+        playback.UpcomingQueue.Returns(songs.Select(song => song.Id).ToArray());
         queue.Refresh();
 
         changes.Should().Equal(NotifyCollectionChangedAction.Add);
@@ -41,14 +41,14 @@ public class PlaybackQueueCollectionTests
     }
 
     [Fact]
-    public async Task UpNext_ReorderingKeepsCurrentTrackFirstAndUsesUpcomingSongsForDuration()
+    public async Task UpNext_AsksThePlaybackServiceToReorderAndUsesUpcomingSongsForDuration()
     {
         var songs = Enumerable.Range(0, 5).Select(index => new Song { Title = $"Song {index}" }).ToArray();
         var ids = songs.Select(song => song.Id).ToArray();
+        var upcoming = ids.Skip(2).ToArray();
         var playback = Substitute.For<IMusicPlaybackService>();
-        playback.PlaybackQueue.Returns(ids);
+        playback.UpcomingQueue.Returns(upcoming);
         playback.CurrentTrack.Returns(songs[2]);
-        playback.CurrentQueueIndex.Returns(2);
         playback.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
             .Returns(songs.ToDictionary(song => song.Id));
         playback.GetQueueDurationAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>()).Returns(TimeSpan.FromMinutes(3));
@@ -58,23 +58,22 @@ public class PlaybackQueueCollectionTests
         var current = queue[0];
         var next = queue[1];
 
-        queue.Move(current, 1);
-        queue.Move(next, -1);
-        queue.Move(1, 0);
-        queue.CompleteReorder(next, queue.Version);
-
-        playback.DidNotReceive().MoveQueueItem(Arg.Any<Guid>(), Arg.Any<Guid?>());
-        queue.Select(entry => entry.Id).Should().Equal(ids.Skip(2));
         queue.Move(queue[2], -1);
         playback.Received(1).MoveQueueItem(ids[4], ids[3]);
-        await playback.Received(1).GetQueueDurationAsync(Arg.Is<IEnumerable<Guid>>(requested => requested.SequenceEqual(ids.Skip(2))), Arg.Any<CancellationToken>());
+
+        // The service refuses to put a song before the current one, so the dropped row goes back.
+        queue.Move(1, 0);
+        queue.CompleteReorder(next, queue.Version);
+        playback.Received(1).MoveQueueItem(next.Id, current.Id);
+        queue.Select(entry => entry.Id).Should().Equal(upcoming);
+        await playback.Received(1).GetQueueDurationAsync(Arg.Is<IEnumerable<Guid>>(requested => requested.SequenceEqual(upcoming)), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public void EmptyQueue_ShowsHelpfulEmptyState()
     {
         var playback = Substitute.For<IMusicPlaybackService>();
-        playback.PlaybackQueue.Returns(Array.Empty<Guid>());
+        playback.UpcomingQueue.Returns(Array.Empty<Guid>());
         using var queue = new PlaybackQueueCollection(playback, NullLogger.Instance);
 
         queue.SetActive(true);
@@ -90,7 +89,7 @@ public class PlaybackQueueCollectionTests
     {
         var song = new Song { Title = "Pending" };
         var playback = Substitute.For<IMusicPlaybackService>();
-        playback.PlaybackQueue.Returns(new[] { song.Id });
+        playback.UpcomingQueue.Returns(new[] { song.Id });
         var result = new TaskCompletionSource<IReadOnlyDictionary<Guid, Song>>(TaskCreationOptions.RunContinuationsAsynchronously);
         playback.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>()).Returns(result.Task);
         using var queue = new PlaybackQueueCollection(playback, NullLogger.Instance);
@@ -114,7 +113,7 @@ public class PlaybackQueueCollectionTests
     {
         var song = new Song { Title = "Recovered" };
         var playback = Substitute.For<IMusicPlaybackService>();
-        playback.PlaybackQueue.Returns(new[] { song.Id });
+        playback.UpcomingQueue.Returns(new[] { song.Id });
         playback.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>()).Returns(
             Task.FromException<IReadOnlyDictionary<Guid, Song>>(new IOException("Unavailable")),
             Task.FromResult<IReadOnlyDictionary<Guid, Song>>(new Dictionary<Guid, Song> { [song.Id] = song }));
@@ -139,7 +138,7 @@ public class PlaybackQueueCollectionTests
         var oldSong = new Song { Title = "Old" };
         var newSong = new Song { Title = "New" };
         var playback = Substitute.For<IMusicPlaybackService>();
-        playback.PlaybackQueue.Returns(new[] { oldSong.Id });
+        playback.UpcomingQueue.Returns(new[] { oldSong.Id });
         var oldResult = new TaskCompletionSource<IReadOnlyDictionary<Guid, Song>>(TaskCreationOptions.RunContinuationsAsynchronously);
         playback.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>()).Returns(
             oldResult.Task,
@@ -148,7 +147,7 @@ public class PlaybackQueueCollectionTests
         queue.SetActive(true);
         var oldLoad = queue.LoadMoreItemsAsync();
 
-        playback.PlaybackQueue.Returns(new[] { newSong.Id });
+        playback.UpcomingQueue.Returns(new[] { newSong.Id });
         queue.Refresh();
         oldResult.SetResult(new Dictionary<Guid, Song> { [oldSong.Id] = oldSong });
         await oldLoad.WaitAsync(TimeSpan.FromSeconds(10));
@@ -163,7 +162,7 @@ public class PlaybackQueueCollectionTests
     {
         var songs = Enumerable.Range(0, 130).Select(i => new Song { Title = $"Track {i}" }).ToDictionary(song => song.Id);
         var playback = Substitute.For<IMusicPlaybackService>();
-        playback.PlaybackQueue.Returns(songs.Keys.ToArray());
+        playback.UpcomingQueue.Returns(songs.Keys.ToArray());
         var attempts = 0;
         var pending = new TaskCompletionSource<IReadOnlyDictionary<Guid, Song>>(TaskCreationOptions.RunContinuationsAsynchronously);
         playback.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>()).Returns(call =>
@@ -195,7 +194,7 @@ public class PlaybackQueueCollectionTests
         var song = new Song { Title = "Original" };
         var updated = new Song { Id = song.Id, Title = "Updated" };
         var playback = Substitute.For<IMusicPlaybackService>();
-        playback.PlaybackQueue.Returns(new[] { song.Id });
+        playback.UpcomingQueue.Returns(new[] { song.Id });
         playback.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>()).Returns(
             Task.FromResult<IReadOnlyDictionary<Guid, Song>>(new Dictionary<Guid, Song> { [song.Id] = song }),
             Task.FromResult<IReadOnlyDictionary<Guid, Song>>(new Dictionary<Guid, Song> { [song.Id] = updated }));
@@ -224,13 +223,13 @@ public class PlaybackQueueCollectionTests
     {
         var songs = Enumerable.Range(0, 3).Select(i => new Song { Title = $"Track {i}" }).ToDictionary(song => song.Id);
         var playback = Substitute.For<IMusicPlaybackService>();
-        playback.PlaybackQueue.Returns(songs.Keys.ToArray());
+        playback.UpcomingQueue.Returns(songs.Keys.ToArray());
         playback.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>()).Returns(songs);
         using var queue = new PlaybackQueueCollection(playback, NullLogger.Instance);
         queue.SetActive(true);
         var originalEntries = queue.ToArray();
 
-        playback.PlaybackQueue.Returns(songs.Keys.Reverse().ToArray());
+        playback.UpcomingQueue.Returns(songs.Keys.Reverse().ToArray());
         queue.Refresh();
 
         queue.Should().Equal(originalEntries.Reverse());

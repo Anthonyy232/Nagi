@@ -32,14 +32,14 @@ public partial class MusicPlaybackServiceTests
         await _service.InitializeAsync();
         var failed = new List<Song>();
         _service.ServerSongFailed += failed.Add;
-        await _service.PlayAsync(_testSongs[0]);
+        await _service.PlayAsync(_testSongs[0].Id);
         _audioPlayer.ErrorOccurred += Raise.Event<Action>();
         await _service.FlushPendingFinalizationAsync();
 
         var song = _testSongs[1];
         song.RemoteId = "s1";
         _musicServers.GetStreamUriAsync(song).Returns(new Uri("https://music.example.com/rest/stream.view?id=s1"));
-        await _service.PlayAsync(song);
+        await _service.PlayAsync(song.Id);
         _audioPlayer.ErrorOccurred += Raise.Event<Action>();
 
         failed.Should().ContainSingle().Which.Should().BeSameAs(song);

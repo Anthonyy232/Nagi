@@ -119,20 +119,14 @@ public partial class PlayerViewModel
     });
 
     [RelayCommand]
-    private Task PlayHistoryNextAsync(RecentListenEntry? entry) => entry is null ? Task.CompletedTask : RunActionAsync(() => _playbackService.PlayNextAsync(entry.Listen.SongId));
+    private Task PlayHistoryNextAsync(RecentListenEntry? entry) => entry is null ? Task.CompletedTask : RunActionAsync(() => _playbackService.PlayNextAsync([entry.Listen.SongId]));
 
     [RelayCommand]
     private Task PlayHistoryNowAsync(RecentListenEntry? entry) => RunActionAsync(async () =>
     {
         if (entry is null) return;
-        await _playbackService.PlayNextAsync(entry.Listen.SongId);
-        var queue = _playbackService.PlaybackQueue;
-        for (var index = 0; index < queue.Count; index++)
-        {
-            if (queue[index] != entry.Listen.SongId) continue;
-            await _playbackService.PlayQueueItemAsync(index);
-            break;
-        }
+        await _playbackService.PlayNextAsync([entry.Listen.SongId]);
+        await _playbackService.PlayQueueItemAsync(entry.Listen.SongId);
     });
 
     [RelayCommand]

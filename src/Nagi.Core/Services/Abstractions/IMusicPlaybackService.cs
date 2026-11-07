@@ -10,9 +10,10 @@ namespace Nagi.Core.Services.Abstractions;
 public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
 {
     /// <summary>
-    ///     Gets the currently playing song, or null if nothing is playing or the player is stopped.
+    ///     The song playing or paused, or null while stopped.
     /// </summary>
     Song? CurrentTrack { get; }
+
     ShuffleMode CurrentShuffleMode { get; }
     PlaybackStopMode StopMode { get; }
 
@@ -31,8 +32,7 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     void ScheduleStop(PlaybackStopMode mode, TimeSpan? delay = null, bool finishCurrentTrack = true);
 
     /// <summary>
-    ///     Gets the unique database ID for the current listening session.
-    ///     This is used to link playback events to a specific entry in the ListenHistory table.
+    ///     The ListenHistory entry of the current listen, or null while none is being recorded.
     /// </summary>
     long? CurrentListenHistoryId { get; }
 
@@ -48,30 +48,24 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
 
     TimeSpan Duration { get; }
 
-    /// <summary>
-    ///     Gets the current volume level (0.0 to 1.0).
-    /// </summary>
+    /// <summary>From 0.0 to 1.0.</summary>
     double Volume { get; }
 
     bool IsMuted { get; }
 
     /// <summary>
-    ///     Gets a read-only list of song IDs in the original, unshuffled playback queue.
+    ///     The queue in the order it plays, shuffled while <see cref="IsShuffleEnabled" />.
     /// </summary>
-    IReadOnlyList<Guid> PlaybackQueue { get; }
+    IReadOnlyList<Guid> PlayOrder { get; }
 
     /// <summary>
-    ///     Gets a read-only list of song IDs in the shuffled playback queue. This list is empty if shuffle is disabled.
+    ///     <see cref="PlayOrder" /> from the current song, or the song playback resumes with while stopped, carrying on
+    ///     from the start while repeating, as <see cref="NextAsync" /> goes through it.
     /// </summary>
-    IReadOnlyList<Guid> ShuffledQueue { get; }
+    IReadOnlyList<Guid> UpcomingQueue { get; }
 
-    int CurrentQueueIndex { get; }
-
-    /// <summary>
-    ///     Gets the index of the current track in the <see cref="ShuffledQueue" />.
-    ///     Returns -1 if shuffle is disabled or no track is playing.
-    /// </summary>
-    int CurrentShuffledIndex { get; }
+    /// <summary>The song <see cref="NextAsync" /> plays, or null when it would stop.</summary>
+    Guid? NextTrackId { get; }
 
     bool IsShuffleEnabled { get; }
 
@@ -116,31 +110,24 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     event Action<Song>? ServerSongFailed;
 
     /// <summary>
-    ///     Initializes the service, loading settings and optionally restoring the last saved playback state.
+    ///     Loads the saved volume, shuffle and repeat, and restores the last session when asked to and the user
+    ///     hasn't turned restoring off.
     /// </summary>
     Task InitializeAsync(bool restoreLastSession = true);
 
     /// <summary>
-    ///     Plays a single song, replacing the current queue.
+    ///     Plays a single song, replacing the queue.
     /// </summary>
     Task PlayAsync(Guid songId);
 
     /// <summary>
-    ///     Plays a single song, replacing the current queue.
+    ///     Plays songs, replacing the queue.
     /// </summary>
-    Task PlayAsync(Song song);
-
-    /// <summary>
-    ///     Plays a list of songs, replacing the current queue.
-    /// </summary>
-    /// <param name="startShuffled">If true, shuffle will be enabled; if false, disabled; if null, preserved.</param>
-    Task PlayAsync(IEnumerable<Song> songs, int startIndex = 0, bool? startShuffled = null);
-
-    /// <summary>
-    ///     Plays a list of songs by their IDs, replacing the current queue.
-    /// </summary>
-    /// <param name="startShuffled">If true, shuffle will be enabled; if false, disabled; if null, preserved.</param>
-    /// <param name="context">The playback context (source) for listen history tracking. Defaults to Library.</param>
+    /// <param name="startShuffled">
+    ///     True to shuffle, letting the shuffle choose the first song; false to play in order; null to keep the shuffle
+    ///     setting, playing the song at <paramref name="startIndex" /> first either way.
+    /// </param>
+    /// <param name="context">Where the songs come from, for listen history. Defaults to the library.</param>
     Task PlayAsync(IEnumerable<Guid> songIds, int startIndex = 0, bool? startShuffled = null, PlaybackContext? context = null);
 
     /// <summary>
@@ -148,51 +135,25 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     /// </summary>
     Task PlayPauseAsync();
 
-    /// <summary>
-    ///     Stops playback but preserves the current queue and index.
-    /// </summary>
-    Task StopAsync();
-
-    /// <summary>
-    ///     Skips to the next track in the queue, respecting shuffle and repeat settings.
-    /// </summary>
     Task NextAsync();
 
     /// <summary>
-    ///     Goes to the previous track in the queue or restarts the current track, respecting shuffle and repeat settings.
+    ///     Restarts the current track once it has played a few seconds, otherwise goes to the previous track.
     /// </summary>
     Task PreviousAsync();
 
     Task SeekAsync(TimeSpan position);
 
-    /// <summary>
-    ///     Creates a new queue from all songs in the specified album and starts playback.
-    /// </summary>
     Task PlayAlbumAsync(Guid albumId);
 
-    /// <summary>
-    ///     Creates a new queue from all songs by the specified artist and starts playback.
-    /// </summary>
     Task PlayArtistAsync(Guid artistId);
 
-    /// <summary>
-    ///     Creates a new queue from all songs in the specified folder and starts playback.
-    /// </summary>
     Task PlayFolderAsync(Guid folderId);
 
-    /// <summary>
-    ///     Creates a new queue from the specified playlist and starts playback.
-    /// </summary>
     Task PlayPlaylistAsync(Guid playlistId);
 
-    /// <summary>
-    ///     Creates a new queue from all songs of the specified genre and starts playback.
-    /// </summary>
     Task PlayGenreAsync(Guid genreId);
 
-    /// <summary>
-    ///     Creates a shuffled queue from the whole library and starts playback.
-    /// </summary>
     Task ShuffleLibraryAsync();
 
     /// <summary>
@@ -208,14 +169,9 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     Task AddTransientFilesToQueueAsync(IEnumerable<string> paths);
 
     /// <summary>
-    ///     Resolves library and transient tracks for queue display.
-    /// </summary>
-    Task<IReadOnlyDictionary<Guid, Song>> GetQueueTracksAsync(IEnumerable<Guid> songIds);
-
-    /// <summary>
     ///     Sets the player volume and persists the value.
     /// </summary>
-    /// <param name="volume">The new volume level (0.0 to 1.0).</param>
+    /// <param name="volume">From 0.0 to 1.0.</param>
     Task SetVolumeAsync(double volume);
 
     /// <summary>
@@ -224,7 +180,7 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     Task ToggleMuteAsync();
 
     /// <summary>
-    ///     Gets the playback speed for this session. 1.0 is normal speed.
+    ///     The playback speed for this session. 1.0 is normal speed.
     /// </summary>
     double PlaybackRate { get; }
 
@@ -244,34 +200,14 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     Task SetRepeatModeAsync(RepeatMode mode);
 
     /// <summary>
-    ///     Adds a song to the end of the current queue.
-    /// </summary>
-    Task AddToQueueAsync(Guid songId);
-
-    /// <summary>
-    ///     Adds a song to the end of the current queue.
-    /// </summary>
-    Task AddToQueueAsync(Song song);
-
-    /// <summary>
-    ///     Adds a collection of songs to the end of the current queue.
-    /// </summary>
-    Task AddRangeToQueueAsync(IEnumerable<Song> songs);
-
-    /// <summary>
-    ///     Adds a collection of song IDs to the end of the current queue.
+    ///     Adds the songs that aren't queued yet to the end of the queue.
     /// </summary>
     Task AddRangeToQueueAsync(IEnumerable<Guid> songIds);
 
     /// <summary>
-    ///     Inserts a song into the queue immediately after the current track.
+    ///     Places the songs, in the order given, right after the current track, queueing any that aren't.
     /// </summary>
-    Task PlayNextAsync(Song song);
-
-    /// <summary>
-    ///     Inserts a song into the queue immediately after the current track.
-    /// </summary>
-    Task PlayNextAsync(Guid songId);
+    Task PlayNextAsync(IEnumerable<Guid> songIds);
 
     /// <summary>
     ///     Removes a song from the queue. If the removed song was playing, playback advances to the next song.
@@ -279,28 +215,28 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     Task RemoveFromQueueAsync(Guid songId);
 
     /// <summary>
-    ///     Removes a song from the queue. If the removed song was playing, playback advances to the next song.
+    ///     Plays a queued song, keeping the queue.
     /// </summary>
-    Task RemoveFromQueueAsync(Song song);
-
-    /// <summary>
-    ///     Removes multiple songs from the queue by their IDs.
-    /// </summary>
-    Task RemoveRangeFromQueueAsync(IEnumerable<Guid> songIds);
-
-    /// <summary>
-    ///     Jumps to and plays a specific item in the queue.
-    /// </summary>
-    /// <param name="originalQueueIndex">The index of the song in the original, unshuffled queue.</param>
-    Task PlayQueueItemAsync(int originalQueueIndex);
+    Task PlayQueueItemAsync(Guid songId);
 
     /// <summary>
     ///     Stops playback and clears the entire queue.
     /// </summary>
     Task ClearQueueAsync();
 
-    void MoveQueueItem(Guid songId, Guid? beforeSongId);
+    /// <summary>
+    ///     Moves a song within <see cref="UpcomingQueue" />, before another or, when <paramref name="beforeSongId" /> is
+    ///     null, to its end. Its first song is the current one, so it can't be moved and nothing can go before it.
+    /// </summary>
+    /// <returns>Whether the song moved.</returns>
+    bool MoveQueueItem(Guid songId, Guid? beforeSongId);
+
+    /// <summary>
+    ///     The queued songs, whether from the library or from files outside it, by ID. Songs no longer in the library
+    ///     are left out.
+    /// </summary>
     Task<IReadOnlyDictionary<Guid, Song>> GetQueueSongsAsync(IEnumerable<Guid> songIds, CancellationToken cancellationToken = default);
+
     Task<TimeSpan> GetQueueDurationAsync(IEnumerable<Guid> songIds, CancellationToken cancellationToken = default);
 
     /// <summary>
