@@ -572,18 +572,6 @@ Archivos que no se pudieron importar: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg sigue sin ser detectado. Por favor, instala FFmpeg y haz clic en 'Volver a comprobar'.</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>Anterior</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Reproducir</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>Pausar</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>Siguiente</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Biblioteca</value>
   </data>
@@ -706,9 +694,6 @@ Archivos que no se pudieron importar: {0}.</value>
   </data>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
     <value>Crear</value>
-  </data>
-  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>Cancelar</value>
   </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>Renombrar '{0}'</value>
@@ -1386,6 +1371,12 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
     <value>Restablecer a valores por defecto</value>
   </data>
+  <data name="SettingsPage_ResetPlayerStyling_Content" xml:space="preserve">
+    <value>Restablecer a valores por defecto</value>
+  </data>
+  <data name="SettingsPage_ResetSongListColumns_Content" xml:space="preserve">
+    <value>Restablecer a valores por defecto</value>
+  </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Material de la ventana</value>
   </data>
@@ -1983,7 +1974,7 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Página siguiente</value>
   </data>
-  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+  <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>p. ej. ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">

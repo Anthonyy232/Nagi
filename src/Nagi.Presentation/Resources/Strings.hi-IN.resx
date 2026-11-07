@@ -572,18 +572,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg का अभी भी पता नहीं चला। कृपया FFmpeg इंस्टॉल करें और 'पुन: जाँच करें' पर क्लिक करें।</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>पिछला</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>चलाएँ</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>रोकें</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>अगला</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>लाइब्रेरी</value>
   </data>
@@ -706,9 +694,6 @@
   </data>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
     <value>बनाएँ</value>
-  </data>
-  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>रद्द करें</value>
   </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>'{0}' का नाम बदलें</value>
@@ -1386,6 +1371,12 @@
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
     <value>डिफ़ॉल्ट पर रीसेट करें</value>
   </data>
+  <data name="SettingsPage_ResetPlayerStyling_Content" xml:space="preserve">
+    <value>डिफ़ॉल्ट पर रीसेट करें</value>
+  </data>
+  <data name="SettingsPage_ResetSongListColumns_Content" xml:space="preserve">
+    <value>डिफ़ॉल्ट पर रीसेट करें</value>
+  </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>विंडो सामग्री</value>
   </data>
@@ -1983,7 +1974,7 @@
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>अगला पृष्ठ</value>
   </data>
-  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+  <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>उदा. ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">

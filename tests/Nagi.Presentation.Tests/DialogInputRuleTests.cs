@@ -1,6 +1,7 @@
 using FluentAssertions;
+using Nagi.Core.Models;
 using Nagi.Presentation.Helpers;
-using Nagi.Presentation.Models;
+using Nagi.Presentation.ViewModels;
 using Xunit;
 
 namespace Nagi.Presentation.Tests;
@@ -18,25 +19,32 @@ public class DialogInputRuleTests
         ListeningMinutes.IsValid(minutes).Should().Be(expected);
 
     [Theory]
-    [InlineData(0, true)]
-    [InlineData(365, true)]
-    [InlineData(-1, false)]
-    [InlineData(366, false)]
-    [InlineData(double.NaN, false)]
-    public void IsValidAvoidRecentDays_AcceptsWholeDaysUpToAYear(double days, bool expected) =>
-        PlaybackMixOptions.IsValidAvoidRecentDays(days).Should().Be(expected);
+    [InlineData(ShuffleMode.MoreVariety, 0, true)]
+    [InlineData(ShuffleMode.MoreVariety, 365, true)]
+    [InlineData(ShuffleMode.MoreVariety, -1, false)]
+    [InlineData(ShuffleMode.MoreVariety, 366, false)]
+    [InlineData(ShuffleMode.MoreVariety, double.NaN, false)]
+    [InlineData(ShuffleMode.Rediscover, double.NaN, true)]
+    public void PlayFor_ChecksAvoidedDaysOnlyForTheModeThatOffersThem(ShuffleMode mode, double days, bool expected)
+    {
+        var viewModel = new PlayForDialogViewModel { AvoidRecentDays = days };
+        viewModel.SelectedMode = viewModel.ModeOptions.Single(option => option.Value == mode);
+
+        viewModel.CanAccept.Should().Be(expected);
+    }
 
     [Theory]
     [InlineData("Road Trip", true)]
     [InlineData(" Mix ", false)]
     [InlineData("   ", false)]
-    public void CanRename_RequiresANewNonBlankName(string newName, bool expected) =>
-        PlaylistNames.CanRename(newName, "Mix").Should().Be(expected);
+    public void Rename_RequiresANewNonBlankName(string newName, bool expected) =>
+        new PlaylistNameDialogViewModel("Mix") { Name = newName }.CanAccept.Should().Be(expected);
 
     [Theory]
     [InlineData("line one\r\nline two", false)]
     [InlineData("line one\nline three", true)]
     [InlineData("  ", false)]
-    public void LyricsCanSave_IgnoresLineEndingChanges(string edited, bool expected) =>
-        LyricsEdit.CanSave(edited, "line one\nline two").Should().Be(expected);
+    public void LyricsEditor_IgnoresLineEndingChanges(string edited, bool expected) =>
+        new LyricsEditorDialogViewModel("line one\nline two", canRemove: false) { Lyrics = edited }.CanSave
+            .Should().Be(expected);
 }

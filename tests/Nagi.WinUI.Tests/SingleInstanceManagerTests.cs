@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Nagi.Presentation.Services;
 using Nagi.WinUI.Helpers;
 using Xunit;
 
@@ -12,13 +13,13 @@ public class SingleInstanceManagerTests
         var instanceId = Guid.NewGuid().ToString("N");
         using var primary = new SingleInstanceManager(instanceId: instanceId);
         using var secondary = new SingleInstanceManager(instanceId: instanceId);
-        var received = new TaskCompletionSource<(string?, JumpListTask)>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var send = secondary.SendActivationAsync("C:\\Music\\song.mp3", JumpListTask.MiniPlayer);
+        var received = new TaskCompletionSource<(string?, LaunchCommand)>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var send = secondary.SendActivationAsync("C:\\Music\\song.mp3", LaunchCommand.MiniPlayer);
 
         primary.StartListening((path, task) => received.TrySetResult((path, task)));
 
         (await send.WaitAsync(TimeSpan.FromSeconds(5))).Should().BeTrue();
-        (await received.Task.WaitAsync(TimeSpan.FromSeconds(5))).Should().Be(("C:\\Music\\song.mp3", JumpListTask.MiniPlayer));
+        (await received.Task.WaitAsync(TimeSpan.FromSeconds(5))).Should().Be(("C:\\Music\\song.mp3", LaunchCommand.MiniPlayer));
     }
 
     [Fact]
@@ -42,7 +43,7 @@ public class SingleInstanceManagerTests
     public void TryAcquire_AfterPreviousOwnerThreadExits_AcquiresAbandonedMutex()
     {
         var instanceId = Guid.NewGuid().ToString("N");
-        using var retainedHandle = new Mutex(false, $@"Global\NagiMusicPlayer-{instanceId}");
+        using var retainedHandle = new Mutex(false, SingleInstanceManager.GetMutexName(instanceId));
         var previousOwner = new Thread(() => retainedHandle.WaitOne());
         previousOwner.Start();
         previousOwner.Join(TimeSpan.FromSeconds(5)).Should().BeTrue();

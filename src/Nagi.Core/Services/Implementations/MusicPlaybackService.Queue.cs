@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Constants;
+using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
 
@@ -12,28 +13,19 @@ public partial class MusicPlaybackService
 {
     private void CommitQueueChanges()
     {
-        _logger.LogTrace("Committing queue changes and rebuilding indices.");
-        _queue.RebuildIndex();
-        if (IsShuffleEnabled) _queue.SyncShuffledWithOrder();
-
-        if (CurrentTrack != null)
-        {
-            CurrentQueueIndex = _queue.IndexOf(CurrentTrack.Id);
-            CurrentShuffledIndex = IsShuffleEnabled ? _queue.ShuffledIndexOf(CurrentTrack.Id) : -1;
-        }
-        else
-        {
-            CurrentQueueIndex = Math.Clamp(CurrentQueueIndex, -1, _queue.Order.Count - 1);
-            CurrentShuffledIndex = IsShuffleEnabled
-                ? Math.Clamp(CurrentShuffledIndex, -1, _queue.Shuffled.Count - 1)
-                : -1;
-        }
-
         PruneTransientTracks();
         QueueChanged?.Invoke();
         UpdateMediaControlsNavigation();
-
     }
+
+    public Task PlayTransientFileAsync(string filePath) => RunPlaybackRequest(async request =>
+    {
+        _logger.LogDebug("Playing file: {FilePath}", filePath);
+        var songs = await ResolveFilesAsync([filePath], request);
+        if (songs is not null)
+            await PlayInternalAsync(songs.Select(song => song.Id), 0, null,
+                new PlaybackContext(PlaybackContextType.Transient, null), request);
+    });
 
     public Task AddTransientFilesToQueueAsync(IEnumerable<string> paths)
     {
@@ -53,8 +45,8 @@ public partial class MusicPlaybackService
 
     private async Task AddTransientFilesInternalAsync(IEnumerable<string> inputPaths)
     {
-        var queueVersion = _queueVersion;
-        var request = _playbackRequestVersion;
+        var queueEdit = _queueCts.Token;
+        var request = _requestCts.Token;
         var requested = inputPaths?.Where(path => !string.IsNullOrWhiteSpace(path)).ToList() ?? [];
         // Walking a folder can touch many files, so only that goes to the thread pool; plain files
         // stay in call order with other adds.
@@ -63,75 +55,79 @@ public partial class MusicPlaybackService
             : ExpandToAudioFiles(requested);
         if (paths.Count == 0) return;
 
-        var songs = new List<(Song Song, bool Transient)>(paths.Count);
+        var songs = await ResolveFilesAsync(paths, queueEdit);
+        if (songs is null) return;
+        _queue.Add(songs.Select(song => song.Id));
+        CommitQueueChanges();
+
+        if (CurrentTrack == null && !request.IsCancellationRequested)
+        {
+            _currentContext = new PlaybackContext(PlaybackContextType.Transient, null);
+            await PlayQueueItemAsync(songs[0].Id);
+        }
+    }
+
+    /// <summary>
+    ///     A file in the library plays as its library song, so its listens are recorded; any other file gets a song
+    ///     built from its tags, kept only while it is queued.
+    /// </summary>
+    /// <returns>The songs, or null when cancelled along the way.</returns>
+    private async Task<List<Song>?> ResolveFilesAsync(IReadOnlyList<string> paths, CancellationToken cancellationToken)
+    {
+        var songs = new List<Song>(paths.Count);
         foreach (var path in paths)
         {
             if (_transientTracks.TryGetByPath(path, out var knownTransient))
             {
-                songs.Add((knownTransient, true));
+                songs.Add(knownTransient);
                 continue;
             }
 
             var librarySong = await _libraryReader.GetSongByFilePathAsync(path);
-            if (_isDisposed || queueVersion != _queueVersion) return;
+            if (cancellationToken.IsCancellationRequested) return null;
             if (librarySong != null)
             {
-                songs.Add((librarySong, false));
+                songs.Add(librarySong);
                 continue;
             }
 
             var transientSong = await CreateTransientSongAsync(path);
-            if (_isDisposed || queueVersion != _queueVersion) return;
-            songs.Add((transientSong, true));
+            if (cancellationToken.IsCancellationRequested) return null;
+            // Another add may have resolved the same path while metadata was loading.
+            if (_transientTracks.TryGetByPath(path, out var existing)) transientSong = existing;
+            else _transientTracks.Register(transientSong);
+            songs.Add(transientSong);
         }
-
-        if (_queue.Order.Count == 0 && CurrentTrack != null) _queue.Add(CurrentTrack.Id);
-        var queuedIds = _queue.Order.ToHashSet();
-        Guid? firstDroppedId = null;
-        foreach (var item in songs)
-        {
-            var song = item.Song;
-            if (item.Transient)
-            {
-                // Another add may have resolved the same path while metadata was loading.
-                if (_transientTracks.TryGetByPath(song.FilePath, out var existing))
-                    song = existing;
-                else
-                    _transientTracks.Register(song);
-            }
-            if (queuedIds.Add(song.Id)) _queue.Add(song.Id);
-            firstDroppedId ??= song.Id;
-        }
-        CommitQueueChanges();
-
-        if (CurrentTrack == null && firstDroppedId is { } playId && IsCurrentRequest(request))
-        {
-            _currentContext = new PlaybackContext(PlaybackContextType.Transient, null);
-            await PlayQueueItemAsync(_queue.IndexOf(playId));
-        }
+        return songs;
     }
 
-    public async Task<IReadOnlyDictionary<Guid, Song>> GetQueueTracksAsync(IEnumerable<Guid> songIds)
+    private async Task<Song> CreateTransientSongAsync(string filePath)
     {
-        var ids = songIds?.Distinct().ToList() ?? [];
-        var result = new Dictionary<Guid, Song>(ids.Count);
-        var libraryIds = new List<Guid>(ids.Count);
+        var metadata = await _metadataService.ExtractMetadataAsync(filePath);
+        var artists = metadata.Artists.Select(ArtistNameHelper.Normalize).DefaultIfEmpty(Artist.UnknownArtistName).ToList();
+        var albumArtists = ArtistNameHelper.NormalizeAlbumArtists(metadata.AlbumArtists, artists);
 
-        foreach (var id in ids)
+        return new Song
         {
-            if (_transientTracks.TryGetValue(id, out var transientTrack))
-                result[id] = transientTrack;
-            else
-                libraryIds.Add(id);
-        }
-
-        if (libraryIds.Count > 0)
-        {
-            var libraryTracks = await _libraryReader.GetSongsByIdsAsync(libraryIds);
-            foreach (var pair in libraryTracks) result[pair.Key] = pair.Value;
-        }
-
-        return result;
+            FilePath = filePath,
+            Title = metadata.Title,
+            ArtistName = Artist.GetDisplayName(artists),
+            PrimaryArtistName = artists[0],
+            SongArtists = artists.Select((name, i) => new SongArtist { Artist = new Artist { Name = name }, Order = i }).ToList(),
+            Album = new Album
+            {
+                Title = TextNormalizer.Normalize(metadata.Album) ?? Album.UnknownAlbumName,
+                ArtistName = Artist.GetDisplayName(albumArtists),
+                PrimaryArtistName = albumArtists[0],
+                AlbumArtists = albumArtists.Select((name, i) => new AlbumArtist { Artist = new Artist { Name = name }, Order = i }).ToList()
+            },
+            Duration = metadata.Duration,
+            Genres = metadata.Genres.Where(g => !string.IsNullOrWhiteSpace(g))
+                .Distinct(StringComparer.OrdinalIgnoreCase).Select(g => new Genre { Name = g }).ToList(),
+            AlbumArtUriFromTrack = metadata.CoverArtUri,
+            Lyrics = metadata.Lyrics,
+            LrcFilePath = metadata.LrcFilePath
+        };
     }
 
     public async Task<IReadOnlyDictionary<Guid, Song>> GetQueueSongsAsync(IEnumerable<Guid> songIds,
@@ -160,140 +156,69 @@ public partial class MusicPlaybackService
         return duration + TimeSpan.FromTicks(transientTicks);
     }
 
-    public void MoveQueueItem(Guid songId, Guid? beforeSongId)
+    public bool MoveQueueItem(Guid songId, Guid? beforeSongId)
     {
-        if (_queue.Move(songId, beforeSongId, IsShuffleEnabled)) CommitQueueChanges();
-    }
-
-    private void PruneTransientTracks()
-    {
-        var retainedIds = _queue.Order.ToHashSet();
-        if (CurrentTrack != null) retainedIds.Add(CurrentTrack.Id);
-        _transientTracks.RetainOnly(retainedIds);
-    }
-
-    public Task AddToQueueAsync(Song song)
-    {
-        return AddToQueueAsync(song?.Id ?? Guid.Empty);
-    }
-
-    public Task AddToQueueAsync(Guid songId)
-    {
-        if (songId == Guid.Empty || _queue.IndexOf(songId) >= 0) return Task.CompletedTask;
-
-        _queue.Add(songId);
+        var current = _queue.CurrentId;
+        if (songId == current || (beforeSongId is { } before && before == current)) return false;
+        // While the upcoming queue wraps around, its end is just before the current song.
+        if (beforeSongId is null && Wraps && _queue.CurrentPosition > 0) beforeSongId = current;
+        if (!_queue.Move(songId, beforeSongId)) return false;
         CommitQueueChanges();
-
-        return Task.CompletedTask;
+        return true;
     }
 
-    public Task AddRangeToQueueAsync(IEnumerable<Song> songs)
-    {
-        return AddRangeToQueueAsync(songs?.Select(s => s.Id) ?? Enumerable.Empty<Guid>());
-    }
+    private void PruneTransientTracks() => _transientTracks.RetainOnly(_queue.Order.ToHashSet());
 
     public Task AddRangeToQueueAsync(IEnumerable<Guid> songIds)
     {
-        if (songIds == null) return Task.CompletedTask;
-
-        var queuedIds = _queue.Order.ToHashSet();
-        var idsToAdd = songIds
-            .Where(id => id != Guid.Empty && queuedIds.Add(id))
-            .ToList();
-
-        if (idsToAdd.Count > 0)
-        {
-            _queue.AddRange(idsToAdd);
-            CommitQueueChanges();
-        }
-
+        if (_queue.Add(songIds)) CommitQueueChanges();
         return Task.CompletedTask;
     }
 
-    public Task PlayNextAsync(Song song)
+    public Task PlayNextAsync(IEnumerable<Guid> songIds)
     {
-        return PlayNextAsync(song?.Id ?? Guid.Empty);
-    }
-
-    public Task PlayNextAsync(Guid songId)
-    {
-        if (songId == Guid.Empty) return Task.CompletedTask;
-
-        _queue.MoveAfterCurrent(songId, CurrentTrack?.Id, CurrentQueueIndex, inShuffled: false);
-        if (IsShuffleEnabled) _queue.MoveAfterCurrent(songId, CurrentTrack?.Id, CurrentShuffledIndex, inShuffled: true);
+        _queue.MoveAfterCurrent(songIds.ToList());
         CommitQueueChanges();
-
         return Task.CompletedTask;
     }
 
-    public Task RemoveFromQueueAsync(Song song)
+    public Task RemoveFromQueueAsync(Guid songId)
     {
-        return RemoveFromQueueAsync(song?.Id ?? Guid.Empty);
-    }
-
-    public Task RemoveFromQueueAsync(Guid songId) =>
-        _queue.IndexOf(songId) < 0 ? Task.CompletedTask : RemoveRangeFromQueueAsync([songId]);
-
-    private void FinalizeCurrentListenBeforeQueueRemoval()
-    {
-        if (!CurrentListenHistoryId.HasValue) return;
-
-        // LibVLC resets its reported time when Stop is called, so capture the listen state
-        // synchronously before the queue-removal path stops the underlying player.
-        var sessionId = CurrentListenHistoryId.Value;
-        var position = _audioPlayer.CurrentPosition;
-        CurrentListenHistoryId = null;
-        FireAndForgetSafe(
-            () => _listening.FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.Skipped),
-            "Finalizing session removed from queue",
-            trackForDisposal: true);
-    }
-
-    private Guid? GetNextSurvivingSongId(HashSet<Guid> idsToRemove) =>
-        _queue.GetNextSurvivingSongId(idsToRemove, IsShuffleEnabled ? CurrentShuffledIndex : CurrentQueueIndex,
-            IsShuffleEnabled, CurrentRepeatMode == RepeatMode.RepeatAll);
-
-    public Task RemoveRangeFromQueueAsync(IEnumerable<Guid> songIds)
-    {
-        var idsToRemove = songIds?.ToHashSet() ?? [];
-        if (idsToRemove.Count == 0) return Task.CompletedTask;
-        if (CurrentTrack == null || !idsToRemove.Contains(CurrentTrack.Id))
+        if (!_queue.Contains(songId)) return Task.CompletedTask;
+        if (CurrentTrack?.Id != songId)
         {
-            RemoveQueuedTracks(idsToRemove);
+            RemoveQueuedTracks(songId);
             return Task.CompletedTask;
         }
 
-        var nextSongId = GetNextSurvivingSongId(idsToRemove);
+        var nextSongId = _queue.FindFromCurrent(id => id != songId, Wraps);
         return RunPlaybackRequest(async request =>
         {
-            FinalizeCurrentListenBeforeQueueRemoval();
+            _ = EndListenSession(PlaybackEndReason.Skipped);
             // Playback carries on with the next song, so a sleep timer or "stop at queue end" still applies.
             await StopInternalAsync(request, clearStopSchedule: !nextSongId.HasValue);
-            if (!IsCurrentRequest(request)) return;
-            RemoveQueuedTracks(idsToRemove);
-            if (nextSongId.HasValue && IsCurrentRequest(request))
-            {
-                var index = _queue.IndexOf(nextSongId.Value);
-                if (index >= 0) await PlayQueueItemInternalAsync(index, request);
-            }
+            if (request.IsCancellationRequested) return;
+            RemoveQueuedTracks(songId);
+            if (nextSongId is { } next && _queue.Contains(next))
+                await PlayQueueItemInternalAsync(next, request);
         });
     }
 
-    private void RemoveQueuedTracks(HashSet<Guid> idsToRemove)
+    private void RemoveQueuedTracks(Guid songId)
     {
-        _queue.RemoveAll(idsToRemove);
+        _queue.Remove(new HashSet<Guid> { songId });
         CommitQueueChanges();
     }
 
     public Task ClearQueueAsync() =>
         RunPlaybackRequest(ClearQueueInternalAsync);
 
-    private async Task ClearQueueInternalAsync(int request)
+    private async Task ClearQueueInternalAsync(CancellationToken request)
     {
-        _queueVersion++;
+        CancelQueueEdits();
         _logger.LogDebug("Clearing playback queue.");
         await StopInternalAsync(request);
-        if (!IsCurrentRequest(request)) return;
+        if (request.IsCancellationRequested) return;
 
         ClearQueuesInternal();
         CommitQueueChanges();
@@ -301,17 +226,10 @@ public partial class MusicPlaybackService
 
     private void ClearQueuesInternal()
     {
-        _queueVersion++;
+        CancelQueueEdits();
         _queue.Clear();
         _transientTracks.Clear();
         CurrentTrack = null;
-        CurrentQueueIndex = -1;
-        CurrentShuffledIndex = -1;
-        CurrentListenHistoryId = null;
-        _currentListenStartedUtc = null;
         CurrentShuffleMode = ShuffleMode.Random;
     }
-
-    private int GetAdjacentTrackIndex(int originalIndex, bool moveForward) =>
-        _queue.GetAdjacentIndex(originalIndex, moveForward, IsShuffleEnabled, CurrentRepeatMode == RepeatMode.RepeatAll);
 }

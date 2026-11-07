@@ -12,41 +12,29 @@ public partial class MusicPlaybackService
     private void OnAudioPlayerPlaybackEnded()
     {
         if (_isTransitioningTrack) return;
-        // Capture and clear the session ID synchronously before firing the async task.
-        // This prevents PlayQueueItemAsync (called inside NextAsync) from seeing a non-null
-        // CurrentListenHistoryId and issuing a second FinalizeListenSessionAsync(Skipped)
-        // on a session already being finalized here as Finished.
-        var finishedSessionId = CurrentListenHistoryId;
-        var duration = Duration;
-        var request = _playbackRequestVersion;
-        CurrentListenHistoryId = null;
-
-        FireAndForgetSafe(async () =>
+        var request = _requestCts.Token;
+        var finishing = EndListenSession(PlaybackEndReason.Finished, Duration);
+        RunInBackground(async () =>
         {
-            if (finishedSessionId.HasValue)
-            {
-                await _listening.FinalizeListenSessionAsync(finishedSessionId.Value, duration, PlaybackEndReason.Finished);
-            }
-            if (IsCurrentRequest(request)) await NextAsync();
-        }, "PlaybackEnded transition", trackForDisposal: true);
+            await finishing;
+            if (!request.IsCancellationRequested) await RunPlaybackRequest(AdvanceAfterTrackEndAsync);
+        }, "Moving on after the track ended");
     }
 
     private void OnAudioPlayerStateChanged()
     {
         PlaybackStateChanged?.Invoke();
+        UpdateMediaControlsStatus();
         UpdateMediaControlsTimeline(CurrentPosition);
     }
 
+    // The one place volume and mute are saved, so changes made outside Nagi, such as in the Windows volume mixer, are
+    // kept too.
     private void OnAudioPlayerVolumeChanged()
     {
-        FireAndForgetSafe(
-            () =>
-            {
-                _settingsService.Set(CoreSettings.Volume, _audioPlayer.Volume);
-                VolumeStateChanged?.Invoke();
-                return Task.CompletedTask;
-            },
-            "Volume save");
+        VolumeStateChanged?.Invoke();
+        _settingsService.Set(CoreSettings.Volume, _audioPlayer.Volume);
+        _settingsService.Set(CoreSettings.IsMuted, _audioPlayer.IsMuted);
     }
 
     private void OnAudioPlayerPositionChanged()
@@ -69,12 +57,11 @@ public partial class MusicPlaybackService
 
         if (!isLongEnough || !hasPlayedEnough) return;
 
-        // Prevent re-entry within the same listening session.
         _isEligibilityMarked = true;
         var sessionId = CurrentListenHistoryId.Value;
         var song = CurrentTrack!;
         var listenStartedUtc = _currentListenStartedUtc ?? _timeProvider.GetUtcNow().UtcDateTime - progress;
-        FireAndForgetSafe(
+        RunInBackground(
             async () =>
             {
                 var marked = false;
@@ -88,8 +75,7 @@ public partial class MusicPlaybackService
                     if (!marked && CurrentListenHistoryId == sessionId) _isEligibilityMarked = false;
                 }
             },
-            "Mark listen eligible for scrobbling",
-            trackForDisposal: true);
+            "Mark listen eligible for scrobbling");
     }
 
     private void OnAudioPlayerDurationChanged()
@@ -98,18 +84,19 @@ public partial class MusicPlaybackService
         UpdateMediaControlsTimeline(CurrentPosition);
     }
 
-    private void OnAudioPlayerErrorOccurred(string errorMessage)
+    private void OnAudioPlayerErrorOccurred()
     {
-        _logger.LogWarning("Audio playback failed: {Message}", errorMessage);
+        _logger.LogWarning("Audio playback failed. Stopping playback.");
         // Read before stopping, which clears the current track.
         var song = CurrentTrack;
-        FireAndForgetSafe(StopAsync, "Error recovery");
+        RunInBackground(StopAsync, "Error recovery");
         if (song is { IsRemote: true }) ServerSongFailed?.Invoke(song);
     }
 
     private void OnAudioPlayerMediaOpened()
     {
-        TrackChanged?.Invoke();
+        if (CurrentTrack is { } song)
+            RunInBackground(() => _mediaControls.SetNowPlayingAsync(song), "Media controls now playing");
         UpdateMediaControlsNavigation();
         UpdateMediaControlsTimeline(CurrentPosition);
     }
@@ -117,26 +104,22 @@ public partial class MusicPlaybackService
     // The media controls send Play and Pause separately, so only toggle when the state differs.
     private void OnMediaControlsPlayPressed()
     {
-        if (!IsPlaying) FireAndForgetSafe(PlayPauseAsync, "Media controls Play");
+        if (!IsPlaying) RunInBackground(PlayPauseAsync, "Media controls Play");
     }
 
     private void OnMediaControlsPausePressed()
     {
-        if (IsPlaying) FireAndForgetSafe(PlayPauseAsync, "Media controls Pause");
+        if (IsPlaying) RunInBackground(PlayPauseAsync, "Media controls Pause");
     }
 
     private void OnMediaControlsNextPressed()
     {
-        FireAndForgetSafe(
-            NextAsync,
-            "Media controls Next");
+        RunInBackground(NextAsync, "Media controls Next");
     }
 
     private void OnMediaControlsPreviousPressed()
     {
-        FireAndForgetSafe(
-            PreviousAsync,
-            "Media controls Previous");
+        RunInBackground(PreviousAsync, "Media controls Previous");
     }
 
     private void OnMediaControlsSeekRequested(TimeSpan position)
@@ -147,48 +130,46 @@ public partial class MusicPlaybackService
             return;
         }
 
-        FireAndForgetSafe(
-            () => SeekAsync(position),
-            "Media controls Seek");
+        RunInBackground(() => SeekAsync(position), "Media controls Seek");
     }
 
     private async Task ApplyReplayGainIfEnabledAsync()
     {
-        var version = ++_replayGainVersion;
-        var request = _playbackRequestVersion;
+        // A later application, or a later playback request, supersedes this one.
+        _replayGainCts.Cancel();
+        _replayGainCts = new CancellationTokenSource();
+        var superseded = _replayGainCts.Token;
+        var request = _requestCts.Token;
         var song = CurrentTrack;
         if (song == null) return;
         var isEnabled = _settingsService.Get(CoreSettings.VolumeNormalization);
-        if (!IsCurrentRequest(request) || version != _replayGainVersion) return;
 
-        if (isEnabled && !_transientTracks.ContainsKey(song.Id) &&
-            !song.ReplayGainTrackGain.HasValue && !song.ReplayGainCheckPerformed)
+        if (isEnabled && !ReferenceEquals(_trackGain?.Song, song))
         {
-            var refreshed = await _libraryReader.GetSongByIdAsync(song.Id);
-            if (!IsCurrentRequest(request) || version != _replayGainVersion) return;
-            song.ReplayGainCheckPerformed = true;
-            if (refreshed != null)
+            var trackGain = new TrackGain(song, song.ReplayGainTrackGain, song.ReplayGainTrackPeak);
+            // A ReplayGain scan can store the gain after the song was loaded.
+            if (!trackGain.GainDb.HasValue && !_transientTracks.ContainsKey(song.Id))
             {
-                song.ReplayGainTrackGain = refreshed.ReplayGainTrackGain;
-                song.ReplayGainTrackPeak = refreshed.ReplayGainTrackPeak;
+                var refreshed = await _libraryReader.GetSongByIdAsync(song.Id);
+                if (request.IsCancellationRequested || superseded.IsCancellationRequested) return;
+                if (refreshed != null)
+                    trackGain = trackGain with { GainDb = refreshed.ReplayGainTrackGain, Peak = refreshed.ReplayGainTrackPeak };
             }
+            _trackGain = trackGain;
         }
 
-        var gain = isEnabled ? song.ReplayGainTrackGain.GetValueOrDefault() : 0;
-        if (isEnabled && song.ReplayGainTrackGain.HasValue && song.ReplayGainTrackPeak is > 0)
-            gain = Math.Min(gain, -20 * Math.Log10(song.ReplayGainTrackPeak.Value));
+        var gain = isEnabled ? _trackGain!.GainDb.GetValueOrDefault() : 0;
+        if (isEnabled && _trackGain!.GainDb.HasValue && _trackGain.Peak is > 0)
+            gain = Math.Min(gain, -20 * Math.Log10(_trackGain.Peak.Value));
         await _audioPlayer.SetReplayGainAsync(gain);
     }
+
+    // Kept per loaded song instance, so the library is asked at most once each time a song is played.
+    private sealed record TrackGain(Song Song, double? GainDb, double? Peak);
 
     private void OnSettingChanged(Setting setting)
     {
         if (setting == CoreSettings.VolumeNormalization)
-            FireAndForgetSafe(ApplyReplayGainIfEnabledAsync, "ReplayGain settings change", trackForDisposal: true);
-        else if (setting == CoreSettings.FadeOnPlayPause)
-            _audioPlayer.SetFadeOnPlayPauseEnabled(_settingsService.Get(CoreSettings.FadeOnPlayPause));
-        else if (setting == CoreSettings.FadeInDurationMs)
-            _audioPlayer.SetFadeInDuration(_settingsService.Get(CoreSettings.FadeInDurationMs));
-        else if (setting == CoreSettings.FadeOutDurationMs)
-            _audioPlayer.SetFadeOutDuration(_settingsService.Get(CoreSettings.FadeOutDurationMs));
+            RunInBackground(ApplyReplayGainIfEnabledAsync, "ReplayGain settings change");
     }
 }

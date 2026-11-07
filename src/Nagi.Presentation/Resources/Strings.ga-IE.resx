@@ -572,18 +572,6 @@ Comhaid nárbh fhéidir a iompórtáil: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>Níor braitheadh FFmpeg fós. Suiteáil FFmpeg le do thoil agus cliceáil 'Athsheiceáil'.</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>Roimhe Seo</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Seinn</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>Sos</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>Ar Aghaidh</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Leabharlann</value>
   </data>
@@ -706,9 +694,6 @@ Comhaid nárbh fhéidir a iompórtáil: {0}.</value>
   </data>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
     <value>Cruthaigh</value>
-  </data>
-  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>Cealaigh</value>
   </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>Athainmnigh '{0}'</value>
@@ -1386,6 +1371,12 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
     <value>Athshocraigh go dtí an Réamhshocrú</value>
   </data>
+  <data name="SettingsPage_ResetPlayerStyling_Content" xml:space="preserve">
+    <value>Athshocraigh go dtí an Réamhshocrú</value>
+  </data>
+  <data name="SettingsPage_ResetSongListColumns_Content" xml:space="preserve">
+    <value>Athshocraigh go dtí an Réamhshocrú</value>
+  </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Ábhar Fuinneoige</value>
   </data>
@@ -1983,7 +1974,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>An Leathanach Eile</value>
   </data>
-  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+  <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>m.sh. ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">

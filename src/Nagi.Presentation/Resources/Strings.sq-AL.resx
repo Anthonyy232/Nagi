@@ -572,18 +572,6 @@ Skedarët që nuk u mundësuan të importohen: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg ende nuk u zbulua. Ju lutemi instaloni FFmpeg dhe klikoni 'Rikontrollo'.</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>E mëparshmja</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Luaj</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>Pauzë</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>Tjetra</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Biblioteka</value>
   </data>
@@ -706,9 +694,6 @@ Skedarët që nuk u mundësuan të importohen: {0}.</value>
   </data>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
     <value>Krijo</value>
-  </data>
-  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>Anulo</value>
   </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>Riemëro '{0}'</value>
@@ -1386,6 +1371,12 @@ Dëshironi të vazhdoni?</value>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
     <value>Rikthe në parazgjedhje</value>
   </data>
+  <data name="SettingsPage_ResetPlayerStyling_Content" xml:space="preserve">
+    <value>Rikthe në parazgjedhje</value>
+  </data>
+  <data name="SettingsPage_ResetSongListColumns_Content" xml:space="preserve">
+    <value>Rikthe në parazgjedhje</value>
+  </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Materiali i dritares</value>
   </data>
@@ -1983,7 +1974,7 @@ Dëshironi të vazhdoni?</value>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Faqja tjetër</value>
   </data>
-  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+  <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>p.sh. ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">

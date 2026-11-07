@@ -2,20 +2,22 @@
 
 namespace Nagi.Presentation.Services.Abstractions;
 
+/// <summary>
+///     Shows a theme and its colors in the UI head's windows. Call it on the UI thread.
+/// </summary>
 public interface IThemeService
 {
-    void ApplyTheme(AppTheme theme);
-    Task ReapplyCurrentDynamicThemeAsync();
-
-    AppTheme CurrentTheme { get; }
+    /// <summary>
+    ///     Whether the main window shows the light theme. With <see cref="AppTheme.Default" /> this follows the system.
+    /// </summary>
+    bool IsLightTheme { get; }
 
     /// <summary>
-    ///     Applies a dynamic theme color based on color swatches, respecting the current app theme (Light/Dark).
+    ///     Raised on the UI thread when the main window switches between light and dark.
     /// </summary>
-    /// <param name="lightSwatchId">The hex color string for the light theme.</param>
-    /// <param name="darkSwatchId">The hex color string for the dark theme.</param>
-    Task ApplyDynamicThemeFromSwatchesAsync(string? lightSwatchId, string? darkSwatchId);
+    event Action? ActualThemeChanged;
 
-    /// <param name="color">The accent color, or null for the app default.</param>
-    Task ApplyAccentColorAsync(ArgbColor? color);
+    void SetTheme(AppTheme theme);
+
+    void SetColors(ThemePalette palette);
 }

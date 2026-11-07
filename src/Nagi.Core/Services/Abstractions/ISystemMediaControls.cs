@@ -4,7 +4,7 @@ namespace Nagi.Core.Services.Abstractions;
 
 /// <summary>
 ///     The operating system's media overlay and media keys, such as the System Media Transport Controls on
-///     Windows. Events are raised on the UI thread.
+///     Windows. Call it from the UI thread; its events are raised there too.
 /// </summary>
 public interface ISystemMediaControls
 {
@@ -17,8 +17,6 @@ public interface ISystemMediaControls
     ///     The requested position is not checked against the track length.
     /// </summary>
     event Action<TimeSpan>? SeekRequested;
-
-    void Initialize();
 
     void SetNavigationEnabled(bool canGoNext, bool canGoPrevious);
 

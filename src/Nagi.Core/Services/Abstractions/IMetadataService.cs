@@ -16,4 +16,10 @@ public interface IMetadataService
     /// <returns>A <see cref="SongFileMetadata" /> object containing the extracted data and file properties.</returns>
     Task<SongFileMetadata> ExtractMetadataAsync(string filePath, string? baseFolderPath = null,
         bool includeMediaAssets = true);
+
+    /// <summary>
+    ///     Writes ReplayGain track tags that <see cref="ExtractMetadataAsync" /> reads back. Logs, rather than throws,
+    ///     when the file can't be written.
+    /// </summary>
+    void WriteReplayGain(string filePath, double gainDb, double peak);
 }

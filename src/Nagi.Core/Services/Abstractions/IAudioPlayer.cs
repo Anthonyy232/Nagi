@@ -5,6 +5,10 @@ namespace Nagi.Core.Services.Abstractions;
 /// <summary>
 ///     Plays audio files and music server streams. Events are raised on the UI thread, which the playback service relies on.
 /// </summary>
+/// <remarks>
+///     The player starts itself, off the calling thread, on the first call that needs it. <see cref="PauseAsync" />,
+///     <see cref="StopAsync" /> and <see cref="SeekAsync" /> do nothing until then, since nothing can be loaded yet.
+/// </remarks>
 public interface IAudioPlayer : IDisposable
 {
     /// <summary>
@@ -18,7 +22,10 @@ public interface IAudioPlayer : IDisposable
 
     event Action? VolumeChanged;
 
-    event Action<string>? ErrorOccurred;
+    /// <summary>
+    ///     Occurs when the current song can't be loaded or played. The player logs the reason itself.
+    /// </summary>
+    event Action? ErrorOccurred;
 
     event Action? MediaOpened;
 
@@ -47,9 +54,7 @@ public interface IAudioPlayer : IDisposable
     string AudioOutputDeviceId { get; }
 
     /// <summary>
-    ///     Asynchronously ensures the audio player is initialized and ready for playback.
-    ///     This can be called from a background thread to pre-warm the audio engine
-    ///     without blocking the UI thread during app startup. Concurrent calls are serialized.
+    ///     Starts the player ahead of its first use, so that use doesn't wait for it. Concurrent calls are serialized.
     /// </summary>
     Task EnsureInitializedAsync();
 
@@ -93,23 +98,13 @@ public interface IAudioPlayer : IDisposable
     /// </summary>
     Task SetPlaybackRateAsync(double rate);
 
-    bool ApplyEqualizerSettings(EqualizerSettings settings);
+    Task ApplyEqualizerSettingsAsync(EqualizerSettings settings);
 
-    IReadOnlyList<(uint Index, float Frequency)> GetEqualizerBands();
+    Task<IReadOnlyList<(uint Index, float Frequency)>> GetEqualizerBandsAsync();
 
     /// <summary>
     ///     Sets the ReplayGain adjustment for volume normalization.
     /// </summary>
     /// <param name="gainDb">The gain adjustment in decibels. Use 0 for no adjustment.</param>
     Task SetReplayGainAsync(double gainDb);
-
-    /// <summary>
-    ///     Enables or disables the fade-in/fade-out effect on play and pause.
-    ///     When enabled, the volume ramps smoothly instead of cutting instantly.
-    /// </summary>
-    void SetFadeOnPlayPauseEnabled(bool isEnabled);
-
-    void SetFadeInDuration(int durationMs);
-
-    void SetFadeOutDuration(int durationMs);
 }

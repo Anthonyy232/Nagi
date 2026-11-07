@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Globalization;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
 
@@ -20,7 +21,8 @@ public sealed class FFmpegLoudnessAnalyzer(ILogger<FFmpegLoudnessAnalyzer> logge
         string[] arguments =
         [
             "-v", "error", "-nostdin", "-i", filePath, "-map", "0:a:0",
-            "-f", "f32le", "-ac", "2", "-ar", "48000", "-vn", "-sn", "-dn", "pipe:1"
+            "-f", Ebur128Meter.FFmpegSampleFormat, "-ac", Ebur128Meter.Channels.ToString(CultureInfo.InvariantCulture),
+            "-ar", Ebur128Meter.SampleRate.ToString(CultureInfo.InvariantCulture), "-vn", "-sn", "-dn", "pipe:1"
         ];
         foreach (var argument in arguments) startInfo.ArgumentList.Add(argument);
 

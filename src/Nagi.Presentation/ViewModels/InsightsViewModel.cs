@@ -484,8 +484,8 @@ public partial class InsightsViewModel : ObservableObject
     private static string FormatListenTime(TimeSpan ts)
     {
         if (ts.TotalHours >= 1)
-            return string.Format(CultureInfo.CurrentCulture, Strings.Insights_Format_HoursMinutes, (int)ts.TotalHours, ts.Minutes);
-        return string.Format(CultureInfo.CurrentCulture, Strings.Insights_Format_MinutesSeconds, ts.Minutes, ts.Seconds);
+            return ResourceFormatter.Format(Strings.Insights_Format_HoursMinutes, (int)ts.TotalHours, ts.Minutes);
+        return ResourceFormatter.Format(Strings.Insights_Format_MinutesSeconds, ts.Minutes, ts.Seconds);
     }
 
     private static string FormatHour(int hour)

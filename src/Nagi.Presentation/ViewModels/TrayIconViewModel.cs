@@ -44,14 +44,12 @@ public partial class TrayIconViewModel : ObservableObject
     public void Cleanup()
     {
         _logger.LogDebug("Cleaning up TrayIconViewModel resources");
-        _windowService.Closing -= OnAppWindowClosing;
         _windowService.UIStateChanged -= OnWindowStateChanged;
         _settingsService.SettingChanged -= OnSettingChanged;
     }
 
     public void Initialize()
     {
-        _windowService.Closing += OnAppWindowClosing;
         _windowService.UIStateChanged += OnWindowStateChanged;
         UpdateTrayIconVisibility();
         _logger.LogDebug("Initialized. HideToTray: {IsHideToTrayEnabled}, IsWindowVisible: {IsWindowVisible}",
@@ -68,19 +66,6 @@ public partial class TrayIconViewModel : ObservableObject
     private void OnWindowStateChanged()
     {
         _dispatcherService.TryEnqueue(UpdateTrayIconVisibility);
-    }
-
-    private void OnAppWindowClosing(WindowClosingEventArgs args)
-    {
-        if (_windowService.IsExiting) return;
-
-        // Closing during onboarding exits, since there is nothing to keep running in the tray.
-        if (IsHideToTrayEnabled && !_windowService.IsShowingOnboarding)
-        {
-            args.Cancel = true;
-            _logger.LogDebug("'Hide to Tray' is enabled. Intercepting close and hiding window");
-            _dispatcherService.TryEnqueue(_windowService.Hide);
-        }
     }
 
     private void OnSettingChanged(Setting setting)

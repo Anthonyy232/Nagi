@@ -5,6 +5,7 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Settings;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Services.Implementations;
 using WinRT;
 
 namespace Nagi.WinUI;
@@ -21,7 +22,7 @@ public static class Program
         {
             using var activationTimeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
             singleInstanceManager
-                .SendActivationAsync(TryGetFilePathFromArgs(args), JumpListTasks.Parse(args), activationTimeout.Token)
+                .SendActivationAsync(TryGetFilePathFromArgs(args), JumpListService.Parse(args), activationTimeout.Token)
                 .GetAwaiter()
                 .GetResult();
             return 0;
@@ -38,8 +39,7 @@ public static class Program
         {
             var context = new DispatcherQueueSynchronizationContext(DispatcherQueue.GetForCurrentThread());
             SynchronizationContext.SetSynchronizationContext(context);
-            var app = new App();
-            singleInstanceManager.StartListening(app.HandleExternalActivation);
+            new App(singleInstanceManager);
         });
 
         return 0;

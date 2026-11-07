@@ -572,18 +572,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>ยังไม่พบ FFmpeg โปรดติดตั้ง FFmpeg และคลิก 'ตรวจสอบซ้ำ'</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>ก่อนหน้า</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>เล่น</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>หยุดชั่วคราว</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>ถัดไป</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>คลังเพลง</value>
   </data>
@@ -706,9 +694,6 @@
   </data>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
     <value>สร้าง</value>
-  </data>
-  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>ยกเลิก</value>
   </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>เปลี่ยนชื่อ '{0}'</value>
@@ -1386,6 +1371,12 @@
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
     <value>รีเซ็ตเป็นค่าเริ่มต้น</value>
   </data>
+  <data name="SettingsPage_ResetPlayerStyling_Content" xml:space="preserve">
+    <value>รีเซ็ตเป็นค่าเริ่มต้น</value>
+  </data>
+  <data name="SettingsPage_ResetSongListColumns_Content" xml:space="preserve">
+    <value>รีเซ็ตเป็นค่าเริ่มต้น</value>
+  </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>วัสดุหน้าต่าง</value>
   </data>
@@ -1983,7 +1974,7 @@
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>หน้าถัดไป</value>
   </data>
-  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+  <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>e.g. ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">

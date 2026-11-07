@@ -53,7 +53,7 @@ public class OnboardingViewModelTests
         _viewModel.IsLibraryReady.Should().BeTrue();
         _viewModel.FinishCommand.CanExecute(null).Should().BeTrue();
         await _viewModel.FinishCommand.ExecuteAsync(null);
-        await _lifecycle.Received(1).NavigateToMainContentAsync();
+        _lifecycle.Received(1).ShowMainShell();
     }
 
     [Fact]

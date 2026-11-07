@@ -572,18 +572,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg இன்னும் கண்டறியப்படவில்லை. தயவுசெய்து FFmpeg ஐ நிறுவி 'மீண்டும் சரிபார்க்கவும்' என்பதைக் கிளிக் செய்யவும்.</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>முந்தைய</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>இயக்கு</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>இடைநிறுத்து</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>அடுத்த</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>நூலகம்</value>
   </data>
@@ -706,9 +694,6 @@
   </data>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
     <value>உருவாக்கு</value>
-  </data>
-  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>ரத்துசெய்</value>
   </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>'{0}' ஐ மறுபெயரிடு</value>
@@ -1386,6 +1371,12 @@
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
     <value>முன்னிருப்புக்கு மீட்டமை</value>
   </data>
+  <data name="SettingsPage_ResetPlayerStyling_Content" xml:space="preserve">
+    <value>முன்னிருப்புக்கு மீட்டமை</value>
+  </data>
+  <data name="SettingsPage_ResetSongListColumns_Content" xml:space="preserve">
+    <value>முன்னிருப்புக்கு மீட்டமை</value>
+  </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>சாளரப் பொருள்</value>
   </data>
@@ -1983,7 +1974,7 @@
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>அடுத்த பக்கம்</value>
   </data>
-  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+  <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>எ.கா. ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">

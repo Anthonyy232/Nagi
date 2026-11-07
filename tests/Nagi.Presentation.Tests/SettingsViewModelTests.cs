@@ -21,8 +21,8 @@ public class SettingsViewModelTests : IDisposable
     private readonly ICredentialLockerService _credentials = Substitute.For<ICredentialLockerService>();
     private readonly SettingsService _settings;
     private readonly ISettingsService _resetSettings = Substitute.For<ISettingsService>();
-    private readonly IThemeService _theme = Substitute.For<IThemeService>();
     private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
+    private readonly IEqualizerService _equalizer = Substitute.For<IEqualizerService>();
     private readonly IAudioPlayer _audioPlayer = Substitute.For<IAudioPlayer>();
     private readonly IAppInfoService _appInfo = Substitute.For<IAppInfoService>();
     private readonly IUIService _ui = Substitute.For<IUIService>();
@@ -44,14 +44,14 @@ public class SettingsViewModelTests : IDisposable
     {
         _settings = TestSettings.Create(credentials: _credentials, autoLaunch: _autoLaunch);
         _credentials.SaveCredential(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(true);
-        _playback.AvailablePresets.Returns(Array.Empty<EqualizerPreset>());
+        _equalizer.Presets.Returns(Array.Empty<EqualizerPreset>());
         _dispatcher.HasThreadAccess.Returns(true);
         _dispatcher.TryEnqueue(Arg.Any<Action>()).Returns(call => { call.Arg<Action>()(); return true; });
         _dispatcher.EnqueueAsync(Arg.Any<Func<Task>>()).Returns(call => call.Arg<Func<Task>>()());
         _viewModel = new SettingsViewModel(_settings, _appInfo, _autoLaunch, _dispatcher,
-            new AppearanceSettingsViewModel(_settings, _theme, _ui, _appInfo, _lifecycle, _dispatcher,
+            new AppearanceSettingsViewModel(_settings, _ui, _appInfo, _lifecycle, _dispatcher,
                 NullLogger<AppearanceSettingsViewModel>.Instance, _timeProvider),
-            new AudioSettingsViewModel(_playback, _audioPlayer, _settings, _ui, _ffmpeg, _replayGain, _operation, _dispatcher,
+            new AudioSettingsViewModel(_equalizer, _audioPlayer, _settings, _ui, _ffmpeg, _replayGain, _operation, _dispatcher,
                 NullLogger<AudioSettingsViewModel>.Instance, _timeProvider),
             new LibrarySettingsViewModel(_settings, _ui, _library.Folders, Substitute.For<IMusicServerService>(), _operation, _dispatcher,
                 NullLogger<LibrarySettingsViewModel>.Instance, _timeProvider),
@@ -560,6 +560,24 @@ public class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
+    public async Task DraggingAProviderAboveMusicBrainz_KeepsMusicBrainzFirst()
+    {
+        await _viewModel.LoadSettingsAsync();
+        var providers = _viewModel.Library.MetadataProviders;
+        providers[0].Id.Should().Be(ServiceProviderIds.MusicBrainz);
+        var dragged = providers[^1];
+
+        // A list view reorders by removing the item and inserting it again.
+        providers.Remove(dragged);
+        providers.Insert(0, dragged);
+        await AdvanceDebouncesAsync();
+
+        providers.Select(p => p.Id).Should().StartWith(new[] { ServiceProviderIds.MusicBrainz, dragged.Id });
+        _settings.Get(CoreSettings.MetadataProviders).Select(p => p.Id).Should()
+            .Equal(providers.Select(p => p.Id));
+    }
+
+    [Fact]
     public async Task ResetPlayerDesign_CancelsOlderTintSave()
     {
         _viewModel.Appearance.PlayerTintIntensity = .75;
@@ -597,7 +615,7 @@ public class SettingsViewModelTests : IDisposable
         var loading = _viewModel.LoadSettingsAsync();
 
         if (playerDesign) _viewModel.Appearance.ResetPlayerDesignSettingsCommand.Execute(null);
-        else await _viewModel.Appearance.ResetAccentColorCommand.ExecuteAsync(null);
+        else _viewModel.Appearance.ResetAccentColorCommand.Execute(null);
         startup.SetResult(true);
         await loading.WaitAsync(TimeSpan.FromSeconds(5));
 
@@ -634,10 +652,10 @@ public class SettingsViewModelTests : IDisposable
         band.GainCommitted += (_, gain) => commits.Add(gain);
         band.Gain = 3;
 
-        _playback.SetEqualizerGainsAsync(Arg.Any<IEnumerable<float>>()).Returns(call =>
+        _equalizer.SetBandGainsAsync(Arg.Any<IEnumerable<float>>()).Returns(call =>
         {
-            _playback.CurrentEqualizerSettings.Returns(new EqualizerSettings { BandGains = call.Arg<IEnumerable<float>>().ToList() });
-            _playback.EqualizerChanged += Raise.Event<Action>();
+            _equalizer.CurrentSettings.Returns(new EqualizerSettings { BandGains = call.Arg<IEnumerable<float>>().ToList() });
+            _equalizer.SettingsChanged += Raise.Event<Action>();
             return Task.CompletedTask;
         });
 
@@ -662,24 +680,20 @@ public class SettingsViewModelTests : IDisposable
         await AdvanceDebouncesAsync();
 
         commits.Should().BeEmpty();
-        await _playback.DidNotReceive().SetEqualizerPreampAsync(Arg.Any<float>());
-        await _playback.Received(1).ResetEqualizerAsync();
+        await _equalizer.DidNotReceive().SetPreampAsync(Arg.Any<float>());
+        await _equalizer.Received(1).ResetAsync();
     }
 
     [Fact]
     public async Task ResetAccentColor_CancelsPendingColorSave()
     {
-        _viewModel.Appearance.IsDynamicThemingEnabled = false;
-        _theme.ClearReceivedCalls();
         _viewModel.Appearance.AccentColor = ArgbColor.FromRgb(200, 10, 20);
 
-        await _viewModel.Appearance.ResetAccentColorCommand.ExecuteAsync(null);
+        _viewModel.Appearance.ResetAccentColorCommand.Execute(null);
         await AdvanceDebouncesAsync();
 
         _viewModel.Appearance.AccentColor.Should().Be(ThemePalette.BrandAccentColor);
         _settings.Get(AppSettings.AccentColor).Should().BeNull();
-        await _theme.Received(1).ApplyAccentColorAsync(null);
-        await _theme.DidNotReceive().ApplyAccentColorAsync(Arg.Is<ArgbColor?>(color => color.HasValue));
     }
 
     [Fact]
@@ -716,14 +730,14 @@ public class SettingsViewModelTests : IDisposable
         if (dispose)
         {
             tintChanges.Should().Be(0);
-            await _playback.DidNotReceive().SetEqualizerPreampAsync(Arg.Any<float>());
+            await _equalizer.DidNotReceive().SetPreampAsync(Arg.Any<float>());
         }
         else
         {
             tintChanges.Should().Be(1);
             _settings.Get(AppSettings.PlayerTintIntensity).Should().Be(.3);
-            await _playback.Received(1).SetEqualizerPreampAsync(2);
-            await _playback.DidNotReceive().SetEqualizerPreampAsync(1);
+            await _equalizer.Received(1).SetPreampAsync(2);
+            await _equalizer.DidNotReceive().SetPreampAsync(1);
         }
     }
 

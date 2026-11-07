@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // Originally sourced from http://archive.msdn.microsoft.com/WindowsAPICodePack
 namespace Nagi.WinUI.Helpers;
 
-internal static partial class TaskbarNativeMethods
+internal static partial class NativeMethods
 {
     internal const int WM_COMMAND = 0x0111;
     internal const int THBN_CLICKED = 0x1800;

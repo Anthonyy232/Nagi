@@ -1,306 +1,115 @@
-using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.UI.Dispatching;
-using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services;
+using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Logging;
-using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
+using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Services.Implementations;
+using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services;
+using Nagi.WinUI.Services.Implementations;
 using Serilog;
 using WinRT;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
-using Nagi.Core.Settings;
 
 namespace Nagi.WinUI;
 
 public partial class App : Application
 {
-    private static string? _currentLogFilePath;
-
-    private readonly ConcurrentQueue<string> _fileActivationQueue = new();
-    private bool _isProcessingFileQueue;
-    private bool _coreServicesInitialized;
-    private volatile bool _hasExternalActivation;
-    private JumpListTask _pendingJumpListTask;
+    private readonly SingleInstanceManager _singleInstanceManager;
     private bool _isReportingCrash;
-    private ILogger<App>? _logger;
-    private Window? _window;
+    private string? _logsDirectory;
+    private MainWindow? _window;
 
-    public App()
+    internal App(SingleInstanceManager singleInstanceManager)
     {
-        CurrentApp = this;
+        _singleInstanceManager = singleInstanceManager;
         InitializeComponent();
 
         UnhandledException += OnAppUnhandledException;
     }
 
-    public static App? CurrentApp { get; private set; }
-
-    public static Window? RootWindow => CurrentApp?._window;
-
+    /// <summary>
+    ///     For pages the navigation frame creates, which can't take constructor dependencies.
+    /// </summary>
     public static IServiceProvider? Services { get; private set; }
 
-    public static DispatcherQueue? MainDispatcherQueue => CurrentApp?._window?.DispatcherQueue;
+    private bool IsExiting => Services?.GetService<IWindowService>()?.IsExiting == true;
 
     protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-            .Build();
-        _currentLogFilePath = AppLogging.Configure(PackagedAppData.CreatePathConfiguration().LogsDirectory);
+        _logsDirectory = PackagedAppData.CreatePathConfiguration().LogsDirectory;
+        AppLogging.Configure(_logsDirectory);
 
         try
         {
-            InitializeWindowAndServices(configuration);
-            _logger = Services!.GetRequiredService<ILogger<App>>();
-            _logger.LogInformation("Application starting up.");
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: true)
+                .Build();
+            Services = new ServiceCollection().AddNagiApp(configuration).BuildServiceProvider();
+            Services.GetRequiredService<ILogger<App>>().LogInformation("Application starting up.");
 
-            InitializeSystemIntegration();
+            _window = Services.GetRequiredService<MainWindow>();
+            _window.Closed += OnWindowClosed;
+            _window.SetContent(new SplashPage());
+            Services.GetRequiredService<TaskbarService>().Start();
 
-            if (_window is MainWindow mainWindow)
-            {
-                mainWindow.Content = new Pages.SplashPage();
-                mainWindow.InitializeCustomTitleBar();
-                mainWindow.RestoreWindowState();
-            }
-            // Before doing heavy blocking initialization, show the window to the user
-            var isStartupLaunch = Environment.GetCommandLineArgs()
-                .Any(arg => arg.Equals("--startup", StringComparison.OrdinalIgnoreCase));
-            var startMinimized = Services!.GetRequiredService<ISettingsService>().Get(AppSettings.StartMinimized);
+            var launch = Services.GetRequiredService<LaunchCoordinator>();
+            var (filePath, command) = ReadActivation(args.UWPLaunchActivatedEventArgs);
+            if (filePath is not null || command != LaunchCommand.None) launch.Activate(filePath, command);
+            _singleInstanceManager.StartListening(launch.Activate);
 
-            if (!isStartupLaunch && !startMinimized)
-            {
-                _window?.AppWindow?.Show();
-                _window?.Activate();
-                if (_window?.AppWindow is not null) _window.AppWindow.IsShownInSwitchers = true;
-            }
-            HandleInitialActivation(args.UWPLaunchActivatedEventArgs);
-
-            var restoreSession = _fileActivationQueue.IsEmpty;
-            await AppServices.StartAsync(Services!, restoreSession, _logger!);
-            if (_isExiting) return;
-            _coreServicesInitialized = true;
-            await Services!.GetRequiredService<IApplicationLifecycle>().NavigateToMainContentAsync();
-            AppServices.StartAfterMainContent(Services!);
-
-            _ = ProcessFileActivationQueueAsync();
-
-            HandleWindowActivation(isStartupLaunch);
-            await RunPendingJumpListTaskAsync();
-
-            EnqueuePostLaunchTasks();
+            await launch.StartAsync();
+            Services.GetRequiredService<JumpListService>().Start();
+        }
+        catch (Exception ex) when (IsExiting)
+        {
+            Log.Debug(ex, "Startup interrupted by application shutdown.");
         }
         catch (Exception ex)
         {
-            if (_isExiting)
-            {
-                Log.Debug(ex, "Startup interrupted by application shutdown.");
-                return;
-            }
             Log.Fatal(ex, "Application terminated unexpectedly during startup.");
             await ShowCrashReportAndExitAsync(ex);
         }
     }
 
-    private void HandleInitialActivation(IActivatedEventArgs args)
+    private static (string? FilePath, LaunchCommand Command) ReadActivation(IActivatedEventArgs args)
     {
-        string? filePath = null;
-
-        if (args.Kind == ActivationKind.File)
+        switch (args.Kind)
         {
-            var fileArgs = args.As<IFileActivatedEventArgs>();
-            if (fileArgs.Files.Any()) filePath = fileArgs.Files[0].Path;
-        }
-        else if (args.Kind == ActivationKind.Launch)
-        {
-            var commandLineArgs = Environment.GetCommandLineArgs()[1..];
-            filePath = Program.TryGetFilePathFromArgs(commandLineArgs);
-            _pendingJumpListTask = JumpListTasks.Parse(commandLineArgs);
-            if (_pendingJumpListTask != JumpListTask.None) _hasExternalActivation = true;
-        }
-
-        if (!string.IsNullOrEmpty(filePath))
-        {
-            _hasExternalActivation = true;
-            _fileActivationQueue.Enqueue(filePath);
+            case ActivationKind.File:
+                return (args.As<IFileActivatedEventArgs>().Files.FirstOrDefault()?.Path, LaunchCommand.None);
+            case ActivationKind.Launch:
+                var commandLineArgs = Environment.GetCommandLineArgs()[1..];
+                return (Program.TryGetFilePathFromArgs(commandLineArgs), JumpListService.Parse(commandLineArgs));
+            default:
+                return (null, LaunchCommand.None);
         }
     }
-
-    /// <summary>
-    ///     Handles an activation request from an external source (e.g., a secondary instance).
-    ///     This method orchestrates file queuing and window activation logic on the UI thread.
-    /// </summary>
-    internal void HandleExternalActivation(string? filePath, JumpListTask jumpListTask)
-    {
-        _hasExternalActivation = true;
-        if (!string.IsNullOrEmpty(filePath)) _fileActivationQueue.Enqueue(filePath);
-        if (jumpListTask != JumpListTask.None) _pendingJumpListTask = jumpListTask;
-        MainDispatcherQueue?.TryEnqueue(() =>
-        {
-            if (!_coreServicesInitialized || _isExiting) return;
-
-            _ = ProcessFileActivationQueueAsync();
-
-            try
-            {
-                var windowService = Services!.GetRequiredService<IWindowService>();
-
-                // The mini-player task replaces the main window, and a file opened while the
-                // mini-player is up plays there without disrupting it.
-                var staysInMiniPlayer = jumpListTask == JumpListTask.MiniPlayer ||
-                                        (!string.IsNullOrEmpty(filePath) && windowService.IsMiniPlayerActive);
-                if (!staysInMiniPlayer) windowService.ShowAndActivate();
-                _ = RunPendingJumpListTaskAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger?.LogError(ex, "HandleExternalActivation: Exception during window activation");
-            }
-        });
-    }
-
-    private async Task RegisterJumpListAsync(bool includeMiniPlayer)
-    {
-        try
-        {
-            if (!_isExiting) await JumpListTasks.RegisterAsync(includeMiniPlayer);
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError(ex, "Failed to register the taskbar jump list");
-        }
-    }
-
-    private async Task RunPendingJumpListTaskAsync()
-    {
-        if (!_coreServicesInitialized || _isExiting) return;
-        var task = Interlocked.Exchange(ref _pendingJumpListTask, JumpListTask.None);
-
-        try
-        {
-            switch (task)
-            {
-                case JumpListTask.MiniPlayer:
-                    // Minimizing swaps in the mini-player, the same as the window's own minimize button.
-                    if (_window?.AppWindow.Presenter is OverlappedPresenter presenter) presenter.Minimize();
-                    break;
-                case JumpListTask.ShuffleAll:
-                    await Services!.GetRequiredService<IMusicPlaybackService>().ShuffleLibraryAsync();
-                    break;
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError(ex, "Failed to run jump list task {JumpListTask}", task);
-        }
-    }
-
-    private async Task ProcessFileActivationQueueAsync()
-    {
-        if (!_coreServicesInitialized || _isProcessingFileQueue || _isExiting) return;
-
-        _isProcessingFileQueue = true;
-        try
-        {
-            while (!_isExiting && _fileActivationQueue.TryDequeue(out var filePath))
-            {
-                try
-                {
-                    await Services!.GetRequiredService<IMusicPlaybackService>().PlayTransientFileAsync(filePath);
-                }
-                catch (Exception ex)
-                {
-                    _logger?.LogError(ex, "Failed to process file '{FilePath}'", filePath);
-                }
-            }
-        }
-        finally
-        {
-            _isProcessingFileQueue = false;
-        }
-    }
-
-    private static IServiceProvider ConfigureServices(MainWindow mainWindow, IConfiguration configuration)
-    {
-        var services = new ServiceCollection();
-
-        services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog());
-        services.AddSingleton(configuration);
-        services.AddNagiMainWindow(mainWindow);
-        services.AddNagiPlatformServices();
-        services.AddNagiCore();
-        services.AddNagiPresentation();
-        services.AddNagiShell();
-
-        return services.BuildServiceProvider();
-    }
-
-    private void InitializeWindowAndServices(IConfiguration configuration)
-    {
-        var mainWindow = new MainWindow();
-        _window = mainWindow;
-        _window.Closed += OnWindowClosed;
-
-        Services = ConfigureServices(mainWindow, configuration);
-
-        mainWindow.InitializeDependencies(Services.GetRequiredService<ISettingsService>(),
-            Services.GetRequiredService<TaskbarService>(), Services.GetRequiredService<TransparencyEffectsMonitor>(),
-            Services.GetRequiredService<ILogger<MainWindow>>());
-    }
-
-    private void InitializeSystemIntegration()
-    {
-        try
-        {
-            _window!.AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/AppLogo.ico"));
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError(ex, "Failed to set window icon");
-        }
-    }
-
-    private bool _isExiting;
 
     private async void OnWindowClosed(object sender, WindowEventArgs args)
     {
-        // We need to handle this manually to ensure async tasks complete before the app exits.
+        // Keep the window until the services have stopped; the process exits afterwards.
         args.Handled = true;
-        if (_isExiting) return;
-        _isExiting = true;
+        _window!.Closed -= OnWindowClosed;
 
         try
         {
-            if (_window is MainWindow mainWindow)
-            {
-                _logger?.LogDebug("Saving window state...");
-                mainWindow.SaveWindowState();
-                mainWindow.Cleanup();
-            }
-
-            if (Services is not null)
-            {
-                await AppServices.StopAsync(Services, _logger ?? NullLogger<App>.Instance);
-            }
+            _window.SaveWindowState();
+            await AppServices.StopAsync(Services!, Services!.GetRequiredService<ILogger<App>>());
         }
         catch (Exception ex)
         {
-            _logger?.LogError(ex, "Error during application shutdown.");
+            Log.Error(ex, "Error during application shutdown.");
         }
         finally
         {
@@ -308,8 +117,6 @@ public partial class App : Application
             {
                 if (Services is IAsyncDisposable asyncDisposableServices)
                     await asyncDisposableServices.DisposeAsync();
-                else if (Services is IDisposable disposableServices)
-                    disposableServices.Dispose();
             }
             catch (Exception ex)
             {
@@ -346,18 +153,14 @@ public partial class App : Application
         _isReportingCrash = true;
         try
         {
-            Log.Fatal(ex, "A critical error occurred. Application will now terminate. Log path: {LogPath}",
-                _currentLogFilePath);
+            Log.Fatal(ex, "A critical error occurred. Application will now terminate. Logs are in {LogsDirectory}",
+                _logsDirectory);
             var fullCrashReport = AppLogging.BuildCrashReport(ex);
-            if (MainDispatcherQueue is not { } dispatcher) return;
+            if (Services?.GetService<UIService>() is not { } uiService) return;
 
-            var dispatcherService = Services?.GetService<IDispatcherService>() ?? new DispatcherService(dispatcher);
-            await dispatcherService.EnqueueAsync(async () =>
+            await Services.GetRequiredService<IDispatcherService>().EnqueueAsync(async () =>
             {
-                if (Services?.GetService<IUIService>() is not { } uiService) return;
-                var result = await uiService.ShowCrashReportDialogAsync(fullCrashReport);
-
-                if (result == CrashReportResult.Reset) await ResetApplicationDataAsync();
+                if (await uiService.ShowCrashReportDialogAsync(fullCrashReport)) await ResetApplicationDataAsync();
             });
         }
         catch (Exception dialogEx)
@@ -370,7 +173,7 @@ public partial class App : Application
         }
     }
 
-    private async Task ResetApplicationDataAsync()
+    private static async Task ResetApplicationDataAsync()
     {
         try
         {
@@ -382,7 +185,6 @@ public partial class App : Application
             await Log.CloseAndFlushAsync();
 
             ElevationHelper.RestartWithoutElevation();
-
         }
         catch (Exception ex)
         {
@@ -394,61 +196,4 @@ public partial class App : Application
             await ExitAsync(0);
         }
     }
-
-    private void HandleWindowActivation(bool isStartupLaunch = false)
-    {
-        if (_isExiting || _window is null || Services is null) return;
-
-        var settingsService = Services.GetRequiredService<ISettingsService>();
-        var startMinimized = settingsService.Get(AppSettings.StartMinimized);
-        var minimizeToMiniPlayer = settingsService.Get(AppSettings.MinimizeToMiniPlayer);
-        var hideToTray = settingsService.Get(AppSettings.HideToTray);
-        var windowService = Services.GetRequiredService<IWindowService>();
-
-        // A launch received during initialization takes precedence over startup minimization.
-        if (_hasExternalActivation || !(isStartupLaunch || startMinimized))
-        {
-            windowService.ShowAndActivate();
-        }
-        else if (minimizeToMiniPlayer)
-        {
-            windowService.ShowMiniPlayer();
-            _window.AppWindow.IsShownInSwitchers = false;
-        }
-        else if (!hideToTray)
-        {
-            WindowActivator.ShowMinimized(_window);
-        }
-    }
-
-    private void EnqueuePostLaunchTasks()
-    {
-        MainDispatcherQueue?.TryEnqueue(DispatcherQueuePriority.Normal, () =>
-        {
-            try
-            {
-                if (_isExiting || Services is null) return;
-
-                Services.GetRequiredService<ISystemMediaControls>().Initialize();
-            }
-            catch (Exception ex)
-            {
-                _logger?.LogError(ex, "Failed to initialize System Media Transport Controls");
-            }
-        });
-
-        MainDispatcherQueue?.TryEnqueue(DispatcherQueuePriority.Low, async () =>
-        {
-            if (_isExiting || Services is null) return;
-            var settings = Services.GetRequiredService<ISettingsService>();
-            // The mini-player only exists while "Minimize to Mini-Player" is on, so the task follows it.
-            settings.SettingChanged += setting =>
-            {
-                if (setting == AppSettings.MinimizeToMiniPlayer)
-                    MainDispatcherQueue?.TryEnqueue(() => _ = RegisterJumpListAsync(settings.Get(AppSettings.MinimizeToMiniPlayer)));
-            };
-            await RegisterJumpListAsync(settings.Get(AppSettings.MinimizeToMiniPlayer));
-        });
-    }
-
 }

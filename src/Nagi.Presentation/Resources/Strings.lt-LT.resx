@@ -572,18 +572,6 @@ Failai, kurių nepavyko importuoti: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg vis dar nerastas. Įdiekite FFmpeg ir spustelėkite "Patikrinti iš naujo".</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>Ankstesnis</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Groti</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>Pristabdyti</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>Kitas</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Biblioteka</value>
   </data>
@@ -706,9 +694,6 @@ Failai, kurių nepavyko importuoti: {0}.</value>
   </data>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
     <value>Sukurti</value>
-  </data>
-  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>Atšaukti</value>
   </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>Pervadinti "{0}"</value>
@@ -1386,6 +1371,12 @@ Ar norite tęsti?</value>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
     <value>Atkurti numatytąjį</value>
   </data>
+  <data name="SettingsPage_ResetPlayerStyling_Content" xml:space="preserve">
+    <value>Atkurti numatytąjį</value>
+  </data>
+  <data name="SettingsPage_ResetSongListColumns_Content" xml:space="preserve">
+    <value>Atkurti numatytąjį</value>
+  </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Lango medžiaga</value>
   </data>
@@ -1983,7 +1974,7 @@ Ar norite tęsti?</value>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Kitas puslapis</value>
   </data>
-  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+  <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>pvz., ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">

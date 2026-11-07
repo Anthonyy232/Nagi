@@ -1,15 +1,17 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Nagi.Core.Models;
+using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 
 namespace Nagi.Presentation.ViewModels;
 
-public partial class ServiceProviderSettingViewModel : ObservableObject
+public partial class ServiceProviderSettingViewModel : ObservableObject, IToggleItem
 {
     [ObservableProperty] public partial bool IsEnabled { get; set; }
 
     public string Id { get; init; } = string.Empty;
     public string DisplayName { get; init; } = string.Empty;
+    public AppIcon Icon => AppIcon.OnlineSource;
     public string? Description => Id switch
     {
         ServiceProviderIds.LrcLib => Strings.Settings_Provider_LRCLIB_Desc,

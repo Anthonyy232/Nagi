@@ -23,9 +23,6 @@ to avoid duplicate declarations across pages and controls.
     <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
     <converters:StringToVisibilityConverter x:Key="InverseStringToVisibilityConverter" Invert="True" />
     <converters:VolumeToClipRectConverter x:Key="VolumeToClipRectConverter" />
-    <converters:AppIconToGlyphConverter x:Key="AppIconToGlyphConverter" />
-    <converters:AppThemeToFriendlyStringConverter x:Key="ThemeToStringConverter" />
-    <converters:BackdropMaterialToStringConverter x:Key="BackdropMaterialToStringConverter" />
     <converters:SortOrderEqualsConverter x:Key="SortOrderEqualsConverter" />
     <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
 

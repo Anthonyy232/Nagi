@@ -312,15 +312,6 @@
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>所選檔案不是有效的 Nagi 備份。</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC 遇到未指定的錯誤。</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC 錯誤：{0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>載入「{0}」失敗。</value>
-  </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>正在瀏覽音樂庫</value>
   </data>

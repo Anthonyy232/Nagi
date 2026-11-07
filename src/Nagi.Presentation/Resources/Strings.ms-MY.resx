@@ -572,18 +572,6 @@ Fail yang tidak dapat diimport: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg masih belum dikesan. Sila pasang FFmpeg dan klik 'Semak Semula'.</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>Sebelumnya</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Main</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>Jeda</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>Seterusnya</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Pustaka</value>
   </data>
@@ -706,9 +694,6 @@ Fail yang tidak dapat diimport: {0}.</value>
   </data>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
     <value>Cipta</value>
-  </data>
-  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>Batal</value>
   </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>Nama semula '{0}'</value>
@@ -1386,6 +1371,12 @@ Adakah anda ingin meneruskan?</value>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
     <value>Tetapkan Semula ke Lalai</value>
   </data>
+  <data name="SettingsPage_ResetPlayerStyling_Content" xml:space="preserve">
+    <value>Tetapkan Semula ke Lalai</value>
+  </data>
+  <data name="SettingsPage_ResetSongListColumns_Content" xml:space="preserve">
+    <value>Tetapkan Semula ke Lalai</value>
+  </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Bahan Tetingkap</value>
   </data>
@@ -1983,7 +1974,7 @@ Adakah anda ingin meneruskan?</value>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Halaman Seterusnya</value>
   </data>
-  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+  <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>e.g. ;/\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">

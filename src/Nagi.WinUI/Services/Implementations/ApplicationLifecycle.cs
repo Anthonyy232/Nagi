@@ -1,63 +1,35 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Nagi.Core.Services.Abstractions;
+﻿using Microsoft.Windows.AppLifecycle;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Pages;
-using Microsoft.Windows.AppLifecycle;
-using Nagi.Core.Settings;
-using Nagi.Presentation.Services;
 
 namespace Nagi.WinUI.Services.Implementations;
 
 public class ApplicationLifecycle : IApplicationLifecycle
 {
     private readonly MainWindow _window;
-    private readonly IWindowService _windowService;
-    private readonly ILibraryReader _libraryReader;
-    private readonly ISettingsService _settingsService;
-    private readonly IThemeService _themeService;
     private readonly Func<MainPage> _createMainPage;
     private readonly Func<OnboardingPage> _createOnboardingPage;
-    private readonly ILogger<ApplicationLifecycle> _logger;
 
-    public ApplicationLifecycle(MainWindow window, IWindowService windowService, ILibraryReader libraryReader,
-        ISettingsService settingsService, IThemeService themeService, Func<MainPage> createMainPage,
-        Func<OnboardingPage> createOnboardingPage, ILogger<ApplicationLifecycle> logger)
+    public ApplicationLifecycle(MainWindow window, Func<MainPage> createMainPage,
+        Func<OnboardingPage> createOnboardingPage)
     {
+        _window = window;
         _createMainPage = createMainPage;
         _createOnboardingPage = createOnboardingPage;
-        _window = window;
-        _windowService = windowService;
-        _libraryReader = libraryReader;
-        _settingsService = settingsService;
-        _themeService = themeService;
-        _logger = logger;
     }
 
-    /// <summary>
-    ///     Shows the main shell when a music library has been configured, or onboarding when it has not,
-    ///     then applies the saved theme to the new content.
-    /// </summary>
-    public async Task NavigateToMainContentAsync()
+    public bool IsShowingOnboarding { get; private set; }
+
+    public void ShowMainShell()
     {
-        if (_windowService.IsExiting) return;
-        _logger.LogInformation("Navigating to main application content.");
+        IsShowingOnboarding = false;
+        if (_window.Content is not MainPage) _window.SetContent(_createMainPage());
+    }
 
-        var hasFolders = await _libraryReader.HasAnyFolderAsync();
-        if (_windowService.IsExiting) return;
-        if (hasFolders)
-        {
-            if (_window.Content is not MainPage) _window.Content = _createMainPage();
-        }
-        else
-        {
-            if (_window.Content is not OnboardingPage) _window.Content = _createOnboardingPage();
-        }
-
-        _themeService.ApplyTheme(_settingsService.Get(AppSettings.Theme));
-
-        _window.NotifyContentLoaded();
-        _window.InitializeCustomTitleBar();
+    public void ShowOnboarding()
+    {
+        IsShowingOnboarding = true;
+        if (_window.Content is not OnboardingPage) _window.SetContent(_createOnboardingPage());
     }
 
     public void Restart() => AppInstance.Restart("");

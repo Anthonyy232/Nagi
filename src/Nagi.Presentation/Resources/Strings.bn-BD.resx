@@ -572,18 +572,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg এখনও সনাক্ত করা যায়নি। অনুগ্রহ করে FFmpeg ইনস্টল করুন এবং 'পুনরায় পরীক্ষা করুন' ক্লিক করুন।</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>পূর্ববর্তী</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>চালান</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>বিরতি দিন</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>পরবর্তী</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>লাইব্রেরি</value>
   </data>
@@ -706,9 +694,6 @@
   </data>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
     <value>তৈরি করুন</value>
-  </data>
-  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>বাতিল করুন</value>
   </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>'{0}' এর নাম পরিবর্তন করুন</value>
@@ -1386,6 +1371,12 @@
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
     <value>ডিফল্টে রিসেট করুন</value>
   </data>
+  <data name="SettingsPage_ResetPlayerStyling_Content" xml:space="preserve">
+    <value>ডিফল্টে রিসেট করুন</value>
+  </data>
+  <data name="SettingsPage_ResetSongListColumns_Content" xml:space="preserve">
+    <value>ডিফল্টে রিসেট করুন</value>
+  </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>উইন্ডো উপাদান</value>
   </data>
@@ -1983,7 +1974,7 @@
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>পরবর্তী পৃষ্ঠা</value>
   </data>
-  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+  <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>উদা. ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">

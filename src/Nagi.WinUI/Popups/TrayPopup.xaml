@@ -24,11 +24,11 @@
             d:DataContext="{d:DesignInstance Type=viewmodels:PlayerViewModel}">
 
         <Grid>
-            <Grid x:Name="CoverArtBackground"
-                  CornerRadius="{ThemeResource OverlayCornerRadius}">
+            <Grid CornerRadius="{ThemeResource OverlayCornerRadius}"
+                  Visibility="{x:Bind ViewModel.IsTrayCoverArtVisible, Mode=OneWay}">
                 <Border Opacity="0.7">
                     <Border.Background>
-                        <media:ImageBlendBrush x:Name="CoverArtBrush"
+                        <media:ImageBlendBrush Source="{x:Bind uihelpers:BitmapImageFactory.Create(ViewModel.AlbumArtUri), Mode=OneWay}"
                                                Mode="Multiply"
                                                Stretch="UniformToFill" />
                     </Border.Background>
@@ -78,7 +78,7 @@
                                 ToolTipService.ToolTip="{Binding ShuffleButtonToolTip}"
                                 AutomationProperties.Name="{Binding ShuffleButtonToolTip}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                      Glyph="{Binding ShuffleIcon, Converter={StaticResource AppIconToGlyphConverter}}"
+                                      Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.ShuffleIcon), Mode=OneWay}"
                                       Opacity="{Binding IsShuffleEnabled, Converter={StaticResource ToggleIconOpacityConverter}}" />
                         </Button>
                         <Button Command="{Binding PreviousCommand}" Style="{StaticResource MediaControlButtonStyle}"
@@ -91,7 +91,7 @@
                                 AutomationProperties.Name="{Binding PlayPauseButtonToolTip}">
                             <Grid>
                                 <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="24"
-                                          Glyph="{Binding PlayPauseIcon, Converter={StaticResource AppIconToGlyphConverter}}"
+                                          Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.PlayPauseIcon), Mode=OneWay}"
                                           Visibility="{Binding IsOpening, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                                 <ProgressRing Width="20" Height="20" IsActive="{Binding IsOpening}" />
                             </Grid>
@@ -105,7 +105,7 @@
                                 ToolTipService.ToolTip="{Binding RepeatButtonToolTip}"
                                 AutomationProperties.Name="{Binding RepeatButtonToolTip}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                      Glyph="{Binding RepeatIcon, Converter={StaticResource AppIconToGlyphConverter}}" />
+                                      Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.RepeatIcon), Mode=OneWay}" />
                         </Button>
                         <Button Command="{Binding ShowQueueViewCommand}" Style="{StaticResource MediaControlButtonStyle}"
                                 ToolTipService.ToolTip="{x:Bind resources:Strings.TrayPopup_QueueButton_ToolTip, Mode=OneTime}"
@@ -120,12 +120,12 @@
                                 <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                           FontSize="20"
                                           Foreground="{ThemeResource TextFillColorDisabledBrush}"
-                                          Glyph="{Binding VolumeIcon, Converter={StaticResource AppIconToGlyphConverter}}" />
+                                          Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.VolumeIcon), Mode=OneWay}" />
                                 <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                           FontSize="20"
                                           Foreground="{StaticResource AppPrimaryColorBrush}"
                                           Clip="{Binding CurrentVolume, Converter={StaticResource VolumeToClipRectConverter}, ConverterParameter='20'}"
-                                          Glyph="{Binding VolumeIcon, Converter={StaticResource AppIconToGlyphConverter}}" />
+                                          Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.VolumeIcon), Mode=OneWay}" />
                             </Grid>
                         </Button>
                     </StackPanel>

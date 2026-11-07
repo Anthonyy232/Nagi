@@ -27,5 +27,7 @@ public enum AppIcon
     Mute,
     VolumeLow,
     VolumeMedium,
-    VolumeHigh
+    VolumeHigh,
+    OnlineSource,
+    History
 }

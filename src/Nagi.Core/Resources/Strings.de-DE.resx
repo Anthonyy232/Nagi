@@ -312,15 +312,6 @@
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Die ausgewählte Datei ist kein gültiges Nagi-Backup.</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC ist auf einen nicht näher bezeichneten Fehler gestoßen.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC-Fehler: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>„{0}“ konnte nicht geladen werden.</value>
-  </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>Durchsucht die Musikbibliothek</value>
   </data>

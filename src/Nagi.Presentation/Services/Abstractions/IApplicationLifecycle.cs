@@ -1,11 +1,18 @@
 ﻿namespace Nagi.Presentation.Services.Abstractions;
 
+/// <summary>
+///     What the main window shows, and restarting the app.
+/// </summary>
 public interface IApplicationLifecycle
 {
     /// <summary>
-    ///     Shows the main shell when a library folder exists, or onboarding when there is none.
+    ///     Whether the main window shows first-run onboarding rather than the main shell.
     /// </summary>
-    Task NavigateToMainContentAsync();
+    bool IsShowingOnboarding { get; }
+
+    void ShowMainShell();
+
+    void ShowOnboarding();
 
     void Restart();
 }

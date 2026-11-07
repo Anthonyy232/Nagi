@@ -312,15 +312,6 @@
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>選択されたファイルは有効な Nagi のバックアップではありません。</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLCで不明なエラーが発生しました。</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLCエラー: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>'{0}'の読み込みに失敗しました。</value>
-  </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>音楽ライブラリを閲覧中</value>
   </data>

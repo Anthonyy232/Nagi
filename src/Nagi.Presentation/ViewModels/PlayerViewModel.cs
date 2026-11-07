@@ -33,6 +33,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     private readonly ILibraryReader _libraryReader;
     private readonly IListeningService _listening;
     private readonly ILibraryNotifier _libraryNotifier;
+    private readonly TimeProvider _timeProvider;
 
     private bool _isUpdatingFromService;
     private bool _isCleanedUp;
@@ -54,7 +55,8 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         ILibraryReader libraryReader, IListeningService listening, ILibraryNotifier libraryNotifier, ILogger<PlayerViewModel> logger, IUIService uiService,
         TimeProvider? timeProvider = null)
     {
-        _openingIndicator = new Debouncer(OpeningIndicatorDelay, timeProvider);
+        _timeProvider = timeProvider ?? TimeProvider.System;
+        _openingIndicator = new Debouncer(OpeningIndicatorDelay, _timeProvider);
         _playbackService = playbackService;
         _musicNavigationService = musicNavigationService;
         _dispatcherService = dispatcherService;
@@ -100,7 +102,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     [ObservableProperty] public partial string ArtistName { get; set; }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsArtworkAvailable))]
+    [NotifyPropertyChangedFor(nameof(IsArtworkAvailable), nameof(IsTrayCoverArtVisible))]
     public partial string? AlbumArtUri { get; set; }
 
     [ObservableProperty]
@@ -157,6 +159,13 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     public ObservableRangeCollection<PlayerButtonSetting> SecondaryControlsButtons { get; } = new();
 
     public bool IsArtworkAvailable => !string.IsNullOrWhiteSpace(AlbumArtUri);
+
+    /// <summary>
+    ///     Whether the tray flyout shows the track's cover art behind its controls.
+    /// </summary>
+    public bool IsTrayCoverArtVisible =>
+        IsArtworkAvailable && _settingsService.Get(AppSettings.ShowCoverArtInTrayFlyout);
+
     public AppIcon PlayPauseIcon => IsPlaying ? AppIcon.Pause : AppIcon.Play;
     public string PlayPauseButtonToolTip => IsOpening ? Strings.Status_Loading
         : IsPlaying ? Strings.Tooltip_Pause
@@ -218,10 +227,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         }
     }
 
-    /// <summary>
-    ///     Cleans up resources and unsubscribes from service events.
-    ///     Called during application shutdown.
-    /// </summary>
     public void Cleanup()
     {
         if (_isCleanedUp) return;
@@ -240,10 +245,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         _openingIndicator.Dispose();
     }
 
-    /// <summary>
-    ///     Loads player button settings and splits them into main and secondary controls
-    ///     based on the <see cref="PlayerButtonIds.Separator" /> item.
-    /// </summary>
     private void LoadPlayerButtonSettings()
     {
         if (_isCleanedUp) return;
@@ -342,7 +343,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
             _settingsService.Set(AppSettings.LastPaneOpen, isOpen);
     }
 
-    private bool CanClearQueue() => _playbackService.PlaybackQueue.Count > 0;
+    private bool CanClearQueue() => _playbackService.PlayOrder.Count > 0;
 
     [RelayCommand]
     private void ToggleQueuePanel() => IsQueuePanelOpen = !IsQueuePanelOpen;
@@ -425,7 +426,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 
     partial void OnCurrentPositionChanged(double value)
     {
-        // Only update time text when the displayed second changes
         var currentSecond = (int)value;
         if (currentSecond != _lastDisplayedSecond)
         {
@@ -442,11 +442,9 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 
     partial void OnIsUserDraggingSliderChanged(bool value)
     {
-        // When the user finishes dragging, perform the final seek.
         if (!value && !_isUpdatingFromService)
         {
             var newPosition = TimeSpan.FromSeconds(CurrentPosition);
-            // Seek only if the position is meaningfully different from the player's known position.
             if (Math.Abs(_playbackService.CurrentPosition.TotalSeconds - newPosition.TotalSeconds) > 0.1)
             {
                 _ = _playbackService.SeekAsync(newPosition);
@@ -511,32 +509,15 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     {
         try
         {
-            var isShuffleEnabled = _playbackService.IsShuffleEnabled;
-            var repeatMode = _playbackService.CurrentRepeatMode;
-            var sourceQueue = isShuffleEnabled
-                ? _playbackService.ShuffledQueue
-                : _playbackService.PlaybackQueue;
-
-            if (sourceQueue.Count == 0)
+            const int displayWindowSize = 100;
+            var idsToShow = _playbackService.UpcomingQueue.Take(displayWindowSize).ToArray();
+            if (idsToShow.Length == 0)
             {
                 CurrentQueue.Clear();
                 return;
             }
 
-            var currentTrackIndexInSource = isShuffleEnabled
-                ? _playbackService.CurrentShuffledIndex
-                : _playbackService.CurrentQueueIndex;
-
-            const int displayWindowSize = 100;
-            var start = currentTrackIndexInSource >= 0 && currentTrackIndexInSource < sourceQueue.Count
-                ? currentTrackIndexInSource : 0;
-            var upcoming = sourceQueue.Skip(start);
-            if (repeatMode == RepeatMode.RepeatAll) upcoming = upcoming.Concat(sourceQueue.Take(start));
-            var idsToShow = upcoming.Take(displayWindowSize).ToArray();
-
-            if (token.IsCancellationRequested) return;
-
-            var fetchedSongs = await _playbackService.GetQueueTracksAsync(idsToShow);
+            var fetchedSongs = await _playbackService.GetQueueSongsAsync(idsToShow, token);
 
             if (token.IsCancellationRequested) return;
 
@@ -552,7 +533,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         }
         catch (OperationCanceledException)
         {
-            // Expected when a newer queue update supersedes this one
+            // A newer queue update superseded this one.
         }
         catch (Exception ex)
         {
@@ -674,6 +655,8 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
             _lastReportedPosition = 0;
             _lastDisplayedSecond = -1;
             UpdateTrackDetails(_playbackService.CurrentTrack);
+            // A song loaded paused reports no duration of its own, so take the library's until it plays.
+            TotalDuration = Math.Max(0, _playbackService.Duration.TotalSeconds);
             CurrentPosition = 0;
             UpdateCurrentQueueDisplay();
             SidebarQueue.Refresh();
@@ -767,6 +750,8 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         if (setting == AppSettings.PlayerButtons) RunOnUIThread(LoadPlayerButtonSettings);
         else if (setting == AppSettings.QueueDisplay)
             RunOnUIThread(() => QueueDisplaySettings = _settingsService.Get(AppSettings.QueueDisplay));
+        else if (setting == AppSettings.ShowCoverArtInTrayFlyout)
+            RunOnUIThread(() => OnPropertyChanged(nameof(IsTrayCoverArtVisible)));
     }
 
     partial void OnQueueDisplaySettingsChanging(QueueDisplaySettings value) =>

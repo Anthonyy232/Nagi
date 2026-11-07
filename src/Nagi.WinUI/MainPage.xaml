@@ -187,7 +187,7 @@
                         <DoubleAnimation
                             Storyboard.TargetName="FloatingPlayerContainer"
                             Storyboard.TargetProperty="MinHeight"
-                            To="132"
+                            To="{x:Bind ExpandedPlayerHeight}"
                             Duration="0:0:0.25"
                             EnableDependentAnimation="True">
                             <DoubleAnimation.EasingFunction>
@@ -212,7 +212,7 @@
                         <DoubleAnimation
                             Storyboard.TargetName="FloatingPlayerContainer"
                             Storyboard.TargetProperty="MinHeight"
-                            To="80"
+                            To="{x:Bind CollapsedPlayerHeight}"
                             Duration="0:0:0.3"
                             EnableDependentAnimation="True">
                             <DoubleAnimation.EasingFunction>
@@ -282,7 +282,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <SplitView x:Name="QueueSplitView" PanePlacement="Right" DisplayMode="Inline"
-                               OpenPaneLength="332" CompactPaneLength="0" PaneBackground="Transparent"
+                               OpenPaneLength="{x:Bind QueuePaneWidth}" CompactPaneLength="0" PaneBackground="Transparent"
                                IsPaneOpen="{x:Bind ViewModel.IsQueuePanelOpen, Mode=TwoWay}">
                         <SplitView.Pane>
                             <Grid Margin="0,12,12,24"
@@ -347,7 +347,7 @@
                                                     Foreground="{StaticResource PlayerAccentBrush}" Click="ToggleListeningPane_Click"
                                                     ToolTipService.ToolTip="{x:Bind ViewModel.ListeningPaneToggleText, Mode=OneWay}"
                                                     AutomationProperties.Name="{x:Bind ViewModel.ListeningPaneToggleText, Mode=OneWay}">
-                                                <FontIcon Glyph="{x:Bind GetListeningPaneToggleIcon(ViewModel.IsHistoryVisible), Mode=OneWay}" FontSize="16" />
+                                                <FontIcon Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.ListeningPaneToggleIcon), Mode=OneWay}" FontSize="16" />
                                             </Button>
                                             <Button Grid.Column="4" VerticalAlignment="Top" Style="{StaticResource CompactMediaControlButtonStyle}"
                                                     Foreground="{StaticResource PlayerAccentBrush}"
@@ -361,7 +361,7 @@
                                                  Severity="Error" IsClosable="False"
                                                  Message="{x:Bind resources:Strings.QueuePanel_LoadError}">
                                             <InfoBar.ActionButton>
-                                                <Button Content="{x:Bind resources:Strings.QueuePanel_Retry}" Click="Queue_Retry" />
+                                                <Button Content="{x:Bind resources:Strings.QueuePanel_Retry}" Command="{x:Bind ViewModel.ReloadQueueCommand}" />
                                             </InfoBar.ActionButton>
                                         </InfoBar>
                                         <Grid Grid.Row="2" Visibility="{x:Bind ViewModel.IsHistoryVisible, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
@@ -382,11 +382,11 @@
                                                           ToolTipService.ToolTip="{x:Bind Title}">
                                                         <Grid.ContextFlyout>
                                                             <MenuFlyout>
-                                                                <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_Play}" Tag="{x:Bind}" Click="QueueEntry_Play" />
-                                                                <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_MoveUp}" Tag="{x:Bind}" Click="QueueEntry_MoveUp" />
-                                                                <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_MoveDown}" Tag="{x:Bind}" Click="QueueEntry_MoveDown" />
+                                                                <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_Play}" Command="{Binding DataContext.PlayQueueEntryCommand, ElementName=MainPageRoot}" CommandParameter="{x:Bind}" />
+                                                                <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_MoveUp}" Command="{Binding DataContext.MoveQueueEntryUpCommand, ElementName=MainPageRoot}" CommandParameter="{x:Bind}" />
+                                                                <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_MoveDown}" Command="{Binding DataContext.MoveQueueEntryDownCommand, ElementName=MainPageRoot}" CommandParameter="{x:Bind}" />
                                                                 <MenuFlyoutSeparator />
-                                                                <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_Remove}" Tag="{x:Bind}" Click="QueueEntry_Remove" />
+                                                                <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_Remove}" Command="{Binding DataContext.RemoveQueueEntryCommand, ElementName=MainPageRoot}" CommandParameter="{x:Bind}" />
                                                             </MenuFlyout>
                                                         </Grid.ContextFlyout>
                                                         <Grid.ColumnDefinitions>
@@ -497,13 +497,13 @@
                         <Frame x:Name="ContentFrame" Padding="12,0,12,0" />
                     </SplitView>
 
-                    <Border x:Name="PlayerContentSpace" Grid.Row="1" MaxHeight="132"
+                    <Border x:Name="PlayerContentSpace" Grid.Row="1" MaxHeight="{x:Bind ExpandedPlayerHeight}"
                             Height="{Binding MinHeight, ElementName=FloatingPlayerContainer}" />
 
                     <Grid
                         x:Name="PlayerHitBox"
                         Grid.RowSpan="2"
-                        Height="132"
+                        Height="{x:Bind ExpandedPlayerHeight}"
                         Margin="12,0,12,12"
                         VerticalAlignment="Bottom"
                         PointerEntered="FloatingPlayerContainer_PointerEntered"

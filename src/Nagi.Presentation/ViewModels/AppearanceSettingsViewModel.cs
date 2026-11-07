@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.Threading.Tasks;
@@ -23,14 +22,11 @@ namespace Nagi.Presentation.ViewModels;
 /// </summary>
 public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
 {
-    private const int SettingsSaveDebounceMs = 300;
     private const int VisualSettingDebounceMs = 200;
 
-    private readonly IThemeService _themeService;
     private readonly IUIService _uiService;
     private readonly IAppInfoService _appInfoService;
     private readonly IApplicationLifecycle _applicationLifecycle;
-    private readonly Debouncer _navigationItemSaveDebouncer;
     private readonly Debouncer _playerTintSaveDebouncer;
     private readonly Debouncer _accentColorSaveDebouncer;
 
@@ -40,7 +36,6 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
 
     public AppearanceSettingsViewModel(
         ISettingsService settingsService,
-        IThemeService themeService,
         IUIService uiService,
         IAppInfoService appInfoService,
         IApplicationLifecycle applicationLifecycle,
@@ -49,43 +44,36 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         TimeProvider? timeProvider = null)
         : base(settingsService, dispatcherService, logger)
     {
-        _themeService = themeService;
         _uiService = uiService;
         _appInfoService = appInfoService;
         _applicationLifecycle = applicationLifecycle;
         timeProvider ??= TimeProvider.System;
-        _navigationItemSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), timeProvider);
         _playerTintSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(VisualSettingDebounceMs), timeProvider);
         _accentColorSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(VisualSettingDebounceMs), timeProvider);
 
-        NavigationItems.CollectionChanged += OnNavigationItemsCollectionChanged;
+        NavigationItems = new ReorderableToggleList<NavigationItemSetting>(
+            items => Set(AppSettings.NavigationItems, items.ToList(), nameof(NavigationItems)), dispatcherService,
+            timeProvider);
         SetSongListColumnToggles(_settingsService.Get(AppSettings.SongListColumns));
         foreach (var setting in SongListColumnSettings) setting.PropertyChanged += OnSongListColumnSettingChanged;
     }
 
-    public AppTheme SelectedTheme
+    public SettingOption<AppTheme> SelectedTheme
     {
-        get => Get(AppSettings.Theme);
-        set
-        {
-            if (value != SelectedTheme && Set(AppSettings.Theme, value)) _themeService.ApplyTheme(value);
-        }
+        get => ThemeOptions.First(option => option.Value == Get(AppSettings.Theme));
+        set => Set(AppSettings.Theme, value.Value);
     }
 
-    public BackdropMaterial SelectedBackdropMaterial
+    public SettingOption<BackdropMaterial> SelectedBackdropMaterial
     {
-        get => Get(AppSettings.BackdropMaterial);
-        set => Set(AppSettings.BackdropMaterial, value);
+        get => BackdropMaterialOptions.First(option => option.Value == Get(AppSettings.BackdropMaterial));
+        set => Set(AppSettings.BackdropMaterial, value.Value);
     }
 
     public bool IsDynamicThemingEnabled
     {
         get => Get(AppSettings.DynamicTheming);
-        set
-        {
-            if (value != IsDynamicThemingEnabled && Set(AppSettings.DynamicTheming, value))
-                _ = ApplyDynamicThemingAsync(value);
-        }
+        set => Set(AppSettings.DynamicTheming, value);
     }
 
     public ArgbColor AccentColor
@@ -96,21 +84,19 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
             if (value == AccentColor) return;
             _pendingAccentColor = value;
             OnPropertyChanged();
-            QueueSettingsSave(_accentColorSaveDebouncer, async token =>
+            QueueSettingsSave(_accentColorSaveDebouncer, _ =>
             {
                 Set(AppSettings.AccentColor, value);
                 if (_pendingAccentColor == value) _pendingAccentColor = null;
-                token.ThrowIfCancellationRequested();
-                if (!IsDynamicThemingEnabled)
-                    await _themeService.ApplyAccentColorAsync(value);
+                return Task.CompletedTask;
             }, nameof(AccentColor));
         }
     }
 
-    public PlayerBackgroundMaterial SelectedPlayerBackgroundMaterial
+    public SettingOption<PlayerBackgroundMaterial> SelectedPlayerBackgroundMaterial
     {
-        get => Get(AppSettings.PlayerBackgroundMaterial);
-        set => Set(AppSettings.PlayerBackgroundMaterial, value);
+        get => PlayerBackgroundMaterialOptions.First(option => option.Value == Get(AppSettings.PlayerBackgroundMaterial));
+        set => Set(AppSettings.PlayerBackgroundMaterial, value.Value);
     }
 
     public double PlayerTintIntensity
@@ -156,17 +142,22 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         set => Set(AppSettings.ShowSongListHeader, value);
     }
 
-    public IReadOnlyList<AppTheme> AvailableThemes { get; } = Enum.GetValues<AppTheme>();
-    public IReadOnlyList<BackdropMaterial> AvailableBackdropMaterials { get; } = Enum.GetValues<BackdropMaterial>();
-    public IReadOnlyList<PlayerBackgroundMaterial> AvailablePlayerBackgroundMaterials { get; } = Enum.GetValues<PlayerBackgroundMaterial>();
+    public IReadOnlyList<SettingOption<AppTheme>> ThemeOptions { get; } =
+        SettingOption<AppTheme>.For(Enum.GetValues<AppTheme>(), SettingsText.GetName);
+
+    public IReadOnlyList<SettingOption<BackdropMaterial>> BackdropMaterialOptions { get; } =
+        SettingOption<BackdropMaterial>.For(Enum.GetValues<BackdropMaterial>(), SettingsText.GetName);
+
+    public IReadOnlyList<SettingOption<PlayerBackgroundMaterial>> PlayerBackgroundMaterialOptions { get; } =
+        SettingOption<PlayerBackgroundMaterial>.For(Enum.GetValues<PlayerBackgroundMaterial>(), SettingsText.GetName);
     public ObservableRangeCollection<LanguageModel> AvailableLanguages { get; } = new();
-    public ObservableRangeCollection<NavigationItemSetting> NavigationItems { get; } = new();
+    public ReorderableToggleList<NavigationItemSetting> NavigationItems { get; }
 
     public IReadOnlyList<SongListColumnSetting> SongListColumnSettings { get; } =
         SongListColumnsHelper.All.Select(column => new SongListColumnSetting(column)).ToList();
 
     internal Task PendingSettingsSaves => Task.WhenAll(
-        _navigationItemSaveDebouncer.PendingInvocation,
+        NavigationItems.PendingSave,
         _playerTintSaveDebouncer.PendingInvocation,
         _accentColorSaveDebouncer.PendingInvocation);
 
@@ -176,14 +167,10 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
     /// </summary>
     public void Load()
     {
+        NavigationItems.Load(_settingsService.Get(AppSettings.NavigationItems));
         var currentLangCode = _settingsService.Get(AppSettings.Language);
         ApplyWithoutSaving(() =>
         {
-            var navigationItems = _settingsService.Get(AppSettings.NavigationItems);
-            foreach (var item in NavigationItems) item.PropertyChanged -= OnNavigationItemPropertyChanged;
-            foreach (var item in navigationItems) item.PropertyChanged += OnNavigationItemPropertyChanged;
-            NavigationItems.ReplaceRange(navigationItems);
-
             // Initialize with a minimal list immediately so the binding is valid on first render.
             // The full language list is populated asynchronously to avoid blocking startup.
             AvailableLanguages.Clear();
@@ -204,12 +191,9 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
 
     protected override void OnDisposing()
     {
-        NavigationItems.CollectionChanged -= OnNavigationItemsCollectionChanged;
-
-        foreach (var item in NavigationItems) item.PropertyChanged -= OnNavigationItemPropertyChanged;
+        NavigationItems.Dispose();
         foreach (var setting in SongListColumnSettings) setting.PropertyChanged -= OnSongListColumnSettingChanged;
 
-        _navigationItemSaveDebouncer.Dispose();
         _playerTintSaveDebouncer.Dispose();
         _accentColorSaveDebouncer.Dispose();
     }
@@ -237,21 +221,13 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         }
     }
 
-    /// <summary>
-    /// Resolves the best LanguageModel match for <paramref name="langCode"/> from AvailableLanguages.
-    /// Must be called on the UI thread (reads the ObservableCollection).
-    /// </summary>
+    // An exact match, else the same language in another region, else the system language.
     private LanguageModel ResolveSelectedLanguage(string langCode) =>
         AvailableLanguages.FirstOrDefault(l => string.Equals(l.Code, langCode, StringComparison.OrdinalIgnoreCase))
         ?? AvailableLanguages.FirstOrDefault(l => !string.IsNullOrEmpty(l.Code) && !string.IsNullOrEmpty(langCode) &&
                                                   (l.Code.StartsWith(langCode + "-", StringComparison.OrdinalIgnoreCase) || langCode.StartsWith(l.Code + "-", StringComparison.OrdinalIgnoreCase)))
         ?? AvailableLanguages.First(l => l.Code == string.Empty);
 
-    /// <summary>
-    /// Populates AvailableLanguages asynchronously by scanning for satellite resource assemblies.
-    /// Fires and forgets from Load — does not block startup.
-    /// Updates SelectedLanguage once the full list is available.
-    /// </summary>
     private async Task PopulateAvailableLanguagesAsync(string currentLangCode)
     {
         var initialSelection = SelectedLanguage;
@@ -289,36 +265,6 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         }
     }
 
-    private void OnNavigationItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-        if (e.NewItems != null)
-            foreach (NavigationItemSetting item in e.NewItems)
-                item.PropertyChanged += OnNavigationItemPropertyChanged;
-
-        if (e.OldItems != null)
-            foreach (NavigationItemSetting item in e.OldItems)
-                item.PropertyChanged -= OnNavigationItemPropertyChanged;
-
-        if (!_isInitializing)
-            QueueNavigationItemSave();
-    }
-
-    private void OnNavigationItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (_isInitializing || e.PropertyName != nameof(NavigationItemSetting.IsEnabled)) return;
-        QueueNavigationItemSave();
-    }
-
-    private void QueueNavigationItemSave()
-    {
-        var snapshot = NavigationItems.ToList();
-        QueueSettingsSave(_navigationItemSaveDebouncer, _ =>
-        {
-            Set(AppSettings.NavigationItems, snapshot, nameof(NavigationItems));
-            return Task.CompletedTask;
-        }, nameof(NavigationItems));
-    }
-
     private void OnSongListColumnSettingChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (_isInitializing) return;
@@ -327,29 +273,13 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         Set(AppSettings.SongListColumns, columns, nameof(SongListColumnSettings));
     }
 
-    private async Task ApplyDynamicThemingAsync(bool isEnabled)
-    {
-        try
-        {
-            if (isEnabled)
-                await _themeService.ReapplyCurrentDynamicThemeAsync();
-            else
-                await _themeService.ApplyAccentColorAsync(_settingsService.Get(AppSettings.AccentColor));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error updating dynamic theming to {Value}", isEnabled);
-        }
-    }
-
     [RelayCommand]
-    private async Task ResetAccentColorAsync()
+    private void ResetAccentColor()
     {
         _accentColorSaveDebouncer.Cancel();
         _pendingAccentColor = null;
         Set(AppSettings.AccentColor, null, nameof(AccentColor));
         OnPropertyChanged(nameof(AccentColor));
-        if (!IsDynamicThemingEnabled) await ApplyDynamicThemingAsync(false);
     }
 
     [RelayCommand]

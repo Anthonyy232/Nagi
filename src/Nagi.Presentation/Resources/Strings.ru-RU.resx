@@ -572,18 +572,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg по-прежнему не обнаружен. Пожалуйста, установите FFmpeg и нажмите 'Перепроверить'.</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>Предыдущий</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Воспроизвести</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>Пауза</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>Следующий</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Библиотека</value>
   </data>
@@ -706,9 +694,6 @@
   </data>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
     <value>Создать</value>
-  </data>
-  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>Отмена</value>
   </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>Переименовать '{0}'</value>
@@ -1386,6 +1371,12 @@
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
     <value>Сбросить по умолчанию</value>
   </data>
+  <data name="SettingsPage_ResetPlayerStyling_Content" xml:space="preserve">
+    <value>Сбросить по умолчанию</value>
+  </data>
+  <data name="SettingsPage_ResetSongListColumns_Content" xml:space="preserve">
+    <value>Сбросить по умолчанию</value>
+  </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Материал окна</value>
   </data>
@@ -1983,7 +1974,7 @@
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Следующая страница</value>
   </data>
-  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+  <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>напр. ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">

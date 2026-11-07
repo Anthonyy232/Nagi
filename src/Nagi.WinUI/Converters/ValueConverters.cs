@@ -19,15 +19,6 @@ public sealed class PageSizeLabelConverter : IValueConverter
         DependencyProperty.UnsetValue;
 }
 
-public sealed class AppIconToGlyphConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, string language) =>
-        value is AppIcon icon ? AppIconGlyphs.ToGlyph(icon) : string.Empty;
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language) =>
-        DependencyProperty.UnsetValue;
-}
-
 /// <summary>
 ///     Converts a TimeSpan or a double (representing seconds) to a formatted time string (m:ss or h:mm:ss).
 /// </summary>
@@ -63,15 +54,6 @@ public class BooleanToInverseBooleanConverter : IValueConverter
     {
         return Convert(value, targetType, parameter, language);
     }
-}
-
-public class AppThemeToFriendlyStringConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, string language) =>
-        value is AppTheme theme ? SettingsText.GetName(theme) : string.Empty;
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language) =>
-        DependencyProperty.UnsetValue;
 }
 
 public class ArgbColorToColorConverter : IValueConverter
@@ -186,28 +168,6 @@ public class GenreToGradientConverter : IValueConverter
             }
         };
     }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-public class BackdropMaterialToStringConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, string language) =>
-        value is BackdropMaterial material ? SettingsText.GetName(material) : string.Empty;
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-public class PlayerBackgroundMaterialToStringConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, string language) =>
-        value is PlayerBackgroundMaterial material ? SettingsText.GetName(material) : string.Empty;
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {

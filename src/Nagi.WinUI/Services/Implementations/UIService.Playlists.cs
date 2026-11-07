@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -8,6 +7,7 @@ using Nagi.Core.Constants;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Services.Implementations;
@@ -18,7 +18,7 @@ public partial class UIService
     {
         if (!TryGetXamlRoot(out var xamlRoot)) return null;
 
-        string? coverImagePath = null;
+        var viewModel = new PlaylistNameDialogViewModel();
         var inputTextBox = new TextBox { PlaceholderText = Strings.PlaylistPage_CreateDialog_Placeholder };
         var imagePreview = new ImageEx.ImageEx
         {
@@ -54,55 +54,56 @@ public partial class UIService
             Title = Strings.PlaylistPage_CreateDialog_Title,
             Content = dialogContent,
             PrimaryButtonText = Strings.PlaylistPage_CreateDialog_CreateButton,
-            CloseButtonText = Strings.PlaylistPage_CreateDialog_CancelButton,
+            CloseButtonText = Strings.Generic_Cancel,
             DefaultButton = ContentDialogButton.Primary,
-            IsPrimaryButtonEnabled = false,
             XamlRoot = xamlRoot
         };
 
         pickImageButton.Click += async (_, _) =>
         {
-            try
-            {
-                var pickedPath = await PickSingleFileAsync(FileExtensions.ImageFileExtensions);
-                if (string.IsNullOrWhiteSpace(pickedPath)) return;
+            var pickedPath = await PickSingleFileAsync(FileExtensions.ImageFileExtensions);
+            if (string.IsNullOrWhiteSpace(pickedPath)) return;
 
-                coverImagePath = pickedPath;
-                imagePreview.Source = BitmapImageFactory.Create(pickedPath);
-                imagePlaceholder.Visibility = Visibility.Collapsed;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error picking cover image for new playlist");
-            }
+            viewModel.CoverImagePath = pickedPath;
+            imagePreview.Source = BitmapImageFactory.Create(pickedPath);
+            imagePlaceholder.Visibility = Visibility.Collapsed;
         };
-        inputTextBox.TextChanged += (_, _) =>
-            dialog.IsPrimaryButtonEnabled = PlaylistNames.IsValid(inputTextBox.Text);
+        TrackName(inputTextBox, dialog, viewModel);
 
         var result = await ShowDialogAsync(dialog);
-        return result == ContentDialogResult.Primary ? new NewPlaylistRequest(inputTextBox.Text, coverImagePath) : null;
+        return result == ContentDialogResult.Primary
+            ? new NewPlaylistRequest(viewModel.Name, viewModel.CoverImagePath)
+            : null;
     }
 
     public async Task<string?> ShowRenamePlaylistDialogAsync(string currentName)
     {
         if (!TryGetXamlRoot(out var xamlRoot)) return null;
 
-        var inputTextBox = new TextBox { Text = currentName };
+        var viewModel = new PlaylistNameDialogViewModel(currentName);
+        var inputTextBox = new TextBox { Text = viewModel.Name };
         var dialog = new ContentDialog
         {
-            Title = string.Format(Strings.PlaylistPage_RenameDialog_Title_Format, currentName),
+            Title = ResourceFormatter.Format(Strings.PlaylistPage_RenameDialog_Title_Format, currentName),
             Content = inputTextBox,
             PrimaryButtonText = Strings.PlaylistPage_RenameDialog_RenameButton,
-            CloseButtonText = Strings.PlaylistPage_CreateDialog_CancelButton,
+            CloseButtonText = Strings.Generic_Cancel,
             DefaultButton = ContentDialogButton.Primary,
-            IsPrimaryButtonEnabled = false,
             XamlRoot = xamlRoot
         };
-
-        inputTextBox.TextChanged += (_, _) =>
-            dialog.IsPrimaryButtonEnabled = PlaylistNames.CanRename(inputTextBox.Text, currentName);
+        TrackName(inputTextBox, dialog, viewModel);
 
         var result = await ShowDialogAsync(dialog);
-        return result == ContentDialogResult.Primary ? inputTextBox.Text : null;
+        return result == ContentDialogResult.Primary ? viewModel.Name : null;
+    }
+
+    private static void TrackName(TextBox input, ContentDialog dialog, PlaylistNameDialogViewModel viewModel)
+    {
+        dialog.IsPrimaryButtonEnabled = viewModel.CanAccept;
+        input.TextChanged += (_, _) =>
+        {
+            viewModel.Name = input.Text;
+            dialog.IsPrimaryButtonEnabled = viewModel.CanAccept;
+        };
     }
 }

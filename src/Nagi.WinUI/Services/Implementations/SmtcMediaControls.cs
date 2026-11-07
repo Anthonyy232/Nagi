@@ -26,6 +26,7 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
     private SystemMediaTransportControls? _smtc;
     private int _displayVersion;
     private volatile bool _isDisposed;
+    private bool _initializationFailed;
 
     public SmtcMediaControls(IDispatcherService dispatcherService, ILogger<SmtcMediaControls> logger)
     {
@@ -39,11 +40,12 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
     public event Action? PreviousPressed;
     public event Action<TimeSpan>? SeekRequested;
 
-    public void Initialize()
+    // Created on first use rather than at construction, so it doesn't slow down start-up.
+    private SystemMediaTransportControls? GetControls()
     {
         lock (_lifetimeLock)
         {
-            if (_isDisposed || _smtc is not null) return;
+            if (_isDisposed || _smtc is not null || _initializationFailed) return _smtc;
             try
             {
                 _logger.LogDebug("Initializing System Media Transport Controls (SMTC).");
@@ -63,14 +65,16 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
             }
             catch (Exception ex)
             {
+                _initializationFailed = true;
                 _logger.LogCritical(ex, "Failed to initialize SMTC. System media controls will be unavailable.");
             }
+            return _smtc;
         }
     }
 
     public void SetNavigationEnabled(bool canGoNext, bool canGoPrevious)
     {
-        var smtc = _smtc;
+        var smtc = GetControls();
         if (_isDisposed || smtc is null) return;
         try
         {
@@ -85,7 +89,8 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
 
     public void SetPlaybackStatus(SystemMediaPlaybackStatus status)
     {
-        if (_isDisposed || _smtc is null) return;
+        var smtc = GetControls();
+        if (_isDisposed || smtc is null) return;
         var newStatus = status switch
         {
             SystemMediaPlaybackStatus.Playing => MediaPlaybackStatus.Playing,
@@ -95,27 +100,22 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
             _ => MediaPlaybackStatus.Closed
         };
 
-        _dispatcherService.TryEnqueue(() =>
+        try
         {
-            var smtc = _smtc;
-            if (_isDisposed || smtc is null) return;
-            try
-            {
-                if (smtc.PlaybackStatus == newStatus) return;
-                _logger.LogDebug("Updating SMTC PlaybackStatus from {OldStatus} to {NewStatus}",
-                    smtc.PlaybackStatus, newStatus);
-                smtc.PlaybackStatus = newStatus;
-            }
-            catch (Exception ex) when (ex.HResult == RO_E_CLOSED)
-            {
-                _logger.LogDebug("SMTC already disposed during playback status update.");
-            }
-        });
+            if (smtc.PlaybackStatus == newStatus) return;
+            _logger.LogDebug("Updating SMTC PlaybackStatus from {OldStatus} to {NewStatus}",
+                smtc.PlaybackStatus, newStatus);
+            smtc.PlaybackStatus = newStatus;
+        }
+        catch (Exception ex) when (ex.HResult == RO_E_CLOSED)
+        {
+            _logger.LogDebug("SMTC already disposed during playback status update.");
+        }
     }
 
     public void SetTimeline(TimeSpan position, TimeSpan duration)
     {
-        var smtc = _smtc;
+        var smtc = GetControls();
         if (_isDisposed || smtc is null) return;
         try
         {
@@ -135,7 +135,7 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
     public async Task SetNowPlayingAsync(Song song)
     {
         ArgumentNullException.ThrowIfNull(song);
-        var smtc = _smtc;
+        var smtc = GetControls();
         if (_isDisposed || smtc is null) return;
         var version = Interlocked.Increment(ref _displayVersion);
 
@@ -175,7 +175,7 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
 
     public void Clear()
     {
-        var smtc = _smtc;
+        var smtc = GetControls();
         if (_isDisposed || smtc is null) return;
         Interlocked.Increment(ref _displayVersion);
         try

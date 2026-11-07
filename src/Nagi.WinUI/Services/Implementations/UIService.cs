@@ -22,20 +22,14 @@ namespace Nagi.WinUI.Services.Implementations;
 
 public partial class UIService : IUIService
 {
-    private const uint MB_OK = 0x00000000;
-    private const uint MB_ICONERROR = 0x00000010;
-    private const string IssuesUrl = "https://github.com/Anthonyy232/Nagi/issues";
-
-    private readonly Win32InteropService _win32InteropService;
     private readonly ViewModelFactory _viewModelFactory;
     private readonly ILogger<UIService> _logger;
     private readonly MainWindow _window;
 
-    public UIService(MainWindow window, Win32InteropService win32InteropService, ViewModelFactory viewModelFactory,
+    public UIService(MainWindow window, ViewModelFactory viewModelFactory,
         ILogger<UIService> logger)
     {
         _window = window;
-        _win32InteropService = win32InteropService;
         _viewModelFactory = viewModelFactory;
         _logger = logger;
     }
@@ -119,41 +113,38 @@ public partial class UIService : IUIService
         await ShowDialogAsync(dialog);
     }
 
-    public async Task<CrashReportResult> ShowCrashReportDialogAsync(string report)
+    /// <summary>
+    ///     Tells the user the app crashed, shows <paramref name="report" /> for an issue report, and offers a data reset.
+    /// </summary>
+    /// <returns>Whether the user asked for the reset.</returns>
+    public async Task<bool> ShowCrashReportDialogAsync(string report)
     {
-        if (!TryGetXamlRoot(out var xamlRoot)) return CrashReportResult.Close;
-
-        var dialogContent = new CrashReportDialogContent
-        {
-            Introduction = Strings.CrashReport_Message,
-            LogContent = report,
-            GitHubUrl = IssuesUrl
-        };
+        if (!TryGetXamlRoot(out var xamlRoot)) return false;
 
         var dialog = new ContentDialog
         {
             Title = Strings.CrashReport_Title,
-            Content = dialogContent,
+            Content = new CrashReportDialogContent(report),
             PrimaryButtonText = Strings.CrashReport_Button_Reset,
             CloseButtonText = Strings.Generic_Close,
             DefaultButton = ContentDialogButton.Close,
             XamlRoot = xamlRoot
         };
 
-        DialogThemeHelper.ApplyThemeOverrides(dialog);
+        DialogThemeHelper.ApplyThemeOverrides(dialog, _window.Content as FrameworkElement);
 
         try
         {
-            var result = await dialog.ShowAsync();
-            return result == ContentDialogResult.Primary ? CrashReportResult.Reset : CrashReportResult.Close;
+            return await dialog.ShowAsync() == ContentDialogResult.Primary;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // Fallback to Win32 MessageBox if ContentDialog fails (e.g. another dialog is open)
+            // Fall back to a message box when the dialog can't show, for example while another dialog is open.
+            _logger.LogWarning(ex, "Could not show the crash report dialog");
             var hwnd = WindowNative.GetWindowHandle(_window);
             var message = $"{Strings.CrashReport_Message}\n\n{report}";
-            _win32InteropService.ShowMessageBox(hwnd, message, Strings.CrashReport_Title, MB_ICONERROR | MB_OK);
-            return CrashReportResult.Close;
+            NativeMethods.MessageBox(hwnd, message, Strings.CrashReport_Title, NativeMethods.MB_ICONERROR | NativeMethods.MB_OK);
+            return false;
         }
     }
 
@@ -268,7 +259,7 @@ public partial class UIService : IUIService
     /// </summary>
     private async Task<ContentDialogResult> ShowDialogAsync(ContentDialog dialog)
     {
-        DialogThemeHelper.ApplyThemeOverrides(dialog);
+        DialogThemeHelper.ApplyThemeOverrides(dialog, _window.Content as FrameworkElement);
         try
         {
             return await dialog.ShowAsync();

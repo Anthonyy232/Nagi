@@ -1,10 +1,7 @@
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.UI.Dispatching;
-using Microsoft.UI.Xaml;
-using Nagi.Core.Services;
-using Nagi.Presentation.Services;
+using Nagi.WinUI.Controls;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Popups;
 using Nagi.WinUI.Services;
@@ -15,21 +12,10 @@ namespace Nagi.WinUI.Tests;
 
 public class AppServiceRegistrationTests
 {
-    private static ServiceProvider BuildProvider()
-    {
-        var services = new ServiceCollection();
-        services.AddLogging();
-        services.AddSingleton(Substitute.For<IConfiguration>());
-        // The window and its dispatcher exist only inside the running app; validation never creates them.
-        services.AddSingleton<MainWindow>(_ => throw new NotSupportedException());
-        services.AddSingleton<DispatcherQueue>(_ => throw new NotSupportedException());
-        services.AddNagiPlatformServices();
-        services.AddNagiCore();
-        services.AddNagiPresentation();
-        services.AddNagiShell();
-
-        return services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
-    }
+    // Validation checks every registration's dependencies without creating the window or anything else.
+    private static ServiceProvider BuildProvider() =>
+        new ServiceCollection().AddNagiApp(Substitute.For<IConfiguration>())
+            .BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
 
     [Theory]
     [InlineData(typeof(MainPage))]
@@ -41,10 +27,8 @@ public class AppServiceRegistrationTests
         await using var provider = BuildProvider();
         var isService = provider.GetRequiredService<IServiceProviderIsService>();
 
-        // The tray popup's theme is passed in by TrayPopupService when it creates the popup.
         var dependencies = shellType.GetConstructors().Should().ContainSingle().Subject.GetParameters()
-            .Select(parameter => parameter.ParameterType)
-            .Where(type => type != typeof(ElementTheme));
+            .Select(parameter => parameter.ParameterType);
 
         dependencies.Should().OnlyContain(type => isService.IsService(type));
     }

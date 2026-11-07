@@ -2,7 +2,6 @@
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml.Hosting;
 using System.Numerics;
-using Windows.UI.ViewManagement;
 
 namespace Nagi.WinUI.Helpers;
 
@@ -11,26 +10,9 @@ namespace Nagi.WinUI.Helpers;
 /// </summary>
 public static class CompositionAnimationHelper
 {
-    private static UISettings SystemSettings { get; } = new();
-    public static bool AreAnimationsEnabled => SystemSettings.AnimationsEnabled;
-
-    internal static event Windows.Foundation.TypedEventHandler<UISettings, UISettingsAnimationsEnabledChangedEventArgs> AnimationsEnabledChanged
-    {
-        add
-        {
-            if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 19041))
-                SystemSettings.AnimationsEnabledChanged += value;
-        }
-        remove
-        {
-            if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 19041))
-                SystemSettings.AnimationsEnabledChanged -= value;
-        }
-    }
-
     public static void AnimateOpacity(UIElement element, float to, int durationMs, int delayMs = 0)
     {
-        if (!AreAnimationsEnabled)
+        if (!SystemVisualSettings.AnimationsEnabled)
         {
             SetOpacityImmediate(element, to);
             return;
@@ -76,7 +58,7 @@ public static class CompositionAnimationHelper
     /// </summary>
     public static void AnimateSlideOut(UIElement element, Vector3 offset, int durationMs, Action completed)
     {
-        if (!AreAnimationsEnabled)
+        if (!SystemVisualSettings.AnimationsEnabled)
         {
             completed();
             return;
@@ -107,7 +89,7 @@ public static class CompositionAnimationHelper
     /// </summary>
     public static void AnimateSlideIn(UIElement element, Vector3 offset, int durationMs, int delayMs = 0)
     {
-        if (!AreAnimationsEnabled)
+        if (!SystemVisualSettings.AnimationsEnabled)
         {
             ResetSlide(element);
             return;
@@ -156,7 +138,7 @@ public static class CompositionAnimationHelper
             visual.CenterPoint = new Vector3(width / 2f, height / 2f, 0f);
 
         visual.StopAnimation("Scale");
-        if (!AreAnimationsEnabled)
+        if (!SystemVisualSettings.AnimationsEnabled)
         {
             visual.Scale = new Vector3(to, to, 1f);
             return;

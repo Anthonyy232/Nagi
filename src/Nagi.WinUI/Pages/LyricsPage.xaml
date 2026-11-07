@@ -95,8 +95,7 @@
                                 PointerEntered="LyricItem_PointerEntered"
                                 PointerExited="LyricItem_PointerExited"
                                 Tapped="LyricItem_Tapped">
-                                <!-- Base (inactive) text -->
-                                <StackPanel Spacing="6">
+                                <StackPanel x:Name="BaseLayer" Spacing="6">
                                     <TextBlock
                                         Text="{x:Bind Text}"
                                         Style="{StaticResource LyricLineTextBlockStyle}" />
@@ -109,8 +108,8 @@
                                         Style="{StaticResource SecondaryLyricLineTextBlockStyle}"
                                         Visibility="{x:Bind HasTranslatedText, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 </StackPanel>
-                                <!-- Active color overlay (opacity controlled entirely via Composition) -->
-                                <StackPanel Spacing="6">
+                                <!-- Opacity is set through Composition. -->
+                                <StackPanel x:Name="ActiveLayer" Spacing="6">
                                     <TextBlock
                                         Text="{x:Bind Text}"
                                         Style="{StaticResource LyricLineTextBlockStyle}"
@@ -126,8 +125,9 @@
                                         Foreground="{StaticResource AppPrimaryColorBrush}"
                                         Visibility="{x:Bind HasTranslatedText, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 </StackPanel>
-                                <!-- Hover background: last child so the text layers keep their indexes; drawn beneath them, out over the padding -->
+                                <!-- Drawn beneath the text, out over the padding. -->
                                 <Border
+                                    x:Name="HoverBackground"
                                     Margin="-32,-28"
                                     Canvas.ZIndex="-1"
                                     Background="{ThemeResource SubtleFillColorSecondaryBrush}"

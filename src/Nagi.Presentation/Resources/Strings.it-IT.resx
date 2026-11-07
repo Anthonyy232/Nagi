@@ -572,18 +572,6 @@ File che non è stato possibile importare: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg ancora non rilevato. Installa FFmpeg e clicca 'Verifica di nuovo'.</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>Precedente</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Riproduci</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>Pausa</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>Successivo</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Libreria</value>
   </data>
@@ -706,9 +694,6 @@ File che non è stato possibile importare: {0}.</value>
   </data>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
     <value>Crea</value>
-  </data>
-  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>Annulla</value>
   </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>Rinomina '{0}'</value>
@@ -1386,6 +1371,12 @@ Vuoi continuare?</value>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
     <value>Ripristina predefinito</value>
   </data>
+  <data name="SettingsPage_ResetPlayerStyling_Content" xml:space="preserve">
+    <value>Ripristina predefinito</value>
+  </data>
+  <data name="SettingsPage_ResetSongListColumns_Content" xml:space="preserve">
+    <value>Ripristina predefinito</value>
+  </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Materiale finestra</value>
   </data>
@@ -1983,7 +1974,7 @@ Vuoi continuare?</value>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Pagina successiva</value>
   </data>
-  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+  <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>ad es. ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">

@@ -1,54 +1,50 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.Graphics;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Media;
+using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Popups;
 
-namespace Nagi.WinUI.Helpers;
+namespace Nagi.WinUI.Services.Implementations;
 
 /// <summary>
-///     Animates tray popup bounds and opacity, cancelling any previous transition.
+///     Animates the tray popup's bounds and opacity, cancelling any previous transition.
 /// </summary>
-internal static class PopupAnimation
+internal sealed class TrayPopupAnimation(ILogger logger)
 {
     private const float StartScale = 0.85f;
-    private static CancellationTokenSource? _animationCts;
-    private static ILogger? _logger;
-    private static ILogger Logger =>
-        _logger ??= App.Services!.GetRequiredService<ILoggerFactory>().CreateLogger("PopupAnimation");
+    private CancellationTokenSource? _animationCts;
 
-    public static void CancelAllAnimations()
+    public void Cancel()
     {
         _animationCts?.Cancel();
         _animationCts?.Dispose();
         _animationCts = null;
     }
 
-    public static Task AnimateIn(TrayPopup window, RectInt32 finalRect) =>
-        AnimateAsync(window, finalRect);
+    public Task AnimateInAsync(TrayPopup window, RectInt32 finalRect) => AnimateAsync(window, finalRect);
 
-    public static Task AnimateOut(TrayPopup window) => AnimateAsync(window, null);
+    public Task AnimateOutAsync(TrayPopup window) => AnimateAsync(window, null);
 
-    private static async Task AnimateAsync(TrayPopup window, RectInt32? showRect)
+    private async Task AnimateAsync(TrayPopup window, RectInt32? showRect)
     {
         if (window.AppWindow is null || (showRect is null && !window.AppWindow.IsVisible)) return;
         var showing = showRect.HasValue;
         try
         {
-            CancelAllAnimations();
+            Cancel();
             _animationCts = new CancellationTokenSource();
             var token = _animationCts.Token;
             var fullRect = showRect ?? new RectInt32(window.AppWindow.Position.X, window.AppWindow.Position.Y,
                 window.AppWindow.Size.Width, window.AppWindow.Size.Height);
-            if (!CompositionAnimationHelper.AreAnimationsEnabled)
+            if (!SystemVisualSettings.AnimationsEnabled)
             {
                 window.SetWindowOpacity(255);
                 if (showing)
                 {
                     window.AppWindow.MoveAndResize(fullRect);
-                    WindowActivator.ActivatePopupWindow(window);
+                    window.ShowInForeground();
                 }
                 else window.AppWindow.Hide();
                 return;
@@ -65,11 +61,11 @@ internal static class PopupAnimation
             {
                 window.SetWindowOpacity(0);
                 window.AppWindow.MoveAndResize(startRect);
-                WindowActivator.ActivatePopupWindow(window);
+                window.ShowInForeground();
             }
 
             var stopwatch = Stopwatch.StartNew();
-            while (CompositionAnimationHelper.AreAnimationsEnabled && stopwatch.Elapsed.TotalMilliseconds < durationMs)
+            while (SystemVisualSettings.AnimationsEnabled && stopwatch.Elapsed.TotalMilliseconds < durationMs)
             {
                 token.ThrowIfCancellationRequested();
                 var progress = Math.Clamp((float)stopwatch.Elapsed.TotalMilliseconds / durationMs, 0f, 1f);
@@ -90,11 +86,11 @@ internal static class PopupAnimation
         }
         catch (OperationCanceledException)
         {
-            Logger.LogDebug("Tray popup animation cancelled.");
+            logger.LogDebug("Tray popup animation cancelled.");
         }
         catch (Exception ex)
         {
-            Logger.LogWarning(ex, "Tray popup animation failed; the window may have closed.");
+            logger.LogWarning(ex, "Tray popup animation failed; the window may have closed.");
             if (!showing && window.AppWindow is not null) window.AppWindow.Hide();
         }
     }

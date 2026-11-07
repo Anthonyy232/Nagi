@@ -199,7 +199,7 @@ public partial class OnboardingViewModel : ObservableObject
     {
         try
         {
-            await _applicationLifecycle.NavigateToMainContentAsync();
+            _applicationLifecycle.ShowMainShell();
         }
         catch (Exception ex)
         {

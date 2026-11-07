@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nagi.Core.Models;
 using Nagi.Presentation.Resources;
+using Nagi.Presentation.Helpers;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -22,7 +23,7 @@ public partial class LibraryViewModel
 
     public bool ShowSuggestion => Suggestion is not null && !ShowFavoritesOnly && !IsSearchActive;
     public string SuggestionReason => Suggestion is null ? string.Empty
-        : string.Format(Strings.Listening_RediscoveryReason, Suggestion.LastPlayedDate.ToLocalTime());
+        : ResourceFormatter.Format(Strings.Listening_RediscoveryReason, Suggestion.LastPlayedDate.ToLocalTime());
 
     public string EmptyStateTitle => IsSearchActive
         ? Strings.LibraryPage_SearchEmpty_Title

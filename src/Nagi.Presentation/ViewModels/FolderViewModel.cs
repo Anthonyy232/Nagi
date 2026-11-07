@@ -245,7 +245,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         }
         catch (Exception ex)
         {
-            error = string.Format(Strings.Folders_Error_AddFolder, ex.Message);
+            error = ResourceFormatter.Format(Strings.Folders_Error_AddFolder, ex.Message);
             _logger.LogError(ex, "Failed to add and scan folder '{FolderPath}'", folderPath);
         }
         finally
@@ -267,14 +267,14 @@ public partial class FolderViewModel : ObservableObject, IDisposable
 
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
             folderToDelete.IsServer ? Strings.FolderPage_RemoveServerDialog_Title : Strings.FolderPage_DeleteDialog_Title,
-            string.Format(folderToDelete.IsServer ? Strings.FolderPage_RemoveServerDialog_Format : Strings.FolderPage_DeleteDialog_Format,
+            ResourceFormatter.Format(folderToDelete.IsServer ? Strings.FolderPage_RemoveServerDialog_Format : Strings.FolderPage_DeleteDialog_Format,
                 folderToDelete.Name),
             Strings.FolderPage_DeleteDialog_PrimaryButton,
             Strings.FolderPage_DeleteDialog_CloseButton);
         if (!confirmed || IsAnyOperationInProgress) return;
 
         _globalOperation.IsInProgress = true;
-        _globalOperation.StatusMessage = string.Format(Strings.Folders_Delete_InProgress, folderToDelete.Name);
+        _globalOperation.StatusMessage = ResourceFormatter.Format(Strings.Folders_Delete_InProgress, folderToDelete.Name);
         _globalOperation.IsIndeterminate = true;
 
         string? error = null;
@@ -284,11 +284,11 @@ public partial class FolderViewModel : ObservableObject, IDisposable
                 ? await _musicServers.RemoveAsync(folderId)
                 : await _libraryFolders.RemoveFolderAsync(folderId);
             if (!removed)
-                error = string.Format(Strings.Folders_Delete_Failed, folderToDelete.Name);
+                error = ResourceFormatter.Format(Strings.Folders_Delete_Failed, folderToDelete.Name);
         }
         catch (Exception ex)
         {
-            error = string.Format(Strings.Folders_Error_DeleteFolder, ex.Message);
+            error = ResourceFormatter.Format(Strings.Folders_Error_DeleteFolder, ex.Message);
             _logger.LogError(ex, "Failed to delete folder {FolderId}", folderId);
         }
         finally
@@ -309,7 +309,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         if (folderItem == null) return;
 
         _globalOperation.IsInProgress = true;
-        _globalOperation.StatusMessage = string.Format(Strings.Folders_Rescan_InProgress, folderItem.Name);
+        _globalOperation.StatusMessage = ResourceFormatter.Format(Strings.Folders_Rescan_InProgress, folderItem.Name);
         _globalOperation.IsIndeterminate = true;
         _globalOperation.SetCancellation(RescanFolderCommand.Cancel);
 
@@ -324,7 +324,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         }
         catch (Exception ex)
         {
-            error = string.Format(Strings.Folders_Error_RescanFolder, ex.Message);
+            error = ResourceFormatter.Format(Strings.Folders_Error_RescanFolder, ex.Message);
             _logger.LogError(ex, "Failed to rescan folder {FolderId}", folderId);
         }
         finally
@@ -365,7 +365,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     {
         using var syncCts = new CancellationTokenSource();
         _globalOperation.IsInProgress = true;
-        _globalOperation.StatusMessage = string.Format(Strings.Folders_Sync_InProgress, name);
+        _globalOperation.StatusMessage = ResourceFormatter.Format(Strings.Folders_Sync_InProgress, name);
         _globalOperation.IsIndeterminate = true;
         _globalOperation.SetCancellation(syncCts.Cancel);
 
@@ -396,7 +396,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         }
 
         if (error != null &&
-            await MusicServerErrors.ShowAsync(_uiService, folderId, name, error, string.Format(Strings.Folders_Sync_Error_Failed, name)))
+            await MusicServerErrors.ShowAsync(_uiService, folderId, name, error, ResourceFormatter.Format(Strings.Folders_Sync_Error_Failed, name)))
             await RunServerSyncAsync(folderId, name);
     }
 }

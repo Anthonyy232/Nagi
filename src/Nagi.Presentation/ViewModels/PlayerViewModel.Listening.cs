@@ -11,14 +11,14 @@ using Nagi.Core.Services.Data;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Helpers;
 
 namespace Nagi.Presentation.ViewModels;
 
 public partial class PlayerViewModel
 {
     private readonly IUIService _uiService;
-    private Timer? _stopTimer;
-    private bool _checkingStopSchedule;
+    private ITimer? _countdownTimer;
     public RecentHistoryViewModel History { get; }
 
     [ObservableProperty]
@@ -28,7 +28,7 @@ public partial class PlayerViewModel
     public string FavoriteActionText => IsCurrentTrackFavorite ? Strings.Listening_RemoveFavorite : Strings.Listening_AddFavorite;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ListeningPaneTitle), nameof(ListeningPaneToggleText))]
+    [NotifyPropertyChangedFor(nameof(ListeningPaneTitle), nameof(ListeningPaneToggleText), nameof(ListeningPaneToggleIcon))]
     public partial bool IsHistoryVisible { get; set; }
 
     public string ListeningPaneTitle => IsHistoryVisible ? Strings.Listening_RecentlyPlayed : Strings.QueueFlyout_Title;
@@ -36,9 +36,11 @@ public partial class PlayerViewModel
     /// <summary>Names the pane the toggle switches to.</summary>
     public string ListeningPaneToggleText => IsHistoryVisible ? Strings.QueueFlyout_Title : Strings.Listening_RecentlyPlayed;
 
+    public AppIcon ListeningPaneToggleIcon => IsHistoryVisible ? AppIcon.Queue : AppIcon.History;
+
     public IReadOnlyList<PlaybackRateOption> PlaybackRateOptions { get; } =
         new[] { 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0 }.Select(rate => new PlaybackRateOption(rate,
-            rate == 1.0 ? Strings.Listening_PlaybackSpeedNormal : string.Format(Strings.Listening_PlaybackSpeedFormat, rate)))
+            rate == 1.0 ? Strings.Listening_PlaybackSpeedNormal : ResourceFormatter.Format(Strings.Listening_PlaybackSpeedFormat, rate)))
         .ToList();
 
     public IReadOnlyList<SleepTimerOption> SleepTimerOptions { get; } =
@@ -64,7 +66,7 @@ public partial class PlayerViewModel
 
     private void CleanupListening()
     {
-        _stopTimer?.Dispose();
+        _countdownTimer?.Dispose();
         History.Dispose();
         _playbackService.StopScheduleChanged -= OnStopScheduleChanged;
         _libraryNotifier.Changed -= OnFavoriteLibraryChanged;
@@ -119,21 +121,42 @@ public partial class PlayerViewModel
         }
     });
 
+    /// <summary>
+    ///     What the favorite shortcut does: favorite the songs selected in <paramref name="activeList" /> when it can,
+    ///     otherwise the playing track when nothing is selected there.
+    /// </summary>
+    /// <returns>The command to run, or null when the shortcut does nothing.</returns>
+    public IAsyncRelayCommand? GetFavoriteShortcutCommand(SongListViewModelBase? activeList)
+    {
+        if (activeList?.ToggleSelectedFavoriteCommand.CanExecute(null) == true) return activeList.ToggleSelectedFavoriteCommand;
+        if (activeList?.HasSelectedSongs != true && ToggleFavoriteCommand.CanExecute(null)) return ToggleFavoriteCommand;
+        return null;
+    }
+
     [RelayCommand]
-    private Task PlayHistoryNextAsync(RecentListenEntry? entry) => entry is null ? Task.CompletedTask : RunActionAsync(() => _playbackService.PlayNextAsync(entry.Listen.SongId));
+    private Task PlayQueueEntryAsync(QueueEntry entry) => SidebarQueue.PlayAsync(entry);
+
+    [RelayCommand]
+    private void MoveQueueEntryUp(QueueEntry entry) => SidebarQueue.Move(entry, -1);
+
+    [RelayCommand]
+    private void MoveQueueEntryDown(QueueEntry entry) => SidebarQueue.Move(entry, 1);
+
+    [RelayCommand]
+    private Task RemoveQueueEntryAsync(QueueEntry entry) => SidebarQueue.RemoveAsync(entry);
+
+    [RelayCommand]
+    private void ReloadQueue() => SidebarQueue.Refresh(reloadMetadata: true);
+
+    [RelayCommand]
+    private Task PlayHistoryNextAsync(RecentListenEntry? entry) => entry is null ? Task.CompletedTask : RunActionAsync(() => _playbackService.PlayNextAsync([entry.Listen.SongId]));
 
     [RelayCommand]
     private Task PlayHistoryNowAsync(RecentListenEntry? entry) => RunActionAsync(async () =>
     {
         if (entry is null) return;
-        await _playbackService.PlayNextAsync(entry.Listen.SongId);
-        var queue = _playbackService.PlaybackQueue;
-        for (var index = 0; index < queue.Count; index++)
-        {
-            if (queue[index] != entry.Listen.SongId) continue;
-            await _playbackService.PlayQueueItemAsync(index);
-            break;
-        }
+        await _playbackService.PlayNextAsync([entry.Listen.SongId]);
+        await _playbackService.PlayQueueItemAsync(entry.Listen.SongId);
     });
 
     [RelayCommand]
@@ -161,27 +184,13 @@ public partial class PlayerViewModel
 
     private void OnStopScheduleChanged() => RunOnUIThread(() =>
     {
-        if (_playbackService.StopMode == PlaybackStopMode.Timer)
-        {
-            _stopTimer ??= new Timer(state => RunOnUIThread(() => _ = CheckStopScheduleAsync()), null, Timeout.Infinite, Timeout.Infinite);
-            _stopTimer.Change(1000, 1000);
-        }
-        else _stopTimer?.Change(Timeout.Infinite, Timeout.Infinite);
+        // Only counts down the shown time; the playback service stops playback itself.
+        _countdownTimer?.Dispose();
+        _countdownTimer = _playbackService.StopMode == PlaybackStopMode.Timer
+            ? _timeProvider.CreateTimer(_ => RunOnUIThread(UpdateStopScheduleText), null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
+            : null;
         UpdateStopScheduleText();
     });
-
-    private async Task CheckStopScheduleAsync()
-    {
-        if (_checkingStopSchedule || _isCleanedUp) return;
-        _checkingStopSchedule = true;
-        try
-        {
-            await _playbackService.CheckStopScheduleAsync();
-            UpdateStopScheduleText();
-        }
-        catch (Exception ex) { _logger.LogError(ex, "Failed to apply scheduled playback stop"); }
-        finally { _checkingStopSchedule = false; }
-    }
 
     private void UpdateStopScheduleText()
     {
@@ -190,8 +199,8 @@ public partial class PlayerViewModel
         {
             PlaybackStopMode.AfterTrack => Strings.Listening_StopAfterTrack,
             PlaybackStopMode.EndOfQueue => Strings.Listening_StopAtQueueEnd,
-            PlaybackStopMode.Timer => string.Format(Strings.Listening_TimerRemaining,
-                DurationFormatter.Format(TimeSpan.FromSeconds(Math.Max(0, Math.Ceiling((_playbackService.StopDeadline!.Value - DateTimeOffset.UtcNow).TotalSeconds))))),
+            PlaybackStopMode.Timer => ResourceFormatter.Format(Strings.Listening_TimerRemaining, DurationFormatter.Format(
+                TimeSpan.FromSeconds(Math.Ceiling(_playbackService.StopTimeRemaining.GetValueOrDefault().TotalSeconds)))),
             _ => string.Empty
         };
     }
