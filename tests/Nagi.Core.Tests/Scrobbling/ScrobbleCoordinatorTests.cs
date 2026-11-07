@@ -98,7 +98,7 @@ public sealed class ScrobbleCoordinatorTests : IDisposable
 
         _settingsService.Set(CoreSettings.LastFmScrobbling, true);
         await _settingsService.SaveListenBrainzUserTokenAsync("token");
-        _playback.ScrobbleEligibilityReached += Raise.Event<Action<Song, long, DateTime>>(new Song(), 1L, DateTime.UtcNow);
+        _playback.ScrobbleEligibilityReached += Raise.Event<Action>();
 
         await submitter.DidNotReceiveWithAnyArgs().SubmitPendingAsync(default);
     }
@@ -109,7 +109,7 @@ public sealed class ScrobbleCoordinatorTests : IDisposable
         var submitter = Substitute.For<IListenSubmitter>();
         Create(submitter).Start();
 
-        _playback.ScrobbleEligibilityReached += Raise.Event<Action<Song, long, DateTime>>(new Song(), 1L, DateTime.UtcNow);
+        _playback.ScrobbleEligibilityReached += Raise.Event<Action>();
 
         await submitter.Received(1).SubmitPendingAsync(Arg.Any<CancellationToken>());
     }

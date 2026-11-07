@@ -59,8 +59,6 @@ public partial class MusicPlaybackService
 
         _isEligibilityMarked = true;
         var sessionId = CurrentListenHistoryId.Value;
-        var song = CurrentTrack!;
-        var listenStartedUtc = _currentListenStartedUtc ?? _timeProvider.GetUtcNow().UtcDateTime - progress;
         RunInBackground(
             async () =>
             {
@@ -68,7 +66,7 @@ public partial class MusicPlaybackService
                 try
                 {
                     marked = await _listening.MarkListenAsEligibleForScrobblingAsync(sessionId);
-                    if (marked && !_isDisposed) ScrobbleEligibilityReached?.Invoke(song, sessionId, listenStartedUtc);
+                    if (marked && !_isDisposed) ScrobbleEligibilityReached?.Invoke();
                 }
                 finally
                 {

@@ -33,7 +33,6 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     private bool _isInitialized;
     private Task? _initializationTask;
     private bool _isEligibilityMarked;
-    private DateTime? _currentListenStartedUtc;
     private readonly PlaybackQueue _queue = new();
     private readonly TransientTrackCache _transientTracks = new();
 
@@ -108,7 +107,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     public event Action? QueueChanged;
     public event Action? PositionChanged;
     public event Action? DurationChanged;
-    public event Action<Song, long, DateTime>? ScrobbleEligibilityReached;
+    public event Action? ScrobbleEligibilityReached;
     public event Action<Song>? ServerSongFailed;
 
     public Task InitializeAsync(bool restoreLastSession = true)
@@ -484,7 +483,6 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
     private async Task StartListenSessionAsync(Guid songId, CancellationToken request)
     {
-        var startedUtc = _timeProvider.GetUtcNow().UtcDateTime;
         var sessionId = await _listening.StartListenSessionAsync(songId, _currentContext);
         if (request.IsCancellationRequested)
         {
@@ -494,7 +492,6 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         }
 
         CurrentListenHistoryId = sessionId;
-        _currentListenStartedUtc = sessionId.HasValue ? startedUtc : null;
     }
 
     /// <summary>
@@ -511,7 +508,6 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         if (CurrentListenHistoryId is not { } sessionId) return Task.CompletedTask;
         var listened = position ?? _audioPlayer.CurrentPosition;
         CurrentListenHistoryId = null;
-        _currentListenStartedUtc = null;
         return RunInBackground(() => _listening.FinalizeListenSessionAsync(sessionId, listened, reason),
             "Finalizing a listen");
     }

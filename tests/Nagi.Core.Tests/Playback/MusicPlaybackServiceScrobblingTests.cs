@@ -1,6 +1,5 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Time.Testing;
 using Nagi.Core.Library;
 using Nagi.Core.Metadata;
 using Nagi.Core.MusicServers;
@@ -24,8 +23,7 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
     private readonly LibraryFakes _library;
     private readonly MusicPlaybackService _service;
     private readonly List<Song> _testSongs;
-    private readonly List<(Song Song, long SessionId, DateTime ListenStartedUtc)> _raisedEvents = new();
-    private readonly FakeTimeProvider _time = new();
+    private int _eligibilityEvents;
 
     public MusicPlaybackServiceScrobblingTests()
     {
@@ -45,7 +43,7 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
             metadataService,
             Substitute.For<IFileSystemService>(),
             Substitute.For<IMusicServerService>(),
-            logger, _time);
+            logger);
 
         _testSongs = Enumerable.Range(1, 2)
             .Select(i => new Song { Id = Guid.NewGuid(), Title = $"Song {i}", FilePath = $"C:\\music\\song{i}.mp3" })
@@ -54,8 +52,7 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
         foreach (var song in _testSongs)
             _library.Reader.GetSongByIdAsync(song.Id).Returns(song);
 
-        _service.ScrobbleEligibilityReached +=
-            (song, sessionId, listenStartedUtc) => _raisedEvents.Add((song, sessionId, listenStartedUtc));
+        _service.ScrobbleEligibilityReached += () => _eligibilityEvents++;
     }
 
     public ValueTask DisposeAsync() => _service.DisposeAsync();
@@ -79,7 +76,7 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
         await playback;
         await _service.FlushPendingFinalizationAsync();
 
-        _raisedEvents.Should().BeEmpty();
+        _eligibilityEvents.Should().Be(0);
         await _library.Listening.DidNotReceive().MarkListenAsEligibleForScrobblingAsync(Arg.Any<long>());
     }
 
@@ -97,12 +94,12 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
 
         RaisePositionChanged();
         await _service.FlushPendingFinalizationAsync();
-        _raisedEvents.Should().BeEmpty();
+        _eligibilityEvents.Should().Be(0);
         _library.Listening.MarkListenAsEligibleForScrobblingAsync(1L).Returns(true);
         RaisePositionChanged();
         await _service.FlushPendingFinalizationAsync();
 
-        _raisedEvents.Should().ContainSingle();
+        _eligibilityEvents.Should().Be(1);
         await _library.Listening.Received(2).MarkListenAsEligibleForScrobblingAsync(1L);
     }
 
@@ -124,13 +121,7 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
         await _service.FlushPendingFinalizationAsync();
 
         await _library.Listening.Received(eligible ? 1 : 0).MarkListenAsEligibleForScrobblingAsync(1L);
-        _raisedEvents.Should().HaveCount(eligible ? 1 : 0);
-        if (eligible)
-        {
-            _raisedEvents[0].Song.Id.Should().Be(_testSongs[0].Id);
-            _raisedEvents[0].SessionId.Should().Be(1L);
-            _raisedEvents[0].ListenStartedUtc.Should().NotBe(default);
-        }
+        _eligibilityEvents.Should().Be(eligible ? 1 : 0);
     }
 
     [Fact]
@@ -162,11 +153,11 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
         await _service.FlushPendingFinalizationAsync();
 
         await _library.Listening.Received(1).MarkListenAsEligibleForScrobblingAsync(5L);
-        _raisedEvents.Should().ContainSingle();
+        _eligibilityEvents.Should().Be(1);
     }
 
     [Fact]
-    public async Task EligibilityEvent_WhenDatabaseMarkIsDelayed_KeepsOriginalSessionStartTime()
+    public async Task EligibilityEvent_WhenTheMarkFinishesAfterATrackChange_IsStillRaised()
     {
         await _service.InitializeAsync();
         _library.Listening.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(20L);
@@ -180,9 +171,6 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
         });
 
         await _service.PlayAsync(_testSongs.Select(song => song.Id), startIndex: 0);
-        var firstSessionStarted = _time.GetUtcNow().UtcDateTime;
-        // Advance by more than the position so the "now minus position" fallback would give a different time.
-        _time.Advance(TimeSpan.FromSeconds(120));
         _audioPlayer.Duration.Returns(TimeSpan.FromMinutes(3));
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(91));
         RaisePositionChanged();
@@ -192,9 +180,8 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
         releaseMark.TrySetResult(true);
         await _service.FlushPendingFinalizationAsync();
 
-        _raisedEvents.Should().ContainSingle();
-        _raisedEvents[0].SessionId.Should().Be(20L);
-        _raisedEvents[0].ListenStartedUtc.Should().Be(firstSessionStarted);
+        _eligibilityEvents.Should().Be(1);
+        await _library.Listening.DidNotReceive().MarkListenAsEligibleForScrobblingAsync(21L);
     }
 
     [Fact]

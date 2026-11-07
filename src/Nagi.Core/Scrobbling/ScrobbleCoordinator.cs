@@ -118,7 +118,7 @@ public sealed class ScrobbleCoordinator : IDisposable
     }
 
     // The listen is already marked eligible, so each destination's queue picks it up with any that failed earlier.
-    private void OnScrobbleEligibilityReached(Song song, long listenHistoryId, DateTime listenStartedUtc) =>
+    private void OnScrobbleEligibilityReached() =>
         _ = SubmitPendingAsync();
 
     private void OnSettingChanged(Setting setting)
