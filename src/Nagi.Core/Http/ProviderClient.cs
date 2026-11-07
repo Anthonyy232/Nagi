@@ -74,6 +74,8 @@ internal sealed class ProviderClient
             if (checkBody is null)
             {
                 if (response.StatusCode == HttpStatusCode.NotFound) return ServiceResult<T>.FromSuccessNotFound();
+                if (_apiKeyName is not null && response.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
+                    return new ProviderReply<T>(ServiceResult<T>.FromTemporaryError(), KeyRejected: true);
                 if (!response.IsSuccessStatusCode) return Failed<T>(response.StatusCode, operation);
             }
 

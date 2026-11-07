@@ -108,6 +108,26 @@ public class FanartTvServiceTests : IDisposable
         result.Status.Should().Be(ServiceResultStatus.TemporaryError);
     }
 
+    [Theory]
+    [InlineData(HttpStatusCode.Unauthorized)]
+    [InlineData(HttpStatusCode.Forbidden)]
+    public async Task GetArtistImagesAsync_WhenKeyIsRejected_RetriesWithARefreshedKey(HttpStatusCode rejection)
+    {
+        _apiKeyService.RefreshApiKeyAsync("fanarttv", Arg.Any<CancellationToken>()).Returns("rotated-key");
+        _httpHandler.SendAsyncFunc = (request, _) => Task.FromResult(
+            request.RequestUri!.Query.Contains("rotated-key")
+                ? new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(JsonSerializer.Serialize(new { artistthumb = new[] { new { url = "https://fanart.tv/thumb.jpg" } } }))
+                }
+                : new HttpResponseMessage(rejection));
+
+        var result = await _service.GetArtistImagesAsync(ValidMbid);
+
+        result.Data!.ThumbUrl.Should().Be("https://fanart.tv/thumb.jpg");
+        _httpHandler.Requests.Should().HaveCount(2);
+    }
+
     [Fact]
     public async Task GetArtistImagesAsync_WhenHttpError_ReturnsTemporaryError()
     {
