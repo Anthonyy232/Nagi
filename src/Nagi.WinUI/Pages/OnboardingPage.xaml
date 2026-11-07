@@ -9,6 +9,12 @@
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
     Background="Transparent">
 
+    <Page.Resources>
+        <Style TargetType="ComboBox" BasedOn="{StaticResource DefaultComboBoxStyle}">
+            <Setter Property="MinWidth" Value="160" />
+        </Style>
+    </Page.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="48" />
@@ -71,36 +77,21 @@
                                 <FontIcon Glyph="&#xE793;" />
                             </controls:SettingsCard.HeaderIcon>
                             <ComboBox
-                                MinWidth="160"
                                 AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_Theme_Header, Mode=OneTime}"
                                 ItemsSource="{x:Bind Settings.Appearance.ThemeOptions}"
                                 DisplayMemberPath="DisplayName"
                                 SelectedItem="{x:Bind Settings.Appearance.SelectedTheme, Mode=TwoWay}" />
                         </controls:SettingsCard>
 
-                        <controls:SettingsCard
-                            Header="{x:Bind resources:Strings.SettingsPage_WindowMaterial_Header, Mode=OneTime}"
-                            Description="{x:Bind resources:Strings.SettingsPage_WindowMaterial_Description, Mode=OneTime}">
-                            <controls:SettingsCard.HeaderIcon>
-                                <FontIcon Glyph="&#xE81E;" />
-                            </controls:SettingsCard.HeaderIcon>
-                            <ComboBox
-                                MinWidth="160"
-                                AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_WindowMaterial_Header, Mode=OneTime}"
-                                ItemsSource="{x:Bind Settings.Appearance.BackdropMaterialOptions}"
-                                DisplayMemberPath="DisplayName"
-                                SelectedItem="{x:Bind Settings.Appearance.SelectedBackdropMaterial, Mode=TwoWay}" />
-                        </controls:SettingsCard>
+                        <ContentControl
+                            Content="{x:Bind Settings.Appearance}"
+                            ContentTemplate="{StaticResource BackdropMaterialSettingCard}"
+                            Style="{StaticResource SettingCardHostStyle}" />
 
-                        <controls:SettingsCard
-                            Header="{x:Bind resources:Strings.SettingsPage_DynamicTheming_Header, Mode=OneTime}"
-                            Description="{x:Bind resources:Strings.SettingsPage_DynamicTheming_Description, Mode=OneTime}">
-                            <controls:SettingsCard.HeaderIcon>
-                                <FontIcon Glyph="&#xE790;" />
-                            </controls:SettingsCard.HeaderIcon>
-                            <ToggleSwitch
-                                IsOn="{x:Bind Settings.Appearance.IsDynamicThemingEnabled, Mode=TwoWay}" />
-                        </controls:SettingsCard>
+                        <ContentControl
+                            Content="{x:Bind Settings.Appearance}"
+                            ContentTemplate="{StaticResource DynamicThemingSettingCard}"
+                            Style="{StaticResource SettingCardHostStyle}" />
                     </StackPanel>
                 </uicontrols:OnboardingStepView>
 
@@ -128,7 +119,6 @@
                                 <FontIcon Glyph="&#xE9E9;" />
                             </controls:SettingsCard.HeaderIcon>
                             <ComboBox
-                                MinWidth="160"
                                 AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_Equalizer, Mode=OneTime}"
                                 ItemsSource="{x:Bind Settings.Audio.AvailableEqualizerPresets}"
                                 PlaceholderText="{x:Bind resources:Strings.SettingsPage_Equalizer_Preset_Custom_Placeholder, Mode=OneTime}"
@@ -179,36 +169,20 @@
                     Description="{x:Bind resources:Strings.OnboardingPage_Desktop_Description, Mode=OneTime}"
                     Visibility="Collapsed">
                     <StackPanel Spacing="{StaticResource SettingsCardSpacing}">
-                        <controls:SettingsCard
-                            Header="{x:Bind resources:Strings.SettingsPage_AutoLaunch_Header, Mode=OneTime}"
-                            Description="{x:Bind resources:Strings.SettingsPage_AutoLaunch_Description, Mode=OneTime}">
-                            <controls:SettingsCard.HeaderIcon>
-                                <FontIcon Glyph="&#xE7E8;" />
-                            </controls:SettingsCard.HeaderIcon>
-                            <ToggleSwitch
-                                IsEnabled="{x:Bind Settings.IsUpdatingAutoLaunch, Mode=OneWay, Converter={StaticResource BooleanToInverseBooleanConverter}}"
-                                IsOn="{x:Bind Settings.IsAutoLaunchEnabled, Mode=TwoWay}" />
-                        </controls:SettingsCard>
+                        <ContentControl
+                            Content="{x:Bind Settings}"
+                            ContentTemplate="{StaticResource AutoLaunchSettingCard}"
+                            Style="{StaticResource SettingCardHostStyle}" />
 
-                        <controls:SettingsCard
-                            Header="{x:Bind resources:Strings.SettingsPage_HideToTray_Header, Mode=OneTime}"
-                            Description="{x:Bind resources:Strings.SettingsPage_HideToTray_Description, Mode=OneTime}">
-                            <controls:SettingsCard.HeaderIcon>
-                                <FontIcon Glyph="&#xE90E;" />
-                            </controls:SettingsCard.HeaderIcon>
-                            <ToggleSwitch
-                                IsOn="{x:Bind Settings.IsHideToTrayEnabled, Mode=TwoWay}" />
-                        </controls:SettingsCard>
+                        <ContentControl
+                            Content="{x:Bind Settings}"
+                            ContentTemplate="{StaticResource HideToTraySettingCard}"
+                            Style="{StaticResource SettingCardHostStyle}" />
 
-                        <controls:SettingsCard
-                            Header="{x:Bind resources:Strings.SettingsPage_MinimizeToMiniPlayer_Header, Mode=OneTime}"
-                            Description="{x:Bind resources:Strings.SettingsPage_MinimizeToMiniPlayer_Description, Mode=OneTime}">
-                            <controls:SettingsCard.HeaderIcon>
-                                <FontIcon Glyph="&#xE73F;" />
-                            </controls:SettingsCard.HeaderIcon>
-                            <ToggleSwitch
-                                IsOn="{x:Bind Settings.IsMinimizeToMiniPlayerEnabled, Mode=TwoWay}" />
-                        </controls:SettingsCard>
+                        <ContentControl
+                            Content="{x:Bind Settings}"
+                            ContentTemplate="{StaticResource MinimizeToMiniPlayerSettingCard}"
+                            Style="{StaticResource SettingCardHostStyle}" />
                     </StackPanel>
                 </uicontrols:OnboardingStepView>
 
@@ -228,15 +202,10 @@
                             <uicontrols:LastFmAccountButtons ViewModel="{x:Bind Settings.Scrobbling}" />
                         </controls:SettingsCard>
 
-                        <controls:SettingsCard
-                            Header="{x:Bind resources:Strings.SettingsPage_Discord_Header, Mode=OneTime}"
-                            Description="{x:Bind resources:Strings.SettingsPage_Discord_Description, Mode=OneTime}">
-                            <controls:SettingsCard.HeaderIcon>
-                                <uicontrols:DiscordIcon Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-                            </controls:SettingsCard.HeaderIcon>
-                            <ToggleSwitch
-                                IsOn="{x:Bind Settings.IsDiscordRichPresenceEnabled, Mode=TwoWay}" />
-                        </controls:SettingsCard>
+                        <ContentControl
+                            Content="{x:Bind Settings}"
+                            ContentTemplate="{StaticResource DiscordSettingCard}"
+                            Style="{StaticResource SettingCardHostStyle}" />
                     </StackPanel>
                 </uicontrols:OnboardingStepView>
 

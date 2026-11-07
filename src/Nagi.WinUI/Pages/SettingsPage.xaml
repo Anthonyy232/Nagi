@@ -22,6 +22,9 @@
             <Setter Property="OnContent" Value="" />
             <Setter Property="OffContent" Value="" />
         </Style>
+        <Style TargetType="ComboBox" BasedOn="{StaticResource DefaultComboBoxStyle}">
+            <Setter Property="MinWidth" Value="300" />
+        </Style>
         <localConverters:ArgbColorToColorConverter x:Key="ArgbColorToColorConverter" />
         <localConverters:FloatToDecimalStringConverter x:Key="FloatToDecimalStringConverter" />
         <localConverters:DoubleToPercentageConverter x:Key="DoubleToPercentageConverter" />
@@ -202,8 +205,8 @@
                         <FontIcon Glyph="&#xE793;" />
                     </controls:SettingsExpander.HeaderIcon>
                     <ComboBox
-                        MinWidth="300"
                         HorizontalAlignment="Right"
+                        AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_Theme_Header, Mode=OneTime}"
                         ItemsSource="{x:Bind ViewModel.Appearance.ThemeOptions}"
                         DisplayMemberPath="DisplayName"
                         SelectedItem="{x:Bind ViewModel.Appearance.SelectedTheme, Mode=TwoWay}" />
@@ -236,28 +239,15 @@
                     </controls:SettingsExpander.Items>
                 </controls:SettingsExpander>
 
-                <controls:SettingsCard
-                    Header="{x:Bind resources:Strings.SettingsPage_WindowMaterial_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_WindowMaterial_Description, Mode=OneTime}">
-                    <controls:SettingsCard.HeaderIcon>
-                        <FontIcon Glyph="&#xE81E;" />
-                    </controls:SettingsCard.HeaderIcon>
-                    <ComboBox
-                        MinWidth="300"
-                        HorizontalAlignment="Right"
-                        ItemsSource="{x:Bind ViewModel.Appearance.BackdropMaterialOptions}"
-                        DisplayMemberPath="DisplayName"
-                        SelectedItem="{x:Bind ViewModel.Appearance.SelectedBackdropMaterial, Mode=TwoWay}" />
-                </controls:SettingsCard>
+                <ContentControl
+                    Content="{x:Bind ViewModel.Appearance}"
+                    ContentTemplate="{StaticResource BackdropMaterialSettingCard}"
+                    Style="{StaticResource SettingCardHostStyle}" />
 
-                <controls:SettingsCard
-                    Header="{x:Bind resources:Strings.SettingsPage_DynamicTheming_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_DynamicTheming_Description, Mode=OneTime}">
-                    <controls:SettingsCard.HeaderIcon>
-                        <FontIcon Glyph="&#xE790;" />
-                    </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
-                        HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.Appearance.IsDynamicThemingEnabled, Mode=TwoWay}" />
-                </controls:SettingsCard>
+                <ContentControl
+                    Content="{x:Bind ViewModel.Appearance}"
+                    ContentTemplate="{StaticResource DynamicThemingSettingCard}"
+                    Style="{StaticResource SettingCardHostStyle}" />
 
                 <controls:SettingsExpander
                     AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_PlayerStyling_Header, Mode=OneTime}"
@@ -281,7 +271,6 @@
                     </controls:SettingsExpander.HeaderIcon>
 
                     <ComboBox
-                        MinWidth="300"
                         HorizontalAlignment="Right"
                         ItemsSource="{x:Bind ViewModel.Appearance.PlayerBackgroundMaterialOptions}"
                         DisplayMemberPath="DisplayName"
@@ -777,16 +766,10 @@
                         IsOn="{x:Bind ViewModel.IsRestorePlaybackStateEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
-                <controls:SettingsCard
-                    Header="{x:Bind resources:Strings.SettingsPage_AutoLaunch_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_AutoLaunch_Description, Mode=OneTime}">
-                    <controls:SettingsCard.HeaderIcon>
-                        <FontIcon Glyph="&#xE7E8;" />
-                    </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
-                        HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.IsAutoLaunchEnabled, Mode=TwoWay}"
-                        IsEnabled="{x:Bind ViewModel.IsUpdatingAutoLaunch, Mode=OneWay, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
-                </controls:SettingsCard>
+                <ContentControl
+                    Content="{x:Bind ViewModel}"
+                    ContentTemplate="{StaticResource AutoLaunchSettingCard}"
+                    Style="{StaticResource SettingCardHostStyle}" />
 
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_StartMinimized_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_StartMinimized_Description, Mode=OneTime}">
@@ -798,25 +781,15 @@
                         IsOn="{x:Bind ViewModel.IsStartMinimizedEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
-                <controls:SettingsCard
-                    Header="{x:Bind resources:Strings.SettingsPage_MinimizeToMiniPlayer_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_MinimizeToMiniPlayer_Description, Mode=OneTime}">
-                    <controls:SettingsCard.HeaderIcon>
-                        <FontIcon Glyph="&#xE73F;" />
-                    </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
-                        HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.IsMinimizeToMiniPlayerEnabled, Mode=TwoWay}" />
-                </controls:SettingsCard>
+                <ContentControl
+                    Content="{x:Bind ViewModel}"
+                    ContentTemplate="{StaticResource MinimizeToMiniPlayerSettingCard}"
+                    Style="{StaticResource SettingCardHostStyle}" />
 
-                <controls:SettingsCard
-                    Header="{x:Bind resources:Strings.SettingsPage_HideToTray_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_HideToTray_Description, Mode=OneTime}">
-                    <controls:SettingsCard.HeaderIcon>
-                        <FontIcon Glyph="&#xE90E;" />
-                    </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
-                        HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.IsHideToTrayEnabled, Mode=TwoWay}" />
-                </controls:SettingsCard>
+                <ContentControl
+                    Content="{x:Bind ViewModel}"
+                    ContentTemplate="{StaticResource HideToTraySettingCard}"
+                    Style="{StaticResource SettingCardHostStyle}" />
 
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_TrayCoverArt_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_TrayCoverArt_Description, Mode=OneTime}">
@@ -1121,15 +1094,10 @@
                     </controls:SettingsExpander.Items>
                 </controls:SettingsExpander>
 
-                <controls:SettingsCard
-                    Header="{x:Bind resources:Strings.SettingsPage_Discord_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_Discord_Description, Mode=OneTime}">
-                    <controls:SettingsCard.HeaderIcon>
-                        <uicontrols:DiscordIcon Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-                    </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
-                        HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.IsDiscordRichPresenceEnabled, Mode=TwoWay}" />
-                </controls:SettingsCard>
+                <ContentControl
+                    Content="{x:Bind ViewModel}"
+                    ContentTemplate="{StaticResource DiscordSettingCard}"
+                    Style="{StaticResource SettingCardHostStyle}" />
 
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{x:Bind resources:Strings.SettingsPage_Section_About, Mode=OneTime}" />
 
