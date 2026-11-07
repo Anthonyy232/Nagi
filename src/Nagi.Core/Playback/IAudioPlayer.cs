@@ -53,11 +53,6 @@ public interface IAudioPlayer : IDisposable
     /// <summary>The current output ID, or an empty string for system default routing.</summary>
     string AudioOutputDeviceId { get; }
 
-    /// <summary>
-    ///     Starts the player ahead of its first use, so that use doesn't wait for it. Concurrent calls are serialized.
-    /// </summary>
-    Task EnsureInitializedAsync();
-
     /// <summary>Enumerates named outputs; system default is represented separately by an empty ID.</summary>
     Task<IReadOnlyList<AudioOutputDeviceInfo>> GetAudioOutputDevicesAsync();
 

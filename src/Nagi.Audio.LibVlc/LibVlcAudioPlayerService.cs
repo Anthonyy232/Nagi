@@ -68,7 +68,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         _disposeTask = new Lazy<Task>(DisposeCoreAsync);
     }
 
-    public async Task EnsureInitializedAsync()
+    private async Task EnsureInitializedAsync()
     {
         if (_isInitialized || _isDisposed) return;
         await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
