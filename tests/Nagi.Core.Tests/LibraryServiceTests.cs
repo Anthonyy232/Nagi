@@ -100,8 +100,8 @@ public partial class LibraryServiceTests : IDisposable
         _httpMessageHandler.Dispose();
     }
 
-    // Concurrency tests need their own file database: contexts that share the in-memory connection collide when
-    // they open it while another runs a query.
+    // Concurrency tests use a file database, whose writers wait for each other the way the app's do; the shared
+    // in-memory database locks whole tables instead.
     private TestLibrary CreateLibrary(DbContextFactoryTestHelper database) =>
         new(database.ContextFactory, _fileSystem, _metadataService,
             new ArtistMetadataService(_lastFmService, _musicBrainzService, _fanartTvService, _theAudioDbService,

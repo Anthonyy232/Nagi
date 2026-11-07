@@ -28,10 +28,19 @@ public class DbContextFactoryTestHelper : IDisposable
         }
         else
         {
-            _connection = new SqliteConnection("DataSource=:memory:");
+            // Each context opens its own connection, as in the app. Contexts sharing one open connection collide when
+            // one is created while another runs a query: EF Core registers its SQL functions on the connection for
+            // every context, which SQLite refuses during an active statement. This connection keeps the database alive.
+            var connectionString = new SqliteConnectionStringBuilder
+            {
+                DataSource = $"nagi-tests-{Guid.NewGuid():N}",
+                Mode = SqliteOpenMode.Memory,
+                Cache = SqliteCacheMode.Shared
+            }.ToString();
+            _connection = new SqliteConnection(connectionString);
             _connection.Open();
             options = new DbContextOptionsBuilder<MusicDbContext>()
-                .UseSqlite(_connection)
+                .UseSqlite(connectionString)
                 .Options;
         }
 
