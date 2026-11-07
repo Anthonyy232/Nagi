@@ -7,23 +7,22 @@ using Nagi.Core.Settings;
 namespace Nagi.Core.Services.Implementations.Presence;
 
 /// <summary>
-///     Orchestrates presence services by listening to music playback and settings events.
-///     This manager activates, deactivates, and broadcasts updates to all relevant
-///     IPresenceService implementations like Discord and Last.fm.
+///     Turns the presence services, such as Discord, on and off as their settings change, and passes playback on to
+///     the ones that are on.
 /// </summary>
 public class PresenceManager : IAsyncDisposable, IDisposable
 {
     private readonly List<IPresenceService> _activeServices = new();
     private readonly ILogger<PresenceManager> _logger;
     private readonly IMusicPlaybackService _playbackService;
-    private readonly IReadOnlyDictionary<string, IPresenceService> _presenceServices;
+    private readonly IReadOnlyList<IPresenceService> _presenceServices;
     private readonly ISettingsService _settingsService;
 
     // Queued event handlers can outlive shutdown; keep this managed semaphore usable until they drain.
     private readonly SemaphoreSlim _servicesLock = new(1, 1);
 
     // Each service's calls are chained, so it sees events in the order they happened
-    // while a slow service (a Last.fm request, say) doesn't hold up the others.
+    // while a slow service (a Discord reconnect, say) doesn't hold up the others.
     private readonly Dictionary<IPresenceService, Task> _pendingCalls = new();
 
     private Song? _currentTrack;
@@ -44,7 +43,7 @@ public class PresenceManager : IAsyncDisposable, IDisposable
         _settingsService = settingsService;
         _logger = logger;
 
-        _presenceServices = presenceServices.ToDictionary(s => s.Name, s => s);
+        _presenceServices = presenceServices.ToList();
     }
 
     private async Task HandleEventAsync(Func<Task> asyncAction, string operationName)
@@ -72,7 +71,7 @@ public class PresenceManager : IAsyncDisposable, IDisposable
         if (_isDisposed) return;
         _isDisposed = true;
 
-        // Synchronous disposal - use Task.Run to avoid deadlock on UI thread
+        // On a background thread, so blocking here can't deadlock with a continuation that needs the UI thread.
         Task.Run(() => ShutdownAsync()).GetAwaiter().GetResult();
     }
 
@@ -87,10 +86,8 @@ public class PresenceManager : IAsyncDisposable, IDisposable
 
             _currentTrack = _playbackService.CurrentTrack;
             _currentListenSessionId = _playbackService.CurrentListenHistoryId;
-            foreach (var service in _presenceServices.Values)
-                await SafeExecuteAsync(service, async s =>
-                    await SetServiceActiveCoreAsync(s, await IsServiceEnabledAsync(s).ConfigureAwait(false))
-                        .ConfigureAwait(false)).ConfigureAwait(false);
+            foreach (var service in _presenceServices)
+                await SafeExecuteAsync(service, s => SetServiceActiveCoreAsync(s, s.IsEnabled)).ConfigureAwait(false);
 
             SubscribeToEvents();
             _isInitialized = true;
@@ -129,9 +126,7 @@ public class PresenceManager : IAsyncDisposable, IDisposable
         _playbackService.TrackChanged += OnTrackChanged;
         _playbackService.PlaybackStateChanged += OnPlaybackStateChanged;
         _playbackService.PositionChanged += OnPositionChanged;
-        _playbackService.ScrobbleEligibilityReached += OnScrobbleEligibilityReached;
         _settingsService.SettingChanged += OnSettingChanged;
-        _settingsService.CredentialsChanged += OnCredentialsChanged;
     }
 
     private void UnsubscribeFromEvents()
@@ -139,71 +134,20 @@ public class PresenceManager : IAsyncDisposable, IDisposable
         _playbackService.TrackChanged -= OnTrackChanged;
         _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
         _playbackService.PositionChanged -= OnPositionChanged;
-        _playbackService.ScrobbleEligibilityReached -= OnScrobbleEligibilityReached;
         _settingsService.SettingChanged -= OnSettingChanged;
-        _settingsService.CredentialsChanged -= OnCredentialsChanged;
     }
 
-    private void OnSettingChanged(Setting setting)
-    {
-        if (setting == CoreSettings.DiscordRichPresence) RefreshService("Discord");
-        else if (setting == CoreSettings.LastFmScrobbling || setting == CoreSettings.LastFmNowPlaying) RefreshService("Last.fm");
-        else if (setting == CoreSettings.ListenBrainzScrobbling || setting == CoreSettings.ListenBrainzNowPlaying)
-            RefreshService("ListenBrainz");
-    }
+    private void OnSettingChanged(Setting setting) =>
+        _ = HandleEventAsync(RefreshServicesAsync, $"{setting.Key} change");
 
-    private void OnCredentialsChanged()
-    {
-        RefreshService("Last.fm");
-        RefreshService("ListenBrainz");
-    }
-
-    private void RefreshService(string name)
-    {
-        _ = HandleEventAsync(
-            async () =>
-            {
-                if (_presenceServices.TryGetValue(name, out var service))
-                    await SetServiceActiveAsync(service).ConfigureAwait(false);
-            },
-            $"{name} settings change");
-    }
-
-    private Task<bool> IsServiceEnabledAsync(IPresenceService service) =>
-        service.Name switch
-        {
-            "Discord" => Task.FromResult(_settingsService.Get(CoreSettings.DiscordRichPresence)),
-            "Last.fm" => IsLastFmServiceEnabledAsync(),
-            "ListenBrainz" => IsListenBrainzServiceEnabledAsync(),
-            // Only acts for songs streamed from a server, which always hears about their plays.
-            "Music servers" => Task.FromResult(true),
-            _ => Task.FromResult(false)
-        };
-
-    private async Task<bool> IsLastFmServiceEnabledAsync()
-    {
-        var hasCredentials = await _settingsService.GetLastFmCredentialsAsync().ConfigureAwait(false) != null;
-        if (!hasCredentials) return false;
-
-        return _settingsService.Get(CoreSettings.LastFmScrobbling) || _settingsService.Get(CoreSettings.LastFmNowPlaying);
-    }
-
-    private async Task<bool> IsListenBrainzServiceEnabledAsync()
-    {
-        var token = await _settingsService.GetListenBrainzUserTokenAsync().ConfigureAwait(false);
-        if (string.IsNullOrEmpty(token)) return false;
-
-        return _settingsService.Get(CoreSettings.ListenBrainzScrobbling) || _settingsService.Get(CoreSettings.ListenBrainzNowPlaying);
-    }
-
-    private async Task SetServiceActiveAsync(IPresenceService service, bool? shouldBeActive = null)
+    private async Task RefreshServicesAsync()
     {
         await _servicesLock.WaitAsync().ConfigureAwait(false);
         try
         {
             if (!_isInitialized || _isDisposed) return;
-            await SetServiceActiveCoreAsync(service,
-                shouldBeActive ?? await IsServiceEnabledAsync(service).ConfigureAwait(false)).ConfigureAwait(false);
+            foreach (var service in _presenceServices)
+                await SafeExecuteAsync(service, s => SetServiceActiveCoreAsync(s, s.IsEnabled)).ConfigureAwait(false);
         }
         finally
         {
@@ -220,7 +164,7 @@ public class PresenceManager : IAsyncDisposable, IDisposable
             _activeServices.Remove(service);
             _pendingCalls.Remove(service);
             await StopAndDisposeAsync(service).ConfigureAwait(false);
-            _logger.LogDebug("Deactivated '{ServiceName}' presence service.", service.Name);
+            _logger.LogDebug("Deactivated '{ServiceName}' presence service.", service.GetType().Name);
             return;
         }
 
@@ -235,13 +179,11 @@ public class PresenceManager : IAsyncDisposable, IDisposable
         }
 
         _activeServices.Add(service);
-        _logger.LogDebug("Activated '{ServiceName}' presence service.", service.Name);
+        _logger.LogDebug("Activated '{ServiceName}' presence service.", service.GetType().Name);
 
         if (_currentTrack is not null)
         {
-            var sessionId = _playbackService.CurrentListenHistoryId;
-            if (service.Name == "Discord" || sessionId.HasValue)
-                await service.OnTrackChangedAsync(_currentTrack, sessionId ?? 0).ConfigureAwait(false);
+            await service.OnTrackChangedAsync(_currentTrack).ConfigureAwait(false);
             await service.OnPlaybackStateChangedAsync(_playbackService.IsPlaying).ConfigureAwait(false);
         }
     }
@@ -257,7 +199,7 @@ public class PresenceManager : IAsyncDisposable, IDisposable
         var newTrack = _playbackService.CurrentTrack;
         var newSessionId = _playbackService.CurrentListenHistoryId;
 
-        // Return if both track and session ID are unchanged (prevents redundant updates, but allows loops)
+        // A song played again gets a new listen, which restarts its time on the profile.
         if (_currentTrack?.Id == newTrack?.Id && _currentListenSessionId == newSessionId) return;
 
         _currentTrack = newTrack;
@@ -269,27 +211,9 @@ public class PresenceManager : IAsyncDisposable, IDisposable
             _currentTrack?.Title ?? "None", _currentListenSessionId);
 
         _ = HandleEventAsync(
-            async () =>
-            {
-                if (newTrack is not null)
-                {
-                    await BroadcastAsync(s =>
-                    {
-                        // Discord needs to know about the track immediately (even at startup restoration)
-                        // Last.fm should only receive tracks that have a valid session ID to avoid scrobbling errors
-                        if (s.Name == "Discord" || newSessionId.HasValue)
-                        {
-                            return s.OnTrackChangedAsync(newTrack, newSessionId ?? 0);
-                        }
-
-                        return Task.CompletedTask;
-                    }).ConfigureAwait(false);
-                }
-                else
-                {
-                    await BroadcastAsync(s => s.OnPlaybackStoppedAsync()).ConfigureAwait(false);
-                }
-            },
+            () => newTrack is not null
+                ? BroadcastAsync(s => s.OnTrackChangedAsync(newTrack))
+                : BroadcastAsync(s => s.OnPlaybackStoppedAsync()),
             "Track change broadcast");
     }
 
@@ -308,7 +232,6 @@ public class PresenceManager : IAsyncDisposable, IDisposable
     {
         if (_currentTrack is null || _playbackService.Duration <= TimeSpan.Zero) return;
 
-        // Throttle presence updates to every 5 seconds
         var now = Stopwatch.GetTimestamp();
         if (_lastPresencePositionUpdate is { } lastUpdate &&
             Stopwatch.GetElapsedTime(lastUpdate, now) < PresenceThrottleInterval)
@@ -320,13 +243,6 @@ public class PresenceManager : IAsyncDisposable, IDisposable
         _ = HandleEventAsync(
             () => BroadcastAsync(s => s.OnTrackProgressAsync(position, duration)),
             "Position change broadcast");
-    }
-
-    private void OnScrobbleEligibilityReached(Song song, long listenHistoryId, DateTime listenStartedUtc)
-    {
-        _ = HandleEventAsync(
-            () => BroadcastAsync(s => s.OnTrackEligibleForScrobblingAsync(song, listenHistoryId, listenStartedUtc)),
-            "Scrobble eligibility broadcast");
     }
 
     private async Task BroadcastAsync(Func<IPresenceService, Task> action)
@@ -375,7 +291,7 @@ public class PresenceManager : IAsyncDisposable, IDisposable
         catch (Exception ex)
         {
             _logger.LogError(ex, "An operation failed for the '{ServiceName}' presence service.",
-                service.Name);
+                service.GetType().Name);
         }
     }
 }

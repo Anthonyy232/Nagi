@@ -204,7 +204,10 @@ public class PlaylistSongListViewModelTests
     {
         using var viewModel = CreateViewModel();
 
-        await viewModel.InitializeAsync("Road Trip", _playlistId, isFromServer: true);
+        _library.Reader.GetPlaylistByIdAsync(_playlistId)
+            .Returns(new Playlist { Id = _playlistId, Name = "Road Trip", ServerFolderId = Guid.NewGuid() });
+
+        await viewModel.InitializeAsync("Road Trip", _playlistId);
 
         viewModel.IsReorderingEnabled.Should().BeFalse();
     }

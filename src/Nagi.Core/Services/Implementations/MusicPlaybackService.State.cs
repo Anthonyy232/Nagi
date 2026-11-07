@@ -72,7 +72,7 @@ public partial class MusicPlaybackService
                 var streamUri = await _musicServers.GetStreamUriAsync(currentSong);
                 if (_isDisposed) return false;
                 // With nothing loaded, Play starts the song from the queue, which stops cleanly while it can't stream.
-                if (currentSong.IsRemote && streamUri is null) CurrentTrack = null;
+                if (currentSong.IsFromServer && streamUri is null) CurrentTrack = null;
                 else await _audioPlayer.LoadAsync(currentSong, streamUri);
             }
             else

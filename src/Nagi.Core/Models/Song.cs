@@ -45,7 +45,8 @@ public class Song
     [MaxLength(2000)] public string? AlbumArtUriFromTrack { get; set; }
 
     /// <summary>
-    ///     The file on disk, or for a song on a music server a unique key that is not a file path.
+    ///     The file on disk, or for a song on a music server a unique key that is not a file path. A server song's key
+    ///     ends in the extension of its file on the server, so <see cref="FileExtension" /> works for both.
     /// </summary>
     [Required][MaxLength(1000)] public string FilePath { get; set; } = string.Empty;
 
@@ -54,7 +55,16 @@ public class Song
     /// </summary>
     [MaxLength(200)] public string? RemoteId { get; set; }
 
-    [NotMapped] public bool IsRemote => RemoteId is not null;
+    /// <summary>
+    ///     Whether the song streams from a music server instead of playing from a file on disk. Queries use
+    ///     <see cref="Data.LibraryQueries.OnDisk(IQueryable{Song})" /> for the songs with files.
+    /// </summary>
+    [NotMapped] public bool IsFromServer => RemoteId is not null;
+
+    /// <summary>
+    ///     The file's lowercase extension with its dot, or empty when it has none.
+    /// </summary>
+    [NotMapped] public string FileExtension => Path.GetExtension(FilePath).ToLowerInvariant();
 
     /// <summary>
     ///     A hash of the song as its server last described it, so a sync can skip songs that haven't changed.

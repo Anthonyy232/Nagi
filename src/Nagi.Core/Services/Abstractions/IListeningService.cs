@@ -21,9 +21,5 @@ public interface IListeningService
     /// <returns>False if the listen doesn't exist.</returns>
     Task<bool> MarkListenAsEligibleForScrobblingAsync(long listenHistoryId);
 
-    Task<bool> MarkListenAsScrobbledAsync(long listenHistoryId);
-
-    Task<bool> MarkListenAsSubmittedToListenBrainzAsync(long listenHistoryId);
-
     Task ClearListenHistoryAsync();
 }

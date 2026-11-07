@@ -35,7 +35,7 @@ public class OpenSubsonicClientTests : IDisposable
     [InlineData("HTTPS://Music.Example.com/navidrome/rest", "https://music.example.com/navidrome")]
     public void NormalizeAddress_MeansHttpsUnlessToldAndDropsThePastedApiPath(string address, string expected)
     {
-        OpenSubsonicClient.NormalizeAddress(address).Should().Be(expected);
+        new OpenSubsonicConnector("Nagi").NormalizeAddress(address).Should().Be(expected);
     }
 
     [Theory]
@@ -45,7 +45,7 @@ public class OpenSubsonicClientTests : IDisposable
     [InlineData("not a server")]
     public void NormalizeAddress_RejectsAddressesThatCantBeAServer(string address)
     {
-        var normalize = () => OpenSubsonicClient.NormalizeAddress(address);
+        var normalize = () => new OpenSubsonicConnector("Nagi").NormalizeAddress(address);
 
         normalize.Should().Throw<MusicServerException>().Which.Error.Should().Be(MusicServerError.InvalidAddress);
     }
@@ -55,10 +55,10 @@ public class OpenSubsonicClientTests : IDisposable
     {
         _handler.RespondSequence((HttpStatusCode.OK, Response(new { status = "ok", type = "navidrome", openSubsonic = true })));
 
-        var (name, userName) = await OpenSubsonicClient.ConnectAsync(_httpClient, BaseUrl, "alex", "secret", false, "Nagi");
+        var signIn = await SignInAsync("alex", "secret", false);
 
-        name.Should().Be("Navidrome");
-        userName.Should().Be("alex");
+        signIn.ServerName.Should().Be("Navidrome");
+        signIn.UserName.Should().Be("alex");
         var query = HttpUtility.ParseQueryString(_handler.Requests.Single().RequestUri!.Query);
         query["p"].Should().BeNull();
         query["apiKey"].Should().BeNull();
@@ -73,9 +73,9 @@ public class OpenSubsonicClientTests : IDisposable
             (HttpStatusCode.OK, Response(new { status = "ok", type = "lms", openSubsonic = true })),
             (HttpStatusCode.OK, Response(new { status = "ok", openSubsonic = true, tokenInfo = new { username = "alex" } })));
 
-        var (_, userName) = await OpenSubsonicClient.ConnectAsync(_httpClient, BaseUrl, "", "key-123", true, "Nagi");
+        var signIn = await SignInAsync("", "key-123", true);
 
-        userName.Should().Be("alex");
+        signIn.UserName.Should().Be("alex");
         _handler.Requests.Select(r => HttpUtility.ParseQueryString(r.RequestUri!.Query)).Should().OnlyContain(q =>
             q["apiKey"] == "key-123" && q["u"] == null && q["t"] == null && q["s"] == null && q["p"] == null);
     }
@@ -88,7 +88,7 @@ public class OpenSubsonicClientTests : IDisposable
     {
         _handler.SendAsyncFunc = (_, _) => throw new HttpRequestException(failure, "The connection failed.");
 
-        var connect = () => OpenSubsonicClient.ConnectAsync(_httpClient, BaseUrl, "alex", "secret", false, "Nagi");
+        var connect = () => SignInAsync("alex", "secret", false);
 
         (await connect.Should().ThrowAsync<MusicServerException>()).Which.Error.Should().Be(expected);
     }
@@ -112,7 +112,7 @@ public class OpenSubsonicClientTests : IDisposable
     {
         _handler.RespondSequence((HttpStatusCode.OK, Response(new { status = "ok", type = "subsonic", openSubsonic = false })));
 
-        var connect = () => OpenSubsonicClient.ConnectAsync(_httpClient, BaseUrl, "alex", "secret", false, "Nagi");
+        var connect = () => SignInAsync("alex", "secret", false);
 
         (await connect.Should().ThrowAsync<MusicServerException>()).Which.Error.Should().Be(MusicServerError.UnsupportedServer);
     }
@@ -131,7 +131,7 @@ public class OpenSubsonicClientTests : IDisposable
             error = new { code, message = "Rejected" }
         })));
 
-        var connect = () => OpenSubsonicClient.ConnectAsync(_httpClient, BaseUrl, "alex", "secret", false, "Nagi");
+        var connect = () => SignInAsync("alex", "secret", false);
 
         (await connect.Should().ThrowAsync<MusicServerException>()).Which.Error.Should().Be(expected);
     }
@@ -313,6 +313,10 @@ public class OpenSubsonicClientTests : IDisposable
     }
 
     private OpenSubsonicClient Client() => new(_httpClient, BaseUrl, "alex", "secret", false, "Nagi");
+
+    private Task<ServerSignIn> SignInAsync(string userName, string secret, bool usesApiKey) =>
+        new OpenSubsonicConnector("Nagi").SignInAsync(_httpClient,
+            new MusicServer { BaseUrl = BaseUrl, UserName = userName, UsesApiKey = usesApiKey }, secret);
 
     private static string Response(object body) =>
         JsonSerializer.Serialize(new Dictionary<string, object> { ["subsonic-response"] = body });

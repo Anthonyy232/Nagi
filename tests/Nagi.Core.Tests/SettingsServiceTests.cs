@@ -85,21 +85,6 @@ public class SettingsServiceTests
     }
 
     [Fact]
-    public async Task ClearLastFmCredentials_TurnsSubmissionOffAndDropsThePendingSignIn()
-    {
-        var settings = TestSettings.Create();
-        settings.Set(CoreSettings.LastFmScrobbling, true);
-        settings.Set(CoreSettings.LastFmNowPlaying, true);
-        settings.Set(CoreSettings.LastFmAuthToken, "pending");
-
-        await settings.ClearLastFmCredentialsAsync();
-
-        settings.Get(CoreSettings.LastFmScrobbling).Should().BeFalse();
-        settings.Get(CoreSettings.LastFmNowPlaying).Should().BeFalse();
-        settings.Get(CoreSettings.LastFmAuthToken).Should().BeNull();
-    }
-
-    [Fact]
     public void Providers_ReconcileSavedPriorityWithCurrentDefinitionsWithoutRewritingStorage()
     {
         var saved = JsonSerializer.Serialize(new[]

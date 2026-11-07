@@ -29,7 +29,8 @@ public interface ISettingsService
     Task<bool> SaveLastFmCredentialsAsync(string username, string sessionKey);
 
     /// <summary>
-    ///     Signs out of Last.fm: removes the credentials and the pending sign-in, and turns its submissions off.
+    ///     Removes the Last.fm credentials. <see cref="IScrobblingAccounts.DisconnectLastFmAsync" /> also turns its
+    ///     submissions off.
     /// </summary>
     Task ClearLastFmCredentialsAsync();
 

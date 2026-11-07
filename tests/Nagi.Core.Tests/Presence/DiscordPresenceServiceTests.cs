@@ -30,7 +30,7 @@ public class DiscordPresenceServiceTests
         configuration["Discord:AppId"].Returns("123456789");
         var clients = new List<DiscordRpcClient>();
         await using var service = new DiscordPresenceService(configuration,
-            NullLogger<DiscordPresenceService>.Instance, _playback, _albumCovers, appId =>
+            NullLogger<DiscordPresenceService>.Instance, _playback, _albumCovers, Substitute.For<ISettingsService>(), appId =>
             {
                 var client = new DiscordRpcClient(appId, client: Substitute.For<INamedPipeClient>());
                 clients.Add(client);
@@ -38,10 +38,10 @@ public class DiscordPresenceServiceTests
             });
 
         await service.InitializeAsync();
-        await service.OnTrackChangedAsync(new Song { Title = "First activation" }, 1);
+        await service.OnTrackChangedAsync(new Song { Title = "First activation" });
         await service.DisposeAsync();
         await service.InitializeAsync();
-        await service.OnTrackChangedAsync(new Song { Title = "Second activation" }, 2);
+        await service.OnTrackChangedAsync(new Song { Title = "Second activation" });
 
         clients.Should().HaveCount(2);
         clients[0].IsDisposed.Should().BeTrue();
@@ -59,7 +59,7 @@ public class DiscordPresenceServiceTests
         configuration["Discord:AppId"].Returns(appId);
         var createClient = Substitute.For<Func<string, DiscordRpcClient>>();
         await using var service = new DiscordPresenceService(configuration,
-            NullLogger<DiscordPresenceService>.Instance, _playback, _albumCovers, createClient);
+            NullLogger<DiscordPresenceService>.Instance, _playback, _albumCovers, Substitute.For<ISettingsService>(), createClient);
 
         await service.InitializeAsync();
 
@@ -94,7 +94,7 @@ public class DiscordPresenceServiceTests
             .ReturnsForAnyArgs(onlineMetadata ? ServiceResult<string>.FromSuccess(url) : null);
         var album = new Album { Title = "Album" };
         await using var service = new DiscordPresenceService(Substitute.For<IConfiguration>(),
-            NullLogger<DiscordPresenceService>.Instance, _playback, _albumCovers,
+            NullLogger<DiscordPresenceService>.Instance, _playback, _albumCovers, Substitute.For<ISettingsService>(),
             Substitute.For<Func<string, DiscordRpcClient>>());
 
         var first = await service.FindCoverUrlAsync(new Song { Title = "One", Album = album, MusicBrainzReleaseId = "release" });

@@ -73,7 +73,7 @@ public class ScrobbleQueueCancellationTests
             return new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(successBody) };
         };
 
-        var processing = submitter.ProcessPendingListensAsync(cancellation.Token);
+        var processing = submitter.SubmitPendingAsync(cancellation.Token);
         try
         {
             await requestStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
@@ -91,7 +91,7 @@ public class ScrobbleQueueCancellationTests
             {
                 Content = new StringContent(successBody)
             });
-            await submitter.ProcessPendingListensAsync(CancellationToken.None);
+            await submitter.SubmitPendingAsync(CancellationToken.None);
             handler.Requests.Should().HaveCount(3);
             (await context.ListenHistory.AsNoTracking().AllAsync(listen => provider == ServiceProviderIds.LastFm
                 ? listen.IsScrobbled : listen.IsSubmittedToListenBrainz)).Should().BeTrue();

@@ -47,8 +47,8 @@ public class CoreServiceRegistrationTests
     {
         await using var provider = BuildProvider();
 
-        provider.GetServices<IListenSubmitter>().Should().HaveCount(2);
-        provider.GetServices<IPresenceService>().Should().HaveCount(4);
+        provider.GetServices<IListenSubmitter>().Should().HaveCount(3);
+        provider.GetServices<IPresenceService>().Should().ContainSingle();
     }
 
     [Theory]

@@ -65,9 +65,6 @@ public sealed class SettingsService : ISettingsService
     public Task ClearLastFmCredentialsAsync()
     {
         _credentialLockerService.RemoveCredential(LastFmCredentialResource);
-        Set(CoreSettings.LastFmScrobbling, false);
-        Set(CoreSettings.LastFmNowPlaying, false);
-        Set(CoreSettings.LastFmAuthToken, null);
         CredentialsChanged?.Invoke();
         return Task.CompletedTask;
     }

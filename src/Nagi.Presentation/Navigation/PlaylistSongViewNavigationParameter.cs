@@ -7,6 +7,4 @@ public record PlaylistSongViewNavigationParameter : INavigationParameter
     public Guid PlaylistId { get; init; }
 
     public string? CoverImageUri { get; init; }
-
-    public bool IsFromServer { get; init; }
 }

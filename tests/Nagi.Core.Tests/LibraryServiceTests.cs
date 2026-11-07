@@ -1262,43 +1262,8 @@ public partial class LibraryServiceTests : IDisposable
     {
         await _library.Listening.FinalizeListenSessionAsync(99999L, TimeSpan.FromSeconds(10), PlaybackEndReason.Finished);
         (await _library.Listening.MarkListenAsEligibleForScrobblingAsync(99999L)).Should().BeFalse();
-        (await _library.Listening.MarkListenAsSubmittedToListenBrainzAsync(99999L)).Should().BeFalse();
-        (await _library.Listening.MarkListenAsScrobbledAsync(99999L)).Should().BeFalse();
         await using var context = _dbHelper.ContextFactory.CreateDbContext();
         (await context.ListenHistory.CountAsync()).Should().Be(0);
-    }
-
-    [Fact]
-    public async Task ScrobbleAcknowledgements_PersistBothServicesAndAreIdempotent()
-    {
-        var folder = new Folder { Name = "Test Folder", Path = "C:\\Test" };
-        var song = new Song { Title = "Test Song", Folder = folder, FilePath = "C:\\Test\\song.mp3" };
-        var listenHistory = new ListenHistory
-        {
-            Song = song,
-            IsEligibleForScrobbling = true,
-            IsSubmittedToListenBrainz = false
-        };
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(folder);
-            context.Songs.Add(song);
-            context.ListenHistory.Add(listenHistory);
-            await context.SaveChangesAsync();
-        }
-
-        var result = await _library.Listening.MarkListenAsSubmittedToListenBrainzAsync(listenHistory.Id);
-        (await _library.Listening.MarkListenAsSubmittedToListenBrainzAsync(listenHistory.Id)).Should().BeTrue();
-        (await _library.Listening.MarkListenAsScrobbledAsync(listenHistory.Id)).Should().BeTrue();
-        (await _library.Listening.MarkListenAsScrobbledAsync(listenHistory.Id)).Should().BeTrue();
-
-        result.Should().BeTrue();
-
-        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
-        var updatedHistory = await assertContext.ListenHistory.FindAsync(listenHistory.Id);
-        updatedHistory!.IsSubmittedToListenBrainz.Should().BeTrue();
-        updatedHistory.IsScrobbled.Should().BeTrue();
     }
 
     [Fact]

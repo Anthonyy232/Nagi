@@ -12,6 +12,7 @@ public interface ILibraryReader
     Task<IReadOnlyList<RecentListen>> GetRecentListensAsync(string searchTerm, int skip, int take, CancellationToken token = default);
     Task<RediscoverySuggestion?> GetRediscoverySuggestionAsync(CancellationToken token = default);
 
+    /// <returns>The folder with its <see cref="Folder.MusicServer" />, or null.</returns>
     Task<Folder?> GetFolderByIdAsync(Guid folderId);
     Task<Folder?> GetFolderByPathAsync(string path);
     Task<bool> HasAnyFolderAsync(CancellationToken token = default);
@@ -38,6 +39,7 @@ public interface ILibraryReader
 
     Task<Album?> GetAlbumByIdAsync(Guid albumId);
     Task<IEnumerable<Playlist>> GetAllPlaylistsAsync(CancellationToken token = default);
+    Task<Playlist?> GetPlaylistByIdAsync(Guid playlistId);
     Task<IEnumerable<Song>> GetSongsInPlaylistOrderedAsync(Guid playlistId, CancellationToken token = default);
     Task<IEnumerable<GenreSummary>> GetGenreSummariesAsync(CancellationToken token = default);
 

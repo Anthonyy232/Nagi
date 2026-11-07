@@ -49,6 +49,8 @@ public class LastFmScrobblerServiceTests : IDisposable
         _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
 
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.LastFm);
+        _settingsService.Set(CoreSettings.LastFmNowPlaying, true);
+        _settingsService.Set(CoreSettings.LastFmScrobbling, true);
         _scrobblerService = CreateService();
     }
 
@@ -70,7 +72,7 @@ public class LastFmScrobblerServiceTests : IDisposable
             _logger);
     }
     [Fact]
-    public async Task UpdateNowPlayingAsync_WithValidSongAndCredentials_ReturnsTrueAndSendsCorrectRequest()
+    public async Task UpdateNowPlayingAsync_WithValidSongAndCredentials_SendsCorrectRequest()
     {
         var song = CreateTestSong();
         SetupValidCredentials();
@@ -89,16 +91,15 @@ public class LastFmScrobblerServiceTests : IDisposable
         const string expectedSignature = "4a7b67e97bde9cb31f13bfe82c6f27c8";
         expectedParams.Add("api_sig", expectedSignature);
 
-        var result = await _scrobblerService.UpdateNowPlayingAsync(song);
+        await _scrobblerService.UpdateNowPlayingAsync(song);
 
-        result.Should().BeTrue();
         _httpMessageHandler.Requests.Should().HaveCount(1);
         _httpMessageHandler.Requests[0].Method.Should().Be(HttpMethod.Post);
         _capturedRequestParams.Should().NotBeNull();
         _capturedRequestParams.Should().BeEquivalentTo(expectedParams);
     }
     [Fact]
-    public async Task ScrobbleAsync_WithValidSongAndCredentials_ReturnsTrueAndSendsCorrectRequest()
+    public async Task SubmitPendingAsync_WithValidSongAndCredentials_SendsCorrectRequest()
     {
         var song = CreateTestSong();
         var startTime = new DateTime(2023, 1, 1, 12, 0, 0, DateTimeKind.Utc);
@@ -120,9 +121,8 @@ public class LastFmScrobblerServiceTests : IDisposable
         const string expectedSignature = "43a14dbd8f9f65f1f1929600d9c9d770";
         expectedParams.Add("api_sig", expectedSignature);
 
-        var result = await _scrobblerService.ScrobbleAsync(song, startTime);
+        await ScrobbleAsync(song, startTime);
 
-        result.Should().BeTrue();
         _httpMessageHandler.Requests.Should().HaveCount(1);
         _httpMessageHandler.Requests[0].Method.Should().Be(HttpMethod.Post);
         _capturedRequestParams.Should().NotBeNull();
@@ -132,7 +132,7 @@ public class LastFmScrobblerServiceTests : IDisposable
     [InlineData(null, ApiSecret, SessionKey)]
     [InlineData(ApiKey, null, SessionKey)]
     [InlineData(ApiKey, ApiSecret, null)]
-    public async Task ApiCall_WhenCredentialsAreMissing_ReturnsFalseAndMakesNoHttpCall(string? apiKey,
+    public async Task ApiCall_WhenCredentialsAreMissing_MakesNoHttpCallAndKeepsTheListen(string? apiKey,
         string? apiSecret, string? sessionKey)
     {
         _apiKeyService.GetApiKeyAsync("lastfm").Returns(Task.FromResult(apiKey));
@@ -140,33 +140,62 @@ public class LastFmScrobblerServiceTests : IDisposable
         (string?, string?)? credentials = sessionKey != null ? ("user", sessionKey) : null;
         _credentials.RetrieveCredential("Nagi/LastFm").Returns(credentials);
 
-        var nowPlayingResult = await _scrobblerService.UpdateNowPlayingAsync(CreateTestSong());
-        var scrobbleResult = await _scrobblerService.ScrobbleAsync(CreateTestSong(), DateTime.UtcNow);
+        await _scrobblerService.UpdateNowPlayingAsync(CreateTestSong());
+        await ScrobbleAsync(CreateTestSong(), DateTime.UtcNow);
 
-        nowPlayingResult.Should().BeFalse();
-        scrobbleResult.Should().BeFalse();
+        _httpMessageHandler.Requests.Should().BeEmpty();
+        await using var verify = _dbHelper.ContextFactory.CreateDbContext();
+        (await verify.ListenHistory.SingleAsync()).IsScrobbled.Should().BeFalse();
+    }
+
+    [Theory]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    public async Task TurnedOff_SendsNothing(bool nowPlaying, bool scrobbling)
+    {
+        _settingsService.Set(CoreSettings.LastFmNowPlaying, nowPlaying);
+        _settingsService.Set(CoreSettings.LastFmScrobbling, scrobbling);
+        SetupValidCredentials();
+        SetupHttpResponse(HttpStatusCode.OK);
+
+        if (nowPlaying) await ScrobbleAsync(CreateTestSong(), DateTime.UtcNow);
+        else await _scrobblerService.UpdateNowPlayingAsync(CreateTestSong());
+
         _httpMessageHandler.Requests.Should().BeEmpty();
     }
-    [Fact]
-    public async Task ScrobbleAsync_WhenApiCallFails_ReturnsFalse()
-    {
-        SetupValidCredentials();
-        SetupHttpResponse(HttpStatusCode.BadRequest);
 
-        var result = await _scrobblerService.ScrobbleAsync(CreateTestSong(), DateTime.UtcNow);
-
-        result.Should().BeFalse();
-        _httpMessageHandler.Requests.Should().HaveCount(1);
-    }
     [Fact]
-    public async Task ApiCall_WhenHttpCallThrowsException_ReturnsFalse()
+    public async Task UpdateNowPlayingAsync_WhenHttpCallThrows_DoesNotThrow()
     {
         SetupValidCredentials();
         _httpMessageHandler.SendAsyncFunc = (_, _) => throw new HttpRequestException("Network error");
 
-        var result = await _scrobblerService.UpdateNowPlayingAsync(CreateTestSong());
+        await FluentActions.Awaiting(() => _scrobblerService.UpdateNowPlayingAsync(CreateTestSong())).Should().NotThrowAsync();
+    }
 
-        result.Should().BeFalse();
+    [Fact]
+    public async Task SubmitPendingAsync_RunsAtTheSameTime_SendsEachListenOnce()
+    {
+        SetupValidCredentials();
+        var firstRequest = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        _httpMessageHandler.SendAsyncFunc = async (_, _) =>
+        {
+            firstRequest.TrySetResult();
+            await release.Task;
+            return new HttpResponseMessage(HttpStatusCode.OK)
+            { Content = new StringContent(SuccessfulResponse, Encoding.UTF8, "application/xml") };
+        };
+        await SeedPendingListensAsync((1, DateTime.UtcNow.AddMinutes(-10)), (2, DateTime.UtcNow.AddMinutes(-5)));
+
+        // The queue run started by a listen reaching the threshold, while the retry loop runs the queue too.
+        var realTime = _scrobblerService.SubmitPendingAsync(CancellationToken.None);
+        await firstRequest.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        var retry = _scrobblerService.SubmitPendingAsync(CancellationToken.None);
+        release.SetResult();
+        await Task.WhenAll(realTime, retry).WaitAsync(TimeSpan.FromSeconds(5));
+
+        _httpMessageHandler.Requests.Should().HaveCount(2);
     }
     [Fact]
     public async Task UpdateNowPlayingAsync_WithMinimalSongData_SendsCorrectParameters()
@@ -186,16 +215,18 @@ public class LastFmScrobblerServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task ScrobbleAsync_SendsMusicBrainzIdTrackNumberAndDifferingAlbumArtist()
+    public async Task SubmitPendingAsync_SendsMusicBrainzIdTrackNumberAndDifferingAlbumArtist()
     {
         var song = CreateTestSong();
         song.MusicBrainzTrackId = "33333333-3333-3333-3333-333333333333";
         song.TrackNumber = 4;
-        song.Album!.ArtistName = "Various Artists";
+        song.Album!.AlbumArtists.Clear();
+        song.Album.AlbumArtists.Add(new AlbumArtist { Artist = new Artist { Name = "Various Artists" }, Order = 0 });
+        song.Album.SyncDenormalizedFields();
         SetupValidCredentials();
         SetupHttpResponse(HttpStatusCode.OK);
 
-        await _scrobblerService.ScrobbleAsync(song, DateTime.UtcNow);
+        await ScrobbleAsync(song, DateTime.UtcNow);
 
         _capturedRequestParams.Should().Contain("mbid", "33333333-3333-3333-3333-333333333333")
             .And.Contain("trackNumber", "4")
@@ -225,7 +256,7 @@ public class LastFmScrobblerServiceTests : IDisposable
     [InlineData(SuccessfulResponse)]
     [InlineData("<lfm status='failed'><error code='6'>Invalid parameters</error></lfm>")]
     [InlineData("<lfm status='ok'><scrobbles accepted='0' ignored='1'><scrobble><ignoredMessage code='3'>Timestamp too old</ignoredMessage></scrobble></scrobbles></lfm>")]
-    public async Task ProcessPendingListensAsync_AcknowledgedOrPermanentlyRejectedListensDoNotBlockQueue(string firstResponse)
+    public async Task SubmitPendingAsync_AcknowledgedOrPermanentlyRejectedListensDoNotBlockQueue(string firstResponse)
     {
         _settingsService.Set(CoreSettings.LastFmScrobbling, true);
         SetupValidCredentials();
@@ -235,8 +266,8 @@ public class LastFmScrobblerServiceTests : IDisposable
 
         await SeedPendingListensAsync((1, DateTime.UtcNow.AddMinutes(-10)), (2, DateTime.UtcNow.AddMinutes(-5)));
 
-        IListenSubmitter sut = CreateService();
-        await sut.ProcessPendingListensAsync(CancellationToken.None);
+        var sut = CreateService();
+        await sut.SubmitPendingAsync(CancellationToken.None);
 
         await using var verify = _dbHelper.ContextFactory.CreateDbContext();
         (await verify.ListenHistory.FindAsync(1L))!.IsScrobbled.Should().BeTrue();
@@ -262,7 +293,7 @@ public class LastFmScrobblerServiceTests : IDisposable
     [InlineData(HttpStatusCode.BadRequest, "<lfm status='failed'><error code='16'>Temporary error</error></lfm>")]
     [InlineData(HttpStatusCode.OK, "<html>Unexpected proxy response</html>")]
     [InlineData(HttpStatusCode.OK, "")]
-    public async Task ProcessPendingListensAsync_RecoverableFailurePreservesRemainingListensForRetry(HttpStatusCode status, string body)
+    public async Task SubmitPendingAsync_RecoverableFailurePreservesRemainingListensForRetry(HttpStatusCode status, string body)
     {
         _settingsService.Set(CoreSettings.LastFmScrobbling, true);
         SetupValidCredentials();
@@ -273,8 +304,8 @@ public class LastFmScrobblerServiceTests : IDisposable
 
         await SeedPendingListensAsync((100, DateTime.UtcNow.AddMinutes(-30)), (101, DateTime.UtcNow.AddMinutes(-20)), (102, DateTime.UtcNow.AddMinutes(-10)));
 
-        IListenSubmitter sut = CreateService();
-        await sut.ProcessPendingListensAsync(CancellationToken.None);
+        var sut = CreateService();
+        await sut.SubmitPendingAsync(CancellationToken.None);
 
         await using var verify = _dbHelper.ContextFactory.CreateDbContext();
         (await verify.ListenHistory.FindAsync(100L))!.IsScrobbled.Should().BeTrue();
@@ -284,35 +315,34 @@ public class LastFmScrobblerServiceTests : IDisposable
             _httpMessageHandler.Requests.Should().HaveCount(2);
 
         SetupHttpResponse(HttpStatusCode.OK);
-        await sut.ProcessPendingListensAsync(CancellationToken.None);
+        await sut.SubmitPendingAsync(CancellationToken.None);
         (await verify.ListenHistory.AllAsync(listen => listen.IsScrobbled)).Should().BeTrue();
     }
 
     [Fact]
-    public async Task ScrobbleAsync_UtcTimestamp_RemainsUtcAfterSqliteDropsKind()
+    public async Task SubmitPendingAsync_ListenTime_IsReadBackAsUtc()
     {
         SetupValidCredentials();
         SetupHttpResponse(HttpStatusCode.OK);
 
-        await _scrobblerService.ScrobbleAsync(CreateTestSong(), new DateTime(2023, 1, 1, 12, 0, 0, DateTimeKind.Unspecified));
+        await ScrobbleAsync(CreateTestSong(), new DateTime(2023, 1, 1, 12, 0, 0, DateTimeKind.Unspecified));
 
         _capturedRequestParams!["timestamp"].Should().Be("1672574400");
     }
 
-    [Fact]
-    public async Task UpdateNowPlayingAsync_IgnoredTrack_ReturnsFalse()
+    // A listen reaching the threshold is sent through the queue, as the coordinator does.
+    private async Task ScrobbleAsync(Song song, DateTime startTime)
     {
-        SetupValidCredentials();
-        _httpMessageHandler.RespondSequence((HttpStatusCode.OK,
-            "<lfm status='ok'><nowplaying><ignoredMessage code='2'>Ignored track</ignoredMessage></nowplaying></lfm>"));
-
-        (await _scrobblerService.UpdateNowPlayingAsync(CreateTestSong())).Should().BeFalse();
+        await SeedPendingListensAsync(song, (1, startTime));
+        await _scrobblerService.SubmitPendingAsync(CancellationToken.None);
     }
 
-    private async Task SeedPendingListensAsync(params (long Id, DateTime Timestamp)[] listens)
+    private Task SeedPendingListensAsync(params (long Id, DateTime Timestamp)[] listens) =>
+        SeedPendingListensAsync(CreateTestSong(), listens);
+
+    private async Task SeedPendingListensAsync(Song song, params (long Id, DateTime Timestamp)[] listens)
     {
         using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var song = CreateTestSong();
         song.FilePath = "C:/Music/song.mp3";
         song.Folder = new Folder { Name = "Music", Path = "C:/Music" };
         context.ListenHistory.AddRange(listens.Select(listen => new ListenHistory

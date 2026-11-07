@@ -20,6 +20,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     private readonly ILogger<DiscordPresenceService> _logger;
     private readonly IMusicPlaybackService _playbackService;
     private readonly IAlbumCoverService _albumCoverService;
+    private readonly ISettingsService _settingsService;
     private readonly Func<string, DiscordRpcClient> _createClient;
     private readonly object _clientLock = new();
     private DiscordRpcClient? _client;
@@ -36,20 +37,21 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     private Timer? _debounceTimer;
 
     public DiscordPresenceService(IConfiguration configuration, ILogger<DiscordPresenceService> logger,
-        IMusicPlaybackService playbackService, IAlbumCoverService albumCoverService)
-        : this(configuration, logger, playbackService, albumCoverService, appId => new DiscordRpcClient(appId, pipe: -1,
-            logger: new DiscordLoggerAdapter(logger), autoEvents: true,
+        IMusicPlaybackService playbackService, IAlbumCoverService albumCoverService, ISettingsService settingsService)
+        : this(configuration, logger, playbackService, albumCoverService, settingsService, appId => new DiscordRpcClient(appId,
+            pipe: -1, logger: new DiscordLoggerAdapter(logger), autoEvents: true,
             client: new SandboxAwareDiscordPipeClient { Logger = new DiscordLoggerAdapter(logger) }))
     {
     }
 
     internal DiscordPresenceService(IConfiguration configuration, ILogger<DiscordPresenceService> logger,
-        IMusicPlaybackService playbackService, IAlbumCoverService albumCoverService,
+        IMusicPlaybackService playbackService, IAlbumCoverService albumCoverService, ISettingsService settingsService,
         Func<string, DiscordRpcClient> createClient)
     {
         _logger = logger;
         _playbackService = playbackService;
         _albumCoverService = albumCoverService;
+        _settingsService = settingsService;
         _createClient = createClient;
         _discordAppId = configuration["Discord:AppId"];
 
@@ -57,7 +59,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
             _logger.LogWarning("Discord AppId is not configured. Discord Rich Presence will be disabled.");
     }
 
-    public string Name => "Discord";
+    public bool IsEnabled => _settingsService.Get(CoreSettings.DiscordRichPresence);
 
     public Task InitializeAsync()
     {
@@ -111,7 +113,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
         return Task.CompletedTask;
     }
 
-    public Task OnTrackChangedAsync(Song song, long listenHistoryId)
+    public Task OnTrackChangedAsync(Song song)
     {
         _currentSong = song;
         _currentProgress = TimeSpan.Zero;
@@ -279,11 +281,6 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
 
     internal static bool IsOutOfSync(Timestamps? timestamps, TimeSpan progress, double playbackRate, DateTime utcNow) =>
         timestamps?.Start is { } start && ((utcNow - start) * playbackRate - progress).Duration() > SyncTolerance;
-
-    public Task OnTrackEligibleForScrobblingAsync(
-        Song song,
-        long listenHistoryId,
-        DateTime listenStartedUtc) => Task.CompletedTask;
 
     public ValueTask DisposeAsync()
     {

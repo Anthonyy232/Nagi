@@ -16,16 +16,14 @@ using Nagi.Core.Settings;
 namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
-///     Handles HTTP communication with ListenBrainz for listen submission and token validation.
-///     Also implements <see cref="IListenSubmitter" /> so <see cref="OfflineScrobbleService" />
-///     can fan out queue processing to this destination.
+///     Sends listens and "now playing" to ListenBrainz, for a user token with scrobbling or "now playing" turned on,
+///     and checks tokens. Only listens since scrobbling was turned on are sent.
 /// </summary>
 public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IListenSubmitter
 {
     private const string DefaultBaseUrl = "https://api.listenbrainz.org";
     private const string SubmitListensPath = "/1/submit-listens";
     private const string ValidateTokenPath = "/1/validate-token";
-    private const string ClientName = "Nagi";
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -38,6 +36,7 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
     private readonly ILogger<ListenBrainzScrobblerService> _logger;
     private readonly ISettingsService _settingsService;
     private readonly IAppInfoService _appInfoService;
+    private readonly SemaphoreSlim _submitLock = new(1, 1);
 
     public ListenBrainzScrobblerService(
         IHttpClientFactory httpClientFactory,
@@ -55,34 +54,55 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
         _logger = logger;
     }
 
-    public string Id => ServiceProviderIds.ListenBrainz;
+    public string Name => "ListenBrainz";
 
-    public async Task<bool> IsEnabledAsync()
+    public async Task UpdateNowPlayingAsync(Song song)
     {
-        var token = await _settingsService.GetListenBrainzUserTokenAsync().ConfigureAwait(false);
-        if (string.IsNullOrEmpty(token)) return false;
-        return _settingsService.Get(CoreSettings.ListenBrainzScrobbling);
+        if (!_settingsService.Get(CoreSettings.ListenBrainzNowPlaying)) return;
+        try
+        {
+            await SubmitAsync(song, "playing_now", listenedAt: null).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to update ListenBrainz 'Now Playing' for track {TrackTitle}.", song.Title);
+        }
     }
 
-    public async Task ProcessPendingListensAsync(CancellationToken cancellationToken)
+    public async Task SubmitPendingAsync(CancellationToken cancellationToken)
     {
-        var enabledSince = _settingsService.Get(CoreSettings.ListenBrainzEnabledSinceUtc);
-        if (!enabledSince.HasValue) return;
-
-        await using var ctx = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
-
-        var pending = await ctx.ListenHistory
-            .AsTracking()
-            .Where(lh => lh.IsEligibleForScrobbling
-                         && !lh.IsSubmittedToListenBrainz
-                         && lh.ListenTimestampUtc >= enabledSince.Value)
-            .Include(lh => lh.Song).ThenInclude(s => s.Album)
-            .OrderBy(lh => lh.ListenTimestampUtc)
-            .ToListAsync(cancellationToken).ConfigureAwait(false);
-
-        foreach (var chunk in pending.Chunk(100))
+        if (!_settingsService.Get(CoreSettings.ListenBrainzScrobbling)) return;
+        // Connecting sets it; a token saved before that existed starts from the first time scrobbling runs, so the
+        // user's whole history isn't sent.
+        if (_settingsService.Get(CoreSettings.ListenBrainzEnabledSinceUtc) is not { } enabledSince)
         {
-            if (!await ProcessBatchAsync(ctx, chunk, cancellationToken).ConfigureAwait(false)) break;
+            enabledSince = DateTime.UtcNow;
+            _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, enabledSince);
+        }
+
+        await _submitLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            if (string.IsNullOrEmpty(await _settingsService.GetListenBrainzUserTokenAsync().ConfigureAwait(false))) return;
+            await using var ctx = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+
+            var pending = await ctx.ListenHistory
+                .AsTracking()
+                .Where(lh => lh.IsEligibleForScrobbling
+                             && !lh.IsSubmittedToListenBrainz
+                             && lh.ListenTimestampUtc >= enabledSince)
+                .Include(lh => lh.Song).ThenInclude(s => s.Album)
+                .OrderBy(lh => lh.ListenTimestampUtc)
+                .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+            foreach (var chunk in pending.Chunk(100))
+            {
+                if (!await ProcessBatchAsync(ctx, chunk, cancellationToken).ConfigureAwait(false)) break;
+            }
+        }
+        finally
+        {
+            _submitLock.Release();
         }
     }
 
@@ -114,34 +134,12 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
             _logger.LogWarning("ListenBrainz permanently rejected listen {Id}; dropping it from the queue.", entries[0].Id);
         foreach (var entry in entries)
             entry.IsSubmittedToListenBrainz = true;
-        // Persist acknowledgements even if shutdown cancels further submissions.
+        // Saved even if shutdown cancels the rest, so a listen ListenBrainz already has isn't sent again.
         await context.SaveChangesAsync(CancellationToken.None).ConfigureAwait(false);
         return true;
     }
 
-    private enum SubmissionOutcome
-    {
-        TransientFailure = 0,
-        Success,
-        PermanentFailure
-    }
-
-    public async Task<bool> UpdateNowPlayingAsync(Song song) =>
-        await SubmitAsync(song, "playing_now", listenedAt: null).ConfigureAwait(false) == SubmissionOutcome.Success;
-
-    public async Task<bool> SubmitListenAsync(Song song, DateTime playStartTimeUtc) =>
-        await SubmitAsync(song, "single", ToUnixSeconds(playStartTimeUtc)).ConfigureAwait(false)
-            == SubmissionOutcome.Success;
-
-    private static long ToUnixSeconds(DateTime timestamp)
-    {
-        var utc = timestamp.Kind == DateTimeKind.Unspecified
-            ? DateTime.SpecifyKind(timestamp, DateTimeKind.Utc)
-            : timestamp.ToUniversalTime();
-        return new DateTimeOffset(utc).ToUnixTimeSeconds();
-    }
-
-    public async Task<ValidateTokenResult> ValidateTokenAsync(string token, string? serverUrl = null)
+    public async Task<ValidateTokenResult> ValidateTokenAsync(string token, string? serverUrl)
     {
         if (string.IsNullOrWhiteSpace(token))
             return new ValidateTokenResult(false, null, Resources.Strings.ListenBrainz_EmptyToken);
@@ -205,7 +203,7 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
 
     private Task<SubmissionOutcome> SubmitBatchAsync(IReadOnlyList<ListenHistory> entries, CancellationToken cancellationToken)
     {
-        var listens = entries.Select(entry => CreateListen(entry.Song, ToUnixSeconds(entry.ListenTimestampUtc)))
+        var listens = entries.Select(entry => CreateListen(entry.Song, new DateTimeOffset(entry.ListenTimestampUtc).ToUnixTimeSeconds()))
             .OfType<ListenBrainzListen>().ToList();
         return listens.Count == 0
             ? Task.FromResult(SubmissionOutcome.PermanentFailure)
@@ -236,8 +234,8 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
                     ReleaseGroupMbid = song.MusicBrainzReleaseGroupId,
                     TrackNumber = song.TrackNumber,
                     DurationMs = song.Duration > TimeSpan.Zero ? (long)song.Duration.TotalMilliseconds : null,
-                    MediaPlayer = ClientName,
-                    SubmissionClient = ClientName,
+                    MediaPlayer = _appInfoService.GetAppName(),
+                    SubmissionClient = _appInfoService.GetAppName(),
                     SubmissionClientVersion = _appInfoService.GetAppVersion()
                 }
             }

@@ -30,7 +30,7 @@ public sealed partial class PlaylistSongViewPage : SongListPage
         base.OnNavigatedTo(e);
 
         var navParam = (PlaylistSongViewNavigationParameter)e.Parameter;
-        await ViewModel.InitializeAsync(navParam.Title, navParam.PlaylistId, navParam.CoverImageUri, navParam.IsFromServer);
+        await ViewModel.InitializeAsync(navParam.Title, navParam.PlaylistId, navParam.CoverImageUri);
     }
 
     private void SongsListView_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)

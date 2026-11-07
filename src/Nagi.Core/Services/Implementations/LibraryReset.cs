@@ -41,7 +41,7 @@ public sealed class LibraryReset : ILibraryReset
     public async Task ClearAllLibraryDataAsync()
     {
         _writeLock.CancelActiveScan("library data reset");
-        _writeLock.CancelServerSyncs();
+        _musicServers.CancelSyncs();
         await _writeLock.WaitAsync(_writeLock.ShutdownToken).ConfigureAwait(false);
         try
         {

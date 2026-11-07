@@ -8,6 +8,7 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using static Nagi.Core.Services.Implementations.MusicServers.MusicServerHttp;
 
 namespace Nagi.Core.Services.Implementations.MusicServers;
 
@@ -17,7 +18,6 @@ namespace Nagi.Core.Services.Implementations.MusicServers;
 /// </summary>
 internal sealed class JellyfinClient : IMusicServerClient
 {
-    private const int PageSize = 500;
     private const string SongFields = "Genres,DateCreated,MediaSources,ProviderIds,Path,People";
     private static readonly Version MinimumVersion = new(10, 11);
 
@@ -27,7 +27,6 @@ internal sealed class JellyfinClient : IMusicServerClient
     private readonly string _accessToken;
     private readonly string _authorizationParameters;
 
-    /// <param name="accessToken">The user's access token, or empty before signing in.</param>
     public JellyfinClient(HttpClient httpClient, string baseUrl, string userId, string accessToken,
         JellyfinClientIdentity identity)
     {
@@ -35,30 +34,34 @@ internal sealed class JellyfinClient : IMusicServerClient
         _baseUrl = baseUrl;
         _userId = userId;
         _accessToken = accessToken;
-        _authorizationParameters = AuthorizationParameters(identity, accessToken);
+        _authorizationParameters = $"{AuthorizationParameters(identity)}, Token=\"{Quote(accessToken)}\"";
     }
 
     /// <summary>
     ///     Signs in and checks the account can see a music library.
     /// </summary>
-    public static async Task<JellyfinSignIn> SignInAsync(HttpClient httpClient, string baseUrl, string userName,
-        string password, JellyfinClientIdentity identity)
+    internal static async Task<ServerSignIn> SignInAsync(HttpClient httpClient, MusicServer server, string password,
+        JellyfinClientIdentity identity)
     {
-        var anonymous = new JellyfinClient(httpClient, baseUrl, string.Empty, string.Empty, identity);
-        var info = await anonymous.SendAsync<PublicSystemInfo>(HttpMethod.Get, "/System/Info/Public", null,
-            CancellationToken.None).ConfigureAwait(false);
+        var baseUrl = server.BaseUrl;
+        // Before signing in, requests introduce Nagi without a token.
+        using var publicInfoRequest = new HttpRequestMessage(HttpMethod.Get, baseUrl + "/System/Info/Public");
+        var info = await SendAnonymousAsync<PublicSystemInfo>(httpClient, publicInfoRequest, baseUrl, identity).ConfigureAwait(false);
         if (!IsSupported(info.Version))
             throw new MusicServerException(MusicServerError.ServerTooOld, $"{baseUrl} runs Jellyfin {info.Version}.");
 
-        var result = await anonymous.SendAsync<AuthenticationResult>(HttpMethod.Post, "/Users/AuthenticateByName",
-            JsonContent.Create(new { Username = userName, Pw = password }), CancellationToken.None).ConfigureAwait(false);
+        using var signInRequest = new HttpRequestMessage(HttpMethod.Post, baseUrl + "/Users/AuthenticateByName")
+        {
+            Content = JsonContent.Create(new { Username = server.UserName, Pw = password })
+        };
+        var result = await SendAnonymousAsync<AuthenticationResult>(httpClient, signInRequest, baseUrl, identity).ConfigureAwait(false);
 
         var client = new JellyfinClient(httpClient, baseUrl, result.User.Id, result.AccessToken, identity);
         if ((await client.GetMusicLibraryIdsAsync(CancellationToken.None).ConfigureAwait(false)).Count == 0)
-            throw new MusicServerException(MusicServerError.NoMusicLibrary, $"{userName} can't see a music library on {baseUrl}.");
+            throw new MusicServerException(MusicServerError.NoMusicLibrary, $"{server.UserName} can't see a music library on {baseUrl}.");
 
-        var name = string.IsNullOrWhiteSpace(info.ServerName) ? new Uri(baseUrl).Host : info.ServerName;
-        return new JellyfinSignIn(name, result.User.Id, result.AccessToken);
+        // The access token stands in for the password, which isn't kept.
+        return new ServerSignIn(ServerName(info.ServerName, baseUrl), server.UserName, result.User.Id, result.AccessToken);
     }
 
     public async IAsyncEnumerable<IReadOnlyList<ServerSongMetadata>> GetSongsAsync(
@@ -94,7 +97,7 @@ internal sealed class JellyfinClient : IMusicServerClient
                 null, cancellationToken).ConfigureAwait(false);
             // Deleted since it was listed.
             if (response.StatusCode == HttpStatusCode.NotFound) continue;
-            var songs = await ReadAsync<ItemsResult>(response, cancellationToken).ConfigureAwait(false);
+            var songs = await ReadAsync<ItemsResult>(response, _baseUrl, cancellationToken).ConfigureAwait(false);
             playlists.Add(new ServerPlaylist(playlist.Id, playlist.Name ?? string.Empty, playlist.DateCreated?.UtcDateTime,
                 songs.Items.Select(song => song.Id).ToList()));
         }
@@ -105,8 +108,8 @@ internal sealed class JellyfinClient : IMusicServerClient
     public async Task<byte[]?> GetCoverArtAsync(string coverArtId, CancellationToken cancellationToken)
     {
         using var response = await SendCoreAsync(HttpMethod.Get,
-            $"/Items/{Uri.EscapeDataString(coverArtId)}/Images/Primary?maxWidth=600&quality=90", null,
-            cancellationToken).ConfigureAwait(false);
+            $"/Items/{Uri.EscapeDataString(coverArtId)}/Images/Primary?maxWidth={CoverSize.ToString(CultureInfo.InvariantCulture)}&quality=90",
+            null, cancellationToken).ConfigureAwait(false);
         if (response.StatusCode == HttpStatusCode.NotFound) return null;
         EnsureSuccess(response);
         return await response.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
@@ -129,7 +132,7 @@ internal sealed class JellyfinClient : IMusicServerClient
         // Jellyfin answers 404 for a song without lyrics.
         if (response.StatusCode == HttpStatusCode.NotFound) return null;
 
-        var lines = (await ReadAsync<LyricsResult>(response, cancellationToken).ConfigureAwait(false)).Lyrics;
+        var lines = (await ReadAsync<LyricsResult>(response, _baseUrl, cancellationToken).ConfigureAwait(false)).Lyrics;
         return lines is null
             ? null
             : LyricsFormatter.Format(lines.Select(line =>
@@ -138,7 +141,7 @@ internal sealed class JellyfinClient : IMusicServerClient
 
     public async Task ReportPlayedAsync(string songId, DateTime playedUtc, CancellationToken cancellationToken)
     {
-        var datePlayed = DateTime.SpecifyKind(playedUtc, DateTimeKind.Utc).ToString("O", CultureInfo.InvariantCulture);
+        var datePlayed = playedUtc.ToString("O", CultureInfo.InvariantCulture);
         using var response = await SendCoreAsync(HttpMethod.Post,
             $"/UserPlayedItems/{Uri.EscapeDataString(songId)}?userId={_userId}&datePlayed={Uri.EscapeDataString(datePlayed)}",
             null, cancellationToken).ConfigureAwait(false);
@@ -178,22 +181,34 @@ internal sealed class JellyfinClient : IMusicServerClient
         CancellationToken cancellationToken)
     {
         using var response = await SendCoreAsync(method, pathAndQuery, content, cancellationToken).ConfigureAwait(false);
-        if (response.StatusCode == HttpStatusCode.NotFound)
-            throw new MusicServerException(MusicServerError.UnsupportedServer, $"{_baseUrl} has no Jellyfin API.");
-        return await ReadAsync<T>(response, cancellationToken).ConfigureAwait(false);
+        return await ReadApiAsync<T>(response, _baseUrl, cancellationToken).ConfigureAwait(false);
     }
 
-    private async Task<T> ReadAsync<T>(HttpResponseMessage response, CancellationToken cancellationToken)
+    private static async Task<T> SendAnonymousAsync<T>(HttpClient httpClient, HttpRequestMessage request, string baseUrl,
+        JellyfinClientIdentity identity)
     {
-        EnsureSuccess(response);
+        request.Headers.Authorization = new AuthenticationHeaderValue("MediaBrowser", AuthorizationParameters(identity));
+        using var response = await MusicServerHttp.SendAsync(httpClient, request, baseUrl, CancellationToken.None).ConfigureAwait(false);
+        return await ReadApiAsync<T>(response, baseUrl, CancellationToken.None).ConfigureAwait(false);
+    }
+
+    // An API every Jellyfin server has answers 404 only when the address isn't a Jellyfin server.
+    private static Task<T> ReadApiAsync<T>(HttpResponseMessage response, string baseUrl, CancellationToken cancellationToken) =>
+        response.StatusCode == HttpStatusCode.NotFound
+            ? throw new MusicServerException(MusicServerError.UnsupportedServer, $"{baseUrl} has no Jellyfin API.")
+            : ReadAsync<T>(response, baseUrl, cancellationToken);
+
+    private static async Task<T> ReadAsync<T>(HttpResponseMessage response, string baseUrl, CancellationToken cancellationToken)
+    {
+        EnsureSuccess(response, baseUrl);
         try
         {
             return await response.Content.ReadFromJsonAsync<T>(cancellationToken).ConfigureAwait(false)
-                   ?? throw new MusicServerException(MusicServerError.UnsupportedServer, $"{_baseUrl} sent an empty answer.");
+                   ?? throw new MusicServerException(MusicServerError.UnsupportedServer, $"{baseUrl} sent an empty answer.");
         }
         catch (JsonException ex)
         {
-            throw new MusicServerException(MusicServerError.UnsupportedServer, $"{_baseUrl} didn't answer in Jellyfin JSON.", ex);
+            throw new MusicServerException(MusicServerError.UnsupportedServer, $"{baseUrl} didn't answer in Jellyfin JSON.", ex);
         }
     }
 
@@ -205,7 +220,9 @@ internal sealed class JellyfinClient : IMusicServerClient
         return await MusicServerHttp.SendAsync(_httpClient, request, _baseUrl, cancellationToken).ConfigureAwait(false);
     }
 
-    private void EnsureSuccess(HttpResponseMessage response)
+    private void EnsureSuccess(HttpResponseMessage response) => EnsureSuccess(response, _baseUrl);
+
+    private static void EnsureSuccess(HttpResponseMessage response, string baseUrl)
     {
         if (response.IsSuccessStatusCode) return;
         var error = response.StatusCode switch
@@ -214,18 +231,15 @@ internal sealed class JellyfinClient : IMusicServerClient
             HttpStatusCode.NotFound => MusicServerError.NotFound,
             _ => MusicServerError.ServerError
         };
-        throw new MusicServerException(error, $"{_baseUrl} answered {(int)response.StatusCode}.");
+        throw new MusicServerException(error, $"{baseUrl} answered {(int)response.StatusCode}.");
     }
 
-    private static string AuthorizationParameters(JellyfinClientIdentity identity, string accessToken)
-    {
-        var parameters = $"Client=\"{Quote(identity.Name)}\", Device=\"{Quote(identity.DeviceName)}\", " +
-                         $"DeviceId=\"{Quote(identity.DeviceId)}\", Version=\"{Quote(identity.Version)}\"";
-        return accessToken.Length == 0 ? parameters : $"{parameters}, Token=\"{Quote(accessToken)}\"";
+    private static string AuthorizationParameters(JellyfinClientIdentity identity) =>
+        $"Client=\"{Quote(identity.Name)}\", Device=\"{Quote(identity.DeviceName)}\", " +
+        $"DeviceId=\"{Quote(identity.DeviceId)}\", Version=\"{Quote(identity.Version)}\"";
 
-        // Jellyfin reads the values URL-encoded, which also keeps quotes and commas from ending them early.
-        static string Quote(string value) => Uri.EscapeDataString(value);
-    }
+    // Jellyfin reads the values URL-encoded, which also keeps quotes and commas from ending them early.
+    private static string Quote(string value) => Uri.EscapeDataString(value);
 
     private static bool IsSupported(string? version)
     {
@@ -242,7 +256,7 @@ internal sealed class JellyfinClient : IMusicServerClient
         {
             RemoteId = item.Id,
             // The file's own extension; the container name is vaguer, such as "ogg" for Opus or "asf" for WMA.
-            FileExtension = Path.GetExtension(item.Path)?.TrimStart('.') is { Length: > 0 } extension ? extension : null,
+            FileExtension = NullIfEmpty(Path.GetExtension(item.Path)?.TrimStart('.')),
             Title = item.Name ?? string.Empty,
             Album = item.Album,
             Artists = item.Artists ?? [],
@@ -255,8 +269,8 @@ internal sealed class JellyfinClient : IMusicServerClient
             Bitrate = source?.Bitrate / 1000,
             SampleRate = audio?.SampleRate,
             Channels = audio?.Channels,
-            Composer = string.Join(", ", item.People?.Where(person => person.Type == "Composer").Select(person => person.Name) ?? [])
-                is { Length: > 0 } composer ? composer : null,
+            Composer = NullIfEmpty(string.Join(", ",
+                item.People?.Where(person => person.Type == "Composer").Select(person => person.Name) ?? [])),
             // Jellyfin normalizes toward -18 LUFS, the reference ReplayGain 2.0 uses, so its gain carries over unchanged.
             ReplayGainTrackGain = item.NormalizationGain,
             MusicBrainzTrackId = ProviderId(item, "MusicBrainzRecording") ?? ProviderId(item, "MusicBrainzTrack"),
@@ -273,7 +287,7 @@ internal sealed class JellyfinClient : IMusicServerClient
     }
 
     private static string? ProviderId(JellyfinItem item, string provider) =>
-        item.ProviderIds?.GetValueOrDefault(provider) is { Length: > 0 } id ? id : null;
+        NullIfEmpty(item.ProviderIds?.GetValueOrDefault(provider));
 
     private sealed record PublicSystemInfo(string? ServerName, string? Version);
 
@@ -323,7 +337,20 @@ internal sealed class JellyfinClient : IMusicServerClient
     }
 }
 
-internal sealed record JellyfinSignIn(string ServerName, string UserId, string AccessToken);
+internal sealed class JellyfinConnector(IAppInfoService appInfo) : MusicServerConnector
+{
+    public override bool SupportsApiKey => false;
+
+    public override Task<ServerSignIn> SignInAsync(HttpClient httpClient, MusicServer server, string secret) =>
+        JellyfinClient.SignInAsync(httpClient, server, secret, Identity(server));
+
+    // A Jellyfin server is always added with the ID of the user it signed in as.
+    public override IMusicServerClient CreateClient(HttpClient httpClient, MusicServer server, string secret) =>
+        new JellyfinClient(httpClient, server.BaseUrl, server.UserId!, secret, Identity(server));
+
+    private JellyfinClientIdentity Identity(MusicServer server) =>
+        new(appInfo.GetAppName(), appInfo.GetAppVersion(), Environment.MachineName, server.FolderId.ToString("N"));
+}
 
 /// <summary>
 ///     How Nagi introduces itself to Jellyfin, which keeps one sign-in per <paramref name="DeviceId" />, so the ID must

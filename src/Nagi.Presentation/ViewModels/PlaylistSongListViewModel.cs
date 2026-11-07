@@ -77,7 +77,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         RemoveSelectedSongsFromPlaylistCommand.NotifyCanExecuteChanged();
     }
 
-    public async Task InitializeAsync(string title, Guid playlistId, string? coverImageUri = null, bool isFromServer = false)
+    public async Task InitializeAsync(string title, Guid playlistId, string? coverImageUri = null)
     {
         if (_isDisposed) return;
         ResetState();
@@ -86,8 +86,19 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
 
         PageTitle = title;
         _currentPlaylistId = playlistId;
-        CanEditPlaylist = !isFromServer;
         CoverImageUri = coverImageUri;
+        var generation = _playlistGeneration;
+        try
+        {
+            var playlist = await _libraryReader.GetPlaylistByIdAsync(playlistId);
+            if (_isDisposed || generation != _playlistGeneration) return;
+            // A server's playlist follows the server at each sync, so it can't be changed here.
+            CanEditPlaylist = playlist?.IsFromServer != true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load playlist {PlaylistId}", playlistId);
+        }
 
         await RefreshOrSortSongsCommand.ExecuteAsync(null);
         OnPropertyChanged(nameof(IsReorderingEnabled));

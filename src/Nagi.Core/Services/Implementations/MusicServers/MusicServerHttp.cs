@@ -4,6 +4,16 @@ namespace Nagi.Core.Services.Implementations.MusicServers;
 
 internal static class MusicServerHttp
 {
+    public const int PageSize = 500;
+    public const int CoverSize = 600;
+
+    /// <summary>
+    ///     The server's own name, or its host when it has none.
+    /// </summary>
+    public static string ServerName(string? name, string baseUrl) => string.IsNullOrWhiteSpace(name) ? new Uri(baseUrl).Host : name;
+
+    public static string? NullIfEmpty(string? value) => string.IsNullOrWhiteSpace(value) ? null : value;
+
     /// <summary>
     ///     Turns what the user typed into a base URL such as <c>https://music.example.com:4533/navidrome</c>.
     ///     An address without a scheme means HTTPS: falling back to HTTP on its own would send the sign-in

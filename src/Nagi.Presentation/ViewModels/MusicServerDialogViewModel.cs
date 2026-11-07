@@ -80,16 +80,14 @@ public sealed partial class MusicServerDialogViewModel : ObservableObject
     public partial bool IsBusy { get; set; }
 
     public bool IsAdding => _signInServer is null;
-    public bool CanChooseSignInMethod => IsAdding && IsOpenSubsonic;
-    public bool UsesApiKey => IsOpenSubsonic && SignInWithApiKey;
+    public bool CanChooseSignInMethod => IsAdding && _musicServers.SupportsApiKey(Kind);
+    public bool UsesApiKey => SignInWithApiKey && _musicServers.SupportsApiKey(Kind);
     public bool AsksForUserName => IsAdding && !UsesApiKey;
     public bool HasError => ErrorMessage is not null;
 
     public bool CanSubmit => !IsBusy
                              && (!IsAdding || !string.IsNullOrWhiteSpace(Address))
                              && (UsesApiKey ? !string.IsNullOrWhiteSpace(ApiKey) : !AsksForUserName || !string.IsNullOrWhiteSpace(UserName));
-
-    private bool IsOpenSubsonic => Kind == MusicServerKind.OpenSubsonic;
 
     public string Title => _signInServer is { } server
         ? ResourceFormatter.Format(Strings.MusicServerDialog_SignInTitle_Format, server.Folder.Name)
@@ -140,7 +138,7 @@ public sealed partial class MusicServerDialogViewModel : ObservableObject
             if (_signInServer is { } server)
                 await _musicServers.SignInAsync(server.FolderId, UsesApiKey ? ApiKey : Password);
             else if (UsesApiKey)
-                AddedServer = await _musicServers.AddWithApiKeyAsync(Address, ApiKey);
+                AddedServer = await _musicServers.AddWithApiKeyAsync(Kind, Address, ApiKey);
             else
                 AddedServer = await _musicServers.AddAsync(Kind, Address, UserName, Password);
             return true;
@@ -148,7 +146,7 @@ public sealed partial class MusicServerDialogViewModel : ObservableObject
         catch (MusicServerException ex)
         {
             _logger.LogWarning(ex, "The music server didn't accept the details.");
-            ErrorMessage = Describe(ex.Error);
+            ErrorMessage = MusicServerErrors.DescribeSignIn(ex.Error, Kind, UsesApiKey, _signInServer);
             return false;
         }
         catch (Exception ex)
@@ -161,37 +159,5 @@ public sealed partial class MusicServerDialogViewModel : ObservableObject
         {
             IsBusy = false;
         }
-    }
-
-    private string Describe(MusicServerError error)
-    {
-        // Signing in again can't change the address or the way of signing in, so the advice is what to do instead.
-        if (_signInServer is not null &&
-            MusicServerErrors.DescribeForServer(error, _signInServer.Folder.Name) is { } advice)
-            return advice;
-
-        return error switch
-        {
-            MusicServerError.InvalidAddress => Strings.MusicServer_Error_InvalidAddress,
-            MusicServerError.Unreachable => Strings.MusicServer_Error_Unreachable,
-            MusicServerError.SecureConnectionFailed => Strings.MusicServer_Error_SecureConnectionFailed,
-            MusicServerError.UnsupportedServer => IsOpenSubsonic
-                ? Strings.MusicServer_Error_NotOpenSubsonic
-                : Strings.MusicServer_Error_NotJellyfin,
-            MusicServerError.ServerTooOld => Strings.MusicServer_Error_JellyfinTooOld,
-            MusicServerError.SignInFailed => UsesApiKey
-                ? Strings.MusicServer_Error_ApiKeyRejected
-                : Strings.MusicServer_Error_SignInFailed,
-            MusicServerError.SignInMethodUnsupported => UsesApiKey
-                ? Strings.MusicServer_Error_ApiKeyUnsupported
-                : Strings.MusicServer_Error_PasswordUnsupported,
-            MusicServerError.NoMusicLibrary => Strings.MusicServer_Error_NoMusicLibrary,
-            MusicServerError.AlreadyAdded => Strings.MusicServer_Error_AlreadyAdded,
-            // Only signing in again checks that an API key is the same account's.
-            MusicServerError.DifferentAccount when _signInServer is { } server =>
-                ResourceFormatter.Format(Strings.MusicServer_Error_DifferentAccount_Format, server.UserName),
-            MusicServerError.SignInNotSaved => Strings.MusicServer_Error_SignInNotSaved,
-            _ => Strings.MusicServer_Error_ServerError
-        };
     }
 }

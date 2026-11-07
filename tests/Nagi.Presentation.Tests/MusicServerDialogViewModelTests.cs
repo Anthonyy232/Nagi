@@ -15,8 +15,11 @@ public class MusicServerDialogViewModelTests
     private readonly IMusicServerService _musicServers = Substitute.For<IMusicServerService>();
     private readonly MusicServerDialogViewModel _viewModel;
 
-    public MusicServerDialogViewModelTests() =>
+    public MusicServerDialogViewModelTests()
+    {
+        _musicServers.SupportsApiKey(MusicServerKind.OpenSubsonic).Returns(true);
         _viewModel = new MusicServerDialogViewModel(_musicServers, NullLogger<MusicServerDialogViewModel>.Instance);
+    }
 
     [Fact]
     public async Task Submit_JellyfinAccountWithoutAPassword_AddsTheServer()
@@ -44,7 +47,7 @@ public class MusicServerDialogViewModelTests
     {
         var refusal = Task.FromException<Folder>(new MusicServerException(error, "refused"));
         _musicServers.AddAsync(default, default!, default!, default!).ReturnsForAnyArgs(refusal);
-        _musicServers.AddWithApiKeyAsync(default!, default!).ReturnsForAnyArgs(refusal);
+        _musicServers.AddWithApiKeyAsync(default, default!, default!).ReturnsForAnyArgs(refusal);
         _viewModel.Kind = kind;
         _viewModel.SignInWithApiKey = signInWithApiKey;
         _viewModel.Address = "music.example.com";

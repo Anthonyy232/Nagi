@@ -32,7 +32,7 @@ public class FolderViewModelTests
             viewModel.LoadFoldersCommand.Cancel();
             token.IsCancellationRequested.Should().BeTrue();
 
-            response.SetResult(new[] { new FolderSummary(new Folder { Name = "Stale folder" }, 2, IsServer: false) });
+            response.SetResult(new[] { new FolderSummary(new Folder { Name = "Stale folder" }, 2, IsFromServer: false) });
             await load;
 
             viewModel.Folders.Should().BeEmpty();
@@ -62,7 +62,7 @@ public class FolderViewModelTests
     {
         var library = new LibraryFakes();
         var folder = new Folder { Name = "Music", Path = @"C:\Music" };
-        library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new FolderSummary(folder, 1, IsServer: false) });
+        library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new FolderSummary(folder, 1, IsFromServer: false) });
         var ui = Substitute.For<IUIService>();
         ui.PickSingleFolderAsync().Returns(@"c:\music\");
         using var viewModel = CreateViewModel(library, ui);
@@ -96,7 +96,7 @@ public class FolderViewModelTests
     {
         var library = new LibraryFakes();
         var folder = new Folder { Name = "Music", Path = @"C:Music" };
-        library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new FolderSummary(folder, 1, IsServer: false) });
+        library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new FolderSummary(folder, 1, IsFromServer: false) });
         library.Folders.RemoveFolderAsync(folder.Id).Returns(true);
         var ui = Substitute.For<IUIService>();
         ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(confirmed);
@@ -114,7 +114,7 @@ public class FolderViewModelTests
     {
         var library = new LibraryFakes();
         var server = new Folder { Name = "Jellyfin", Path = "nagi-server:0123" };
-        library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new FolderSummary(server, 1, IsServer: true) });
+        library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new FolderSummary(server, 1, IsFromServer: true) });
         var musicServers = Substitute.For<IMusicServerService>();
         musicServers.RemoveAsync(server.Id).Returns(true);
         var ui = Substitute.For<IUIService>();
@@ -134,7 +134,7 @@ public class FolderViewModelTests
     {
         var library = new LibraryFakes();
         var server = new Folder { Name = "Navidrome", Path = "nagi-server:0123" };
-        library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new FolderSummary(server, 1, IsServer: true) });
+        library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new FolderSummary(server, 1, IsFromServer: true) });
         var musicServers = Substitute.For<IMusicServerService>();
         musicServers.SyncAsync(server.Id, Arg.Any<IProgress<ScanProgress>?>(), Arg.Any<CancellationToken>()).Returns(
             Task.FromException(new MusicServerException(MusicServerError.SignInFailed, "rejected")),
@@ -157,7 +157,7 @@ public class FolderViewModelTests
     {
         var library = new LibraryFakes();
         var server = new Folder { Name = "Living Room", Path = "nagi-server:0123" };
-        library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new FolderSummary(server, 1, IsServer: true) });
+        library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new FolderSummary(server, 1, IsFromServer: true) });
         var musicServers = Substitute.For<IMusicServerService>();
         musicServers.SyncAsync(server.Id, Arg.Any<IProgress<ScanProgress>?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromException(new MusicServerException(MusicServerError.Unreachable, "timed out")));

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -61,15 +60,15 @@ public sealed class SongInfoViewModel(
                 (Strings.Label_Copyright, song.Copyright)),
             Section(CoreStrings.Label_File,
                 // A server song's path is a library key, not a file, so its server is shown instead.
-                song.IsRemote ? (Strings.Label_Server, song.Folder?.Name) : (Strings.Label_Path, song.FilePath),
-                (Strings.Label_Format, Path.GetExtension(song.FilePath).TrimStart('.').ToUpperInvariant()),
+                song.IsFromServer ? (Strings.Label_Server, song.Folder?.Name) : (Strings.Label_Path, song.FilePath),
+                (Strings.Label_Format, song.FileExtension.TrimStart('.').ToUpperInvariant()),
                 (CoreStrings.Label_Duration, DurationFormatter.Format(song.Duration)),
                 (Strings.Label_Bitrate, Format(Strings.SongInfo_Bitrate_Format, song.Bitrate)),
                 (Strings.Label_SampleRate, Format(Strings.SongInfo_SampleRate_Format, song.SampleRate)),
                 (Strings.Label_Channels, song.Channels?.ToString()),
-                (Strings.Label_FileSize, song.IsRemote ? null : Format(Strings.SongInfo_FileSize_Format, GetFileSizeInMegabytes(song.FilePath))),
+                (Strings.Label_FileSize, song.IsFromServer ? null : Format(Strings.SongInfo_FileSize_Format, GetFileSizeInMegabytes(song.FilePath))),
                 // A server song's creation date is the date its server added it, already shown as Date Added.
-                (CoreStrings.Label_DateCreated, song.IsRemote ? null : FormatDate(song.FileCreatedDate)),
+                (CoreStrings.Label_DateCreated, song.IsFromServer ? null : FormatDate(song.FileCreatedDate)),
                 (CoreStrings.Label_DateModified, FormatDate(song.FileModifiedDate))),
             Section(Strings.SongInfo_Section_Listening,
                 (CoreStrings.Label_DateAdded, FormatDate(song.DateAddedToLibrary)),

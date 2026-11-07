@@ -37,7 +37,7 @@ public class JellyfinClientTests : IDisposable
     {
         RouteServer(version, hasMusicLibrary: true);
 
-        var signIn = () => JellyfinClient.SignInAsync(_httpClient, BaseUrl, "alex", "secret", Identity);
+        var signIn = () => JellyfinClient.SignInAsync(_httpClient, new MusicServer { BaseUrl = BaseUrl, UserName = "alex" }, "secret", Identity);
 
         if (supported)
             await signIn.Should().NotThrowAsync();
@@ -50,9 +50,9 @@ public class JellyfinClientTests : IDisposable
     {
         RouteServer("12.0.0", hasMusicLibrary: true);
 
-        var signIn = await JellyfinClient.SignInAsync(_httpClient, BaseUrl, "alex", "secret", Identity);
+        var signIn = await JellyfinClient.SignInAsync(_httpClient, new MusicServer { BaseUrl = BaseUrl, UserName = "alex" }, "secret", Identity);
 
-        signIn.Should().Be(new JellyfinSignIn("Living Room", "user-1", "token-1"));
+        signIn.Should().Be(new ServerSignIn("Living Room", "alex", "user-1", "token-1"));
         _handler.Requests.Should().OnlyContain(r => !r.Headers.Contains("X-Emby-Authorization") && !r.Headers.Contains("X-Emby-Token"));
         var headers = _handler.Requests.Select(r => r.Headers.GetValues("Authorization").Single()).ToList();
         headers.Should().OnlyContain(h => h.StartsWith("MediaBrowser ") && h.Contains("DeviceId=\"device-1\""));
@@ -64,7 +64,7 @@ public class JellyfinClientTests : IDisposable
     {
         RouteServer("12.0.0", hasMusicLibrary: false);
 
-        var signIn = () => JellyfinClient.SignInAsync(_httpClient, BaseUrl, "alex", "secret", Identity);
+        var signIn = () => JellyfinClient.SignInAsync(_httpClient, new MusicServer { BaseUrl = BaseUrl, UserName = "alex" }, "secret", Identity);
 
         (await signIn.Should().ThrowAsync<MusicServerException>()).Which.Error.Should().Be(MusicServerError.NoMusicLibrary);
     }

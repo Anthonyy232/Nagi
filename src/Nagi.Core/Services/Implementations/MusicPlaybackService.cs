@@ -444,7 +444,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         // Before the listen session starts, so a server song that can't stream isn't credited with any listening time.
         var streamUri = await _musicServers.GetStreamUriAsync(song);
         if (request.IsCancellationRequested) return;
-        if (song.IsRemote && streamUri is null)
+        if (song.IsFromServer && streamUri is null)
         {
             await StopInternalAsync(request);
             ServerSongFailed?.Invoke(song);
