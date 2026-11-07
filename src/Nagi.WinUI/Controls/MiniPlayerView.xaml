@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:media="using:CommunityToolkit.WinUI.Media"
-    xmlns:models="using:Nagi.Core.Library"
+    xmlns:library="using:Nagi.Core.Library"
     xmlns:viewmodels="using:Nagi.Presentation.ViewModels"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:resources="using:Nagi.Presentation.Resources"
@@ -208,7 +208,7 @@
                         VirtualizingStackPanel.VirtualizationMode="Recycling"
                         Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="models:Song">
+                            <DataTemplate x:DataType="library:Song">
                                 <StackPanel>
                                     <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}"
                                                Foreground="{StaticResource MediaOnImageTextPrimaryBrush}"

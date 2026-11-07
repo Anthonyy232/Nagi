@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:constants="using:Nagi.Core.Platform"
+    xmlns:platform="using:Nagi.Core.Platform"
     xmlns:resources="using:Nagi.Presentation.Resources"
     mc:Ignorable="d">
 
@@ -25,7 +25,7 @@
 
         <TextBlock Grid.Row="1" TextWrapping="Wrap">
             <Run Text="{x:Bind resources:Strings.CrashReport_ReportIssuePreLink, Mode=OneTime}" />
-            <Hyperlink NavigateUri="{x:Bind constants:AppLinks.Issues}">
+            <Hyperlink NavigateUri="{x:Bind platform:AppLinks.Issues}">
                 <Run Text="{x:Bind resources:Strings.CrashReport_IssueLink, Mode=OneTime}" />
             </Hyperlink>
             <Run Text="{x:Bind resources:Strings.CrashReport_ReportIssuePostLink, Mode=OneTime}" />

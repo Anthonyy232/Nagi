@@ -7,7 +7,7 @@
     xmlns:viewmodels="using:Nagi.Presentation.ViewModels"
     xmlns:media="using:CommunityToolkit.WinUI.Media"
     xmlns:muxm="using:Microsoft.UI.Xaml.Media"
-    xmlns:models="using:Nagi.Core.Library"
+    xmlns:library="using:Nagi.Core.Library"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:resources="using:Nagi.Presentation.Resources"
     mc:Ignorable="d">
@@ -165,7 +165,7 @@
                             </ItemsPanelTemplate>
                         </ListView.ItemsPanel>
                         <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="models:Song">
+                            <DataTemplate x:DataType="library:Song">
                                 <StackPanel>
                                     <TextBlock
                                         Style="{ThemeResource BodyStrongTextBlockStyle}"

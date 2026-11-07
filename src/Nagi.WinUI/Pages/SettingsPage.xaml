@@ -6,8 +6,8 @@
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
-    xmlns:constants="using:Nagi.Core.Platform"
-    xmlns:coreModels="using:Nagi.Core.Playback"
+    xmlns:platform="using:Nagi.Core.Platform"
+    xmlns:playback="using:Nagi.Core.Playback"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:localConverters="using:Nagi.WinUI.Converters"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -531,8 +531,8 @@
                             <TextBlock FontWeight="SemiBold" Text="{x:Bind resources:Strings.SettingsPage_Equalizer_Preamp, Mode=OneTime}" HorizontalAlignment="Center" />
                             <Slider
                                 AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_Equalizer_Preamp, Mode=OneTime}"
-                                Maximum="{x:Bind coreModels:EqualizerSettings.MaxGainDb}"
-                                Minimum="{x:Bind coreModels:EqualizerSettings.MinGainDb}"
+                                Maximum="{x:Bind playback:EqualizerSettings.MaxGainDb}"
+                                Minimum="{x:Bind playback:EqualizerSettings.MinGainDb}"
                                 StepFrequency="0.1"
                                 Style="{StaticResource DefaultSliderStyle}"
                                 Value="{x:Bind ViewModel.Audio.EqualizerPreamp, Mode=TwoWay}" />
@@ -562,8 +562,8 @@
                                             <Slider
                                                 AutomationProperties.Name="{x:Bind AccessibleName}"
                                                 HorizontalAlignment="Center"
-                                                Maximum="{x:Bind coreModels:EqualizerSettings.MaxGainDb}"
-                                                Minimum="{x:Bind coreModels:EqualizerSettings.MinGainDb}"
+                                                Maximum="{x:Bind playback:EqualizerSettings.MaxGainDb}"
+                                                Minimum="{x:Bind playback:EqualizerSettings.MinGainDb}"
                                                 Orientation="Vertical"
                                                 StepFrequency="0.1"
                                                 Style="{StaticResource DefaultSliderStyle}"
@@ -587,7 +587,7 @@
                             PlaceholderText="{x:Bind resources:Strings.SettingsPage_Equalizer_Preset_Custom_Placeholder, Mode=OneTime}"
                             SelectedItem="{x:Bind ViewModel.Audio.SelectedEqualizerPreset, Mode=TwoWay}">
                             <ComboBox.ItemTemplate>
-                                <DataTemplate x:DataType="coreModels:EqualizerPreset">
+                                <DataTemplate x:DataType="playback:EqualizerPreset">
                                     <TextBlock Text="{x:Bind Name}" />
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
@@ -1120,11 +1120,11 @@
                                 <HyperlinkButton
                                     Content="{x:Bind resources:Strings.SettingsPage_About_Licenses_Content, Mode=OneTime}"
                                     Style="{StaticResource AnimatedHyperlinkButtonStyle}"
-                                    NavigateUri="{x:Bind constants:AppLinks.License}" />
+                                    NavigateUri="{x:Bind platform:AppLinks.License}" />
                                 <HyperlinkButton
                                     Content="{x:Bind resources:Strings.SettingsPage_About_SourceCode_Content, Mode=OneTime}"
                                     Style="{StaticResource AnimatedHyperlinkButtonStyle}"
-                                    NavigateUri="{x:Bind constants:AppLinks.Repository}" />
+                                    NavigateUri="{x:Bind platform:AppLinks.Repository}" />
                             </StackPanel>
                         </controls:SettingsCard>
                     </controls:SettingsExpander.Items>
@@ -1137,11 +1137,11 @@
                     <HyperlinkButton
                         Content="{x:Bind resources:Strings.SettingsPage_About_Feedback_Content, Mode=OneTime}"
                         Style="{StaticResource AnimatedHyperlinkButtonStyle}"
-                        NavigateUri="{x:Bind constants:AppLinks.FeedbackEmail}" />
+                        NavigateUri="{x:Bind platform:AppLinks.FeedbackEmail}" />
                     <HyperlinkButton
                         Content="{x:Bind resources:Strings.SettingsPage_About_PrivacyPolicy_Content, Mode=OneTime}"
                         Style="{StaticResource AnimatedHyperlinkButtonStyle}"
-                        NavigateUri="{x:Bind constants:AppLinks.PrivacyPolicy}" />
+                        NavigateUri="{x:Bind platform:AppLinks.PrivacyPolicy}" />
                 </StackPanel>
             </StackPanel>
         </Grid>

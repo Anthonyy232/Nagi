@@ -6,7 +6,7 @@
     xmlns:controls="using:ImageEx"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:Nagi.Core.Library"
+    xmlns:library="using:Nagi.Core.Library"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:viewmodels="using:Nagi.Presentation.ViewModels"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
@@ -138,7 +138,7 @@
                             </DataTemplate>
                         </uihelpers:HeaderedListTemplateSelector.HeaderTemplate>
                         <uihelpers:HeaderedListTemplateSelector.SongTemplate>
-                            <DataTemplate x:DataType="models:Song">
+                            <DataTemplate x:DataType="library:Song">
                                 <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" ShowDiscNumber="False" />
                             </DataTemplate>
                         </uihelpers:HeaderedListTemplateSelector.SongTemplate>
@@ -158,7 +158,7 @@
                 DoubleTapped="SongsListView_DoubleTapped"
                 Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                 <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="models:Song">
+                    <DataTemplate x:DataType="library:Song">
                         <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>

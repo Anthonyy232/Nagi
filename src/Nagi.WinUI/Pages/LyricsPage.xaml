@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:core="using:Nagi.Core.Lyrics"
+    xmlns:lyrics="using:Nagi.Core.Lyrics"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:helpers="using:Nagi.WinUI.Helpers"
     mc:Ignorable="d"
@@ -86,7 +86,7 @@
                         <helpers:NonVirtualizingStackLayout />
                     </ItemsRepeater.Layout>
                     <ItemsRepeater.ItemTemplate>
-                        <DataTemplate x:DataType="core:LyricLine">
+                        <DataTemplate x:DataType="lyrics:LyricLine">
                             <Grid
                                 Padding="32,28"
                                 Background="Transparent"
@@ -153,7 +153,7 @@
             ItemContainerStyle="{StaticResource PaddedListViewItemStyle}"
             Visibility="{x:Bind ViewModel.HasUnsyncedLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="core:LyricLine">
+                <DataTemplate x:DataType="lyrics:LyricLine">
                     <StackPanel>
                         <TextBlock
                             Text="{x:Bind Text}"
