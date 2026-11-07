@@ -45,14 +45,17 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasNextPage), nameof(HasPreviousPage))]
+    [NotifyCanExecuteChangedFor(nameof(NextPageCommand), nameof(PreviousPageCommand))]
     public partial int CurrentPage { get; set; } = 1;
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasNextPage))]
+    [NotifyCanExecuteChangedFor(nameof(NextPageCommand))]
     public partial int TotalPages { get; set; } = 1;
 
     /// <summary>The items a page holds, or 0 to show every item.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasNextPage), nameof(HasPreviousPage))]
+    [NotifyCanExecuteChangedFor(nameof(NextPageCommand), nameof(PreviousPageCommand))]
     public partial int PageSize { get; set; }
 
     [ObservableProperty]
@@ -167,17 +170,17 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
         });
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(HasNextPage))]
     public async Task NextPageAsync()
     {
-        if (_isDisposed || !HasNextPage || IsLoading) return;
+        if (_isDisposed || IsLoading) return;
         await StepToPageAsync(CurrentPage + 1);
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(HasPreviousPage))]
     public async Task PreviousPageAsync()
     {
-        if (_isDisposed || !HasPreviousPage || IsLoading) return;
+        if (_isDisposed || IsLoading) return;
         await StepToPageAsync(CurrentPage - 1);
     }
 

@@ -2,7 +2,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Models;
 using Nagi.Presentation.Navigation;
@@ -93,13 +92,8 @@ public abstract class SongListPage : SearchablePage
     private void AttachNowPlayingBinders(object sender, RoutedEventArgs e)
     {
         if (_nowPlayingBinders.Count > 0) return;
-        var playingBrush = (Brush)Application.Current.Resources["AppPrimaryColorBrush"];
         foreach (var list in _songLists)
-        {
-            var binder = new NowPlayingIndicatorBinder(list, _viewModel!, playingBrush, item => GetSong(item)?.Id);
-            binder.Refresh();
-            _nowPlayingBinders.Add(binder);
-        }
+            _nowPlayingBinders.Add(new NowPlayingIndicatorBinder(list, _viewModel!, item => GetSong(item)?.Id));
     }
 
     private void DetachNowPlayingBinders(object sender, RoutedEventArgs e)
