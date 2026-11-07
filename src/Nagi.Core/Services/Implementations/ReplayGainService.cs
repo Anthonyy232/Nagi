@@ -1,4 +1,3 @@
-using ATL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
@@ -13,6 +12,7 @@ public class ReplayGainService : IReplayGainService
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly ILogger<ReplayGainService> _logger;
     private readonly ILoudnessAnalyzer _loudnessAnalyzer;
+    private readonly IMetadataService _metadataService;
     private readonly SemaphoreSlim _dbLock = new(1, 1);
     private readonly object _passLock = new();
     private bool _isPassRunning;
@@ -22,14 +22,16 @@ public class ReplayGainService : IReplayGainService
     public ReplayGainService(
         IDbContextFactory<MusicDbContext> contextFactory,
         ILoudnessAnalyzer loudnessAnalyzer,
+        IMetadataService metadataService,
         ILogger<ReplayGainService> logger)
     {
         _contextFactory = contextFactory;
         _loudnessAnalyzer = loudnessAnalyzer;
+        _metadataService = metadataService;
         _logger = logger;
     }
 
-    public async Task<(double GainDb, double Peak)?> CalculateAsync(string filePath, CancellationToken cancellationToken = default)
+    private async Task<(double GainDb, double Peak)?> CalculateAsync(string filePath, CancellationToken cancellationToken)
     {
         try
         {
@@ -141,7 +143,7 @@ public class ReplayGainService : IReplayGainService
                 {
                     // The player normalizes from the database, so a file whose tags can't be written (read-only, say)
                     // still gets its gain, and isn't analyzed again on every scan.
-                    TagFileSafely(song.FilePath, values.GainDb, values.Peak);
+                    _metadataService.WriteReplayGain(song.FilePath, values.GainDb, values.Peak);
                     song.ReplayGainTrackGain = values.GainDb;
                     song.ReplayGainTrackPeak = values.Peak;
                 }
@@ -167,21 +169,6 @@ public class ReplayGainService : IReplayGainService
 
         progress?.Report(new ScanProgress { StatusText = string.Format(Resources.Strings.ReplayGain_Complete, processed), Percentage = 100 });
         _logger.LogInformation("ReplayGain scan complete. Processed {Count} songs.", processed);
-    }
-
-    private void TagFileSafely(string filePath, double gainDb, double peak)
-    {
-        try
-        {
-            var track = new Track(filePath);
-            track.AdditionalFields["REPLAYGAIN_TRACK_GAIN"] = FormattableString.Invariant($"{gainDb:F2} dB");
-            track.AdditionalFields["REPLAYGAIN_TRACK_PEAK"] = FormattableString.Invariant($"{peak:F6}");
-            if (!track.Save()) _logger.LogError("Failed to save ReplayGain tags to file: {FilePath}", filePath);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error writing ReplayGain tags to file: {FilePath}", filePath);
-        }
     }
 
     public void Dispose()

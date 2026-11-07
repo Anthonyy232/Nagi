@@ -13,6 +13,8 @@ public partial class AtlMetadataService : IMetadataService
 {
     private const char AtlMultiValueSeparator = '\u001F';
     private const char CombinedValueSeparator = ';';
+    private const string ReplayGainTrackGainKey = "REPLAYGAIN_TRACK_GAIN";
+    private const string ReplayGainTrackPeakKey = "REPLAYGAIN_TRACK_PEAK";
     private readonly IFileSystemService _fileSystem;
     private readonly IImageProcessor _imageProcessor;
     private readonly ILogger<AtlMetadataService> _logger;
@@ -167,15 +169,8 @@ public partial class AtlMetadataService : IMetadataService
             track.AdditionalFields.TryGetValue("TIT1", out grouping))
             metadata.Grouping = ArtistNameHelper.NormalizeStringCore(grouping);
 
-        var gainKey = track.AdditionalFields.Keys
-            .FirstOrDefault(k => k.Equals("REPLAYGAIN_TRACK_GAIN", StringComparison.OrdinalIgnoreCase));
-        if (gainKey != null && track.AdditionalFields.TryGetValue(gainKey, out var gainStr))
-            metadata.ReplayGainTrackGain = ParseReplayGainValue(gainStr);
-
-        var peakKey = track.AdditionalFields.Keys
-            .FirstOrDefault(k => k.Equals("REPLAYGAIN_TRACK_PEAK", StringComparison.OrdinalIgnoreCase));
-        if (peakKey != null && track.AdditionalFields.TryGetValue(peakKey, out var peakStr))
-            metadata.ReplayGainTrackPeak = ParseReplayGainValue(peakStr);
+        metadata.ReplayGainTrackGain = ParseReplayGainValue(GetAdditionalField(track, ReplayGainTrackGainKey));
+        metadata.ReplayGainTrackPeak = ParseReplayGainValue(GetAdditionalField(track, ReplayGainTrackPeakKey));
     }
 
     private static void PopulateMusicBrainzIds(SongFileMetadata metadata, Track track)
@@ -330,6 +325,27 @@ public partial class AtlMetadataService : IMetadataService
 
         await LyricsStorageHelper.SaveAsync(_fileSystem, cachedLrcPath, lrcContent).ConfigureAwait(false);
         return cachedLrcPath;
+    }
+
+    public void WriteReplayGain(string filePath, double gainDb, double peak)
+    {
+        try
+        {
+            var track = new Track(filePath);
+            track.AdditionalFields[ReplayGainTrackGainKey] = FormattableString.Invariant($"{gainDb:F2} dB");
+            track.AdditionalFields[ReplayGainTrackPeakKey] = FormattableString.Invariant($"{peak:F6}");
+            if (!track.Save()) _logger.LogError("Failed to save ReplayGain tags to file: {FilePath}", filePath);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error writing ReplayGain tags to file: {FilePath}", filePath);
+        }
+    }
+
+    private static string? GetAdditionalField(Track track, string key)
+    {
+        var storedKey = track.AdditionalFields.Keys.FirstOrDefault(k => k.Equals(key, StringComparison.OrdinalIgnoreCase));
+        return storedKey is null ? null : track.AdditionalFields[storedKey];
     }
 
     private static double? ParseReplayGainValue(string? value)

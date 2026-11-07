@@ -12,10 +12,8 @@ namespace Nagi.Core.Tests;
 
 public class ReplayGainServiceTests
 {
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task CancellationDuringAnalysis_PropagatesAndStopsFurtherSongs(bool scanLibrary)
+    [Fact]
+    public async Task CancellationDuringAnalysis_PropagatesAndStopsFurtherSongs()
     {
         using var database = new DbContextFactoryTestHelper();
         await using (var context = database.ContextFactory.CreateDbContext())
@@ -34,12 +32,10 @@ public class ReplayGainServiceTests
             cancellation.Cancel();
             return Task.FromCanceled<(double LoudnessLufs, double Peak)?>(cancellation.Token);
         });
-        using var service = new ReplayGainService(database.ContextFactory, analyzer,
+        using var service = new ReplayGainService(database.ContextFactory, analyzer, Substitute.For<IMetadataService>(),
             NullLogger<ReplayGainService>.Instance);
 
-        Func<Task> analyze = scanLibrary
-            ? () => service.ScanLibraryAsync(cancellationToken: cancellation.Token)
-            : () => service.CalculateAsync("C:\\Music\\one.mp3", cancellation.Token);
+        Func<Task> analyze = () => service.ScanLibraryAsync(cancellationToken: cancellation.Token);
 
         await analyze.Should().ThrowAsync<OperationCanceledException>();
         await analyzer.Received(1).AnalyzeAsync(Arg.Any<string>(), Arg.Any<CancellationToken>());
@@ -68,7 +64,7 @@ public class ReplayGainServiceTests
             firstAnalysisStarted.SetResult();
             return releaseFirstAnalysis.Task;
         });
-        using var service = new ReplayGainService(database.ContextFactory, analyzer,
+        using var service = new ReplayGainService(database.ContextFactory, analyzer, Substitute.For<IMetadataService>(),
             NullLogger<ReplayGainService>.Instance);
 
         var firstPass = service.ScanLibraryAsync();
@@ -96,7 +92,8 @@ public class ReplayGainServiceTests
         var analyzer = Substitute.For<ILoudnessAnalyzer>();
         analyzer.AnalyzeAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<(double LoudnessLufs, double Peak)?>(null));
-        using var service = new ReplayGainService(database.ContextFactory, analyzer, NullLogger<ReplayGainService>.Instance);
+        using var service = new ReplayGainService(database.ContextFactory, analyzer, Substitute.For<IMetadataService>(),
+            NullLogger<ReplayGainService>.Instance);
 
         await service.ScanLibraryAsync();
 
@@ -105,23 +102,25 @@ public class ReplayGainServiceTests
     }
 
     [Fact]
-    public async Task ScanLibraryAsync_WhenTheTagsCantBeWritten_StillStoresTheGain()
+    public async Task ScanLibraryAsync_StoresTheGainAndTagsTheFile()
     {
         using var database = new DbContextFactoryTestHelper();
         await using (var context = database.ContextFactory.CreateDbContext())
         {
-            var missingFile = Path.Combine(Path.GetTempPath(), $"nagi-missing-{Guid.NewGuid():N}.mp3");
-            context.Songs.Add(new Song { FilePath = missingFile, Folder = new Folder { Path = Path.GetTempPath() } });
+            context.Songs.Add(new Song { FilePath = "C:\\Music\\one.mp3", Folder = new Folder { Path = "C:\\Music" } });
             await context.SaveChangesAsync();
         }
         var analyzer = Substitute.For<ILoudnessAnalyzer>();
         analyzer.AnalyzeAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<(double LoudnessLufs, double Peak)?>((-14, 0.5)));
-        using var service = new ReplayGainService(database.ContextFactory, analyzer, NullLogger<ReplayGainService>.Instance);
+        var metadata = Substitute.For<IMetadataService>();
+        using var service = new ReplayGainService(database.ContextFactory, analyzer, metadata,
+            NullLogger<ReplayGainService>.Instance);
 
         await service.ScanLibraryAsync();
 
         await using var saved = database.ContextFactory.CreateDbContext();
-        (await saved.Songs.SingleAsync()).ReplayGainTrackGain.Should().NotBeNull();
+        (await saved.Songs.SingleAsync()).ReplayGainTrackGain.Should().Be(-4);
+        metadata.Received(1).WriteReplayGain("C:\\Music\\one.mp3", -4, 0.5);
     }
 }
