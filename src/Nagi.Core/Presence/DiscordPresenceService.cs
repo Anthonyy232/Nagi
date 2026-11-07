@@ -9,7 +9,7 @@ using Nagi.Core.Playback;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Settings;
 
-namespace Nagi.Core.Services.Implementations.Presence;
+namespace Nagi.Core.Presence;
 
 public class DiscordPresenceService : IPresenceService, IAsyncDisposable
 {

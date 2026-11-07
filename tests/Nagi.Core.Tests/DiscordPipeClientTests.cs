@@ -1,7 +1,7 @@
 using System.IO.Pipes;
 using DiscordRPC.IO;
 using FluentAssertions;
-using Nagi.Core.Services.Implementations.Presence;
+using Nagi.Core.Presence;
 using Xunit;
 
 namespace Nagi.Core.Tests;

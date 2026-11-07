@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Services.Implementations.Presence;
+using Nagi.Core.Presence;
 using NSubstitute;
 using Xunit;
 using DiscordLogLevel = DiscordRPC.Logging.LogLevel;

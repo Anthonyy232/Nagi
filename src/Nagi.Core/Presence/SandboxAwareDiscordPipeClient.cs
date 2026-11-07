@@ -3,7 +3,7 @@ using System.Buffers.Binary;
 using DiscordRPC.IO;
 using DiscordRPC.Logging;
 
-namespace Nagi.Core.Services.Implementations.Presence;
+namespace Nagi.Core.Presence;
 
 /// <summary>
 ///     A custom <see cref="INamedPipeClient" /> that finds Discord's pipe inside the MSIX sandbox and on Unix,

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using LogLevel = DiscordRPC.Logging.LogLevel;
 
-namespace Nagi.Core.Services.Implementations.Presence;
+namespace Nagi.Core.Presence;
 
 public class DiscordLoggerAdapter : DiscordRPC.Logging.ILogger
 {

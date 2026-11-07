@@ -1,6 +1,6 @@
 ﻿using Nagi.Core.Library;
 
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.Presence;
 
 /// <summary>
 ///     Shows what is playing outside Nagi, such as on the user's Discord profile. <c>PresenceManager</c> feeds it

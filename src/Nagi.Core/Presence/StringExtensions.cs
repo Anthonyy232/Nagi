@@ -1,4 +1,4 @@
-﻿namespace Nagi.Core.Helpers;
+﻿namespace Nagi.Core.Presence;
 
 public static class StringExtensions
 {

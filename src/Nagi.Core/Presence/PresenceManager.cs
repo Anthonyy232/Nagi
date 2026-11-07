@@ -5,7 +5,7 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Settings;
 using System.Diagnostics;
 
-namespace Nagi.Core.Services.Implementations.Presence;
+namespace Nagi.Core.Presence;
 
 /// <summary>
 ///     Turns the presence services, such as Discord, on and off as their settings change, and passes playback on to
