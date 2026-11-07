@@ -15,11 +15,20 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     Song? CurrentTrack { get; }
     ShuffleMode CurrentShuffleMode { get; }
     PlaybackStopMode StopMode { get; }
-    DateTimeOffset? StopDeadline { get; }
+
+    /// <summary>
+    ///     How long until the <see cref="PlaybackStopMode.Timer" /> stops playback, or null while no timer is set.
+    /// </summary>
+    TimeSpan? StopTimeRemaining { get; }
+
     event Action? StopScheduleChanged;
     Task<bool> PlayMixAsync(IEnumerable<Guid> songIds, ShuffleMode mode, TimeSpan? duration = null, PlaybackContext? context = null, int avoidRecentDays = PlaybackMixLimits.DefaultAvoidRecentDays);
+
+    /// <param name="delay">
+    ///     For <see cref="PlaybackStopMode.Timer" />, up to <see cref="PlaybackMixLimits.MaxMinutes" />.
+    /// </param>
+    /// <param name="finishCurrentTrack">Whether a timer that runs out mid-song lets the song finish first.</param>
     void ScheduleStop(PlaybackStopMode mode, TimeSpan? delay = null, bool finishCurrentTrack = true);
-    Task CheckStopScheduleAsync();
 
     /// <summary>
     ///     Gets the unique database ID for the current listening session.

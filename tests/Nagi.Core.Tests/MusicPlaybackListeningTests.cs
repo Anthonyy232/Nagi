@@ -5,6 +5,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
+using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
 
@@ -77,16 +78,19 @@ public partial class MusicPlaybackServiceTests
     public async Task ExpiredTimer_FinishesOnlyAnActivelyPlayingTrack(bool finishTrack, bool playing)
     {
         var clock = new FakeTimeProvider();
-        await using var service = new MusicPlaybackService(_settingsService, _playbackStateStore, _audioPlayer, _mediaControls, _library.Reader, _library.Writer,
+        await using var service = new MusicPlaybackService(_settingsService, _playbackStateStore, _audioPlayer, _mediaControls, new ImmediateDispatcher(), _library.Reader, _library.Writer,
             _metadataService, Substitute.For<IFileSystemService>(), Substitute.For<IMusicServerService>(), NullLogger<MusicPlaybackService>.Instance, clock);
         await service.InitializeAsync();
         await service.PlayAsync(_testSongs);
         _audioPlayer.MediaOpened += Raise.Event<Action>();
         _audioPlayer.IsPlaying.Returns(playing);
         service.ScheduleStop(PlaybackStopMode.Timer, TimeSpan.FromMinutes(1), finishTrack);
-        clock.Advance(TimeSpan.FromMinutes(2));
+        clock.Advance(TimeSpan.FromSeconds(59));
+        service.StopMode.Should().Be(PlaybackStopMode.Timer);
+        service.StopTimeRemaining.Should().Be(TimeSpan.FromSeconds(1));
 
-        await service.CheckStopScheduleAsync();
+        clock.Advance(TimeSpan.FromSeconds(1));
+        await service.FlushPendingFinalizationAsync();
 
         if (finishTrack && playing)
         {

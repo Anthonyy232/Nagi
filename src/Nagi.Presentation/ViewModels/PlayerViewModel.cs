@@ -33,6 +33,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     private readonly ILibraryReader _libraryReader;
     private readonly ILibraryWriter _libraryWriter;
     private readonly ILibraryScanner _libraryScanner;
+    private readonly TimeProvider _timeProvider;
 
     private bool _isUpdatingFromService;
     private bool _isCleanedUp;
@@ -54,7 +55,8 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         ILibraryReader libraryReader, ILibraryWriter libraryWriter, ILibraryScanner libraryScanner, ILogger<PlayerViewModel> logger, IUIService uiService,
         TimeProvider? timeProvider = null)
     {
-        _openingIndicator = new Debouncer(OpeningIndicatorDelay, timeProvider);
+        _timeProvider = timeProvider ?? TimeProvider.System;
+        _openingIndicator = new Debouncer(OpeningIndicatorDelay, _timeProvider);
         _playbackService = playbackService;
         _musicNavigationService = musicNavigationService;
         _dispatcherService = dispatcherService;

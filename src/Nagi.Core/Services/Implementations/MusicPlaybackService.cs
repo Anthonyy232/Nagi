@@ -11,6 +11,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 {
     private readonly IAudioPlayer _audioPlayer;
     private readonly ISystemMediaControls _mediaControls;
+    private readonly IDispatcherService _dispatcher;
     private readonly ILibraryReader _libraryReader;
     private readonly ILibraryWriter _libraryWriter;
     private readonly ILogger<MusicPlaybackService> _logger;
@@ -42,6 +43,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         IPlaybackStateStore playbackStateStore,
         IAudioPlayer audioPlayer,
         ISystemMediaControls mediaControls,
+        IDispatcherService dispatcher,
         ILibraryReader libraryReader,
         ILibraryWriter libraryWriter,
         IMetadataService metadataService,
@@ -55,6 +57,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         _playbackStateStore = playbackStateStore;
         _audioPlayer = audioPlayer;
         _mediaControls = mediaControls;
+        _dispatcher = dispatcher;
         _libraryReader = libraryReader;
         _libraryWriter = libraryWriter;
         _metadataService = metadataService;
@@ -778,6 +781,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     {
         if (_isDisposed) return;
         _isDisposed = true;
+        _stopTimer?.Dispose();
         _playbackRequestVersion++;
         _queueVersion++;
         _replayGainVersion++;

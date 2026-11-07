@@ -26,6 +26,7 @@ public class CoreServiceRegistrationTests
         services.AddSingleton(Substitute.For<ICredentialLockerService>());
         services.AddSingleton(Substitute.For<IAudioPlayer>());
         services.AddSingleton(Substitute.For<ISystemMediaControls>());
+        services.AddSingleton(Substitute.For<IDispatcherService>());
         services.AddNagiCore();
 
         return services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
