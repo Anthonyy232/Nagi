@@ -1,7 +1,7 @@
 using FluentAssertions;
 using MaterialColorUtilities.ColorAppearance;
 using MaterialColorUtilities.Utils;
-using Nagi.Presentation.Models;
+using Nagi.Presentation.Theme;
 using Xunit;
 
 namespace Nagi.Presentation.Tests;

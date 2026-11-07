@@ -1,6 +1,4 @@
-﻿using Nagi.Presentation.Models;
-
-namespace Nagi.Presentation.Services.Abstractions;
+﻿namespace Nagi.Presentation.Theme;
 
 /// <summary>
 ///     Shows a theme and its colors in the UI head's windows. Call it on the UI thread.

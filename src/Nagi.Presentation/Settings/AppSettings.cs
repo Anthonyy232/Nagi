@@ -4,10 +4,10 @@ using Nagi.Core.Playlists;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Lists;
-using Nagi.Presentation.Models;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Player;
 using Nagi.Presentation.Resources;
+using Nagi.Presentation.Theme;
 
 namespace Nagi.Presentation.Settings;
 
@@ -17,7 +17,7 @@ namespace Nagi.Presentation.Settings;
 public static class AppSettings
 {
     public static readonly Setting<AppTheme> Theme = Setting.EnumName("AppTheme", AppTheme.Default);
-    public static readonly Setting<BackdropMaterial> BackdropMaterial = Setting.EnumName("BackdropMaterial", Models.BackdropMaterial.Mica);
+    public static readonly Setting<BackdropMaterial> BackdropMaterial = Setting.EnumName("BackdropMaterial", Nagi.Presentation.Theme.BackdropMaterial.Mica);
     public static readonly Setting<bool> DynamicTheming = Setting.Value("DynamicThemingEnabled", true);
 
     /// <summary>Null for Nagi's brand color.</summary>
@@ -26,7 +26,7 @@ public static class AppSettings
         color => color?.ToHex());
 
     public static readonly Setting<PlayerBackgroundMaterial> PlayerBackgroundMaterial =
-        Setting.EnumName("PlayerBackgroundMaterial", Models.PlayerBackgroundMaterial.Acrylic);
+        Setting.EnumName("PlayerBackgroundMaterial", Nagi.Presentation.Theme.PlayerBackgroundMaterial.Acrylic);
 
     /// <summary>From 0 (neutral) to 1 (vibrant).</summary>
     public static readonly Setting<double> PlayerTintIntensity =

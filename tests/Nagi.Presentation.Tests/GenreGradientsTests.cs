@@ -1,6 +1,6 @@
 using FluentAssertions;
 using Nagi.Presentation.Lists;
-using Nagi.Presentation.Models;
+using Nagi.Presentation.Theme;
 using Xunit;
 
 namespace Nagi.Presentation.Tests;

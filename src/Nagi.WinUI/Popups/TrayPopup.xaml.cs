@@ -3,7 +3,7 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
 using Nagi.Presentation.Player;
-using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Theme;
 using Nagi.WinUI.Helpers;
 using WinRT.Interop;
 

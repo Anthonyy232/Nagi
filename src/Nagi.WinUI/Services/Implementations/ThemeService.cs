@@ -1,8 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
-using Nagi.Presentation.Models;
-using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Theme;
 using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Services.Implementations;

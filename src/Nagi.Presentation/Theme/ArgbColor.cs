@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace Nagi.Presentation.Models;
+namespace Nagi.Presentation.Theme;
 
 public readonly record struct ArgbColor(byte A, byte R, byte G, byte B)
 {

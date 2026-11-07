@@ -1,7 +1,7 @@
 using MaterialColorUtilities.ColorAppearance;
 using MaterialColorUtilities.Utils;
 
-namespace Nagi.Presentation.Models;
+namespace Nagi.Presentation.Theme;
 
 /// <summary>
 ///     The colors the app derives from its primary color for the current light or dark theme.

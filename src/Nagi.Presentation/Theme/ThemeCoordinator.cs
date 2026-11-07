@@ -2,11 +2,9 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Settings;
-using Nagi.Presentation.Models;
-using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Settings;
 
-namespace Nagi.Presentation.Services;
+namespace Nagi.Presentation.Theme;
 
 /// <summary>
 ///     Re-themes the app whenever the theme, accent, dynamic theming or player design settings, the playing track or

@@ -4,6 +4,7 @@ using Nagi.Core.Library;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Theme;
 
 namespace Nagi.Presentation.Services;
 

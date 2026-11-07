@@ -1,4 +1,4 @@
-﻿namespace Nagi.Presentation.Models;
+﻿namespace Nagi.Presentation.Theme;
 
 public enum BackdropMaterial
 {

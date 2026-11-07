@@ -7,6 +7,7 @@ using Nagi.Presentation.Player;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services.Implementations;
 using Nagi.Presentation.Settings;
+using Nagi.Presentation.Theme;
 using Nagi.Presentation.ViewModels;
 
 namespace Nagi.Presentation.Services;

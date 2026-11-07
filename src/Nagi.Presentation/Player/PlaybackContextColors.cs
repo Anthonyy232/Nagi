@@ -1,5 +1,5 @@
 using Nagi.Core.Playback;
-using Nagi.Presentation.Models;
+using Nagi.Presentation.Theme;
 
 namespace Nagi.Presentation.Player;
 
