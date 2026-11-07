@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Constants;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Http.Pipelines;
@@ -589,7 +590,7 @@ public partial class LibraryService
         using var httpClient = _httpClientFactory.CreateClient("ImageDownloader");
 
         return await _pipelines.ExecuteWithFallbackAsync<byte[]?>(
-            ServiceProviderIds.ImageDownload,
+            ProviderCatalog.ImageDownload.ProviderId,
             async ct =>
             {
                 _logger.LogDebug("Downloading image: {ImageUrl}", imageUrl);

@@ -22,13 +22,13 @@ public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter
     private readonly IApiKeyService _apiKeyService;
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly HttpClient _httpClient;
-    private readonly IProviderPipelineProvider _pipelines;
+    private readonly ProviderPipelineProvider _pipelines;
     private readonly ILogger<LastFmScrobblerService> _logger;
     private readonly ISettingsService _settingsService;
 
     public LastFmScrobblerService(
         IHttpClientFactory httpClientFactory,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         IApiKeyService apiKeyService,
         ISettingsService settingsService,
         IDbContextFactory<MusicDbContext> contextFactory,
@@ -235,8 +235,8 @@ public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter
     private async Task<(string? ApiKey, string? ApiSecret, string? SessionKey)> GetApiCredentialsAsync(
         CancellationToken cancellationToken = default)
     {
-        var apiKeyTask = _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFm, cancellationToken);
-        var apiSecretTask = _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFmSecret, cancellationToken);
+        var apiKeyTask = _apiKeyService.GetApiKeyAsync(ApiKeyNames.LastFm, cancellationToken);
+        var apiSecretTask = _apiKeyService.GetApiKeyAsync(ApiKeyNames.LastFmSecret, cancellationToken);
         var credentialsTask = _settingsService.GetLastFmCredentialsAsync();
 
         await Task.WhenAll(apiKeyTask, apiSecretTask, credentialsTask).ConfigureAwait(false);

@@ -40,7 +40,7 @@ file class TheAudioDbArtist
 /// <summary>
 ///     Service for fetching artist metadata from TheAudioDB. Rate limiting (free tier
 ///     is 30 req/min), retry, and circuit breaker are handled by
-///     <see cref="IProviderPipelineProvider"/>.
+///     <see cref="ProviderPipelineProvider"/>.
 /// </summary>
 public class TheAudioDbService : ITheAudioDbService
 {
@@ -48,13 +48,13 @@ public class TheAudioDbService : ITheAudioDbService
     private const string ApiKeyName = ServiceProviderIds.TheAudioDb;
 
     private readonly HttpClient _httpClient;
-    private readonly IProviderPipelineProvider _pipelines;
+    private readonly ProviderPipelineProvider _pipelines;
     private readonly IApiKeyService _apiKeyService;
     private readonly ILogger<TheAudioDbService> _logger;
 
     public TheAudioDbService(
         IHttpClientFactory httpClientFactory,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         IApiKeyService apiKeyService,
         ILogger<TheAudioDbService> logger)
     {

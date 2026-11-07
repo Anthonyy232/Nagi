@@ -32,14 +32,14 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
 
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly HttpClient _httpClient;
-    private readonly IProviderPipelineProvider _pipelines;
+    private readonly ProviderPipelineProvider _pipelines;
     private readonly ILogger<ListenBrainzScrobblerService> _logger;
     private readonly ISettingsService _settingsService;
     private readonly IAppInfoService _appInfoService;
 
     public ListenBrainzScrobblerService(
         IHttpClientFactory httpClientFactory,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         IDbContextFactory<MusicDbContext> contextFactory,
         ISettingsService settingsService,
         IAppInfoService appInfoService,

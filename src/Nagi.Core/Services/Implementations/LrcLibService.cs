@@ -21,12 +21,12 @@ public class LrcLibService : IOnlineLyricsService
     private const string SearchUrl = "https://lrclib.net/api/search";
 
     private readonly HttpClient _httpClient;
-    private readonly IProviderPipelineProvider _pipelines;
+    private readonly ProviderPipelineProvider _pipelines;
     private readonly ILogger<LrcLibService> _logger;
 
     public LrcLibService(
         IHttpClientFactory httpClientFactory,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         ILogger<LrcLibService> logger)
     {
         _httpClient = httpClientFactory.CreateClient();

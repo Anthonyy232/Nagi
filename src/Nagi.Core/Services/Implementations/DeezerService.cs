@@ -11,7 +11,7 @@ namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
 ///     Searches Deezer's public catalog, which needs no API key. Its limit of 50 requests per 5 seconds
-///     is enforced by <see cref="IProviderPipelineProvider" />.
+///     is enforced by <see cref="ProviderPipelineProvider" />.
 /// </summary>
 public class DeezerService : IDeezerService
 {
@@ -21,12 +21,12 @@ public class DeezerService : IDeezerService
     private const int DataNotFoundErrorCode = 800;
 
     private readonly HttpClient _httpClient;
-    private readonly IProviderPipelineProvider _pipelines;
+    private readonly ProviderPipelineProvider _pipelines;
     private readonly ILogger<DeezerService> _logger;
 
     public DeezerService(
         IHttpClientFactory httpClientFactory,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         ILogger<DeezerService> logger)
     {
         _httpClient = httpClientFactory.CreateClient();

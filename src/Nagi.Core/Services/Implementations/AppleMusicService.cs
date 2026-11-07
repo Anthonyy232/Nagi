@@ -19,12 +19,12 @@ public class AppleMusicService : IAppleMusicService
     private const string SearchUrl = "https://itunes.apple.com/search";
 
     private readonly HttpClient _httpClient;
-    private readonly IProviderPipelineProvider _pipelines;
+    private readonly ProviderPipelineProvider _pipelines;
     private readonly ILogger<AppleMusicService> _logger;
 
     public AppleMusicService(
         IHttpClientFactory httpClientFactory,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         ILogger<AppleMusicService> logger)
     {
         _httpClient = httpClientFactory.CreateClient();

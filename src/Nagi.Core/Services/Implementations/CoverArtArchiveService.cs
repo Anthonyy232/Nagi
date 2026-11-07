@@ -16,12 +16,12 @@ public class CoverArtArchiveService : ICoverArtArchiveService
     private const string BaseUrl = "https://coverartarchive.org";
 
     private readonly HttpClient _httpClient;
-    private readonly IProviderPipelineProvider _pipelines;
+    private readonly ProviderPipelineProvider _pipelines;
     private readonly ILogger<CoverArtArchiveService> _logger;
 
     public CoverArtArchiveService(
         IHttpClientFactory httpClientFactory,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         ILogger<CoverArtArchiveService> logger)
     {
         _httpClient = httpClientFactory.CreateClient();

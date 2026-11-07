@@ -34,7 +34,7 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
     private readonly ISettingsService _settingsService;
     private readonly IReplayGainService _replayGainService;
     private readonly IImageProcessor _imageProcessor;
-    private readonly IProviderPipelineProvider _pipelines;
+    private readonly ProviderPipelineProvider _pipelines;
     private int _disposeState;
     private volatile CancellationTokenSource? _metadataFetchCts;
     private CancellationTokenSource? _activeScanCts;
@@ -52,7 +52,7 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         ISettingsService settingsService,
         IReplayGainService replayGainService,
         IImageProcessor imageProcessor,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         ILogger<LibraryService> logger)
     {
         _contextFactory = contextFactory;

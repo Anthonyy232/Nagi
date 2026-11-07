@@ -136,8 +136,8 @@ public class LastFmAuthServiceTests : IDisposable
     {
         const string key = "key+with&reserved=characters";
         const string token = "token/?with&reserved=characters+#";
-        _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFm).Returns(key);
-        _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFmSecret).Returns(ApiSecret);
+        _apiKeyService.GetApiKeyAsync(ApiKeyNames.LastFm).Returns(key);
+        _apiKeyService.GetApiKeyAsync(ApiKeyNames.LastFmSecret).Returns(ApiSecret);
         SetupHttpResponse(HttpStatusCode.OK, new { token });
 
         var authentication = await _authService.GetAuthenticationTokenAsync();

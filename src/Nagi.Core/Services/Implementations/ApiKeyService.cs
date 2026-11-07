@@ -2,8 +2,8 @@ using System.Collections.Concurrent;
 using System.Net.Http.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
-using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.Core.Services.Implementations;
@@ -21,13 +21,13 @@ public class ApiKeyService : IApiKeyService
     private readonly ConcurrentDictionary<string, Lazy<Task<string?>>> _cachedApiKeys = new();
     private readonly IConfiguration _configuration;
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly IProviderPipelineProvider _pipelines;
+    private readonly ProviderPipelineProvider _pipelines;
     private readonly ILogger<ApiKeyService> _logger;
     private volatile bool _globalAuthFailed;
 
     public ApiKeyService(
         IHttpClientFactory httpClientFactory,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         IConfiguration configuration,
         ILogger<ApiKeyService> logger)
     {
@@ -76,26 +76,17 @@ public class ApiKeyService : IApiKeyService
             return null;
         }
 
-        var route = keyName switch
-        {
-            ServiceProviderIds.TheAudioDb => "theaudiodb-key",
-            ServiceProviderIds.LastFm => "lastfm-key",
-            ServiceProviderIds.LastFmSecret => "lastfm-secret-key",
-            ServiceProviderIds.FanartTv => "fanarttv-key",
-            _ => throw new ArgumentException($"Unknown service: {keyName}", nameof(keyName))
-        };
-
         if (!Uri.TryCreate(serverUrl, UriKind.Absolute, out var serverUri) ||
             serverUri.Scheme is not ("http" or "https"))
             serverUri = new Uri("https://" + serverUrl);
         var requestUri = new UriBuilder(serverUri)
         {
-            Path = $"{serverUri.AbsolutePath.TrimEnd('/')}/api/{route}"
+            Path = $"{serverUri.AbsolutePath.TrimEnd('/')}/api/{keyName}-key"
         }.Uri;
         using var httpClient = _httpClientFactory.CreateClient();
 
         return await _pipelines.ExecuteWithFallbackAsync<string?>(
-            ServiceProviderIds.NagiApi,
+            ProviderCatalog.NagiApi.ProviderId,
             async ct =>
             {
                 using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);

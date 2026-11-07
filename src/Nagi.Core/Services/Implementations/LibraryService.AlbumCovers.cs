@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Http;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -15,7 +16,7 @@ public partial class LibraryService
     private async Task FetchMissingAlbumCoversAsync(IReadOnlyList<ServiceProviderSetting> enabledProviders,
         CancellationToken token)
     {
-        if (!enabledProviders.Any(p => AlbumCoverService.SourceIds.Contains(p.Id))) return;
+        if (!enabledProviders.Any(p => ProviderCatalog.Can(p.Id, ProviderCapabilities.AlbumCover))) return;
 
         const int batchSize = 50;
         // "Unknown Album" groups unrelated tracks, so no single cover is right for it.

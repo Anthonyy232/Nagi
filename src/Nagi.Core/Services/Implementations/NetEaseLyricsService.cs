@@ -19,12 +19,12 @@ public class NetEaseLyricsService : INetEaseLyricsService
     private const string LyricsUrl = "https://music.163.com/api/song/lyric";
 
     private readonly HttpClient _httpClient;
-    private readonly IProviderPipelineProvider _pipelines;
+    private readonly ProviderPipelineProvider _pipelines;
     private readonly ILogger<NetEaseLyricsService> _logger;
 
     public NetEaseLyricsService(
         IHttpClientFactory httpClientFactory,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         ILogger<NetEaseLyricsService> logger)
     {
         _httpClient = httpClientFactory.CreateClient();

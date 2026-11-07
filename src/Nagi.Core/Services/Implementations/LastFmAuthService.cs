@@ -12,12 +12,12 @@ public class LastFmAuthService : ILastFmAuthService
 
     private readonly IApiKeyService _apiKeyService;
     private readonly HttpClient _httpClient;
-    private readonly IProviderPipelineProvider _pipelines;
+    private readonly ProviderPipelineProvider _pipelines;
     private readonly ILogger<LastFmAuthService> _logger;
 
     public LastFmAuthService(
         IHttpClientFactory httpClientFactory,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         IApiKeyService apiKeyService,
         ILogger<LastFmAuthService> logger)
     {
@@ -129,8 +129,8 @@ public class LastFmAuthService : ILastFmAuthService
 
     private async Task<(string ApiKey, string ApiSecret)?> GetCredentialsAsync()
     {
-        var apiKeyTask = _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFm);
-        var apiSecretTask = _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFmSecret);
+        var apiKeyTask = _apiKeyService.GetApiKeyAsync(ApiKeyNames.LastFm);
+        var apiSecretTask = _apiKeyService.GetApiKeyAsync(ApiKeyNames.LastFmSecret);
 
         await Task.WhenAll(apiKeyTask, apiSecretTask).ConfigureAwait(false);
         var apiKey = await apiKeyTask.ConfigureAwait(false);

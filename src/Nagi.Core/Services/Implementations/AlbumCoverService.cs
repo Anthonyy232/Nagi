@@ -8,12 +8,6 @@ namespace Nagi.Core.Services.Implementations;
 
 public class AlbumCoverService : IAlbumCoverService
 {
-    /// <summary>The sources <see cref="FindCoverUrlAsync" /> can ask; keep in step with its switch.</summary>
-    public static readonly IReadOnlySet<string> SourceIds = new HashSet<string>
-    {
-        ServiceProviderIds.CoverArtArchive, ServiceProviderIds.AppleMusic, ServiceProviderIds.Deezer, ServiceProviderIds.LastFm
-    };
-
     private readonly ICoverArtArchiveService _coverArtArchive;
     private readonly IMusicBrainzService _musicBrainz;
     private readonly IAppleMusicService _appleMusic;

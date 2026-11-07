@@ -14,13 +14,13 @@ public class FanartTvService : IFanartTvService
     private const string ApiKeyName = ServiceProviderIds.FanartTv;
 
     private readonly HttpClient _httpClient;
-    private readonly IProviderPipelineProvider _pipelines;
+    private readonly ProviderPipelineProvider _pipelines;
     private readonly IApiKeyService _apiKeyService;
     private readonly ILogger<FanartTvService> _logger;
 
     public FanartTvService(
         IHttpClientFactory httpClientFactory,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         IApiKeyService apiKeyService,
         ILogger<FanartTvService> logger)
     {

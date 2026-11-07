@@ -1,19 +1,25 @@
 ﻿namespace Nagi.Core.Services.Abstractions;
 
+/// <summary>The keys Nagi's API server hands out.</summary>
+public static class ApiKeyNames
+{
+    public const string LastFm = "lastfm";
+
+    public const string LastFmSecret = "lastfm-secret";
+
+    public const string TheAudioDb = "theaudiodb";
+
+    public const string FanartTv = "fanarttv";
+}
+
 public interface IApiKeyService
 {
-    /// <summary>
-    ///     Retrieves the specified API key.
-    ///     The key is fetched from the source on the first request and cached for subsequent calls.
-    /// </summary>
-    /// <param name="keyName">The unique name of the key to retrieve (e.g., "lastfm").</param>
-    /// <returns>The API key, or null if it could not be retrieved.</returns>
+    /// <summary>Fetches the key on first use and caches it.</summary>
+    /// <param name="keyName">One of <see cref="ApiKeyNames" />.</param>
+    /// <returns>The key, or null if it couldn't be fetched.</returns>
     Task<string?> GetApiKeyAsync(string keyName, CancellationToken cancellationToken = default);
 
-    /// <summary>
-    ///     Forces a refresh of a specific cached API key by re-fetching it from the source.
-    /// </summary>
-    /// <param name="keyName">The unique name of the key to refresh.</param>
-    /// <returns>The API key, or null if it could not be retrieved.</returns>
+    /// <summary>Fetches the key again, for when a provider rejects the cached one.</summary>
+    /// <returns>The key, or null if it couldn't be fetched.</returns>
     Task<string?> RefreshApiKeyAsync(string keyName, CancellationToken cancellationToken = default);
 }

@@ -18,12 +18,12 @@ public class WikipediaService : IWikipediaService
     private const string FallbackLanguage = "en";
 
     private readonly HttpClient _httpClient;
-    private readonly IProviderPipelineProvider _pipelines;
+    private readonly ProviderPipelineProvider _pipelines;
     private readonly ILogger<WikipediaService> _logger;
 
     public WikipediaService(
         IHttpClientFactory httpClientFactory,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         ILogger<WikipediaService> logger)
     {
         _httpClient = httpClientFactory.CreateClient();

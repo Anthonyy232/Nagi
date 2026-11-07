@@ -13,7 +13,7 @@ internal static class ProviderRequests
     ///     failure status, an open circuit, a transport error or a timeout is a retryable failure.
     /// </summary>
     public static async Task<ServiceResult<TResult>> GetJsonAsync<TResponse, TResult>(
-        this IProviderPipelineProvider pipelines, HttpClient httpClient, string providerId, string url,
+        this ProviderPipelineProvider pipelines, HttpClient httpClient, string providerId, string url,
         Func<TResponse, ServiceResult<TResult>> map, ILogger logger, string operation, CancellationToken cancellationToken)
         where TResult : class
     {

@@ -10,19 +10,19 @@ namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
 ///     Rate limiting (1 req/s as MusicBrainz requires), retry, and circuit-breaker policy
-///     are handled by <see cref="IProviderPipelineProvider"/>.
+///     are handled by <see cref="ProviderPipelineProvider"/>.
 /// </summary>
 public class MusicBrainzService : IMusicBrainzService
 {
     private const string BaseUrl = "https://musicbrainz.org/ws/2";
 
     private readonly HttpClient _httpClient;
-    private readonly IProviderPipelineProvider _pipelines;
+    private readonly ProviderPipelineProvider _pipelines;
     private readonly ILogger<MusicBrainzService> _logger;
 
     public MusicBrainzService(
         IHttpClientFactory httpClientFactory,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         ILogger<MusicBrainzService> logger)
     {
         _httpClient = httpClientFactory.CreateClient();

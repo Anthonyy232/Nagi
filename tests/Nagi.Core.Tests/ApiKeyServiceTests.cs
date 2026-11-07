@@ -4,6 +4,7 @@ using System.Text.Json;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Implementations;
@@ -33,7 +34,7 @@ public class ApiKeyServiceTests : IDisposable
         _httpClientFactory.CreateClient(Arg.Any<string>())
             .Returns(_ => new HttpClient(_httpMessageHandler, disposeHandler: false));
 
-        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.NagiApi);
+        _pipelines = TestProviderPipeline.Build(ProviderCatalog.NagiApi.ProviderId);
         _apiKeyService = new ApiKeyService(_httpClientFactory, _pipelines, _configuration, _logger);
     }
 

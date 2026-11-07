@@ -15,7 +15,7 @@ public static class ProviderPipelineExtensions
     ///     or any other non-cancellation exception. Caller-requested cancellation is not swallowed.
     /// </summary>
     public static async ValueTask<T> ExecuteWithFallbackAsync<T>(
-        this IProviderPipelineProvider pipelines,
+        this ProviderPipelineProvider pipelines,
         string providerId,
         Func<CancellationToken, ValueTask<HttpResponseMessage>> httpCall,
         Func<HttpResponseMessage, CancellationToken, ValueTask<T>> processResponse,

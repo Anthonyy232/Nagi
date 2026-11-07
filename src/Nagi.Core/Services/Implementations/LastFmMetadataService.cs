@@ -22,12 +22,12 @@ public class LastFmMetadataService : ILastFmMetadataService
 
     private readonly IApiKeyService _apiKeyService;
     private readonly HttpClient _httpClient;
-    private readonly IProviderPipelineProvider _pipelines;
+    private readonly ProviderPipelineProvider _pipelines;
     private readonly ILogger<LastFmMetadataService> _logger;
 
     public LastFmMetadataService(
         IHttpClientFactory httpClientFactory,
-        IProviderPipelineProvider pipelines,
+        ProviderPipelineProvider pipelines,
         IApiKeyService apiKeyService,
         ILogger<LastFmMetadataService> logger)
     {
