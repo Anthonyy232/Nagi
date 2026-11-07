@@ -6,11 +6,10 @@ using Nagi.Core.Artwork;
 using Nagi.Core.Helpers;
 using Nagi.Core.Library;
 using Nagi.Core.Lyrics;
-using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Settings;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Metadata;
 
 public partial class AtlMetadataService : IMetadataService
 {

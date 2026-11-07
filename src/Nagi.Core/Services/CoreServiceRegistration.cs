@@ -9,6 +9,7 @@ using Nagi.Core.Library;
 using Nagi.Core.Listening;
 using Nagi.Core.Lyrics;
 using Nagi.Core.Lyrics.Romanization;
+using Nagi.Core.Metadata;
 using Nagi.Core.MusicServers;
 using Nagi.Core.OnlineProviders;
 using Nagi.Core.OnlineProviders.Pipelines;

@@ -4,7 +4,7 @@ using Nagi.Core.Artwork;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
 using Nagi.Core.Lyrics;
-using Nagi.Core.Models;
+using Nagi.Core.Metadata;
 using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.Core.Library;

@@ -1,6 +1,6 @@
 using System.Collections.Frozen;
 
-namespace Nagi.Core.Constants;
+namespace Nagi.Core.Metadata;
 
 public static class FileExtensions
 {

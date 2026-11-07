@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
-using Nagi.Core.Constants;
 using Nagi.Core.Library;
+using Nagi.Core.Metadata;
 using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.Core.Artwork;

@@ -1,5 +1,5 @@
 using FluentAssertions;
-using Nagi.Core.Constants;
+using Nagi.Core.Metadata;
 using Xunit;
 
 namespace Nagi.Core.Tests;

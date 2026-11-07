@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
 using Nagi.Core.Listening;
+using Nagi.Core.Metadata;
 using Nagi.Core.MusicServers;
 using Nagi.Core.Playlists;
 using Nagi.Core.Services.Abstractions;
