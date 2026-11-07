@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Nagi.Core.Data;
-using Nagi.Core.Models;
+using Nagi.Core.Library;
 using Nagi.Core.Tests.Utils;
 using Xunit;
 

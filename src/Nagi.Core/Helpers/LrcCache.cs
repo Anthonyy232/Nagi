@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
-using Nagi.Core.Models;
+using Nagi.Core.Library;
 
 namespace Nagi.Core.Helpers;
 

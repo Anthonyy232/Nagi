@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Library;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Windows.Media;

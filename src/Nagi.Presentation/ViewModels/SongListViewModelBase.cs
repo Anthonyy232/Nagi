@@ -6,16 +6,16 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Library;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Data;
+using Nagi.Core.Settings;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services;
 using Nagi.Presentation.Services.Abstractions;
-using Nagi.Core.Settings;
 
 namespace Nagi.Presentation.ViewModels;
 

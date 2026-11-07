@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
+using Nagi.Core.Library;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
 using Nagi.Core.Services.Implementations.Presence;

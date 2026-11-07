@@ -1,3 +1,5 @@
+using Nagi.Core.Library;
+
 namespace Nagi.Core.Models;
 
 public class PlaylistSong

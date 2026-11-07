@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Nagi.Core.Helpers;
-using Nagi.Core.Models;
+using Nagi.Core.Library;
 
 namespace Nagi.Core.Data.Interceptors;
 

@@ -1,6 +1,6 @@
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Nagi.Core.Models;
+using Nagi.Core.Library;
 
 namespace Nagi.Presentation.Models;
 

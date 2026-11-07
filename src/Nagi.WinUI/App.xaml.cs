@@ -6,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
-using Nagi.Core.Services;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Logging;
 using Nagi.Presentation.Services;

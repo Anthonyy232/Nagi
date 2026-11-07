@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Nagi.Core.Library;
 using Nagi.Core.Models;
 
 namespace Nagi.Core.Data;

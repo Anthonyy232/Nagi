@@ -1,9 +1,9 @@
 using System.Text;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Nagi.Core.Library;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Data;
 using Nagi.Core.Settings;
 using NSubstitute;
 using Xunit;

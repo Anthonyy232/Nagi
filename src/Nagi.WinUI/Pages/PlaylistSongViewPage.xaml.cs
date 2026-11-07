@@ -1,7 +1,7 @@
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
-using Nagi.Core.Models;
+using Nagi.Core.Library;
 using Nagi.Presentation.Services.Implementations;
 using Nagi.Presentation.ViewModels;
 using Windows.ApplicationModel.DataTransfer;

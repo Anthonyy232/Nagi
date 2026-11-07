@@ -1,7 +1,7 @@
 using FluentAssertions;
 using System.Globalization;
 using Microsoft.Extensions.Logging.Abstractions;
-using Nagi.Core.Models;
+using Nagi.Core.Library;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;

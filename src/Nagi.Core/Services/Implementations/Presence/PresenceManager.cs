@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Models;
+using Nagi.Core.Library;
 using Nagi.Core.Services.Abstractions;
-using System.Diagnostics;
 using Nagi.Core.Settings;
+using System.Diagnostics;
 
 namespace Nagi.Core.Services.Implementations.Presence;
 

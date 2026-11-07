@@ -1,5 +1,5 @@
 using FluentAssertions;
-using Nagi.Core.Models;
+using Nagi.Core.Library;
 using Nagi.Presentation.Helpers;
 using Xunit;
 

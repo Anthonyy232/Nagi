@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
-using Nagi.Core.Models;
+using Nagi.Core.Library;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.ViewModels;

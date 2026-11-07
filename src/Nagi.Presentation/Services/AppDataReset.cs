@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Nagi.Core.Helpers;
+using Nagi.Core.Library;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Services.Abstractions;
 using Serilog;

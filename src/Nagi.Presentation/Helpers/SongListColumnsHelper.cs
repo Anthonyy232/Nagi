@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Nagi.Core.Helpers;
-using Nagi.Core.Models;
+using Nagi.Core.Library;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 using CoreStrings = Nagi.Core.Resources.Strings;

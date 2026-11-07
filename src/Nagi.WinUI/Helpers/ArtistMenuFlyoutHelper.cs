@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
-using Nagi.Core.Models;
+using Nagi.Core.Library;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 

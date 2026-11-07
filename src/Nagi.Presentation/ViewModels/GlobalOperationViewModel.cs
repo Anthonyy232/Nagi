@@ -1,7 +1,7 @@
 using System.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Nagi.Core.Services.Data;
+using Nagi.Core.Library;
 
 namespace Nagi.Presentation.ViewModels;
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Data;
+using Nagi.Core.Library;
 using Nagi.Core.Models;
 
 namespace Nagi.Core.Tests.Utils;

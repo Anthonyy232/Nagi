@@ -1,8 +1,8 @@
 using BenchmarkDotNet.Attributes;
 using Microsoft.EntityFrameworkCore;
 using Nagi.Benchmarks.Helpers;
+using Nagi.Core.Library;
 using Nagi.Core.Models;
-using Nagi.Core.Services.Data;
 
 namespace Nagi.Benchmarks.Benchmarks;
 

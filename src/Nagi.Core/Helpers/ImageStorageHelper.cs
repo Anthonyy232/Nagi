@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 using Nagi.Core.Constants;
-using Nagi.Core.Models;
+using Nagi.Core.Library;
 using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.Core.Helpers;

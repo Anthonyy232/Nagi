@@ -1,3 +1,4 @@
+using Nagi.Core.Library;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

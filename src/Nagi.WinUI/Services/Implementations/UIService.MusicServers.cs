@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
-using Nagi.Core.Models;
+using Nagi.Core.Library;
 using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Dialogs;
 

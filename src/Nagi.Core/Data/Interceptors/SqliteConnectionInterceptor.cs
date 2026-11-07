@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Data.Common;
 using System.Globalization;
-using Nagi.Core.Helpers;
+using Nagi.Core.Library;
 
 namespace Nagi.Core.Data.Interceptors;
 

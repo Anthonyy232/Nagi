@@ -1,6 +1,6 @@
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Nagi.Core.Models;
+using Nagi.Core.Library;
 using Nagi.Core.Tests.Utils;
 using Xunit;
 

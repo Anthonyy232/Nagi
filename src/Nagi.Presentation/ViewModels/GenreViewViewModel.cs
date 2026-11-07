@@ -3,14 +3,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Library;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Data;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
-using Nagi.Core.Settings;
 
 namespace Nagi.Presentation.ViewModels;
 

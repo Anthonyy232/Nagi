@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
-using Nagi.Core.Models;
+using Nagi.Core.Library;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;

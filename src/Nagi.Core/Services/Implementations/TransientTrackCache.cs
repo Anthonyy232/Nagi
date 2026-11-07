@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Nagi.Core.Models;
+using Nagi.Core.Library;
 
 namespace Nagi.Core.Services.Implementations;
 
