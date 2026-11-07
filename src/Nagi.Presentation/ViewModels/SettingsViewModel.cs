@@ -189,18 +189,8 @@ public partial class SettingsViewModel : SettingsSectionViewModel
             _logger.LogError(ex, "Failed to change startup setting.");
         }
 
-        try
-        {
-            var enabled = await _autoLaunchService.IsEnabledAsync();
-            if (!_isDisposed) IsAutoLaunchEnabled = enabled;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to read startup setting.");
-        }
-        finally
-        {
-            IsUpdatingAutoLaunch = false;
-        }
+        var enabled = await _autoLaunchService.IsEnabledAsync();
+        if (!_isDisposed) IsAutoLaunchEnabled = enabled;
+        IsUpdatingAutoLaunch = false;
     }
 }

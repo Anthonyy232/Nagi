@@ -62,19 +62,12 @@ public partial class UIService
 
         pickImageButton.Click += async (_, _) =>
         {
-            try
-            {
-                var pickedPath = await PickSingleFileAsync(FileExtensions.ImageFileExtensions);
-                if (string.IsNullOrWhiteSpace(pickedPath)) return;
+            var pickedPath = await PickSingleFileAsync(FileExtensions.ImageFileExtensions);
+            if (string.IsNullOrWhiteSpace(pickedPath)) return;
 
-                coverImagePath = pickedPath;
-                imagePreview.Source = BitmapImageFactory.Create(pickedPath);
-                imagePlaceholder.Visibility = Visibility.Collapsed;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error picking cover image for new playlist");
-            }
+            coverImagePath = pickedPath;
+            imagePreview.Source = BitmapImageFactory.Create(pickedPath);
+            imagePlaceholder.Visibility = Visibility.Collapsed;
         };
         inputTextBox.TextChanged += (_, _) =>
             dialog.IsPrimaryButtonEnabled = PlaylistNames.IsValid(inputTextBox.Text);
