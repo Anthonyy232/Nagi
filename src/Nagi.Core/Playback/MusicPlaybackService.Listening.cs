@@ -5,7 +5,7 @@ public partial class MusicPlaybackService
     private readonly TimeProvider _timeProvider;
     private bool _finishCurrentTrack = true;
     private DateTimeOffset? _stopDeadline;
-    private ITimer? _stopTimer;
+    private CancellationTokenSource? _stopTimerCts;
 
     public ShuffleMode CurrentShuffleMode { get; private set; }
     public PlaybackStopMode StopMode { get; private set; }
@@ -59,29 +59,36 @@ public partial class MusicPlaybackService
         if (mode == PlaybackStopMode.Timer && (delay is null || delay <= TimeSpan.Zero ||
                                                delay > TimeSpan.FromMinutes(PlaybackMixLimits.MaxMinutes)))
             throw new ArgumentOutOfRangeException(nameof(delay));
-        _stopTimer?.Dispose();
-        _stopTimer = null;
+        _stopTimerCts?.Cancel();
+        _stopTimerCts = null;
         StopMode = mode;
         _stopDeadline = null;
         _finishCurrentTrack = finishCurrentTrack;
         if (mode == PlaybackStopMode.Timer)
         {
-            var deadline = _timeProvider.GetUtcNow() + delay!.Value;
-            _stopDeadline = deadline;
-            _stopTimer = _timeProvider.CreateTimer(_ => _dispatcher.TryEnqueue(() => OnStopTimerElapsed(deadline)),
-                null, delay.Value, Timeout.InfiniteTimeSpan);
+            _stopDeadline = _timeProvider.GetUtcNow() + delay!.Value;
+            _stopTimerCts = new CancellationTokenSource();
+            _ = StopWhenTimerRunsOutAsync(delay.Value, _stopTimerCts.Token);
         }
         StopScheduleChanged?.Invoke();
     }
 
-    private void OnStopTimerElapsed(DateTimeOffset deadline)
+    // Scheduled from the UI context, like every call into the service, so it carries on there when the delay ends.
+    private async Task StopWhenTimerRunsOutAsync(TimeSpan delay, CancellationToken cancellation)
     {
-        // A timer replaced after this one fired but before it got here no longer applies.
-        if (_isDisposed || _stopDeadline != deadline) return;
+        try
+        {
+            await Task.Delay(delay, _timeProvider, cancellation);
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+
         if (_finishCurrentTrack && CurrentTrack is not null && IsPlaying)
             ScheduleStop(PlaybackStopMode.AfterTrack);
         else
-            RunInBackground(StopAsync, "Sleep timer stop");
+            _ = RunInBackground(StopAsync, "Sleep timer stop");
     }
 
     private bool ShouldStopAfterTrack()

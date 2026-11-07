@@ -46,7 +46,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _service = new MusicPlaybackService(
             _settingsService, _playbackStateStore,
             _audioPlayer,
-            _mediaControls, new ImmediateDispatcher(),
+            _mediaControls,
             _library.Reader, _smartPlaylists, _library.Listening,
             _metadataService,
             _fileSystem,
@@ -516,7 +516,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         settings.Get(CoreSettings.IsMuted).Returns(true);
         settings.Get(CoreSettings.IsShuffleEnabled).Returns(true);
         settings.Get(CoreSettings.RepeatMode).Returns(RepeatMode.RepeatAll);
-        using var service = new MusicPlaybackService(settings, _playbackStateStore, _audioPlayer, _mediaControls, new ImmediateDispatcher(),
+        using var service = new MusicPlaybackService(settings, _playbackStateStore, _audioPlayer, _mediaControls,
             _library.Reader, _smartPlaylists, _library.Listening, _metadataService, _fileSystem, _musicServers, _logger);
 
         await service.InitializeAsync();
@@ -1284,7 +1284,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
 
         _settingsService.Set(CoreSettings.RestorePlaybackState, true);
         _playbackStateStore.LoadAsync().Returns(savedState);
-        using var restored = new MusicPlaybackService(_settingsService, _playbackStateStore, _audioPlayer, _mediaControls, new ImmediateDispatcher(), _library.Reader, _smartPlaylists, _library.Listening, _metadataService, _fileSystem, _musicServers, _logger);
+        using var restored = new MusicPlaybackService(_settingsService, _playbackStateStore, _audioPlayer, _mediaControls, _library.Reader, _smartPlaylists, _library.Listening, _metadataService, _fileSystem, _musicServers, _logger);
         await restored.InitializeAsync();
         restored.PlayOrder.Should().BeEmpty();
         restored.CurrentTrack.Should().BeNull();

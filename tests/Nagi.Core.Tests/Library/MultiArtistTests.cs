@@ -258,7 +258,7 @@ public class MultiArtistTests : IDisposable
             TestSettings.Create(),
             Substitute.For<IPlaybackStateStore>(),
             Substitute.For<IAudioPlayer>(),
-            Substitute.For<ISystemMediaControls>(), new ImmediateDispatcher(),
+            Substitute.For<ISystemMediaControls>(),
             Substitute.For<ILibraryReader>(),
             Substitute.For<ISmartPlaylistService>(),
             Substitute.For<IListeningService>(),
