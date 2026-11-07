@@ -42,7 +42,7 @@ public class SingleInstanceManagerTests
     public void TryAcquire_AfterPreviousOwnerThreadExits_AcquiresAbandonedMutex()
     {
         var instanceId = Guid.NewGuid().ToString("N");
-        using var retainedHandle = new Mutex(false, $@"Global\NagiMusicPlayer-{instanceId}");
+        using var retainedHandle = new Mutex(false, SingleInstanceManager.GetMutexName(instanceId));
         var previousOwner = new Thread(() => retainedHandle.WaitOne());
         previousOwner.Start();
         previousOwner.Join(TimeSpan.FromSeconds(5)).Should().BeTrue();
