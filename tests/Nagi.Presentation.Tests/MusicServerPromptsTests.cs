@@ -94,6 +94,28 @@ public sealed class MusicServerPromptsTests : IDisposable
             string.Format(Strings.MusicServer_Error_SavedSignIn_Format, "Living Room"), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<bool>());
     }
 
+    [Fact]
+    public async Task SignInRejectedWhileASongMessageIsOpen_IsOfferedOnceTheMessageCloses()
+    {
+        var song = AddServerSong();
+        var messageOpen = new TaskCompletionSource();
+        _ui.ShowMessageDialogAsync(Arg.Any<string>(), Arg.Any<string>()).Returns(messageOpen.Task);
+        var offered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<bool>())
+            .Returns(_ =>
+            {
+                offered.TrySetResult();
+                return false;
+            });
+
+        _playback.ServerSongFailed += Raise.Event<Action<Song>>(song);
+        _musicServers.SignInRejected += Raise.Event<Action<Guid>>(song.FolderId);
+        offered.Task.IsCompleted.Should().BeFalse("only one dialog can be open at a time");
+        messageOpen.SetResult();
+
+        await offered.Task.WaitAsync(TimeSpan.FromSeconds(5));
+    }
+
     private Song AddServerSong()
     {
         var folder = new Folder { Name = "Living Room", Path = "nagi-server:0123" };

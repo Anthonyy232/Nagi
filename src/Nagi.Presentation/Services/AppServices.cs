@@ -61,12 +61,8 @@ public static class AppServices
     /// <summary>
     ///     Starts what has to wait for the main content: music server syncs and the prompts they can show.
     /// </summary>
-    public static void StartAfterMainContent(IServiceProvider services)
-    {
-        // Listening first, so the first sync can already offer to sign in again.
+    public static void StartAfterMainContent(IServiceProvider services) =>
         services.GetRequiredService<MusicServerPrompts>().Start();
-        services.GetRequiredService<IMusicServerService>().StartPeriodicSync();
-    }
 
     /// <summary>
     ///     Saves the playback session and finalizes listen history. The caller disposes the provider afterwards.

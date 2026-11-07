@@ -361,32 +361,20 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         if (await _uiService.ShowMusicServerSignInDialogAsync(folderId)) await RunServerSyncAsync(server.Id, server.Name);
     }
 
-    private async Task RunServerSyncAsync(Guid folderId, string name)
+    private Task RunServerSyncAsync(Guid folderId, string name) =>
+        MusicServerErrors.RunAsync(_uiService, _logger, folderId, name, () => SyncServerWithProgressAsync(folderId, name),
+            ResourceFormatter.Format(Strings.Folders_Sync_Error_Failed, name));
+
+    private async Task SyncServerWithProgressAsync(Guid folderId, string name)
     {
         using var syncCts = new CancellationTokenSource();
         _globalOperation.IsInProgress = true;
         _globalOperation.StatusMessage = ResourceFormatter.Format(Strings.Folders_Sync_InProgress, name);
         _globalOperation.IsIndeterminate = true;
         _globalOperation.SetCancellation(syncCts.Cancel);
-
-        MusicServerError? error = null;
         try
         {
             await _musicServers.SyncAsync(folderId, _globalOperation.CreateProgress(syncCts.Token), syncCts.Token);
-        }
-        catch (OperationCanceledException)
-        {
-            _logger.LogInformation("Sync cancelled for server folder {FolderId}.", folderId);
-        }
-        catch (MusicServerException ex)
-        {
-            error = ex.Error;
-            _logger.LogWarning(ex, "Failed to sync server folder {FolderId}", folderId);
-        }
-        catch (Exception ex)
-        {
-            error = MusicServerError.ServerError;
-            _logger.LogError(ex, "Failed to sync server folder {FolderId}", folderId);
         }
         finally
         {
@@ -394,9 +382,5 @@ public partial class FolderViewModel : ObservableObject, IDisposable
             _globalOperation.IsInProgress = false;
             _globalOperation.IsIndeterminate = false;
         }
-
-        if (error != null &&
-            await MusicServerErrors.ShowAsync(_uiService, folderId, name, error, ResourceFormatter.Format(Strings.Folders_Sync_Error_Failed, name)))
-            await RunServerSyncAsync(folderId, name);
     }
 }

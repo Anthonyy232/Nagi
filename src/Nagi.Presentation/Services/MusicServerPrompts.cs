@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
@@ -11,8 +12,8 @@ using Nagi.Presentation.Services.Abstractions;
 namespace Nagi.Presentation.Services;
 
 /// <summary>
-///     Tells the user about music server failures that no page asked about: a server song that won't play, and a
-///     background sync that finds the server no longer accepts the saved sign-in.
+///     Runs the background syncs of the music servers and tells the user about failures that no page asked about: a
+///     server song that won't play, and a background sync that finds the server no longer accepts the saved sign-in.
 /// </summary>
 public sealed class MusicServerPrompts : IDisposable
 {
@@ -21,8 +22,10 @@ public sealed class MusicServerPrompts : IDisposable
     private readonly IUIService _ui;
     private readonly IDispatcherService _dispatcher;
     private readonly ILogger<MusicServerPrompts> _logger;
-    // One message at a time: playing a song again while its message is open fails again.
-    private bool _isShowingMessage;
+    // Only one dialog can be open at a time, so a prompt waits for the one before it instead of failing to show.
+    private readonly SemaphoreSlim _promptTurn = new(1, 1);
+    // Playing a song again while its message is open fails again, and one message is enough.
+    private bool _isExplainingSongFailure;
     // Offered once per server each run, so a user who declines isn't asked again at every sync.
     private readonly HashSet<Guid> _offeredSignIns = [];
 
@@ -34,13 +37,14 @@ public sealed class MusicServerPrompts : IDisposable
         _ui = ui;
         _dispatcher = dispatcher;
         _logger = logger;
-    }
-
-    public void Start()
-    {
         _playback.ServerSongFailed += OnServerSongFailed;
         _musicServers.SignInRejected += OnSignInRejected;
     }
+
+    /// <summary>
+    ///     Starts syncing every server now and every half hour, once the main content can show the prompts.
+    /// </summary>
+    public void Start() => _musicServers.StartPeriodicSync();
 
     public void Dispose()
     {
@@ -56,8 +60,9 @@ public sealed class MusicServerPrompts : IDisposable
     // Asks the server what went wrong, so the message can say what to do about it.
     private async Task ExplainServerSongFailureAsync(Song song)
     {
-        if (_isShowingMessage) return;
-        _isShowingMessage = true;
+        if (_isExplainingSongFailure) return;
+        _isExplainingSongFailure = true;
+        await _promptTurn.WaitAsync();
         try
         {
             MusicServerError? error = null;
@@ -89,14 +94,15 @@ public sealed class MusicServerPrompts : IDisposable
         }
         finally
         {
-            _isShowingMessage = false;
+            _promptTurn.Release();
+            _isExplainingSongFailure = false;
         }
     }
 
     private async Task OfferSignInAsync(Guid folderId)
     {
-        if (_isShowingMessage || !_offeredSignIns.Add(folderId)) return;
-        _isShowingMessage = true;
+        if (!_offeredSignIns.Add(folderId)) return;
+        await _promptTurn.WaitAsync();
         try
         {
             if (await _musicServers.GetServerAsync(folderId) is { } server)
@@ -108,7 +114,7 @@ public sealed class MusicServerPrompts : IDisposable
         }
         finally
         {
-            _isShowingMessage = false;
+            _promptTurn.Release();
         }
     }
 }
