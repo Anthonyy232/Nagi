@@ -1,6 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Data.Sqlite;
-using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 
 namespace Nagi.Core.Data;
@@ -35,9 +33,7 @@ public class MusicDbContext : DbContext
 
     public Task BackfillSortKeysAsync(CancellationToken cancellationToken = default)
     {
-        // Use the same Unicode normalization as new writes, without tracking the library in memory.
-        var connection = (SqliteConnection)Database.GetDbConnection();
-        connection.CreateFunction<string, string>("nagi_sort_key", SortKeyHelper.Normalize, isDeterministic: true);
+        // Uses the same Unicode normalization as new writes, without tracking the library in memory.
         return Database.ExecuteSqlRawAsync("""
             UPDATE Artists SET SortName = nagi_sort_key(Name) WHERE SortName = '';
             UPDATE Albums
