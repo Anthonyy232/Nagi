@@ -22,6 +22,16 @@ public class FileSystemService : IFileSystemService
         Directory.Delete(path, recursive);
     }
 
+    public IEnumerable<string> EnumerateDirectories(string path)
+    {
+        return Directory.EnumerateDirectories(path);
+    }
+
+    public void MoveDirectory(string sourceDirName, string destDirName)
+    {
+        Directory.Move(sourceDirName, destDirName);
+    }
+
     public IEnumerable<string> EnumerateFiles(string path, string searchPattern, SearchOption searchOption)
     {
         return SafeFileEnumerator
@@ -58,6 +68,16 @@ public class FileSystemService : IFileSystemService
     public Task<byte[]> ReadAllBytesAsync(string path)
     {
         return File.ReadAllBytesAsync(path);
+    }
+
+    public Stream OpenRead(string path)
+    {
+        return File.OpenRead(path);
+    }
+
+    public Stream CreateFile(string path)
+    {
+        return File.Create(path);
     }
 
     public bool FileExists(string path)

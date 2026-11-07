@@ -1,35 +1,19 @@
 using System.Text;
-using Nagi.Core.Models.Romanization;
-using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.Core.Services.Implementations.Romanization;
 
-public sealed class JapaneseRomanizationProvider : IRomanizationProvider
+internal sealed class JapaneseRomanizationProvider : RomanizationProvider<JapaneseRomanizationProvider.JapaneseRuleSet>
 {
-    private const string RulesFileName = "japanese-rules.json";
+    public override string RulesFileName => "japanese-rules.json";
 
-    public string EngineId => "japanese-v1";
+    public override string EngineId => "japanese-v1";
 
-    public bool Supports(string text)
+    public override bool Supports(string text)
     {
         return text.Any(c => c is >= '\u3040' and <= '\u30FF' or >= '\u3400' and <= '\u9FFF');
     }
 
-    public async Task<string?> RomanizeAsync(string text, InstalledRomanizationPack pack, CancellationToken cancellationToken = default)
-    {
-        if (string.IsNullOrWhiteSpace(text) || !Supports(text)) return null;
-
-        var rules = await RomanizationProviderHelpers.LoadRulesAsync<JapaneseRuleSet>(pack, RulesFileName, cancellationToken).ConfigureAwait(false);
-        var result = Romanize(text, rules);
-        return string.Equals(result, text, StringComparison.Ordinal) ? null : result;
-    }
-
-    public Task<bool> ValidatePackAsync(InstalledRomanizationPack pack, CancellationToken cancellationToken = default)
-    {
-        return RomanizationProviderHelpers.ValidatePackAsync(pack, RulesFileName, RomanizeAsync, cancellationToken);
-    }
-
-    private static string Romanize(string text, JapaneseRuleSet rules)
+    protected override string Romanize(string text, JapaneseRuleSet rules)
     {
         if (rules.Phrases.TryGetValue(text, out var wholePhrase)) return wholePhrase;
 
@@ -39,8 +23,8 @@ public sealed class JapaneseRomanizationProvider : IRomanizationProvider
 
         while (index < text.Length)
         {
-            if (RomanizationProviderHelpers.TryMatchLongest(text, index, rules.Phrases, out var matchedLength, out var replacement)
-                || RomanizationProviderHelpers.TryMatchLongest(text, index, rules.Sequences, out matchedLength, out replacement, NormalizeKana))
+            if (TryMatchLongest(text, index, rules.Phrases, out var matchedLength, out var replacement)
+                || TryMatchLongest(text, index, rules.Sequences, out matchedLength, out replacement, NormalizeKana))
             {
                 AppendReplacement(builder, replacement, ref geminateNext);
                 index += matchedLength;
@@ -78,7 +62,7 @@ public sealed class JapaneseRomanizationProvider : IRomanizationProvider
             index++;
         }
 
-        return RomanizationProviderHelpers.NormalizePunctuationSpacing(builder.ToString());
+        return NormalizePunctuationSpacing(builder.ToString());
     }
 
     private static void AppendReplacement(StringBuilder builder, string replacement, ref bool geminateNext)
@@ -121,7 +105,7 @@ public sealed class JapaneseRomanizationProvider : IRomanizationProvider
         return null;
     }
 
-    private sealed class JapaneseRuleSet
+    internal sealed class JapaneseRuleSet
     {
         public Dictionary<string, string> Phrases { get; set; } = new();
         public Dictionary<string, string> Sequences { get; set; } = new();

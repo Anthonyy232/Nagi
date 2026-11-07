@@ -1,5 +1,8 @@
 namespace Nagi.Core.Models.Romanization;
 
+// The catalog signature is checked against these types serialized again, so RomanizationPackCatalog and
+// RomanizationPackCatalogEntry must keep exactly the properties, names and order the signing tool wrote. Removing one,
+// even one nothing reads, makes every published catalog fail verification.
 public sealed class RomanizationCatalogEnvelope
 {
     public RomanizationPackCatalog Catalog { get; set; } = new();
