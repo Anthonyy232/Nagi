@@ -4,14 +4,10 @@ public enum ServiceResultStatus
 {
     Success,
 
-    /// <summary>
-    ///     The operation completed successfully, but no data was found for the query.
-    /// </summary>
+    /// <summary>The service answered, and has no data for the query.</summary>
     SuccessNotFound,
 
-    /// <summary>
-    ///     The operation failed due to a temporary issue (e.g., network error) and can be retried.
-    /// </summary>
+    /// <summary>The service couldn't answer, for example because of a network error, so the query can be retried.</summary>
     TemporaryError
 }
 
@@ -27,10 +23,7 @@ public class ServiceResult<T> where T : class
 
     public ServiceResultStatus Status { get; }
 
-    /// <summary>
-    ///     Gets a value indicating whether the service call was conclusive (i.e., not a temporary error).
-    ///     A conclusive result means the operation either succeeded or confirmed no data exists.
-    /// </summary>
+    /// <summary>The service answered, so missing data is final rather than worth retrying.</summary>
     public bool IsConclusive => Status is not ServiceResultStatus.TemporaryError;
 
     public static ServiceResult<T> FromSuccess(T data) => new(data, ServiceResultStatus.Success);
@@ -40,4 +33,10 @@ public class ServiceResult<T> where T : class
     public static ServiceResult<T> FromSuccessOrNotFound(T? data) => data is null ? FromSuccessNotFound() : FromSuccess(data);
 
     public static ServiceResult<T> FromTemporaryError() => new(null, ServiceResultStatus.TemporaryError);
+
+    /// <summary>Converts the data, keeping a missing answer missing and a failure retryable.</summary>
+    public ServiceResult<TOut> Map<TOut>(Func<T, TOut?> map) where TOut : class =>
+        Data is not null ? ServiceResult<TOut>.FromSuccessOrNotFound(map(Data))
+        : IsConclusive ? ServiceResult<TOut>.FromSuccessNotFound()
+        : ServiceResult<TOut>.FromTemporaryError();
 }

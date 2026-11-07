@@ -1,8 +1,10 @@
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Services.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -37,34 +39,40 @@ public class AlbumCoverService : IAlbumCoverService
         // A name search for an unknown title or artist would return some unrelated album.
         var canSearchByName = album.Title != Album.UnknownAlbumName && album.ArtistName != Artist.UnknownArtistName;
         var canSearchMusicBrainz = canSearchByName && enabledProviders.Any(p => p.Id == ServiceProviderIds.MusicBrainz);
-        var allConclusive = true;
 
-        foreach (var provider in enabledProviders)
+        string? coverUrl = null;
+        // Enumerated lazily, so the sources are asked one at a time and the search stops at the first cover.
+        var isFinal = await ProviderPriority.TakeInOrderAsync(
+            enabledProviders
+                .Where(p => ProviderCatalog.Can(p.Id, ProviderCapabilities.AlbumCover) &&
+                            (canSearchByName || p.Id == ServiceProviderIds.CoverArtArchive))
+                .Select(p => FindCoverUrlAsync(p.Id, album, canSearchMusicBrainz, cancellationToken)),
+            url =>
+            {
+                coverUrl = url;
+                return true;
+            }, cancellationToken).ConfigureAwait(false);
+
+        return coverUrl is not null ? ServiceResult<string>.FromSuccess(coverUrl)
+            : isFinal ? ServiceResult<string>.FromSuccessNotFound()
+            : ServiceResult<string>.FromTemporaryError();
+    }
+
+    private async Task<ServiceResult<string>> FindCoverUrlAsync(string providerId, AlbumCoverQuery album,
+        bool canSearchMusicBrainz, CancellationToken cancellationToken)
+    {
+        var result = await (providerId switch
         {
-            var result = provider.Id switch
-            {
-                ServiceProviderIds.CoverArtArchive =>
-                    await FindInCoverArtArchiveAsync(album, canSearchMusicBrainz, cancellationToken).ConfigureAwait(false),
-                ServiceProviderIds.AppleMusic when canSearchByName =>
-                    await _appleMusic.GetAlbumCoverUrlAsync(album.Title, album.ArtistName, cancellationToken).ConfigureAwait(false),
-                ServiceProviderIds.Deezer when canSearchByName =>
-                    await _deezer.GetAlbumCoverUrlAsync(album.Title, album.ArtistName, cancellationToken).ConfigureAwait(false),
-                ServiceProviderIds.LastFm when canSearchByName =>
-                    await _lastFm.GetAlbumCoverUrlAsync(album.Title, album.ArtistName, cancellationToken).ConfigureAwait(false),
-                _ => null
-            };
-            if (result is null) continue;
+            ServiceProviderIds.CoverArtArchive => FindInCoverArtArchiveAsync(album, canSearchMusicBrainz, cancellationToken),
+            ServiceProviderIds.AppleMusic => _appleMusic.GetAlbumCoverUrlAsync(album.Title, album.ArtistName, cancellationToken),
+            ServiceProviderIds.Deezer => _deezer.GetAlbumCoverUrlAsync(album.Title, album.ArtistName, cancellationToken),
+            ServiceProviderIds.LastFm => _lastFm.GetAlbumCoverUrlAsync(album.Title, album.ArtistName, cancellationToken),
+            _ => throw new NotSupportedException($"No album cover lookup for provider '{providerId}'.")
+        }).ConfigureAwait(false);
 
-            if (result.Data is not null)
-            {
-                _logger.LogDebug("Using {Provider} cover for album '{AlbumTitle}'.", provider.Id, album.Title);
-                return result;
-            }
-
-            allConclusive &= result.IsConclusive;
-        }
-
-        return allConclusive ? ServiceResult<string>.FromSuccessNotFound() : ServiceResult<string>.FromTemporaryError();
+        if (result.Data is not null)
+            _logger.LogDebug("Using {Provider} cover for album '{AlbumTitle}'.", providerId, album.Title);
+        return result;
     }
 
     private async Task<ServiceResult<string>> FindInCoverArtArchiveAsync(AlbumCoverQuery album, bool canSearchMusicBrainz,

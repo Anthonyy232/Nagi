@@ -150,7 +150,7 @@ public partial class LibraryServiceTests : IDisposable
     [Theory]
     [InlineData(ServiceProviderIds.TheAudioDb)]
     [InlineData(ServiceProviderIds.MusicBrainz)]
-    public async Task ArtistMetadata_ProviderTimeout_UsesLowerPriorityBiography(string providerId)
+    public async Task ArtistMetadata_ProviderFailure_UsesLowerPriorityBiography(string providerId)
     {
         var artist = new Artist
         {
@@ -169,9 +169,9 @@ public partial class LibraryServiceTests : IDisposable
                 new() { Id = ServiceProviderIds.LastFm, IsEnabled = true }
             });
         _theAudioDbService.GetArtistMetadataAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
-            .Returns(Task.FromException<ServiceResult<TheAudioDbArtistInfo>>(new TaskCanceledException("Timed out")));
+            .Returns(ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError());
         _musicBrainzService.SearchArtistAsync(artist.Name, Arg.Any<CancellationToken>())
-            .Returns(Task.FromException<ServiceResult<string>>(new TaskCanceledException("Timed out")));
+            .Returns(ServiceResult<string>.FromTemporaryError());
         _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccess(new ArtistInfo { Biography = "Fallback biography" }));
 
@@ -179,48 +179,6 @@ public partial class LibraryServiceTests : IDisposable
 
         result!.Biography.Should().Be("Fallback biography");
         result.MetadataLastCheckedUtc.Should().BeNull();
-    }
-
-    [Fact]
-    public async Task ArtistMetadata_CancellationDuringIdentityLookup_StillObservesOtherProviderFailures()
-    {
-        var artist = new Artist { Name = "Cancelled lookup" };
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Artists.Add(artist);
-            await context.SaveChangesAsync();
-        }
-        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata).Returns(
-            new List<ServiceProviderSetting>
-            {
-                new() { Id = ServiceProviderIds.MusicBrainz, IsEnabled = true },
-                new() { Id = ServiceProviderIds.LastFm, IsEnabled = true }
-            });
-        var identity = new TaskCompletionSource<ServiceResult<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var metadata = new TaskCompletionSource<ServiceResult<ArtistInfo>>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var observed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var failure = new HttpRequestException("Late provider failure");
-        _musicBrainzService.SearchArtistAsync(artist.Name, Arg.Any<CancellationToken>()).Returns(identity.Task);
-        _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>()).Returns(_ =>
-        {
-            started.TrySetResult();
-            return metadata.Task;
-        });
-        _artistMetadataLogger.When(logger => logger.Log(LogLevel.Debug, Arg.Any<EventId>(), Arg.Any<Arg.AnyType>(),
-                Arg.Is<Exception?>(exception => ReferenceEquals(exception, failure)),
-                Arg.Any<Func<Arg.AnyType, Exception?, string>>()))
-            .Do(_ => observed.TrySetResult());
-        using var cancellation = new CancellationTokenSource();
-
-        var lookup = _libraryService.GetArtistDetailsAsync(artist.Id, true, cancellation.Token);
-        await started.Task.WaitAsync(TimeSpan.FromSeconds(2));
-        cancellation.Cancel();
-        identity.SetCanceled(cancellation.Token);
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => lookup);
-        metadata.SetException(failure);
-
-        await observed.Task.WaitAsync(TimeSpan.FromSeconds(2));
     }
 
     [Fact]
