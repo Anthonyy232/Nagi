@@ -1,21 +1,27 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Nagi.Core.Data;
 using Nagi.Core.Library;
 using Nagi.Core.Platform;
-using Nagi.Core.Playback;
 
 namespace Nagi.Core.Listening;
 
 public class StatisticsService : IStatisticsService
 {
-    // Song.PlayCount counts only scrobble-eligible listens (ListeningService); Insights also counts finished ones.
-    private static readonly Expression<Func<ListenHistory, ScoredListen>> Score = listen => new ScoredListen
+    private static readonly Expression<Func<ListenHistory, ScoredListen>> Score = WithPlayRule((listen, countsAsPlay) =>
+        new ScoredListen { SongId = listen.SongId, CountsAsPlay = countsAsPlay, DurationTicks = listen.ListenDurationTicks });
+
+    // Inlines the rule's expression, since a call to it couldn't be translated to SQL.
+    private static Expression<Func<ListenHistory, ScoredListen>> WithPlayRule(
+        Expression<Func<ListenHistory, bool, ScoredListen>> score)
     {
-        SongId = listen.SongId,
-        CountsAsPlay = listen.IsEligibleForScrobbling || listen.EndReason == PlaybackEndReason.Finished,
-        DurationTicks = listen.ListenDurationTicks
-    };
+        var listen = score.Parameters[0];
+        var countsAsPlay = ReplacingExpressionVisitor.Replace(
+            ListenRules.CountsAsPlay.Parameters[0], listen, ListenRules.CountsAsPlay.Body);
+        return Expression.Lambda<Func<ListenHistory, ScoredListen>>(
+            ReplacingExpressionVisitor.Replace(score.Parameters[1], countsAsPlay, score.Body), listen);
+    }
 
     private static readonly EntityKind<Song> Songs = new(
         (_, listens) => listens.Select(listen => new Credit { EntityId = listen.SongId, Listen = listen }),

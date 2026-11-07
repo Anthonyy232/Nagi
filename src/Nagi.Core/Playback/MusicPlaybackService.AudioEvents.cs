@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
+using Nagi.Core.Listening;
 using Nagi.Core.Settings;
 
 namespace Nagi.Core.Playback;
@@ -47,15 +48,7 @@ public partial class MusicPlaybackService
     {
         if (_isTransitioningTrack || _isEligibilityMarked || !CurrentListenHistoryId.HasValue) return;
 
-        var duration = Duration;
-        var progress = _audioPlayer.CurrentPosition;
-
-        // Apply the scrobble threshold even when no external scrobbling account is configured.
-        var isLongEnough = duration.TotalSeconds > 30;
-        var hasPlayedEnough = progress.TotalSeconds >= duration.TotalSeconds / 2
-                           || progress.TotalMinutes >= 4;
-
-        if (!isLongEnough || !hasPlayedEnough) return;
+        if (!ListenRules.IsEligible(Duration, _audioPlayer.CurrentPosition)) return;
 
         _isEligibilityMarked = true;
         var sessionId = CurrentListenHistoryId.Value;

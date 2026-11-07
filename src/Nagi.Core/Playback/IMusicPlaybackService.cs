@@ -1,4 +1,5 @@
 using Nagi.Core.Library;
+using Nagi.Core.Listening;
 
 namespace Nagi.Core.Playback;
 
@@ -98,7 +99,7 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
 
     /// <summary>
     ///     Occurs once per listen, after its ListenHistory entry is marked eligible for scrobbling because the track
-    ///     has played long enough (track &gt; 30 s AND played ≥ 50% or ≥ 4 min).
+    ///     has played long enough (<see cref="ListenRules.IsEligible" />).
     /// </summary>
     event Action? ScrobbleEligibilityReached;
 
