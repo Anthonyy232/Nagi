@@ -20,6 +20,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     private readonly IMetadataService _metadataService;
     private readonly IFileSystemService _fileSystem = Substitute.For<IFileSystemService>();
     private readonly IMusicServerService _musicServers = Substitute.For<IMusicServerService>();
+    private readonly ISmartPlaylistService _smartPlaylists = Substitute.For<ISmartPlaylistService>();
 
     private readonly MusicPlaybackService _service;
 
@@ -44,7 +45,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
             _settingsService, _playbackStateStore,
             _audioPlayer,
             _mediaControls, new ImmediateDispatcher(),
-            _library.Reader, _library.Listening,
+            _library.Reader, _smartPlaylists, _library.Listening,
             _metadataService,
             _fileSystem,
             _musicServers,
@@ -514,7 +515,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         settings.Get(CoreSettings.IsShuffleEnabled).Returns(true);
         settings.Get(CoreSettings.RepeatMode).Returns(RepeatMode.RepeatAll);
         using var service = new MusicPlaybackService(settings, _playbackStateStore, _audioPlayer, _mediaControls, new ImmediateDispatcher(),
-            _library.Reader, _library.Listening, _metadataService, _fileSystem, _musicServers, _logger);
+            _library.Reader, _smartPlaylists, _library.Listening, _metadataService, _fileSystem, _musicServers, _logger);
 
         await service.InitializeAsync();
 
@@ -859,6 +860,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     [InlineData(PlaybackContextType.Folder)]
     [InlineData(PlaybackContextType.Genre)]
     [InlineData(PlaybackContextType.Playlist)]
+    [InlineData(PlaybackContextType.SmartPlaylist)]
     public async Task PlayingACollection_StartsTheListenSessionWithThatCollectionAsContext(PlaybackContextType type)
     {
         await _service.InitializeAsync();
@@ -883,6 +885,10 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
             case PlaybackContextType.Genre:
                 _library.Reader.GetSongIdsAsync(new SongScope.Genre(id), null, Arg.Any<SongSortOrder>()).Returns(songIds);
                 await _service.PlayGenreAsync(id);
+                break;
+            case PlaybackContextType.SmartPlaylist:
+                _smartPlaylists.GetMatchingSongIdsAsync(id, token: Arg.Any<CancellationToken>()).Returns(songIds);
+                (await _service.PlaySmartPlaylistAsync(id)).Should().BeTrue();
                 break;
             default:
                 _library.Reader.GetSongIdsAsync(new SongScope.Playlist(id), null, Arg.Any<SongSortOrder>()).Returns(songIds);
@@ -1276,7 +1282,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
 
         _settingsService.Set(CoreSettings.RestorePlaybackState, true);
         _playbackStateStore.LoadAsync().Returns(savedState);
-        using var restored = new MusicPlaybackService(_settingsService, _playbackStateStore, _audioPlayer, _mediaControls, new ImmediateDispatcher(), _library.Reader, _library.Listening, _metadataService, _fileSystem, _musicServers, _logger);
+        using var restored = new MusicPlaybackService(_settingsService, _playbackStateStore, _audioPlayer, _mediaControls, new ImmediateDispatcher(), _library.Reader, _smartPlaylists, _library.Listening, _metadataService, _fileSystem, _musicServers, _logger);
         await restored.InitializeAsync();
         restored.PlayOrder.Should().BeEmpty();
         restored.CurrentTrack.Should().BeNull();

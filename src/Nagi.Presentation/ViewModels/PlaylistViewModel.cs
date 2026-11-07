@@ -207,14 +207,12 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         {
             if (isSmart)
             {
-                var songIds = await _smartPlaylistService.GetMatchingSongIdsAsync(playlistId);
-                if (songIds.Count == 0)
+                if (!await _musicPlaybackService.PlaySmartPlaylistAsync(playlistId))
                 {
                     StatusMessage = Strings.Playlist_Status_SmartEmpty;
                     _logger.LogDebug("Smart playlist {PlaylistId} has no matching songs", playlistId);
                     return;
                 }
-                await _musicPlaybackService.PlayAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.SmartPlaylist, playlistId));
             }
             else
             {
@@ -270,16 +268,9 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
                 var id = await _smartPlaylistService.GetRandomSmartPlaylistIdAsync();
                 if (id.HasValue)
                 {
-                    var songIds = await _smartPlaylistService.GetMatchingSongIdsAsync(id.Value);
-                    if (songIds.Count > 0)
-                    {
-                        await _musicPlaybackService.PlayAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.SmartPlaylist, id.Value));
-                        StatusMessage = string.Empty;
-                    }
-                    else
-                    {
-                        StatusMessage = Strings.Playlist_Status_SmartSelectedEmpty;
-                    }
+                    StatusMessage = await _musicPlaybackService.PlaySmartPlaylistAsync(id.Value)
+                        ? string.Empty
+                        : Strings.Playlist_Status_SmartSelectedEmpty;
                 }
                 else StatusMessage = Strings.Playlist_Status_NoPlaylists;
             }

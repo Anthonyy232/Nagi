@@ -12,6 +12,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     private readonly ISystemMediaControls _mediaControls;
     private readonly IDispatcherService _dispatcher;
     private readonly ILibraryReader _libraryReader;
+    private readonly ISmartPlaylistService _smartPlaylists;
     private readonly IListeningService _listening;
     private readonly ILogger<MusicPlaybackService> _logger;
     private readonly IMetadataService _metadataService;
@@ -45,6 +46,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         ISystemMediaControls mediaControls,
         IDispatcherService dispatcher,
         ILibraryReader libraryReader,
+        ISmartPlaylistService smartPlaylists,
         IListeningService listening,
         IMetadataService metadataService,
         IFileSystemService fileSystem,
@@ -59,6 +61,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         _mediaControls = mediaControls;
         _dispatcher = dispatcher;
         _libraryReader = libraryReader;
+        _smartPlaylists = smartPlaylists;
         _listening = listening;
         _metadataService = metadataService;
         _logger = logger;
@@ -342,6 +345,19 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         if (!request.IsCancellationRequested)
             await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Playlist, playlistId), request);
     });
+
+    public async Task<bool> PlaySmartPlaylistAsync(Guid smartPlaylistId)
+    {
+        var played = false;
+        await RunPlaybackRequest(async request =>
+        {
+            var songIds = await _smartPlaylists.GetMatchingSongIdsAsync(smartPlaylistId, token: request);
+            if (songIds.Count == 0 || request.IsCancellationRequested) return;
+            await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.SmartPlaylist, smartPlaylistId), request);
+            played = true;
+        });
+        return played;
+    }
 
     public Task PlayGenreAsync(Guid genreId) => RunPlaybackRequest(async request =>
     {

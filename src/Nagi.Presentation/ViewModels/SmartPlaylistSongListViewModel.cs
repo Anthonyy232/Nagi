@@ -20,14 +20,9 @@ namespace Nagi.Presentation.ViewModels;
 /// </summary>
 public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
 {
-    private readonly record struct RandomSnapshotKey(Guid PlaylistId, string? SearchTerm);
-
     private readonly ISmartPlaylistService _smartPlaylistService;
-    private readonly object _randomSnapshotLock = new();
     private Guid? _currentSmartPlaylistId;
     private int _playlistGeneration;
-    private Task<List<Guid>>? _randomSongIdsTask;
-    private RandomSnapshotKey? _randomSnapshotKey;
 
     public SmartPlaylistSongListViewModel(
         ILibraryReader libraryReader,
@@ -146,7 +141,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         if (!_currentSmartPlaylistId.HasValue) return Task.FromResult(new PagedResult<Song>());
 
         if (sortOrder == SongSortOrder.Random)
-            return LoadRandomSongsPageAsync(pageNumber, pageSize, cancellationToken);
+            return LoadRandomPageAsync(pageNumber, pageSize, cancellationToken);
 
         return _smartPlaylistService.GetMatchingSongsPagedAsync(
             _currentSmartPlaylistId.Value, pageNumber, pageSize, ActiveSearchTerm, sortOrder, cancellationToken);
@@ -155,7 +150,6 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
     protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
     {
         if (!_currentSmartPlaylistId.HasValue) return Task.FromResult(new List<Guid>());
-        if (sortOrder == SongSortOrder.Random) return GetRandomSongIdsAsync(token);
         return _smartPlaylistService.GetMatchingSongIdsAsync(_currentSmartPlaylistId.Value, ActiveSearchTerm, sortOrder, token);
     }
 
@@ -169,16 +163,10 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
             : Task.CompletedTask;
     }
 
-    public override Task RefreshOrSortSongsAsync(string? sortOrderString = null, CancellationToken manualToken = default)
+    // A random order only holds still as one list of IDs, so every page is cut from the list that playing all uses.
+    private async Task<PagedResult<Song>> LoadRandomPageAsync(int pageNumber, int pageSize, CancellationToken token)
     {
-        ClearRandomSnapshot();
-        return base.RefreshOrSortSongsAsync(sortOrderString, manualToken);
-    }
-
-    private async Task<PagedResult<Song>> LoadRandomSongsPageAsync(int pageNumber, int pageSize, CancellationToken token)
-    {
-        var ids = await GetRandomSongIdsAsync(token).ConfigureAwait(false);
-        token.ThrowIfCancellationRequested();
+        var ids = await GetFullSongIdsAsync().WaitAsync(token).ConfigureAwait(false);
 
         var pageIds = ids.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
         var songsById = await _libraryReader.GetSongsByIdsAsync(pageIds).ConfigureAwait(false);
@@ -198,53 +186,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         };
     }
 
-    private async Task<List<Guid>> GetRandomSongIdsAsync(CancellationToken token)
-    {
-        if (!_currentSmartPlaylistId.HasValue) return new List<Guid>();
-
-        var playlistId = _currentSmartPlaylistId.Value;
-        var searchTerm = ActiveSearchTerm;
-        var snapshotKey = new RandomSnapshotKey(playlistId, searchTerm);
-        Task<List<Guid>> snapshotTask;
-
-        lock (_randomSnapshotLock)
-        {
-            if (_randomSongIdsTask is null || _randomSnapshotKey != snapshotKey)
-            {
-                _randomSnapshotKey = snapshotKey;
-                // The ordering is shared by every page. Do not let cancellation of the first page
-                // poison the snapshot for subsequent page or playback-ID requests.
-                _randomSongIdsTask = _smartPlaylistService.GetMatchingSongIdsAsync(
-                    playlistId, searchTerm, SongSortOrder.Random, CancellationToken.None);
-            }
-
-            snapshotTask = _randomSongIdsTask;
-        }
-
-        try
-        {
-            return await snapshotTask.WaitAsync(token).ConfigureAwait(false);
-        }
-        catch (Exception ex) when (ex is not OperationCanceledException || !token.IsCancellationRequested)
-        {
-            ClearRandomSnapshot(snapshotTask);
-            throw;
-        }
-    }
-
     private string? ActiveSearchTerm => IsSearchActive ? SearchTerm : null;
-
-    private void ClearRandomSnapshot(Task<List<Guid>>? expectedTask = null)
-    {
-        lock (_randomSnapshotLock)
-        {
-            if (expectedTask is not null && !ReferenceEquals(_randomSongIdsTask, expectedTask))
-                return;
-
-            _randomSongIdsTask = null;
-            _randomSnapshotKey = null;
-        }
-    }
 
     public override void ResetState()
     {
@@ -252,7 +194,6 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
 
         _currentSmartPlaylistId = null;
         _playlistGeneration++;
-        ClearRandomSnapshot();
 
         base.ResetState();
     }

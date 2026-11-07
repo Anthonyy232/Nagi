@@ -157,6 +157,9 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
 
     Task PlayPlaylistAsync(Guid playlistId);
 
+    /// <returns>False when the smart playlist matches no songs, so nothing plays.</returns>
+    Task<bool> PlaySmartPlaylistAsync(Guid smartPlaylistId);
+
     Task PlayGenreAsync(Guid genreId);
 
     Task ShuffleLibraryAsync();

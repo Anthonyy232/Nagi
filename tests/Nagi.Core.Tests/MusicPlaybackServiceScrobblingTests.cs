@@ -38,7 +38,7 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
             Substitute.For<IPlaybackStateStore>(),
             _audioPlayer,
             Substitute.For<ISystemMediaControls>(), new ImmediateDispatcher(),
-            _library.Reader, _library.Listening,
+            _library.Reader, Substitute.For<ISmartPlaylistService>(), _library.Listening,
             metadataService,
             Substitute.For<IFileSystemService>(),
             Substitute.For<IMusicServerService>(),
