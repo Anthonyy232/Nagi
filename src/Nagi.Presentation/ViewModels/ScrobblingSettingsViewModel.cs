@@ -155,6 +155,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
     {
         if (_isDisposed) return;
         var version = _lastFmAuthVersion;
+        var failureMessage = Strings.Settings_LastFm_FinalizeError_Message;
         try
         {
             var authToken = _settingsService.Get(CoreSettings.LastFmAuthToken);
@@ -164,13 +165,17 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
             if (!IsLastFmAuthCurrent(version)) return;
             if (sessionData is { Username: not null, SessionKey: not null })
             {
-                await _settingsService.SaveLastFmCredentialsAsync(sessionData.Value.Username, sessionData.Value.SessionKey);
-                _settingsService.Set(CoreSettings.LastFmScrobbling, true);
-                _settingsService.Set(CoreSettings.LastFmNowPlaying, true);
+                if (await _settingsService.SaveLastFmCredentialsAsync(sessionData.Value.Username, sessionData.Value.SessionKey))
+                {
+                    _settingsService.Set(CoreSettings.LastFmScrobbling, true);
+                    _settingsService.Set(CoreSettings.LastFmNowPlaying, true);
 
-                LastFmUsername = sessionData.Value.Username;
-                IsLastFmConnected = true;
-                return;
+                    LastFmUsername = sessionData.Value.Username;
+                    IsLastFmConnected = true;
+                    return;
+                }
+
+                failureMessage = Strings.MusicServer_Error_SignInNotSaved;
             }
         }
         catch (Exception ex)
@@ -187,8 +192,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
         }
 
         if (IsLastFmAuthCurrent(version))
-            await _uiService.ShowMessageDialogAsync(Strings.Settings_LastFm_FinalizeError_Title,
-                Strings.Settings_LastFm_FinalizeError_Message);
+            await _uiService.ShowMessageDialogAsync(Strings.Settings_LastFm_FinalizeError_Title, failureMessage);
     }
 
     [RelayCommand]
@@ -242,9 +246,15 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
             var server = string.IsNullOrWhiteSpace(ListenBrainzServerUrl) ? null : ListenBrainzServerUrl;
             var result = await _listenBrainzScrobblerService.ValidateTokenAsync(token, server);
             if (_isDisposed || version != _listenBrainzConnectionVersion) return;
-            if (result.IsValid)
+            if (result.IsValid && !await _settingsService.SaveListenBrainzUserTokenAsync(token))
             {
-                await _settingsService.SaveListenBrainzUserTokenAsync(token);
+                ListenBrainzIsConnected = false;
+                ListenBrainzConnectionStatus = string.Format(
+                    Strings.SettingsPage_ListenBrainz_ConnectionFailed,
+                    Strings.MusicServer_Error_SignInNotSaved);
+            }
+            else if (result.IsValid)
+            {
                 StampListenBrainzEnabledSinceIfNeeded();
                 ListenBrainzIsConnected = true;
                 ListenBrainzConnectionStatus = string.Format(

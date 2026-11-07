@@ -12,6 +12,7 @@ using Nagi.Presentation.Services;
 using Nagi.Presentation.ViewModels;
 using NSubstitute;
 using Xunit;
+using Nagi.Presentation.Resources;
 
 namespace Nagi.Presentation.Tests;
 
@@ -41,6 +42,7 @@ public class SettingsViewModelTests : IDisposable
     public SettingsViewModelTests()
     {
         _settings = TestSettings.Create(credentials: _credentials, autoLaunch: _autoLaunch);
+        _credentials.SaveCredential(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(true);
         _playback.AvailablePresets.Returns(Array.Empty<EqualizerPreset>());
         _dispatcher.HasThreadAccess.Returns(true);
         _dispatcher.TryEnqueue(Arg.Any<Action>()).Returns(call => { call.Arg<Action>()(); return true; });
@@ -292,6 +294,34 @@ public class SettingsViewModelTests : IDisposable
         _viewModel.Scrobbling.IsLastFmNowPlayingEnabled.Should().BeTrue();
         _settings.Get(CoreSettings.LastFmAuthToken).Should().BeNull();
         _credentials.Received(1).SaveCredential(Arg.Any<string>(), "user", "session");
+    }
+
+    [Fact]
+    public async Task LastFm_FinalizeReportsASessionTheCredentialStoreRefused()
+    {
+        _credentials.SaveCredential(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(false);
+        _settings.Set(CoreSettings.LastFmAuthToken, "temporary");
+        _lastFm.GetSessionAsync("temporary").Returns(("user", "session"));
+
+        await _viewModel.Scrobbling.LastFmFinalizeAuthCommand.ExecuteAsync(null);
+
+        _viewModel.Scrobbling.IsLastFmConnected.Should().BeFalse();
+        _viewModel.Scrobbling.IsLastFmScrobblingEnabled.Should().BeFalse();
+        await _ui.Received(1).ShowMessageDialogAsync(Arg.Any<string>(), Strings.MusicServer_Error_SignInNotSaved);
+    }
+
+    [Fact]
+    public async Task ListenBrainz_ValidTokenTheCredentialStoreRefusedIsNotConnected()
+    {
+        _credentials.SaveCredential(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(false);
+        _listenBrainz.ValidateTokenAsync("token", null).Returns(new ValidateTokenResult(true, "user", null));
+        _viewModel.Scrobbling.ListenBrainzUserToken = "token";
+
+        await _viewModel.Scrobbling.TestListenBrainzConnectionCommand.ExecuteAsync(null);
+
+        _viewModel.Scrobbling.ListenBrainzIsConnected.Should().BeFalse();
+        _viewModel.Scrobbling.ListenBrainzConnectionStatus.Should().Contain(Strings.MusicServer_Error_SignInNotSaved);
+        _settings.Get(CoreSettings.ListenBrainzEnabledSinceUtc).Should().BeNull();
     }
 
     [Theory]

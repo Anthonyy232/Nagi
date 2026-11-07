@@ -67,6 +67,23 @@ public class SettingsServiceTests
         credentialChanges.Should().Be(2);
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task SavingCredentials_ReportsWhetherTheCredentialStoreAcceptedThem(bool accepted)
+    {
+        var credentials = Substitute.For<ICredentialLockerService>();
+        credentials.SaveCredential(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(accepted);
+        var settings = TestSettings.Create(credentials: credentials);
+        var credentialChanges = 0;
+        settings.CredentialsChanged += () => credentialChanges++;
+
+        (await settings.SaveLastFmCredentialsAsync("user", "session")).Should().Be(accepted);
+        (await settings.SaveListenBrainzUserTokenAsync("token")).Should().Be(accepted);
+
+        credentialChanges.Should().Be(accepted ? 2 : 0);
+    }
+
     [Fact]
     public async Task ClearLastFmCredentials_TurnsSubmissionOffAndDropsThePendingSignIn()
     {

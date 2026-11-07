@@ -20,8 +20,15 @@ public static class TestSettings
         store.Values.Returns(values ?? new Dictionary<string, object>());
         return new SettingsService(store, Setting.DeclaredIn(typeof(CoreSettings)),
             playbackStateStore ?? Substitute.For<IPlaybackStateStore>(),
-            credentials ?? Substitute.For<ICredentialLockerService>(),
+            credentials ?? AcceptingCredentials(),
             autoLaunch ?? Substitute.For<IAutoLaunchService>(), NullLogger<SettingsService>.Instance);
+    }
+
+    private static ICredentialLockerService AcceptingCredentials()
+    {
+        var credentials = Substitute.For<ICredentialLockerService>();
+        credentials.SaveCredential(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(true);
+        return credentials;
     }
 
     /// <summary>

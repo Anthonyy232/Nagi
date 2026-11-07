@@ -59,12 +59,8 @@ public sealed class SettingsService : ISettingsService
     public Task<(string? Username, string? SessionKey)?> GetLastFmCredentialsAsync() =>
         Task.FromResult(_credentialLockerService.RetrieveCredential(LastFmCredentialResource));
 
-    public Task SaveLastFmCredentialsAsync(string username, string sessionKey)
-    {
-        _credentialLockerService.SaveCredential(LastFmCredentialResource, username, sessionKey);
-        CredentialsChanged?.Invoke();
-        return Task.CompletedTask;
-    }
+    public Task<bool> SaveLastFmCredentialsAsync(string username, string sessionKey) =>
+        Task.FromResult(SaveCredential(LastFmCredentialResource, username, sessionKey));
 
     public Task ClearLastFmCredentialsAsync()
     {
@@ -79,12 +75,8 @@ public sealed class SettingsService : ISettingsService
     public Task<string?> GetListenBrainzUserTokenAsync() =>
         Task.FromResult(_credentialLockerService.RetrieveCredential(ListenBrainzTokenResource)?.Password);
 
-    public Task SaveListenBrainzUserTokenAsync(string token)
-    {
-        _credentialLockerService.SaveCredential(ListenBrainzTokenResource, ListenBrainzTokenUserName, token);
-        CredentialsChanged?.Invoke();
-        return Task.CompletedTask;
-    }
+    public Task<bool> SaveListenBrainzUserTokenAsync(string token) =>
+        Task.FromResult(SaveCredential(ListenBrainzTokenResource, ListenBrainzTokenUserName, token));
 
     public Task ClearListenBrainzUserTokenAsync()
     {
@@ -135,6 +127,18 @@ public sealed class SettingsService : ISettingsService
         foreach (var (key, value) in values) _store.Values[key] = value;
         _logger.LogInformation("Imported {Count} settings.", values.Count);
         return Task.CompletedTask;
+    }
+
+    private bool SaveCredential(string resource, string userName, string secret)
+    {
+        if (!_credentialLockerService.SaveCredential(resource, userName, secret))
+        {
+            _logger.LogWarning("The credential store refused the sign-in for {Resource}.", resource);
+            return false;
+        }
+
+        CredentialsChanged?.Invoke();
+        return true;
     }
 
     private object? StoredFormOf(Setting setting)

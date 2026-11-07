@@ -25,7 +25,8 @@ public interface ISettingsService
     /// <returns>The username and session key, or null if not signed in.</returns>
     Task<(string? Username, string? SessionKey)?> GetLastFmCredentialsAsync();
 
-    Task SaveLastFmCredentialsAsync(string username, string sessionKey);
+    /// <returns>False if the credential store refused them, for example because it is full.</returns>
+    Task<bool> SaveLastFmCredentialsAsync(string username, string sessionKey);
 
     /// <summary>
     ///     Signs out of Last.fm: removes the credentials and the pending sign-in, and turns its submissions off.
@@ -34,7 +35,8 @@ public interface ISettingsService
 
     Task<string?> GetListenBrainzUserTokenAsync();
 
-    Task SaveListenBrainzUserTokenAsync(string token);
+    /// <returns>False if the credential store refused it, for example because it is full.</returns>
+    Task<bool> SaveListenBrainzUserTokenAsync(string token);
 
     Task ClearListenBrainzUserTokenAsync();
 
