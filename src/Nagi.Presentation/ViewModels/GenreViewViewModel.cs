@@ -29,11 +29,9 @@ public partial class GenreViewViewModel : SongListViewModelBase
         ISettingsService settingsService,
         IUIService uiService,
         ILogger<GenreViewViewModel> logger)
-        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger, CommonSortOrders, AppSettings.GenreViewSortOrder)
     {
         GenreName = Strings.GenreView_DefaultName;
-
-        CurrentSortOrder = SongSortOrder.TitleAsc;
     }
 
     [ObservableProperty] public partial string GenreName { get; set; }
@@ -66,18 +64,10 @@ public partial class GenreViewViewModel : SongListViewModelBase
         GenreName = navParam.GenreName;
         PageTitle = navParam.GenreName;
 
-        var sortOrder = _settingsService.Get(AppSettings.GenreViewSortOrder);
-        CurrentSortOrder = sortOrder;
-        await RefreshOrSortSongsAsync();
+        await LoadAsync(CancellationToken.None);
     }
 
     protected override PlaybackContext GetPlaybackContext() =>
         _genreId != Guid.Empty ? new(PlaybackContextType.Genre, _genreId) : base.GetPlaybackContext();
-
-    protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
-    {
-        _settingsService.Set(AppSettings.GenreViewSortOrder, sortOrder);
-        return Task.CompletedTask;
-    }
 
 }

@@ -36,14 +36,18 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         ISettingsService settingsService,
         IUIService uiService,
         ILogger<AlbumViewViewModel> logger)
-        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger, SortOrders, AppSettings.AlbumViewSortOrder)
     {
         AlbumTitle = Strings.AlbumView_DefaultAlbumTitle;
         ArtistName = Strings.AlbumView_DefaultArtistName;
         AlbumDetailsText = string.Empty;
-
-        CurrentSortOrder = SongSortOrder.TrackNumberAsc;
     }
+
+    private static readonly SongSortOrder[] SortOrders =
+    [
+        SongSortOrder.TrackNumberAsc, SongSortOrder.TrackNumberDesc, SongSortOrder.TitleAsc, SongSortOrder.TitleDesc,
+        SongSortOrder.YearAsc, SongSortOrder.YearDesc, SongSortOrder.FileCreatedDateAsc, SongSortOrder.FileCreatedDateDesc
+    ];
 
     [ObservableProperty] public partial string AlbumTitle { get; set; }
 
@@ -90,7 +94,6 @@ public partial class AlbumViewViewModel : SongListViewModelBase
             var albumTask = _libraryReader.GetAlbumByIdAsync(albumId);
             var album = await albumTask;
             if (!IsSongContextCurrent(generation)) return;
-            CurrentSortOrder = _settingsService.Get(AppSettings.AlbumViewSortOrder);
 
             if (album != null)
             {
@@ -100,7 +103,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
                 PageTitle = album.Title;
                 _albumYear = album.Year;
                 CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
-                await RefreshOrSortSongsAsync();
+                await LoadAsync(CancellationToken.None);
                 _logger.LogDebug("Populated details for album '{AlbumTitle}' ({AlbumId})", album.Title, albumId);
             }
             else
@@ -208,7 +211,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
 
     private void UpdateGrouping()
     {
-        IsGroupedByDisc = CurrentSortOrder == SongSortOrder.TrackNumberAsc && !IsSearchActive;
+        IsGroupedByDisc = Sort.Current == SongSortOrder.TrackNumberAsc && !IsSearchActive;
 
         if (IsGroupedByDisc)
         {
@@ -242,12 +245,6 @@ public partial class AlbumViewViewModel : SongListViewModelBase
 
     protected override PlaybackContext GetPlaybackContext() =>
         _albumId != Guid.Empty ? new(PlaybackContextType.Album, _albumId) : base.GetPlaybackContext();
-
-    protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
-    {
-        _settingsService.Set(AppSettings.AlbumViewSortOrder, sortOrder);
-        return Task.CompletedTask;
-    }
 
     private void CancelDurationFetch()
     {

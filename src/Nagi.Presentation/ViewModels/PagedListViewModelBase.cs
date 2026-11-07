@@ -28,7 +28,6 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     private readonly object _loadLock = new();
     private readonly Debouncer _libraryChangeDebouncer = new(TimeSpan.FromSeconds(1));
 
-    private bool _hasLoadedInitialSortOrder;
     private bool _pendingReload;
     protected bool _isDisposed;
     private CancellationTokenSource? _loadCts;
@@ -81,10 +80,6 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     }
 
     protected abstract Task<PagedResult<TItem>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token);
-
-    protected virtual void LoadInitialSortOrder()
-    {
-    }
 
     protected abstract string FormatTotalItemsText(PagedResult<TItem> result);
 
@@ -215,12 +210,6 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
 
         try
         {
-            if (!_hasLoadedInitialSortOrder)
-            {
-                LoadInitialSortOrder();
-                _hasLoadedInitialSortOrder = true;
-            }
-
             var pageToLoad = CurrentPage;
             var pageSize = FetchSize;
 

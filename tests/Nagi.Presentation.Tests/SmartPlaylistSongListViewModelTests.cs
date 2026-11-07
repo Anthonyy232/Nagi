@@ -47,7 +47,7 @@ public class SmartPlaylistSongListViewModelTests
 
         viewModel.PageTitle.Should().Be("Current");
         viewModel.CoverImageUri.Should().StartWith(current.CoverImageUri);
-        viewModel.CurrentSortOrder.Should().Be(SongSortOrder.DurationDesc);
+        viewModel.Sort.Current.Should().Be(SongSortOrder.DurationDesc);
         await _playlists.DidNotReceive().GetMatchingSongsPagedAsync(oldId, Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<string?>(), Arg.Any<SongSortOrder?>(), Arg.Any<CancellationToken>());
     }
@@ -69,7 +69,7 @@ public class SmartPlaylistSongListViewModelTests
         await loading;
 
         viewModel.PageTitle.Should().Be("Initial");
-        viewModel.CurrentSortOrder.Should().Be(SongSortOrder.TitleAsc);
+        viewModel.Sort.Current.Should().Be(SongSortOrder.TitleAsc);
         viewModel.Songs.Should().BeEmpty();
     }
 

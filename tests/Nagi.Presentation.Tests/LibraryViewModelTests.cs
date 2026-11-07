@@ -71,7 +71,7 @@ public class LibraryViewModelTests
         using var viewModel = new LibraryViewModel(library.Reader, library.Listening, library.Notifier, Substitute.For<IPlaylistService>(), playback,
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), settings,
             Substitute.For<IUIService>(), NullLogger<LibraryViewModel>.Instance);
-        await viewModel.RefreshOrSortSongsAsync();
+        await viewModel.LoadAsync(CancellationToken.None);
         viewModel.Songs.Select(song => song.Title).Should().Equal("Apple", "A Moon");
         await viewModel.PlayAllSongsCommand.ExecuteAsync(null);
         playback.ClearReceivedCalls();

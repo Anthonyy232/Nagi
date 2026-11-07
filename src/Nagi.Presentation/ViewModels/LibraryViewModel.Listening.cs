@@ -52,7 +52,7 @@ public partial class LibraryViewModel
         DeselectAll();
         ClearFullSongIds();
         CurrentPage = 1;
-        if (HasInitialized) await RefreshOrSortSongsAsync();
+        if (HasInitialized) await LoadAsync(CancellationToken.None);
     }
 
     protected override void OnSearchTermChangedInternal(string value)

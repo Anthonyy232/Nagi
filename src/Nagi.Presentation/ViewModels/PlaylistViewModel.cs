@@ -100,7 +100,6 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     private readonly IMusicNavigationService _navigationService;
     private readonly ISettingsService _settingsService;
     private readonly IUIService _uiService;
-    private bool _hasSortOrderLoaded;
     private readonly List<PlaylistViewModelItem> _allPlaylists = new();
     private int _isMutating;
     private int _loadVersion;
@@ -127,14 +126,20 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 
         _playlistService.PlaylistsChanged += OnPlaylistsChanged;
         _smartPlaylistService.PlaylistsChanged += OnPlaylistsChanged;
-
-        UpdateSortOrderText();
+        Sort = new SortOrderSelection<PlaylistSortOrder>(SortOrders, AppSettings.PlaylistsSortOrder, settingsService, () =>
+        {
+            ApplyFilter();
+            return Task.CompletedTask;
+        }, logger);
     }
 
-    private void UpdateSortOrderText()
-    {
-        CurrentSortOrderText = SortOrderHelper.GetDisplayName(CurrentSortOrder);
-    }
+    private static readonly PlaylistSortOrder[] SortOrders =
+    [
+        PlaylistSortOrder.NameAsc, PlaylistSortOrder.NameDesc, PlaylistSortOrder.DateCreatedAsc,
+        PlaylistSortOrder.DateCreatedDesc, PlaylistSortOrder.DateModifiedAsc, PlaylistSortOrder.DateModifiedDesc
+    ];
+
+    public SortOrderSelection<PlaylistSortOrder> Sort { get; }
 
     public ObservableRangeCollection<PlaylistViewModelItem> Playlists { get; } = new();
 
@@ -159,12 +164,6 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     public partial bool IsLoadingPlaylists { get; set; }
 
     [ObservableProperty] public partial string StatusMessage { get; set; } = string.Empty;
-
-    [ObservableProperty] public partial PlaylistSortOrder CurrentSortOrder { get; set; } = PlaylistSortOrder.NameAsc;
-
-    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = string.Empty;
-
-    partial void OnCurrentSortOrderChanged(PlaylistSortOrder value) => UpdateSortOrderText();
 
     public bool IsAnyOperationInProgress =>
         IsLoadingPlaylists || IsCreatingPlaylist || IsRenamingPlaylist || IsDeletingPlaylist || IsUpdatingCover;
@@ -296,12 +295,6 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             await Task.WhenAll(playlistsTask, smartPlaylistsTask, matchCountsTask);
 
             if (_isDisposed || loadVersion != _loadVersion) return;
-
-            if (!_hasSortOrderLoaded)
-            {
-                CurrentSortOrder = _settingsService.Get(AppSettings.PlaylistsSortOrder);
-                _hasSortOrderLoaded = true;
-            }
 
             _allPlaylists.Clear();
 
@@ -546,7 +539,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             filtered = _allPlaylists.Where(p =>
                 p.Name.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase));
 
-        var sorted = CurrentSortOrder switch
+        var sorted = Sort.Current switch
         {
             PlaylistSortOrder.NameDesc => filtered.OrderByDescending(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
             PlaylistSortOrder.DateCreatedDesc => filtered.OrderByDescending(p => p.DateCreated).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
@@ -558,18 +551,6 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 
         Playlists.ReplaceRange(sorted);
 
-    }
-
-    [RelayCommand]
-    public async Task ChangeSortOrderAsync(string sortOrderString)
-    {
-        if (Enum.TryParse<PlaylistSortOrder>(sortOrderString, out var newSortOrder)
-            && newSortOrder != CurrentSortOrder)
-        {
-            CurrentSortOrder = newSortOrder;
-            _settingsService.Set(AppSettings.PlaylistsSortOrder, newSortOrder);
-            ApplyFilter();
-        }
     }
 
     public void Dispose()
@@ -596,7 +577,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
                 backingItem.CoverImageUri = null;
                 backingItem.CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(e.CoverImageUri, e.DateModified);
                 backingItem.DateModified = e.DateModified;
-                if (CurrentSortOrder is PlaylistSortOrder.DateModifiedAsc or PlaylistSortOrder.DateModifiedDesc)
+                if (Sort.Current is PlaylistSortOrder.DateModifiedAsc or PlaylistSortOrder.DateModifiedDesc)
                     ApplyFilter();
             }
         });

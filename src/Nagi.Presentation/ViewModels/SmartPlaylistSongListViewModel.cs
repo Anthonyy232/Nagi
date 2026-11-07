@@ -20,6 +20,16 @@ namespace Nagi.Presentation.ViewModels;
 /// </summary>
 public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
 {
+    private static readonly SongSortOrder[] SortOrders =
+    [
+        SongSortOrder.TitleAsc, SongSortOrder.TitleDesc, SongSortOrder.YearAsc, SongSortOrder.YearDesc,
+        SongSortOrder.ArtistAsc, SongSortOrder.ArtistDesc, SongSortOrder.AlbumAsc, SongSortOrder.AlbumDesc,
+        SongSortOrder.TrackNumberAsc, SongSortOrder.TrackNumberDesc, SongSortOrder.PlayCountAsc, SongSortOrder.PlayCountDesc,
+        SongSortOrder.LastPlayedAsc, SongSortOrder.LastPlayedDesc, SongSortOrder.DateAddedAsc, SongSortOrder.DateAddedDesc,
+        SongSortOrder.DurationAsc, SongSortOrder.DurationDesc, SongSortOrder.BpmAsc, SongSortOrder.BpmDesc,
+        SongSortOrder.FileCreatedDateAsc, SongSortOrder.FileCreatedDateDesc, SongSortOrder.Random
+    ];
+
     private readonly ISmartPlaylistService _smartPlaylistService;
     private Guid? _currentSmartPlaylistId;
     private int _playlistGeneration;
@@ -36,7 +46,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         ISettingsService settingsService,
         IUIService uiService,
         ILogger<SmartPlaylistSongListViewModel> logger)
-        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger, SortOrders, null)
     {
         _smartPlaylistService = smartPlaylistService;
     }
@@ -82,7 +92,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         ResetState();
         var generation = _playlistGeneration;
         CurrentPage = 1;
-        CurrentSortOrder = SongSortOrder.TitleAsc;
+        Sort.Current = SongSortOrder.TitleAsc;
         Songs.Clear();
         TotalItemCount = 0;
         RuleSummary = string.Empty;
@@ -101,14 +111,14 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
                 PageTitle = smartPlaylist.Name;
                 CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(smartPlaylist.CoverImageUri, smartPlaylist.DateModified);
                 RuleSummary = BuildRuleSummary(smartPlaylist);
-                CurrentSortOrder = smartPlaylist.SortOrder.ToSongSortOrder();
+                Sort.Current = smartPlaylist.SortOrder.ToSongSortOrder();
             }
             else
             {
                 _currentSmartPlaylistId = null;
             }
 
-            await RefreshOrSortSongsCommand.ExecuteAsync(null);
+            await LoadAsync(CancellationToken.None);
         }
         catch (Exception ex)
         {

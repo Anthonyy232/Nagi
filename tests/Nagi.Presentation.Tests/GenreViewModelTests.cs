@@ -20,10 +20,10 @@ public class GenreViewModelTests
         using var viewModel = CreateViewModel(library);
         await viewModel.LoadGenresAsync(CancellationToken.None);
 
-        await viewModel.ChangeSortOrderAsync(nameof(GenreSortOrder.NameDesc));
+        await viewModel.Sort.ChangeCommand.ExecuteAsync(GenreSortOrder.NameDesc);
 
         viewModel.Genres.Select(genre => genre.Name).Should().Equal("Rock", "Jazz");
-        viewModel.CurrentSortOrder.Should().Be(GenreSortOrder.NameDesc);
+        viewModel.Sort.Current.Should().Be(GenreSortOrder.NameDesc);
     }
 
     [Fact]

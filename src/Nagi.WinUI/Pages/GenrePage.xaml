@@ -8,7 +8,7 @@
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:Nagi.Core.Services.Data"
-    xmlns:helpers="using:Nagi.Presentation.Helpers"
+    xmlns:uicontrols="using:Nagi.WinUI.Controls"
     x:Name="GenrePageRoot"
     Background="Transparent"
     mc:Ignorable="d">
@@ -79,27 +79,7 @@
                     </Button>
                 </Grid>
 
-                <Button Style="{StaticResource SongListViewPageIconButton}"
-                        ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}"
-                        AutomationProperties.Name="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
-                    <Button.Flyout>
-                        <MenuFlyout Placement="Bottom">
-                            <RadioMenuFlyoutItem GroupName="GenreSort" Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
-                                            CommandParameter="NameAsc" Text="{x:Bind helpers:SortOrderHelper.TitleAscLabel}"
-                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=NameAsc}" />
-                            <RadioMenuFlyoutItem GroupName="GenreSort" Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
-                                            CommandParameter="NameDesc" Text="{x:Bind helpers:SortOrderHelper.TitleDescLabel}"
-                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=NameDesc}" />
-                             <RadioMenuFlyoutItem GroupName="GenreSort" Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
-                                             CommandParameter="SongCountAsc" Text="{x:Bind helpers:SortOrderHelper.LeastSongsLabel}"
-                                             IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=SongCountAsc}" />
-                            <RadioMenuFlyoutItem GroupName="GenreSort" Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
-                                            CommandParameter="SongCountDesc" Text="{x:Bind helpers:SortOrderHelper.MostSongsLabel}"
-                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=SongCountDesc}" />
-                        </MenuFlyout>
-                    </Button.Flyout>
-                    <FontIcon FontSize="16" Glyph="&#xE8CB;" />
-                </Button>
+                <uicontrols:SortButton Selection="{x:Bind ViewModel.Sort}" />
 
                 <Button
                         ToolTipService.ToolTip="{x:Bind resources:Strings.GenrePage_RandomButton_ToolTip, Mode=OneTime}"

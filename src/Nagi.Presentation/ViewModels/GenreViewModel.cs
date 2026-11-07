@@ -22,7 +22,6 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
     private readonly IMusicNavigationService _navigationService;
     private readonly ISettingsService _settingsService;
     private readonly IUIService _uiService;
-    private bool _hasSortOrderLoaded;
     private List<GenreSummary> _allGenres = new();
     private readonly Debouncer _debouncer = new(TimeSpan.FromSeconds(1));
     private readonly SemaphoreSlim _loadLock = new(1, 1);
@@ -38,6 +37,11 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
         _navigationService = navigationService;
         _settingsService = settingsService;
         _uiService = uiService;
+        Sort = new SortOrderSelection<GenreSortOrder>(SortOrders, AppSettings.GenresSortOrder, settingsService, () =>
+        {
+            ApplyFilter();
+            return Task.CompletedTask;
+        }, logger);
 
         Genres.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasGenres));
 
@@ -84,11 +88,10 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
 
     [ObservableProperty] public partial bool HasLoadError { get; set; }
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CurrentSortOrderText))]
-    public partial GenreSortOrder CurrentSortOrder { get; set; } = GenreSortOrder.NameAsc;
+    private static readonly GenreSortOrder[] SortOrders =
+        [GenreSortOrder.NameAsc, GenreSortOrder.NameDesc, GenreSortOrder.SongCountAsc, GenreSortOrder.SongCountDesc];
 
-    public string CurrentSortOrderText => SortOrderHelper.GetDisplayName(CurrentSortOrder);
+    public SortOrderSelection<GenreSortOrder> Sort { get; }
 
     public bool HasGenres => Genres.Any();
 
@@ -105,11 +108,6 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
 
         try
         {
-            if (!_hasSortOrderLoaded)
-            {
-                CurrentSortOrder = _settingsService.Get(AppSettings.GenresSortOrder);
-                _hasSortOrderLoaded = true;
-            }
             var genreModels = await Task.Run(() => _libraryReader.GetGenreSummariesAsync(cancellationToken), cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -151,7 +149,7 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
             filtered = _allGenres.Where(g =>
                 g.Name.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase));
 
-        var sorted = CurrentSortOrder switch
+        var sorted = Sort.Current switch
         {
             GenreSortOrder.NameDesc => filtered.OrderByDescending(g => g.Name, StringComparer.OrdinalIgnoreCase).ThenBy(g => g.Id),
             GenreSortOrder.SongCountDesc => filtered.OrderByDescending(g => g.SongCount).ThenBy(g => g.Name, StringComparer.OrdinalIgnoreCase).ThenBy(g => g.Id),
@@ -160,18 +158,6 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
         };
 
         Genres.ReplaceRange(sorted);
-    }
-
-    [RelayCommand]
-    public async Task ChangeSortOrderAsync(string sortOrderString)
-    {
-        if (Enum.TryParse<GenreSortOrder>(sortOrderString, out var newSortOrder)
-            && newSortOrder != CurrentSortOrder)
-        {
-            CurrentSortOrder = newSortOrder;
-            _settingsService.Set(AppSettings.GenresSortOrder, newSortOrder);
-            ApplyFilter();
-        }
     }
 
     [RelayCommand]

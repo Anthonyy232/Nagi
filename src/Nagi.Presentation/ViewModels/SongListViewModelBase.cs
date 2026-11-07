@@ -60,9 +60,14 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         IDispatcherService dispatcherService,
         ISettingsService settingsService,
         IUIService uiService,
-        ILogger logger)
+        ILogger logger,
+        IReadOnlyList<SongSortOrder> sortOrders,
+        Setting<SongSortOrder>? sortOrderSetting)
         : base(libraryReader, libraryNotifier, settingsService, dispatcherService, logger)
     {
+        Sort = sortOrderSetting is null
+            ? new SortOrderSelection<SongSortOrder>(sortOrders, sortOrders[0], SaveSortOrderAsync, OnSortOrderChangedAsync, logger)
+            : new SortOrderSelection<SongSortOrder>(sortOrders, sortOrderSetting, settingsService, OnSortOrderChangedAsync, logger);
         _listening = listening;
         _playlistService = playlistService;
         _playbackService = playbackService;
@@ -138,21 +143,25 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     public virtual int SelectedItemsCount => SelectedSongs.Count;
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CurrentSortOrderText))]
-    public partial SongSortOrder CurrentSortOrder { get; set; } = SongSortOrder.TitleAsc;
+    /// <summary>The orders most song lists offer.</summary>
+    protected static readonly SongSortOrder[] CommonSortOrders =
+    [
+        SongSortOrder.TitleAsc, SongSortOrder.TitleDesc, SongSortOrder.YearAsc, SongSortOrder.YearDesc,
+        SongSortOrder.ArtistAsc, SongSortOrder.ArtistDesc, SongSortOrder.AlbumAsc, SongSortOrder.AlbumDesc,
+        SongSortOrder.FileCreatedDateAsc, SongSortOrder.FileCreatedDateDesc
+    ];
 
-    partial void OnCurrentSortOrderChanged(SongSortOrder oldValue, SongSortOrder newValue)
-    {
-        OnCurrentSortOrderChangedInternal(oldValue, newValue);
-    }
+    public SortOrderSelection<SongSortOrder> Sort { get; }
 
-    protected virtual void OnCurrentSortOrderChangedInternal(SongSortOrder oldOrder, SongSortOrder newOrder)
+    protected virtual Task OnSortOrderChangedAsync()
     {
         ClearFullSongIds();
+        CurrentPage = 1;
+        return LoadAsync(CancellationToken.None);
     }
 
-    public string CurrentSortOrderText => SortOrderHelper.GetDisplayName(CurrentSortOrder);
+    /// <summary>Saves a chosen order for a list whose order isn't kept in a setting.</summary>
+    protected virtual Task SaveSortOrderAsync(SongSortOrder sortOrder) => Task.CompletedTask;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(VisibleColumns))]
@@ -191,7 +200,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     protected override void OnLoadingStateChanged(bool isLoading)
     {
         OnPropertyChanged(nameof(ShowEmptyState));
-        RefreshOrSortSongsCommand.NotifyCanExecuteChanged();
         NotifyPlayCommandsChanged();
     }
 
@@ -212,7 +220,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     protected sealed override Task<PagedResult<Song>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token)
     {
-        return LoadSongsPagedAsync(pageNumber, pageSize, CurrentSortOrder, token);
+        return LoadSongsPagedAsync(pageNumber, pageSize, Sort.Current, token);
     }
 
     protected override async Task OnAuxiliaryLoadAsync(CancellationToken token)
@@ -223,7 +231,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
             return;
         }
 
-        var ids = await LoadAllSongIdsAsync(CurrentSortOrder, token).ConfigureAwait(false);
+        var ids = await LoadAllSongIdsAsync(Sort.Current, token).ConfigureAwait(false);
         token.ThrowIfCancellationRequested();
         StoreFullSongIds(ids, generation);
     }
@@ -258,7 +266,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
             if (_isDisposed) return new List<Guid>();
 
             generation = _fullSongIdGeneration;
-            var sortOrder = CurrentSortOrder;
+            var sortOrder = Sort.Current;
             loadTask = _fullSongIdLoadTask ??=
                 Task.Run(() => LoadAllSongIdsAsync(sortOrder, CancellationToken.None));
         }
@@ -325,25 +333,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         CancellationToken cancellationToken = default);
 
     protected abstract Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default);
-
-    [RelayCommand(CanExecute = nameof(CanExecuteLoadCommands))]
-    public async Task RefreshOrSortSongsAsync(string? sortOrderString = null, CancellationToken manualToken = default)
-    {
-        if (!string.IsNullOrEmpty(sortOrderString) &&
-            Enum.TryParse<SongSortOrder>(sortOrderString, true, out var newSortOrder)
-            && newSortOrder != CurrentSortOrder)
-        {
-            CurrentSortOrder = newSortOrder;
-            CurrentPage = 1;
-            _logger.LogDebug("Sort order changed to '{SortOrder}'", CurrentSortOrder);
-            try { await SaveSortOrderAsync(newSortOrder); }
-            catch (Exception ex) { _logger.LogError(ex, "Failed to save sort order"); }
-        }
-
-        UpdateSelectionStatus();
-
-        await LoadAsync(manualToken);
-    }
 
     protected override void ApplyItemsToCollection(PagedResult<Song> result, bool append)
     {
@@ -503,11 +492,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     private Task GoToArtistAsync(ArtistNavigationRequest? request) =>
         request is null ? Task.CompletedTask : _musicNavigationService.OpenArtistAsync(request);
 
-    protected bool CanExecuteLoadCommands()
-    {
-        return !IsLoading;
-    }
-
     /// <summary>Whether play all, shuffle and mixes have anything to play.</summary>
     protected virtual bool HasPlayableSongs => Songs.Any();
 
@@ -547,11 +531,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     {
         var selected = SelectedSongs.Select(song => song.Id).ToHashSet();
         return Task.FromResult(Songs.Where(song => selected.Contains(song.Id)).Select(song => song.Id).ToList());
-    }
-
-    protected virtual Task SaveSortOrderAsync(SongSortOrder sortOrder)
-    {
-        return Task.CompletedTask;
     }
 
     private void UpdateSelectionDependentCommands()

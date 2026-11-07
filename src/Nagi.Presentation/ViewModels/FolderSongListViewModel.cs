@@ -52,7 +52,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         ISettingsService settingsService,
         IUIService uiService,
         ILogger<FolderSongListViewModel> logger)
-        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger, CommonSortOrders, AppSettings.FolderViewSortOrder)
     {
     }
 
@@ -91,14 +91,13 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             if (!IsSongContextCurrent(generation)) return;
 
             _rootFolderPath = rootFolder?.Path;
-            CurrentSortOrder = _settingsService.Get(AppSettings.FolderViewSortOrder);
 
             if (string.IsNullOrEmpty(_currentDirectoryPath))
                 _currentDirectoryPath = _rootFolderPath ?? string.Empty;
 
             PageTitle = title;
             UpdateBreadcrumbs();
-            await RefreshOrSortSongsCommand.ExecuteAsync(null);
+            await LoadAsync(CancellationToken.None);
         }
         catch (Exception ex)
         {
@@ -183,7 +182,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             FolderContents.Clear();
             UpdateBreadcrumbs();
             CurrentPage = 1;
-            await RefreshOrSortSongsCommand.ExecuteAsync(null);
+            await LoadAsync(CancellationToken.None);
         }
         finally
         {
@@ -288,12 +287,6 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         }
 
         return ids;
-    }
-
-    protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
-    {
-        _settingsService.Set(AppSettings.FolderViewSortOrder, sortOrder);
-        return Task.CompletedTask;
     }
 
     public override void ResetState()

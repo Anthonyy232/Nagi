@@ -120,7 +120,7 @@ public class SongListViewModelTests
         : SongListViewModelBase(Substitute.For<ILibraryReader>(), Substitute.For<IListeningService>(), Substitute.For<ILibraryNotifier>(), Substitute.For<IPlaylistService>(),
             Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), TestSettings.Create(),
-            Substitute.For<IUIService>(), NullLogger.Instance)
+            Substitute.For<IUIService>(), NullLogger.Instance, [SongSortOrder.TitleAsc], null)
     {
         protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
             SongSortOrder sortOrder, CancellationToken cancellationToken = default) => load(pageNumber, pageSize, cancellationToken);
@@ -158,7 +158,7 @@ public class SongListViewModelTests
         : SongListViewModelBase(Substitute.For<ILibraryReader>(), Substitute.For<IListeningService>(), Substitute.For<ILibraryNotifier>(), Substitute.For<IPlaylistService>(),
             playback ?? Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), TestSettings.Create(),
-            ui ?? Substitute.For<IUIService>(), NullLogger.Instance)
+            ui ?? Substitute.For<IUIService>(), NullLogger.Instance, [SongSortOrder.TitleAsc], null)
     {
         protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default) => ids;
 

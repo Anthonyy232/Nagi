@@ -56,15 +56,19 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         IDispatcherService dispatcherService,
         IUIService uiService,
         ILogger<ArtistViewViewModel> logger)
-        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger, SortOrders, AppSettings.ArtistViewSortOrder)
     {
         _artwork = artwork;
         ArtistName = Strings.ArtistView_DefaultArtistName;
         ArtistBio = Strings.Status_Loading;
-
-        CurrentSortOrder = SongSortOrder.AlbumAsc;
         Albums.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasAlbums));
     }
+
+    private static readonly SongSortOrder[] SortOrders =
+    [
+        SongSortOrder.TitleAsc, SongSortOrder.TitleDesc, SongSortOrder.YearAsc, SongSortOrder.YearDesc,
+        SongSortOrder.AlbumAsc, SongSortOrder.AlbumDesc, SongSortOrder.FileCreatedDateAsc, SongSortOrder.FileCreatedDateDesc
+    ];
 
     [ObservableProperty] public partial string ArtistName { get; set; }
 
@@ -108,10 +112,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         try
         {
             _artistId = artistId;
-            CurrentSortOrder = _settingsService.Get(AppSettings.ArtistViewSortOrder);
 
-            // Updates its own UI.
-            var songsTask = RefreshOrSortSongsAsync(manualToken: token);
+            var songsTask = LoadAsync(token);
             var artistTask = _artwork.GetArtistDetailsAsync(artistId, token);
             var albumsTask = _libraryReader.GetAlbumsForArtistAsync(artistId);
 
@@ -199,12 +201,6 @@ public partial class ArtistViewViewModel : SongListViewModelBase
 
     protected override PlaybackContext GetPlaybackContext() =>
         _artistId != Guid.Empty ? new(PlaybackContextType.Artist, _artistId) : base.GetPlaybackContext();
-
-    protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
-    {
-        _settingsService.Set(AppSettings.ArtistViewSortOrder, sortOrder);
-        return Task.CompletedTask;
-    }
 
     public override void ResetState()
     {

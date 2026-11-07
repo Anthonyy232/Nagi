@@ -56,22 +56,26 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
         _musicPlaybackService = musicPlaybackService;
         _musicNavigationService = musicNavigationService;
         _uiService = uiService;
+        Sort = new SortOrderSelection<AlbumSortOrder>(SortOrders, AppSettings.AlbumsSortOrder, settingsService, () =>
+        {
+            CurrentPage = 1;
+            return LoadAsync(CancellationToken.None);
+        }, logger);
 
         Albums.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasAlbums));
     }
 
     public ObservableRangeCollection<AlbumViewModelItem> Albums { get; } = new();
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CurrentSortOrderText))]
-    public partial AlbumSortOrder CurrentSortOrder { get; set; } = AlbumSortOrder.ArtistAsc;
+    private static readonly AlbumSortOrder[] SortOrders =
+    [
+        AlbumSortOrder.ArtistAsc, AlbumSortOrder.ArtistDesc, AlbumSortOrder.AlbumTitleAsc, AlbumSortOrder.AlbumTitleDesc,
+        AlbumSortOrder.YearAsc, AlbumSortOrder.YearDesc, AlbumSortOrder.SongCountAsc, AlbumSortOrder.SongCountDesc
+    ];
 
-    public string CurrentSortOrderText => SortOrderHelper.GetDisplayName(CurrentSortOrder);
+    public SortOrderSelection<AlbumSortOrder> Sort { get; }
 
     public bool HasAlbums => Albums.Any();
-
-    protected override void LoadInitialSortOrder() =>
-        CurrentSortOrder = _settingsService.Get(AppSettings.AlbumsSortOrder);
 
     protected override string FormatTotalItemsText(PagedResult<Album> result) =>
         result.TotalCount == 1
@@ -79,7 +83,7 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
             : ResourceFormatter.Format(Strings.Albums_Count_Plural, result.TotalCount);
 
     protected override Task<PagedResult<Album>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token) =>
-        _libraryReader.GetAlbumsAsync(SearchTerm, CurrentSortOrder, pageNumber, pageSize, token);
+        _libraryReader.GetAlbumsAsync(SearchTerm, Sort.Current, pageNumber, pageSize, token);
 
     protected override void ApplyItemsToCollection(PagedResult<Album> result, bool append)
     {
@@ -114,16 +118,4 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
 
     [RelayCommand]
     private Task GoToArtistAsync(ArtistNavigationRequest request) => _musicNavigationService.OpenArtistAsync(request);
-
-    [RelayCommand]
-    public async Task ChangeSortOrderAsync(string sortOrderString)
-    {
-        if (!Enum.TryParse<AlbumSortOrder>(sortOrderString, out var newSortOrder) || newSortOrder == CurrentSortOrder)
-            return;
-
-        CurrentSortOrder = newSortOrder;
-        _settingsService.Set(AppSettings.AlbumsSortOrder, newSortOrder);
-        CurrentPage = 1;
-        await LoadCommand.ExecuteAsync(CancellationToken.None);
-    }
 }

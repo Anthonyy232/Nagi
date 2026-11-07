@@ -35,7 +35,7 @@ public class PlaylistViewModelTests
         _ui.ShowCreatePlaylistDialogAsync().Returns(new NewPlaylistRequest("Alpha", null));
         using var viewModel = CreateViewModel();
         await viewModel.LoadPlaylistsCommand.ExecuteAsync(null);
-        await viewModel.ChangeSortOrderAsync(nameof(PlaylistSortOrder.NameAsc));
+        await viewModel.Sort.ChangeCommand.ExecuteAsync(PlaylistSortOrder.NameAsc);
 
         await viewModel.CreatePlaylistCommand.ExecuteAsync(null);
 
@@ -332,7 +332,7 @@ public class PlaylistViewModelTests
             });
         using var viewModel = CreateViewModel();
         await viewModel.LoadPlaylistsCommand.ExecuteAsync(null);
-        await viewModel.ChangeSortOrderAsync(nameof(PlaylistSortOrder.DateModifiedDesc));
+        await viewModel.Sort.ChangeCommand.ExecuteAsync(PlaylistSortOrder.DateModifiedDesc);
         viewModel.SearchTerm = "Recent";
         await viewModel.SearchAsync();
 

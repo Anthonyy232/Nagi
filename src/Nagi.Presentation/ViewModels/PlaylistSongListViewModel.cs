@@ -32,7 +32,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         ISettingsService settingsService,
         IUIService uiService,
         ILogger<PlaylistSongListViewModel> logger)
-        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger, [SongSortOrder.PlaylistOrder, .. CommonSortOrders], null)
     {
         Songs.CollectionChanged += OnSongsCollectionChanged;
     }
@@ -41,7 +41,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
     protected override bool IsPaged => false;
 
     public bool IsReorderingEnabled => !_isDisposed && !_isSavingOrder && !IsLoading && !HasLoadError &&
-        CanEditPlaylist && CurrentSortOrder == SongSortOrder.PlaylistOrder && !IsSearchActive &&
+        CanEditPlaylist && Sort.Current == SongSortOrder.PlaylistOrder && !IsSearchActive &&
         Songs.Count == TotalItemCount;
 
     [ObservableProperty]
@@ -61,10 +61,10 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         OnPropertyChanged(nameof(IsReorderingEnabled));
     }
 
-    protected override void OnCurrentSortOrderChangedInternal(SongSortOrder oldOrder, SongSortOrder newOrder)
+    protected override Task OnSortOrderChangedAsync()
     {
-        base.OnCurrentSortOrderChangedInternal(oldOrder, newOrder);
         OnPropertyChanged(nameof(IsReorderingEnabled));
+        return base.OnSortOrderChangedAsync();
     }
 
     protected override void OnLoadingStateChanged(bool isLoading)
@@ -83,7 +83,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
     {
         if (_isDisposed) return;
         ResetState();
-        CurrentSortOrder = SongSortOrder.PlaylistOrder;
+        Sort.Current = SongSortOrder.PlaylistOrder;
         _logger.LogDebug("Initializing for playlist '{Title}' (ID: {PlaylistId})", title, playlistId);
 
         PageTitle = title;
@@ -91,7 +91,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         CanEditPlaylist = !isFromServer;
         CoverImageUri = coverImageUri;
 
-        await RefreshOrSortSongsCommand.ExecuteAsync(null);
+        await LoadAsync(CancellationToken.None);
         OnPropertyChanged(nameof(IsReorderingEnabled));
     }
 
@@ -128,7 +128,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
             var success =
                 await _playlistService.RemoveSongsFromPlaylistAsync(playlistId, songIdsToRemove);
             if (success && !_isDisposed && generation == _playlistGeneration)
-                await RefreshOrSortSongsCommand.ExecuteAsync(null);
+                await LoadAsync(CancellationToken.None);
         });
 
     private bool CanRemoveSongs()
@@ -190,7 +190,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         {
             if (!saved && !_isDisposed && generation == _playlistGeneration)
             {
-                await RefreshOrSortSongsAsync();
+                await LoadAsync(CancellationToken.None);
                 if (!_isDisposed && generation == _playlistGeneration)
                     await _uiService.ShowMessageDialogAsync(
                         Strings.Generic_Error, Strings.Playlist_ErrorSavingOrder);
