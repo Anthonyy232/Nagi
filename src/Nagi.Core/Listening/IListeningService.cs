@@ -1,6 +1,6 @@
 using Nagi.Core.Playback;
 
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.Listening;
 
 /// <summary>
 ///     What the user listens to and loves: favorites, and the listen history that play counts and scrobbles come from.

@@ -1,4 +1,4 @@
-using Nagi.Core.Models;
+using Nagi.Core.Listening;
 using Nagi.Presentation.Resources;
 
 namespace Nagi.Presentation.Helpers;

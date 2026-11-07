@@ -1,10 +1,8 @@
 using FluentAssertions;
 using Nagi.Core.Library;
-using Nagi.Core.Models;
+using Nagi.Core.Listening;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
-using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Implementations;
 using Nagi.Core.Tests.Utils;
 using Xunit;
 

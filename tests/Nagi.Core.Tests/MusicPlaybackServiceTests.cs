@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
+using Nagi.Core.Listening;
 using Nagi.Core.Models;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;

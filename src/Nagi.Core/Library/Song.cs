@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Nagi.Core.Models;
+using Nagi.Core.Listening;
 using Nagi.Core.Playlists;
 
 namespace Nagi.Core.Library;

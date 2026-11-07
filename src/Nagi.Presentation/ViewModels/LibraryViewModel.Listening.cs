@@ -2,7 +2,7 @@ using System.Threading;
 using Microsoft.Extensions.Logging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Nagi.Core.Models;
+using Nagi.Core.Listening;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Helpers;
 

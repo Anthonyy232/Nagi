@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Listening;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;
 

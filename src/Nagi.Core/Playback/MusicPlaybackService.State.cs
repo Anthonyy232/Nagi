@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Models;
+using Nagi.Core.Listening;
 using Nagi.Core.Settings;
 
 namespace Nagi.Core.Playback;

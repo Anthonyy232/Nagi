@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Constants;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
+using Nagi.Core.Listening;
 using Nagi.Core.Models;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;

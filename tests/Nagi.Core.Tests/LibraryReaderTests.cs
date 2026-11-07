@@ -2,7 +2,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Helpers;
 using Nagi.Core.Library;
-using Nagi.Core.Models;
+using Nagi.Core.Listening;
 using Nagi.Core.Playlists;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;

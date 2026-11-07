@@ -4,6 +4,7 @@ using Nagi.Core.Data;
 using Nagi.Core.Helpers;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Library;
+using Nagi.Core.Listening;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
 using Nagi.Core.Services.Abstractions;

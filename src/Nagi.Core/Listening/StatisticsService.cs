@@ -3,11 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
 using Nagi.Core.Library;
-using Nagi.Core.Models;
 using Nagi.Core.Playback;
-using Nagi.Core.Services.Abstractions;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Listening;
 
 public class StatisticsService : IStatisticsService
 {
