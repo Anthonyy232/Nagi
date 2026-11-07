@@ -25,10 +25,9 @@ public partial class LibraryServiceTests : IDisposable
     private readonly TestHttpMessageHandler _httpMessageHandler;
     private readonly ILastFmMetadataService _lastFmService;
 
-    private readonly LibraryService _libraryService;
+    private readonly TestLibrary _library;
     private readonly LibraryReader _libraryReader;
 
-    private readonly ILogger<LibraryService> _logger;
     private readonly ILogger<ArtistMetadataService> _artistMetadataLogger = Substitute.For<ILogger<ArtistMetadataService>>();
 
     private readonly IMetadataService _metadataService;
@@ -56,7 +55,6 @@ public partial class LibraryServiceTests : IDisposable
         _theAudioDbService = Substitute.For<ITheAudioDbService>();
         _imageProcessor = Substitute.For<IImageProcessor>();
         _httpMessageHandler = new TestHttpMessageHandler();
-        _logger = Substitute.For<ILogger<LibraryService>>();
 
         _dbHelper = new DbContextFactoryTestHelper();
 
@@ -72,9 +70,8 @@ public partial class LibraryServiceTests : IDisposable
 
         _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, _settingsService);
 
-        _libraryService = new LibraryService(
+        _library = new TestLibrary(
             _dbHelper.ContextFactory,
-            _libraryReader,
             _fileSystem,
             _metadataService,
             new ArtistMetadataService(
@@ -92,13 +89,12 @@ public partial class LibraryServiceTests : IDisposable
             _settingsService,
             _replayGainService,
             _imageProcessor,
-            _pipelines,
-            _logger);
+            _pipelines);
     }
 
     public void Dispose()
     {
-        _libraryService.Dispose();
+        _library.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
         _httpMessageHandler.Dispose();
@@ -106,12 +102,12 @@ public partial class LibraryServiceTests : IDisposable
 
     // Concurrency tests need their own file database: contexts that share the in-memory connection collide when
     // they open it while another runs a query.
-    private LibraryService CreateLibraryService(DbContextFactoryTestHelper database, LibraryReader reader) =>
-        new(database.ContextFactory, reader, _fileSystem, _metadataService,
+    private TestLibrary CreateLibrary(DbContextFactoryTestHelper database) =>
+        new(database.ContextFactory, _fileSystem, _metadataService,
             new ArtistMetadataService(_lastFmService, _musicBrainzService, _fanartTvService, _theAudioDbService,
                 Substitute.For<IDeezerService>(), Substitute.For<IWikipediaService>(), _settingsService, _artistMetadataLogger),
             Substitute.For<IAlbumCoverService>(), _httpClientFactory, _pathConfig, _settingsService, _replayGainService,
-            _imageProcessor, _pipelines, _logger);
+            _imageProcessor, _pipelines);
 
     [Theory]
     [InlineData(ServiceProviderIds.LastFm)]
@@ -141,10 +137,10 @@ public partial class LibraryServiceTests : IDisposable
         _musicBrainzService.SearchArtistAsync(artist.Name, Arg.Any<CancellationToken>()).Returns(
             ServiceResult<string>.FromTemporaryError(), ServiceResult<string>.FromSuccessNotFound());
 
-        var failed = await _libraryService.GetArtistDetailsAsync(artist.Id);
+        var failed = await _library.Artwork.GetArtistDetailsAsync(artist.Id);
         failed!.MetadataLastCheckedUtc.Should().BeNull();
 
-        var retried = await _libraryService.GetArtistDetailsAsync(artist.Id);
+        var retried = await _library.Artwork.GetArtistDetailsAsync(artist.Id);
         retried!.MetadataLastCheckedUtc.Should().NotBeNull();
     }
 
@@ -163,7 +159,7 @@ public partial class LibraryServiceTests : IDisposable
         }
         _settingsService.EnableOnly(CoreSettings.MetadataProviders, providerIds);
 
-        var result = await _libraryService.GetArtistDetailsAsync(artist.Id);
+        var result = await _library.Artwork.GetArtistDetailsAsync(artist.Id);
 
         result!.MetadataLastCheckedUtc.Should().NotBeNull();
         await _musicBrainzService.DidNotReceive().SearchArtistAsync(Arg.Any<string>(), Arg.Any<CancellationToken>());
@@ -193,7 +189,7 @@ public partial class LibraryServiceTests : IDisposable
         _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccess(new ArtistInfo { Biography = "Fallback biography" }));
 
-        var result = await _libraryService.GetArtistDetailsAsync(artist.Id);
+        var result = await _library.Artwork.GetArtistDetailsAsync(artist.Id);
 
         result!.Biography.Should().Be("Fallback biography");
         result.MetadataLastCheckedUtc.Should().BeNull();
@@ -219,7 +215,7 @@ public partial class LibraryServiceTests : IDisposable
         _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(_ => new HttpClient(_httpMessageHandler, disposeHandler: false));
         _httpMessageHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.ServiceUnavailable));
 
-        var failed = await _libraryService.GetArtistDetailsAsync(artist.Id);
+        var failed = await _library.Artwork.GetArtistDetailsAsync(artist.Id);
         failed!.Biography.Should().Be("Biography");
         failed.LocalImageCachePath.Should().BeNull();
         failed.MetadataLastCheckedUtc.Should().BeNull();
@@ -229,7 +225,7 @@ public partial class LibraryServiceTests : IDisposable
             Content = new ByteArrayContent([1, 2, 3])
         });
         _imageProcessor.ProcessImageBytesAsync(Arg.Any<byte[]>()).Returns(new byte[] { 4, 5, 6 });
-        var retried = await _libraryService.GetArtistDetailsAsync(artist.Id);
+        var retried = await _library.Artwork.GetArtistDetailsAsync(artist.Id);
 
         retried!.Biography.Should().Be("Biography");
         retried.LocalImageCachePath.Should().NotBeNullOrEmpty();
@@ -260,14 +256,14 @@ public partial class LibraryServiceTests : IDisposable
             return provider.Task;
         });
 
-        var run = _libraryService.StartMetadataBackgroundFetchAsync();
+        var run = _library.Artwork.StartMetadataBackgroundFetchAsync();
         var token = await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
         Task reset = Task.CompletedTask;
-        if (action == "dispose") _libraryService.Dispose();
+        if (action == "dispose") _library.Dispose();
         else if (action == "disable") _settingsService.Set(CoreSettings.FetchOnlineMetadata, false);
         else
         {
-            reset = _libraryService.ClearAllLibraryDataAsync();
+            reset = _library.Reset.ClearAllLibraryDataAsync();
             reset.IsCompleted.Should().BeFalse();
         }
         token.IsCancellationRequested.Should().BeTrue();
@@ -287,7 +283,7 @@ public partial class LibraryServiceTests : IDisposable
         _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccessNotFound());
         _settingsService.Set(CoreSettings.FetchOnlineMetadata, true);
-        await _libraryService.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(5));
+        await _library.Artwork.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(5));
         await _lastFmService.Received(action == "disable" ? 2 : 1)
             .GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>());
     }
@@ -323,9 +319,9 @@ public partial class LibraryServiceTests : IDisposable
             return metadata.Task;
         });
 
-        var scan = _libraryService.RescanFolderForMusicAsync(folder.Id);
+        var scan = _library.Folders.RescanFolderForMusicAsync(folder.Id);
         await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
-        _libraryService.Dispose();
+        _library.Dispose();
         metadata.SetResult(songMetadata);
 
         (await scan.WaitAsync(TimeSpan.FromSeconds(5))).Should().BeFalse();
@@ -378,9 +374,9 @@ public partial class LibraryServiceTests : IDisposable
                 songCountsAtAnalysis.Add(await context.Songs.CountAsync());
             });
 
-        var firstRefresh = _libraryService.RefreshAllFoldersAsync();
+        var firstRefresh = _library.Folders.RefreshAllFoldersAsync();
         await firstStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
-        var replacementRefresh = _libraryService.RefreshAllFoldersAsync();
+        var replacementRefresh = _library.Folders.RefreshAllFoldersAsync();
         firstMetadata.SetResult(new SongFileMetadata { FilePath = firstPath, Title = "First" });
         (await firstRefresh.WaitAsync(TimeSpan.FromSeconds(5))).Should().BeFalse();
         await replacementStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
@@ -403,7 +399,7 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        await _libraryService.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
+        await _library.Artwork.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
 
         await _lastFmService.Received(51).GetArtistInfoAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
@@ -411,7 +407,7 @@ public partial class LibraryServiceTests : IDisposable
 
         _lastFmService.GetArtistInfoAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccessNotFound());
-        await _libraryService.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
+        await _library.Artwork.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
 
         await _lastFmService.Received(102).GetArtistInfoAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
@@ -443,7 +439,7 @@ public partial class LibraryServiceTests : IDisposable
 
         _fileSystem.DirectoryExists(Arg.Any<string>()).Returns(true);
 
-        await _libraryService.ClearAllLibraryDataAsync();
+        await _library.Reset.ClearAllLibraryDataAsync();
 
         await using (var assertContext = _dbHelper.ContextFactory.CreateDbContext())
         {
@@ -493,7 +489,7 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        (await _libraryService.RemoveFolderAsync(removed.Id)).Should().BeTrue();
+        (await _library.Folders.RemoveFolderAsync(removed.Id)).Should().BeTrue();
 
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         (await assertContext.Folders.Select(f => f.Id).ToListAsync()).Should().BeEquivalentTo(new[] { root.Id, artist.Id, album.Id });
@@ -535,7 +531,7 @@ public partial class LibraryServiceTests : IDisposable
         _fileSystem.EnumerateFiles(_pathConfig.PlaylistImageCachePath, "*.*", SearchOption.TopDirectoryOnly).Returns(new[] { playlistArt });
         _fileSystem.EnumerateFiles(_pathConfig.LrcCachePath, "*.*", SearchOption.TopDirectoryOnly).Returns(new[] { pendingLyrics });
 
-        (await _libraryService.RemoveFolderAsync(removed.Id)).Should().BeTrue();
+        (await _library.Folders.RemoveFolderAsync(removed.Id)).Should().BeTrue();
 
         _fileSystem.DidNotReceive().DeleteFile(Arg.Any<string>());
     }
@@ -559,7 +555,7 @@ public partial class LibraryServiceTests : IDisposable
         if (imageLocked)
             _fileSystem.When(fs => fs.DeleteFile(imagePath)).Do(_ => throw new IOException("File is locked"));
 
-        (await _libraryService.RemoveFolderAsync(folder.Id)).Should().BeTrue();
+        (await _library.Folders.RemoveFolderAsync(folder.Id)).Should().BeTrue();
 
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         (await assertContext.Artists.CountAsync()).Should().Be(0);
@@ -588,7 +584,7 @@ public partial class LibraryServiceTests : IDisposable
             Album = "Album"
         });
 
-        await _libraryService.RescanFolderForMusicAsync(root.Id);
+        await _library.Folders.RescanFolderForMusicAsync(root.Id);
 
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         var artistFolder = await assertContext.Folders.SingleAsync(f => f.Path == @"C:\Music\Artist");
@@ -605,7 +601,7 @@ public partial class LibraryServiceTests : IDisposable
         var lastWriteTime = DateTime.UtcNow;
         _fileSystem.GetLastWriteTimeUtc(folderPath).Returns(lastWriteTime);
 
-        var result = await _libraryService.AddFolderAsync(folderPath);
+        var result = await _library.Folders.AddFolderAsync(folderPath);
 
         result.Should().NotBeNull();
         result!.Path.Should().Be(folderPath);
@@ -627,7 +623,7 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var result = await _libraryService.AddFolderAsync(folderPath);
+        var result = await _library.Folders.AddFolderAsync(folderPath);
 
         result.Should().NotBeNull();
         result!.Id.Should().Be(existingFolder.Id);
@@ -647,7 +643,7 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var add = () => _libraryService.AddFolderAsync(folderPath);
+        var add = () => _library.Folders.AddFolderAsync(folderPath);
 
         await add.Should().ThrowAsync<FolderOverlapsException>();
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
@@ -683,7 +679,7 @@ public partial class LibraryServiceTests : IDisposable
         _fileSystem.FileExists("C:\\cache\\lrc\\lyrics1.lrc").Returns(true);
         _pathConfig.LrcCachePath.Returns("C:\\cache\\lrc");
 
-        var result = await _libraryService.RemoveFolderAsync(folder.Id);
+        var result = await _library.Folders.RemoveFolderAsync(folder.Id);
 
         result.Should().BeTrue();
 
@@ -748,7 +744,7 @@ public partial class LibraryServiceTests : IDisposable
             .Returns(new SongFileMetadata
             { FilePath = "C:\\Music\\Scan\\new.mp3", Title = "New Song", Artists = new List<string> { "Artist" } });
 
-        var result = await _libraryService.RescanFolderForMusicAsync(folder.Id);
+        var result = await _library.Folders.RescanFolderForMusicAsync(folder.Id);
 
         result.Should().BeTrue();
 
@@ -773,7 +769,7 @@ public partial class LibraryServiceTests : IDisposable
 
         _fileSystem.DirectoryExists(folder.Path).Returns(false);
 
-        var result = await _libraryService.RescanFolderForMusicAsync(folder.Id);
+        var result = await _library.Folders.RescanFolderForMusicAsync(folder.Id);
 
         result.Should().BeTrue();
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
@@ -796,7 +792,7 @@ public partial class LibraryServiceTests : IDisposable
         using var cts = new CancellationTokenSource();
         cts.Cancel();
 
-        var result = await _libraryService.RescanFolderForMusicAsync(folder.Id, cancellationToken: cts.Token);
+        var result = await _library.Folders.RescanFolderForMusicAsync(folder.Id, cancellationToken: cts.Token);
 
         result.Should().BeFalse();
         await _metadataService.DidNotReceive().ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>());
@@ -829,7 +825,7 @@ public partial class LibraryServiceTests : IDisposable
         _fileSystem.GetFiles("C:\\Music\\Scan", "*.lrc").Returns(Array.Empty<string>());
         _fileSystem.GetFiles("C:\\Music\\Scan", "*.txt").Returns(new[] { lyricsPath });
 
-        var result = await _libraryService.RescanFolderForMusicAsync(folder.Id);
+        var result = await _library.Folders.RescanFolderForMusicAsync(folder.Id);
 
         result.Should().BeTrue();
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
@@ -868,14 +864,14 @@ public partial class LibraryServiceTests : IDisposable
         });
 
         var eventFired = false;
-        _libraryService.ArtistMetadataUpdated += (sender, args) =>
+        _library.Notifier.ArtistImagesChanged += (_, changes) =>
         {
             eventFired = true;
-            args.ArtistId.Should().Be(artist.Id);
-            args.NewLocalImageCachePath.Should().Be(expectedImagePath);
+            changes.Single().ArtistId.Should().Be(artist.Id);
+            changes.Single().ImagePath.Should().Be(expectedImagePath);
         };
 
-        var result = await _libraryService.GetArtistDetailsAsync(artist.Id);
+        var result = await _library.Artwork.GetArtistDetailsAsync(artist.Id);
 
         result.Should().NotBeNull();
         result!.Biography.Should().Be("A cool bio.");
@@ -897,7 +893,7 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var result = await _libraryService.GetArtistDetailsAsync(artist.Id);
+        var result = await _library.Artwork.GetArtistDetailsAsync(artist.Id);
 
         result.Should().NotBeNull();
         result!.Biography.Should().BeNull();
@@ -906,7 +902,7 @@ public partial class LibraryServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task UpdateSongLrcPathAsync_PreservesArtistName()
+    public async Task UpdatingASongLoadedWithoutItsArtists_PreservesArtistName()
     {
         Guid songId;
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
@@ -931,7 +927,11 @@ public partial class LibraryServiceTests : IDisposable
             song.ArtistName.Should().Be("Preserved Artist");
         }
 
-        await _libraryService.UpdateSongLrcPathAsync(songId, @"C:\cache\lrc\preserve.lrc");
+        await using (var updateContext = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            (await updateContext.Songs.FindAsync(songId))!.LrcFilePath = @"C:\cache\lrc\preserve.lrc";
+            await updateContext.SaveChangesAsync();
+        }
 
         await using (var assertContext = _dbHelper.ContextFactory.CreateDbContext())
         {
@@ -946,8 +946,7 @@ public partial class LibraryServiceTests : IDisposable
     public async Task RescanFolderForMusicAsync_SupersedingScansWaitForActiveWorkAndApplyOnlyLatest()
     {
         using var database = new DbContextFactoryTestHelper(useFileDatabase: true);
-        var reader = new LibraryReader(database.ContextFactory, _fileSystem, _settingsService);
-        using var service = CreateLibraryService(database, reader);
+        using var library = CreateLibrary(database);
         var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\Concurrent", Name = "Concurrent" };
         await using (var context = database.ContextFactory.CreateDbContext())
         {
@@ -967,10 +966,10 @@ public partial class LibraryServiceTests : IDisposable
             return metadata.Task;
         });
 
-        var first = service.RescanFolderForMusicAsync(folder.Id);
+        var first = library.Folders.RescanFolderForMusicAsync(folder.Id);
         await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
-        var second = service.RescanFolderForMusicAsync(folder.Id);
-        var third = service.RescanFolderForMusicAsync(folder.Id);
+        var second = library.Folders.RescanFolderForMusicAsync(folder.Id);
+        var third = library.Folders.RescanFolderForMusicAsync(folder.Id);
         try
         {
             third.IsCompleted.Should().BeFalse();
@@ -1013,7 +1012,7 @@ public partial class LibraryServiceTests : IDisposable
 
         var playbackContext = new PlaybackContext(PlaybackContextType.Album, Guid.NewGuid());
 
-        var sessionId = await _libraryService.StartListenSessionAsync(song.Id, playbackContext);
+        var sessionId = await _library.Listening.StartListenSessionAsync(song.Id, playbackContext);
 
         sessionId.Should().NotBeNull();
 
@@ -1032,7 +1031,7 @@ public partial class LibraryServiceTests : IDisposable
     [Fact]
     public async Task StartListenSessionAsync_WithInvalidSongId_ReturnsNull()
     {
-        var sessionId = await _libraryService.StartListenSessionAsync(Guid.NewGuid(), new PlaybackContext(PlaybackContextType.Library, null));
+        var sessionId = await _library.Listening.StartListenSessionAsync(Guid.NewGuid(), new PlaybackContext(PlaybackContextType.Library, null));
 
         sessionId.Should().BeNull();
     }
@@ -1054,8 +1053,8 @@ public partial class LibraryServiceTests : IDisposable
 
         var finalDuration = TimeSpan.FromSeconds(150);
 
-        await _libraryService.FinalizeListenSessionAsync(listenHistory.Id, finalDuration, PlaybackEndReason.Finished);
-        await _libraryService.FinalizeListenSessionAsync(listenHistory.Id, TimeSpan.FromSeconds(5), PlaybackEndReason.Skipped);
+        await _library.Listening.FinalizeListenSessionAsync(listenHistory.Id, finalDuration, PlaybackEndReason.Finished);
+        await _library.Listening.FinalizeListenSessionAsync(listenHistory.Id, TimeSpan.FromSeconds(5), PlaybackEndReason.Skipped);
 
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         var updatedHistory = await assertContext.ListenHistory.FindAsync(listenHistory.Id);
@@ -1085,8 +1084,8 @@ public partial class LibraryServiceTests : IDisposable
 
         var finalDuration = TimeSpan.FromSeconds(10);
 
-        await _libraryService.FinalizeListenSessionAsync(listenHistory.Id, finalDuration, PlaybackEndReason.Skipped);
-        await _libraryService.FinalizeListenSessionAsync(listenHistory.Id, finalDuration, PlaybackEndReason.Skipped);
+        await _library.Listening.FinalizeListenSessionAsync(listenHistory.Id, finalDuration, PlaybackEndReason.Skipped);
+        await _library.Listening.FinalizeListenSessionAsync(listenHistory.Id, finalDuration, PlaybackEndReason.Skipped);
 
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         var updatedHistory = await assertContext.ListenHistory.FindAsync(listenHistory.Id);
@@ -1117,14 +1116,14 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var id = (await _libraryService.StartListenSessionAsync(song.Id, new PlaybackContext(PlaybackContextType.Library, null)))!.Value;
+        var id = (await _library.Listening.StartListenSessionAsync(song.Id, new PlaybackContext(PlaybackContextType.Library, null)))!.Value;
         var beforeEligible = DateTime.UtcNow;
         if (eligibilityFirst)
-            await _libraryService.MarkListenAsEligibleForScrobblingAsync(id);
-        await _libraryService.FinalizeListenSessionAsync(id, TimeSpan.FromMinutes(3), PlaybackEndReason.Skipped);
-        (await _libraryService.MarkListenAsEligibleForScrobblingAsync(id)).Should().BeTrue();
-        await _libraryService.MarkListenAsEligibleForScrobblingAsync(id);
-        await _libraryService.FinalizeListenSessionAsync(id, TimeSpan.FromMinutes(3), PlaybackEndReason.Skipped);
+            await _library.Listening.MarkListenAsEligibleForScrobblingAsync(id);
+        await _library.Listening.FinalizeListenSessionAsync(id, TimeSpan.FromMinutes(3), PlaybackEndReason.Skipped);
+        (await _library.Listening.MarkListenAsEligibleForScrobblingAsync(id)).Should().BeTrue();
+        await _library.Listening.MarkListenAsEligibleForScrobblingAsync(id);
+        await _library.Listening.FinalizeListenSessionAsync(id, TimeSpan.FromMinutes(3), PlaybackEndReason.Skipped);
 
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         (await assertContext.ListenHistory.SingleAsync()).IsEligibleForScrobbling.Should().BeTrue();
@@ -1188,11 +1187,11 @@ public partial class LibraryServiceTests : IDisposable
             return path.Replace(alias, canonical, StringComparison.OrdinalIgnoreCase);
         });
         var notifications = 0;
-        _libraryService.LibraryContentChanged += (_, _) => notifications++;
+        _library.Notifier.Changed += (_, _) => notifications++;
 
         if (failDuringSongMerge)
         {
-            Func<Task> merge = () => _libraryService.DeduplicateLibraryAsync();
+            Func<Task> merge = () => _library.Folders.DeduplicateLibraryAsync();
             await merge.Should().ThrowAsync<IOException>();
             await using var context = _dbHelper.ContextFactory.CreateDbContext();
             (await context.Folders.CountAsync()).Should().Be(4);
@@ -1203,8 +1202,8 @@ public partial class LibraryServiceTests : IDisposable
             failDuringSongMerge = false;
         }
 
-        (await _libraryService.DeduplicateLibraryAsync()).Should().Be(3);
-        (await _libraryService.DeduplicateLibraryAsync()).Should().Be(0);
+        (await _library.Folders.DeduplicateLibraryAsync()).Should().Be(3);
+        (await _library.Folders.DeduplicateLibraryAsync()).Should().Be(0);
         notifications.Should().Be(1);
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         var survivor = await assertContext.Songs.SingleAsync();
@@ -1234,8 +1233,7 @@ public partial class LibraryServiceTests : IDisposable
     public async Task ListenCallbacks_ConcurrentSessionsPreserveCounters()
     {
         using var database = new DbContextFactoryTestHelper(useFileDatabase: true);
-        var reader = new LibraryReader(database.ContextFactory, _fileSystem, _settingsService);
-        using var service = CreateLibraryService(database, reader);
+        using var library = CreateLibrary(database);
         var song = new Song { FilePath = @"C:\Music\song.mp3", Folder = new Folder { Path = @"C:\Music", Name = "Music" } };
         await using (var context = database.ContextFactory.CreateDbContext())
         {
@@ -1243,15 +1241,15 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
         var playbackContext = new PlaybackContext(PlaybackContextType.Library, null);
-        var first = (await service.StartListenSessionAsync(song.Id, playbackContext))!.Value;
-        var second = (await service.StartListenSessionAsync(song.Id, playbackContext))!.Value;
+        var first = (await library.Listening.StartListenSessionAsync(song.Id, playbackContext))!.Value;
+        var second = (await library.Listening.StartListenSessionAsync(song.Id, playbackContext))!.Value;
 
         await Task.WhenAll(new[] { first, second }.SelectMany(id => new Func<Task>[]
         {
-            () => service.MarkListenAsEligibleForScrobblingAsync(id),
-            () => service.MarkListenAsEligibleForScrobblingAsync(id),
-            () => service.FinalizeListenSessionAsync(id, TimeSpan.FromSeconds(40), PlaybackEndReason.Skipped),
-            () => service.FinalizeListenSessionAsync(id, TimeSpan.FromSeconds(40), PlaybackEndReason.Skipped)
+            () => library.Listening.MarkListenAsEligibleForScrobblingAsync(id),
+            () => library.Listening.MarkListenAsEligibleForScrobblingAsync(id),
+            () => library.Listening.FinalizeListenSessionAsync(id, TimeSpan.FromSeconds(40), PlaybackEndReason.Skipped),
+            () => library.Listening.FinalizeListenSessionAsync(id, TimeSpan.FromSeconds(40), PlaybackEndReason.Skipped)
         }).Select(callback => Task.Run(callback)));
 
         await using var assertContext = database.ContextFactory.CreateDbContext();
@@ -1265,10 +1263,10 @@ public partial class LibraryServiceTests : IDisposable
     [Fact]
     public async Task ListenCallbacks_ForMissingHistory_DoNotRecreateEntries()
     {
-        await _libraryService.FinalizeListenSessionAsync(99999L, TimeSpan.FromSeconds(10), PlaybackEndReason.Finished);
-        (await _libraryService.MarkListenAsEligibleForScrobblingAsync(99999L)).Should().BeFalse();
-        (await _libraryService.MarkListenAsSubmittedToListenBrainzAsync(99999L)).Should().BeFalse();
-        (await _libraryService.MarkListenAsScrobbledAsync(99999L)).Should().BeFalse();
+        await _library.Listening.FinalizeListenSessionAsync(99999L, TimeSpan.FromSeconds(10), PlaybackEndReason.Finished);
+        (await _library.Listening.MarkListenAsEligibleForScrobblingAsync(99999L)).Should().BeFalse();
+        (await _library.Listening.MarkListenAsSubmittedToListenBrainzAsync(99999L)).Should().BeFalse();
+        (await _library.Listening.MarkListenAsScrobbledAsync(99999L)).Should().BeFalse();
         await using var context = _dbHelper.ContextFactory.CreateDbContext();
         (await context.ListenHistory.CountAsync()).Should().Be(0);
     }
@@ -1293,10 +1291,10 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var result = await _libraryService.MarkListenAsSubmittedToListenBrainzAsync(listenHistory.Id);
-        (await _libraryService.MarkListenAsSubmittedToListenBrainzAsync(listenHistory.Id)).Should().BeTrue();
-        (await _libraryService.MarkListenAsScrobbledAsync(listenHistory.Id)).Should().BeTrue();
-        (await _libraryService.MarkListenAsScrobbledAsync(listenHistory.Id)).Should().BeTrue();
+        var result = await _library.Listening.MarkListenAsSubmittedToListenBrainzAsync(listenHistory.Id);
+        (await _library.Listening.MarkListenAsSubmittedToListenBrainzAsync(listenHistory.Id)).Should().BeTrue();
+        (await _library.Listening.MarkListenAsScrobbledAsync(listenHistory.Id)).Should().BeTrue();
+        (await _library.Listening.MarkListenAsScrobbledAsync(listenHistory.Id)).Should().BeTrue();
 
         result.Should().BeTrue();
 
@@ -1322,7 +1320,7 @@ public partial class LibraryServiceTests : IDisposable
             await ctx.SaveChangesAsync();
         }
 
-        await _libraryService.ClearListenHistoryAsync();
+        await _library.Listening.ClearListenHistoryAsync();
 
         await using var assertCtx = _dbHelper.ContextFactory.CreateDbContext();
         (await assertCtx.ListenHistory.CountAsync()).Should().Be(0, "history should be cleared");
@@ -1346,7 +1344,7 @@ public partial class LibraryServiceTests : IDisposable
             await ctx.SaveChangesAsync();
         }
 
-        await _libraryService.RemoveFolderAsync(folder.Id);
+        await _library.Folders.RemoveFolderAsync(folder.Id);
 
         _fileSystem.DidNotReceive().DeleteFile(userLrcPath);
     }
@@ -1392,8 +1390,8 @@ public partial class LibraryServiceTests : IDisposable
             .Returns(Array.Empty<(string, DateTime)>());
 
         var changed = removeFolder
-            ? await _libraryService.RemoveFolderAsync(folder.Id)
-            : await _libraryService.RescanFolderForMusicAsync(folder.Id);
+            ? await _library.Folders.RemoveFolderAsync(folder.Id)
+            : await _library.Folders.RescanFolderForMusicAsync(folder.Id);
 
         changed.Should().BeTrue();
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
@@ -1434,7 +1432,7 @@ public partial class LibraryServiceTests : IDisposable
             (@"C:\Music\with-art.mp3", timestamp), (@"C:\Music\without-art.mp3", timestamp), (@"C:\Music\unknown.mp3", timestamp)
         });
 
-        (await _libraryService.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
+        (await _library.Folders.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
 
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         var songs = await assertContext.Songs.ToDictionaryAsync(s => Path.GetFileNameWithoutExtension(s.FilePath));
@@ -1503,7 +1501,7 @@ public partial class LibraryServiceTests : IDisposable
                 CoverArtUri = online.Contains(song) ? null : newCover
             });
 
-        (await _libraryService.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
+        (await _library.Folders.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
 
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         var covers = await assertContext.Albums.ToDictionaryAsync(a => a.Title, a => a.CoverArtUri);
@@ -1584,7 +1582,7 @@ public partial class LibraryServiceTests : IDisposable
         _metadataService.ExtractMetadataAsync(@"C:\Music\Online.mp3", folder.Path, true)
             .Returns(Metadata("Online", null));
 
-        (await _libraryService.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
+        (await _library.Folders.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
 
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         var songs = await assertContext.Songs.Include(s => s.Album)
@@ -1639,7 +1637,7 @@ public partial class LibraryServiceTests : IDisposable
                 CoverArtUri = newCover
             });
 
-        (await _libraryService.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
+        (await _library.Folders.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
 
         _fileSystem.Received(1).DeleteFile(orphanedCover);
         _fileSystem.Received(1).DeleteFile(staleAlbumCover);

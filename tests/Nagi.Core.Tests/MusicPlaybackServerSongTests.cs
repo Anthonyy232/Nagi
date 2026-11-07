@@ -22,7 +22,7 @@ public partial class MusicPlaybackServiceTests
 
         _service.CurrentTrack.Should().BeNull();
         failed.Should().BeSameAs(song);
-        await _library.Writer.DidNotReceive().StartListenSessionAsync(song.Id, Arg.Any<PlaybackContext>());
+        await _library.Listening.DidNotReceive().StartListenSessionAsync(song.Id, Arg.Any<PlaybackContext>());
         await _audioPlayer.DidNotReceiveWithAnyArgs().LoadAsync(default!, default);
     }
 

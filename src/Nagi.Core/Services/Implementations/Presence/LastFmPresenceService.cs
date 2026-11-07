@@ -13,19 +13,19 @@ namespace Nagi.Core.Services.Implementations.Presence;
 /// </summary>
 public class LastFmPresenceService : IPresenceService
 {
-    private readonly ILibraryWriter _libraryWriter;
+    private readonly IListeningService _listening;
     private readonly ILogger<LastFmPresenceService> _logger;
     private readonly ILastFmScrobblerService _scrobblerService;
     private readonly ISettingsService _settingsService;
 
     public LastFmPresenceService(
         ILastFmScrobblerService scrobblerService,
-        ILibraryWriter libraryWriter,
+        IListeningService listening,
         ISettingsService settingsService,
         ILogger<LastFmPresenceService> logger)
     {
         _scrobblerService = scrobblerService;
-        _libraryWriter = libraryWriter;
+        _listening = listening;
         _settingsService = settingsService;
         _logger = logger;
     }
@@ -81,7 +81,7 @@ public class LastFmPresenceService : IPresenceService
             if (await _scrobblerService.ScrobbleAsync(song, listenStartedUtc).ConfigureAwait(false))
             {
                 _logger.LogDebug("Successfully scrobbled track '{TrackTitle}' in real-time.", song.Title);
-                await _libraryWriter.MarkListenAsScrobbledAsync(listenHistoryId).ConfigureAwait(false);
+                await _listening.MarkListenAsScrobbledAsync(listenHistoryId).ConfigureAwait(false);
             }
         }
         catch (Exception ex)

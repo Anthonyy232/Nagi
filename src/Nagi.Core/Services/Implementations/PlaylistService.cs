@@ -23,16 +23,93 @@ public class PlaylistService : IPlaylistService
         IFileSystemService fileSystem,
         IImageProcessor imageProcessor,
         IPathConfiguration pathConfig,
+        ILibraryNotifier libraryNotifier,
         ILogger<PlaylistService> logger)
     {
         _contextFactory = contextFactory;
         _rules = new PlaylistRules(fileSystem, imageProcessor, pathConfig, logger);
         _logger = logger;
+        libraryNotifier.Changed += OnLibraryChanged;
     }
 
     public event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;
 
     public event EventHandler? PlaylistsChanged;
+
+    // Removing songs from the library removes them from their playlists, and removing a server removes its playlists.
+    private void OnLibraryChanged(object? sender, LibraryChange change)
+    {
+        if (change.Kind is LibraryChangeKind.RootRemoved or LibraryChangeKind.FolderRescanned
+            or LibraryChangeKind.LibraryRescanned or LibraryChangeKind.LibraryCleared)
+            PlaylistsChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    ///     Makes the server's playlists in the library match its list. Songs the library doesn't have from the server are
+    ///     left out, and a song listed twice is kept once, where it first appears.
+    /// </summary>
+    /// <returns>True if a playlist was added, changed or removed.</returns>
+    internal async Task<bool> SyncServerPlaylistsAsync(Guid folderId, IReadOnlyList<ServerPlaylist> playlists,
+        CancellationToken cancellationToken)
+    {
+        bool changed;
+        await using (var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false))
+        {
+            var songIds = await context.Songs.Where(s => s.FolderId == folderId && s.RemoteId != null)
+                .ToDictionaryAsync(s => s.RemoteId!, s => s.Id, cancellationToken).ConfigureAwait(false);
+            var stored = await context.Playlists.Include(p => p.PlaylistSongs).Where(p => p.ServerFolderId == folderId)
+                .ToDictionaryAsync(p => p.RemoteId!, cancellationToken).ConfigureAwait(false);
+
+            changed = false;
+            foreach (var listed in playlists)
+            {
+                stored.Remove(listed.RemoteId, out var playlist);
+                var playlistChanged = playlist?.Name != listed.Name;
+                if (playlist is null)
+                {
+                    playlist = new Playlist
+                    {
+                        ServerFolderId = folderId,
+                        RemoteId = listed.RemoteId,
+                        DateCreated = listed.CreatedUtc ?? DateTime.UtcNow
+                    };
+                    context.Playlists.Add(playlist);
+                }
+
+                playlist.Name = listed.Name;
+                var entries = playlist.PlaylistSongs.ToDictionary(ps => ps.SongId);
+                var order = 0;
+                foreach (var songId in listed.SongIds.Select(id => songIds.GetValueOrDefault(id)).Where(id => id != Guid.Empty).Distinct())
+                {
+                    order++;
+                    if (entries.Remove(songId, out var entry))
+                    {
+                        if (entry.Order == order) continue;
+                    }
+                    else
+                    {
+                        entry = new PlaylistSong { SongId = songId };
+                        playlist.PlaylistSongs.Add(entry);
+                    }
+
+                    entry.Order = order;
+                    playlistChanged = true;
+                }
+
+                foreach (var gone in entries.Values) playlist.PlaylistSongs.Remove(gone);
+                if (!playlistChanged && entries.Count == 0) continue;
+                playlist.DateModified = DateTime.UtcNow;
+                changed = true;
+            }
+
+            context.Playlists.RemoveRange(stored.Values);
+            changed |= stored.Count > 0;
+            if (changed) await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        if (changed) PlaylistsChanged?.Invoke(this, EventArgs.Empty);
+        return changed;
+    }
 
     public async Task<Playlist> CreatePlaylistAsync(string name, string? description = null,
         string? coverImageUri = null)

@@ -38,7 +38,7 @@ public abstract partial class SongListViewModelBase
     {
         var ids = await GetCurrentSelectionIdsAsync();
         if (ids.Count == 0) return;
-        if (await Task.Run(() => _libraryWriter.SetSongsLovedAsync(ids, loved)))
+        if (await Task.Run(() => _listening.SetSongsLovedAsync(ids, loved)))
         {
             var changed = ids.ToHashSet();
             foreach (var song in Songs.Concat(SelectedSongs).DistinctBy(song => song.Id))

@@ -39,7 +39,7 @@ public partial class ArtistViewModelItem : ObservableObject
 public partial class ArtistViewModel : PagedListViewModelBase<Artist>
 {
     private readonly Dictionary<Guid, ArtistViewModelItem> _artistLookup = new();
-    private readonly ILibraryWriter _libraryWriter;
+    private readonly IArtworkService _artwork;
     private readonly IUIService _uiService;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly IMusicNavigationService _musicNavigationService;
@@ -48,24 +48,23 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
 
     public ArtistViewModel(
         ILibraryReader libraryReader,
-        ILibraryWriter libraryWriter,
-        ILibraryScanner libraryScanner,
+        ILibraryNotifier libraryNotifier,
+        IArtworkService artwork,
         ISettingsService settingsService,
         IMusicPlaybackService musicPlaybackService,
         IDispatcherService dispatcherService,
         IMusicNavigationService musicNavigationService,
         IUIService uiService,
         ILogger<ArtistViewModel> logger)
-        : base(libraryReader, libraryScanner, settingsService, dispatcherService, logger)
+        : base(libraryReader, libraryNotifier, settingsService, dispatcherService, logger)
     {
-        _libraryWriter = libraryWriter;
+        _artwork = artwork;
         _uiService = uiService;
         _musicPlaybackService = musicPlaybackService;
         _musicNavigationService = musicNavigationService;
 
         Artists.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasArtists));
-        _libraryScanner.ArtistMetadataUpdated += OnArtistMetadataUpdated;
-        _libraryScanner.ArtistMetadataBatchUpdated += OnArtistMetadataBatchUpdated;
+        _libraryNotifier.ArtistImagesChanged += OnArtistImagesChanged;
     }
 
     public ObservableRangeCollection<ArtistViewModelItem> Artists { get; } = new();
@@ -113,7 +112,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
     // Service's own semaphore dedupes concurrent runs of the metadata fetch.
     protected override Task OnPageLoadedAsync(PagedResult<Artist> result, CancellationToken token)
     {
-        _ = _libraryScanner.StartMetadataBackgroundFetchAsync();
+        _ = _artwork.StartMetadataBackgroundFetchAsync();
         return Task.CompletedTask;
     }
 
@@ -153,34 +152,23 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
         await LoadCommand.ExecuteAsync(CancellationToken.None);
     }
 
-    private void OnArtistMetadataUpdated(object? sender, ArtistMetadataUpdatedEventArgs e)
-    {
-        _dispatcherService.TryEnqueue(() =>
-        {
-            if (_isDisposed) return;
-            if (_artistLookup.TryGetValue(e.ArtistId, out var artistVm))
-                artistVm.LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(e.NewLocalImageCachePath, DateTime.UtcNow);
-        });
-    }
-
-    private void OnArtistMetadataBatchUpdated(object? sender, IEnumerable<ArtistMetadataUpdatedEventArgs> updates)
+    private void OnArtistImagesChanged(object? sender, IReadOnlyList<ArtistImageChange> changes)
     {
         _dispatcherService.TryEnqueue(() =>
         {
             if (_isDisposed) return;
             var timestamp = DateTime.UtcNow;
-            foreach (var update in updates)
+            foreach (var change in changes)
             {
-                if (_artistLookup.TryGetValue(update.ArtistId, out var artistVm))
-                    artistVm.LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(update.NewLocalImageCachePath, timestamp);
+                if (_artistLookup.TryGetValue(change.ArtistId, out var artistVm))
+                    artistVm.LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(change.ImagePath, timestamp);
             }
         });
     }
 
     public override void Dispose()
     {
-        _libraryScanner.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
-        _libraryScanner.ArtistMetadataBatchUpdated -= OnArtistMetadataBatchUpdated;
+        _libraryNotifier.ArtistImagesChanged -= OnArtistImagesChanged;
         base.Dispose();
     }
 
@@ -194,7 +182,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
         {
             var localPath = await _uiService.PickSingleFileAsync(FileExtensions.ImageFileExtensions);
             if (string.IsNullOrWhiteSpace(localPath)) return;
-            await _libraryWriter.UpdateArtistImageAsync(artistId, localPath);
+            await _artwork.UpdateArtistImageAsync(artistId, localPath);
         }
         catch (Exception ex)
         {
@@ -205,7 +193,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
     [RelayCommand]
     private async Task RemoveArtistImageAsync(Guid artistId)
     {
-        try { await _libraryWriter.RemoveArtistImageAsync(artistId); }
+        try { await _artwork.RemoveArtistImageAsync(artistId); }
         catch (Exception ex) { _logger.LogError(ex, "Failed to remove the image of artist {ArtistId}", artistId); }
     }
 }

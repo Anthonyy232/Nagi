@@ -13,7 +13,7 @@ namespace Nagi.Core.Tests.Presence;
 
 public class ListenBrainzPresenceServiceTests : IAsyncDisposable
 {
-    private readonly ILibraryWriter _libraryWriter;
+    private readonly IListeningService _listening;
     private readonly ILogger<ListenBrainzPresenceService> _logger;
     private readonly IListenBrainzScrobblerService _scrobblerService;
     private readonly ListenBrainzPresenceService _service;
@@ -22,13 +22,13 @@ public class ListenBrainzPresenceServiceTests : IAsyncDisposable
     public ListenBrainzPresenceServiceTests()
     {
         _scrobblerService = Substitute.For<IListenBrainzScrobblerService>();
-        _libraryWriter = Substitute.For<ILibraryWriter>();
+        _listening = Substitute.For<IListeningService>();
         _settingsService = TestSettings.Create();
         _logger = Substitute.For<ILogger<ListenBrainzPresenceService>>();
 
         _service = new ListenBrainzPresenceService(
             _scrobblerService,
-            _libraryWriter,
+            _listening,
             _settingsService,
             _logger);
     }
@@ -70,7 +70,7 @@ public class ListenBrainzPresenceServiceTests : IAsyncDisposable
         await _service.OnTrackEligibleForScrobblingAsync(song, 1, DateTime.UnixEpoch);
 
         await _scrobblerService.DidNotReceive().SubmitListenAsync(Arg.Any<Song>(), Arg.Any<DateTime>());
-        await _libraryWriter.DidNotReceive().MarkListenAsSubmittedToListenBrainzAsync(Arg.Any<long>());
+        await _listening.DidNotReceive().MarkListenAsSubmittedToListenBrainzAsync(Arg.Any<long>());
     }
 
     [Fact]
@@ -84,7 +84,7 @@ public class ListenBrainzPresenceServiceTests : IAsyncDisposable
         await _service.OnTrackEligibleForScrobblingAsync(song, 1, DateTime.UnixEpoch);
 
         await _scrobblerService.Received(1).SubmitListenAsync(song, DateTime.UnixEpoch);
-        await _libraryWriter.Received(1).MarkListenAsSubmittedToListenBrainzAsync(1);
+        await _listening.Received(1).MarkListenAsSubmittedToListenBrainzAsync(1);
     }
 
     [Theory]
@@ -100,6 +100,6 @@ public class ListenBrainzPresenceServiceTests : IAsyncDisposable
 
         await _service.OnTrackEligibleForScrobblingAsync(song, 1, DateTime.UnixEpoch);
 
-        await _libraryWriter.DidNotReceive().MarkListenAsSubmittedToListenBrainzAsync(Arg.Any<long>());
+        await _listening.DidNotReceive().MarkListenAsSubmittedToListenBrainzAsync(Arg.Any<long>());
     }
 }

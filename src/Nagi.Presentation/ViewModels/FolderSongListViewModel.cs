@@ -47,8 +47,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase
 
     public FolderSongListViewModel(
         ILibraryReader libraryReader,
-        ILibraryWriter libraryWriter,
-        ILibraryScanner libraryScanner,
+        IListeningService listening,
+        ILibraryNotifier libraryNotifier,
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
@@ -56,7 +56,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         ISettingsService settingsService,
         IUIService uiService,
         ILogger<FolderSongListViewModel> logger)
-        : base(libraryReader, libraryWriter, libraryScanner, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
     }
 

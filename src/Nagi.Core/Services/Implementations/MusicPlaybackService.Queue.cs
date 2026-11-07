@@ -244,7 +244,7 @@ public partial class MusicPlaybackService
         var position = _audioPlayer.CurrentPosition;
         CurrentListenHistoryId = null;
         FireAndForgetSafe(
-            () => _libraryWriter.FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.Skipped),
+            () => _listening.FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.Skipped),
             "Finalizing session removed from queue",
             trackForDisposal: true);
     }

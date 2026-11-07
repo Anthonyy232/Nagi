@@ -33,6 +33,7 @@ public class SettingsViewModelTests : IDisposable
     private readonly ILastFmAuthService _lastFm = Substitute.For<ILastFmAuthService>();
     private readonly IListenBrainzScrobblerService _listenBrainz = Substitute.For<IListenBrainzScrobblerService>();
     private readonly LibraryFakes _library = new LibraryFakes();
+    private readonly ILibraryReset _libraryReset = Substitute.For<ILibraryReset>();
     private readonly IFFmpegService _ffmpeg = Substitute.For<IFFmpegService>();
     private readonly IReplayGainService _replayGain = Substitute.For<IReplayGainService>();
     private readonly GlobalOperationViewModel _operation = new();
@@ -52,14 +53,14 @@ public class SettingsViewModelTests : IDisposable
                 NullLogger<AppearanceSettingsViewModel>.Instance, _timeProvider),
             new AudioSettingsViewModel(_playback, _audioPlayer, _settings, _ui, _ffmpeg, _replayGain, _operation, _dispatcher,
                 NullLogger<AudioSettingsViewModel>.Instance, _timeProvider),
-            new LibrarySettingsViewModel(_settings, _ui, _library.Scanner, Substitute.For<IMusicServerService>(), _operation, _dispatcher,
+            new LibrarySettingsViewModel(_settings, _ui, _library.Folders, Substitute.For<IMusicServerService>(), _operation, _dispatcher,
                 NullLogger<LibrarySettingsViewModel>.Instance, _timeProvider),
             new ScrobblingSettingsViewModel(_settings, _ui, _lastFm, _listenBrainz, _dispatcher,
                 NullLogger<ScrobblingSettingsViewModel>.Instance),
             new RomanizationPacksSettingsViewModel(Substitute.For<IRomanizationPackManager>(), _dispatcher,
                 NullLogger<RomanizationPacksSettingsViewModel>.Instance),
             new DataManagementSettingsViewModel(_ui, Substitute.For<IPlaylistExportService>(),
-                _backup, _lifecycle, _resetSettings, _library.Writer, _playback,
+                _backup, _lifecycle, _resetSettings, _libraryReset, _playback,
                 NullLogger<DataManagementSettingsViewModel>.Instance),
             NullLogger<SettingsViewModel>.Instance, _timeProvider);
     }
@@ -262,7 +263,7 @@ public class SettingsViewModelTests : IDisposable
         Received.InOrder(() =>
         {
             _resetSettings.ResetToDefaultsAsync();
-            _library.Writer.ClearAllLibraryDataAsync();
+            _libraryReset.ClearAllLibraryDataAsync();
             _playback.ClearQueueAsync();
             _lifecycle.Restart();
         });
@@ -273,7 +274,7 @@ public class SettingsViewModelTests : IDisposable
     {
         _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
             Arg.Any<bool>()).Returns(true);
-        _library.Writer.ClearAllLibraryDataAsync().Returns(Task.FromException(new IOException("locked")));
+        _libraryReset.ClearAllLibraryDataAsync().Returns(Task.FromException(new IOException("locked")));
 
         await _viewModel.DataManagement.ResetApplicationDataCommand.ExecuteAsync(null);
 
@@ -355,7 +356,7 @@ public class SettingsViewModelTests : IDisposable
         confirmation.SetResult(true);
         await scan.WaitAsync(TimeSpan.FromSeconds(5));
 
-        await _library.Scanner.DidNotReceive().ForceRescanMetadataAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>());
+        await _library.Folders.DidNotReceive().ForceRescanMetadataAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>());
         _operation.IsInProgress.Should().BeTrue();
     }
 
@@ -364,7 +365,7 @@ public class SettingsViewModelTests : IDisposable
     {
         _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(true);
         var scanning = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _library.Scanner.ForceRescanMetadataAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>()).Returns(scanning.Task);
+        _library.Folders.ForceRescanMetadataAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>()).Returns(scanning.Task);
         var scan = _viewModel.Library.RescanMetadataCommand.ExecuteAsync(null);
 
         _viewModel.Dispose();
@@ -407,7 +408,7 @@ public class SettingsViewModelTests : IDisposable
     public async Task MetadataRescan_QueuedProgressCannotOverwriteFollowingOperation()
     {
         _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(true);
-        _library.Scanner.ForceRescanMetadataAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>()).Returns(call =>
+        _library.Folders.ForceRescanMetadataAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>()).Returns(call =>
         {
             call.Arg<IProgress<ScanProgress>>().Report(new ScanProgress { StatusText = "Old progress", Percentage = 90 });
             return true;

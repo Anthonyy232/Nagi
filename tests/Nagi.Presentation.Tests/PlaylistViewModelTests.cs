@@ -174,18 +174,7 @@ public class PlaylistViewModelTests
         await _library.Reader.Received(saved ? 1 : 0).GetAllPlaylistsAsync(Arg.Any<CancellationToken>());
     }
 
-    [Fact]
-    public void ServerSync_ReloadsThePlaylists()
-    {
-        using var viewModel = CreateViewModel();
-
-        _library.Scanner.LibraryContentChanged += Raise.EventWith(
-            new LibraryContentChangedEventArgs(LibraryChangeType.FolderRescanned, Guid.NewGuid()));
-
-        _library.Reader.Received(1).GetAllPlaylistsAsync(Arg.Any<CancellationToken>());
-    }
-
-    private PlaylistViewModel CreateViewModel() => new(_library.Reader, _library.Scanner, _library.Playlists, _smart, Substitute.For<IMusicPlaybackService>(),
+    private PlaylistViewModel CreateViewModel() => new(_library.Reader, _library.Playlists, _smart, Substitute.For<IMusicPlaybackService>(),
         Substitute.For<INavigationService>(), _ui, TestSettings.Create(), new ImmediateDispatcher(),
         NullLogger<PlaylistViewModel>.Instance);
 

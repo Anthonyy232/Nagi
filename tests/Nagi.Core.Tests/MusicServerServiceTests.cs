@@ -9,6 +9,7 @@ using Microsoft.Extensions.Time.Testing;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Services.Implementations;
 using Nagi.Core.Services.Implementations.MusicServers;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
@@ -25,8 +26,8 @@ public class MusicServerServiceTests : IDisposable
     // Favorites are pushed from an event handler while a test reads the database, so contexts run at the same time.
     private readonly DbContextFactoryTestHelper _dbHelper = new(useFileDatabase: true);
     private readonly TestHttpMessageHandler _handler = new();
-    private readonly ILibraryWriter _writer = Substitute.For<ILibraryWriter>();
-    private readonly ILibraryScanner _scanner = Substitute.For<ILibraryScanner>();
+    private readonly IServerLibrarySync _serverLibrary = Substitute.For<IServerLibrarySync>();
+    private readonly LibraryNotifier _notifier = new();
     private readonly ICredentialLockerService _credentials = Substitute.For<ICredentialLockerService>();
     private readonly FakeTimeProvider _time = new();
     private readonly MusicServerService _service;
@@ -40,10 +41,10 @@ public class MusicServerServiceTests : IDisposable
         appInfo.GetAppVersion().Returns("2.6.0");
         _credentials.SaveCredential(default!, default!, default!).ReturnsForAnyArgs(true);
         _credentials.RetrieveCredential(Arg.Any<string>()).Returns(("alex", "secret"));
-        _writer.AddMusicServerAsync(Arg.Any<MusicServer>(), Arg.Any<string>())
+        _serverLibrary.AddAsync(Arg.Any<MusicServer>(), Arg.Any<string>())
             .Returns(call => new Folder { Id = call.Arg<MusicServer>().FolderId, Name = call.Arg<string>() });
 
-        _service = new MusicServerService(_dbHelper.ContextFactory, _writer, _scanner, _credentials, httpClientFactory,
+        _service = new MusicServerService(_dbHelper.ContextFactory, _serverLibrary, _notifier, _credentials, httpClientFactory,
             appInfo, Substitute.For<ILogger<MusicServerService>>(), _time);
     }
 
@@ -62,7 +63,7 @@ public class MusicServerServiceTests : IDisposable
         var folder = await _service.AddAsync(MusicServerKind.Jellyfin, "https://jellyfin.example.com", "alex", "secret");
 
         _credentials.Received(1).SaveCredential($"Nagi/MusicServer/{folder.Id:N}", "alex", "token-1");
-        await _writer.Received(1).AddMusicServerAsync(Arg.Is<MusicServer>(s => s.UserId == "user-1"), "Living Room");
+        await _serverLibrary.Received(1).AddAsync(Arg.Is<MusicServer>(s => s.UserId == "user-1"), "Living Room");
     }
 
     [Fact]
@@ -85,7 +86,7 @@ public class MusicServerServiceTests : IDisposable
         var add = () => _service.AddAsync(MusicServerKind.OpenSubsonic, BaseUrl, "alex", "secret");
 
         (await add.Should().ThrowAsync<MusicServerException>()).Which.Error.Should().Be(MusicServerError.SignInNotSaved);
-        await _writer.DidNotReceiveWithAnyArgs().AddMusicServerAsync(default!, default!);
+        await _serverLibrary.DidNotReceiveWithAnyArgs().AddAsync(default!, default!);
     }
 
     [Fact]
@@ -96,7 +97,7 @@ public class MusicServerServiceTests : IDisposable
 
         await _service.AddAsync(MusicServerKind.OpenSubsonic, "https://other.example.com:4533", "alex", "secret");
 
-        await _writer.Received(1).AddMusicServerAsync(Arg.Any<MusicServer>(), "Navidrome (other.example.com:4533)");
+        await _serverLibrary.Received(1).AddAsync(Arg.Any<MusicServer>(), "Navidrome (other.example.com:4533)");
     }
 
     [Fact]
@@ -129,11 +130,13 @@ public class MusicServerServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task RemovingTheServersFolder_ForgetsItsSignIn()
+    public async Task RemoveAsync_ForgetsTheSignIn()
     {
         var (server, _) = await SeedServerAsync();
 
-        _scanner.LibraryContentChanged += Raise.EventWith(new LibraryContentChangedEventArgs(LibraryChangeType.FolderRemoved, server.FolderId));
+        _serverLibrary.RemoveAsync(server.FolderId).Returns(true);
+
+        await _service.RemoveAsync(server.FolderId);
 
         _credentials.Received(1).RemoveCredential($"Nagi/MusicServer/{server.FolderId:N}");
     }
@@ -142,7 +145,7 @@ public class MusicServerServiceTests : IDisposable
     public async Task RemoveAsync_Jellyfin_SignsOutWithTheSavedSignIn()
     {
         var (server, _) = await SeedServerAsync(kind: MusicServerKind.Jellyfin);
-        _writer.RemoveFolderAsync(server.FolderId).Returns(true);
+        _serverLibrary.RemoveAsync(server.FolderId).Returns(true);
         var signedOut = new TaskCompletionSource<string?>(TaskCreationOptions.RunContinuationsAsynchronously);
         _handler.SendAsyncFunc = (request, _) =>
         {
@@ -159,7 +162,7 @@ public class MusicServerServiceTests : IDisposable
     public async Task RemoveAsync_ServerThatCouldntBeRemoved_StaysSignedIn()
     {
         var (server, _) = await SeedServerAsync(kind: MusicServerKind.Jellyfin);
-        _writer.RemoveFolderAsync(server.FolderId).Returns(false);
+        _serverLibrary.RemoveAsync(server.FolderId).Returns(false);
 
         (await _service.RemoveAsync(server.FolderId)).Should().BeFalse();
 
@@ -173,13 +176,12 @@ public class MusicServerServiceTests : IDisposable
         await SeedListensAsync(song, (new DateTime(2026, 10, 1, 8, 0, 0, DateTimeKind.Utc), true));
         _handler.RespondSequence((HttpStatusCode.OK, OkResponse), (HttpStatusCode.OK, OkResponse));
         (bool Pending, bool Submitted)? whenSyncing = null;
-        _scanner.SyncServerFolderAsync(server.FolderId, Arg.Any<IMusicServerClient>(), Arg.Any<IProgress<ScanProgress>?>(),
+        _serverLibrary.SyncAsync(server.FolderId, Arg.Any<IMusicServerClient>(), Arg.Any<IProgress<ScanProgress>?>(),
             Arg.Any<CancellationToken>()).Returns(async _ =>
         {
             await using var context = _dbHelper.ContextFactory.CreateDbContext();
             whenSyncing = ((await context.Songs.SingleAsync()).IsLovedSyncPending,
                 (await context.ListenHistory.SingleAsync()).IsSubmittedToServer);
-            return true;
         });
 
         await _service.SyncAsync(server.FolderId);
@@ -193,7 +195,7 @@ public class MusicServerServiceTests : IDisposable
     public async Task SyncAllAsync_ServerThatRejectsTheSavedSignIn_IsReported(MusicServerError error, bool reported)
     {
         var (server, _) = await SeedServerAsync();
-        _scanner.SyncServerFolderAsync(server.FolderId, Arg.Any<IMusicServerClient>(), Arg.Any<IProgress<ScanProgress>?>(),
+        _serverLibrary.SyncAsync(server.FolderId, Arg.Any<IMusicServerClient>(), Arg.Any<IProgress<ScanProgress>?>(),
             Arg.Any<CancellationToken>()).ThrowsAsync(new MusicServerException(error, "failed"));
         var rejected = new List<Guid>();
         _service.SignInRejected += rejected.Add;
@@ -209,11 +211,11 @@ public class MusicServerServiceTests : IDisposable
     {
         var (server, _) = await SeedServerAsync();
         var synced = new SemaphoreSlim(0);
-        _scanner.SyncServerFolderAsync(server.FolderId, Arg.Any<IMusicServerClient>(), Arg.Any<IProgress<ScanProgress>?>(),
+        _serverLibrary.SyncAsync(server.FolderId, Arg.Any<IMusicServerClient>(), Arg.Any<IProgress<ScanProgress>?>(),
             Arg.Any<CancellationToken>()).Returns(_ =>
         {
             synced.Release();
-            return Task.FromResult(false);
+            return Task.CompletedTask;
         });
 
         _service.StartPeriodicSync();
@@ -237,13 +239,22 @@ public class MusicServerServiceTests : IDisposable
     [Fact]
     public async Task FavoriteChangedInNagi_IsSentToTheServer()
     {
-        await SeedServerAsync(lovedPending: true);
-        _handler.RespondSequence((HttpStatusCode.OK, OkResponse));
+        var (server, _) = await SeedServerAsync(lovedPending: true);
+        var sent = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _handler.SendAsyncFunc = (request, _) =>
+        {
+            sent.TrySetResult(request.RequestUri!.AbsolutePath);
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+            { Content = new StringContent(OkResponse, Encoding.UTF8, "application/json") });
+        };
 
-        _scanner.LibraryContentChanged += Raise.EventWith(new LibraryContentChangedEventArgs(LibraryChangeType.SongsUpdated));
+        _notifier.Raise(LibraryChangeKind.FavoritesChanged);
 
-        (await WaitUntilAsync(async () => !await IsLovedPendingAsync())).Should().BeTrue();
-        _handler.Requests.Single().RequestUri!.AbsolutePath.Should().Be("/rest/star.view");
+        (await sent.Task.WaitAsync(TimeSpan.FromSeconds(5))).Should().Be("/rest/star.view");
+        // A sync sends favorites one at a time after the push the change started, so it returns once that push is done.
+        await _service.SyncAsync(server.FolderId);
+        (await IsLovedPendingAsync()).Should().BeFalse();
+        _handler.Requests.Should().ContainSingle();
     }
 
     [Fact]
@@ -368,18 +379,6 @@ public class MusicServerServiceTests : IDisposable
     {
         await using var context = _dbHelper.ContextFactory.CreateDbContext();
         return (await context.Songs.SingleAsync()).IsLovedSyncPending;
-    }
-
-    // The push runs from an event handler, so there is no task to await.
-    private static async Task<bool> WaitUntilAsync(Func<Task<bool>> condition)
-    {
-        for (var attempt = 0; attempt < 500; attempt++)
-        {
-            if (await condition()) return true;
-            await Task.Delay(10);
-        }
-
-        return false;
     }
 
     private static Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> JellyfinServer(string accessToken) =>

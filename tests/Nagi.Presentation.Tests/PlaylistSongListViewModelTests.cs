@@ -223,7 +223,7 @@ public class PlaylistSongListViewModelTests
     }
 
     private sealed class TestPlaylist(LibraryFakes library, IPlaylistService playlists, IUIService ui)
-        : PlaylistSongListViewModel(library.Reader, library.Writer, library.Scanner, playlists, Substitute.For<IMusicPlaybackService>(),
+        : PlaylistSongListViewModel(library.Reader, library.Listening, library.Notifier, playlists, Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(),
             TestSettings.Create(), ui, NullLogger<PlaylistSongListViewModel>.Instance)
     {

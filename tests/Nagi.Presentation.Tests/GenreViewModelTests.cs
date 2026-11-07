@@ -68,8 +68,8 @@ public class GenreViewModelTests
         });
         using var viewModel = CreateViewModel(library);
 
-        library.Scanner.LibraryContentChanged += Raise.Event<EventHandler<LibraryContentChangedEventArgs>>(
-            library.Scanner, new LibraryContentChangedEventArgs(LibraryChangeType.LibraryRescanned));
+        library.Notifier.Changed += Raise.Event<EventHandler<LibraryChange>>(
+            library.Notifier, new LibraryChange(LibraryChangeKind.LibraryRescanned));
         try
         {
             var token = await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
@@ -144,7 +144,7 @@ public class GenreViewModelTests
 
     private static GenreViewModel CreateViewModel(LibraryFakes library, IMusicPlaybackService? playback = null,
         IUIService? ui = null) =>
-        new(library.Reader, library.Scanner, playback ?? Substitute.For<IMusicPlaybackService>(),
+        new(library.Reader, library.Notifier, playback ?? Substitute.For<IMusicPlaybackService>(),
             Substitute.For<INavigationService>(), TestSettings.Create(),
             new ImmediateDispatcher(), ui ?? Substitute.For<IUIService>(), NullLogger<GenreViewModel>.Instance);
 }

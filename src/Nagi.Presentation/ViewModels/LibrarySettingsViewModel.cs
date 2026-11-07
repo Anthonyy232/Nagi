@@ -23,7 +23,7 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
     private const int SettingsSaveDebounceMs = 300;
 
     private readonly IUIService _uiService;
-    private readonly ILibraryScanner _libraryScanner;
+    private readonly ILibraryFolderService _libraryFolders;
     private readonly IMusicServerService _musicServers;
     private readonly GlobalOperationViewModel _globalOperation;
     private readonly Debouncer _lyricsProviderSaveDebouncer;
@@ -33,7 +33,7 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
     public LibrarySettingsViewModel(
         ISettingsService settingsService,
         IUIService uiService,
-        ILibraryScanner libraryScanner,
+        ILibraryFolderService libraryFolders,
         IMusicServerService musicServers,
         GlobalOperationViewModel globalOperation,
         IDispatcherService dispatcherService,
@@ -42,7 +42,7 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
         : base(settingsService, dispatcherService, logger)
     {
         _uiService = uiService;
-        _libraryScanner = libraryScanner;
+        _libraryFolders = libraryFolders;
         _musicServers = musicServers;
         _globalOperation = globalOperation;
         _globalOperation.PropertyChanged += OnGlobalOperationPropertyChanged;
@@ -175,7 +175,7 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
         try
         {
             var progress = _globalOperation.CreateProgress(token);
-            await _libraryScanner.ForceRescanMetadataAsync(progress, token);
+            await _libraryFolders.ForceRescanMetadataAsync(progress, token);
             token.ThrowIfCancellationRequested();
             // A sync applies the split settings to server songs.
             await _musicServers.SyncAllAsync(progress, token);

@@ -9,7 +9,7 @@ namespace Nagi.Core.Services.Implementations;
 
 public class StatisticsService : IStatisticsService
 {
-    // Song.PlayCount counts only scrobble-eligible listens (LibraryService); Insights also counts finished ones.
+    // Song.PlayCount counts only scrobble-eligible listens (ListeningService); Insights also counts finished ones.
     private static readonly Expression<Func<ListenHistory, ScoredListen>> Score = listen => new ScoredListen
     {
         SongId = listen.SongId,

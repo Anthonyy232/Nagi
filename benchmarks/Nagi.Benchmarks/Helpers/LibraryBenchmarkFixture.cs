@@ -20,7 +20,7 @@ internal sealed class LibraryBenchmarkFixture : IDisposable
     public string RootPath { get; } = Directory.CreateTempSubdirectory("NagiBenchmarks-").FullName;
     public IDbContextFactory<MusicDbContext> ContextFactory { get; }
     public LibraryReader Reader { get; }
-    public LibraryService Library { get; }
+    public LibraryFolderService Folders { get; }
     public SmartPlaylistService SmartPlaylists { get; }
 
     public LibraryBenchmarkFixture()
@@ -52,6 +52,11 @@ internal sealed class LibraryBenchmarkFixture : IDisposable
         services.AddSingleton(new ProviderPipelineProvider([], NullLogger<ProviderPipelineProvider>.Instance));
         services.AddSingleton<IMetadataService, AtlMetadataService>();
         services.AddSingleton<ILibraryReader, LibraryReader>();
+        services.AddSingleton<LibraryNotifier>();
+        services.AddSingleton<LibraryWriteLock>();
+        services.AddSingleton<ArtworkService>();
+        services.AddSingleton<LibraryImporter>();
+        services.AddSingleton<LibraryFolderService>();
         services.AddHttpClient();
         services.AddLogging(b => b.AddProvider(NullLoggerProvider.Instance));
 
@@ -62,13 +67,12 @@ internal sealed class LibraryBenchmarkFixture : IDisposable
         context.Database.EnsureCreated();
 
         Reader = (LibraryReader)_services.GetRequiredService<ILibraryReader>();
-        Library = ActivatorUtilities.CreateInstance<LibraryService>(_services);
+        Folders = _services.GetRequiredService<LibraryFolderService>();
         SmartPlaylists = ActivatorUtilities.CreateInstance<SmartPlaylistService>(_services);
     }
 
     public void Dispose()
     {
-        Library.Dispose();
         _services.Dispose();
         Directory.Delete(RootPath, recursive: true);
     }

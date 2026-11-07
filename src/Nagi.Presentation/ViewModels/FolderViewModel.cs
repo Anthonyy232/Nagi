@@ -49,8 +49,8 @@ public sealed class FolderViewModelItem
 public partial class FolderViewModel : ObservableObject, IDisposable
 {
     private readonly ILibraryReader _libraryReader;
-    private readonly ILibraryWriter _libraryWriter;
-    private readonly ILibraryScanner _libraryScanner;
+    private readonly ILibraryFolderService _libraryFolders;
+    private readonly ILibraryNotifier _libraryNotifier;
     private readonly IMusicServerService _musicServers;
     private readonly ILogger<FolderViewModel> _logger;
     private readonly IMusicPlaybackService _musicPlaybackService;
@@ -60,14 +60,14 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     private readonly GlobalOperationViewModel _globalOperation;
     private readonly Debouncer _debouncer = new(TimeSpan.FromSeconds(1));
 
-    public FolderViewModel(ILibraryReader libraryReader, ILibraryWriter libraryWriter, ILibraryScanner libraryScanner,
+    public FolderViewModel(ILibraryReader libraryReader, ILibraryFolderService libraryFolders, ILibraryNotifier libraryNotifier,
         IMusicServerService musicServers, GlobalOperationViewModel globalOperation,
         IMusicPlaybackService musicPlaybackService, INavigationService navigationService, IUIService uiService,
         IDispatcherService dispatcherService, ILogger<FolderViewModel> logger)
     {
         _libraryReader = libraryReader;
-        _libraryWriter = libraryWriter;
-        _libraryScanner = libraryScanner;
+        _libraryFolders = libraryFolders;
+        _libraryNotifier = libraryNotifier;
         _musicServers = musicServers;
         _globalOperation = globalOperation;
         _musicPlaybackService = musicPlaybackService;
@@ -78,16 +78,14 @@ public partial class FolderViewModel : ObservableObject, IDisposable
 
         Folders.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasFolders));
 
-        _libraryScanner.LibraryContentChanged += OnLibraryContentChanged;
+        _libraryNotifier.Changed += OnLibraryChanged;
         _globalOperation.PropertyChanged += OnGlobalOperationPropertyChanged;
     }
 
-    private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
+    private void OnLibraryChanged(object? sender, LibraryChange change)
     {
-        if (e.ChangeType == LibraryChangeType.FolderAdded ||
-            e.ChangeType == LibraryChangeType.FolderRemoved ||
-            e.ChangeType == LibraryChangeType.FolderRescanned ||
-            e.ChangeType == LibraryChangeType.LibraryRescanned)
+        if (change.Kind is LibraryChangeKind.RootAdded or LibraryChangeKind.RootRemoved or LibraryChangeKind.FolderRescanned
+            or LibraryChangeKind.LibraryRescanned or LibraryChangeKind.LibraryCleared)
         {
             _debouncer.Trigger(async token =>
             {
@@ -106,7 +104,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
 
     public void Dispose()
     {
-        _libraryScanner.LibraryContentChanged -= OnLibraryContentChanged;
+        _libraryNotifier.Changed -= OnLibraryChanged;
         _globalOperation.PropertyChanged -= OnGlobalOperationPropertyChanged;
         _debouncer.Dispose();
         LoadFoldersCommand.Cancel();
@@ -217,7 +215,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     {
         if (string.IsNullOrWhiteSpace(folderPath) || IsAnyOperationInProgress) return;
 
-        // LibraryService hands back a folder that is already in the library, so say so here rather than rescanning it.
+        // Adding a folder that is already in the library hands it back, so say so here rather than rescanning it.
         var canonicalNew = PathCanonicalizer.Normalize(folderPath);
         if (Folders.Any(f => PathCanonicalizer.Normalize(f.Path).Equals(canonicalNew, StringComparison.OrdinalIgnoreCase)))
         {
@@ -234,11 +232,11 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         string? error = null;
         try
         {
-            var folder = await _libraryWriter.AddFolderAsync(folderPath);
+            var folder = await _libraryFolders.AddFolderAsync(folderPath);
             if (folder == null)
                 error = Strings.Folders_AddFolder_Failed;
             else
-                await _libraryScanner.ScanFolderForMusicAsync(folder.Path, _globalOperation.CreateProgress());
+                await _libraryFolders.RescanFolderForMusicAsync(folder.Id, _globalOperation.CreateProgress());
         }
         catch (FolderOverlapsException)
         {
@@ -284,7 +282,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         {
             var removed = folderToDelete.IsServer
                 ? await _musicServers.RemoveAsync(folderId)
-                : await _libraryWriter.RemoveFolderAsync(folderId);
+                : await _libraryFolders.RemoveFolderAsync(folderId);
             if (!removed)
                 error = string.Format(Strings.Folders_Delete_Failed, folderToDelete.Name);
         }
@@ -318,7 +316,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         string? error = null;
         try
         {
-            await _libraryScanner.RescanFolderForMusicAsync(folderId, _globalOperation.CreateProgress(cancellationToken), cancellationToken);
+            await _libraryFolders.RescanFolderForMusicAsync(folderId, _globalOperation.CreateProgress(cancellationToken), cancellationToken);
         }
         catch (OperationCanceledException)
         {

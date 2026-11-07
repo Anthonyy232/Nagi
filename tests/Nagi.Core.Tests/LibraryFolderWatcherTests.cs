@@ -15,7 +15,8 @@ public sealed class LibraryFolderWatcherTests : IDisposable
 
     private readonly string _root = Directory.CreateTempSubdirectory("nagi-watch-").FullName;
     private readonly ILibraryReader _reader = Substitute.For<ILibraryReader>();
-    private readonly ILibraryScanner _scanner = Substitute.For<ILibraryScanner>();
+    private readonly ILibraryNotifier _notifier = Substitute.For<ILibraryNotifier>();
+    private readonly ILibraryFolderService _folderService = Substitute.For<ILibraryFolderService>();
     private readonly List<Folder> _folders = new();
     private readonly LibraryFolderWatcher _watcher;
     private readonly TaskCompletionSource _refreshed = new(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -25,12 +26,12 @@ public sealed class LibraryFolderWatcherTests : IDisposable
         _reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>())
             .Returns(_ => _folders.Select(f => new FolderSummary(f, 0, IsServer: false)).ToList());
         // File system events arrive on their own thread, so tests wait for this signal rather than a fixed time.
-        _scanner.RefreshFolderInBackgroundAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(_ =>
+        _folderService.RefreshFolderInBackgroundAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(_ =>
         {
             _refreshed.TrySetResult();
             return true;
         });
-        _watcher = new LibraryFolderWatcher(_reader, _scanner, NullLogger<LibraryFolderWatcher>.Instance)
+        _watcher = new LibraryFolderWatcher(_reader, _notifier, _folderService, NullLogger<LibraryFolderWatcher>.Instance)
         {
             QuietPeriod = QuietPeriod
         };
@@ -51,9 +52,9 @@ public sealed class LibraryFolderWatcherTests : IDisposable
             await File.WriteAllTextAsync(Path.Combine(_root, $"song{i}.mp3"), "audio");
 
         await _refreshed.Task.WaitAsync(TimeSpan.FromSeconds(10));
-        await _scanner.Received(1).RefreshFolderInBackgroundAsync(folder.Id, Arg.Any<CancellationToken>());
+        await _folderService.Received(1).RefreshFolderInBackgroundAsync(folder.Id, Arg.Any<CancellationToken>());
         await Task.Delay(QuietPeriod * 2);
-        await _scanner.Received(1).RefreshFolderInBackgroundAsync(folder.Id, Arg.Any<CancellationToken>());
+        await _folderService.Received(1).RefreshFolderInBackgroundAsync(folder.Id, Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -65,7 +66,7 @@ public sealed class LibraryFolderWatcherTests : IDisposable
         await File.WriteAllTextAsync(Path.Combine(_root, "cover.jpg"), "image");
         await Task.Delay(Settle);
 
-        await _scanner.DidNotReceiveWithAnyArgs().RefreshFolderInBackgroundAsync(default);
+        await _folderService.DidNotReceiveWithAnyArgs().RefreshFolderInBackgroundAsync(default);
     }
 
     [Fact]
@@ -77,7 +78,7 @@ public sealed class LibraryFolderWatcherTests : IDisposable
         album.Delete();
 
         await _refreshed.Task.WaitAsync(TimeSpan.FromSeconds(10));
-        await _scanner.Received(1).RefreshFolderInBackgroundAsync(folder.Id, Arg.Any<CancellationToken>());
+        await _folderService.Received(1).RefreshFolderInBackgroundAsync(folder.Id, Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -89,11 +90,11 @@ public sealed class LibraryFolderWatcherTests : IDisposable
         {
             var added = new Folder { Name = "Second", Path = second };
             _folders.Add(added);
-            _scanner.LibraryContentChanged += Raise.EventWith(new LibraryContentChangedEventArgs(LibraryChangeType.FolderAdded, added.Id));
+            _notifier.Changed += Raise.Event<EventHandler<LibraryChange>>(_notifier, new LibraryChange(LibraryChangeKind.RootAdded, added.Id));
             await File.WriteAllTextAsync(Path.Combine(second, "song.flac"), "audio");
 
             await _refreshed.Task.WaitAsync(TimeSpan.FromSeconds(10));
-            await _scanner.Received(1).RefreshFolderInBackgroundAsync(added.Id, Arg.Any<CancellationToken>());
+            await _folderService.Received(1).RefreshFolderInBackgroundAsync(added.Id, Arg.Any<CancellationToken>());
         }
         finally
         {

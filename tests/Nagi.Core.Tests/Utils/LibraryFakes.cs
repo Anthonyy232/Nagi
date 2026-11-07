@@ -10,15 +10,18 @@ namespace Nagi.Core.Tests.Utils;
 public sealed class LibraryFakes
 {
     public ILibraryReader Reader { get; } = Substitute.For<ILibraryReader>();
-    public ILibraryWriter Writer { get; } = Substitute.For<ILibraryWriter>();
-    public ILibraryScanner Scanner { get; } = Substitute.For<ILibraryScanner>();
+    public ILibraryNotifier Notifier { get; } = Substitute.For<ILibraryNotifier>();
+    public ILibraryFolderService Folders { get; } = Substitute.For<ILibraryFolderService>();
+    public IListeningService Listening { get; } = Substitute.For<IListeningService>();
+    public IArtworkService Artwork { get; } = Substitute.For<IArtworkService>();
     public IPlaylistService Playlists { get; } = Substitute.For<IPlaylistService>();
 
     public void ClearReceivedCalls()
     {
         Reader.ClearReceivedCalls();
-        Writer.ClearReceivedCalls();
-        Scanner.ClearReceivedCalls();
+        Folders.ClearReceivedCalls();
+        Listening.ClearReceivedCalls();
+        Artwork.ClearReceivedCalls();
         Playlists.ClearReceivedCalls();
     }
 }

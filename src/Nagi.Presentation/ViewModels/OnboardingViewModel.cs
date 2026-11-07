@@ -36,18 +36,16 @@ public partial class OnboardingViewModel : ObservableObject
     }
 
     private readonly IApplicationLifecycle _applicationLifecycle;
-    private readonly ILibraryScanner _libraryScanner;
-    private readonly ILibraryWriter _libraryWriter;
+    private readonly ILibraryFolderService _libraryFolders;
     private readonly IMusicServerService _musicServers;
     private readonly ILogger<OnboardingViewModel> _logger;
     private readonly IUIService _uiService;
 
-    public OnboardingViewModel(ILibraryWriter libraryWriter, ILibraryScanner libraryScanner,
+    public OnboardingViewModel(ILibraryFolderService libraryFolders,
         IMusicServerService musicServers, IUIService uiService, IApplicationLifecycle applicationLifecycle,
         ILogger<OnboardingViewModel> logger)
     {
-        _libraryWriter = libraryWriter;
-        _libraryScanner = libraryScanner;
+        _libraryFolders = libraryFolders;
         _musicServers = musicServers;
         _uiService = uiService;
         _applicationLifecycle = applicationLifecycle;
@@ -124,13 +122,13 @@ public partial class OnboardingViewModel : ObservableObject
         _logger.LogDebug("User selected folder '{FolderPath}' for onboarding", folderPath);
         await BuildLibraryAsync(folderPath, async progress =>
         {
-            if (await _libraryWriter.AddFolderAsync(folderPath) is not { } folder)
+            if (await _libraryFolders.AddFolderAsync(folderPath) is not { } folder)
             {
                 _logger.LogWarning("Could not add onboarding folder '{FolderPath}'", folderPath);
                 return false;
             }
 
-            await _libraryScanner.ScanFolderForMusicAsync(folder.Path, progress);
+            await _libraryFolders.RescanFolderForMusicAsync(folder.Id, progress);
             return true;
         });
     }

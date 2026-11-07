@@ -18,11 +18,10 @@ public class ArtistViewViewModelTests
     public async Task MetadataCompletesAfterLeaving_DoesNotUpdateTheDisposedView(bool fails)
     {
         var library = new LibraryFakes();
-        var scanner = Substitute.For<ILibraryScanner>();
         var metadata = new TaskCompletionSource<Artist?>(TaskCreationOptions.RunContinuationsAsynchronously);
-        scanner.GetArtistDetailsAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        library.Artwork.GetArtistDetailsAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(metadata.Task);
-        using var viewModel = CreateViewModel(library, scanner);
+        using var viewModel = CreateViewModel(library);
         var originalName = viewModel.ArtistName;
         var load = viewModel.LoadArtistDetailsAsync(Guid.NewGuid());
 
@@ -42,14 +41,14 @@ public class ArtistViewViewModelTests
         var library = new LibraryFakes();
         var ui = Substitute.For<IUIService>();
         ui.PickSingleFileAsync(Arg.Any<IEnumerable<string>>()).Returns((string?)null);
-        using var viewModel = CreateViewModel(library, Substitute.For<ILibraryScanner>(), ui);
+        using var viewModel = CreateViewModel(library, ui);
 
         await viewModel.ChangeArtistImageCommand.ExecuteAsync(null);
 
-        await library.Writer.DidNotReceiveWithAnyArgs().UpdateArtistImageAsync(default, default!);
+        await library.Artwork.DidNotReceiveWithAnyArgs().UpdateArtistImageAsync(default, default!);
     }
 
-    private static ArtistViewViewModel CreateViewModel(LibraryFakes library, ILibraryScanner scanner, IUIService? ui = null)
+    private static ArtistViewViewModel CreateViewModel(LibraryFakes library, IUIService? ui = null)
     {
         library.Reader.GetSongsByArtistIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
@@ -59,7 +58,7 @@ public class ArtistViewViewModelTests
                 Items = []
             });
         var settings = TestSettings.Create();
-        return new ArtistViewViewModel(library.Reader, library.Writer, scanner, Substitute.For<IPlaylistService>(),
+        return new ArtistViewViewModel(library.Reader, library.Listening, library.Notifier, library.Artwork, Substitute.For<IPlaylistService>(),
             Substitute.For<IMusicPlaybackService>(), Substitute.For<IMusicNavigationService>(),
             settings, new ImmediateDispatcher(), ui ?? Substitute.For<IUIService>(), NullLogger<ArtistViewViewModel>.Instance);
     }

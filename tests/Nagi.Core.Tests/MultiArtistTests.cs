@@ -18,7 +18,7 @@ public class MultiArtistTests : IDisposable
     private readonly DbContextFactoryTestHelper _dbHelper;
     private readonly IFileSystemService _fileSystem;
     private readonly IMetadataService _metadataService;
-    private readonly LibraryService _libraryService;
+    private readonly TestLibrary _library;
     private readonly LibraryReader _libraryReader;
     private readonly ProviderPipelineProvider _pipelines;
 
@@ -39,9 +39,8 @@ public class MultiArtistTests : IDisposable
 
         _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, settingsService);
 
-        _libraryService = new LibraryService(
+        _library = new TestLibrary(
             _dbHelper.ContextFactory,
-            _libraryReader,
             _fileSystem,
             _metadataService,
             Substitute.For<IArtistMetadataService>(),
@@ -51,14 +50,12 @@ public class MultiArtistTests : IDisposable
             settingsService,
             Substitute.For<IReplayGainService>(),
             Substitute.For<IImageProcessor>(),
-            _pipelines,
-            Substitute.For<ILogger<LibraryService>>()
-        );
+            _pipelines);
     }
 
     public void Dispose()
     {
-        _libraryService.Dispose();
+        _library.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
     }
@@ -94,7 +91,7 @@ public class MultiArtistTests : IDisposable
 
         _metadataService.ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>()).Returns(metadata);
 
-        var result = await _libraryService.RescanFolderForMusicAsync(folderId);
+        var result = await _library.Folders.RescanFolderForMusicAsync(folderId);
 
         result.Should().BeTrue("the scan should complete without errors");
 
@@ -149,7 +146,7 @@ public class MultiArtistTests : IDisposable
             MusicBrainzArtistIds = ["tag-duo"]
         });
 
-        await _libraryService.RescanFolderForMusicAsync(folder.Id);
+        await _library.Folders.RescanFolderForMusicAsync(folder.Id);
 
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         var ids = await assertContext.Artists.ToDictionaryAsync(a => a.Name, a => a.MusicBrainzId);
@@ -202,7 +199,7 @@ public class MultiArtistTests : IDisposable
             CoverArtUri = @"C:\cache\new.jpg"
         });
 
-        (await _libraryService.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
+        (await _library.Folders.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
 
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         var saved = await assertContext.Albums.Include(a => a.AlbumArtists).ThenInclude(a => a.Artist).SingleAsync();
@@ -230,7 +227,7 @@ public class MultiArtistTests : IDisposable
         _metadataService.ExtractMetadataAsync(first.FilePath, folder.Path).Returns(first);
         _metadataService.ExtractMetadataAsync(second.FilePath, folder.Path).Returns(second);
 
-        (await _libraryService.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
+        (await _library.Folders.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
 
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         var songs = await assertContext.Songs.Include(s => s.Album).OrderBy(s => s.Title).ToListAsync();
@@ -259,7 +256,7 @@ public class MultiArtistTests : IDisposable
             Substitute.For<IAudioPlayer>(),
             Substitute.For<ISystemMediaControls>(),
             Substitute.For<ILibraryReader>(),
-            Substitute.For<ILibraryWriter>(),
+            Substitute.For<IListeningService>(),
             _metadataService,
             Substitute.For<IFileSystemService>(),
             Substitute.For<IMusicServerService>(),

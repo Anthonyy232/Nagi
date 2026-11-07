@@ -12,18 +12,20 @@ namespace Nagi.Core.Services.Implementations;
 public sealed class LibraryFolderWatcher : IDisposable
 {
     private readonly ILibraryReader _libraryReader;
-    private readonly ILibraryScanner _libraryScanner;
+    private readonly ILibraryNotifier _libraryNotifier;
+    private readonly ILibraryFolderService _folderService;
     private readonly ILogger<LibraryFolderWatcher> _logger;
     private readonly CancellationTokenSource _shutdownCts = new();
     private readonly CancellationToken _shutdownToken;
     private readonly Lock _lock = new();
     private readonly Dictionary<Guid, WatchedFolder> _folders = new();
 
-    public LibraryFolderWatcher(ILibraryReader libraryReader, ILibraryScanner libraryScanner,
+    public LibraryFolderWatcher(ILibraryReader libraryReader, ILibraryNotifier libraryNotifier, ILibraryFolderService folders,
         ILogger<LibraryFolderWatcher> logger)
     {
         _libraryReader = libraryReader;
-        _libraryScanner = libraryScanner;
+        _libraryNotifier = libraryNotifier;
+        _folderService = folders;
         _logger = logger;
         _shutdownToken = _shutdownCts.Token;
     }
@@ -35,14 +37,14 @@ public sealed class LibraryFolderWatcher : IDisposable
 
     public void Start()
     {
-        _libraryScanner.LibraryContentChanged += OnLibraryContentChanged;
+        _libraryNotifier.Changed += OnLibraryChanged;
         _ = SyncFoldersAsync();
     }
 
     public void Dispose()
     {
         if (_shutdownToken.IsCancellationRequested) return;
-        _libraryScanner.LibraryContentChanged -= OnLibraryContentChanged;
+        _libraryNotifier.Changed -= OnLibraryChanged;
         _shutdownCts.Cancel();
         lock (_lock)
         {
@@ -52,9 +54,9 @@ public sealed class LibraryFolderWatcher : IDisposable
         _shutdownCts.Dispose();
     }
 
-    private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
+    private void OnLibraryChanged(object? sender, LibraryChange change)
     {
-        if (e.ChangeType is LibraryChangeType.FolderAdded or LibraryChangeType.FolderRemoved)
+        if (change.Kind is LibraryChangeKind.RootAdded or LibraryChangeKind.RootRemoved or LibraryChangeKind.LibraryCleared)
             _ = SyncFoldersAsync();
     }
 
@@ -145,7 +147,7 @@ public sealed class LibraryFolderWatcher : IDisposable
         try
         {
             _logger.LogDebug("Refreshing library folder {FolderId} after file changes.", folderId);
-            await _libraryScanner.RefreshFolderInBackgroundAsync(folderId, _shutdownToken).ConfigureAwait(false);
+            await _folderService.RefreshFolderInBackgroundAsync(folderId, _shutdownToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {

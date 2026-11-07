@@ -101,7 +101,7 @@ public class AlbumViewViewModelTests
     private static AlbumViewViewModel CreateViewModel(LibraryFakes library, IDispatcherService? dispatcher = null)
     {
         var settings = TestSettings.Create();
-        return new AlbumViewViewModel(library.Reader, library.Writer, library.Scanner, Substitute.For<IPlaylistService>(),
+        return new AlbumViewViewModel(library.Reader, library.Listening, library.Notifier, Substitute.For<IPlaylistService>(),
             Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), dispatcher ?? new ImmediateDispatcher(), settings,
             Substitute.For<IUIService>(), NullLogger<AlbumViewViewModel>.Instance);

@@ -22,7 +22,7 @@ namespace Nagi.Presentation.ViewModels;
 /// </summary>
 public abstract partial class SongListViewModelBase : PagedListViewModelBase<Song>, INowPlayingSource
 {
-    protected readonly ILibraryWriter _libraryWriter;
+    protected readonly IListeningService _listening;
     protected readonly IMusicPlaybackService _playbackService;
     protected readonly IPlaylistService _playlistService;
     protected readonly IUIService _uiService;
@@ -55,8 +55,8 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     protected SongListViewModelBase(
         ILibraryReader libraryReader,
-        ILibraryWriter libraryWriter,
-        ILibraryScanner libraryScanner,
+        IListeningService listening,
+        ILibraryNotifier libraryNotifier,
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
@@ -64,9 +64,9 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         ISettingsService settingsService,
         IUIService uiService,
         ILogger logger)
-        : base(libraryReader, libraryScanner, settingsService, dispatcherService, logger)
+        : base(libraryReader, libraryNotifier, settingsService, dispatcherService, logger)
     {
-        _libraryWriter = libraryWriter;
+        _listening = listening;
         _playlistService = playlistService;
         _playbackService = playbackService;
         _musicNavigationService = musicNavigationService;
@@ -188,7 +188,8 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     public bool HasSelectedSongs => SelectedItemsCount > 0;
 
-    protected override bool ShouldReloadOnLibraryChange(LibraryChangeType changeType) => changeType == LibraryChangeType.SongsUpdated;
+    protected override bool ShouldReloadOnLibraryChange(LibraryChangeKind kind) =>
+        kind is LibraryChangeKind.SongsChanged or LibraryChangeKind.FavoritesChanged;
 
     protected override void OnLoadingStateChanged(bool isLoading)
     {

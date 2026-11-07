@@ -23,7 +23,7 @@ public class PlaylistServiceTests : IDisposable
     {
         _pathConfig.PlaylistImageCachePath.Returns(@"C:\cache\playlistimages");
         _playlistService = new PlaylistService(_dbHelper.ContextFactory, _fileSystem, Substitute.For<IImageProcessor>(),
-            _pathConfig, Substitute.For<ILogger<PlaylistService>>());
+            _pathConfig, Substitute.For<ILibraryNotifier>(), Substitute.For<ILogger<PlaylistService>>());
     }
 
     public void Dispose() => _dbHelper.Dispose();

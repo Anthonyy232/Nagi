@@ -18,9 +18,8 @@ public class LibraryServiceBugTests : IDisposable
     private readonly DbContextFactoryTestHelper _dbHelper;
     private readonly IFileSystemService _fileSystem;
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly LibraryService _libraryService;
+    private readonly TestLibrary _library;
     private readonly LibraryReader _libraryReader;
-    private readonly ILogger<LibraryService> _logger;
     private readonly IMetadataService _metadataService;
     private readonly IPathConfiguration _pathConfig;
     private readonly SettingsService _settingsService;
@@ -37,16 +36,14 @@ public class LibraryServiceBugTests : IDisposable
         _settingsService = TestSettings.Create();
         _replayGainService = Substitute.For<IReplayGainService>();
         _imageProcessor = Substitute.For<IImageProcessor>();
-        _logger = Substitute.For<ILogger<LibraryService>>();
 
         _dbHelper = new DbContextFactoryTestHelper(useFileDatabase: true);
         _pipelines = TestProviderPipeline.Build(ProviderCatalog.ImageDownload.ProviderId);
 
         _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, _settingsService);
 
-        _libraryService = new LibraryService(
+        _library = new TestLibrary(
             _dbHelper.ContextFactory,
-            _libraryReader,
             _fileSystem,
             _metadataService,
             Substitute.For<IArtistMetadataService>(),
@@ -56,13 +53,12 @@ public class LibraryServiceBugTests : IDisposable
             _settingsService,
             _replayGainService,
             _imageProcessor,
-            _pipelines,
-            _logger);
+            _pipelines);
     }
 
     public void Dispose()
     {
-        _libraryService.Dispose();
+        _library.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
     }
@@ -95,7 +91,7 @@ public class LibraryServiceBugTests : IDisposable
                 Artists = ["Artist"]
             });
 
-        var result = await _libraryService.RescanFolderForMusicAsync(folder.Id)
+        var result = await _library.Folders.RescanFolderForMusicAsync(folder.Id)
             .WaitAsync(TimeSpan.FromSeconds(5));
 
         result.Should().BeFalse();
@@ -138,11 +134,11 @@ public class LibraryServiceBugTests : IDisposable
                 return new SongFileMetadata { FilePath = path, Title = Path.GetFileNameWithoutExtension(path) };
             });
 
-        var scanTask = _libraryService.RescanFolderForMusicAsync(folder.Id);
+        var scanTask = _library.Folders.RescanFolderForMusicAsync(folder.Id);
         try
         {
             await WaitForSongCountAsync(51);
-            var sessionId = await _libraryService.StartListenSessionAsync(
+            var sessionId = await _library.Listening.StartListenSessionAsync(
                 existingSong.Id,
                 new PlaybackContext(PlaybackContextType.Library, null));
 
@@ -201,10 +197,10 @@ public class LibraryServiceBugTests : IDisposable
                 };
             });
 
-        var refreshTask = _libraryService.RefreshAllFoldersAsync();
+        var refreshTask = _library.Folders.RefreshAllFoldersAsync();
         await extractionStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
-        var removeTask = _libraryService.RemoveFolderAsync(folder.Id);
+        var removeTask = _library.Folders.RemoveFolderAsync(folder.Id);
         var removed = await removeTask.WaitAsync(TimeSpan.FromSeconds(5));
         var refreshResult = await refreshTask.WaitAsync(TimeSpan.FromSeconds(5));
         allowExtractionToFinish.TrySetResult();
@@ -249,11 +245,11 @@ public class LibraryServiceBugTests : IDisposable
                 };
             });
 
-        var refreshTask = _libraryService.RefreshAllFoldersAsync();
+        var refreshTask = _library.Folders.RefreshAllFoldersAsync();
         await extractionStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
-        var queuedRescanTask = _libraryService.RescanFolderForMusicAsync(folder.Id);
-        var removeTask = _libraryService.RemoveFolderAsync(folder.Id);
+        var queuedRescanTask = _library.Folders.RescanFolderForMusicAsync(folder.Id);
+        var removeTask = _library.Folders.RemoveFolderAsync(folder.Id);
         allowExtractionToFinish.TrySetResult();
 
         var removed = await removeTask.WaitAsync(TimeSpan.FromSeconds(5));
@@ -318,7 +314,7 @@ public class LibraryServiceBugTests : IDisposable
                 FileModifiedDate = DateTime.UtcNow
             });
 
-        var result = await _libraryService.RescanFolderForMusicAsync(folderId);
+        var result = await _library.Folders.RescanFolderForMusicAsync(folderId);
 
         result.Should().BeTrue();
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
@@ -402,7 +398,7 @@ public class LibraryServiceBugTests : IDisposable
                 Genres = ["Electronic", "Techno"]
             });
 
-        var result = await _libraryService.ForceRescanMetadataAsync().WaitAsync(TimeSpan.FromSeconds(5));
+        var result = await _library.Folders.ForceRescanMetadataAsync().WaitAsync(TimeSpan.FromSeconds(5));
 
         result.Should().BeTrue();
         await _metadataService.Received(1).ExtractMetadataAsync(filePath, folder.Path, false);
@@ -450,7 +446,7 @@ public class LibraryServiceBugTests : IDisposable
                 CoverArtUri = "new-cover.jpg"
             });
 
-        (await _libraryService.ForceRescanMetadataAsync().WaitAsync(TimeSpan.FromSeconds(5))).Should().BeTrue();
+        (await _library.Folders.ForceRescanMetadataAsync().WaitAsync(TimeSpan.FromSeconds(5))).Should().BeTrue();
 
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         (await assertContext.Songs.SingleAsync()).AlbumArtUriFromTrack.Should().Be("new-cover.jpg");
@@ -467,7 +463,7 @@ public class LibraryServiceBugTests : IDisposable
         }
         _fileSystem.DirectoryExists(folder.Path).Returns(false);
 
-        var act = () => _libraryService.ForceRescanMetadataAsync();
+        var act = () => _library.Folders.ForceRescanMetadataAsync();
 
         await act.Should().ThrowAsync<DirectoryNotFoundException>();
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
@@ -508,7 +504,7 @@ public class LibraryServiceBugTests : IDisposable
                 AlbumArtists = new List<string> { "Artist One" }
             });
 
-        var result = await _libraryService.RescanFolderForMusicAsync(folderId);
+        var result = await _library.Folders.RescanFolderForMusicAsync(folderId);
 
         result.Should().BeTrue();
 

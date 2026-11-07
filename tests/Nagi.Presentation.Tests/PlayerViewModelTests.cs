@@ -32,7 +32,7 @@ public partial class PlayerViewModelTests : IDisposable
         _settings.Set(AppSettings.PlayerButtons, [new PlayerButtonSetting { Id = "Volume", DisplayName = "Volume", IsEnabled = true }]);
         _viewModel = new PlayerViewModel(_playback, Substitute.For<IMusicNavigationService>(),
             _dispatcher, _settings, Substitute.For<IWindowService>(),
-            _library.Reader, _library.Writer, _library.Scanner, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>(), _time);
+            _library.Reader, _library.Listening, _library.Notifier, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>(), _time);
     }
 
     public void Dispose() => _viewModel.Cleanup();

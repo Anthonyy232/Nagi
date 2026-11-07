@@ -14,7 +14,7 @@ namespace Nagi.Core.Tests;
 public class LastFmPresenceServiceTests : IAsyncDisposable
 {
     private readonly ILastFmScrobblerService _scrobblerService;
-    private readonly ILibraryWriter _libraryWriter;
+    private readonly IListeningService _listening;
     private readonly SettingsService _settingsService;
     private readonly ILogger<LastFmPresenceService> _logger;
     private readonly LastFmPresenceService _service;
@@ -22,7 +22,7 @@ public class LastFmPresenceServiceTests : IAsyncDisposable
     public LastFmPresenceServiceTests()
     {
         _scrobblerService = Substitute.For<ILastFmScrobblerService>();
-        _libraryWriter = Substitute.For<ILibraryWriter>();
+        _listening = Substitute.For<IListeningService>();
         _settingsService = TestSettings.Create();
         _logger = Substitute.For<ILogger<LastFmPresenceService>>();
 
@@ -32,7 +32,7 @@ public class LastFmPresenceServiceTests : IAsyncDisposable
 
         _service = new LastFmPresenceService(
             _scrobblerService,
-            _libraryWriter,
+            _listening,
             _settingsService,
             _logger);
     }
@@ -85,7 +85,7 @@ public class LastFmPresenceServiceTests : IAsyncDisposable
         await _service.OnTrackEligibleForScrobblingAsync(song, 42L, DateTime.UnixEpoch);
 
         await _scrobblerService.Received(1).ScrobbleAsync(song, DateTime.UnixEpoch);
-        await _libraryWriter.Received(1).MarkListenAsScrobbledAsync(42L);
+        await _listening.Received(1).MarkListenAsScrobbledAsync(42L);
     }
 
     [Fact]
@@ -97,7 +97,7 @@ public class LastFmPresenceServiceTests : IAsyncDisposable
         await _service.OnTrackEligibleForScrobblingAsync(
             new Song { Title = "Song" }, 1L, DateTime.UnixEpoch);
 
-        await _libraryWriter.DidNotReceive().MarkListenAsScrobbledAsync(Arg.Any<long>());
+        await _listening.DidNotReceive().MarkListenAsScrobbledAsync(Arg.Any<long>());
     }
 
     [Fact]
@@ -109,6 +109,6 @@ public class LastFmPresenceServiceTests : IAsyncDisposable
         await _service.OnTrackEligibleForScrobblingAsync(
             new Song { Title = "Song" }, 1L, DateTime.UnixEpoch);
 
-        await _libraryWriter.DidNotReceive().MarkListenAsScrobbledAsync(Arg.Any<long>());
+        await _listening.DidNotReceive().MarkListenAsScrobbledAsync(Arg.Any<long>());
     }
 }

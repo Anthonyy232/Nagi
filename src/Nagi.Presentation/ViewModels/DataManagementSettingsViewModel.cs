@@ -19,7 +19,7 @@ public partial class DataManagementSettingsViewModel : ObservableObject
     private readonly IBackupRestoreService _backupRestoreService;
     private readonly IApplicationLifecycle _applicationLifecycle;
     private readonly ISettingsService _settingsService;
-    private readonly ILibraryWriter _libraryWriter;
+    private readonly ILibraryReset _libraryReset;
     private readonly IMusicPlaybackService _playbackService;
     private readonly ILogger<DataManagementSettingsViewModel> _logger;
 
@@ -29,7 +29,7 @@ public partial class DataManagementSettingsViewModel : ObservableObject
         IBackupRestoreService backupRestoreService,
         IApplicationLifecycle applicationLifecycle,
         ISettingsService settingsService,
-        ILibraryWriter libraryWriter,
+        ILibraryReset libraryReset,
         IMusicPlaybackService playbackService,
         ILogger<DataManagementSettingsViewModel> logger)
     {
@@ -38,7 +38,7 @@ public partial class DataManagementSettingsViewModel : ObservableObject
         _backupRestoreService = backupRestoreService;
         _applicationLifecycle = applicationLifecycle;
         _settingsService = settingsService;
-        _libraryWriter = libraryWriter;
+        _libraryReset = libraryReset;
         _playbackService = playbackService;
         _logger = logger;
     }
@@ -57,7 +57,7 @@ public partial class DataManagementSettingsViewModel : ObservableObject
         try
         {
             await _settingsService.ResetToDefaultsAsync();
-            await _libraryWriter.ClearAllLibraryDataAsync();
+            await _libraryReset.ClearAllLibraryDataAsync();
             await _playbackService.ClearQueueAsync();
             _logger.LogInformation("Application data reset. Restarting.");
             _applicationLifecycle.Restart();

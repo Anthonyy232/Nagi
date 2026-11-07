@@ -32,14 +32,13 @@ public class CoreServiceRegistrationTests
     }
 
     [Fact]
-    public async Task AddNagiCore_SharesOneLibraryServiceAcrossWriterAndScanner()
+    public async Task AddNagiCore_SharesTheLibraryServicesTheirCollaboratorsUseDirectly()
     {
         await using var provider = BuildProvider();
 
-        var writer = provider.GetRequiredService<ILibraryWriter>();
-        var scanner = provider.GetRequiredService<ILibraryScanner>();
-
-        writer.Should().BeOfType<LibraryService>().And.BeSameAs(scanner);
+        provider.GetRequiredService<ILibraryNotifier>().Should().BeSameAs(provider.GetRequiredService<LibraryNotifier>());
+        provider.GetRequiredService<IArtworkService>().Should().BeSameAs(provider.GetRequiredService<ArtworkService>());
+        provider.GetRequiredService<IPlaylistService>().Should().BeSameAs(provider.GetRequiredService<PlaylistService>());
     }
 
     [Fact]
@@ -53,7 +52,7 @@ public class CoreServiceRegistrationTests
 
     [Theory]
     [InlineData("")]
-    [InlineData(LibraryService.ImageHttpClientName)]
+    [InlineData(ArtworkService.ImageHttpClientName)]
     [InlineData(MusicServerService.HttpClientName)]
     public async Task AddNagiCore_IdentifiesNagiOnceOnEveryHttpClient(string clientName)
     {

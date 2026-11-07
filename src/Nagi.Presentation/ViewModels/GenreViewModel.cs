@@ -18,7 +18,7 @@ namespace Nagi.Presentation.ViewModels;
 public partial class GenreViewModel : SearchableViewModelBase, IDisposable
 {
     private readonly ILibraryReader _libraryReader;
-    private readonly ILibraryScanner _libraryScanner;
+    private readonly ILibraryNotifier _libraryNotifier;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
     private readonly ISettingsService _settingsService;
@@ -28,13 +28,13 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
     private readonly Debouncer _debouncer = new(TimeSpan.FromSeconds(1));
     private readonly SemaphoreSlim _loadLock = new(1, 1);
 
-    public GenreViewModel(ILibraryReader libraryReader, ILibraryScanner libraryScanner, IMusicPlaybackService musicPlaybackService,
+    public GenreViewModel(ILibraryReader libraryReader, ILibraryNotifier libraryNotifier, IMusicPlaybackService musicPlaybackService,
         INavigationService navigationService, ISettingsService settingsService, IDispatcherService dispatcherService, IUIService uiService,
         ILogger<GenreViewModel> logger)
         : base(dispatcherService, logger)
     {
         _libraryReader = libraryReader;
-        _libraryScanner = libraryScanner;
+        _libraryNotifier = libraryNotifier;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
         _settingsService = settingsService;
@@ -42,20 +42,20 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
 
         Genres.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasGenres));
 
-        _libraryScanner.LibraryContentChanged += OnLibraryContentChanged;
+        _libraryNotifier.Changed += OnLibraryChanged;
 
     }
 
-    private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
+    private void OnLibraryChanged(object? sender, LibraryChange change)
     {
-        // We don't need to refresh the genre list just because a folder container was added (it has no songs yet).
-        if (e.ChangeType == LibraryChangeType.FolderAdded) return;
+        // Song counts per genre change only when songs do.
+        if (change.Kind is LibraryChangeKind.RootAdded or LibraryChangeKind.FavoritesChanged or LibraryChangeKind.ListenHistoryCleared) return;
 
         _debouncer.Trigger(async token =>
         {
             try
             {
-                _logger.LogDebug("Library content changed ({ChangeType}). Refreshing genre list.", e.ChangeType);
+                _logger.LogDebug("Library changed ({ChangeKind}). Refreshing genre list.", change.Kind);
                 await _dispatcherService.EnqueueAsync(() => token.IsCancellationRequested
                     ? Task.CompletedTask : LoadGenresAsync(token));
             }
@@ -75,7 +75,7 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
 
     public void Dispose()
     {
-        _libraryScanner.LibraryContentChanged -= OnLibraryContentChanged;
+        _libraryNotifier.Changed -= OnLibraryChanged;
         ResetState();
     }
 

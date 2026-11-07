@@ -29,7 +29,7 @@ public class ServiceProviderIntegrationTests : IDisposable
     private readonly DbContextFactoryTestHelper _dbHelper;
     private readonly TestHttpMessageHandler _httpHandler = new();
 
-    private readonly LibraryService _libraryService;
+    private readonly TestLibrary _library;
     private readonly LibraryReader _libraryReader;
 
     public ServiceProviderIntegrationTests()
@@ -49,9 +49,8 @@ public class ServiceProviderIntegrationTests : IDisposable
 
         _libraryReader = new LibraryReader(_dbHelper.ContextFactory, Substitute.For<IFileSystemService>(), _settingsService);
 
-        _libraryService = new LibraryService(
+        _library = new TestLibrary(
             _dbHelper.ContextFactory,
-            _libraryReader,
             Substitute.For<IFileSystemService>(),
             Substitute.For<IMetadataService>(),
             new ArtistMetadataService(
@@ -69,8 +68,7 @@ public class ServiceProviderIntegrationTests : IDisposable
             _settingsService,
             Substitute.For<IReplayGainService>(),
             _imageProcessor,
-            _pipelines,
-            Substitute.For<ILogger<LibraryService>>());
+            _pipelines);
 
         _pathConfig.ArtistImageCachePath.Returns("C:\\cache\\artistimages");
         _settingsService.Set(CoreSettings.FetchOnlineMetadata, true);
@@ -78,7 +76,7 @@ public class ServiceProviderIntegrationTests : IDisposable
 
     public void Dispose()
     {
-        _libraryService.Dispose();
+        _library.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _httpHandler.Dispose();
         _dbHelper.Dispose();
@@ -96,7 +94,7 @@ public class ServiceProviderIntegrationTests : IDisposable
 
         _settingsService.EnableOnly(CoreSettings.MetadataProviders);
 
-        await _libraryService.GetArtistDetailsAsync(artist.Id);
+        await _library.Artwork.GetArtistDetailsAsync(artist.Id);
 
         using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         var assertArtist = await assertContext.Artists.FindAsync(artist.Id);
@@ -118,7 +116,7 @@ public class ServiceProviderIntegrationTests : IDisposable
         _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccess(new ArtistInfo { Biography = "Available biography" }));
 
-        var result = await _libraryService.GetArtistDetailsAsync(artist.Id);
+        var result = await _library.Artwork.GetArtistDetailsAsync(artist.Id);
         result!.Biography.Should().Be("Available biography");
 
         await _theAudioDbService.DidNotReceive().GetArtistMetadataAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
@@ -146,7 +144,7 @@ public class ServiceProviderIntegrationTests : IDisposable
                 ImageUrl = "https://lastfm.test/artist.jpg"
             }));
 
-        var result = await _libraryService.GetArtistDetailsAsync(artist.Id);
+        var result = await _library.Artwork.GetArtistDetailsAsync(artist.Id);
 
         result!.Biography.Should().Be("Last.fm biography");
         _httpHandler.Requests.Select(request => request.RequestUri!.AbsoluteUri)
@@ -190,10 +188,10 @@ public class ServiceProviderIntegrationTests : IDisposable
         });
         _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>())
             .Returns(Task.FromResult<(string?, string?, string?)>((coverPath, "light", "dark")));
-        var changes = new List<LibraryChangeType>();
-        _libraryService.LibraryContentChanged += (_, e) => changes.Add(e.ChangeType);
+        var changes = new List<LibraryChangeKind>();
+        _library.Notifier.Changed += (_, e) => changes.Add(e.Kind);
 
-        await _libraryService.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
+        await _library.Artwork.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
 
         var hasCover = status == ServiceResultStatus.Success && downloads;
         using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
@@ -202,7 +200,7 @@ public class ServiceProviderIntegrationTests : IDisposable
         storedAlbum.CoverArtLastCheckedUtc.HasValue.Should().Be(expectChecked);
         assertContext.Songs.Select(s => new { s.AlbumArtUriFromTrack, s.DarkSwatchId }).ToList().Should().AllBeEquivalentTo(
             new { AlbumArtUriFromTrack = hasCover ? coverPath : null, DarkSwatchId = hasCover ? "dark" : null });
-        changes.Should().Equal(hasCover ? [LibraryChangeType.SongsUpdated] : []);
+        changes.Should().Equal(hasCover ? [LibraryChangeKind.SongsChanged] : []);
     }
 
     [Fact]
@@ -238,7 +236,7 @@ public class ServiceProviderIntegrationTests : IDisposable
         _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>())
             .Returns(Task.FromResult<(string?, string?, string?)>((@"C:\cache\albumart\online.jpg", "light", "dark")));
 
-        await _libraryService.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
+        await _library.Artwork.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
 
         using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         assertContext.Albums.Single().CoverArtUri.Should().Be(scannedCover);
@@ -257,7 +255,7 @@ public class ServiceProviderIntegrationTests : IDisposable
         }
         _settingsService.Set(CoreSettings.FetchOnlineMetadata, false);
 
-        await _libraryService.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
+        await _library.Artwork.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
 
         _lastFmService.ReceivedCalls().Should().BeEmpty();
         _albumCoverService.ReceivedCalls().Should().BeEmpty();

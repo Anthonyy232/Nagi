@@ -9,8 +9,8 @@ using Nagi.Core.Services.Data;
 namespace Nagi.Core.Services.Implementations.MusicServers;
 
 /// <summary>
-///     Keeps the library in step with the user's music servers. The library writes and scans live in
-///     <see cref="LibraryService" />; this service owns the connections and the server's side of favorites and plays.
+///     Keeps the library in step with the user's music servers. The library side of a sync lives in
+///     <see cref="ServerLibrarySync" />; this service owns the connections and the server's side of favorites and plays.
 /// </summary>
 public sealed class MusicServerService : IMusicServerService, IDisposable
 {
@@ -19,8 +19,8 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
     private static readonly TimeSpan PeriodicSyncInterval = TimeSpan.FromMinutes(30);
 
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
-    private readonly ILibraryWriter _libraryWriter;
-    private readonly ILibraryScanner _libraryScanner;
+    private readonly IServerLibrarySync _library;
+    private readonly ILibraryNotifier _libraryNotifier;
     private readonly ICredentialLockerService _credentials;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IAppInfoService _appInfo;
@@ -35,8 +35,8 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
 
     public MusicServerService(
         IDbContextFactory<MusicDbContext> contextFactory,
-        ILibraryWriter libraryWriter,
-        ILibraryScanner libraryScanner,
+        IServerLibrarySync library,
+        ILibraryNotifier libraryNotifier,
         ICredentialLockerService credentials,
         IHttpClientFactory httpClientFactory,
         IAppInfoService appInfo,
@@ -44,14 +44,14 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
         TimeProvider? timeProvider = null)
     {
         _contextFactory = contextFactory;
-        _libraryWriter = libraryWriter;
-        _libraryScanner = libraryScanner;
+        _library = library;
+        _libraryNotifier = libraryNotifier;
         _credentials = credentials;
         _httpClientFactory = httpClientFactory;
         _appInfo = appInfo;
         _logger = logger;
         _timeProvider = timeProvider ?? TimeProvider.System;
-        _libraryScanner.LibraryContentChanged += OnLibraryContentChanged;
+        _libraryNotifier.Changed += OnLibraryChanged;
     }
 
     public event Action<Guid>? SignInRejected;
@@ -94,7 +94,8 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
             _logger.LogDebug(ex, "Server folder {FolderId} has no sign-in to end.", folderId);
         }
 
-        if (!await _libraryWriter.RemoveFolderAsync(folderId).ConfigureAwait(false)) return false;
+        if (!await _library.RemoveAsync(folderId).ConfigureAwait(false)) return false;
+        ForgetServer(folderId);
         // In the background, so a server that can't be reached doesn't hold up its removal.
         if (client is not null) _ = SignOutAsync(folderId, client);
         return true;
@@ -117,7 +118,7 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
         // The server must hear about Nagi's favorites and plays before the sync reads its own back.
         await PushPendingFavoritesAsync(folderId, syncCts.Token).ConfigureAwait(false);
         await ReportPlaysAsync(folderId, syncCts.Token).ConfigureAwait(false);
-        await _libraryScanner.SyncServerFolderAsync(folderId, client, progress, syncCts.Token).ConfigureAwait(false);
+        await _library.SyncAsync(folderId, client, progress, syncCts.Token).ConfigureAwait(false);
     }
 
     public async Task SyncAllAsync(IProgress<ScanProgress>? progress = null, CancellationToken cancellationToken = default)
@@ -237,7 +238,7 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
     public void Dispose()
     {
         if (_shutdownCts.IsCancellationRequested) return;
-        _libraryScanner.LibraryContentChanged -= OnLibraryContentChanged;
+        _libraryNotifier.Changed -= OnLibraryChanged;
         _shutdownCts.Cancel();
         _shutdownCts.Dispose();
     }
@@ -289,7 +290,7 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
             throw new MusicServerException(MusicServerError.SignInNotSaved, $"The sign-in for {server.BaseUrl} couldn't be saved.");
         try
         {
-            var folder = await _libraryWriter.AddMusicServerAsync(server, name).ConfigureAwait(false);
+            var folder = await _library.AddAsync(server, name).ConfigureAwait(false);
             _logger.LogInformation("Added {Kind} server {BaseUrl} as folder {FolderId}.", kind, server.BaseUrl, folder.Id);
             return folder;
         }
@@ -344,22 +345,25 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
             throw new MusicServerException(MusicServerError.AlreadyAdded, $"{server.UserName} on {server.BaseUrl} is already in the library.");
     }
 
-    private async void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
+    public void ForgetSignIns(IEnumerable<Guid> folderIds)
     {
+        foreach (var folderId in folderIds) ForgetServer(folderId);
+    }
+
+    // A favorite changed in Nagi is flagged pending until its server has been told.
+    private async void OnLibraryChanged(object? sender, LibraryChange change)
+    {
+        if (change.Kind != LibraryChangeKind.FavoritesChanged) return;
         try
         {
-            if (e is { ChangeType: LibraryChangeType.FolderRemoved, FolderId: { } folderId })
-                ForgetServer(folderId);
-            // Favorites changed through the library writer are flagged pending and announced as a song update.
-            else if (e.ChangeType == LibraryChangeType.SongsUpdated)
-                await PushPendingFavoritesAsync(null, _shutdownCts.Token).ConfigureAwait(false);
+            await PushPendingFavoritesAsync(null, _shutdownCts.Token).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (_shutdownCts.IsCancellationRequested)
         {
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to update music servers after a library change.");
+            _logger.LogError(ex, "Failed to send changed favorites to music servers.");
         }
     }
 
@@ -376,7 +380,6 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
         }
     }
 
-    // Does nothing for a folder on disk, which has no sign-in.
     private void ForgetServer(Guid folderId)
     {
         _clients.TryRemove(folderId, out _);

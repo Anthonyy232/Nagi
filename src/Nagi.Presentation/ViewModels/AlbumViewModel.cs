@@ -40,17 +40,20 @@ public sealed class AlbumViewModelItem
 
 public partial class AlbumViewModel : PagedListViewModelBase<Album>
 {
+    private readonly IArtworkService _artwork;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly IMusicNavigationService _musicNavigationService;
     private readonly IUIService _uiService;
 
     private bool _isNavigating;
 
-    public AlbumViewModel(ILibraryReader libraryReader, ILibraryScanner libraryScanner, IMusicPlaybackService musicPlaybackService,
+    public AlbumViewModel(ILibraryReader libraryReader, ILibraryNotifier libraryNotifier, IArtworkService artwork,
+        IMusicPlaybackService musicPlaybackService,
         IMusicNavigationService musicNavigationService,
         ISettingsService settingsService, IDispatcherService dispatcherService, IUIService uiService, ILogger<AlbumViewModel> logger)
-        : base(libraryReader, libraryScanner, settingsService, dispatcherService, logger)
+        : base(libraryReader, libraryNotifier, settingsService, dispatcherService, logger)
     {
+        _artwork = artwork;
         _musicPlaybackService = musicPlaybackService;
         _musicNavigationService = musicNavigationService;
         _uiService = uiService;
@@ -89,7 +92,7 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
     // Service's own semaphore dedupes concurrent runs of the metadata fetch.
     protected override Task OnPageLoadedAsync(PagedResult<Album> result, CancellationToken token)
     {
-        _ = _libraryScanner.StartMetadataBackgroundFetchAsync();
+        _ = _artwork.StartMetadataBackgroundFetchAsync();
         return Task.CompletedTask;
     }
 

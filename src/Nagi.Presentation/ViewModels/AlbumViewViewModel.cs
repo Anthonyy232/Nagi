@@ -27,8 +27,8 @@ public partial class AlbumViewViewModel : SongListViewModelBase
 
     public AlbumViewViewModel(
         ILibraryReader libraryReader,
-        ILibraryWriter libraryWriter,
-        ILibraryScanner libraryScanner,
+        IListeningService listening,
+        ILibraryNotifier libraryNotifier,
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
@@ -36,7 +36,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         ISettingsService settingsService,
         IUIService uiService,
         ILogger<AlbumViewViewModel> logger)
-        : base(libraryReader, libraryWriter, libraryScanner, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
         AlbumTitle = Strings.AlbumView_DefaultAlbumTitle;
         ArtistName = Strings.AlbumView_DefaultArtistName;

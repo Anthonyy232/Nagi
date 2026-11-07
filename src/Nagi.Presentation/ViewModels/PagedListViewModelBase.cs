@@ -22,7 +22,7 @@ namespace Nagi.Presentation.ViewModels;
 public abstract partial class PagedListViewModelBase<TItem> : SearchableViewModelBase, IPagedListViewModel, IDisposable
 {
     protected readonly ILibraryReader _libraryReader;
-    protected readonly ILibraryScanner _libraryScanner;
+    protected readonly ILibraryNotifier _libraryNotifier;
     protected readonly ISettingsService _settingsService;
 
     protected readonly object _loadLock = new();
@@ -69,16 +69,16 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
 
     protected PagedListViewModelBase(
         ILibraryReader libraryReader,
-        ILibraryScanner libraryScanner,
+        ILibraryNotifier libraryNotifier,
         ISettingsService settingsService,
         IDispatcherService dispatcherService,
         ILogger logger)
         : base(dispatcherService, logger)
     {
         _libraryReader = libraryReader;
-        _libraryScanner = libraryScanner;
+        _libraryNotifier = libraryNotifier;
         _settingsService = settingsService;
-        _libraryScanner.LibraryContentChanged += OnLibraryContentChanged;
+        _libraryNotifier.Changed += OnLibraryChanged;
         _settingsService.SettingChanged += OnSettingChanged;
     }
 
@@ -100,8 +100,8 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
 
     protected virtual void OnLoadingStateChanged(bool isLoading) { }
 
-    protected virtual bool ShouldReloadOnLibraryChange(LibraryChangeType changeType) =>
-        changeType != LibraryChangeType.FolderAdded;
+    protected virtual bool ShouldReloadOnLibraryChange(LibraryChangeKind kind) =>
+        kind is not (LibraryChangeKind.RootAdded or LibraryChangeKind.FavoritesChanged or LibraryChangeKind.ListenHistoryCleared);
 
     /// <summary>
     ///     Write the page's items into the typed collection. Runs on the UI thread inside
@@ -173,13 +173,13 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
         });
     }
 
-    protected virtual void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
+    private void OnLibraryChanged(object? sender, LibraryChange change)
     {
-        if (!ShouldReloadOnLibraryChange(e.ChangeType)) return;
+        if (!ShouldReloadOnLibraryChange(change.Kind)) return;
 
         _libraryChangeDebouncer.Trigger(async token =>
         {
-            _logger.LogDebug("Library content changed ({ChangeType}). Refreshing paged list.", e.ChangeType);
+            _logger.LogDebug("Library changed ({ChangeKind}). Refreshing paged list.", change.Kind);
             await _dispatcherService.EnqueueAsync(() => token.IsCancellationRequested
                 ? Task.CompletedTask : RefreshAsync(token));
         });
@@ -411,7 +411,7 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
         _isDisposed = true;
         CancelPendingSearch();
 
-        _libraryScanner.LibraryContentChanged -= OnLibraryContentChanged;
+        _libraryNotifier.Changed -= OnLibraryChanged;
         _settingsService.SettingChanged -= OnSettingChanged;
         CancelInflightPageLoad();
         _libraryChangeDebouncer.Dispose();

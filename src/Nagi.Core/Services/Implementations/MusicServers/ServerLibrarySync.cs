@@ -1,44 +1,93 @@
 using System.Collections.Concurrent;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Data;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Settings;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Services.Implementations.MusicServers;
 
-/// <summary>
-///     Music servers: their library roots, and mirroring their songs and covers into the library.
-/// </summary>
-public partial class LibraryService
+public sealed class ServerLibrarySync : IServerLibrarySync
 {
     // One sync per server at a time; a second one, such as Sync pressed during a background sync, waits its turn.
-    private readonly ConcurrentDictionary<Guid, SemaphoreSlim> _serverSyncLocks = new();
+    private readonly ConcurrentDictionary<Guid, SemaphoreSlim> _syncLocks = new();
+    private readonly IDbContextFactory<MusicDbContext> _contextFactory;
+    private readonly IFileSystemService _fileSystem;
+    private readonly IImageProcessor _imageProcessor;
+    private readonly ISettingsService _settingsService;
+    private readonly LibraryImporter _importer;
+    private readonly ArtworkService _artwork;
+    private readonly PlaylistService _playlists;
+    private readonly LibraryNotifier _notifier;
+    private readonly LibraryWriteLock _writeLock;
+    private readonly ILogger<ServerLibrarySync> _logger;
 
-    // Removing a server cancels its sync, which would otherwise hold the removal up until the import finished.
-    private readonly ConcurrentDictionary<Guid, CancellationTokenSource> _serverSyncs = new();
+    public ServerLibrarySync(
+        IDbContextFactory<MusicDbContext> contextFactory,
+        IFileSystemService fileSystem,
+        IImageProcessor imageProcessor,
+        ISettingsService settingsService,
+        LibraryImporter importer,
+        ArtworkService artwork,
+        PlaylistService playlists,
+        LibraryNotifier notifier,
+        LibraryWriteLock writeLock,
+        ILogger<ServerLibrarySync> logger)
+    {
+        _contextFactory = contextFactory;
+        _fileSystem = fileSystem;
+        _imageProcessor = imageProcessor;
+        _settingsService = settingsService;
+        _importer = importer;
+        _artwork = artwork;
+        _playlists = playlists;
+        _notifier = notifier;
+        _writeLock = writeLock;
+        _logger = logger;
+    }
 
-    public async Task<Folder> AddMusicServerAsync(MusicServer server, string name)
+    public async Task<Folder> AddAsync(MusicServer server, string name)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         // Server roots need a unique path too, so they get a key that can never be a real file path.
         server.Folder = new Folder { Id = server.FolderId, Name = name, Path = $"nagi-server:{server.FolderId:N}" };
         context.MusicServers.Add(server);
         await context.SaveChangesAsync().ConfigureAwait(false);
-        LibraryContentChanged?.Invoke(this, new LibraryContentChangedEventArgs(LibraryChangeType.FolderAdded, server.FolderId));
+        _notifier.Raise(LibraryChangeKind.RootAdded, server.FolderId);
         return server.Folder;
     }
 
-    public async Task<bool> SyncServerFolderAsync(Guid folderId, IMusicServerClient client,
-        IProgress<ScanProgress>? progress = null, CancellationToken cancellationToken = default)
+    public async Task<bool> RemoveAsync(Guid folderId)
     {
-        using var operationCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _shutdownCts.Token);
+        var token = _writeLock.ShutdownToken;
+        _writeLock.CancelActiveScan("server removal");
+        _writeLock.CancelServerSync(folderId);
+        await _writeLock.WaitAsync(token).ConfigureAwait(false);
+        try
+        {
+            if (!await IsMusicServerFolderAsync(folderId, token).ConfigureAwait(false)
+                || !await _importer.RemoveRootAsync(folderId, token).ConfigureAwait(false)) return false;
+        }
+        finally
+        {
+            _writeLock.Release();
+        }
+
+        _notifier.Raise(LibraryChangeKind.RootRemoved, folderId);
+        return true;
+    }
+
+    public async Task SyncAsync(Guid folderId, IMusicServerClient client, IProgress<ScanProgress>? progress = null,
+        CancellationToken cancellationToken = default)
+    {
+        using var operationCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _writeLock.ShutdownToken);
         var operationToken = operationCts.Token;
-        var syncLock = _serverSyncLocks.GetOrAdd(folderId, _ => new SemaphoreSlim(1, 1));
+        var syncLock = _syncLocks.GetOrAdd(folderId, _ => new SemaphoreSlim(1, 1));
         await syncLock.WaitAsync(operationToken).ConfigureAwait(false);
-        _serverSyncs[folderId] = operationCts;
+        _writeLock.SetServerSync(folderId, operationCts);
 
         try
         {
@@ -46,7 +95,7 @@ public partial class LibraryService
             if (!await IsMusicServerFolderAsync(folderId, operationToken).ConfigureAwait(false))
                 throw new OperationCanceledException($"Server folder {folderId} was removed.");
 
-            // Reading from the server happens outside the scan lock, so a slow server doesn't hold up folder scans.
+            // Reading from the server happens outside the write lock, so a slow server doesn't hold up folder scans.
             var songs = new List<ServerSongMetadata>();
             progress?.Report(FetchingProgress(0));
             await foreach (var page in client.GetSongsAsync(operationToken).ConfigureAwait(false))
@@ -58,53 +107,47 @@ public partial class LibraryService
             var playlists = await client.GetPlaylistsAsync(operationToken).ConfigureAwait(false);
 
             ServerImport import;
-            bool playlistsChanged;
-            await _scanSemaphore.WaitAsync(operationToken).ConfigureAwait(false);
+            await _writeLock.WaitAsync(operationToken).ConfigureAwait(false);
             try
             {
-                import = await ImportServerSongsAsync(folderId, songs, progress, operationToken).ConfigureAwait(false);
-                playlistsChanged = await ImportServerPlaylistsAsync(folderId, playlists, operationToken).ConfigureAwait(false);
+                import = await ImportSongsAsync(folderId, songs, progress, operationToken).ConfigureAwait(false);
+                await _playlists.SyncServerPlaylistsAsync(folderId, playlists, operationToken).ConfigureAwait(false);
             }
             finally
             {
-                _scanSemaphore.Release();
+                _writeLock.Release();
             }
 
             var importChanged = import.Added + import.Updated + import.Removed > 0;
             // The songs show up now rather than after their covers, which can take a while to download.
-            if (importChanged || playlistsChanged)
-                LibraryContentChanged?.Invoke(this, new LibraryContentChangedEventArgs(LibraryChangeType.FolderRescanned, folderId));
+            if (importChanged) _notifier.Raise(LibraryChangeKind.FolderRescanned, folderId);
 
-            var covers = await DownloadServerCoversAsync(folderId, client, import.SongsNeedingCovers, progress, operationToken)
+            var covers = await DownloadCoversAsync(folderId, client, import.SongsNeedingCovers, progress, operationToken)
                 .ConfigureAwait(false);
             var coverUpdates = covers;
             // A retagged song can bring its cover to an album that had none, so this runs after any change.
             if (importChanged || covers > 0)
             {
                 // Like scans, under the lock: replacing an album cover can delete a file a running scan would reuse.
-                await _scanSemaphore.WaitAsync(operationToken).ConfigureAwait(false);
+                await _writeLock.WaitAsync(operationToken).ConfigureAwait(false);
                 try
                 {
-                    coverUpdates += await SyncAlbumCoversWithTracksAsync(folderId, operationToken).ConfigureAwait(false);
-                    coverUpdates += await ApplyAlbumCoversToTracksWithoutArtAsync(folderId, operationToken).ConfigureAwait(false);
-                    await using var context = await _contextFactory.CreateDbContextAsync(operationToken).ConfigureAwait(false);
-                    await DeleteUnreferencedCoverArtAsync(context, import.ReplacedCovers, operationToken).ConfigureAwait(false);
+                    var albumCovers = await _artwork.UpdateAlbumCoversAsync(folderId, import.ReplacedCovers, false, operationToken)
+                        .ConfigureAwait(false);
+                    coverUpdates += albumCovers.Albums + albumCovers.Tracks;
                 }
                 finally
                 {
-                    _scanSemaphore.Release();
+                    _writeLock.Release();
                 }
             }
 
-            if (coverUpdates > 0)
-                LibraryContentChanged?.Invoke(this, new LibraryContentChangedEventArgs(LibraryChangeType.FolderRescanned, folderId));
-            if (importChanged)
-                _ = StartMetadataBackgroundFetchAsync();
+            if (coverUpdates > 0) _notifier.Raise(LibraryChangeKind.FolderRescanned, folderId);
+            if (importChanged) _ = _artwork.StartMetadataBackgroundFetchAsync();
 
             _logger.LogInformation("Synced server folder {FolderId}: +{Added} ~{Updated} -{Removed}, {Covers} songs got covers, {Playlists} playlists.",
                 folderId, import.Added, import.Updated, import.Removed, covers, playlists.Count);
             progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_SyncComplete, Percentage = 100 });
-            return importChanged || playlistsChanged || coverUpdates > 0;
         }
         catch (OperationCanceledException)
         {
@@ -113,21 +156,8 @@ public partial class LibraryService
         }
         finally
         {
-            _serverSyncs.TryRemove(folderId, out _);
+            _writeLock.ClearServerSync(folderId);
             syncLock.Release();
-        }
-    }
-
-    private void CancelServerSync(Guid folderId)
-    {
-        if (!_serverSyncs.TryGetValue(folderId, out var sync)) return;
-        try
-        {
-            sync.Cancel();
-        }
-        catch (ObjectDisposedException)
-        {
-            // The sync finished while it was being cancelled.
         }
     }
 
@@ -145,16 +175,23 @@ public partial class LibraryService
     ///     Makes the folder's songs match the server's list: adds new songs, updates the ones whose details changed,
     ///     and removes the ones it no longer lists.
     /// </summary>
-    private async Task<ServerImport> ImportServerSongsAsync(Guid folderId, List<ServerSongMetadata> songs,
+    private async Task<ServerImport> ImportSongsAsync(Guid folderId, List<ServerSongMetadata> songs,
         IProgress<ScanProgress>? progress, CancellationToken cancellationToken)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
-        context.ChangeTracker.AutoDetectChangesEnabled = false;
-
-        var rootPath = await context.Folders.Where(f => f.Id == folderId).Select(f => f.Path)
+        string rootPath;
+        Dictionary<string, StoredSong> existing;
+        await using (var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false))
+        {
+            rootPath = await context.Folders.Where(f => f.Id == folderId).Select(f => f.Path)
                            .FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false)
-                       // Removed while this sync waited for the scan lock.
+                       // Removed while this sync waited for the write lock.
                        ?? throw new OperationCanceledException($"Server folder {folderId} was removed.");
+            existing = await context.Songs.Where(s => s.FolderId == folderId)
+                .Select(s => new StoredSong(s.FilePath, s.RemoteHash, s.AlbumArtUriFromTrack, s.RemoteCoverArtId))
+                .ToDictionaryAsync(s => s.FilePath, StringComparer.OrdinalIgnoreCase, cancellationToken)
+                .ConfigureAwait(false);
+        }
+
         var artistSplitCharacters = _settingsService.Get(CoreSettings.ArtistSplitCharacters);
         var genreSplitCharacters = _settingsService.Get(CoreSettings.GenreSplitCharacters);
         foreach (var song in songs)
@@ -178,11 +215,6 @@ public partial class LibraryService
         }
         // A song can come back twice when the server's list changes between two pages.
         var listed = songs.DistinctBy(song => song.FilePath, StringComparer.OrdinalIgnoreCase).ToList();
-
-        var existing = await context.Songs.Where(s => s.FolderId == folderId)
-            .Select(s => new { s.FilePath, s.RemoteHash, s.AlbumArtUriFromTrack, s.RemoteCoverArtId })
-            .ToDictionaryAsync(s => s.FilePath, StringComparer.OrdinalIgnoreCase, cancellationToken)
-            .ConfigureAwait(false);
         var existingPaths = existing.Keys.ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         var toImport = listed.Where(song => !existing.TryGetValue(song.FilePath, out var stored) || stored.RemoteHash != song.ComputeHash())
@@ -190,15 +222,14 @@ public partial class LibraryService
         var added = toImport.Count(song => !existingPaths.Contains(song.FilePath));
         if (toImport.Count > 0)
         {
-            const int batchSize = 50;
-            var caches = await LoadImportCachesAsync(context, cancellationToken).ConfigureAwait(false);
+            // The server has no cover or lyrics paths, so a song keeps the ones it already has.
+            await using var import = await _importer.BeginAsync(folderId, existingPaths, _ => true, cancellationToken)
+                .ConfigureAwait(false);
             var saved = 0;
-            foreach (var batch in toImport.Chunk(batchSize))
+            foreach (var batch in toImport.Chunk(50))
             {
-                // The server has no cover or lyrics paths, so a song keeps the ones it already has.
-                saved += await ProcessSingleBatchAsync(folderId, batch, context, caches,
-                    filePathsBeingUpdated: existingPaths, unchangedFiles: existingPaths,
-                    replacedCovers: new HashSet<string>(), cancellationToken).ConfigureAwait(false);
+                await import.WriteBatchAsync(batch, cancellationToken, ApplyServerDetails).ConfigureAwait(false);
+                saved += batch.Length;
                 progress?.Report(new ScanProgress
                 { StatusText = Resources.Strings.Status_AddingServerSongs, Percentage = saved * 100.0 / toImport.Count });
             }
@@ -206,7 +237,7 @@ public partial class LibraryService
 
         var listedPaths = listed.Select(song => song.FilePath).ToHashSet(StringComparer.OrdinalIgnoreCase);
         var gone = existingPaths.Where(path => !listedPaths.Contains(path)).ToList();
-        if (gone.Count > 0 && (listed.Count == 0 || IsLikelyMissedListing(gone.Count, existing.Count, added)))
+        if (gone.Count > 0 && (listed.Count == 0 || LibraryImporter.IsLikelyMissedListing(gone.Count, existing.Count, added)))
         {
             _logger.LogError(
                 "Sync safety guard tripped for server folder {FolderId}: it listed {ListedCount} songs, so {DeleteCount}/{ExistingCount} would be removed. Keeping them; the server likely has a library offline.",
@@ -214,10 +245,10 @@ public partial class LibraryService
             gone.Clear();
         }
 
-        var removed = gone.Count > 0 ? await DeleteSongsAsync(folderId, gone, cancellationToken).ConfigureAwait(false) : 0;
+        var removed = gone.Count > 0 ? await _importer.DeleteSongsAsync(folderId, gone, cancellationToken).ConfigureAwait(false) : 0;
         // Added songs can't leave an artist, album or genre without songs, as with a scan.
         if (toImport.Count > added || removed > 0)
-            DeleteOrphanedArtistImages(await CleanUpOrphanedEntitiesAsync(context, cancellationToken).ConfigureAwait(false));
+            await _importer.CleanUpOrphansAsync(cancellationToken).ConfigureAwait(false);
 
         // A cover downloads again when the server changed it, or when it's gone from the cache, as a scan re-reads a
         // song whose cover is gone.
@@ -233,73 +264,25 @@ public partial class LibraryService
         return new ServerImport(added, toImport.Count - added, removed, songsNeedingCovers, replacedCovers);
     }
 
-    /// <summary>
-    ///     Makes the server's playlists in the library match its list. Songs the library doesn't have from the server are
-    ///     left out, and a song listed twice is kept once, where it first appears.
-    /// </summary>
-    /// <returns>True if a playlist was added, changed or removed.</returns>
-    private async Task<bool> ImportServerPlaylistsAsync(Guid folderId, IReadOnlyList<ServerPlaylist> playlists,
-        CancellationToken cancellationToken)
+    private sealed record StoredSong(string FilePath, string? RemoteHash, string? AlbumArtUriFromTrack, string? RemoteCoverArtId);
+
+    private static void ApplyServerDetails(Song song, ServerSongMetadata remote, bool isNew)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
-        var songIds = await context.Songs.Where(s => s.FolderId == folderId && s.RemoteId != null)
-            .ToDictionaryAsync(s => s.RemoteId!, s => s.Id, cancellationToken).ConfigureAwait(false);
-        var stored = await context.Playlists.Include(p => p.PlaylistSongs).Where(p => p.ServerFolderId == folderId)
-            .ToDictionaryAsync(p => p.RemoteId!, cancellationToken).ConfigureAwait(false);
-
-        var changed = false;
-        foreach (var listed in playlists)
-        {
-            stored.Remove(listed.RemoteId, out var playlist);
-            var playlistChanged = playlist?.Name != listed.Name;
-            if (playlist is null)
-            {
-                playlist = new Playlist
-                {
-                    ServerFolderId = folderId,
-                    RemoteId = listed.RemoteId,
-                    DateCreated = listed.CreatedUtc ?? DateTime.UtcNow
-                };
-                context.Playlists.Add(playlist);
-            }
-
-            playlist.Name = listed.Name;
-            var entries = playlist.PlaylistSongs.ToDictionary(ps => ps.SongId);
-            var order = 0;
-            foreach (var songId in listed.SongIds.Select(id => songIds.GetValueOrDefault(id)).Where(id => id != Guid.Empty).Distinct())
-            {
-                order++;
-                if (entries.Remove(songId, out var entry))
-                {
-                    if (entry.Order == order) continue;
-                }
-                else
-                {
-                    entry = new PlaylistSong { SongId = songId };
-                    playlist.PlaylistSongs.Add(entry);
-                }
-
-                entry.Order = order;
-                playlistChanged = true;
-            }
-
-            foreach (var gone in entries.Values) playlist.PlaylistSongs.Remove(gone);
-            if (!playlistChanged && entries.Count == 0) continue;
-            playlist.DateModified = DateTime.UtcNow;
-            changed = true;
-        }
-
-        context.Playlists.RemoveRange(stored.Values);
-        changed |= stored.Count > 0;
-        if (changed) await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-        return changed;
+        song.RemoteId = remote.RemoteId;
+        song.RemoteHash = remote.ComputeHash();
+        // The server counts plays and keeps favorites from every app the user listens with, so its values win,
+        // except for a favorite changed here that the server hasn't been told about yet.
+        song.PlayCount = remote.PlayCount;
+        song.LastPlayedDate = remote.LastPlayedUtc;
+        if (!song.IsLovedSyncPending) song.IsLoved = remote.IsFavorite;
+        if (isNew && remote.AddedUtc is { } addedUtc) song.DateAddedToLibrary = addedUtc;
     }
 
     /// <summary>
     ///     Downloads each needed cover once and gives it to every song that uses it.
     /// </summary>
     /// <returns>The number of songs that got a cover.</returns>
-    private async Task<int> DownloadServerCoversAsync(Guid folderId, IMusicServerClient client,
+    private async Task<int> DownloadCoversAsync(Guid folderId, IMusicServerClient client,
         List<ServerSongMetadata> songsNeedingCovers, IProgress<ScanProgress>? progress, CancellationToken cancellationToken)
     {
         const int maxConcurrentDownloads = 4;
@@ -315,7 +298,7 @@ public partial class LibraryService
                 {
                     try
                     {
-                        Interlocked.Add(ref updated, await ApplyServerCoverAsync(folderId, client, cover.Key,
+                        Interlocked.Add(ref updated, await ApplyCoverAsync(folderId, client, cover.Key,
                             cover.Select(song => song.FilePath).ToList(), token).ConfigureAwait(false));
                     }
                     catch (MusicServerException ex) when (ex.Error is MusicServerError.Unreachable
@@ -345,7 +328,7 @@ public partial class LibraryService
         return updated;
     }
 
-    private async Task<int> ApplyServerCoverAsync(Guid folderId, IMusicServerClient client, string coverArtId,
+    private async Task<int> ApplyCoverAsync(Guid folderId, IMusicServerClient client, string coverArtId,
         List<string> filePaths, CancellationToken cancellationToken)
     {
         var image = await client.GetCoverArtAsync(coverArtId, cancellationToken).ConfigureAwait(false);

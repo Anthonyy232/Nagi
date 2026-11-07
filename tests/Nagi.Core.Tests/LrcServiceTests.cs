@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using Nagi.Core.Helpers;
@@ -21,7 +22,7 @@ public class LrcServiceTests : IDisposable
     private readonly ILyricsProvider _lrcLib = LyricsProvider(ServiceProviderIds.LrcLib);
     private readonly SettingsService _settingsService;
     private readonly IPathConfiguration _pathConfig;
-    private readonly ILibraryWriter _libraryWriter;
+    private readonly DbContextFactoryTestHelper _db = new();
     private readonly ILogger<LrcService> _logger;
     private readonly ILyricsProvider _netEase = LyricsProvider(ServiceProviderIds.NetEase);
     private readonly IMusicServerService _musicServers = Substitute.For<IMusicServerService>();
@@ -32,7 +33,6 @@ public class LrcServiceTests : IDisposable
         _fileSystem = Substitute.For<IFileSystemService>();
         _settingsService = TestSettings.Create();
         _pathConfig = Substitute.For<IPathConfiguration>();
-        _libraryWriter = Substitute.For<ILibraryWriter>();
         _logger = Substitute.For<ILogger<LrcService>>();
 
         _lrcService = new LrcService(
@@ -40,12 +40,32 @@ public class LrcServiceTests : IDisposable
             [_lrcLib, _netEase],
             _settingsService,
             _pathConfig,
-            _libraryWriter,
+            _db.ContextFactory,
             _musicServers,
             _logger);
     }
 
-    public void Dispose() => _lrcService.Dispose();
+    public void Dispose()
+    {
+        _lrcService.Dispose();
+        _db.Dispose();
+    }
+
+    private async Task<Song> SeedAsync(Song song)
+    {
+        await using var context = _db.ContextFactory.CreateDbContext();
+        song.Folder = new Folder { Name = "Music", Path = Path.Combine("C:", "Music") };
+        if (string.IsNullOrEmpty(song.FilePath)) song.FilePath = Path.Combine(song.Folder.Path, $"{song.Id}.mp3");
+        context.Songs.Add(song);
+        await context.SaveChangesAsync();
+        return song;
+    }
+
+    private async Task<Song> StoredAsync(Song song)
+    {
+        await using var context = _db.ContextFactory.CreateDbContext();
+        return await context.Songs.AsNoTracking().SingleAsync(s => s.Id == song.Id);
+    }
 
     [Fact]
     public async Task LrcService_RespectsProviderOrder()
@@ -128,7 +148,7 @@ public class LrcServiceTests : IDisposable
     [Fact]
     public async Task GetLyricsAsync_ServerSongWhileTheServerIsDown_IsAskedAgainLater()
     {
-        var song = new Song { Title = "Breakwater", FilePath = @"nagi-server:0123\s1", RemoteId = "s1" };
+        var song = await SeedAsync(new Song { Title = "Breakwater", FilePath = @"nagi-server:0123\s1", RemoteId = "s1" });
         _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
         _musicServers.GetLyricsAsync(song, Arg.Any<CancellationToken>())
             .Returns(Task.FromException<string?>(new MusicServerException(MusicServerError.Unreachable, "offline")));
@@ -136,20 +156,20 @@ public class LrcServiceTests : IDisposable
         (await _lrcService.GetLyricsAsync(song)).Should().BeNull();
 
         song.LyricsLastCheckedUtc.Should().BeNull();
-        await _libraryWriter.DidNotReceive().UpdateSongLyricsLastCheckedAsync(song.Id);
+        (await StoredAsync(song)).LyricsLastCheckedUtc.Should().BeNull();
     }
 
     [Fact]
     public async Task GetLyricsAsync_WhenOneProviderFails_DoesNotCacheNegativeResult()
     {
-        var song = new Song { Id = Guid.NewGuid(), Title = "Retryable" };
+        var song = await SeedAsync(new Song { Id = Guid.NewGuid(), Title = "Retryable" });
         _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
         _lrcLib.GetLyricsAsync(Arg.Any<Song>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<string>.FromTemporaryError(), Found("[00:01.00]Recovered"));
 
         (await _lrcService.GetLyricsAsync(song)).Should().BeNull();
         song.LyricsLastCheckedUtc.Should().BeNull();
-        await _libraryWriter.DidNotReceive().UpdateSongLyricsLastCheckedAsync(song.Id);
+        (await StoredAsync(song)).LyricsLastCheckedUtc.Should().BeNull();
 
         var retry = await _lrcService.GetLyricsAsync(song);
         retry.Should().NotBeNull();
@@ -175,7 +195,7 @@ public class LrcServiceTests : IDisposable
     public async Task GetLyricsAsync_WhenCancelledBeforeProviderCompletes_DoesNotCacheLyrics()
     {
         using var cts = new CancellationTokenSource();
-        var song = new Song { Id = Guid.NewGuid(), Title = "Cancelled" };
+        var song = await SeedAsync(new Song { Id = Guid.NewGuid(), Title = "Cancelled" });
         _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
         _lrcLib.GetLyricsAsync(Arg.Any<Song>(), Arg.Any<CancellationToken>())
             .Returns(_ =>
@@ -187,8 +207,9 @@ public class LrcServiceTests : IDisposable
         var result = await _lrcService.GetLyricsAsync(song, cts.Token);
 
         result.Should().BeNull();
-        await _libraryWriter.DidNotReceive().UpdateSongLyricsLastCheckedAsync(song.Id);
-        await _libraryWriter.DidNotReceive().UpdateSongLrcPathAsync(song.Id, Arg.Any<string?>());
+        var stored = await StoredAsync(song);
+        stored.LyricsLastCheckedUtc.Should().BeNull();
+        stored.LrcFilePath.Should().BeNull();
     }
 
     [Theory]
@@ -204,15 +225,15 @@ public class LrcServiceTests : IDisposable
         var onlineService = new LrcLibService(factory, pipeline, Substitute.For<ILogger<LrcLibService>>());
         var netEaseService = new NetEaseLyricsService(factory, pipeline, Substitute.For<ILogger<NetEaseLyricsService>>());
         using var service = new LrcService(_fileSystem, [onlineService, netEaseService], _settingsService,
-            _pathConfig, _libraryWriter, _musicServers, _logger);
-        var song = new Song { Id = Guid.NewGuid(), Title = "Song", DurationTicks = TimeSpan.FromSeconds(180).Ticks };
+            _pathConfig, _db.ContextFactory, _musicServers, _logger);
+        var song = await SeedAsync(new Song { Id = Guid.NewGuid(), Title = "Song", DurationTicks = TimeSpan.FromSeconds(180).Ticks });
         _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
         _settingsService.EnableOnly(CoreSettings.LyricsProviders, providerId);
         handler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.ServiceUnavailable));
 
         (await service.GetLyricsAsync(song)).Should().BeNull();
         song.LyricsLastCheckedUtc.Should().BeNull();
-        await _libraryWriter.DidNotReceive().UpdateSongLyricsLastCheckedAsync(song.Id);
+        (await StoredAsync(song)).LyricsLastCheckedUtc.Should().BeNull();
 
         handler.SendAsyncFunc = (request, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
         {
@@ -302,7 +323,7 @@ public class LrcServiceTests : IDisposable
     {
         const string cacheRoot = @"C:\cache\lrc";
         var cachedPath = Path.Combine(cacheRoot, "song.lrc");
-        var song = new Song { Id = Guid.NewGuid(), LrcFilePath = cachedPath };
+        var song = await SeedAsync(new Song { Id = Guid.NewGuid(), LrcFilePath = cachedPath });
         _pathConfig.LrcCachePath.Returns(cacheRoot);
         _fileSystem.FileExists(cachedPath).Returns(true);
         _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
@@ -313,8 +334,9 @@ public class LrcServiceTests : IDisposable
         removed.Should().BeTrue();
         result.Should().BeNull();
         _fileSystem.Received(1).DeleteFile(cachedPath);
-        await _libraryWriter.Received(1).UpdateSongLrcPathAsync(song.Id, null);
-        await _libraryWriter.Received(1).UpdateSongLyricsLastCheckedAsync(song.Id);
+        var stored = await StoredAsync(song);
+        stored.LrcFilePath.Should().BeNull();
+        stored.LyricsLastCheckedUtc.Should().NotBeNull();
         await _lrcLib.DidNotReceive().GetLyricsAsync(Arg.Any<Song>(), Arg.Any<CancellationToken>());
         song.LrcFilePath.Should().BeNull();
         song.LyricsLastCheckedUtc.Should().NotBeNull();
@@ -326,7 +348,7 @@ public class LrcServiceTests : IDisposable
         const string cacheRoot = @"C:\cache\lrc";
         const string externalPath = @"C:\Music\Song.lrc";
         const string content = "[00:01.00]Correct lyrics";
-        var song = new Song
+        var song = await SeedAsync(new Song
         {
             Id = Guid.NewGuid(),
             FilePath = @"C:\Music\Song.flac",
@@ -334,7 +356,7 @@ public class LrcServiceTests : IDisposable
             PrimaryArtistName = "Artist",
             LrcFilePath = externalPath,
             Album = new Album { Title = "Album" }
-        };
+        });
         var expectedPath = LrcCache.OverridePath(cacheRoot, song.FilePath);
         _pathConfig.LrcCachePath.Returns(cacheRoot);
         _fileSystem.GetFiles(@"C:\Music", "*.lrc").Returns([externalPath]);
@@ -350,8 +372,7 @@ public class LrcServiceTests : IDisposable
         await _fileSystem.DidNotReceive().WriteAllTextAsync(externalPath, Arg.Any<string>());
         _fileSystem.Received(1).DeleteFile(expectedPath);
         _fileSystem.DidNotReceive().DeleteFile(externalPath);
-        await _libraryWriter.Received(1).UpdateSongLrcPathAsync(song.Id, expectedPath);
-        await _libraryWriter.Received(1).UpdateSongLrcPathAsync(song.Id, externalPath);
+        (await StoredAsync(song)).LrcFilePath.Should().Be(externalPath);
         song.LrcFilePath.Should().Be(externalPath);
     }
 
@@ -361,7 +382,7 @@ public class LrcServiceTests : IDisposable
     public async Task SaveLyricsAsync_WhenWriteOrReplaceFails_PreservesExistingLyrics(bool failOnReplace)
     {
         const string cacheRoot = @"C:\cache\lrc";
-        var song = new Song { FilePath = @"C:\Music\Song.flac" };
+        var song = await SeedAsync(new Song { FilePath = @"C:\Music\Song.flac" });
         var previousPath = LrcCache.OverridePath(cacheRoot, song.FilePath);
         song.LrcFilePath = previousPath;
         _pathConfig.LrcCachePath.Returns(cacheRoot);
@@ -382,7 +403,7 @@ public class LrcServiceTests : IDisposable
         _fileSystem.Received(1).DeleteFile(temporaryPath!);
         _fileSystem.DidNotReceive().DeleteFile(previousPath);
         await _fileSystem.DidNotReceive().WriteAllTextAsync(previousPath, Arg.Any<string>());
-        await _libraryWriter.DidNotReceive().UpdateSongLrcPathAsync(Arg.Any<Guid>(), Arg.Any<string?>());
+        (await StoredAsync(song)).LrcFilePath.Should().BeNull();
         song.LrcFilePath.Should().Be(previousPath);
     }
 
@@ -392,14 +413,14 @@ public class LrcServiceTests : IDisposable
     [InlineData(@"C:\cache\lrc-other\Song.lrc")]
     public async Task RemoveCachedLyricsAsync_WithExternalSidecar_DoesNotDeleteFile(string path)
     {
-        var song = new Song { Id = Guid.NewGuid(), LrcFilePath = path };
+        var song = await SeedAsync(new Song { Id = Guid.NewGuid(), LrcFilePath = path });
         _pathConfig.LrcCachePath.Returns(@"C:\cache\lrc");
 
         var removed = await _lrcService.RemoveCachedLyricsAsync(song);
 
         removed.Should().BeFalse();
         _fileSystem.DidNotReceive().DeleteFile(Arg.Any<string>());
-        await _libraryWriter.DidNotReceive().UpdateSongLrcPathAsync(Arg.Any<Guid>(), Arg.Any<string?>());
+        (await StoredAsync(song)).LrcFilePath.Should().Be(path);
     }
 
     [Fact]
@@ -512,7 +533,7 @@ public class LrcServiceTests : IDisposable
     {
         const string cacheRoot = @"C:\cache\lrc";
         const string legacyPath = @"C:\cache\lrc\Artist - Album - Song.lrc";
-        var song = new Song
+        var song = await SeedAsync(new Song
         {
             Title = "Song",
             PrimaryArtistName = "Artist",
@@ -521,7 +542,7 @@ public class LrcServiceTests : IDisposable
             LyricsLastCheckedUtc = DateTime.UtcNow,
             Duration = TimeSpan.FromMinutes(3),
             Album = new Album { Title = "Album" }
-        };
+        });
         _pathConfig.LrcCachePath.Returns(cacheRoot);
         _fileSystem.FileExists(legacyPath).Returns(true);
         _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
@@ -534,9 +555,7 @@ public class LrcServiceTests : IDisposable
 
         result!.Lines.Single().Text.Should().Be("Fresh Lyrics");
         await _fileSystem.DidNotReceive().ReadAllTextAsync(legacyPath);
-        await _libraryWriter.Received(1).UpdateSongLrcPathAsync(
-            song.Id,
-            Arg.Is<string?>(path => path != null && path != legacyPath && path.EndsWith(".lrc")));
+        (await StoredAsync(song)).LrcFilePath.Should().NotBeNull().And.NotBe(legacyPath).And.EndWith(".lrc");
     }
 
     [Fact]
@@ -545,7 +564,7 @@ public class LrcServiceTests : IDisposable
         const string cacheRoot = @"C:\cache\lrc";
         const string audioFilePath = @"C:\Music\Song.flac";
         var cachePath = LrcCache.CachedPath(cacheRoot, audioFilePath, "Original Artist", "Original Album", "Original Title");
-        var song = new Song
+        var song = await SeedAsync(new Song
         {
             Title = "Corrected Title",
             PrimaryArtistName = "Corrected Artist",
@@ -553,7 +572,7 @@ public class LrcServiceTests : IDisposable
             LrcFilePath = cachePath,
             LyricsLastCheckedUtc = DateTime.UtcNow,
             Album = new Album { Title = "Corrected Album" }
-        };
+        });
         _pathConfig.LrcCachePath.Returns(cacheRoot);
         _fileSystem.FileExists(cachePath).Returns(true);
         _fileSystem.ReadAllTextAsync(cachePath).Returns("[00:01.00]Cached Lyrics");
@@ -562,7 +581,7 @@ public class LrcServiceTests : IDisposable
         var result = await _lrcService.GetLyricsAsync(song);
 
         result!.Lines.Single().Text.Should().Be("Cached Lyrics");
-        await _libraryWriter.DidNotReceive().UpdateSongLrcPathAsync(Arg.Any<Guid>(), Arg.Any<string?>());
+        (await StoredAsync(song)).LrcFilePath.Should().Be(cachePath);
         await _lrcLib.DidNotReceive().GetLyricsAsync(Arg.Any<Song>(), Arg.Any<CancellationToken>());
     }
 
@@ -582,7 +601,7 @@ public class LrcServiceTests : IDisposable
     [Fact]
     public async Task GetLyricsAsync_WhenNoProvidersEnabled_DoesNotFetchOrCacheNegativeResult()
     {
-        var song = new Song { Title = "Test", LrcFilePath = null, Duration = TimeSpan.FromMinutes(3) };
+        var song = await SeedAsync(new Song { Title = "Test", LrcFilePath = null, Duration = TimeSpan.FromMinutes(3) });
         _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
         _settingsService.EnableOnly(CoreSettings.LyricsProviders);
 
@@ -591,7 +610,7 @@ public class LrcServiceTests : IDisposable
         result.Should().BeNull();
         await _lrcLib.DidNotReceive().GetLyricsAsync(Arg.Any<Song>(), Arg.Any<CancellationToken>());
         await _netEase.DidNotReceive().GetLyricsAsync(Arg.Any<Song>(), Arg.Any<CancellationToken>());
-        await _libraryWriter.DidNotReceive().UpdateSongLyricsLastCheckedAsync(Arg.Any<Guid>());
+        (await StoredAsync(song)).LyricsLastCheckedUtc.Should().BeNull();
         song.LyricsLastCheckedUtc.Should().BeNull();
     }
 
@@ -719,7 +738,7 @@ public class LrcServiceTests : IDisposable
     [InlineData(true)]
     public async Task GetLyricsAsync_WhenFetchDisabled_StopsWaitingForProvider(bool plainFound)
     {
-        var song = new Song { Title = "Song" };
+        var song = await SeedAsync(new Song { Title = "Song" });
         _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
         var pending = new TaskCompletionSource<ServiceResult<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
         CancellationToken providerToken = default;
@@ -748,7 +767,7 @@ public class LrcServiceTests : IDisposable
 
             providerToken.IsCancellationRequested.Should().BeTrue();
             result.Should().BeNull();
-            await _libraryWriter.DidNotReceive().UpdateSongLyricsLastCheckedAsync(song.Id);
+            (await StoredAsync(song)).LyricsLastCheckedUtc.Should().BeNull();
             await _fileSystem.DidNotReceive().WriteAllTextAsync(Arg.Any<string>(), Arg.Any<string>());
         }
         finally
@@ -775,7 +794,7 @@ public class LrcServiceTests : IDisposable
     [Fact]
     public async Task GetLyricsAsync_WhenProvidersReturnEmpty_MarksLyricsAsChecked()
     {
-        var song = new Song { Title = "Unknown Song" };
+        var song = await SeedAsync(new Song { Title = "Unknown Song" });
         _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
         _lrcLib.GetLyricsAsync(Arg.Any<Song>(), Arg.Any<CancellationToken>()).Returns(Found(null));
         _netEase.GetLyricsAsync(Arg.Any<Song>(), Arg.Any<CancellationToken>())
@@ -783,7 +802,7 @@ public class LrcServiceTests : IDisposable
 
         var result = await _lrcService.GetLyricsAsync(song);
         result.Should().BeNull();
-        await _libraryWriter.Received(1).UpdateSongLyricsLastCheckedAsync(song.Id);
+        (await StoredAsync(song)).LyricsLastCheckedUtc.Should().NotBeNull();
     }
 
     private static ILyricsProvider LyricsProvider(string id)

@@ -8,6 +8,7 @@ namespace Nagi.Benchmarks.Benchmarks;
 public class LibraryScanBenchmarks
 {
     private LibraryBenchmarkFixture _fixture = null!;
+    private Guid _folderId;
 
     [Params(100, 500, 10_000)]
     public int SongCount;
@@ -17,7 +18,8 @@ public class LibraryScanBenchmarks
     {
         _fixture = new LibraryBenchmarkFixture();
         SyntheticAudioGenerator.GenerateLibrary(_fixture.RootPath, SongCount);
-        await _fixture.Library.ScanFolderForMusicAsync(_fixture.RootPath);
+        _folderId = (await _fixture.Folders.AddFolderAsync(_fixture.RootPath))!.Id;
+        await _fixture.Folders.RescanFolderForMusicAsync(_folderId);
         VerifyScan();
     }
 
@@ -44,8 +46,8 @@ public class LibraryScanBenchmarks
     }
 
     [Benchmark]
-    public Task InitialScan() => _fixture.Library.ScanFolderForMusicAsync(_fixture.RootPath);
+    public Task InitialScan() => _fixture.Folders.RescanFolderForMusicAsync(_folderId);
 
     [Benchmark]
-    public Task RescanNoChanges() => _fixture.Library.ScanFolderForMusicAsync(_fixture.RootPath);
+    public Task RescanNoChanges() => _fixture.Folders.RescanFolderForMusicAsync(_folderId);
 }

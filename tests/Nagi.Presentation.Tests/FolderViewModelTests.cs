@@ -54,7 +54,7 @@ public class FolderViewModelTests
 
         await viewModel.AddFolderCommand.ExecuteAsync(null);
 
-        await library.Writer.DidNotReceiveWithAnyArgs().AddFolderAsync(default!, default);
+        await library.Folders.DidNotReceiveWithAnyArgs().AddFolderAsync(default!, default);
     }
 
     [Fact]
@@ -71,14 +71,14 @@ public class FolderViewModelTests
         await viewModel.AddFolderCommand.ExecuteAsync(null);
 
         await ui.Received(1).ShowMessageDialogAsync(Arg.Any<string>(), Strings.Folders_AddFolder_Exists);
-        await library.Writer.DidNotReceiveWithAnyArgs().AddFolderAsync(default!, default);
+        await library.Folders.DidNotReceiveWithAnyArgs().AddFolderAsync(default!, default);
     }
 
     [Fact]
     public async Task AddFolder_OverlappingAnExistingFolder_TellsTheUserWhyAndScansNothing()
     {
         var library = new LibraryFakes();
-        library.Writer.AddFolderAsync(@"C:\Music\Rock").Returns<Folder?>(_ => throw new FolderOverlapsException(@"C:\Music\Rock"));
+        library.Folders.AddFolderAsync(@"C:\Music\Rock").Returns<Folder?>(_ => throw new FolderOverlapsException(@"C:\Music\Rock"));
         var ui = Substitute.For<IUIService>();
         ui.PickSingleFolderAsync().Returns(@"C:\Music\Rock");
         using var viewModel = CreateViewModel(library, ui);
@@ -86,7 +86,7 @@ public class FolderViewModelTests
         await viewModel.AddFolderCommand.ExecuteAsync(null);
 
         await ui.Received(1).ShowMessageDialogAsync(Strings.FolderPage_AddFolder_Label, Strings.Folders_AddFolder_Overlaps);
-        await library.Scanner.DidNotReceiveWithAnyArgs().ScanFolderForMusicAsync(default!, default, default);
+        await library.Folders.DidNotReceiveWithAnyArgs().RescanFolderForMusicAsync(default, default, default);
     }
 
     [Theory]
@@ -97,7 +97,7 @@ public class FolderViewModelTests
         var library = new LibraryFakes();
         var folder = new Folder { Name = "Music", Path = @"C:Music" };
         library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new FolderSummary(folder, 1, IsServer: false) });
-        library.Writer.RemoveFolderAsync(folder.Id).Returns(true);
+        library.Folders.RemoveFolderAsync(folder.Id).Returns(true);
         var ui = Substitute.For<IUIService>();
         ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(confirmed);
         using var viewModel = CreateViewModel(library, ui);
@@ -106,7 +106,7 @@ public class FolderViewModelTests
 
         await viewModel.DeleteFolderCommand.ExecuteAsync(folder.Id);
 
-        await library.Writer.Received(confirmed ? 1 : 0).RemoveFolderAsync(folder.Id);
+        await library.Folders.Received(confirmed ? 1 : 0).RemoveFolderAsync(folder.Id);
     }
 
     [Fact]
@@ -125,7 +125,7 @@ public class FolderViewModelTests
         await viewModel.DeleteFolderCommand.ExecuteAsync(server.Id);
 
         await musicServers.Received(1).RemoveAsync(server.Id);
-        await library.Writer.DidNotReceive().RemoveFolderAsync(server.Id);
+        await library.Folders.DidNotReceive().RemoveFolderAsync(server.Id);
         await ui.DidNotReceiveWithAnyArgs().ShowMessageDialogAsync(default!, default!);
     }
 
@@ -172,7 +172,7 @@ public class FolderViewModelTests
     }
 
     private static FolderViewModel CreateViewModel(LibraryFakes library, IUIService ui, IMusicServerService? musicServers = null) =>
-        new(library.Reader, library.Writer, library.Scanner, musicServers ?? Substitute.For<IMusicServerService>(),
+        new(library.Reader, library.Folders, library.Notifier, musicServers ?? Substitute.For<IMusicServerService>(),
             new GlobalOperationViewModel(), Substitute.For<IMusicPlaybackService>(), Substitute.For<INavigationService>(), ui,
             new ImmediateDispatcher(), NullLogger<FolderViewModel>.Instance);
 }

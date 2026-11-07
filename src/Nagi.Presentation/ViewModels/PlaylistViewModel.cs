@@ -95,7 +95,6 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 {
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
     private readonly ILibraryReader _libraryReader;
-    private readonly ILibraryScanner _libraryScanner;
     private readonly IPlaylistService _playlistService;
     private readonly ISmartPlaylistService _smartPlaylistService;
     private readonly IMusicPlaybackService _musicPlaybackService;
@@ -108,13 +107,12 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     private int _loadVersion;
     private bool _isDisposed;
 
-    public PlaylistViewModel(ILibraryReader libraryReader, ILibraryScanner libraryScanner, IPlaylistService playlistService, ISmartPlaylistService smartPlaylistService,
+    public PlaylistViewModel(ILibraryReader libraryReader, IPlaylistService playlistService, ISmartPlaylistService smartPlaylistService,
         IMusicPlaybackService musicPlaybackService, INavigationService navigationService, IUIService uiService,
         ISettingsService settingsService, IDispatcherService dispatcherService, ILogger<PlaylistViewModel> logger)
         : base(dispatcherService, logger)
     {
         _libraryReader = libraryReader;
-        _libraryScanner = libraryScanner;
         _playlistService = playlistService;
         _smartPlaylistService = smartPlaylistService;
         _musicPlaybackService = musicPlaybackService;
@@ -130,7 +128,6 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 
         _playlistService.PlaylistsChanged += OnPlaylistsChanged;
         _smartPlaylistService.PlaylistsChanged += OnPlaylistsChanged;
-        _libraryScanner.LibraryContentChanged += OnLibraryContentChanged;
 
         UpdateSortOrderText();
     }
@@ -607,7 +604,6 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         _smartPlaylistService.PlaylistUpdated -= OnPlaylistUpdated;
         _playlistService.PlaylistsChanged -= OnPlaylistsChanged;
         _smartPlaylistService.PlaylistsChanged -= OnPlaylistsChanged;
-        _libraryScanner.LibraryContentChanged -= OnLibraryContentChanged;
     }
 
     private void OnPlaylistUpdated(object? sender, PlaylistUpdatedEventArgs e)
@@ -627,12 +623,6 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
                     ApplyFilter();
             }
         });
-    }
-
-    // A server's sync or removal adds, changes and removes its playlists.
-    private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
-    {
-        if (e.ChangeType is LibraryChangeType.FolderRescanned or LibraryChangeType.FolderRemoved) OnPlaylistsChanged(sender, e);
     }
 
     private void OnPlaylistsChanged(object? sender, EventArgs e)

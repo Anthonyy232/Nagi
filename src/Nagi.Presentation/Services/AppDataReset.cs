@@ -27,10 +27,10 @@ public static class AppDataReset
             try
             {
                 var settingsService = services.GetRequiredService<ISettingsService>();
-                var libraryWriter = services.GetRequiredService<ILibraryWriter>();
+                var libraryReset = services.GetRequiredService<ILibraryReset>();
 
                 await settingsService.ResetToDefaultsAsync();
-                await libraryWriter.ClearAllLibraryDataAsync();
+                await libraryReset.ClearAllLibraryDataAsync();
             }
             catch (Exception serviceEx)
             {

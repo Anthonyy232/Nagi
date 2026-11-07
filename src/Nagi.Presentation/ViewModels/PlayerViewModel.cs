@@ -31,8 +31,8 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     private readonly ISettingsService _settingsService;
     private readonly IWindowService _windowService;
     private readonly ILibraryReader _libraryReader;
-    private readonly ILibraryWriter _libraryWriter;
-    private readonly ILibraryScanner _libraryScanner;
+    private readonly IListeningService _listening;
+    private readonly ILibraryNotifier _libraryNotifier;
 
     private bool _isUpdatingFromService;
     private bool _isCleanedUp;
@@ -51,7 +51,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     public PlayerViewModel(IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService, ISettingsService settingsService, IWindowService windowService,
-        ILibraryReader libraryReader, ILibraryWriter libraryWriter, ILibraryScanner libraryScanner, ILogger<PlayerViewModel> logger, IUIService uiService,
+        ILibraryReader libraryReader, IListeningService listening, ILibraryNotifier libraryNotifier, ILogger<PlayerViewModel> logger, IUIService uiService,
         TimeProvider? timeProvider = null)
     {
         _openingIndicator = new Debouncer(OpeningIndicatorDelay, timeProvider);
@@ -61,8 +61,8 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         _settingsService = settingsService;
         _windowService = windowService;
         _libraryReader = libraryReader;
-        _libraryWriter = libraryWriter;
-        _libraryScanner = libraryScanner;
+        _listening = listening;
+        _libraryNotifier = libraryNotifier;
         _logger = logger;
         _uiService = uiService;
 
@@ -75,7 +75,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 
         SubscribeToPlaybackServiceEvents();
         InitializeListeningEvents();
-        _libraryScanner.LibraryContentChanged += OnQueueLibraryContentChanged;
+        _libraryNotifier.Changed += OnQueueLibraryChanged;
         _settingsService.SettingChanged += OnSettingChanged;
         SubscribeToWindowServiceEvents();
         InitializeStateFromService();
@@ -229,7 +229,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         _logger.LogDebug("Cleaning up PlayerViewModel resources");
         UnsubscribeFromPlaybackServiceEvents();
         CleanupListening();
-        _libraryScanner.LibraryContentChanged -= OnQueueLibraryContentChanged;
+        _libraryNotifier.Changed -= OnQueueLibraryChanged;
         _settingsService.SettingChanged -= OnSettingChanged;
         UnsubscribeFromWindowServiceEvents();
         QueueDisplaySettings.PropertyChanged -= OnQueueDisplaySettingChanged;
@@ -719,9 +719,9 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         });
     }
 
-    private void OnQueueLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
+    private void OnQueueLibraryChanged(object? sender, LibraryChange change)
     {
-        if (e.ChangeType == LibraryChangeType.FolderAdded) return;
+        if (change.Kind == LibraryChangeKind.RootAdded) return;
         RunOnUIThread(() =>
         {
             UpdateCurrentQueueDisplay();

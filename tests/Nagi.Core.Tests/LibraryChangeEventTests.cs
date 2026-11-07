@@ -15,16 +15,16 @@ using Xunit;
 
 namespace Nagi.Core.Tests;
 
-public class LibraryServiceEventTests : IDisposable
+public class LibraryChangeEventTests : IDisposable
 {
     private readonly DbContextFactoryTestHelper _dbHelper;
     private readonly IFileSystemService _fileSystem;
-    private readonly LibraryService _libraryService;
+    private readonly TestLibrary _library;
     private readonly LibraryReader _libraryReader;
     private readonly IMetadataService _metadataService;
     private readonly ProviderPipelineProvider _pipelines;
 
-    public LibraryServiceEventTests()
+    public LibraryChangeEventTests()
     {
         _fileSystem = Substitute.For<IFileSystemService>();
         _fileSystem.NormalizePath(Arg.Any<string>()).Returns(call => PathCanonicalizer.Normalize(call.Arg<string>()));
@@ -36,9 +36,8 @@ public class LibraryServiceEventTests : IDisposable
 
         _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, TestSettings.Create());
 
-        _libraryService = new LibraryService(
+        _library = new TestLibrary(
             _dbHelper.ContextFactory,
-            _libraryReader,
             _fileSystem,
             _metadataService,
             Substitute.For<IArtistMetadataService>(),
@@ -48,35 +47,34 @@ public class LibraryServiceEventTests : IDisposable
             TestSettings.Create(),
             Substitute.For<IReplayGainService>(),
             Substitute.For<IImageProcessor>(),
-            _pipelines,
-            Substitute.For<ILogger<LibraryService>>());
+            _pipelines);
     }
 
     public void Dispose()
     {
-        _libraryService.Dispose();
+        _library.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
     }
 
     [Fact]
-    public async Task AddFolderAsync_FiresLibraryContentChanged_FolderAdded()
+    public async Task AddFolderAsync_AnnouncesTheRootAdded()
     {
         var folderPath = "C:\\Music\\NewFolder";
         _fileSystem.GetLastWriteTimeUtc(folderPath).Returns(DateTime.UtcNow);
 
-        LibraryContentChangedEventArgs? eventArgs = null;
-        _libraryService.LibraryContentChanged += (s, e) => eventArgs = e;
+        LibraryChange? eventArgs = null;
+        _library.Notifier.Changed += (s, e) => eventArgs = e;
 
-        await _libraryService.AddFolderAsync(folderPath);
+        await _library.Folders.AddFolderAsync(folderPath);
 
         eventArgs.Should().NotBeNull();
-        eventArgs!.ChangeType.Should().Be(LibraryChangeType.FolderAdded);
+        eventArgs!.Kind.Should().Be(LibraryChangeKind.RootAdded);
         eventArgs.FolderId.Should().NotBeNull();
     }
 
     [Fact]
-    public async Task RemoveFolderAsync_FiresLibraryContentChanged_FolderRemoved()
+    public async Task RemoveFolderAsync_AnnouncesTheRootRemoved()
     {
         var folder = new Folder { Path = "C:\\Music\\FolderToRemove", Name = "FolderToRemove" };
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
@@ -85,18 +83,18 @@ public class LibraryServiceEventTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        LibraryContentChangedEventArgs? eventArgs = null;
-        _libraryService.LibraryContentChanged += (s, e) => eventArgs = e;
+        LibraryChange? eventArgs = null;
+        _library.Notifier.Changed += (s, e) => eventArgs = e;
 
-        await _libraryService.RemoveFolderAsync(folder.Id);
+        await _library.Folders.RemoveFolderAsync(folder.Id);
 
         eventArgs.Should().NotBeNull();
-        eventArgs!.ChangeType.Should().Be(LibraryChangeType.FolderRemoved);
+        eventArgs!.Kind.Should().Be(LibraryChangeKind.RootRemoved);
         eventArgs.FolderId.Should().Be(folder.Id);
     }
 
     [Fact]
-    public async Task RescanFolderForMusicAsync_WithChanges_FiresLibraryContentChanged_FolderRescanned()
+    public async Task RescanFolderForMusicAsync_WithChanges_AnnouncesTheFolderRescanned()
     {
         var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\ScanChanges", Name = "ScanChanges" };
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
@@ -112,18 +110,18 @@ public class LibraryServiceEventTests : IDisposable
         _metadataService.ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>())
             .Returns(new SongFileMetadata { FilePath = "C:\\Music\\ScanChanges\\new.mp3", Title = "New Song" });
 
-        LibraryContentChangedEventArgs? eventArgs = null;
-        _libraryService.LibraryContentChanged += (s, e) => eventArgs = e;
+        LibraryChange? eventArgs = null;
+        _library.Notifier.Changed += (s, e) => eventArgs = e;
 
-        await _libraryService.RescanFolderForMusicAsync(folder.Id);
+        await _library.Folders.RescanFolderForMusicAsync(folder.Id);
 
         eventArgs.Should().NotBeNull();
-        eventArgs!.ChangeType.Should().Be(LibraryChangeType.FolderRescanned);
+        eventArgs!.Kind.Should().Be(LibraryChangeKind.FolderRescanned);
         eventArgs.FolderId.Should().Be(folder.Id);
     }
 
     [Fact]
-    public async Task RefreshAllFoldersAsync_WithChanges_FiresLibraryContentChanged_LibraryRescanned()
+    public async Task RefreshAllFoldersAsync_WithChanges_AnnouncesTheLibraryRescanned()
     {
         var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\ScanChanges", Name = "ScanChanges" };
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
@@ -138,13 +136,13 @@ public class LibraryServiceEventTests : IDisposable
         _metadataService.ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>())
             .Returns(new SongFileMetadata { FilePath = "C:\\Music\\ScanChanges\\new.mp3", Title = "New Song" });
 
-        LibraryContentChangedEventArgs? eventArgs = null;
-        _libraryService.LibraryContentChanged += (s, e) => eventArgs = e;
+        LibraryChange? eventArgs = null;
+        _library.Notifier.Changed += (s, e) => eventArgs = e;
 
-        await _libraryService.RefreshAllFoldersAsync();
+        await _library.Folders.RefreshAllFoldersAsync();
 
         eventArgs.Should().NotBeNull();
-        eventArgs!.ChangeType.Should().Be(LibraryChangeType.LibraryRescanned);
+        eventArgs!.Kind.Should().Be(LibraryChangeKind.LibraryRescanned);
         eventArgs.FolderId.Should().BeNull();
     }
 
@@ -177,12 +175,12 @@ public class LibraryServiceEventTests : IDisposable
                 return Task.FromResult(new SongFileMetadata { FilePath = finalFile, Title = "Final" });
             });
 
-        var changeTypes = new List<LibraryChangeType>();
-        _libraryService.LibraryContentChanged += (_, e) => changeTypes.Add(e.ChangeType);
+        var changeTypes = new List<LibraryChangeKind>();
+        _library.Notifier.Changed += (_, e) => changeTypes.Add(e.Kind);
 
-        var result = await _libraryService.ForceRescanMetadataAsync(cancellationToken: cts.Token);
+        var result = await _library.Folders.ForceRescanMetadataAsync(cancellationToken: cts.Token);
 
         result.Should().BeFalse();
-        changeTypes.Should().NotContain(LibraryChangeType.LibraryRescanned);
+        changeTypes.Should().NotContain(LibraryChangeKind.LibraryRescanned);
     }
 }

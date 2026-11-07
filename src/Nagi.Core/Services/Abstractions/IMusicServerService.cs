@@ -45,6 +45,11 @@ public interface IMusicServerService
     /// <returns>False if the folder couldn't be removed, in which case Nagi stays signed in.</returns>
     Task<bool> RemoveAsync(Guid folderId);
 
+    /// <summary>
+    ///     Forgets the saved sign-ins of servers that are no longer in the library, such as after it was cleared.
+    /// </summary>
+    void ForgetSignIns(IEnumerable<Guid> folderIds);
+
     /// <returns>The server with its root folder, or null if the folder isn't a server.</returns>
     Task<MusicServer?> GetServerAsync(Guid folderId);
 

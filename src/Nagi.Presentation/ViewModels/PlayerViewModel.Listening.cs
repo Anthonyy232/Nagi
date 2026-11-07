@@ -57,7 +57,7 @@ public partial class PlayerViewModel
     private void InitializeListeningEvents()
     {
         _playbackService.StopScheduleChanged += OnStopScheduleChanged;
-        _libraryScanner.LibraryContentChanged += OnFavoriteLibraryChanged;
+        _libraryNotifier.Changed += OnFavoriteLibraryChanged;
         _playbackService.TrackChanged += OnHistoryTrackChanged;
         OnStopScheduleChanged();
     }
@@ -67,7 +67,7 @@ public partial class PlayerViewModel
         _stopTimer?.Dispose();
         History.Dispose();
         _playbackService.StopScheduleChanged -= OnStopScheduleChanged;
-        _libraryScanner.LibraryContentChanged -= OnFavoriteLibraryChanged;
+        _libraryNotifier.Changed -= OnFavoriteLibraryChanged;
         _playbackService.TrackChanged -= OnHistoryTrackChanged;
     }
 
@@ -82,9 +82,9 @@ public partial class PlayerViewModel
         if (IsQueuePanelOpen && IsHistoryVisible) _ = History.RefreshAsync();
     });
 
-    private void OnFavoriteLibraryChanged(object? sender, LibraryContentChangedEventArgs e)
+    private void OnFavoriteLibraryChanged(object? sender, LibraryChange change)
     {
-        if (e.ChangeType != LibraryChangeType.SongsUpdated) return;
+        if (change.Kind != LibraryChangeKind.FavoritesChanged) return;
         RunOnUIThread(() => _ = RefreshFavoriteAsync());
     }
 
@@ -112,7 +112,7 @@ public partial class PlayerViewModel
         var current = CurrentPlayingTrack;
         if (current is null) return;
         var loved = !IsCurrentTrackFavorite;
-        if (await Task.Run(() => _libraryWriter.SetSongsLovedAsync([current.Id], loved)) && ReferenceEquals(current, CurrentPlayingTrack))
+        if (await Task.Run(() => _listening.SetSongsLovedAsync([current.Id], loved)) && ReferenceEquals(current, CurrentPlayingTrack))
         {
             current.IsLoved = loved;
             IsCurrentTrackFavorite = loved;

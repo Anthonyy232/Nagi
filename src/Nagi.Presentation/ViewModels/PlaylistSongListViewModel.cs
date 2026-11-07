@@ -23,8 +23,8 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
 
     public PlaylistSongListViewModel(
         ILibraryReader libraryReader,
-        ILibraryWriter libraryWriter,
-        ILibraryScanner libraryScanner,
+        IListeningService listening,
+        ILibraryNotifier libraryNotifier,
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
@@ -32,7 +32,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         ISettingsService settingsService,
         IUIService uiService,
         ILogger<PlaylistSongListViewModel> logger)
-        : base(libraryReader, libraryWriter, libraryScanner, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
         IsPaginationEnabled = false;
         Songs.CollectionChanged += OnSongsCollectionChanged;

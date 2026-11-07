@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Data;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Models.Lyrics;
@@ -16,7 +18,7 @@ public class LrcService : ILrcService, IDisposable
     private readonly Dictionary<string, ILyricsProvider> _providers;
     private readonly ISettingsService _settingsService;
     private readonly IPathConfiguration _pathConfig;
-    private readonly ILibraryWriter _libraryWriter;
+    private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly IMusicServerService _musicServers;
 
     private readonly OnlineLookupCancellation _onlineLookups = new();
@@ -26,7 +28,7 @@ public class LrcService : ILrcService, IDisposable
         IEnumerable<ILyricsProvider> providers,
         ISettingsService settingsService,
         IPathConfiguration pathConfig,
-        ILibraryWriter libraryWriter,
+        IDbContextFactory<MusicDbContext> contextFactory,
         IMusicServerService musicServers,
         ILogger<LrcService> logger)
     {
@@ -34,7 +36,7 @@ public class LrcService : ILrcService, IDisposable
         _providers = providers.ToDictionary(provider => provider.Id);
         _settingsService = settingsService;
         _pathConfig = pathConfig;
-        _libraryWriter = libraryWriter;
+        _contextFactory = contextFactory;
         _musicServers = musicServers;
         _logger = logger;
         _settingsService.SettingChanged += OnSettingChanged;
@@ -141,10 +143,10 @@ public class LrcService : ILrcService, IDisposable
             if (forceOnlineRefresh && !string.IsNullOrWhiteSpace(song.LrcFilePath))
             {
                 song.LrcFilePath = null;
-                await _libraryWriter.UpdateSongLrcPathAsync(song.Id, null).ConfigureAwait(false);
+                await UpdateSongAsync(song.Id, s => s.LrcFilePath = null).ConfigureAwait(false);
             }
 
-            await _libraryWriter.UpdateSongLyricsLastCheckedAsync(song.Id).ConfigureAwait(false);
+            await UpdateSongAsync(song.Id, s => s.LyricsLastCheckedUtc = DateTime.UtcNow).ConfigureAwait(false);
             song.LyricsLastCheckedUtc = DateTime.UtcNow;
         }
 
@@ -170,8 +172,11 @@ public class LrcService : ILrcService, IDisposable
 
         song.LrcFilePath = sidecarPath;
         song.LyricsLastCheckedUtc = DateTime.UtcNow;
-        await _libraryWriter.UpdateSongLrcPathAsync(song.Id, sidecarPath).ConfigureAwait(false);
-        await _libraryWriter.UpdateSongLyricsLastCheckedAsync(song.Id).ConfigureAwait(false);
+        await UpdateSongAsync(song.Id, s =>
+        {
+            s.LrcFilePath = sidecarPath;
+            s.LyricsLastCheckedUtc = song.LyricsLastCheckedUtc;
+        }).ConfigureAwait(false);
         return true;
     }
 
@@ -179,6 +184,23 @@ public class LrcService : ILrcService, IDisposable
     {
         ArgumentNullException.ThrowIfNull(song);
         return LrcCache.Contains(_pathConfig.LrcCachePath, song.LrcFilePath);
+    }
+
+    private async Task UpdateSongAsync(Guid songId, Action<Song> update)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var song = await context.Songs.FindAsync(songId).ConfigureAwait(false);
+        if (song is null) return;
+
+        update(song);
+        try
+        {
+            await context.SaveChangesAsync().ConfigureAwait(false);
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Database update failed for song ID {SongId}.", songId);
+        }
     }
 
     private async Task<SongLyrics?> ReadLyricsFileAsync(string path)
@@ -219,7 +241,7 @@ public class LrcService : ILrcService, IDisposable
         _logger.LogDebug("Cached lyrics for song {SongId} to {Path}", song.Id, cachedLrcPath);
 
         if (previousPath == cachedLrcPath) return;
-        await _libraryWriter.UpdateSongLrcPathAsync(song.Id, cachedLrcPath).ConfigureAwait(false);
+        await UpdateSongAsync(song.Id, s => s.LrcFilePath = cachedLrcPath).ConfigureAwait(false);
         song.LrcFilePath = cachedLrcPath;
 
         if (LrcCache.Contains(cacheRoot, previousPath) && _fileSystemService.FileExists(previousPath!))

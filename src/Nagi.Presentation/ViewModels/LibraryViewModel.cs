@@ -14,12 +14,14 @@ namespace Nagi.Presentation.ViewModels;
 
 public partial class LibraryViewModel : SongListViewModelBase
 {
+    private readonly ILibraryFolderService _libraryFolders;
     private bool _isInitialScanTriggered;
 
     public LibraryViewModel(
         ILibraryReader libraryReader,
-        ILibraryWriter libraryWriter,
-        ILibraryScanner libraryScanner,
+        IListeningService listening,
+        ILibraryNotifier libraryNotifier,
+        ILibraryFolderService libraryFolders,
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
@@ -27,8 +29,9 @@ public partial class LibraryViewModel : SongListViewModelBase
         ISettingsService settingsService,
         IUIService uiService,
         ILogger<LibraryViewModel> logger)
-        : base(libraryReader, libraryWriter, libraryScanner, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
+        _libraryFolders = libraryFolders;
         PageTitle = Strings.LibraryPage_Title;
         _settingsService.SettingChanged += OnSettingChanged;
     }
@@ -85,14 +88,14 @@ public partial class LibraryViewModel : SongListViewModelBase
         _isInitialScanTriggered = true;
 
         _logger.LogDebug("Starting initial background library refresh");
-        // LibraryContentChanged refreshes the view when the background scan finishes.
+        // The library change refreshes the view when the background scan finishes.
         _ = Task.Run(async () =>
         {
             try
             {
                 // Run the dedup pass before refresh so the UI doesn't briefly show duplicate
                 // entries from a prior (pre-canonicalization) run.
-                await _libraryScanner.DeduplicateLibraryAsync().ConfigureAwait(false);
+                await _libraryFolders.DeduplicateLibraryAsync().ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -100,7 +103,7 @@ public partial class LibraryViewModel : SongListViewModelBase
             }
             try
             {
-                await _libraryScanner.RefreshAllFoldersAsync().ConfigureAwait(false);
+                await _libraryFolders.RefreshAllFoldersAsync().ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -109,8 +112,8 @@ public partial class LibraryViewModel : SongListViewModelBase
         });
     }
 
-    protected override bool ShouldReloadOnLibraryChange(LibraryChangeType changeType) =>
-        changeType != LibraryChangeType.FolderAdded;
+    protected override bool ShouldReloadOnLibraryChange(LibraryChangeKind kind) =>
+        kind != LibraryChangeKind.RootAdded;
 
     protected override Task RefreshAsync(CancellationToken cancellationToken) =>
         RefreshOrSortSongsAsync(manualToken: cancellationToken);

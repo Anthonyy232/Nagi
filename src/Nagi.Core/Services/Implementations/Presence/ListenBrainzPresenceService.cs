@@ -13,19 +13,19 @@ namespace Nagi.Core.Services.Implementations.Presence;
 /// </summary>
 public class ListenBrainzPresenceService : IPresenceService
 {
-    private readonly ILibraryWriter _libraryWriter;
+    private readonly IListeningService _listening;
     private readonly ILogger<ListenBrainzPresenceService> _logger;
     private readonly IListenBrainzScrobblerService _scrobblerService;
     private readonly ISettingsService _settingsService;
 
     public ListenBrainzPresenceService(
         IListenBrainzScrobblerService scrobblerService,
-        ILibraryWriter libraryWriter,
+        IListeningService listening,
         ISettingsService settingsService,
         ILogger<ListenBrainzPresenceService> logger)
     {
         _scrobblerService = scrobblerService;
-        _libraryWriter = libraryWriter;
+        _listening = listening;
         _settingsService = settingsService;
         _logger = logger;
     }
@@ -84,7 +84,7 @@ public class ListenBrainzPresenceService : IPresenceService
             {
                 _logger.LogDebug(
                     "Successfully submitted '{TrackTitle}' to ListenBrainz in real-time.", song.Title);
-                await _libraryWriter.MarkListenAsSubmittedToListenBrainzAsync(listenHistoryId).ConfigureAwait(false);
+                await _listening.MarkListenAsSubmittedToListenBrainzAsync(listenHistoryId).ConfigureAwait(false);
             }
         }
         catch (Exception ex)

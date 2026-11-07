@@ -238,7 +238,7 @@ public class PagedListViewModelTests
     private sealed class TestViewModel(ISettingsService settings,
         Func<int, int, CancellationToken, Task<PagedResult<int>>> load,
         IDispatcherService? dispatcher = null)
-        : PagedListViewModelBase<int>(Substitute.For<ILibraryReader>(), Substitute.For<ILibraryScanner>(), settings,
+        : PagedListViewModelBase<int>(Substitute.For<ILibraryReader>(), Substitute.For<ILibraryNotifier>(), settings,
             dispatcher ?? new ImmediateDispatcher(), NullLogger.Instance)
     {
         public List<int> Items { get; } = [];

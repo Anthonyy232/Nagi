@@ -31,8 +31,8 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
 
     public SmartPlaylistSongListViewModel(
         ILibraryReader libraryReader,
-        ILibraryWriter libraryWriter,
-        ILibraryScanner libraryScanner,
+        IListeningService listening,
+        ILibraryNotifier libraryNotifier,
         IPlaylistService playlistService,
         ISmartPlaylistService smartPlaylistService,
         IMusicPlaybackService playbackService,
@@ -41,7 +41,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         ISettingsService settingsService,
         IUIService uiService,
         ILogger<SmartPlaylistSongListViewModel> logger)
-        : base(libraryReader, libraryWriter, libraryScanner, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
         _smartPlaylistService = smartPlaylistService;
     }

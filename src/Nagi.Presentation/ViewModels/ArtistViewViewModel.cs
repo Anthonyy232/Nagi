@@ -40,13 +40,15 @@ public sealed class ArtistAlbumViewModelItem
 
 public partial class ArtistViewViewModel : SongListViewModelBase
 {
+    private readonly IArtworkService _artwork;
     private Guid _artistId;
     private CancellationTokenSource? _pageCts;
 
     public ArtistViewViewModel(
         ILibraryReader libraryReader,
-        ILibraryWriter libraryWriter,
-        ILibraryScanner libraryScanner,
+        IListeningService listening,
+        ILibraryNotifier libraryNotifier,
+        IArtworkService artwork,
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
@@ -54,8 +56,9 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         IDispatcherService dispatcherService,
         IUIService uiService,
         ILogger<ArtistViewViewModel> logger)
-        : base(libraryReader, libraryWriter, libraryScanner, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
+        _artwork = artwork;
         ArtistName = Strings.ArtistView_DefaultArtistName;
         ArtistBio = Strings.Status_Loading;
 
@@ -105,8 +108,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         var token = _pageCts.Token;
         _logger.LogDebug("Loading details for artist ID {ArtistId}", artistId);
 
-        _libraryScanner.ArtistMetadataUpdated += OnArtistMetadataUpdated;
-        _libraryScanner.ArtistMetadataBatchUpdated += OnArtistMetadataBatchUpdated;
+        _libraryNotifier.ArtistImagesChanged += OnArtistImagesChanged;
 
         try
         {
@@ -115,7 +117,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
 
             // Updates its own UI.
             var songsTask = RefreshOrSortSongsAsync(manualToken: token);
-            var artistTask = _libraryScanner.GetArtistDetailsAsync(artistId, token);
+            var artistTask = _artwork.GetArtistDetailsAsync(artistId, token);
             var albumsTask = _libraryReader.GetTopAlbumsForArtistAsync(artistId, int.MaxValue);
 
             await Task.WhenAll(artistTask, albumsTask, songsTask);
@@ -179,9 +181,9 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     [RelayCommand]
     private Task PlayAlbumAsync(Guid albumId) => RunActionAsync(() => _playbackService.PlayAlbumAsync(albumId));
 
-    private void OnArtistMetadataUpdated(object? sender, ArtistMetadataUpdatedEventArgs e)
+    private void OnArtistImagesChanged(object? sender, IReadOnlyList<ArtistImageChange> changes)
     {
-        if (e.ArtistId == _artistId)
+        if (changes.FirstOrDefault(change => change.ArtistId == _artistId) is { } change)
         {
             var generation = CaptureSongContext();
             _logger.LogDebug("Received metadata update for artist ID {ArtistId}", _artistId);
@@ -191,18 +193,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase
                 // This prevents COMException crashes when navigating away quickly after an image update.
                 if (!IsSongContextCurrent(generation) || _pageCts is null) return;
 
-                ArtistImageUri = ImageUriHelper.GetUriWithCacheBuster(e.NewLocalImageCachePath, DateTime.UtcNow);
+                ArtistImageUri = ImageUriHelper.GetUriWithCacheBuster(change.ImagePath, DateTime.UtcNow);
             });
-        }
-    }
-
-    private void OnArtistMetadataBatchUpdated(object? sender, IEnumerable<ArtistMetadataUpdatedEventArgs> updates)
-    {
-        var update = updates.FirstOrDefault(u => u.ArtistId == _artistId);
-        if (update != null)
-        {
-            _logger.LogDebug("Received batch metadata update for artist ID {ArtistId}", _artistId);
-            OnArtistMetadataUpdated(sender, update);
         }
     }
 
@@ -225,8 +217,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
 
         base.ResetState();
         _logger.LogDebug("Cleaned up ArtistViewViewModel search resources");
-        _libraryScanner.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
-        _libraryScanner.ArtistMetadataBatchUpdated -= OnArtistMetadataBatchUpdated;
+        _libraryNotifier.ArtistImagesChanged -= OnArtistImagesChanged;
 
         _logger.LogDebug("Cleaned up for artist ID {ArtistId}", _artistId);
     }
@@ -243,7 +234,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
             if (string.IsNullOrWhiteSpace(localPath)) return;
 
             _logger.LogInformation("Updating custom image for current artist ({ArtistName}) from {Path}", ArtistName, localPath);
-            await _libraryWriter.UpdateArtistImageAsync(_artistId, localPath);
+            await _artwork.UpdateArtistImageAsync(_artistId, localPath);
         }
         catch (Exception ex)
         {
@@ -255,7 +246,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     private async Task RemoveArtistImageAsync()
     {
         _logger.LogInformation("Removing custom image for current artist ({ArtistName})", ArtistName);
-        try { await _libraryWriter.RemoveArtistImageAsync(_artistId); }
+        try { await _artwork.RemoveArtistImageAsync(_artistId); }
         catch (Exception ex) { _logger.LogError(ex, "Failed to remove the image of artist {ArtistName}", ArtistName); }
     }
 }

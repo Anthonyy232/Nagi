@@ -32,9 +32,8 @@ public class LibraryServiceArtistImageTests : IDisposable
     private readonly IFileSystemService _fileSystem;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IImageProcessor _imageProcessor;
-    private readonly LibraryService _libraryService;
+    private readonly TestLibrary _library;
     private readonly LibraryReader _libraryReader;
-    private readonly ILogger<LibraryService> _logger;
     private readonly IMetadataService _metadataService;
     private readonly IPathConfiguration _pathConfig;
     private readonly SettingsService _settingsService;
@@ -50,7 +49,6 @@ public class LibraryServiceArtistImageTests : IDisposable
         _settingsService = TestSettings.Create();
         _replayGainService = Substitute.For<IReplayGainService>();
         _imageProcessor = Substitute.For<IImageProcessor>();
-        _logger = Substitute.For<ILogger<LibraryService>>();
 
         _dbHelper = new DbContextFactoryTestHelper();
 
@@ -75,9 +73,8 @@ public class LibraryServiceArtistImageTests : IDisposable
 
         _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, _settingsService);
 
-        _libraryService = new LibraryService(
+        _library = new TestLibrary(
             _dbHelper.ContextFactory,
-            _libraryReader,
             _fileSystem,
             _metadataService,
             Substitute.For<IArtistMetadataService>(),
@@ -87,8 +84,7 @@ public class LibraryServiceArtistImageTests : IDisposable
             _settingsService,
             _replayGainService,
             _imageProcessor,
-            _pipelines,
-            _logger);
+            _pipelines);
     }
 
     [Theory]
@@ -111,9 +107,9 @@ public class LibraryServiceArtistImageTests : IDisposable
         _fileSystem.FileExists(localPath).Returns(hasLocal);
         _fileSystem.FileExists(fetchedPath).Returns(hasFetched);
         string? notifiedPath = customPath;
-        _libraryService.ArtistMetadataUpdated += (_, args) => notifiedPath = args.NewLocalImageCachePath;
+        _library.Notifier.ArtistImagesChanged += (_, changes) => notifiedPath = changes.Single().ImagePath;
 
-        (await _libraryService.RemoveArtistImageAsync(artist.Id)).Should().BeTrue();
+        (await _library.Artwork.RemoveArtistImageAsync(artist.Id)).Should().BeTrue();
 
         var expected = suffix is null ? null : Path.Combine(ArtistImageCachePath, $"{artist.Id}{suffix}.jpg");
         (await GetArtistLocalImagePathAsync(artist.Id)).Should().Be(expected);
@@ -125,7 +121,7 @@ public class LibraryServiceArtistImageTests : IDisposable
 
     public void Dispose()
     {
-        _libraryService.Dispose();
+        _library.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
     }
@@ -184,16 +180,16 @@ public class LibraryServiceArtistImageTests : IDisposable
     {
         var (folder, artist, _) = await SeedUpToDateSongAsync();
         SetupArtistImageAt(imagePath);
-        ArtistMetadataUpdatedEventArgs? notification = null;
-        _libraryService.ArtistMetadataUpdated += (_, args) => notification = args;
+        ArtistImageChange? notification = null;
+        _library.Notifier.ArtistImagesChanged += (_, changes) => notification = changes.Single();
 
-        await _libraryService.RescanFolderForMusicAsync(folder.Id);
+        await _library.Folders.RescanFolderForMusicAsync(folder.Id);
 
         var localPath = await GetArtistLocalImagePathAsync(artist.Id);
         localPath.Should().Be(Path.Combine(ArtistImageCachePath, $"{artist.Id}.local.jpg"));
         notification.Should().NotBeNull();
         notification!.ArtistId.Should().Be(artist.Id);
-        notification.NewLocalImageCachePath.Should().Be(localPath);
+        notification.ImagePath.Should().Be(localPath);
     }
 
     [Theory]
@@ -207,7 +203,7 @@ public class LibraryServiceArtistImageTests : IDisposable
 
         SetupArtistImageAt(ArtistImagePath);
 
-        await _libraryService.RescanFolderForMusicAsync(folder.Id);
+        await _library.Folders.RescanFolderForMusicAsync(folder.Id);
 
         var localPath = await GetArtistLocalImagePathAsync(artist.Id);
         localPath.Should().Be(customPath);
@@ -228,10 +224,10 @@ public class LibraryServiceArtistImageTests : IDisposable
         }
         if (hasFolderImage) SetupArtistImageAt(ArtistImagePath);
         var notifiedPaths = new List<string?>();
-        _libraryService.ArtistMetadataUpdated += (_, args) => notifiedPaths.Add(args.NewLocalImageCachePath);
+        _library.Notifier.ArtistImagesChanged += (_, changes) => notifiedPaths.AddRange(changes.Select(change => change.ImagePath));
 
         // Reporting a change makes the scan start the online lookup afterwards.
-        (await _libraryService.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
+        (await _library.Folders.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
 
         var expectedPath = hasFolderImage ? Path.Combine(ArtistImageCachePath, $"{artist.Id}.local.jpg") : null;
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
@@ -261,7 +257,7 @@ public class LibraryServiceArtistImageTests : IDisposable
                 .ExecuteUpdateAsync(setters => setters.SetProperty(s => s.AlbumId, album.Id));
         }
 
-        await _libraryService.RescanFolderForMusicAsync(folder.Id);
+        await _library.Folders.RescanFolderForMusicAsync(folder.Id);
 
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         var updated = await assertContext.Artists.SingleAsync(a => a.Id == albumArtist.Id);
@@ -274,9 +270,9 @@ public class LibraryServiceArtistImageTests : IDisposable
     {
         var (folder, artist, _) = await SeedUpToDateSongAsync();
         var eventFired = false;
-        _libraryService.ArtistMetadataUpdated += (_, _) => eventFired = true;
+        _library.Notifier.ArtistImagesChanged += (_, _) => eventFired = true;
 
-        await _libraryService.RescanFolderForMusicAsync(folder.Id);
+        await _library.Folders.RescanFolderForMusicAsync(folder.Id);
 
         var localPath = await GetArtistLocalImagePathAsync(artist.Id);
         localPath.Should().BeNull(because: "no image file was found on disk");
@@ -302,7 +298,7 @@ public class LibraryServiceArtistImageTests : IDisposable
 
         _imageProcessor.ProcessImageBytesAsync(parentBytes).Returns(Task.FromResult(ProcessedBytes));
 
-        await _libraryService.RescanFolderForMusicAsync(folder.Id);
+        await _library.Folders.RescanFolderForMusicAsync(folder.Id);
 
         await _imageProcessor.Received(1).ProcessImageBytesAsync(parentBytes);
         await _imageProcessor.DidNotReceive().ProcessImageBytesAsync(albumBytes);
@@ -352,7 +348,7 @@ public class LibraryServiceArtistImageTests : IDisposable
         _imageProcessor.ProcessImageBytesAsync(artist2Bytes)
             .Returns(Task.FromResult(ProcessedBytes));
 
-        await _libraryService.RescanFolderForMusicAsync(folder.Id);
+        await _library.Folders.RescanFolderForMusicAsync(folder.Id);
 
         var path1 = await GetArtistLocalImagePathAsync(artist1.Id);
         var path2 = await GetArtistLocalImagePathAsync(artist2.Id);
@@ -368,7 +364,7 @@ public class LibraryServiceArtistImageTests : IDisposable
         _fileSystem.GetFiles(FolderPath, "*.*").Returns(new[] { ArtistImagePath });
         _fileSystem.ReadAllBytesAsync(ArtistImagePath).Returns(Task.FromResult(Array.Empty<byte>()));
 
-        await _libraryService.RescanFolderForMusicAsync(folder.Id);
+        await _library.Folders.RescanFolderForMusicAsync(folder.Id);
 
         var localPath = await GetArtistLocalImagePathAsync(artist.Id);
         localPath.Should().BeNull(because: "empty bytes must not produce a cached image");
@@ -383,7 +379,7 @@ public class LibraryServiceArtistImageTests : IDisposable
         _fileSystem.FileExists(legacyPath).Returns(true);
         SetupArtistImageAt(ArtistImagePath);
 
-        await _libraryService.RescanFolderForMusicAsync(folder.Id);
+        await _library.Folders.RescanFolderForMusicAsync(folder.Id);
 
         var localPath = await GetArtistLocalImagePathAsync(artist.Id);
         localPath.Should().NotBe(legacyPath, because: "a local folder image should replace a non-local/non-custom path");
@@ -398,7 +394,7 @@ public class LibraryServiceArtistImageTests : IDisposable
 
         var expectedPath = Path.Combine(ArtistImageCachePath, $"{artist.Id}.local.jpg");
 
-        var result = await _libraryService.GetArtistDetailsAsync(artist.Id);
+        var result = await _library.Artwork.GetArtistDetailsAsync(artist.Id);
 
         result.Should().NotBeNull();
         result!.LocalImageCachePath.Should().Be(expectedPath,
@@ -415,7 +411,7 @@ public class LibraryServiceArtistImageTests : IDisposable
         var (_, artist, _) = await SeedUpToDateSongAsync(localImageCachePath: existingLocal);
         SetupArtistImageAt(ArtistImagePath);
 
-        await _libraryService.GetArtistDetailsAsync(artist.Id);
+        await _library.Artwork.GetArtistDetailsAsync(artist.Id);
 
         await _imageProcessor.DidNotReceive().ProcessImageBytesAsync(Arg.Any<byte[]>());
     }
@@ -434,7 +430,7 @@ public class LibraryServiceArtistImageTests : IDisposable
         _fileSystem.ReadAllBytesAsync(artistJpgPath).Returns(Task.FromResult(artistBytes));
         _imageProcessor.ProcessImageBytesAsync(artistBytes).Returns(Task.FromResult(ProcessedBytes));
 
-        await _libraryService.RescanFolderForMusicAsync(folder.Id);
+        await _library.Folders.RescanFolderForMusicAsync(folder.Id);
 
         await _imageProcessor.Received(1).ProcessImageBytesAsync(artistBytes);
     }
@@ -460,7 +456,7 @@ public class LibraryServiceArtistImageTests : IDisposable
             await ctx.SaveChangesAsync();
         }
 
-        await _libraryService.RescanFolderForMusicAsync(folder.Id);
+        await _library.Folders.RescanFolderForMusicAsync(folder.Id);
 
         _fileSystem.Received().GetFiles(AlbumDir, "*.*");
         _fileSystem.DidNotReceive().GetFiles(Arg.Is<string>(dir => dir.StartsWith("nagi-server:")), Arg.Any<string>());

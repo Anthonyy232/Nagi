@@ -24,8 +24,8 @@ public class OnboardingViewModelTests
     public OnboardingViewModelTests()
     {
         _ui.PickSingleFolderAsync().Returns(FolderPath);
-        _library.Writer.AddFolderAsync(FolderPath).Returns(new Folder { Name = "Music", Path = FolderPath });
-        _viewModel = new OnboardingViewModel(_library.Writer, _library.Scanner, _musicServers, _ui, _lifecycle,
+        _library.Folders.AddFolderAsync(FolderPath).Returns(new Folder { Name = "Music", Path = FolderPath });
+        _viewModel = new OnboardingViewModel(_library.Folders, _musicServers, _ui, _lifecycle,
             NullLogger<OnboardingViewModel>.Instance);
         _viewModel.GoNextCommand.Execute(null);
     }
@@ -33,8 +33,8 @@ public class OnboardingViewModelTests
     [Fact]
     public async Task ChoosingAFolder_MovesOnWhileScanningAndOnlyAllowsFinishingOnceTheLibraryIsReady()
     {
-        var scan = new TaskCompletionSource();
-        _library.Scanner.ScanFolderForMusicAsync(FolderPath, Arg.Any<IProgress<ScanProgress>>())
+        var scan = new TaskCompletionSource<bool>();
+        _library.Folders.RescanFolderForMusicAsync(Arg.Any<Guid>(), Arg.Any<IProgress<ScanProgress>>())
             .Returns(scan.Task);
 
         var choosing = _viewModel.ChooseFolderCommand.ExecuteAsync(null);
@@ -47,7 +47,7 @@ public class OnboardingViewModelTests
         _viewModel.GoToStepCommand.CanExecute(OnboardingStep.Library).Should().BeTrue();
         _viewModel.GoToStepCommand.CanExecute(OnboardingStep.Welcome).Should().BeFalse();
 
-        scan.SetResult();
+        scan.SetResult(true);
         await choosing;
 
         _viewModel.IsLibraryReady.Should().BeTrue();
@@ -65,7 +65,7 @@ public class OnboardingViewModelTests
         await _viewModel.ChooseFolderCommand.ExecuteAsync(null);
 
         _viewModel.CurrentStep.Should().Be(OnboardingStep.Library);
-        await _library.Writer.DidNotReceiveWithAnyArgs().AddFolderAsync(default!);
+        await _library.Folders.DidNotReceiveWithAnyArgs().AddFolderAsync(default!);
     }
 
     [Fact]
@@ -100,9 +100,9 @@ public class OnboardingViewModelTests
     public async Task FailedFolder_KeepsTheStepsOpenButOnlyFinishesAfterAnotherFolderIsChosen(bool cannotAddFolder)
     {
         if (cannotAddFolder)
-            _library.Writer.AddFolderAsync(FolderPath).Returns((Folder?)null);
+            _library.Folders.AddFolderAsync(FolderPath).Returns((Folder?)null);
         else
-            _library.Scanner.ScanFolderForMusicAsync(FolderPath, Arg.Any<IProgress<ScanProgress>>())
+            _library.Folders.RescanFolderForMusicAsync(Arg.Any<Guid>(), Arg.Any<IProgress<ScanProgress>>())
                 .ThrowsAsync(new IOException("unreadable"));
 
         await _viewModel.ChooseFolderCommand.ExecuteAsync(null);
@@ -113,9 +113,9 @@ public class OnboardingViewModelTests
         _viewModel.GoToStepCommand.CanExecute(OnboardingStep.Welcome).Should().BeTrue();
 
         _viewModel.SkipSetupCommand.Execute(null);
-        _library.Writer.AddFolderAsync(FolderPath).Returns(new Folder { Name = "Music", Path = FolderPath });
-        _library.Scanner.ScanFolderForMusicAsync(FolderPath, Arg.Any<IProgress<ScanProgress>>())
-            .Returns(Task.CompletedTask);
+        _library.Folders.AddFolderAsync(FolderPath).Returns(new Folder { Name = "Music", Path = FolderPath });
+        _library.Folders.RescanFolderForMusicAsync(Arg.Any<Guid>(), Arg.Any<IProgress<ScanProgress>>())
+            .Returns(true);
         await _viewModel.ChooseFolderCommand.ExecuteAsync(null);
 
         _viewModel.CurrentStep.Should().Be(OnboardingStep.Finish);

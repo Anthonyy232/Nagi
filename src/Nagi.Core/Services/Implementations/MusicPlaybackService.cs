@@ -12,7 +12,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     private readonly IAudioPlayer _audioPlayer;
     private readonly ISystemMediaControls _mediaControls;
     private readonly ILibraryReader _libraryReader;
-    private readonly ILibraryWriter _libraryWriter;
+    private readonly IListeningService _listening;
     private readonly ILogger<MusicPlaybackService> _logger;
     private readonly IMetadataService _metadataService;
     private readonly IFileSystemService _fileSystem;
@@ -42,7 +42,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         IAudioPlayer audioPlayer,
         ISystemMediaControls mediaControls,
         ILibraryReader libraryReader,
-        ILibraryWriter libraryWriter,
+        IListeningService listening,
         IMetadataService metadataService,
         IFileSystemService fileSystem,
         IMusicServerService musicServers,
@@ -55,7 +55,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         _audioPlayer = audioPlayer;
         _mediaControls = mediaControls;
         _libraryReader = libraryReader;
-        _libraryWriter = libraryWriter;
+        _listening = listening;
         _metadataService = metadataService;
         _logger = logger;
         _timeProvider = timeProvider ?? TimeProvider.System;
@@ -226,7 +226,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             var sessionId = CurrentListenHistoryId.Value;
             var position = _audioPlayer.CurrentPosition;
             CurrentListenHistoryId = null;
-            FireAndForgetSafe(() => _libraryWriter.FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.Skipped), "Finalizing session on Transient Playback", trackForDisposal: true);
+            FireAndForgetSafe(() => _listening.FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.Skipped), "Finalizing session on Transient Playback", trackForDisposal: true);
         }
 
         _isEligibilityMarked = false;
@@ -446,7 +446,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             var sessionId = CurrentListenHistoryId.Value;
             var position = _audioPlayer.CurrentPosition;
             CurrentListenHistoryId = null;
-            FireAndForgetSafe(() => _libraryWriter.FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.PausedAndAbandoned), "Finalizing session on Stop", trackForDisposal: true);
+            FireAndForgetSafe(() => _listening.FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.PausedAndAbandoned), "Finalizing session on Stop", trackForDisposal: true);
         }
 
         await _audioPlayer.StopAsync();
@@ -652,7 +652,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             var previousSessionId = CurrentListenHistoryId.Value;
             var position = _audioPlayer.CurrentPosition;
             CurrentListenHistoryId = null;
-            FireAndForgetSafe(() => _libraryWriter.FinalizeListenSessionAsync(previousSessionId, position, PlaybackEndReason.Skipped), "Finalizing skipped session", trackForDisposal: true);
+            FireAndForgetSafe(() => _listening.FinalizeListenSessionAsync(previousSessionId, position, PlaybackEndReason.Skipped), "Finalizing skipped session", trackForDisposal: true);
         }
 
         _isEligibilityMarked = false;
@@ -730,11 +730,11 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     {
         // Presence listeners need the session before LoadAsync can raise MediaOpened.
         var startedUtc = _timeProvider.GetUtcNow().UtcDateTime;
-        var sessionId = await _libraryWriter.StartListenSessionAsync(songId, _currentContext);
+        var sessionId = await _listening.StartListenSessionAsync(songId, _currentContext);
         if (!IsCurrentRequest(request))
         {
             if (sessionId.HasValue)
-                await _libraryWriter.FinalizeListenSessionAsync(sessionId.Value, TimeSpan.Zero, PlaybackEndReason.PausedAndAbandoned);
+                await _listening.FinalizeListenSessionAsync(sessionId.Value, TimeSpan.Zero, PlaybackEndReason.PausedAndAbandoned);
             return;
         }
 
@@ -764,7 +764,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             CurrentListenHistoryId = null;
             try
             {
-                await _libraryWriter.FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.PausedAndAbandoned);
+                await _listening.FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.PausedAndAbandoned);
             }
             catch (Exception ex)
             {

@@ -88,7 +88,7 @@ public partial class InsightsViewModel : ObservableObject
     private readonly IStatisticsService _statisticsService;
     private readonly IDispatcherService _dispatcherService;
     private readonly INavigationService _navigationService;
-    private readonly ILibraryWriter _libraryWriter;
+    private readonly IListeningService _listening;
     private readonly IUIService _uiService;
     private readonly ILogger<InsightsViewModel> _logger;
     private readonly Debouncer _seeAllSearchDebouncer = new(TimeSpan.FromMilliseconds(300));
@@ -100,14 +100,14 @@ public partial class InsightsViewModel : ObservableObject
         IStatisticsService statisticsService,
         IDispatcherService dispatcherService,
         INavigationService navigationService,
-        ILibraryWriter libraryWriter,
+        IListeningService listening,
         IUIService uiService,
         ILogger<InsightsViewModel> logger)
     {
         _statisticsService = statisticsService;
         _dispatcherService = dispatcherService;
         _navigationService = navigationService;
-        _libraryWriter = libraryWriter;
+        _listening = listening;
         _uiService = uiService;
         _logger = logger;
 
@@ -339,7 +339,7 @@ public partial class InsightsViewModel : ObservableObject
 
         try
         {
-            await _libraryWriter.ClearListenHistoryAsync();
+            await _listening.ClearListenHistoryAsync();
             _logger.LogInformation("Listen history reset by user.");
             await LoadInsightsAsync();
         }

@@ -39,10 +39,18 @@ public static class CoreServiceRegistration
         services.AddSettings(typeof(CoreSettings));
         services.AddSingleton<IFileSystemService, FileSystemService>();
         services.AddSingleton<ILibraryReader, LibraryReader>();
-        services.AddSingleton<IPlaylistService, PlaylistService>();
-        services.AddSingleton<LibraryService>();
-        services.AddSingleton<ILibraryWriter>(sp => sp.GetRequiredService<LibraryService>());
-        services.AddSingleton<ILibraryScanner>(sp => sp.GetRequiredService<LibraryService>());
+        services.AddSingleton<PlaylistService>();
+        services.AddSingleton<IPlaylistService>(sp => sp.GetRequiredService<PlaylistService>());
+        services.AddSingleton<LibraryNotifier>();
+        services.AddSingleton<ILibraryNotifier>(sp => sp.GetRequiredService<LibraryNotifier>());
+        services.AddSingleton<LibraryWriteLock>();
+        services.AddSingleton<ArtworkService>();
+        services.AddSingleton<IArtworkService>(sp => sp.GetRequiredService<ArtworkService>());
+        services.AddSingleton<LibraryImporter>();
+        services.AddSingleton<ILibraryFolderService, LibraryFolderService>();
+        services.AddSingleton<ILibraryReset, LibraryReset>();
+        services.AddSingleton<IListeningService, ListeningService>();
+        services.AddSingleton<IServerLibrarySync, ServerLibrarySync>();
         services.AddSingleton<LibraryFolderWatcher>();
 
         services.AddSingleton<IPlaybackStateStore, PlaybackStateStore>();
@@ -132,7 +140,7 @@ public static class CoreServiceRegistration
             .RemoveAllLoggers();
 
         // Image downloads are larger payloads and tolerate slower CDNs; use a longer timeout.
-        services.AddHttpClient(LibraryService.ImageHttpClientName)
+        services.AddHttpClient(ArtworkService.ImageHttpClientName)
             .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(30))
             .ConfigurePrimaryHttpMessageHandler(CreateHandler);
     }

@@ -25,7 +25,7 @@ public partial class MusicPlaybackService
         {
             if (finishedSessionId.HasValue)
             {
-                await _libraryWriter.FinalizeListenSessionAsync(finishedSessionId.Value, duration, PlaybackEndReason.Finished);
+                await _listening.FinalizeListenSessionAsync(finishedSessionId.Value, duration, PlaybackEndReason.Finished);
             }
             if (IsCurrentRequest(request)) await NextAsync();
         }, "PlaybackEnded transition", trackForDisposal: true);
@@ -80,7 +80,7 @@ public partial class MusicPlaybackService
                 var marked = false;
                 try
                 {
-                    marked = await _libraryWriter.MarkListenAsEligibleForScrobblingAsync(sessionId);
+                    marked = await _listening.MarkListenAsEligibleForScrobblingAsync(sessionId);
                     if (marked && !_isDisposed) ScrobbleEligibilityReached?.Invoke(song, sessionId, listenStartedUtc);
                 }
                 finally
