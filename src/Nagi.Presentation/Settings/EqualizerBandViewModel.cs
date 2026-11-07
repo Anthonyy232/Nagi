@@ -4,7 +4,7 @@ using Nagi.Core.Platform;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Settings;
 
 public partial class EqualizerBandViewModel : ObservableObject, IDisposable
 {

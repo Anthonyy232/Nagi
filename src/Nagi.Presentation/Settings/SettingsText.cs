@@ -1,7 +1,7 @@
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 
-namespace Nagi.Presentation.Helpers;
+namespace Nagi.Presentation.Settings;
 
 /// <summary>
 ///     The names settings choices are shown with.

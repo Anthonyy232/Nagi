@@ -1,10 +1,10 @@
 using System.ComponentModel;
 using Nagi.Presentation.Common;
 
-namespace Nagi.Presentation.Models;
+namespace Nagi.Presentation.Settings;
 
 /// <summary>
-///     An item of a <see cref="ViewModels.ReorderableToggleList{T}" />.
+///     An item of a <see cref="ReorderableToggleList{T}" />.
 /// </summary>
 public interface IToggleItem : INotifyPropertyChanged
 {

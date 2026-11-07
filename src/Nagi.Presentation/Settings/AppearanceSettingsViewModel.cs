@@ -8,15 +8,13 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Platform;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Common;
-using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Lists;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
-using Nagi.Presentation.Services;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Settings;
 
 /// <summary>
 ///     Settings section for how the app looks and is laid out: theme, accent color, backdrop, player

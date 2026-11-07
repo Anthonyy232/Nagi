@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Platform;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Settings;
 
 namespace Nagi.Presentation.Services;
 

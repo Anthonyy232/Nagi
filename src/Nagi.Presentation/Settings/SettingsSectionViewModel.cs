@@ -7,7 +7,7 @@ using Nagi.Core.Platform;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Common;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Settings;
 
 /// <summary>
 ///     Base for the settings page and its sections. Their setting properties read and write the settings store

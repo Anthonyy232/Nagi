@@ -14,7 +14,7 @@ using Nagi.Presentation.Common;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
-using Nagi.Presentation.Services;
+using Nagi.Presentation.Settings;
 
 namespace Nagi.Presentation.Lists;
 

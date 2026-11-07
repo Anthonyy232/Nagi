@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Nagi.Presentation.Resources;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Settings;
 
 public enum FFmpegSetupStatus
 {

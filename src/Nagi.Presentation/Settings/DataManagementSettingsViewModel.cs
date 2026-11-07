@@ -11,7 +11,7 @@ using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Settings;
 
 /// <summary>
 ///     Settings section for playlist import/export, backup and restore, and resetting the app.

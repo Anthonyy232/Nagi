@@ -9,7 +9,7 @@ using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Player;
 using Nagi.Presentation.Resources;
 
-namespace Nagi.Presentation.Services;
+namespace Nagi.Presentation.Settings;
 
 /// <summary>
 ///     The settings of the app's interface and windows.

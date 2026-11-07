@@ -10,7 +10,7 @@ using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using CoreStrings = Nagi.Core.Resources.Strings;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Settings;
 
 /// <summary>
 ///     Settings section for Last.fm and ListenBrainz accounts and their submission toggles.

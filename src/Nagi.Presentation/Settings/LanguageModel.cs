@@ -1,3 +1,3 @@
-﻿namespace Nagi.Presentation.Models;
+﻿namespace Nagi.Presentation.Settings;
 
 public record LanguageModel(string Code, string DisplayName);

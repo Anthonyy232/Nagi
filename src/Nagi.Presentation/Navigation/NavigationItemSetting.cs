@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Nagi.Presentation.Common;
-using Nagi.Presentation.Models;
+using Nagi.Presentation.Settings;
 
 namespace Nagi.Presentation.Navigation;
 

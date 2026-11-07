@@ -5,7 +5,7 @@
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
-    xmlns:viewmodels="using:Nagi.Presentation.ViewModels">
+    xmlns:settings="using:Nagi.Presentation.Settings">
 
     <!--
         Setting cards shown on both the settings page and onboarding. A page shows one with a ContentControl
@@ -22,7 +22,7 @@
         <Setter Property="AutomationProperties.AccessibilityView" Value="Raw" />
     </Style>
 
-    <DataTemplate x:Key="BackdropMaterialSettingCard" x:DataType="viewmodels:AppearanceSettingsViewModel">
+    <DataTemplate x:Key="BackdropMaterialSettingCard" x:DataType="settings:AppearanceSettingsViewModel">
         <controls:SettingsCard
             Header="{x:Bind resources:Strings.SettingsPage_WindowMaterial_Header}"
             Description="{x:Bind resources:Strings.SettingsPage_WindowMaterial_Description}">
@@ -38,7 +38,7 @@
         </controls:SettingsCard>
     </DataTemplate>
 
-    <DataTemplate x:Key="DynamicThemingSettingCard" x:DataType="viewmodels:AppearanceSettingsViewModel">
+    <DataTemplate x:Key="DynamicThemingSettingCard" x:DataType="settings:AppearanceSettingsViewModel">
         <controls:SettingsCard
             Header="{x:Bind resources:Strings.SettingsPage_DynamicTheming_Header}"
             Description="{x:Bind resources:Strings.SettingsPage_DynamicTheming_Description}">
@@ -52,7 +52,7 @@
         </controls:SettingsCard>
     </DataTemplate>
 
-    <DataTemplate x:Key="AutoLaunchSettingCard" x:DataType="viewmodels:SettingsViewModel">
+    <DataTemplate x:Key="AutoLaunchSettingCard" x:DataType="settings:SettingsViewModel">
         <controls:SettingsCard
             Header="{x:Bind resources:Strings.SettingsPage_AutoLaunch_Header}"
             Description="{x:Bind resources:Strings.SettingsPage_AutoLaunch_Description}">
@@ -67,7 +67,7 @@
         </controls:SettingsCard>
     </DataTemplate>
 
-    <DataTemplate x:Key="MinimizeToMiniPlayerSettingCard" x:DataType="viewmodels:SettingsViewModel">
+    <DataTemplate x:Key="MinimizeToMiniPlayerSettingCard" x:DataType="settings:SettingsViewModel">
         <controls:SettingsCard
             Header="{x:Bind resources:Strings.SettingsPage_MinimizeToMiniPlayer_Header}"
             Description="{x:Bind resources:Strings.SettingsPage_MinimizeToMiniPlayer_Description}">
@@ -81,7 +81,7 @@
         </controls:SettingsCard>
     </DataTemplate>
 
-    <DataTemplate x:Key="HideToTraySettingCard" x:DataType="viewmodels:SettingsViewModel">
+    <DataTemplate x:Key="HideToTraySettingCard" x:DataType="settings:SettingsViewModel">
         <controls:SettingsCard
             Header="{x:Bind resources:Strings.SettingsPage_HideToTray_Header}"
             Description="{x:Bind resources:Strings.SettingsPage_HideToTray_Description}">
@@ -95,7 +95,7 @@
         </controls:SettingsCard>
     </DataTemplate>
 
-    <DataTemplate x:Key="DiscordSettingCard" x:DataType="viewmodels:SettingsViewModel">
+    <DataTemplate x:Key="DiscordSettingCard" x:DataType="settings:SettingsViewModel">
         <controls:SettingsCard
             Header="{x:Bind resources:Strings.SettingsPage_Discord_Header}"
             Description="{x:Bind resources:Strings.SettingsPage_Discord_Description}">

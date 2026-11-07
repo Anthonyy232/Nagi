@@ -7,7 +7,7 @@ using Nagi.Presentation.Lists;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Player;
-using Nagi.Presentation.Services;
+using Nagi.Presentation.Settings;
 using Xunit;
 
 namespace Nagi.Presentation.Tests;

@@ -10,8 +10,9 @@ using Nagi.Core.Settings;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.ViewModels;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Settings;
 
 /// <summary>
 ///     Settings section for audio playback: volume normalization, exclusive mode, fades, the equalizer

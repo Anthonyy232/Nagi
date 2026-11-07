@@ -11,11 +11,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:localConverters="using:Nagi.WinUI.Converters"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:Nagi.Presentation.Models"
+    xmlns:settings="using:Nagi.Presentation.Settings"
     xmlns:player="using:Nagi.Presentation.Player"
     xmlns:lists="using:Nagi.Presentation.Lists"
     xmlns:resources="using:Nagi.Presentation.Resources"
-    xmlns:viewmodels="using:Nagi.Presentation.ViewModels"
     mc:Ignorable="d"
     Background="Transparent"
     NavigationCacheMode="Required">
@@ -32,7 +31,7 @@
         <localConverters:FloatToDecimalStringConverter x:Key="FloatToDecimalStringConverter" />
         <localConverters:DoubleToPercentageConverter x:Key="DoubleToPercentageConverter" />
 
-        <DataTemplate x:Key="ToggleItemTemplate" x:DataType="models:IToggleItem">
+        <DataTemplate x:Key="ToggleItemTemplate" x:DataType="settings:IToggleItem">
             <Grid Padding="12,8" VerticalAlignment="Center"
                   ToolTipService.ToolTip="{x:Bind Description}">
                 <Grid.ColumnDefinitions>
@@ -87,7 +86,7 @@
             <Setter Property="SelectionMode" Value="Single" />
         </Style>
 
-        <DataTemplate x:Key="RomanizationPackItemTemplate" x:DataType="viewmodels:RomanizationPackViewModel">
+        <DataTemplate x:Key="RomanizationPackItemTemplate" x:DataType="settings:RomanizationPackViewModel">
             <Border
                 Padding="16,12"
                 Background="{ThemeResource LayerFillColorDefaultBrush}"
@@ -324,7 +323,7 @@
                         ItemsSource="{x:Bind ViewModel.Appearance.AvailableLanguages}"
                         SelectedItem="{x:Bind ViewModel.Appearance.SelectedLanguage, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="models:LanguageModel">
+                            <DataTemplate x:DataType="settings:LanguageModel">
                                 <TextBlock Text="{x:Bind DisplayName}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
@@ -552,7 +551,7 @@
                                 <StackLayout Orientation="Horizontal" Spacing="8" />
                             </ItemsRepeater.Layout>
                             <ItemsRepeater.ItemTemplate>
-                                <DataTemplate x:DataType="viewmodels:EqualizerBandViewModel">
+                                <DataTemplate x:DataType="settings:EqualizerBandViewModel">
                                     <StackPanel Width="44" Spacing="6">
                                         <Grid Height="140">
                                             <!-- 0 dB center line -->

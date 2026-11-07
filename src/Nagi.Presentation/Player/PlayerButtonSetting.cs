@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Text.Json.Serialization;
 using Nagi.Presentation.Common;
-using Nagi.Presentation.Models;
+using Nagi.Presentation.Settings;
 
 namespace Nagi.Presentation.Player;
 

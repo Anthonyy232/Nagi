@@ -9,7 +9,7 @@ using Nagi.Presentation.Common;
 using Nagi.Presentation.Player;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
-using Nagi.Presentation.Services;
+using Nagi.Presentation.Settings;
 using NSubstitute;
 using Xunit;
 

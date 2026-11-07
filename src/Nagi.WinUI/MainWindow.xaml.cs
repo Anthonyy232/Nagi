@@ -8,7 +8,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Models;
-using Nagi.Presentation.Services;
+using Nagi.Presentation.Settings;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Pages;

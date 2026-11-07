@@ -15,7 +15,7 @@ using Nagi.Presentation.Playlists;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services.Implementations;
-using Nagi.Presentation.ViewModels;
+using Nagi.Presentation.Settings;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Dialogs;
 using Nagi.WinUI.Helpers;

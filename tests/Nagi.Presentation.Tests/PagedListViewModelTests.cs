@@ -4,7 +4,7 @@ using Nagi.Core.Library;
 using Nagi.Core.Platform;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Lists;
-using Nagi.Presentation.Services;
+using Nagi.Presentation.Settings;
 using NSubstitute;
 using Xunit;
 

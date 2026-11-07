@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using Windows.Globalization;
 using Nagi.WinUI.Services.Implementations;
-using Nagi.Presentation.Services;
+using Nagi.Presentation.Settings;
 
 namespace Nagi.WinUI.Helpers;
 

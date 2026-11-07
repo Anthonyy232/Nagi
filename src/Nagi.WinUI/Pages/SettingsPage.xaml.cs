@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Playback;
-using Nagi.Presentation.ViewModels;
+using Nagi.Presentation.Settings;
 
 namespace Nagi.WinUI.Pages;
 

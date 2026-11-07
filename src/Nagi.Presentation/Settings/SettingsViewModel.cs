@@ -6,9 +6,8 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Platform;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Player;
-using Nagi.Presentation.Services;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Settings;
 
 /// <summary>
 ///     ViewModel for the Settings page. Owns the player and startup behavior settings directly and

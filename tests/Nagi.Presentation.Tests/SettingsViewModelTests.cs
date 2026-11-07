@@ -16,7 +16,7 @@ using Nagi.Presentation.Models;
 using Nagi.Presentation.Player;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
-using Nagi.Presentation.Services;
+using Nagi.Presentation.Settings;
 using Nagi.Presentation.ViewModels;
 using NSubstitute;
 using Xunit;

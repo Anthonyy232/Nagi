@@ -4,8 +4,9 @@ using Nagi.Core.Library;
 using Nagi.Core.Playback;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Models;
-using Nagi.Presentation.Services;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services;
+using Nagi.Presentation.Settings;
 using NSubstitute;
 using Xunit;
 

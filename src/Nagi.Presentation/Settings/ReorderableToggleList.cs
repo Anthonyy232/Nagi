@@ -3,9 +3,8 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using Nagi.Core.Platform;
 using Nagi.Presentation.Common;
-using Nagi.Presentation.Models;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Settings;
 
 /// <summary>
 ///     A settings list the user reorders by dragging and switches items on and off in. Every change saves the whole

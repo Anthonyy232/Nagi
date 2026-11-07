@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:playback="using:Nagi.Core.Playback"
-    xmlns:models="using:Nagi.Presentation.Models"
+    xmlns:settings="using:Nagi.Presentation.Settings"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
     Background="Transparent">
@@ -283,7 +283,7 @@
                         SelectedItem="{x:Bind Settings.Appearance.SelectedLanguage, Mode=TwoWay}"
                         ToolTipService.ToolTip="{x:Bind resources:Strings.SettingsPage_Language_Header, Mode=OneTime}">
                         <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="models:LanguageModel">
+                            <DataTemplate x:DataType="settings:LanguageModel">
                                 <TextBlock Text="{x:Bind DisplayName}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>

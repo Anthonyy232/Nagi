@@ -11,8 +11,9 @@ using Nagi.Core.Platform;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.ViewModels;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Settings;
 
 /// <summary>
 ///     Settings section for how the library is read and enriched: title sorting, artist and genre
