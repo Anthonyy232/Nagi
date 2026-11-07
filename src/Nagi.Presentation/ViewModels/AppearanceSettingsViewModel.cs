@@ -234,21 +234,13 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         }
     }
 
-    /// <summary>
-    /// Resolves the best LanguageModel match for <paramref name="langCode"/> from AvailableLanguages.
-    /// Must be called on the UI thread (reads the ObservableCollection).
-    /// </summary>
+    // An exact match, else the same language in another region, else the system language.
     private LanguageModel ResolveSelectedLanguage(string langCode) =>
         AvailableLanguages.FirstOrDefault(l => string.Equals(l.Code, langCode, StringComparison.OrdinalIgnoreCase))
         ?? AvailableLanguages.FirstOrDefault(l => !string.IsNullOrEmpty(l.Code) && !string.IsNullOrEmpty(langCode) &&
                                                   (l.Code.StartsWith(langCode + "-", StringComparison.OrdinalIgnoreCase) || langCode.StartsWith(l.Code + "-", StringComparison.OrdinalIgnoreCase)))
         ?? AvailableLanguages.First(l => l.Code == string.Empty);
 
-    /// <summary>
-    /// Populates AvailableLanguages asynchronously by scanning for satellite resource assemblies.
-    /// Fires and forgets from Load — does not block startup.
-    /// Updates SelectedLanguage once the full list is available.
-    /// </summary>
     private async Task PopulateAvailableLanguagesAsync(string currentLangCode)
     {
         var initialSelection = SelectedLanguage;
