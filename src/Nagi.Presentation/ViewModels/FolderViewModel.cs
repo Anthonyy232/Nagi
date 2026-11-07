@@ -131,8 +131,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         var navParam = new FolderSongViewNavigationParameter
         {
             Title = folder.Name,
-            FolderId = folder.Id,
-            IsServer = folder.IsServer
+            FolderId = folder.Id
         };
         _navigationService.NavigateTo(navParam);
     }

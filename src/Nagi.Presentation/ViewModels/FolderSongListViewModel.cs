@@ -78,7 +78,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     public string EmptySubtitle =>
         IsServer ? Strings.FolderSongViewPage_ServerEmpty_Subtitle : Strings.FolderSongViewPage_Empty_Subtitle;
 
-    public async Task InitializeAsync(string title, Guid rootFolderId, string? directoryPath = null, bool isServer = false)
+    public async Task InitializeAsync(string title, Guid rootFolderId, string? directoryPath = null)
     {
         if (_isDisposed) return;
         ResetState();
@@ -89,12 +89,12 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             _rootFolderId = rootFolderId;
             _rootFolderPath = null;
             _currentDirectoryPath = directoryPath ?? string.Empty;
-            IsServer = isServer;
 
             var rootFolder = await _libraryReader.GetFolderByIdAsync(rootFolderId);
             if (!IsSongContextCurrent(generation)) return;
 
             _rootFolderPath = rootFolder?.Path;
+            IsServer = rootFolder?.MusicServer is not null;
             CurrentSortOrder = _settingsService.Get(AppSettings.FolderViewSortOrder);
 
             if (string.IsNullOrEmpty(_currentDirectoryPath))
@@ -518,6 +518,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         base.ResetState();
         FolderContents.Clear();
         Breadcrumbs.Clear();
+        IsServer = false;
         _currentParentFolderId = null;
         _totalFolderCount = 0;
         _logger.LogDebug("Cleaned up resources for folder {FolderId}", _rootFolderId);

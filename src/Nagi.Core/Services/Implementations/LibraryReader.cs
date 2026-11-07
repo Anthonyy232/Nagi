@@ -31,7 +31,8 @@ public partial class LibraryReader : ILibraryReader
     public async Task<Folder?> GetFolderByIdAsync(Guid folderId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        return await context.Folders.AsNoTracking().FirstOrDefaultAsync(f => f.Id == folderId).ConfigureAwait(false);
+        return await context.Folders.AsNoTracking().Include(f => f.MusicServer)
+            .FirstOrDefaultAsync(f => f.Id == folderId).ConfigureAwait(false);
     }
 
     public async Task<Folder?> GetFolderByPathAsync(string path)
@@ -206,6 +207,12 @@ public partial class LibraryReader : ILibraryReader
             .Include(p => p.ServerFolder)
             .OrderBy(p => p.Name).ThenBy(p => p.Id)
             .ToListAsync(token).ConfigureAwait(false);
+    }
+
+    public async Task<Playlist?> GetPlaylistByIdAsync(Guid playlistId)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await context.Playlists.AsNoTracking().FirstOrDefaultAsync(p => p.Id == playlistId).ConfigureAwait(false);
     }
 
     public async Task<IEnumerable<Song>> GetSongsInPlaylistOrderedAsync(Guid playlistId, CancellationToken token = default)

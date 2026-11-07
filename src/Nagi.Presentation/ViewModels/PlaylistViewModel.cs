@@ -188,8 +188,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             {
                 Title = playlist.Name,
                 PlaylistId = playlist.Id,
-                CoverImageUri = playlist.CoverImageUri,
-                IsFromServer = playlist.IsFromServer
+                CoverImageUri = playlist.CoverImageUri
             });
     }
 
