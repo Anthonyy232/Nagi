@@ -107,7 +107,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
                 PageTitle = smartPlaylist.Name;
                 CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(smartPlaylist.CoverImageUri, smartPlaylist.DateModified);
                 RuleSummary = BuildRuleSummary(smartPlaylist);
-                CurrentSortOrder = SortOrderHelper.MapToSongSortOrder(smartPlaylist.SortOrder);
+                CurrentSortOrder = smartPlaylist.SortOrder.ToSongSortOrder();
             }
             else
             {
@@ -166,7 +166,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
     protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
     {
         return _currentSmartPlaylistId.HasValue
-            ? _smartPlaylistService.SetSortOrderAsync(_currentSmartPlaylistId.Value, SortOrderHelper.MapToSmartPlaylistSortOrder(sortOrder))
+            ? _smartPlaylistService.SetSortOrderAsync(_currentSmartPlaylistId.Value, sortOrder.ToSmartPlaylistSortOrder())
             : Task.CompletedTask;
     }
 

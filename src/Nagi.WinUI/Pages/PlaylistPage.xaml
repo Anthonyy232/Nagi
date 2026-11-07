@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:Nagi.Presentation.ViewModels"
     xmlns:resources="using:Nagi.Presentation.Resources"
-    xmlns:helpers="using:Nagi.Core.Helpers"
+    xmlns:helpers="using:Nagi.Presentation.Helpers"
     xmlns:controls="using:ImageEx"
     x:Name="PlaylistPageRoot"
     Background="Transparent"

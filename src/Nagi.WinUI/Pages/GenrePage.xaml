@@ -8,7 +8,7 @@
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:Nagi.Core.Services.Data"
-    xmlns:helpers="using:Nagi.Core.Helpers"
+    xmlns:helpers="using:Nagi.Presentation.Helpers"
     x:Name="GenrePageRoot"
     Background="Transparent"
     mc:Ignorable="d">

@@ -1,19 +1,18 @@
 using FluentAssertions;
-using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
 using Xunit;
 
 namespace Nagi.Core.Tests;
 
-public class SortOrderHelperTests
+public class SmartPlaylistSortOrdersTests
 {
     [Fact]
     public void SmartPlaylistSortOrders_MapToEquivalentSongSortOrders()
     {
         foreach (var smartPlaylistSortOrder in Enum.GetValues<SmartPlaylistSortOrder>())
         {
-            var songSortOrder = SortOrderHelper.MapToSongSortOrder(smartPlaylistSortOrder);
+            var songSortOrder = smartPlaylistSortOrder.ToSongSortOrder();
 
             songSortOrder.ToString().Should().Be(smartPlaylistSortOrder.ToString());
         }
@@ -24,7 +23,7 @@ public class SortOrderHelperTests
     {
         foreach (var songSortOrder in Enum.GetValues<SongSortOrder>().Where(value => value != SongSortOrder.PlaylistOrder))
         {
-            var smartPlaylistSortOrder = SortOrderHelper.MapToSmartPlaylistSortOrder(songSortOrder);
+            var smartPlaylistSortOrder = songSortOrder.ToSmartPlaylistSortOrder();
 
             smartPlaylistSortOrder.ToString().Should().Be(songSortOrder.ToString());
         }
@@ -33,7 +32,7 @@ public class SortOrderHelperTests
     [Fact]
     public void PlaylistOrder_MapsToTitleAscendingFallback()
     {
-        SortOrderHelper.MapToSmartPlaylistSortOrder(SongSortOrder.PlaylistOrder)
+        SongSortOrder.PlaylistOrder.ToSmartPlaylistSortOrder()
             .Should().Be(SmartPlaylistSortOrder.TitleAsc);
     }
 }

@@ -22,7 +22,7 @@ public class SmartPlaylistQueryBuilder
             .Include(s => s.Genres)
             .AsSplitQuery();
 
-        return SongQuery.Sort(query, sortOrderOverride ?? SortOrderHelper.MapToSongSortOrder(smartPlaylist.SortOrder));
+        return SongQuery.Sort(query, sortOrderOverride ?? smartPlaylist.SortOrder.ToSongSortOrder());
     }
 
     /// <summary>
