@@ -1,6 +1,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
-using Nagi.Core.Services.Implementations;
+using Nagi.Core.Settings;
 using Nagi.Presentation.Services;
 using Nagi.Presentation.Services.Abstractions;
 using NSubstitute;

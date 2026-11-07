@@ -8,7 +8,6 @@ using Nagi.Core.Lyrics;
 using Nagi.Core.MusicServers;
 using Nagi.Core.OnlineProviders;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Implementations;
 using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;

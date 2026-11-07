@@ -1,7 +1,6 @@
 ﻿using Nagi.Core.Scrobbling;
-using Nagi.Core.Settings;
 
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.Settings;
 
 /// <summary>
 ///     Reads and writes the app's settings, and keeps the scrobbling accounts' credentials in the operating

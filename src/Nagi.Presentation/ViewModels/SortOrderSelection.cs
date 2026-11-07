@@ -6,7 +6,6 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Helpers;
 

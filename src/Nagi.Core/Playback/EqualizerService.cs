@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Settings;
 
 namespace Nagi.Core.Playback;

@@ -5,7 +5,6 @@ using Nagi.Core.Library;
 using Nagi.Core.Listening;
 using Nagi.Core.Playlists;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Implementations;
 using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;

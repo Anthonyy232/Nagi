@@ -12,6 +12,7 @@ using Nagi.Core.MusicServers;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Settings;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Navigation;

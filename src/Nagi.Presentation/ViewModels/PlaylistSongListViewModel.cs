@@ -11,6 +11,7 @@ using Nagi.Core.Listening;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Settings;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;

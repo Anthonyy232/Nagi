@@ -6,7 +6,6 @@ using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
-using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Services;

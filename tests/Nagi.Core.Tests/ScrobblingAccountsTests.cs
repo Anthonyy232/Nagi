@@ -1,7 +1,6 @@
 using FluentAssertions;
 using Nagi.Core.Scrobbling;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Implementations;
 using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;

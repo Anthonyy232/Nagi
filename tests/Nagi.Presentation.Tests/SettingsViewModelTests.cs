@@ -10,7 +10,6 @@ using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
 using Nagi.Core.Scrobbling;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Implementations;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Services.Abstractions;

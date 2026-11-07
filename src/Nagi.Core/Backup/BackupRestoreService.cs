@@ -4,7 +4,7 @@ using System.Text.Json;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
-using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Backup;
 

@@ -7,7 +7,6 @@ using Nagi.Core.Artwork;
 using Nagi.Core.Helpers;
 using Nagi.Core.Library;
 using Nagi.Core.Playback;
-using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Settings;
 
 namespace Nagi.Core.Presence;

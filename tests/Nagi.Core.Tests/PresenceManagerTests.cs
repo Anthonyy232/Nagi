@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
 using Nagi.Core.Playback;
 using Nagi.Core.Presence;
-using Nagi.Core.Services.Implementations;
 using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;

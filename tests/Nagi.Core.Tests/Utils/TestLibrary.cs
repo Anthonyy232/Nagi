@@ -11,6 +11,7 @@ using Nagi.Core.OnlineProviders.Pipelines;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Settings;
 using NSubstitute;
 
 namespace Nagi.Core.Tests.Utils;

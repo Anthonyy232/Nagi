@@ -10,7 +10,6 @@ using Nagi.Core.Lyrics;
 using Nagi.Core.Metadata;
 using Nagi.Core.Playback;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Implementations;
 using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;

@@ -6,6 +6,7 @@ using Nagi.Core.Lyrics;
 using Nagi.Core.Lyrics.Romanization;
 using Nagi.Core.Playback;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Settings;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;

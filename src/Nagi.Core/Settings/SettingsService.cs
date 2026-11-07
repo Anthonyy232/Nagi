@@ -2,9 +2,8 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Playback;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Settings;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Settings;
 
 public sealed class SettingsService : ISettingsService
 {

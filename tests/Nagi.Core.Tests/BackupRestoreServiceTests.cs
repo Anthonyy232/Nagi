@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Data.Sqlite;
 using Nagi.Core.Backup;
 using Nagi.Core.Helpers;
-using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Settings;
 using NSubstitute;
 using Xunit;
 

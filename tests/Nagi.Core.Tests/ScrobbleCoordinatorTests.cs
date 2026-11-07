@@ -4,7 +4,6 @@ using Microsoft.Extensions.Time.Testing;
 using Nagi.Core.Library;
 using Nagi.Core.Playback;
 using Nagi.Core.Scrobbling;
-using Nagi.Core.Services.Implementations;
 using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;

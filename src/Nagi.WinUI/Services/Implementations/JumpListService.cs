@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
-using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services;
