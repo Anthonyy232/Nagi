@@ -161,24 +161,28 @@ public partial class MusicPlaybackService
         var isEnabled = _settingsService.Get(CoreSettings.VolumeNormalization);
         if (!IsCurrentRequest(request) || version != _replayGainVersion) return;
 
-        if (isEnabled && !_transientTracks.ContainsKey(song.Id) &&
-            !song.ReplayGainTrackGain.HasValue && !song.ReplayGainCheckPerformed)
+        if (isEnabled && !ReferenceEquals(_trackGain?.Song, song))
         {
-            var refreshed = await _libraryReader.GetSongByIdAsync(song.Id);
-            if (!IsCurrentRequest(request) || version != _replayGainVersion) return;
-            song.ReplayGainCheckPerformed = true;
-            if (refreshed != null)
+            var trackGain = new TrackGain(song, song.ReplayGainTrackGain, song.ReplayGainTrackPeak);
+            // A ReplayGain scan can store the gain after the song was loaded.
+            if (!trackGain.GainDb.HasValue && !_transientTracks.ContainsKey(song.Id))
             {
-                song.ReplayGainTrackGain = refreshed.ReplayGainTrackGain;
-                song.ReplayGainTrackPeak = refreshed.ReplayGainTrackPeak;
+                var refreshed = await _libraryReader.GetSongByIdAsync(song.Id);
+                if (!IsCurrentRequest(request) || version != _replayGainVersion) return;
+                if (refreshed != null)
+                    trackGain = trackGain with { GainDb = refreshed.ReplayGainTrackGain, Peak = refreshed.ReplayGainTrackPeak };
             }
+            _trackGain = trackGain;
         }
 
-        var gain = isEnabled ? song.ReplayGainTrackGain.GetValueOrDefault() : 0;
-        if (isEnabled && song.ReplayGainTrackGain.HasValue && song.ReplayGainTrackPeak is > 0)
-            gain = Math.Min(gain, -20 * Math.Log10(song.ReplayGainTrackPeak.Value));
+        var gain = isEnabled ? _trackGain!.GainDb.GetValueOrDefault() : 0;
+        if (isEnabled && _trackGain!.GainDb.HasValue && _trackGain.Peak is > 0)
+            gain = Math.Min(gain, -20 * Math.Log10(_trackGain.Peak.Value));
         await _audioPlayer.SetReplayGainAsync(gain);
     }
+
+    // Kept per loaded song instance, so the library is asked at most once each time a song is played.
+    private sealed record TrackGain(Song Song, double? GainDb, double? Peak);
 
     private void OnSettingChanged(Setting setting)
     {

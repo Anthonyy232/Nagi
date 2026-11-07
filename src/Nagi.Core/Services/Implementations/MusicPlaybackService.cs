@@ -24,6 +24,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     private int _playbackRequestVersion;
     private int _queueVersion;
     private int _replayGainVersion;
+    private TrackGain? _trackGain;
     private bool _isDisposed;
     private bool _isInitialized;
     private Task? _initializationTask;
