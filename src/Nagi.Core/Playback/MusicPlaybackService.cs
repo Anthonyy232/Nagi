@@ -123,42 +123,41 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     {
         _logger.LogDebug("Initializing MusicPlaybackService...");
 
+        var savedState = await _playbackStateStore.LoadAsync();
+        if (_isDisposed) return;
+
         try
         {
-            var savedState = await _playbackStateStore.LoadAsync();
-            if (_isDisposed) return;
-
             await _audioPlayer.SetVolumeAsync(_settingsService.Get(CoreSettings.Volume));
             if (_isDisposed) return;
             await _audioPlayer.SetMuteAsync(_settingsService.Get(CoreSettings.IsMuted));
-            if (_isDisposed) return;
-            _queue.SetShuffled(_settingsService.Get(CoreSettings.IsShuffleEnabled));
-            CurrentRepeatMode = _settingsService.Get(CoreSettings.RepeatMode);
-
-            var restoredSuccessfully = false;
-            if (restoreLastSession && _settingsService.Get(CoreSettings.RestorePlaybackState) && savedState != null)
-                restoredSuccessfully = await RestoreInternalPlaybackStateAsync(savedState);
-
-            if (_isDisposed) return;
-            if (!restoredSuccessfully) ClearQueuesInternal();
-
-            _logger.LogDebug("MusicPlaybackService initialized successfully. Session restored: {IsRestored}",
-                restoredSuccessfully);
         }
         catch (Exception ex)
         {
-            if (_isDisposed) return;
-            _logger.LogError(ex, "MusicPlaybackService initialization failed. Using default settings.");
-            await _audioPlayer.SetVolumeAsync(CoreSettings.Volume.Default);
-            if (_isDisposed) return;
-            await _audioPlayer.SetMuteAsync(false);
-            if (_isDisposed) return;
-            _queue.SetShuffled(false);
-            CurrentRepeatMode = RepeatMode.Off;
-            ClearQueuesInternal();
+            _logger.LogError(ex, "The audio player failed to start, so nothing can play.");
         }
 
         if (_isDisposed) return;
+        _queue.SetShuffled(_settingsService.Get(CoreSettings.IsShuffleEnabled));
+        CurrentRepeatMode = _settingsService.Get(CoreSettings.RepeatMode);
+
+        var restoredSuccessfully = false;
+        if (restoreLastSession && _settingsService.Get(CoreSettings.RestorePlaybackState) && savedState != null)
+        {
+            try
+            {
+                restoredSuccessfully = await RestoreInternalPlaybackStateAsync(savedState);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not restore the last session.");
+            }
+        }
+
+        if (_isDisposed) return;
+        if (!restoredSuccessfully) ClearQueuesInternal();
+        _logger.LogDebug("MusicPlaybackService initialized. Session restored: {IsRestored}", restoredSuccessfully);
+
         _isInitialized = true;
         UpdateMediaControlsNavigation();
 

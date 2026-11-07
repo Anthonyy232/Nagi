@@ -509,23 +509,32 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task InitializeAsync_WhenSettingsServiceThrows_FallsBackToDefaultSettings()
+    public async Task InitializeAsync_WhenTheAudioPlayerFailsToStart_StillRestoresTheSession()
     {
-        var settings = Substitute.For<ISettingsService>();
-        settings.Get(CoreSettings.Volume).Throws(new InvalidOperationException("Config file corrupted"));
-        settings.Get(CoreSettings.IsMuted).Returns(true);
-        settings.Get(CoreSettings.IsShuffleEnabled).Returns(true);
-        settings.Get(CoreSettings.RepeatMode).Returns(RepeatMode.RepeatAll);
-        using var service = new MusicPlaybackService(settings, _playbackStateStore, _audioPlayer, _mediaControls,
-            _library.Reader, _smartPlaylists, _library.Listening, _metadataService, _fileSystem, _musicServers, _logger);
+        _audioPlayer.SetVolumeAsync(Arg.Any<double>()).ThrowsAsync(new InvalidOperationException("No audio output"));
+        _settingsService.Set(CoreSettings.RepeatMode, RepeatMode.RepeatAll);
+        _settingsService.Set(CoreSettings.RestorePlaybackState, true);
+        _playbackStateStore.LoadAsync().Returns(new PlaybackState { PlaybackQueueTrackIds = Ids(_testSongs).ToList() });
+        var tracker = new EventTracker(_service);
 
-        await service.InitializeAsync();
+        await _service.InitializeAsync();
 
-        await _audioPlayer.Received(1).SetVolumeAsync(0.5);
-        await _audioPlayer.Received(1).SetMuteAsync(false);
-        service.IsShuffleEnabled.Should().BeFalse();
-        service.CurrentRepeatMode.Should().Be(RepeatMode.Off);
-        service.PlayOrder.Should().BeEmpty();
+        _service.CurrentRepeatMode.Should().Be(RepeatMode.RepeatAll);
+        _service.PlayOrder.Should().Equal(Ids(_testSongs));
+        tracker.QueueChangedCount.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task InitializeAsync_WhenTheSessionCantBeRestored_StartsWithAnEmptyQueue()
+    {
+        _settingsService.Set(CoreSettings.RestorePlaybackState, true);
+        _playbackStateStore.LoadAsync().Returns(new PlaybackState { PlaybackQueueTrackIds = Ids(_testSongs).ToList() });
+        _library.Reader.GetSongsByIdsAsync(Arg.Any<IEnumerable<Guid>>()).ThrowsAsync(new IOException("Database locked"));
+
+        await _service.InitializeAsync();
+
+        _service.PlayOrder.Should().BeEmpty();
+        _service.CurrentTrack.Should().BeNull();
     }
 
     [Fact]
