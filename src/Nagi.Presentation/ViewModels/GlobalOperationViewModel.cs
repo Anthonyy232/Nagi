@@ -23,9 +23,27 @@ public partial class GlobalOperationViewModel : ObservableObject
     public partial bool IsCancellable { get; set; }
 
     /// <summary>
-    ///     Offers <paramref name="cancel" /> through <see cref="CancelCommand" />, or withdraws the offer when null.
+    ///     Shows an operation as running until the returned scope is disposed, offering <paramref name="cancel" />
+    ///     through <see cref="CancelCommand" /> meanwhile.
     /// </summary>
-    public void SetCancellation(Action? cancel)
+    public IDisposable Begin(string status, Action? cancel = null)
+    {
+        IsInProgress = true;
+        StatusMessage = status;
+        ProgressValue = 0;
+        IsIndeterminate = true;
+        SetCancellation(cancel);
+        return new Scope(this);
+    }
+
+    private void End()
+    {
+        SetCancellation(null);
+        IsInProgress = false;
+        IsIndeterminate = false;
+    }
+
+    private void SetCancellation(Action? cancel)
     {
         Interlocked.Exchange(ref _cancel, cancel);
         IsCancellable = cancel != null;
@@ -49,5 +67,12 @@ public partial class GlobalOperationViewModel : ObservableObject
         var cancel = Interlocked.Exchange(ref _cancel, null);
         IsCancellable = false;
         cancel?.Invoke();
+    }
+
+    private sealed class Scope(GlobalOperationViewModel operation) : IDisposable
+    {
+        private GlobalOperationViewModel? _operation = operation;
+
+        public void Dispose() => Interlocked.Exchange(ref _operation, null)?.End();
     }
 }

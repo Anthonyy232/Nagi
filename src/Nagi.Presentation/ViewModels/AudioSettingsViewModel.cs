@@ -385,30 +385,23 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         _replayGainScanCts = scanCts;
         var cancellationToken = scanCts.Token;
 
-        _globalOperation.IsInProgress = true;
-        _globalOperation.StatusMessage = Strings.Settings_Status_VolumeNorm_Preparing;
-        _globalOperation.IsIndeterminate = true;
-        _globalOperation.SetCancellation(scanCts.Cancel);
-
         string? error = null;
-        try
-        {
-            await _replayGainService.ScanLibraryAsync(_globalOperation.CreateProgress(cancellationToken), cancellationToken);
-        }
-        catch (OperationCanceledException) { }
-        catch (Exception ex)
-        {
-            error = ResourceFormatter.Format(Strings.Settings_Status_VolumeNorm_Error_Format, ex.Message);
-            _logger.LogError(ex, "Failed to scan library for ReplayGain");
-        }
-        finally
-        {
-            scanCts.Cancel();
-            _replayGainScanCts = null;
-            _globalOperation.SetCancellation(null);
-            _globalOperation.IsInProgress = false;
-            _globalOperation.IsIndeterminate = false;
-        }
+        using (_globalOperation.Begin(Strings.Settings_Status_VolumeNorm_Preparing, scanCts.Cancel))
+            try
+            {
+                await _replayGainService.ScanLibraryAsync(_globalOperation.CreateProgress(cancellationToken), cancellationToken);
+            }
+            catch (OperationCanceledException) { }
+            catch (Exception ex)
+            {
+                error = ResourceFormatter.Format(Strings.Settings_Status_VolumeNorm_Error_Format, ex.Message);
+                _logger.LogError(ex, "Failed to scan library for ReplayGain");
+            }
+            finally
+            {
+                scanCts.Cancel();
+                _replayGainScanCts = null;
+            }
 
         if (error != null && !_isDisposed) await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, error);
     }
