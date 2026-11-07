@@ -131,7 +131,7 @@ public partial class ArtistViewViewModel : DetailSongListViewModelBase<ArtistVie
     public void OpenAlbum(ArtistAlbumViewModelItem album) => _musicNavigationService.OpenAlbum(album.Id);
 
     [RelayCommand]
-    private Task PlayAlbumAsync(Guid albumId) => RunActionAsync(() => _playbackService.PlayAlbumAsync(albumId));
+    private Task PlayAlbumAsync(Guid albumId) => RunActionAsync(() => _playbackService.PlayScopeAsync(new SongScope.Album(albumId)));
 
     private void OnArtistImagesChanged(object? sender, IReadOnlyList<ArtistImageChange> changes)
     {

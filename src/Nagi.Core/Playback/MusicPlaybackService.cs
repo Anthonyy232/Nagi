@@ -317,33 +317,25 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         if (!request.IsCancellationRequested) UpdateMediaControlsTimeline(position);
     }
 
-    public Task PlayAlbumAsync(Guid albumId) => RunPlaybackRequest(async request =>
+    public Task PlayScopeAsync(SongScope scope, bool? startShuffled = null) => RunPlaybackRequest(async request =>
     {
-        var songIds = await _libraryReader.GetSongIdsAsync(new SongScope.Album(albumId), null, SongSortOrder.TrackNumberAsc);
+        var (sort, context) = PlaybackOf(scope);
+        var songIds = await _libraryReader.GetSongIdsAsync(scope, null, sort);
         if (!request.IsCancellationRequested)
-            await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Album, albumId), request);
+            await PlayInternalAsync(songIds, 0, startShuffled, context, request);
     });
 
-    public Task PlayArtistAsync(Guid artistId) => RunPlaybackRequest(async request =>
+    private static (SongSortOrder Sort, PlaybackContext Context) PlaybackOf(SongScope scope) => scope switch
     {
-        var songIds = await _libraryReader.GetSongIdsAsync(new SongScope.Artist(artistId), null, SongSortOrder.TitleAsc);
-        if (!request.IsCancellationRequested)
-            await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Artist, artistId), request);
-    });
-
-    public Task PlayFolderAsync(Guid folderId) => RunPlaybackRequest(async request =>
-    {
-        var songIds = await _libraryReader.GetSongIdsAsync(new SongScope.Folder(folderId), null, SongSortOrder.TitleAsc);
-        if (!request.IsCancellationRequested)
-            await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Folder, folderId), request);
-    });
-
-    public Task PlayPlaylistAsync(Guid playlistId) => RunPlaybackRequest(async request =>
-    {
-        var songIds = await _libraryReader.GetSongIdsAsync(new SongScope.Playlist(playlistId), null, SongSortOrder.PlaylistOrder);
-        if (!request.IsCancellationRequested)
-            await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Playlist, playlistId), request);
-    });
+        SongScope.Album album => (SongSortOrder.TrackNumberAsc, new(PlaybackContextType.Album, album.AlbumId)),
+        SongScope.Artist artist => (SongSortOrder.TitleAsc, new(PlaybackContextType.Artist, artist.ArtistId)),
+        SongScope.Genre genre => (SongSortOrder.TitleAsc, new(PlaybackContextType.Genre, genre.GenreId)),
+        SongScope.Playlist playlist => (SongSortOrder.PlaylistOrder, new(PlaybackContextType.Playlist, playlist.PlaylistId)),
+        SongScope.Folder folder => (SongSortOrder.TitleAsc, new(PlaybackContextType.Folder, folder.RootFolderId)),
+        SongScope.Directory directory => (SongSortOrder.TitleAsc, new(PlaybackContextType.Folder, directory.RootFolderId)),
+        SongScope.DirectoryTree tree => (SongSortOrder.TitleAsc, new(PlaybackContextType.Folder, tree.RootFolderId)),
+        _ => (SongSortOrder.TitleAsc, new(PlaybackContextType.Library, null))
+    };
 
     public async Task<bool> PlaySmartPlaylistAsync(Guid smartPlaylistId)
     {
@@ -357,20 +349,6 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         });
         return played;
     }
-
-    public Task PlayGenreAsync(Guid genreId) => RunPlaybackRequest(async request =>
-    {
-        var songIds = await _libraryReader.GetSongIdsAsync(new SongScope.Genre(genreId), null, SongSortOrder.TitleAsc);
-        if (!request.IsCancellationRequested)
-            await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Genre, genreId), request);
-    });
-
-    public Task ShuffleLibraryAsync() => RunPlaybackRequest(async request =>
-    {
-        var songIds = await _libraryReader.GetSongIdsAsync(SongScope.Library, null, SongSortOrder.TitleAsc);
-        if (!request.IsCancellationRequested)
-            await PlayInternalAsync(songIds, 0, true, new PlaybackContext(PlaybackContextType.Library, null), request);
-    });
 
     public Task SetVolumeAsync(double volume) => _audioPlayer.SetVolumeAsync(volume);
 

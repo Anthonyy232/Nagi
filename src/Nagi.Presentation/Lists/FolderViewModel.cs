@@ -108,7 +108,7 @@ public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderVie
     private async Task PlayFolderAsync(Guid folderId)
     {
         if (IsAnyOperationInProgress || folderId == Guid.Empty) return;
-        await UserAction.RunAsync(() => _musicPlaybackService.PlayFolderAsync(folderId), _logger, _uiService,
+        await UserAction.RunAsync(() => _musicPlaybackService.PlayScopeAsync(new SongScope.Folder(folderId)), _logger, _uiService,
             failureMessage: Strings.Folders_Error_Playback);
     }
 
@@ -119,7 +119,7 @@ public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderVie
         await UserAction.RunAsync(async () =>
         {
             if (await _libraryReader.GetRandomFolderIdAsync() is { } folderId)
-                await _musicPlaybackService.PlayFolderAsync(folderId);
+                await _musicPlaybackService.PlayScopeAsync(new SongScope.Folder(folderId));
             else
                 await _uiService.ShowMessageDialogAsync(Strings.FolderPage_Title, Strings.Folders_Empty_NoMusicFound);
         }, _logger, _uiService, failureMessage: Strings.Folders_Error_RandomPlayback);

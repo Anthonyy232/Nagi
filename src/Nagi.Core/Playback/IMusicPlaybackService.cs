@@ -147,20 +147,15 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
 
     Task SeekAsync(TimeSpan position);
 
-    Task PlayAlbumAsync(Guid albumId);
-
-    Task PlayArtistAsync(Guid artistId);
-
-    Task PlayFolderAsync(Guid folderId);
-
-    Task PlayPlaylistAsync(Guid playlistId);
+    /// <summary>
+    ///     Plays the songs in a scope, replacing the queue: an album in track order, a playlist in its own order and
+    ///     anything else by title. The scope is also the listens' context.
+    /// </summary>
+    /// <param name="startShuffled">As for <see cref="PlayAsync(IEnumerable{Guid}, int, bool?, PlaybackContext?)" />.</param>
+    Task PlayScopeAsync(SongScope scope, bool? startShuffled = null);
 
     /// <returns>False when the smart playlist matches no songs, so nothing plays.</returns>
     Task<bool> PlaySmartPlaylistAsync(Guid smartPlaylistId);
-
-    Task PlayGenreAsync(Guid genreId);
-
-    Task ShuffleLibraryAsync();
 
     /// <summary>
     ///     Replaces the queue with a single audio file and plays it. A file in the library plays as that library song.

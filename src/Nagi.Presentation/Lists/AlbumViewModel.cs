@@ -104,7 +104,7 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
     private async Task PlayAlbumAsync(Guid albumId)
     {
         if (IsLoading || albumId == Guid.Empty) return;
-        await UserAction.RunAsync(() => _musicPlaybackService.PlayAlbumAsync(albumId), _logger, _uiService);
+        await UserAction.RunAsync(() => _musicPlaybackService.PlayScopeAsync(new SongScope.Album(albumId)), _logger, _uiService);
     }
 
     [RelayCommand]
@@ -113,7 +113,7 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
         if (IsLoading) return;
         await UserAction.RunAsync(async () =>
         {
-            if (await _libraryReader.GetRandomAlbumIdAsync() is { } id) await _musicPlaybackService.PlayAlbumAsync(id);
+            if (await _libraryReader.GetRandomAlbumIdAsync() is { } id) await _musicPlaybackService.PlayScopeAsync(new SongScope.Album(id));
         }, _logger, _uiService);
     }
 

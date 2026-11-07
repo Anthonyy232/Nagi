@@ -186,7 +186,7 @@ public partial class PlaylistViewModel : ClientFilteredListViewModelBase<Playlis
         await RunAsync(async () =>
         {
             if (!isSmart)
-                await _musicPlaybackService.PlayPlaylistAsync(playlistId);
+                await _musicPlaybackService.PlayScopeAsync(new SongScope.Playlist(playlistId));
             else if (!await _musicPlaybackService.PlaySmartPlaylistAsync(playlistId))
                 await ShowMessageAsync(Strings.PlaylistPage_Title, Strings.Playlist_Status_SmartEmpty);
         }, Strings.Playlist_Status_ErrorPlayback);
@@ -212,7 +212,7 @@ public partial class PlaylistViewModel : ClientFilteredListViewModelBase<Playlis
             {
                 if (await _libraryReader.GetRandomPlaylistIdAsync() is { } id)
                 {
-                    await _musicPlaybackService.PlayPlaylistAsync(id);
+                    await _musicPlaybackService.PlayScopeAsync(new SongScope.Playlist(id));
                     return;
                 }
             }

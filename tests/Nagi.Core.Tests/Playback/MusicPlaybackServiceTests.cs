@@ -874,19 +874,19 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         {
             case PlaybackContextType.Album:
                 _library.Reader.GetSongIdsAsync(new SongScope.Album(id), null, Arg.Any<SongSortOrder>()).Returns(songIds);
-                await _service.PlayAlbumAsync(id);
+                await _service.PlayScopeAsync(new SongScope.Album(id));
                 break;
             case PlaybackContextType.Artist:
                 _library.Reader.GetSongIdsAsync(new SongScope.Artist(id), null, Arg.Any<SongSortOrder>()).Returns(songIds);
-                await _service.PlayArtistAsync(id);
+                await _service.PlayScopeAsync(new SongScope.Artist(id));
                 break;
             case PlaybackContextType.Folder:
                 _library.Reader.GetSongIdsAsync(new SongScope.Folder(id), null, Arg.Any<SongSortOrder>()).Returns(songIds);
-                await _service.PlayFolderAsync(id);
+                await _service.PlayScopeAsync(new SongScope.Folder(id));
                 break;
             case PlaybackContextType.Genre:
                 _library.Reader.GetSongIdsAsync(new SongScope.Genre(id), null, Arg.Any<SongSortOrder>()).Returns(songIds);
-                await _service.PlayGenreAsync(id);
+                await _service.PlayScopeAsync(new SongScope.Genre(id));
                 break;
             case PlaybackContextType.SmartPlaylist:
                 _smartPlaylists.GetMatchingSongIdsAsync(id, token: Arg.Any<CancellationToken>()).Returns(songIds);
@@ -894,7 +894,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
                 break;
             default:
                 _library.Reader.GetSongIdsAsync(new SongScope.Playlist(id), null, Arg.Any<SongSortOrder>()).Returns(songIds);
-                await _service.PlayPlaylistAsync(id);
+                await _service.PlayScopeAsync(new SongScope.Playlist(id));
                 break;
         }
 
@@ -1568,7 +1568,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         var release = new TaskCompletionSource<List<Guid>>(TaskCreationOptions.RunContinuationsAsynchronously);
         var albumId = Guid.NewGuid();
         _library.Reader.GetSongIdsAsync(new SongScope.Album(albumId), null, SongSortOrder.TrackNumberAsc).Returns(release.Task);
-        var oldRequest = _service.PlayAlbumAsync(albumId);
+        var oldRequest = _service.PlayScopeAsync(new SongScope.Album(albumId));
 
         await _service.PlayAsync(_testSongs[1].Id);
         release.SetResult([_testSongs[0].Id]);
