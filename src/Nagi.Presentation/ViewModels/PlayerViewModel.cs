@@ -100,7 +100,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     [ObservableProperty] public partial string ArtistName { get; set; }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsArtworkAvailable))]
+    [NotifyPropertyChangedFor(nameof(IsArtworkAvailable), nameof(IsTrayCoverArtVisible))]
     public partial string? AlbumArtUri { get; set; }
 
     [ObservableProperty]
@@ -157,6 +157,13 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     public ObservableRangeCollection<PlayerButtonSetting> SecondaryControlsButtons { get; } = new();
 
     public bool IsArtworkAvailable => !string.IsNullOrWhiteSpace(AlbumArtUri);
+
+    /// <summary>
+    ///     Whether the tray flyout shows the track's cover art behind its controls.
+    /// </summary>
+    public bool IsTrayCoverArtVisible =>
+        IsArtworkAvailable && _settingsService.Get(AppSettings.ShowCoverArtInTrayFlyout);
+
     public AppIcon PlayPauseIcon => IsPlaying ? AppIcon.Pause : AppIcon.Play;
     public string PlayPauseButtonToolTip => IsOpening ? Strings.Status_Loading
         : IsPlaying ? Strings.Tooltip_Pause
@@ -767,6 +774,8 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         if (setting == AppSettings.PlayerButtons) RunOnUIThread(LoadPlayerButtonSettings);
         else if (setting == AppSettings.QueueDisplay)
             RunOnUIThread(() => QueueDisplaySettings = _settingsService.Get(AppSettings.QueueDisplay));
+        else if (setting == AppSettings.ShowCoverArtInTrayFlyout)
+            RunOnUIThread(() => OnPropertyChanged(nameof(IsTrayCoverArtVisible)));
     }
 
     partial void OnQueueDisplaySettingsChanging(QueueDisplaySettings value) =>

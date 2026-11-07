@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using Windows.Foundation;
+﻿using Windows.Foundation;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
@@ -7,37 +6,27 @@ using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
 using WinRT.Interop;
-using Nagi.Core.Settings;
-using Nagi.Presentation.Services;
-using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.WinUI.Popups;
 
 public sealed partial class TrayPopup : Window
 {
     private readonly IThemeService _themeService;
-    private readonly ISettingsService _settingsService;
-    private bool _isClosed;
 
-    public TrayPopup(PlayerViewModel viewModel, IThemeService themeService, ISettingsService settingsService)
+    public TrayPopup(PlayerViewModel viewModel, IThemeService themeService)
     {
-        InitializeComponent();
-
         ViewModel = viewModel;
         _themeService = themeService;
-        _settingsService = settingsService;
+        InitializeComponent();
 
         ApplyTheme();
         OuterBorder.DataContext = ViewModel;
         PlayerInputHelper.AttachSeekSlider(MediaSeekerSlider, ViewModel);
 
         ConfigureWindowAppearance();
-        UpdateCoverArtVisibility();
 
         Activated += OnActivated;
         Closed += OnClosed;
-        ViewModel.PropertyChanged += OnViewModelPropertyChanged;
-        _settingsService.SettingChanged += OnSettingChanged;
         _themeService.ActualThemeChanged += ApplyTheme;
     }
 
@@ -79,14 +68,6 @@ public sealed partial class TrayPopup : Window
         return OuterBorder.DesiredSize.Height;
     }
 
-    private void UpdateCoverArtVisibility()
-    {
-        var shouldBeVisible = _settingsService.Get(AppSettings.ShowCoverArtInTrayFlyout) && !string.IsNullOrEmpty(ViewModel.AlbumArtUri);
-        CoverArtBackground.Visibility = shouldBeVisible ? Visibility.Visible : Visibility.Collapsed;
-
-        CoverArtBrush.Source = BitmapImageFactory.Create(ViewModel.AlbumArtUri)!;
-    }
-
     private void ConfigureWindowAppearance()
     {
         var presenter = OverlappedPresenter.CreateForDialog();
@@ -120,30 +101,7 @@ public sealed partial class TrayPopup : Window
         }
     }
 
-    private void OnSettingChanged(Setting setting)
-    {
-        if (setting != AppSettings.ShowCoverArtInTrayFlyout) return;
-        DispatcherQueue.TryEnqueue(() =>
-        {
-            if (!_isClosed) UpdateCoverArtVisibility();
-        });
-    }
-
-    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(PlayerViewModel.AlbumArtUri))
-        {
-            UpdateCoverArtVisibility();
-        }
-    }
-
-    private void OnClosed(object sender, WindowEventArgs args)
-    {
-        _isClosed = true;
-        ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
-        _settingsService.SettingChanged -= OnSettingChanged;
-        _themeService.ActualThemeChanged -= ApplyTheme;
-    }
+    private void OnClosed(object sender, WindowEventArgs args) => _themeService.ActualThemeChanged -= ApplyTheme;
 
     private void VolumeButton_PointerWheelChanged(object sender, PointerRoutedEventArgs e) =>
         PlayerInputHelper.StepVolumeWithWheel(sender, e, ViewModel);
