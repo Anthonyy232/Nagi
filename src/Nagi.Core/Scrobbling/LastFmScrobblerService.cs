@@ -90,18 +90,8 @@ public class LastFmScrobblerService : IListenSubmitter
             {
                 if (cancellationToken.IsCancellationRequested) break;
 
-                SubmissionOutcome outcome;
-                try
-                {
-                    outcome = await ScrobbleAsync(entry.Song, entry.ListenTimestampUtc, credentials, cancellationToken)
-                        .ConfigureAwait(false);
-                }
-                catch (Exception ex) when (ex is not OperationCanceledException)
-                {
-                    _logger.LogWarning(ex, "Last.fm queue submission raised. Will retry later. Song '{Title}'.", entry.Song.Title);
-                    break;
-                }
-
+                var outcome = await ScrobbleAsync(entry.Song, entry.ListenTimestampUtc, credentials, cancellationToken)
+                    .ConfigureAwait(false);
                 if (outcome == SubmissionOutcome.TransientFailure)
                 {
                     _logger.LogDebug("Last.fm transient failure for '{Title}'. Stopping to preserve order.", entry.Song.Title);

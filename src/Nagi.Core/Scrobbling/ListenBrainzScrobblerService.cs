@@ -110,17 +110,7 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        SubmissionOutcome outcome;
-        try
-        {
-            outcome = await SubmitBatchAsync(entries, cancellationToken).ConfigureAwait(false);
-        }
-        catch (Exception ex) when (ex is not OperationCanceledException)
-        {
-            _logger.LogWarning(ex, "ListenBrainz submission failed; retaining {Count} listens for retry.", entries.Count);
-            return false;
-        }
-
+        var outcome = await SubmitBatchAsync(entries, cancellationToken).ConfigureAwait(false);
         if (outcome == SubmissionOutcome.TransientFailure) return false;
         if (outcome == SubmissionOutcome.PermanentFailure && entries.Count > 1)
         {

@@ -13,7 +13,6 @@ namespace Nagi.Core.Scrobbling;
 public sealed class ScrobbleCoordinator : IDisposable
 {
     private static readonly TimeSpan RetryInterval = TimeSpan.FromMinutes(15);
-    private const int MaxRetryDoublings = 4;
 
     private readonly IMusicPlaybackService _playback;
     private readonly IReadOnlyList<IListenSubmitter> _submitters;
@@ -63,14 +62,12 @@ public sealed class ScrobbleCoordinator : IDisposable
     /// <summary>
     ///     Sends every destination its pending listens. One destination failing doesn't keep the others from theirs.
     /// </summary>
-    /// <returns>False if a destination failed.</returns>
-    public async Task<bool> SubmitPendingAsync(CancellationToken cancellationToken = default)
+    public async Task SubmitPendingAsync(CancellationToken cancellationToken = default)
     {
-        if (_shutdownCts.IsCancellationRequested) return true;
+        if (_shutdownCts.IsCancellationRequested) return;
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _shutdownCts.Token);
         var token = linkedCts.Token;
 
-        var succeeded = true;
         foreach (var submitter in _submitters)
         {
             if (token.IsCancellationRequested) break;
@@ -81,26 +78,17 @@ public sealed class ScrobbleCoordinator : IDisposable
             catch (Exception ex) when (ex is not OperationCanceledException || !token.IsCancellationRequested)
             {
                 _logger.LogWarning(ex, "Couldn't send pending listens to {Destination}.", submitter.Name);
-                succeeded = false;
             }
         }
-
-        return succeeded;
     }
 
     private async Task RetryPeriodicallyAsync(CancellationToken cancellationToken)
     {
         using var timer = new PeriodicTimer(RetryInterval, _timeProvider);
-        var failures = 0;
         try
         {
             while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))
-            {
-                failures = await SubmitPendingAsync(cancellationToken).ConfigureAwait(false) ? 0 : failures + 1;
-                // A destination that keeps failing is asked less often, up to every four hours.
-                var period = RetryInterval * Math.Pow(2, Math.Min(failures, MaxRetryDoublings));
-                if (timer.Period != period) timer.Period = period;
-            }
+                await SubmitPendingAsync(cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {

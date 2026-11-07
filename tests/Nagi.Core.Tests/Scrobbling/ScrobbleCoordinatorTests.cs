@@ -23,18 +23,17 @@ public sealed class ScrobbleCoordinatorTests : IDisposable
         foreach (var coordinator in _coordinators) coordinator.Dispose();
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task SubmitPendingAsync_OneDestinationFailing_DoesNotBlockTheOthers(bool timeout)
+    [Fact]
+    public async Task SubmitPendingAsync_OneDestinationFailing_DoesNotBlockTheOthers()
     {
+        // Network failures are handled inside each destination; what escapes is unexpected, such as a database error.
         var failing = Substitute.For<IListenSubmitter>();
         failing.SubmitPendingAsync(Arg.Any<CancellationToken>())
-            .Returns(Task.FromException(timeout ? new TaskCanceledException("Request timed out") : new HttpRequestException("boom")));
+            .Returns(Task.FromException(new InvalidOperationException("database unavailable")));
         var healthy = Substitute.For<IListenSubmitter>();
         var coordinator = Create(failing, healthy);
 
-        (await coordinator.SubmitPendingAsync()).Should().BeFalse();
+        await coordinator.SubmitPendingAsync();
 
         await healthy.Received(1).SubmitPendingAsync(Arg.Any<CancellationToken>());
     }
