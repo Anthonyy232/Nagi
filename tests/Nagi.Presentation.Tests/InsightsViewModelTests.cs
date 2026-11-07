@@ -41,24 +41,24 @@ public class InsightsViewModelTests
                 Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
                 .Returns(new StatisticsPage<GenreStats>(genres, 1));
             var viewModel = CreateViewModel(statistics);
-            viewModel.ArtistsSortMetric = SortMetric.PlayCount;
+            viewModel.Artists.SetMetricCommand.Execute("PlayCount");
 
             await viewModel.LoadInsightsAsync();
 
             viewModel.HasData.Should().BeTrue();
-            viewModel.TopSongs.Should().ContainSingle().Which.StatText.Should().Be(expected);
-            viewModel.TopArtists.Should().ContainSingle().Which.StatText.Should().Be(expected);
-            viewModel.TopAlbums.Should().ContainSingle().Which.StatText.Should().Be(expected);
-            viewModel.TopGenres.Should().ContainSingle().Which.StatText.Should().Be(expected);
+            viewModel.Songs.TopItems.Should().ContainSingle().Which.StatText.Should().Be(expected);
+            viewModel.Artists.TopItems.Should().ContainSingle().Which.StatText.Should().Be(expected);
+            viewModel.Albums.TopItems.Should().ContainSingle().Which.StatText.Should().Be(expected);
+            viewModel.Genres.TopItems.Should().ContainSingle().Which.StatText.Should().Be(expected);
 
-            await viewModel.OpenSeeAllSongsCommand.ExecuteAsync(null);
-            viewModel.SeeAllSongs.Should().ContainSingle().Which.StatText.Should().Be(expected);
-            await viewModel.OpenSeeAllArtistsCommand.ExecuteAsync(null);
-            viewModel.SeeAllArtists.Should().ContainSingle().Which.StatText.Should().Be(expected);
-            await viewModel.OpenSeeAllAlbumsCommand.ExecuteAsync(null);
-            viewModel.SeeAllAlbums.Should().ContainSingle().Which.StatText.Should().Be(expected);
-            await viewModel.OpenSeeAllGenresCommand.ExecuteAsync(null);
-            viewModel.SeeAllGenres.Should().ContainSingle().Which.StatText.Should().Be(expected);
+            await viewModel.Songs.OpenSeeAllCommand.ExecuteAsync(null);
+            viewModel.SeeAllItems.Should().ContainSingle().Which.StatText.Should().Be(expected);
+            await viewModel.Artists.OpenSeeAllCommand.ExecuteAsync(null);
+            viewModel.SeeAllItems.Should().ContainSingle().Which.StatText.Should().Be(expected);
+            await viewModel.Albums.OpenSeeAllCommand.ExecuteAsync(null);
+            viewModel.SeeAllItems.Should().ContainSingle().Which.StatText.Should().Be(expected);
+            await viewModel.Genres.OpenSeeAllCommand.ExecuteAsync(null);
+            viewModel.SeeAllItems.Should().ContainSingle().Which.StatText.Should().Be(expected);
         }
         finally
         {
@@ -124,15 +124,15 @@ public class InsightsViewModelTests
             Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>()).Returns(artists.Task);
         var viewModel = CreateViewModel(statistics);
 
-        var oldLoad = viewModel.OpenSeeAllSongsCommand.ExecuteAsync(null);
-        var currentLoad = viewModel.OpenSeeAllArtistsCommand.ExecuteAsync(null);
+        var oldLoad = viewModel.Songs.OpenSeeAllCommand.ExecuteAsync(null);
+        var currentLoad = viewModel.Artists.OpenSeeAllCommand.ExecuteAsync(null);
         try
         {
             if (oldRequestFails) songs.SetException(new IOException("Old request failed"));
             else songs.SetResult(new StatisticsPage<SongStats>(Array.Empty<SongStats>(), 200));
             await oldLoad;
 
-            viewModel.CurrentSeeAllCategory.Should().Be(SeeAllCategory.Artists);
+            viewModel.SeeAllCategory.Should().BeSameAs(viewModel.Artists);
             viewModel.IsSeeAllLoading.Should().BeTrue();
             viewModel.SeeAllTotalPages.Should().Be(1);
         }
@@ -153,7 +153,7 @@ public class InsightsViewModelTests
             Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>()).Returns(response.Task);
         var viewModel = CreateViewModel(statistics);
 
-        var load = viewModel.OpenSeeAllSongsCommand.ExecuteAsync(null);
+        var load = viewModel.Songs.OpenSeeAllCommand.ExecuteAsync(null);
         await viewModel.CloseSeeAllCommand.ExecuteAsync(null);
         response.SetResult(new StatisticsPage<SongStats>(
             new[] { new SongStats(new Song { Title = "Stale song" }, 1, TimeSpan.Zero, 1) }, 200));
@@ -162,7 +162,7 @@ public class InsightsViewModelTests
         viewModel.IsSeeAllOpen.Should().BeFalse();
         viewModel.IsSeeAllLoading.Should().BeFalse();
         viewModel.SeeAllTotalPages.Should().Be(1);
-        viewModel.SeeAllSongs.Should().BeEmpty();
+        viewModel.SeeAllItems.Should().BeEmpty();
     }
 
     [Fact]
@@ -178,12 +178,12 @@ public class InsightsViewModelTests
             Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromException<StatisticsPage<SongStats>>(new IOException("Page unavailable")));
         var viewModel = CreateViewModel(statistics);
-        await viewModel.OpenSeeAllSongsCommand.ExecuteAsync(null);
+        await viewModel.Songs.OpenSeeAllCommand.ExecuteAsync(null);
 
         await viewModel.SeeAllNextPageCommand.ExecuteAsync(null);
 
         viewModel.SeeAllCurrentPage.Should().Be(1);
-        viewModel.SeeAllSongs.Should().ContainSingle().Which.Title.Should().Be("First page");
+        viewModel.SeeAllItems.Should().ContainSingle().Which.Should().BeOfType<TopSongItem>().Which.Title.Should().Be("First page");
         viewModel.IsSeeAllLoading.Should().BeFalse();
 
         statistics.GetTopSongsAsync(Arg.Any<TimeRange>(), Arg.Any<SortMetric>(), Arg.Is<int>(offset => offset > 0),
@@ -191,11 +191,30 @@ public class InsightsViewModelTests
             .Returns(new StatisticsPage<SongStats>(new[] { second }, 50));
         await viewModel.SeeAllNextPageCommand.ExecuteAsync(null);
         viewModel.SeeAllCurrentPage.Should().Be(2);
-        viewModel.SeeAllSongs.Should().ContainSingle().Which.Title.Should().Be("Second page");
+        viewModel.SeeAllItems.Should().ContainSingle().Which.Should().BeOfType<TopSongItem>().Which.Title.Should().Be("Second page");
 
         await viewModel.SeeAllPreviousPageCommand.ExecuteAsync(null);
         viewModel.SeeAllCurrentPage.Should().Be(1);
-        viewModel.SeeAllSongs.Should().ContainSingle().Which.Title.Should().Be("First page");
+        viewModel.SeeAllItems.Should().ContainSingle().Which.Should().BeOfType<TopSongItem>().Which.Title.Should().Be("First page");
+    }
+
+    [Fact]
+    public async Task ChangingTheOpenCategorysMetric_ReloadsOverlayAndCard()
+    {
+        var statistics = Substitute.For<IStatisticsService>();
+        StubRankings(statistics, playedSongs: 0);
+        var viewModel = CreateViewModel(statistics);
+        await viewModel.Albums.OpenSeeAllCommand.ExecuteAsync(null);
+        statistics.ClearReceivedCalls();
+
+        viewModel.Albums.SetMetricCommand.Execute("Duration");
+
+        viewModel.Albums.IsByDuration.Should().BeTrue();
+        await statistics.Received(1).GetTopAlbumsAsync(Arg.Any<TimeRange>(), SortMetric.Duration, 0, 25,
+            Arg.Any<string?>(), Arg.Any<CancellationToken>());
+        await statistics.Received(1).GetTopAlbumsAsync(Arg.Any<TimeRange>(), SortMetric.Duration, 0, 10,
+            Arg.Any<string?>(), Arg.Any<CancellationToken>());
+        viewModel.SeeAllCategory.Should().BeSameAs(viewModel.Albums);
     }
 
     private static void StubRankings(IStatisticsService statistics, int playedSongs)

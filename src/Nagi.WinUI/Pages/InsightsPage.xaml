@@ -10,6 +10,64 @@
     Background="Transparent"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <DataTemplate x:Key="InsightsCategoryCardTemplate" x:DataType="vm:InsightsCategoryViewModel">
+            <Grid Style="{StaticResource InsightsCardStyle}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Text="{x:Bind Title}"
+                               Style="{StaticResource InsightsCardHeaderStyle}"
+                               Margin="0"
+                               VerticalAlignment="Center" />
+                    <DropDownButton Grid.Column="1"
+                                    Content="{x:Bind SortLabel, Mode=OneWay}"
+                                    FontSize="11" Height="28" Padding="8,0"
+                                    VerticalAlignment="Center" Margin="0,0,8,0">
+                        <DropDownButton.Flyout>
+                            <MenuFlyout>
+                                <!-- RadioMenuFlyoutItem groups by name across menus, so each card needs its own group. -->
+                                <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_PlayCount}" GroupName="{x:Bind Title}"
+                                                     IsChecked="{x:Bind IsByPlayCount, Mode=OneWay}"
+                                                     Command="{x:Bind SetMetricCommand}" CommandParameter="PlayCount" />
+                                <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_Duration}" GroupName="{x:Bind Title}"
+                                                     IsChecked="{x:Bind IsByDuration, Mode=OneWay}"
+                                                     Command="{x:Bind SetMetricCommand}" CommandParameter="Duration" />
+                            </MenuFlyout>
+                        </DropDownButton.Flyout>
+                    </DropDownButton>
+                    <Button Grid.Column="2"
+                            Command="{x:Bind OpenSeeAllCommand}"
+                            Style="{StaticResource SubtleButtonStyle}"
+                            Width="28" Height="28" Padding="0"
+                            VerticalAlignment="Center"
+                            ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip}"
+                            AutomationProperties.Name="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip}">
+                        <FontIcon Glyph="&#xE76C;" FontSize="11" />
+                    </Button>
+                </Grid>
+
+                <ListView Grid.Row="1"
+                          ItemsSource="{x:Bind TopItems}"
+                          SelectionMode="None"
+                          ScrollViewer.VerticalScrollMode="Disabled"
+                          ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                          IsItemClickEnabled="False"
+                          ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
+                          ItemTemplateSelector="{StaticResource InsightsItemTemplateSelector}" />
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
     <Grid Padding="{StaticResource PageContainerPaddingVertical}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="HeroLayoutStates">
@@ -80,8 +138,9 @@
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                 <ComboBox
                           AutomationProperties.Name="{x:Bind resources:Strings.InsightsPage_TimeRange_Name, Mode=OneTime}"
-                          ItemsSource="{x:Bind ViewModel.TimeRangeLabels}"
-                          SelectedIndex="{x:Bind ViewModel.SelectedTimeRangeIndex, Mode=TwoWay}"
+                          ItemsSource="{x:Bind vm:InsightsViewModel.TimeRanges}"
+                          DisplayMemberPath="Label"
+                          SelectedItem="{x:Bind ViewModel.SelectedTimeRange, Mode=TwoWay}"
                           MinWidth="140" />
                 <Button Command="{x:Bind ViewModel.ResetListenHistoryCommand}"
                         Style="{StaticResource SubtleButtonStyle}"
@@ -207,111 +266,17 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <Grid x:Name="TopSongsCard" Grid.Column="0" Grid.Row="0" Style="{StaticResource InsightsCardStyle}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
+                        <ContentPresenter x:Name="TopSongsCard" Grid.Column="0" Grid.Row="0"
+                                          Content="{x:Bind ViewModel.Songs}"
+                                          ContentTemplate="{StaticResource InsightsCategoryCardTemplate}"
+                                          HorizontalContentAlignment="Stretch"
+                                          VerticalContentAlignment="Stretch" />
 
-                            <Grid Grid.Row="0" Margin="0,0,0,12">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0"
-                                           Text="{x:Bind resources:Strings.InsightsPage_TopSongs, Mode=OneTime}"
-                                           FontSize="16" FontWeight="SemiBold"
-                                           VerticalAlignment="Center" />
-                                <DropDownButton Grid.Column="1"
-                                               Content="{x:Bind ViewModel.SongsSortLabel, Mode=OneWay}"
-                                               FontSize="11" Height="28" Padding="8,0"
-                                               VerticalAlignment="Center" Margin="0,0,8,0">
-                                    <DropDownButton.Flyout>
-                                        <MenuFlyout>
-                                            <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_PlayCount, Mode=OneTime}" GroupName="SongsSort"
-                                                                 IsChecked="{x:Bind ViewModel.IsSongsByPlayCount, Mode=OneWay}"
-                                                                 Click="OnSongsSortByPlayCountClick" />
-                                            <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_Duration, Mode=OneTime}" GroupName="SongsSort"
-                                                                 IsChecked="{x:Bind ViewModel.IsSongsByDuration, Mode=OneWay}"
-                                                                 Click="OnSongsSortByDurationClick" />
-                                        </MenuFlyout>
-                                    </DropDownButton.Flyout>
-                                </DropDownButton>
-                                <Button
-                                        Grid.Column="2"
-                                        Command="{x:Bind ViewModel.OpenSeeAllSongsCommand}"
-                                        Style="{StaticResource SubtleButtonStyle}"
-                                        Width="28" Height="28" Padding="0"
-                                        VerticalAlignment="Center"
-                                        ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}"
-                                        AutomationProperties.Name="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}">
-                                    <FontIcon Glyph="&#xE76C;" FontSize="11" />
-                                </Button>
-                            </Grid>
-
-                            <ListView Grid.Row="1"
-                                      ItemsSource="{x:Bind ViewModel.TopSongs, Mode=OneWay}"
-                                      SelectionMode="None"
-                                      ScrollViewer.VerticalScrollMode="Disabled"
-                                      ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                                      IsItemClickEnabled="False"
-                                      ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
-                                      ItemTemplate="{StaticResource TopSongItemTemplate}" />
-                        </Grid>
-
-                        <Grid x:Name="TopArtistsCard" Grid.Column="1" Grid.Row="0" Style="{StaticResource InsightsCardStyle}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-
-                            <Grid Grid.Row="0" Margin="0,0,0,12">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0"
-                                           Text="{x:Bind resources:Strings.InsightsPage_TopArtists, Mode=OneTime}"
-                                           FontSize="16" FontWeight="SemiBold"
-                                           VerticalAlignment="Center" />
-                                <DropDownButton Grid.Column="1"
-                                               Content="{x:Bind ViewModel.ArtistsSortLabel, Mode=OneWay}"
-                                               FontSize="11" Height="28" Padding="8,0"
-                                               VerticalAlignment="Center" Margin="0,0,8,0">
-                                    <DropDownButton.Flyout>
-                                        <MenuFlyout>
-                                            <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_PlayCount, Mode=OneTime}" GroupName="ArtistsSort"
-                                                                 IsChecked="{x:Bind ViewModel.IsArtistsByPlayCount, Mode=OneWay}"
-                                                                 Click="OnArtistsSortByPlayCountClick" />
-                                            <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_Duration, Mode=OneTime}" GroupName="ArtistsSort"
-                                                                 IsChecked="{x:Bind ViewModel.IsArtistsByDuration, Mode=OneWay}"
-                                                                 Click="OnArtistsSortByDurationClick" />
-                                        </MenuFlyout>
-                                    </DropDownButton.Flyout>
-                                </DropDownButton>
-                                <Button
-                                        Grid.Column="2"
-                                        Command="{x:Bind ViewModel.OpenSeeAllArtistsCommand}"
-                                        Style="{StaticResource SubtleButtonStyle}"
-                                        Width="28" Height="28" Padding="0"
-                                        VerticalAlignment="Center"
-                                        ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}"
-                                        AutomationProperties.Name="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}">
-                                    <FontIcon Glyph="&#xE76C;" FontSize="11" />
-                                </Button>
-                            </Grid>
-
-                            <ListView Grid.Row="1"
-                                      ItemsSource="{x:Bind ViewModel.TopArtists, Mode=OneWay}"
-                                      SelectionMode="None"
-                                      ScrollViewer.VerticalScrollMode="Disabled"
-                                      ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                                      IsItemClickEnabled="False"
-                                      ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
-                                      ItemTemplate="{StaticResource TopArtistItemTemplate}" />
-                        </Grid>
+                        <ContentPresenter x:Name="TopArtistsCard" Grid.Column="1" Grid.Row="0"
+                                          Content="{x:Bind ViewModel.Artists}"
+                                          ContentTemplate="{StaticResource InsightsCategoryCardTemplate}"
+                                          HorizontalContentAlignment="Stretch"
+                                          VerticalContentAlignment="Stretch" />
                     </Grid>
 
                     <Grid x:Name="Row3Grid" ColumnSpacing="16">
@@ -324,111 +289,17 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <Grid x:Name="TopAlbumsCard" Grid.Column="0" Grid.Row="0" Style="{StaticResource InsightsCardStyle}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
+                        <ContentPresenter x:Name="TopAlbumsCard" Grid.Column="0" Grid.Row="0"
+                                          Content="{x:Bind ViewModel.Albums}"
+                                          ContentTemplate="{StaticResource InsightsCategoryCardTemplate}"
+                                          HorizontalContentAlignment="Stretch"
+                                          VerticalContentAlignment="Stretch" />
 
-                            <Grid Grid.Row="0" Margin="0,0,0,12">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0"
-                                           Text="{x:Bind resources:Strings.InsightsPage_TopAlbums, Mode=OneTime}"
-                                           FontSize="16" FontWeight="SemiBold"
-                                           VerticalAlignment="Center" />
-                                <DropDownButton Grid.Column="1"
-                                               Content="{x:Bind ViewModel.AlbumsSortLabel, Mode=OneWay}"
-                                               FontSize="11" Height="28" Padding="8,0"
-                                               VerticalAlignment="Center" Margin="0,0,8,0">
-                                    <DropDownButton.Flyout>
-                                        <MenuFlyout>
-                                            <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_PlayCount, Mode=OneTime}" GroupName="AlbumsSort"
-                                                                 IsChecked="{x:Bind ViewModel.IsAlbumsByPlayCount, Mode=OneWay}"
-                                                                 Click="OnAlbumsSortByPlayCountClick" />
-                                            <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_Duration, Mode=OneTime}" GroupName="AlbumsSort"
-                                                                 IsChecked="{x:Bind ViewModel.IsAlbumsByDuration, Mode=OneWay}"
-                                                                 Click="OnAlbumsSortByDurationClick" />
-                                        </MenuFlyout>
-                                    </DropDownButton.Flyout>
-                                </DropDownButton>
-                                <Button
-                                        Grid.Column="2"
-                                        Command="{x:Bind ViewModel.OpenSeeAllAlbumsCommand}"
-                                        Style="{StaticResource SubtleButtonStyle}"
-                                        Width="28" Height="28" Padding="0"
-                                        VerticalAlignment="Center"
-                                        ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}"
-                                        AutomationProperties.Name="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}">
-                                    <FontIcon Glyph="&#xE76C;" FontSize="11" />
-                                </Button>
-                            </Grid>
-
-                            <ListView Grid.Row="1"
-                                      ItemsSource="{x:Bind ViewModel.TopAlbums, Mode=OneWay}"
-                                      SelectionMode="None"
-                                      ScrollViewer.VerticalScrollMode="Disabled"
-                                      ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                                      IsItemClickEnabled="False"
-                                      ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
-                                      ItemTemplate="{StaticResource TopAlbumItemTemplate}" />
-                        </Grid>
-
-                        <Grid x:Name="TopGenresCard" Grid.Column="1" Grid.Row="0" Style="{StaticResource InsightsCardStyle}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-
-                            <Grid Grid.Row="0" Margin="0,0,0,12">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0"
-                                           Text="{x:Bind resources:Strings.InsightsPage_TopGenres, Mode=OneTime}"
-                                           FontSize="16" FontWeight="SemiBold"
-                                           VerticalAlignment="Center" />
-                                <DropDownButton Grid.Column="1"
-                                               Content="{x:Bind ViewModel.GenresSortLabel, Mode=OneWay}"
-                                               FontSize="11" Height="28" Padding="8,0"
-                                               VerticalAlignment="Center" Margin="0,0,8,0">
-                                    <DropDownButton.Flyout>
-                                        <MenuFlyout>
-                                            <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_PlayCount, Mode=OneTime}" GroupName="GenresSort"
-                                                                 IsChecked="{x:Bind ViewModel.IsGenresByPlayCount, Mode=OneWay}"
-                                                                 Click="OnGenresSortByPlayCountClick" />
-                                            <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_Duration, Mode=OneTime}" GroupName="GenresSort"
-                                                                 IsChecked="{x:Bind ViewModel.IsGenresByDuration, Mode=OneWay}"
-                                                                 Click="OnGenresSortByDurationClick" />
-                                        </MenuFlyout>
-                                    </DropDownButton.Flyout>
-                                </DropDownButton>
-                                <Button
-                                        Grid.Column="2"
-                                        Command="{x:Bind ViewModel.OpenSeeAllGenresCommand}"
-                                        Style="{StaticResource SubtleButtonStyle}"
-                                        Width="28" Height="28" Padding="0"
-                                        VerticalAlignment="Center"
-                                        ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}"
-                                        AutomationProperties.Name="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}">
-                                    <FontIcon Glyph="&#xE76C;" FontSize="11" />
-                                </Button>
-                            </Grid>
-
-                            <ListView Grid.Row="1"
-                                      ItemsSource="{x:Bind ViewModel.TopGenres, Mode=OneWay}"
-                                      SelectionMode="None"
-                                      ScrollViewer.VerticalScrollMode="Disabled"
-                                      ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                                      IsItemClickEnabled="False"
-                                      ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
-                                      ItemTemplate="{StaticResource TopGenreItemTemplate}" />
-                        </Grid>
+                        <ContentPresenter x:Name="TopGenresCard" Grid.Column="1" Grid.Row="0"
+                                          Content="{x:Bind ViewModel.Genres}"
+                                          ContentTemplate="{StaticResource InsightsCategoryCardTemplate}"
+                                          HorizontalContentAlignment="Stretch"
+                                          VerticalContentAlignment="Stretch" />
                     </Grid>
 
                     <Grid Style="{StaticResource InsightsCardStyle}">

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="Nagi.WinUI.Controls.InsightsSeeAllOverlay"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resources="using:Nagi.Presentation.Resources"
+    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
+    mc:Ignorable="d"
+    Visibility="{x:Bind ViewModel.IsSeeAllOpen, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+    <Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="SeeAllSearchStates">
+                <VisualState x:Name="SeeAllSearchCollapsed">
+                    <VisualState.Setters>
+                        <Setter Target="SeeAllSearchTextBox.Width" Value="0" />
+                        <Setter Target="SeeAllSearchTextBox.Opacity" Value="0" />
+                        <Setter Target="SeeAllSearchTextBox.IsHitTestVisible" Value="False" />
+                        <Setter Target="SeeAllSearchTextBox.IsTabStop" Value="False" />
+                        <Setter Target="SeeAllSearchIcon.Glyph" Value="&#xE721;" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="SeeAllSearchExpanded">
+                    <VisualState.Setters>
+                        <Setter Target="SeeAllSearchTextBox.Width" Value="{StaticResource SearchBoxExpandedWidth}" />
+                        <Setter Target="SeeAllSearchTextBox.Opacity" Value="1" />
+                        <Setter Target="SeeAllSearchTextBox.IsHitTestVisible" Value="True" />
+                        <Setter Target="SeeAllSearchTextBox.IsTabStop" Value="True" />
+                        <Setter Target="SeeAllSearchIcon.Glyph" Value="&#xE711;" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="18*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.ColumnSpan="3"
+              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+              Opacity="0.85"
+              Tapped="OnBackdropTapped" />
+
+        <Grid
+              Grid.Column="1"
+              Margin="0,156,0,156"
+              VerticalAlignment="Stretch"
+              Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
+              CornerRadius="{ThemeResource OverlayCornerRadius}"
+              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+              BorderThickness="1"
+              Tapped="OnPanelTapped">
+
+            <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="{ThemeResource OverlayCornerRadius}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Padding="{StaticResource SurfaceContentPadding}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Text="{x:Bind ViewModel.SeeAllCategory.Title, Mode=OneWay}"
+                               Style="{StaticResource InsightsCardHeaderStyle}"
+                               Margin="0"
+                               VerticalAlignment="Center" />
+
+                    <Grid Grid.Column="1" Margin="0,0,8,0">
+                        <TextBox x:Name="SeeAllSearchTextBox"
+                                 PlaceholderText="{x:Bind resources:Strings.InsightsPage_SeeAll_SearchBox_Placeholder, Mode=OneTime}"
+                                 Style="{StaticResource SearchTextBoxStyle}"
+                                 Width="0"
+                                 Opacity="0"
+                                 IsHitTestVisible="False"
+                                 IsTabStop="False"
+                                 HorizontalAlignment="Right"
+                                 KeyDown="OnSearchTextBoxKeyDown"
+                                 Text="{x:Bind ViewModel.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 Canvas.ZIndex="0">
+                            <TextBox.OpacityTransition>
+                                <ScalarTransition Duration="0:0:0.15" />
+                            </TextBox.OpacityTransition>
+                        </TextBox>
+
+                        <Button x:Name="SeeAllSearchToggleButton"
+                                ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_SearchButton_ToolTip, Mode=OneTime}"
+                                AutomationProperties.Name="{x:Bind resources:Strings.InsightsPage_SeeAll_SearchButton_ToolTip, Mode=OneTime}"
+                                Click="OnSearchToggleButtonClick"
+                                Style="{StaticResource SongListViewPageIconButton}"
+                                HorizontalAlignment="Right"
+                                Margin="0,0,1,0"
+                                IsHitTestVisible="True"
+                                Canvas.ZIndex="1">
+                            <FontIcon x:Name="SeeAllSearchIcon" FontSize="16" Glyph="&#xE721;" />
+                        </Button>
+                    </Grid>
+
+                    <DropDownButton Grid.Column="2"
+                                    Content="{x:Bind ViewModel.SeeAllCategory.SortLabel, Mode=OneWay}"
+                                    FontSize="11" Height="28" Padding="8,0"
+                                    VerticalAlignment="Center" Margin="0,0,8,0">
+                        <DropDownButton.Flyout>
+                            <MenuFlyout>
+                                <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_PlayCount, Mode=OneTime}" GroupName="SeeAllSort"
+                                                     IsChecked="{x:Bind ViewModel.SeeAllCategory.IsByPlayCount, Mode=OneWay}"
+                                                     Command="{x:Bind ViewModel.SeeAllCategory.SetMetricCommand, Mode=OneWay}"
+                                                     CommandParameter="PlayCount" />
+                                <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_Duration, Mode=OneTime}" GroupName="SeeAllSort"
+                                                     IsChecked="{x:Bind ViewModel.SeeAllCategory.IsByDuration, Mode=OneWay}"
+                                                     Command="{x:Bind ViewModel.SeeAllCategory.SetMetricCommand, Mode=OneWay}"
+                                                     CommandParameter="Duration" />
+                            </MenuFlyout>
+                        </DropDownButton.Flyout>
+                    </DropDownButton>
+
+                    <Button Grid.Column="3"
+                            Command="{x:Bind ViewModel.CloseSeeAllCommand}"
+                            ToolTipService.ToolTip="{x:Bind resources:Strings.Generic_Close, Mode=OneTime}"
+                            AutomationProperties.Name="{x:Bind resources:Strings.Generic_Close, Mode=OneTime}"
+                            Style="{StaticResource SubtleButtonStyle}"
+                            Width="32" Height="32" Padding="0">
+                        <FontIcon Glyph="&#xE711;" FontSize="12" />
+                    </Button>
+                </Grid>
+
+                <Grid Grid.Row="1">
+                    <ProgressRing IsActive="{x:Bind ViewModel.IsSeeAllLoading, Mode=OneWay}"
+                                  Visibility="{x:Bind ViewModel.IsSeeAllLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                                  Width="40" Height="40" />
+
+                    <ListView uihelpers:ScrollEdgeFade.IsEnabled="True"
+                              Visibility="{x:Bind ViewModel.IsSeeAllLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                              ItemsSource="{x:Bind ViewModel.SeeAllItems}"
+                              SelectionMode="None"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              Padding="16,0,16,8"
+                              ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
+                              ItemTemplateSelector="{StaticResource InsightsItemTemplateSelector}" />
+                </Grid>
+
+                <Grid Grid.Row="2" Padding="16,8,16,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" VerticalAlignment="Center" FontSize="12"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                        <Run Text="{x:Bind ViewModel.SeeAllCurrentPage, Mode=OneWay}"
+                             FontWeight="SemiBold"
+                             Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                        <Run Text=" / " />
+                        <Run Text="{x:Bind ViewModel.SeeAllTotalPages, Mode=OneWay}" />
+                    </TextBlock>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4">
+                        <Button Command="{x:Bind ViewModel.SeeAllPreviousPageCommand}"
+                                IsEnabled="{x:Bind ViewModel.HasSeeAllPreviousPage, Mode=OneWay}"
+                                ToolTipService.ToolTip="{x:Bind resources:Strings.PaginationControl_PreviousPage_ToolTip, Mode=OneTime}"
+                                AutomationProperties.Name="{x:Bind resources:Strings.PaginationControl_PreviousPage_ToolTip, Mode=OneTime}"
+                                Style="{StaticResource SubtleButtonStyle}"
+                                Width="32" Height="32" Padding="0">
+                            <FontIcon Glyph="&#xE76B;" FontSize="12" />
+                        </Button>
+                        <Button Command="{x:Bind ViewModel.SeeAllNextPageCommand}"
+                                IsEnabled="{x:Bind ViewModel.HasSeeAllNextPage, Mode=OneWay}"
+                                ToolTipService.ToolTip="{x:Bind resources:Strings.PaginationControl_NextPage_ToolTip, Mode=OneTime}"
+                                AutomationProperties.Name="{x:Bind resources:Strings.PaginationControl_NextPage_ToolTip, Mode=OneTime}"
+                                Style="{StaticResource SubtleButtonStyle}"
+                                Width="32" Height="32" Padding="0">
+                            <FontIcon Glyph="&#xE76C;" FontSize="12" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>
