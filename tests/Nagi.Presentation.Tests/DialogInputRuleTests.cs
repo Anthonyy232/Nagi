@@ -2,7 +2,7 @@ using FluentAssertions;
 using Nagi.Core.Playback;
 using Nagi.Presentation.Lyrics;
 using Nagi.Presentation.Player;
-using Nagi.Presentation.ViewModels;
+using Nagi.Presentation.Playlists;
 using Xunit;
 
 namespace Nagi.Presentation.Tests;

@@ -1,4 +1,4 @@
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Playlists;
 
 /// <summary>
 ///     The new playlist and rename playlist dialogs.

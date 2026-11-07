@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:ImageEx"
-    xmlns:viewmodels="using:Nagi.Presentation.ViewModels"
+    xmlns:playlists="using:Nagi.Presentation.Playlists"
     xmlns:resources="using:Nagi.Presentation.Resources"
     mc:Ignorable="d"
     PrimaryButtonText="{x:Bind resources:Strings.SmartPlaylist_Dialog_PrimaryButton, Mode=OneTime}"
@@ -65,7 +65,7 @@
                 <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_SortOrderLabel, Mode=OneTime}" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
                 <ComboBox HorizontalAlignment="Stretch"
                           AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylist_SortOrderLabel, Mode=OneTime}"
-                          ItemsSource="{x:Bind viewmodels:SmartPlaylistEditorViewModel.SortOptions}"
+                          ItemsSource="{x:Bind playlists:SmartPlaylistEditorViewModel.SortOptions}"
                           DisplayMemberPath="DisplayName"
                           SelectedItem="{x:Bind ViewModel.SelectedSortOption, Mode=TwoWay}" />
             </StackPanel>
@@ -112,7 +112,7 @@
                                 </Style>
                             </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="viewmodels:RuleViewModel">
+                                <DataTemplate x:DataType="playlists:RuleViewModel">
                                     <Border Style="{StaticResource RuleRowStyle}">
                                         <Grid ColumnSpacing="12">
                                             <Grid.ColumnDefinitions>
@@ -123,7 +123,7 @@
                                             </Grid.ColumnDefinitions>
 
                                             <ComboBox Grid.Column="0"
-                                                      ItemsSource="{x:Bind viewmodels:RuleViewModel.AvailableFields}"
+                                                      ItemsSource="{x:Bind playlists:RuleViewModel.AvailableFields}"
                                                       AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylist_RuleField_Name, Mode=OneTime}"
                                                       SelectedItem="{x:Bind SelectedField, Mode=TwoWay}"
                                                       DisplayMemberPath="DisplayName"

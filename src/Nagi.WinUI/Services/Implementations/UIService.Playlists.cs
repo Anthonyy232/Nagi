@@ -5,9 +5,8 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Nagi.Core.Metadata;
 using Nagi.Presentation.Common;
-using Nagi.Presentation.Models;
+using Nagi.Presentation.Playlists;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Services.Implementations;

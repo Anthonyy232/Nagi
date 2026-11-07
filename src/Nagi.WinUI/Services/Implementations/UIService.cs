@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml.Controls;
 using Nagi.Core.Library;
 using Nagi.Core.Playlists;
 using Nagi.Presentation.Lists;
+using Nagi.Presentation.Playlists;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services.Implementations;

@@ -14,7 +14,7 @@ using Nagi.Presentation.Lists;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Playlists;
 
 public enum SmartPlaylistSaveResult
 {

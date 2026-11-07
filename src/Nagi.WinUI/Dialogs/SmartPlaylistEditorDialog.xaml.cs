@@ -2,8 +2,8 @@ using System.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Presentation.Common;
+using Nagi.Presentation.Playlists;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Dialogs;

@@ -4,7 +4,7 @@ using Nagi.Core.Playlists;
 using Nagi.Presentation.Resources;
 using CoreStrings = Nagi.Core.Resources.Strings;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Playlists;
 
 public class RuleViewModel : ObservableObject
 {
