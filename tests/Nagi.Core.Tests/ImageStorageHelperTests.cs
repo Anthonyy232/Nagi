@@ -1,5 +1,5 @@
 using FluentAssertions;
-using Nagi.Core.Helpers;
+using Nagi.Core.Artwork;
 using Nagi.Core.Services.Abstractions;
 using NSubstitute;
 using Xunit;

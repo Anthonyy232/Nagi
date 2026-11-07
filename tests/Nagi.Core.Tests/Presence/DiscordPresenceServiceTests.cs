@@ -3,6 +3,7 @@ using DiscordRPC.IO;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nagi.Core.Artwork;
 using Nagi.Core.Library;
 using Nagi.Core.Playback;
 using Nagi.Core.Presence;

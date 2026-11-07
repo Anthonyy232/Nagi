@@ -8,7 +8,7 @@ using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Helpers;
 using Nagi.Core.Settings;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Artwork;
 
 public class AlbumCoverService : IAlbumCoverService, IDisposable
 {

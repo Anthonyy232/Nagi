@@ -3,7 +3,7 @@ using Nagi.Core.Constants;
 using Nagi.Core.Library;
 using Nagi.Core.Services.Abstractions;
 
-namespace Nagi.Core.Helpers;
+namespace Nagi.Core.Artwork;
 
 /// <summary>
 ///     Where a cached artist or playlist image came from. Its file name, <c>{id}{suffix}{extension}</c>, records the

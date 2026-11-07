@@ -1,4 +1,4 @@
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.Artwork;
 
 /// <param name="MusicBrainzId">The ID MusicBrainz found for an artist that had none, otherwise null.</param>
 /// <param name="IsConclusive">

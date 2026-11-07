@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nagi.Core.Artwork;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
 using Nagi.Core.Http.Pipelines;
@@ -9,7 +10,6 @@ using Nagi.Core.MusicServers;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Implementations;
 using NSubstitute;
 
 namespace Nagi.Core.Tests.Utils;

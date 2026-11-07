@@ -12,7 +12,7 @@ using SixLabors.ImageSharp.Memory;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Artwork;
 
 /// <summary>
 ///     An image processor implementation using ImageSharp for resizing and color extraction.

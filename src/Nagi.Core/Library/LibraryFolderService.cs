@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Threading.Channels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Artwork;
 using Nagi.Core.Constants;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
@@ -10,7 +11,6 @@ using Nagi.Core.Models;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Implementations;
 using Nagi.Core.Settings;
 
 namespace Nagi.Core.Library;

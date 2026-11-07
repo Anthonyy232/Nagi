@@ -1,6 +1,6 @@
 using Nagi.Core.Services.Data;
 
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.Artwork;
 
 /// <param name="ReleaseId">MusicBrainz release ID from the album's tags, if any.</param>
 /// <param name="ReleaseGroupId">MusicBrainz release group ID from the album's tags, if any.</param>

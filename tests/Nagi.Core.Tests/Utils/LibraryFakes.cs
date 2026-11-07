@@ -1,7 +1,7 @@
+using Nagi.Core.Artwork;
 using Nagi.Core.Library;
 using Nagi.Core.Listening;
 using Nagi.Core.Playlists;
-using Nagi.Core.Services.Abstractions;
 using NSubstitute;
 
 namespace Nagi.Core.Tests.Utils;

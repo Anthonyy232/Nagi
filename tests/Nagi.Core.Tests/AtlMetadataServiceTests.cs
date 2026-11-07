@@ -3,6 +3,7 @@ using FluentAssertions;
 using System.Globalization;
 using System.Text;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Artwork;
 using Nagi.Core.Helpers;
 using Nagi.Core.Library;
 using Nagi.Core.Lyrics;

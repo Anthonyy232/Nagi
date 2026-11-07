@@ -1,6 +1,6 @@
 using Nagi.Core.Library;
 
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.Artwork;
 
 /// <summary>
 ///     Artist images and album covers, from music folders and online sources, and the artist biographies looked up

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nagi.Core.Artwork;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
 using Nagi.Core.Http.Pipelines;

@@ -2,6 +2,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Artwork;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
 using Nagi.Core.Http;
