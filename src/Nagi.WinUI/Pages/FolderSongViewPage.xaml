@@ -134,19 +134,7 @@
 
                     <uicontrols:SortButton Selection="{x:Bind ViewModel.Sort}" />
 
-                    <Button Command="{x:Bind ViewModel.PlayAllSongsCommand}"
-                            ToolTipService.ToolTip="{x:Bind resources:Strings.SongList_PlayAll, Mode=OneTime}"
-                            AutomationProperties.Name="{x:Bind resources:Strings.SongList_PlayAll, Mode=OneTime}"
-                            Style="{StaticResource SongListViewPageIconButton}">
-                        <FontIcon FontSize="16" Glyph="" />
-                    </Button>
-
-                    <SplitButton Style="{StaticResource SongListViewPageShuffleButton}" Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}"
-                            ToolTipService.ToolTip="{x:Bind resources:Strings.SongList_ShuffleAll, Mode=OneTime}"
-                            AutomationProperties.Name="{x:Bind resources:Strings.SongList_ShuffleAll, Mode=OneTime}">
-                        <SplitButton.Flyout><MenuFlyout Opening="ListeningOptions_Opening" /></SplitButton.Flyout>
-                        <FontIcon FontSize="16" Glyph="" />
-                    </SplitButton>
+                    <uicontrols:SongListPlayButtons ViewModel="{x:Bind ViewModel}" />
 
                 </StackPanel>
             </Grid>

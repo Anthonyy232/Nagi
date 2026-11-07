@@ -83,9 +83,6 @@ public abstract class SongListPage : Page
         return header;
     }
 
-    protected void ListeningOptions_Opening(object sender, object e) =>
-        ListeningMenuFlyoutHelper.PopulateMixes((MenuFlyout)sender, _viewModel!.PlayMixCommand, _viewModel.PlayForCommand);
-
     // Recreated on each load so a cached page coming back gets fresh binders.
     private void AttachNowPlayingBinders(object sender, RoutedEventArgs e)
     {
