@@ -57,7 +57,7 @@ public sealed class LibraryFolderWatcher : IDisposable
 
     private void OnLibraryChanged(object? sender, LibraryChange change)
     {
-        if (change.Kind is LibraryChangeKind.RootAdded or LibraryChangeKind.RootRemoved or LibraryChangeKind.LibraryCleared)
+        if (change.AffectsRoots)
             _ = SyncFoldersAsync();
     }
 

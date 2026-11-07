@@ -38,6 +38,31 @@ public class ArtistViewViewModelTests
     }
 
     [Fact]
+    public async Task Rescan_ReloadsTheArtistsSongsAndAlbums()
+    {
+        var library = new LibraryFakes();
+        var artistId = Guid.NewGuid();
+        library.Artwork.GetArtistDetailsAsync(artistId, Arg.Any<CancellationToken>()).Returns(new Artist { Id = artistId, Name = "Artist" });
+        Album[] albums = [new Album { Title = "First" }];
+        library.Reader.GetAlbumsForArtistAsync(artistId).Returns(_ => albums);
+        using var viewModel = CreateViewModel(library);
+        await viewModel.OpenAsync(new ArtistViewNavigationParameter(artistId));
+        viewModel.Albums.Select(album => album.Name).Should().Equal("First");
+        library.Reader.ClearReceivedCalls();
+        var reloaded = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        viewModel.Albums.CollectionChanged += (_, _) => reloaded.TrySetResult();
+
+        albums = [albums[0], new Album { Title = "Second" }];
+        library.Notifier.Changed += Raise.Event<EventHandler<LibraryChange>>(
+            library.Notifier, new LibraryChange(LibraryChangeKind.FolderRescanned, Guid.NewGuid()));
+        await reloaded.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        viewModel.Albums.Select(album => album.Name).Should().Equal("First", "Second");
+        await library.Reader.Received().GetSongsAsync(new SongScope.Artist(artistId), Arg.Any<string?>(), Arg.Any<SongSortOrder>(),
+            Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
     public async Task ChangeArtistImage_CancelledPickerLeavesImageUntouched()
     {
         var library = new LibraryFakes();

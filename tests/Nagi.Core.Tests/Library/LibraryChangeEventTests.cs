@@ -57,6 +57,26 @@ public class LibraryChangeEventTests : IDisposable
         _dbHelper.Dispose();
     }
 
+    // What each kind touches decides who reloads: the folder watcher (roots), playlists (songs added or removed), song,
+    // album, artist and genre lists (songs), the folders page (folders) and song lists again (favorites).
+    [Theory]
+    [InlineData(LibraryChangeKind.RootAdded, true, false, false, true, false)]
+    [InlineData(LibraryChangeKind.RootRemoved, true, true, true, true, false)]
+    [InlineData(LibraryChangeKind.FolderRescanned, false, true, true, true, false)]
+    [InlineData(LibraryChangeKind.LibraryRescanned, false, true, true, true, false)]
+    [InlineData(LibraryChangeKind.LibraryCleared, true, true, true, true, false)]
+    [InlineData(LibraryChangeKind.SongsChanged, false, false, true, false, false)]
+    [InlineData(LibraryChangeKind.FavoritesChanged, false, false, false, false, true)]
+    [InlineData(LibraryChangeKind.ListenHistoryCleared, false, false, false, false, false)]
+    public void EachKind_SaysWhatItTouched(LibraryChangeKind kind, bool roots, bool addsOrRemoves, bool songs, bool folders,
+        bool favorites)
+    {
+        var change = new LibraryChange(kind);
+
+        new[] { change.AffectsRoots, change.AddsOrRemovesSongs, change.AffectsSongs, change.AffectsFolders, change.AffectsFavorites }
+            .Should().Equal(roots, addsOrRemoves, songs, folders, favorites);
+    }
+
     [Fact]
     public async Task AddFolderAsync_AnnouncesTheRootAdded()
     {
@@ -136,18 +156,17 @@ public class LibraryChangeEventTests : IDisposable
         _metadataService.ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>())
             .Returns(new SongFileMetadata { FilePath = "C:\\Music\\ScanChanges\\new.mp3", Title = "New Song" });
 
-        LibraryChange? eventArgs = null;
-        _library.Notifier.Changed += (s, e) => eventArgs = e;
+        var changes = new List<LibraryChange>();
+        _library.Notifier.Changed += (_, e) => changes.Add(e);
 
         await _library.Folders.RefreshAllFoldersAsync();
 
-        eventArgs.Should().NotBeNull();
-        eventArgs!.Kind.Should().Be(LibraryChangeKind.LibraryRescanned);
-        eventArgs.FolderId.Should().BeNull();
+        // Not once per folder as well, which would reload every list again.
+        changes.Should().Equal(new LibraryChange(LibraryChangeKind.LibraryRescanned));
     }
 
     [Fact]
-    public async Task ForceRescanMetadataAsync_CancelledInFinalFolder_DoesNotFireLibraryRescanned()
+    public async Task ForceRescanMetadataAsync_CancelledInFinalFolder_StillAnnouncesTheFolderThatChanged()
     {
         var firstFolder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\A", Name = "A" };
         var finalFolder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\B", Name = "B" };
@@ -181,6 +200,6 @@ public class LibraryChangeEventTests : IDisposable
         var result = await _library.Folders.ForceRescanMetadataAsync(cancellationToken: cts.Token);
 
         result.Should().BeFalse();
-        changeTypes.Should().NotContain(LibraryChangeKind.LibraryRescanned);
+        changeTypes.Should().Equal(LibraryChangeKind.LibraryRescanned);
     }
 }

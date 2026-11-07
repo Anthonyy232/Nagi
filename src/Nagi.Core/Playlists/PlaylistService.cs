@@ -38,8 +38,7 @@ public class PlaylistService : IPlaylistService
     // Removing songs from the library removes them from their playlists, and removing a server removes its playlists.
     private void OnLibraryChanged(object? sender, LibraryChange change)
     {
-        if (change.Kind is LibraryChangeKind.RootRemoved or LibraryChangeKind.FolderRescanned
-            or LibraryChangeKind.LibraryRescanned or LibraryChangeKind.LibraryCleared)
+        if (change.AddsOrRemovesSongs)
             PlaylistsChanged?.Invoke(this, EventArgs.Empty);
     }
 

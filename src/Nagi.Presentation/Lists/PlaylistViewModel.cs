@@ -140,7 +140,7 @@ public partial class PlaylistViewModel : ClientFilteredListViewModelBase<Playlis
     protected override void OnLoadingChanged() => OnPropertyChanged(nameof(IsAnyOperationInProgress));
 
     // Playlists follow their own change events, not the library's.
-    protected override bool ShouldReloadOnLibraryChange(LibraryChangeKind kind) => false;
+    protected override bool ShouldReloadOnLibraryChange(LibraryChange change) => false;
 
     protected override async Task<IEnumerable<PlaylistViewModelItem>> LoadItemsAsync(CancellationToken token)
     {

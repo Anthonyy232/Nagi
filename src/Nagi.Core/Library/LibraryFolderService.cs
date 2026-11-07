@@ -176,11 +176,19 @@ public sealed class LibraryFolderService : ILibraryFolderService
                 }
 
                 changed = false;
-                foreach (var (index, folder) in folders.Index())
+                try
                 {
-                    token.ThrowIfCancellationRequested();
-                    changed |= await ScanFolderAsync(kind, folder.Id, FolderProgress(progress, index, folders.Count, folder.Name), token)
-                        .ConfigureAwait(false);
+                    foreach (var (index, folder) in folders.Index())
+                    {
+                        token.ThrowIfCancellationRequested();
+                        changed |= await ScanFolderAsync(kind, folder.Id, FolderProgress(progress, index, folders.Count, folder.Name), token)
+                            .ConfigureAwait(false);
+                    }
+                }
+                finally
+                {
+                    // Once for every folder, also when a later folder fails or the scan is cancelled.
+                    if (changed) _notifier.Raise(LibraryChangeKind.LibraryRescanned);
                 }
             }
 
@@ -189,10 +197,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
                 await RunReplayGainAnalysisAsync(progress, token).ConfigureAwait(false);
 
             if (folderId is null)
-            {
                 progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_LibraryRefreshComplete, Percentage = 100 });
-                if (changed) _notifier.Raise(LibraryChangeKind.LibraryRescanned);
-            }
 
             if (changed) _ = _artwork.StartMetadataBackgroundFetchAsync();
             return changed;
@@ -328,7 +333,8 @@ public sealed class LibraryFolderService : ILibraryFolderService
 
         var changed = removed > 0 || import.SongCount > 0 || lrcUpdates > 0 || coverArtUpdates > 0 ||
                       artistImageUpdates > 0 || covers.Albums > 0 || clearedArtistImages > 0;
-        if (changed) _notifier.Raise(LibraryChangeKind.FolderRescanned, folderId);
+        // A scan of every folder announces them together when it is done.
+        if (changed && kind is ScanKind.Manual or ScanKind.Background) _notifier.Raise(LibraryChangeKind.FolderRescanned, folderId);
         return changed;
 
         // A forced scan reports every folder that fails; the others skip it.

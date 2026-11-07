@@ -191,8 +191,8 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     public bool HasSelectedSongs => SelectedItemsCount > 0;
 
-    protected override bool ShouldReloadOnLibraryChange(LibraryChangeKind kind) =>
-        kind is LibraryChangeKind.SongsChanged or LibraryChangeKind.FavoritesChanged;
+    protected override bool ShouldReloadOnLibraryChange(LibraryChange change) =>
+        change.AffectsSongs || change.AffectsFavorites;
 
     protected override void OnLoadingStateChanged(bool isLoading)
     {

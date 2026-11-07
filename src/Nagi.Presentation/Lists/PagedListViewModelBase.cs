@@ -104,8 +104,7 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
 
     protected virtual void OnLoadingStateChanged(bool isLoading) { }
 
-    protected virtual bool ShouldReloadOnLibraryChange(LibraryChangeKind kind) =>
-        kind is not (LibraryChangeKind.RootAdded or LibraryChangeKind.FavoritesChanged or LibraryChangeKind.ListenHistoryCleared);
+    protected virtual bool ShouldReloadOnLibraryChange(LibraryChange change) => change.AffectsSongs;
 
     /// <summary>
     ///     Writes a page's items into the typed collection. Runs on the UI thread in the same dispatcher hop that sets the
@@ -142,10 +141,11 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
 
     partial void OnPageSizeChanged(int value) => _settingsService.Set(AppSettings.SongsPerPage, value);
 
-    // Whichever list changed the page size, every list picks it up from the setting.
+    // Whichever list changed the page size, every list picks it up from the setting. The reader sorts songs, albums
+    // and artists by the leading-articles setting, so every list reloads for that too.
     private void OnSettingChanged(Setting setting)
     {
-        if (setting != AppSettings.SongsPerPage) return;
+        if (setting != AppSettings.SongsPerPage && setting != CoreSettings.IgnoreLeadingArticlesOnSort) return;
         _dispatcherService.TryEnqueue(() =>
         {
             if (_isDisposed) return;
@@ -158,7 +158,7 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
 
     private void OnLibraryChanged(object? sender, LibraryChange change)
     {
-        if (!ShouldReloadOnLibraryChange(change.Kind)) return;
+        if (!ShouldReloadOnLibraryChange(change)) return;
 
         _libraryChangeDebouncer.Trigger(async token =>
         {

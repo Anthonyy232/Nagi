@@ -44,8 +44,7 @@ public partial class GenreViewModel : ClientFilteredListViewModelBase<GenreSumma
     public SortOrderSelection<GenreSortOrder> Sort { get; }
 
     // Song counts per genre change only when songs do.
-    protected override bool ShouldReloadOnLibraryChange(LibraryChangeKind kind) =>
-        kind is not (LibraryChangeKind.RootAdded or LibraryChangeKind.FavoritesChanged or LibraryChangeKind.ListenHistoryCleared);
+    protected override bool ShouldReloadOnLibraryChange(LibraryChange change) => change.AffectsSongs;
 
     // SQLite's async APIs still perform native I/O, so keep the query off the UI thread.
     protected override async Task<IEnumerable<GenreSummary>> LoadItemsAsync(CancellationToken token) =>

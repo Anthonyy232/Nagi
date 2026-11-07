@@ -32,23 +32,6 @@ public partial class LibraryViewModel : SongListViewModelBase
         : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger, CommonSortOrders, AppSettings.LibrarySortOrder)
     {
         PageTitle = Strings.LibraryPage_Title;
-        _settingsService.SettingChanged += OnSettingChanged;
-    }
-
-    private void OnSettingChanged(Setting setting)
-    {
-        if (setting != CoreSettings.IgnoreLeadingArticlesOnSort) return;
-        _dispatcherService.TryEnqueue(() =>
-        {
-            CurrentPage = 1;
-            _ = LoadAsync(CancellationToken.None);
-        });
-    }
-
-    public override void Dispose()
-    {
-        _settingsService.SettingChanged -= OnSettingChanged;
-        base.Dispose();
     }
 
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
@@ -71,8 +54,4 @@ public partial class LibraryViewModel : SongListViewModelBase
         await LoadAsync(CancellationToken.None);
         HasInitialized = !HasLoadError;
     }
-
-    protected override bool ShouldReloadOnLibraryChange(LibraryChangeKind kind) =>
-        kind != LibraryChangeKind.RootAdded;
-
 }

@@ -127,7 +127,7 @@ public sealed class ServerLibrarySync : IServerLibrarySync
                 }
             }
 
-            if (coverUpdates > 0) _notifier.Raise(LibraryChangeKind.FolderRescanned, folderId);
+            if (coverUpdates > 0) _notifier.Raise(LibraryChangeKind.SongsChanged);
             if (importChanged) _ = _artwork.StartMetadataBackgroundFetchAsync();
 
             _logger.LogInformation("Synced server folder {FolderId}: +{Added} ~{Updated} -{Removed}, {Covers} songs got covers, {Playlists} playlists.",
