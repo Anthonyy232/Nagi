@@ -41,6 +41,7 @@ public static class CoreServiceRegistration
         services.AddSingleton<ILibraryScanner>(sp => sp.GetRequiredService<LibraryService>());
         services.AddSingleton<LibraryFolderWatcher>();
 
+        services.AddSingleton<IPlaybackStateStore, PlaybackStateStore>();
         services.AddSingleton<IMusicPlaybackService, MusicPlaybackService>();
         services.AddSingleton<OfflineScrobbleService>();
         services.AddSingleton<IImageProcessor, ImageSharpProcessor>();

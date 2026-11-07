@@ -27,7 +27,7 @@ public partial class MusicPlaybackService
             ShuffledQueueTrackIds = IsShuffleEnabled ? shuffledQueue : [],
             CurrentShuffledQueueIndex = shuffledQueue.IndexOf(_queue.Shuffled.ElementAtOrDefault(CurrentShuffledIndex))
         };
-        await _settingsService.SavePlaybackStateAsync(state);
+        await _playbackStateStore.SaveAsync(state);
     }
 
     private async Task<bool> RestoreInternalPlaybackStateAsync(PlaybackState state)

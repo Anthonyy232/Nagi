@@ -202,61 +202,6 @@ public class SettingsServiceTests
     }
 
     [Fact]
-    public async Task PlaybackState_FailedReplacementPreservesSavedQueueAndCleansTemporaryFile()
-    {
-        var directory = Directory.CreateTempSubdirectory("Nagi-settings-");
-        try
-        {
-            var path = Path.Combine(directory.FullName, "playback_state.json");
-            var settings = CreateSettings(new Dictionary<string, object>(), path);
-            var songId = Guid.NewGuid();
-            await settings.SavePlaybackStateAsync(new PlaybackState
-            { CurrentTrackId = songId, PlaybackQueueTrackIds = [songId] });
-
-            using (File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read))
-            {
-                var failure = await Record.ExceptionAsync(() => settings.SavePlaybackStateAsync(new PlaybackState()));
-                Assert.True(failure is IOException or UnauthorizedAccessException, failure?.ToString());
-            }
-
-            var state = await settings.GetPlaybackStateAsync();
-            state!.CurrentTrackId.Should().Be(songId);
-            state.PlaybackQueueTrackIds.Should().Equal(songId);
-            Directory.GetFiles(directory.FullName).Should().Equal(path);
-            await settings.SavePlaybackStateAsync(null);
-            (await settings.GetPlaybackStateAsync()).Should().BeNull();
-            File.Exists(path).Should().BeFalse();
-        }
-        finally
-        {
-            directory.Delete(recursive: true);
-        }
-    }
-
-    [Fact]
-    public async Task PlaybackState_ReadFailurePreservesFileButMalformedJsonIsDiscarded()
-    {
-        var directory = Directory.CreateTempSubdirectory("Nagi-settings-");
-        try
-        {
-            var path = Path.Combine(directory.FullName, "playback_state.json");
-            var settings = CreateSettings(new Dictionary<string, object>(), path);
-            await settings.SavePlaybackStateAsync(new PlaybackState());
-            using (File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None))
-                (await settings.GetPlaybackStateAsync()).Should().BeNull();
-            File.Exists(path).Should().BeTrue();
-
-            await File.WriteAllTextAsync(path, "{broken");
-            (await settings.GetPlaybackStateAsync()).Should().BeNull();
-            File.Exists(path).Should().BeFalse();
-        }
-        finally
-        {
-            directory.Delete(recursive: true);
-        }
-    }
-
-    [Fact]
     public async Task ResetToDefaults_TurnsOffAutoLaunch()
     {
         var autoLaunch = Substitute.For<IAutoLaunchService>();
@@ -302,15 +247,11 @@ public class SettingsServiceTests
         values.Should().Equal(new Dictionary<string, object> { ["Volume"] = 0.8 });
     }
 
-    private static SettingsService CreateSettings(IDictionary<string, object> values, string? playbackPath = null,
-        IAutoLaunchService? autoLaunch = null)
+    private static SettingsService CreateSettings(IDictionary<string, object> values, IAutoLaunchService? autoLaunch = null)
     {
-        var paths = Substitute.For<IPathConfiguration>();
-        // A unique temp path: resetting settings deletes the playback state file.
-        paths.PlaybackStateFilePath.Returns(playbackPath ?? Path.Combine(Path.GetTempPath(), $"nagi-playback-{Guid.NewGuid():N}.json"));
         var store = Substitute.For<ISettingsStore>();
         store.Values.Returns(values);
-        return new SettingsService(store, paths, Substitute.For<ICredentialLockerService>(),
+        return new SettingsService(store, Substitute.For<IPlaybackStateStore>(), Substitute.For<ICredentialLockerService>(),
             autoLaunch ?? Substitute.For<IAutoLaunchService>(), NullLogger<SettingsService>.Instance);
     }
 }

@@ -23,6 +23,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     private readonly MusicPlaybackService _service;
 
     private readonly ISettingsService _settingsService;
+    private readonly IPlaybackStateStore _playbackStateStore = Substitute.For<IPlaybackStateStore>();
 
     private readonly ISystemMediaControls _mediaControls = Substitute.For<ISystemMediaControls>();
 
@@ -41,13 +42,13 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _settingsService.GetInitialShuffleStateAsync().Returns(false);
         _settingsService.GetInitialRepeatModeAsync().Returns(RepeatMode.Off);
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(false);
-        _settingsService.GetPlaybackStateAsync().Returns((PlaybackState?)null);
+        _playbackStateStore.LoadAsync().Returns((PlaybackState?)null);
         _settingsService.GetEqualizerSettingsAsync().Returns((EqualizerSettings?)null);
 
         _audioPlayer.GetEqualizerBands().Returns(new List<(uint, float)> { (0, 60f), (1, 170f) });
 
         _service = new MusicPlaybackService(
-            _settingsService,
+            _settingsService, _playbackStateStore,
             _audioPlayer,
             _mediaControls,
             _library.Reader, _library.Writer,
@@ -138,7 +139,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         await _audioPlayer.DidNotReceive().LoadAsync(Arg.Any<Song>());
         await _audioPlayer.DidNotReceive().StopAsync();
         PlaybackState? saved = null;
-        _settingsService.SavePlaybackStateAsync(Arg.Do<PlaybackState>(s => saved = s)).Returns(Task.CompletedTask);
+        _playbackStateStore.SaveAsync(Arg.Do<PlaybackState>(s => saved = s)).Returns(Task.CompletedTask);
         await _service.SavePlaybackStateAsync();
         (shuffle ? saved!.ShuffledQueueTrackIds : saved!.PlaybackQueueTrackIds).Should().Equal(order);
 
@@ -267,7 +268,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         externalIds.Select(id => tracks[id].Title).Should().ContainInOrder("First", "Second");
 
         await _service.SavePlaybackStateAsync();
-        await _settingsService.Received().SavePlaybackStateAsync(Arg.Is<PlaybackState>(state =>
+        await _playbackStateStore.Received().SaveAsync(Arg.Is<PlaybackState>(state =>
             state.PlaybackQueueTrackIds.SequenceEqual(_testSongs.Select(song => song.Id))));
 
         await _service.PlayQueueItemAsync(_testSongs.Count);
@@ -330,7 +331,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         var first = _testSongs[0];
         var second = _testSongs[1];
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
-        _settingsService.GetPlaybackStateAsync().Returns(new PlaybackState
+        _playbackStateStore.LoadAsync().Returns(new PlaybackState
         {
             PlaybackQueueTrackIds = [first.Id, Guid.Empty, first.Id, second.Id],
             CurrentPlaybackQueueIndex = 3
@@ -351,7 +352,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         var removed = Guid.NewGuid();
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
         _settingsService.GetInitialShuffleStateAsync().Returns(true);
-        _settingsService.GetPlaybackStateAsync().Returns(new PlaybackState
+        _playbackStateStore.LoadAsync().Returns(new PlaybackState
         {
             PlaybackQueueTrackIds = [a, removed, b, c],
             ShuffledQueueTrackIds = [c, removed, a, b],
@@ -376,7 +377,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         shuffle[^1] = duplicate ? ids[0] : Guid.NewGuid();
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
         _settingsService.GetInitialShuffleStateAsync().Returns(true);
-        _settingsService.GetPlaybackStateAsync().Returns(new PlaybackState
+        _playbackStateStore.LoadAsync().Returns(new PlaybackState
         {
             PlaybackQueueTrackIds = ids,
             ShuffledQueueTrackIds = shuffle,
@@ -398,7 +399,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         var ids = _testSongs.Select(song => song.Id).ToList();
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
         _settingsService.GetInitialShuffleStateAsync().Returns(shuffle);
-        _settingsService.GetPlaybackStateAsync().Returns(new PlaybackState
+        _playbackStateStore.LoadAsync().Returns(new PlaybackState
         {
             PlaybackQueueTrackIds = ids,
             ShuffledQueueTrackIds = ids.AsEnumerable().Reverse().ToList(),
@@ -421,7 +422,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         var first = _testSongs[0];
         var unqueued = _testSongs[1];
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
-        _settingsService.GetPlaybackStateAsync().Returns(new PlaybackState
+        _playbackStateStore.LoadAsync().Returns(new PlaybackState
         {
             PlaybackQueueTrackIds = [first.Id],
             CurrentTrackId = unqueued.Id
@@ -479,7 +480,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
             CurrentPlaybackQueueIndex = 1
         };
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
-        _settingsService.GetPlaybackStateAsync().Returns(savedState);
+        _playbackStateStore.LoadAsync().Returns(savedState);
         await _service.InitializeAsync();
 
         _service.PlaybackQueue.Should().BeEquivalentTo(_testSongs.Select(s => s.Id));
@@ -500,7 +501,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
             CurrentPlaybackQueueIndex = 1
         };
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
-        _settingsService.GetPlaybackStateAsync().Returns(savedState);
+        _playbackStateStore.LoadAsync().Returns(savedState);
 
         _library.Reader.GetSongByIdAsync(_testSongs[1].Id).Returns((Song?)null);
 
@@ -1166,7 +1167,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         await _service.PlayAsync(ids);
         await _service.SetShuffleAsync(shuffled);
         PlaybackState? savedState = null;
-        _settingsService.SavePlaybackStateAsync(Arg.Do<PlaybackState>(state => savedState = state))
+        _playbackStateStore.SaveAsync(Arg.Do<PlaybackState>(state => savedState = state))
             .Returns(Task.CompletedTask);
 
         await _service.ClearQueueAsync();
@@ -1184,8 +1185,8 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         savedState.CurrentTrackId.Should().BeNull();
 
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
-        _settingsService.GetPlaybackStateAsync().Returns(savedState);
-        using var restored = new MusicPlaybackService(_settingsService, _audioPlayer, _mediaControls, _library.Reader, _library.Writer, _metadataService, _fileSystem, _musicServers, _logger);
+        _playbackStateStore.LoadAsync().Returns(savedState);
+        using var restored = new MusicPlaybackService(_settingsService, _playbackStateStore, _audioPlayer, _mediaControls, _library.Reader, _library.Writer, _metadataService, _fileSystem, _musicServers, _logger);
         await restored.InitializeAsync();
         restored.PlaybackQueue.Should().BeEmpty();
         restored.CurrentTrack.Should().BeNull();
@@ -1236,7 +1237,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
 
         await _service.SavePlaybackStateAsync();
 
-        await _settingsService.Received(1).SavePlaybackStateAsync(Arg.Is<PlaybackState>(state =>
+        await _playbackStateStore.Received(1).SaveAsync(Arg.Is<PlaybackState>(state =>
             state != null &&
             state.CurrentTrackId == _testSongs[2].Id &&
             state.PlaybackQueueTrackIds.SequenceEqual(_testSongs.Select(s => s.Id)) &&
@@ -1620,7 +1621,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
 
         await _service.SavePlaybackStateAsync();
 
-        await _settingsService.Received().SavePlaybackStateAsync(Arg.Is<PlaybackState>(state =>
+        await _playbackStateStore.Received().SaveAsync(Arg.Is<PlaybackState>(state =>
             state.CurrentTrackId == null && state.CurrentPlaybackQueueIndex == 3));
     }
 
@@ -1628,7 +1629,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     public async Task InitializeAsync_WhenDisposedDuringSessionFileRead_DoesNotTouchAudio()
     {
         var release = new TaskCompletionSource<PlaybackState?>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _settingsService.GetPlaybackStateAsync().Returns(release.Task);
+        _playbackStateStore.LoadAsync().Returns(release.Task);
         var initialization = _service.InitializeAsync();
         var disposal = _service.DisposeAsync().AsTask();
         release.SetResult(null);
@@ -1643,7 +1644,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     public async Task PlayPauseAsync_AfterSessionRestore_StartsListenBeforePlaying()
     {
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
-        _settingsService.GetPlaybackStateAsync().Returns(new PlaybackState
+        _playbackStateStore.LoadAsync().Returns(new PlaybackState
         {
             PlaybackQueueTrackIds = [_testSongs[0].Id],
             CurrentTrackId = _testSongs[0].Id

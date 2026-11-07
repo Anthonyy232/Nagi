@@ -51,7 +51,7 @@ public partial class MusicPlaybackServiceTests
         song.RemoteId = "s1";
         _musicServers.GetStreamUriAsync(song).Returns((Uri?)null);
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
-        _settingsService.GetPlaybackStateAsync().Returns(new PlaybackState
+        _playbackStateStore.LoadAsync().Returns(new PlaybackState
         {
             CurrentTrackId = song.Id,
             PlaybackQueueTrackIds = _testSongs.Select(s => s.Id).ToList(),

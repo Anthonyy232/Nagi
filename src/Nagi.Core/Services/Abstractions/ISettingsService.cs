@@ -64,16 +64,6 @@ public interface ISettingsService
 
     Task SetDiscordRichPresenceEnabledAsync(bool isEnabled);
 
-    /// <summary>
-    ///     Saves the current playback state, including the queue and current track.
-    /// </summary>
-    /// <param name="state">The playback state to save. If null, the saved state is cleared.</param>
-    Task SavePlaybackStateAsync(PlaybackState? state);
-
-    Task<PlaybackState?> GetPlaybackStateAsync();
-
-    Task ClearPlaybackStateAsync();
-
     Task<bool> GetFetchOnlineLyricsEnabledAsync();
 
     Task SetFetchOnlineLyricsEnabledAsync(bool isEnabled);

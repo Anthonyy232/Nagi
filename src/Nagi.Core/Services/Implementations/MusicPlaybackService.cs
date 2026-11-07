@@ -17,6 +17,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     private readonly IFileSystemService _fileSystem;
     private readonly IMusicServerService _musicServers;
     private readonly ISettingsService _settingsService;
+    private readonly IPlaybackStateStore _playbackStateStore;
     private readonly object _pendingOperationsLock = new();
 
     private int _playbackRequestVersion;
@@ -36,6 +37,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
     public MusicPlaybackService(
         ISettingsService settingsService,
+        IPlaybackStateStore playbackStateStore,
         IAudioPlayer audioPlayer,
         ISystemMediaControls mediaControls,
         ILibraryReader libraryReader,
@@ -48,6 +50,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         _fileSystem = fileSystem;
         _musicServers = musicServers;
         _settingsService = settingsService;
+        _playbackStateStore = playbackStateStore;
         _audioPlayer = audioPlayer;
         _mediaControls = mediaControls;
         _libraryReader = libraryReader;
@@ -149,7 +152,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             var fadeEnabledTask = _settingsService.GetFadeOnPlayPauseEnabledAsync();
             var fadeInTask = _settingsService.GetFadeInDurationMsAsync();
             var fadeOutTask = _settingsService.GetFadeOutDurationMsAsync();
-            var playbackStateTask = _settingsService.GetPlaybackStateAsync();
+            var playbackStateTask = _playbackStateStore.LoadAsync();
 
             await Task.WhenAll(volumeTask, muteTask, shuffleTask, repeatTask, eqTask, restoreEnabledTask, fadeEnabledTask, fadeInTask, fadeOutTask, playbackStateTask);
             if (_isDisposed) return;

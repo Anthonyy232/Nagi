@@ -104,7 +104,7 @@ public static class AppServices
             if (await settingsService.GetRestorePlaybackStateEnabledAsync())
                 await musicPlaybackService.SavePlaybackStateAsync();
             else
-                await settingsService.ClearPlaybackStateAsync();
+                services.GetRequiredService<IPlaybackStateStore>().Clear();
         }
         catch (Exception ex)
         {

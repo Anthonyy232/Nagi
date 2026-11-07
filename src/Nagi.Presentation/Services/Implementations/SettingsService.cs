@@ -76,12 +76,12 @@ public partial class SettingsService : IUISettingsService
     private readonly ICredentialLockerService _credentialLockerService;
     private readonly IDictionary<string, object> _values;
     private readonly ILogger<SettingsService> _logger;
-    private readonly IPathConfiguration _pathConfig;
+    private readonly IPlaybackStateStore _playbackStateStore;
 
-    public SettingsService(ISettingsStore settingsStore, IPathConfiguration pathConfig,
+    public SettingsService(ISettingsStore settingsStore, IPlaybackStateStore playbackStateStore,
         ICredentialLockerService credentialLockerService, IAutoLaunchService autoLaunchService, ILogger<SettingsService> logger)
     {
-        _pathConfig = pathConfig;
+        _playbackStateStore = playbackStateStore;
         _credentialLockerService =
             credentialLockerService;
         _autoLaunchService = autoLaunchService;
@@ -117,8 +117,8 @@ public partial class SettingsService : IUISettingsService
     public async Task ResetToDefaultsAsync()
     {
         await ResetStoredValuesAsync().ConfigureAwait(false);
-        await Task.WhenAll(ClearPlaybackStateAsync(),
-            _autoLaunchService.SetEnabledAsync(SettingsDefaults.AutoLaunchEnabled),
+        _playbackStateStore.Clear();
+        await Task.WhenAll(_autoLaunchService.SetEnabledAsync(SettingsDefaults.AutoLaunchEnabled),
             ClearLastFmCredentialsAsync(), ClearListenBrainzUserTokenAsync()).ConfigureAwait(false);
         _logger.LogInformation("All application settings have been reset to their default values.");
     }

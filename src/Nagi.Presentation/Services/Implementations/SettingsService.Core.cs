@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
@@ -101,65 +100,6 @@ public partial class SettingsService
     {
         return SetValueAndNotifyAsync(DiscordRichPresenceEnabledKey, isEnabled, SettingsDefaults.DiscordRichPresenceEnabled,
             DiscordRichPresenceSettingChanged);
-    }
-
-    public async Task SavePlaybackStateAsync(PlaybackState? state)
-    {
-        if (state == null)
-        {
-            await ClearPlaybackStateAsync().ConfigureAwait(false);
-            return;
-        }
-
-        var path = _pathConfig.PlaybackStateFilePath;
-        var temporaryPath = $"{path}.{Guid.NewGuid():N}.tmp";
-        try
-        {
-            await File.WriteAllTextAsync(temporaryPath, JsonSerializer.Serialize(state)).ConfigureAwait(false);
-            File.Move(temporaryPath, path, overwrite: true);
-        }
-        finally
-        {
-            try { File.Delete(temporaryPath); }
-            catch (Exception ex) { _logger.LogWarning(ex, "Could not remove temporary playback state {Path}.", temporaryPath); }
-        }
-    }
-
-    public async Task<PlaybackState?> GetPlaybackStateAsync()
-    {
-        try
-        {
-            var json = await File.ReadAllTextAsync(_pathConfig.PlaybackStateFilePath).ConfigureAwait(false);
-            return JsonSerializer.Deserialize<PlaybackState>(json);
-        }
-        catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
-        {
-            return null;
-        }
-        catch (JsonException ex)
-        {
-            _logger.LogWarning(ex, "Discarding invalid playback state.");
-            await ClearPlaybackStateAsync().ConfigureAwait(false);
-            return null;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Error reading playback state.");
-            return null;
-        }
-    }
-
-    public Task ClearPlaybackStateAsync()
-    {
-        try
-        {
-            File.Delete(_pathConfig.PlaybackStateFilePath);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Error clearing playback state file.");
-        }
-        return Task.CompletedTask;
     }
 
     public Task<bool> GetLastFmScrobblingEnabledAsync()

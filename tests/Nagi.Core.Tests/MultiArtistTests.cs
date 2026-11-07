@@ -255,6 +255,7 @@ public class MultiArtistTests : IDisposable
 
         using var playbackService = new MusicPlaybackService(
             Substitute.For<ISettingsService>(),
+            Substitute.For<IPlaybackStateStore>(),
             Substitute.For<IAudioPlayer>(),
             Substitute.For<ISystemMediaControls>(),
             Substitute.For<ILibraryReader>(),
