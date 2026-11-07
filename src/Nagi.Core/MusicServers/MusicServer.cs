@@ -2,7 +2,7 @@ using Nagi.Core.Library;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Nagi.Core.Models;
+namespace Nagi.Core.MusicServers;
 
 public enum MusicServerKind
 {

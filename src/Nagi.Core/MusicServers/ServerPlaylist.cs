@@ -1,4 +1,4 @@
-namespace Nagi.Core.Models;
+namespace Nagi.Core.MusicServers;
 
 /// <summary>
 ///     A playlist as a music server describes it.

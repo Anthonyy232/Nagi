@@ -6,13 +6,11 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using Nagi.Core.Helpers;
 using Nagi.Core.Library;
-using Nagi.Core.Models;
 using Nagi.Core.Playlists;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Data;
-using static Nagi.Core.Services.Implementations.MusicServers.MusicServerHttp;
+using static Nagi.Core.MusicServers.MusicServerHttp;
 
-namespace Nagi.Core.Services.Implementations.MusicServers;
+namespace Nagi.Core.MusicServers;
 
 /// <summary>
 ///     Talks to Jellyfin 10.11 and later. Requests carry the <c>Authorization: MediaBrowser</c> header, and stream URLs

@@ -1,9 +1,7 @@
 using Nagi.Core.Library;
-using Nagi.Core.Models;
 using Nagi.Core.Scrobbling;
-using Nagi.Core.Services.Data;
 
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.MusicServers;
 
 /// <summary>
 ///     The user's music servers: adding and syncing them and streaming their songs. Each server is a root folder in

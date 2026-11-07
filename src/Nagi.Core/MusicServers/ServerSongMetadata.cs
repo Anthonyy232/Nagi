@@ -1,7 +1,8 @@
+using Nagi.Core.Models;
 using System.Security.Cryptography;
 using System.Text.Json;
 
-namespace Nagi.Core.Models;
+namespace Nagi.Core.MusicServers;
 
 /// <summary>
 ///     A song as a music server describes it, imported the same way as tags read from a file.

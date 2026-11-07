@@ -1,6 +1,4 @@
-using Nagi.Core.Services.Data;
-
-namespace Nagi.Core.Services.Implementations.MusicServers;
+namespace Nagi.Core.MusicServers;
 
 internal static class MusicServerHttp
 {

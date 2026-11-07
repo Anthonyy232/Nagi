@@ -5,11 +5,11 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Library;
 using Nagi.Core.Listening;
+using Nagi.Core.MusicServers;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
-using Nagi.Core.Services.Implementations.MusicServers;
 using NSubstitute;
 
 namespace Nagi.Core.Tests.Utils;

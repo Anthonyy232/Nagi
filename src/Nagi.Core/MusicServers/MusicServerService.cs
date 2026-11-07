@@ -4,12 +4,10 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
 using Nagi.Core.Library;
 using Nagi.Core.Listening;
-using Nagi.Core.Models;
 using Nagi.Core.Scrobbling;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Data;
 
-namespace Nagi.Core.Services.Implementations.MusicServers;
+namespace Nagi.Core.MusicServers;
 
 /// <summary>
 ///     Keeps the library in step with the user's music servers: their sign-ins, syncs and removal. The library side of a

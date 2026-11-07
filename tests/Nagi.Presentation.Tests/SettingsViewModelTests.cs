@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Time.Testing;
 using Nagi.Core.Library;
 using Nagi.Core.Models;
+using Nagi.Core.MusicServers;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
 using Nagi.Core.Scrobbling;

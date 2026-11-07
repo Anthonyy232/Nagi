@@ -5,9 +5,7 @@ using System.Text.Json;
 using System.Web;
 using FluentAssertions;
 using Nagi.Core.Library;
-using Nagi.Core.Models;
-using Nagi.Core.Services.Data;
-using Nagi.Core.Services.Implementations.MusicServers;
+using Nagi.Core.MusicServers;
 using Nagi.Core.Tests.Utils;
 using Xunit;
 

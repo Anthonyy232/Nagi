@@ -1,7 +1,4 @@
-using Nagi.Core.Models;
-using Nagi.Core.Services.Data;
-
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.MusicServers;
 
 /// <summary>
 ///     A signed-in connection to one music server. Failures throw <see cref="MusicServerException" />.

@@ -1,4 +1,4 @@
-using Nagi.Core.Models;
+using Nagi.Core.MusicServers;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

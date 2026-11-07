@@ -1,4 +1,4 @@
-using Nagi.Core.Services.Abstractions;
+using Nagi.Core.MusicServers;
 
 namespace Nagi.Core.Library;
 

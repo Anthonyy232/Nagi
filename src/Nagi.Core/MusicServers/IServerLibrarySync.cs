@@ -1,8 +1,6 @@
 using Nagi.Core.Library;
-using Nagi.Core.Models;
-using Nagi.Core.Services.Data;
 
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.MusicServers;
 
 /// <summary>
 ///     The library side of the music servers that <see cref="IMusicServerService" /> manages: each server's root folder,

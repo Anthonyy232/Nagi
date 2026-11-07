@@ -1,7 +1,4 @@
-using Nagi.Core.Models;
-using Nagi.Core.Services.Abstractions;
-
-namespace Nagi.Core.Services.Implementations.MusicServers;
+namespace Nagi.Core.MusicServers;
 
 /// <summary>
 ///     Everything that differs between kinds of music server, apart from the client itself: how an address is written,
@@ -14,14 +11,14 @@ internal abstract class MusicServerConnector
     /// <summary>
     ///     Turns what the user typed into the server's base URL.
     /// </summary>
-    /// <exception cref="Data.MusicServerException">The address can't be a server URL.</exception>
+    /// <exception cref="MusicServerException">The address can't be a server URL.</exception>
     public virtual string NormalizeAddress(string address) => MusicServerHttp.NormalizeAddress(address);
 
     /// <summary>
     ///     Signs in to <paramref name="server" /> and checks it can be synced.
     /// </summary>
     /// <param name="secret">The password, or the API key for a server that <see cref="MusicServer.UsesApiKey" />.</param>
-    /// <exception cref="Data.MusicServerException">The server couldn't be signed in to or isn't supported.</exception>
+    /// <exception cref="MusicServerException">The server couldn't be signed in to or isn't supported.</exception>
     public abstract Task<ServerSignIn> SignInAsync(HttpClient httpClient, MusicServer server, string secret);
 
     /// <param name="secret">The <see cref="ServerSignIn.Secret" /> kept from signing in.</param>

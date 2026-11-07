@@ -1,8 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
-using Nagi.Core.Models;
-using Nagi.Core.Services.Data;
+using Nagi.Core.MusicServers;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
