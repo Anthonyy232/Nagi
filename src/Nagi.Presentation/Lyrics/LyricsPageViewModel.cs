@@ -11,11 +11,10 @@ using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Common;
-using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Lyrics;
 
 public partial class LyricsPageViewModel : ObservableObject, IDisposable
 {

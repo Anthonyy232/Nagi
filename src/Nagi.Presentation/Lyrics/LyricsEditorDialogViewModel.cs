@@ -1,6 +1,4 @@
-using Nagi.Presentation.Models;
-
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Lyrics;
 
 /// <summary>
 ///     The lyrics editor, which saves the edited lyrics or removes the saved ones.

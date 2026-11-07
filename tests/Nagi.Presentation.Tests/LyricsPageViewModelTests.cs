@@ -7,10 +7,9 @@ using Nagi.Core.Lyrics.Romanization;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Settings;
-using Nagi.Presentation.Models;
+using Nagi.Presentation.Lyrics;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
-using Nagi.Presentation.ViewModels;
 using NSubstitute;
 using Xunit;
 

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Nagi.Core.Library;
 using Nagi.Core.Playlists;
+using Nagi.Presentation.Lyrics;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Player;
 

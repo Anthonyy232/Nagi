@@ -1,9 +1,8 @@
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Nagi.Presentation.Models;
+using Nagi.Presentation.Lyrics;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.ViewModels;
 
 namespace Nagi.WinUI.Services.Implementations;
 
