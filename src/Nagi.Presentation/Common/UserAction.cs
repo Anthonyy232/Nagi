@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
-namespace Nagi.Presentation.Helpers;
+namespace Nagi.Presentation.Common;
 
 /// <summary>
 ///     Runs something the user asked for, such as starting playback, and tells them if it failed.

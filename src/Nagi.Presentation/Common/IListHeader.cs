@@ -1,4 +1,4 @@
-namespace Nagi.Presentation.Models;
+namespace Nagi.Presentation.Common;
 
 /// <summary>
 ///     A row that heads a group in a song list, such as a disc or a day, rather than a song.

@@ -2,7 +2,7 @@
 using System.Collections.Specialized;
 using System.ComponentModel;
 
-namespace Nagi.Presentation.Helpers;
+namespace Nagi.Presentation.Common;
 
 /// <summary>
 /// Batches collection notifications for bulk updates.

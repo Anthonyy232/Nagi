@@ -4,7 +4,7 @@ using System.Resources;
 using System.Text.RegularExpressions;
 using FluentAssertions;
 using Jeffijoe.MessageFormat;
-using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Common;
 using Xunit;
 using CoreStrings = Nagi.Core.Resources.Strings;
 using UiStrings = Nagi.Presentation.Resources.Strings;

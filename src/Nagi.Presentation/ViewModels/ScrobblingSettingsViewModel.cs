@@ -5,10 +5,10 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Platform;
 using Nagi.Core.Scrobbling;
 using Nagi.Core.Settings;
+using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using CoreStrings = Nagi.Core.Resources.Strings;
-using Nagi.Presentation.Helpers;
 
 namespace Nagi.Presentation.ViewModels;
 

@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using Jeffijoe.MessageFormat;
 
-namespace Nagi.Presentation.Helpers;
+namespace Nagi.Presentation.Common;
 
 /// <summary>
 ///     Formats localized strings, whether a translation uses ICU plural or select rules or plain .NET placeholders.

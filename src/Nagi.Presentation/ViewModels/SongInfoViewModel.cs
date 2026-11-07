@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
 using Nagi.Core.Platform;
-using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Common;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 using CoreStrings = Nagi.Core.Resources.Strings;

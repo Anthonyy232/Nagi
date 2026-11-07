@@ -1,4 +1,4 @@
-using Nagi.Presentation.Models;
+using Nagi.Presentation.Common;
 
 namespace Nagi.WinUI.Helpers;
 

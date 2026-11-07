@@ -1,4 +1,4 @@
-namespace Nagi.Presentation.Models;
+namespace Nagi.Presentation.Common;
 
 /// <summary>
 ///     A collection that loads its items a page at a time as the list showing it scrolls.

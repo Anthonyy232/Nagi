@@ -8,8 +8,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Listening;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
-using Nagi.Presentation.Helpers;
-using Nagi.Presentation.Navigation;
+using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 

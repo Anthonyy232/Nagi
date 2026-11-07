@@ -1,6 +1,7 @@
 ﻿using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Text.Json.Serialization;
+using Nagi.Presentation.Common;
 
 namespace Nagi.Presentation.Models;
 

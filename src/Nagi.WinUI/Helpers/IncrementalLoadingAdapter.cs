@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Specialized;
 using Microsoft.UI.Xaml.Data;
-using Nagi.Presentation.Models;
+using Nagi.Presentation.Common;
 using Windows.Foundation;
 
 namespace Nagi.WinUI.Helpers;

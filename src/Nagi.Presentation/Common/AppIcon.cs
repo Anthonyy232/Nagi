@@ -1,4 +1,4 @@
-namespace Nagi.Presentation.Models;
+namespace Nagi.Presentation.Common;
 
 /// <summary>
 ///     Icons that view models choose between. Each UI head maps them to its platform's icon set.

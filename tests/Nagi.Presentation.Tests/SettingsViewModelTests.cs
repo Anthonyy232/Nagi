@@ -12,12 +12,12 @@ using Nagi.Core.Playlists;
 using Nagi.Core.Scrobbling;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Models;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
 using Nagi.Presentation.ViewModels;
 using NSubstitute;
 using Xunit;
-using Nagi.Presentation.Resources;
 
 namespace Nagi.Presentation.Tests;
 

@@ -7,7 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
 using Nagi.Core.Platform;
-using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Common;
 
 namespace Nagi.Presentation.ViewModels;
 

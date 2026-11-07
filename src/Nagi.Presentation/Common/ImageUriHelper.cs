@@ -2,7 +2,7 @@
 using System.Web;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace Nagi.Presentation.Helpers;
+namespace Nagi.Presentation.Common;
 
 public static class ImageUriHelper
 {

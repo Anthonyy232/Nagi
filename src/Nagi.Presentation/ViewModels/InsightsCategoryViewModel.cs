@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nagi.Core.Listening;
-using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
 
 namespace Nagi.Presentation.ViewModels;

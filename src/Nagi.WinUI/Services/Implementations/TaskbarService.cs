@@ -6,7 +6,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
-using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.ViewModels;
 using Windows.Foundation;

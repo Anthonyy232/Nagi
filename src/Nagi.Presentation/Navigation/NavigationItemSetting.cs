@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using Nagi.Presentation.Common;
 using Nagi.Presentation.Models;
 
 namespace Nagi.Presentation.Navigation;

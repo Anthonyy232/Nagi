@@ -1,4 +1,4 @@
-namespace Nagi.Presentation.Models;
+namespace Nagi.Presentation.Common;
 
 /// <summary>
 ///     A choice for a setting, with the name it is shown with.

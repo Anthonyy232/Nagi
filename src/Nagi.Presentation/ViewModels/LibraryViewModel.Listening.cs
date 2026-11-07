@@ -3,8 +3,8 @@ using Microsoft.Extensions.Logging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nagi.Core.Listening;
+using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Helpers;
 
 namespace Nagi.Presentation.ViewModels;
 

@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Nagi.Presentation.Helpers;
+namespace Nagi.Presentation.Common;
 
 /// <summary>
 ///     Re-triggerable delay: each <see cref="Trigger"/> call cancels the previous

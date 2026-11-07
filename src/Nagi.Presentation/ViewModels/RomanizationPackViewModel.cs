@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Nagi.Core.Lyrics.Romanization;
+using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Helpers;
 
 namespace Nagi.Presentation.ViewModels;
 

@@ -16,14 +16,12 @@ using Nagi.Core.Platform;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services;
 using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Implementations;
-using Nagi.Presentation.Services;
-using Nagi.Presentation.Navigation;
 
 namespace Nagi.WinUI;
 

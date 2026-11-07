@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Nagi.Presentation.Common;
 
 namespace Nagi.Presentation.Models;
 
