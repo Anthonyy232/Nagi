@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Constants;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
-using Nagi.Core.Http;
-using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Library;
+using Nagi.Core.OnlineProviders;
+using Nagi.Core.OnlineProviders.Pipelines;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Settings;
 

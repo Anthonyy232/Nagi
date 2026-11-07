@@ -4,12 +4,11 @@ using System.Net;
 using System.Globalization;
 using System.Xml.Linq;
 using Nagi.Core.Data;
-using Nagi.Core.Http;
-using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Library;
 using Nagi.Core.Listening;
+using Nagi.Core.OnlineProviders;
+using Nagi.Core.OnlineProviders.Pipelines;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Helpers;
 using Nagi.Core.Settings;
 
 namespace Nagi.Core.Scrobbling;

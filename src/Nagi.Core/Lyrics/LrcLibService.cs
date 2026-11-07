@@ -2,11 +2,9 @@ using System.Globalization;
 using System.Web;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
-using Nagi.Core.Http;
-using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Library;
-using Nagi.Core.Models;
-using Nagi.Core.Services.Data;
+using Nagi.Core.OnlineProviders;
+using Nagi.Core.OnlineProviders.Pipelines;
 
 namespace Nagi.Core.Lyrics;
 

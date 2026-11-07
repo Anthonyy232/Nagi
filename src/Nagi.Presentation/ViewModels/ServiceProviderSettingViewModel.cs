@@ -1,5 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using Nagi.Core.Models;
+using Nagi.Core.OnlineProviders;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 

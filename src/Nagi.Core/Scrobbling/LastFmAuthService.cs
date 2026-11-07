@@ -1,9 +1,7 @@
 using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Http;
-using Nagi.Core.Http.Pipelines;
-using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Helpers;
+using Nagi.Core.OnlineProviders;
+using Nagi.Core.OnlineProviders.Pipelines;
 
 namespace Nagi.Core.Scrobbling;
 

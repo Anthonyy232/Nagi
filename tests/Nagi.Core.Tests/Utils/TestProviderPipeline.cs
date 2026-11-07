@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging.Abstractions;
-using Nagi.Core.Http.Pipelines;
+using Nagi.Core.OnlineProviders.Pipelines;
 
 namespace Nagi.Core.Tests;
 

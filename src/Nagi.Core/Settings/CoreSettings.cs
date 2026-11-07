@@ -1,4 +1,4 @@
-using Nagi.Core.Models;
+using Nagi.Core.OnlineProviders;
 using Nagi.Core.Playback;
 
 namespace Nagi.Core.Settings;

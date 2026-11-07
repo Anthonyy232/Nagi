@@ -1,9 +1,7 @@
 using System.Globalization;
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Models;
+using Nagi.Core.OnlineProviders;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Data;
-using Nagi.Core.Services.Helpers;
 using Nagi.Core.Settings;
 
 namespace Nagi.Core.Artwork;

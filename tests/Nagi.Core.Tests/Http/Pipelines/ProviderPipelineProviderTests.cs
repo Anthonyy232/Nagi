@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
-using Nagi.Core.Http.Pipelines;
+using Nagi.Core.OnlineProviders.Pipelines;
 using Polly.CircuitBreaker;
 using Xunit;
 

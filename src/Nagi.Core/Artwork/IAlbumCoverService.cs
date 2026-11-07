@@ -1,4 +1,4 @@
-using Nagi.Core.Services.Data;
+using Nagi.Core.OnlineProviders;
 
 namespace Nagi.Core.Artwork;
 

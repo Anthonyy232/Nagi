@@ -1,9 +1,7 @@
 using System.Net;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
-using Nagi.Core.Models;
-using Nagi.Core.Services.Data;
-using Nagi.Core.Services.Implementations;
+using Nagi.Core.OnlineProviders;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
