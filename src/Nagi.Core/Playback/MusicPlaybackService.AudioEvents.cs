@@ -12,7 +12,7 @@ public partial class MusicPlaybackService
 {
     private void OnAudioPlayerPlaybackEnded()
     {
-        if (_isTransitioningTrack) return;
+        if (IsRequestPending) return;
         var request = _requestCts.Token;
         var finishing = EndListenSession(PlaybackEndReason.Finished, Duration);
         RunInBackground(async () =>
@@ -46,7 +46,7 @@ public partial class MusicPlaybackService
 
     private void MaybeMarkEligibleForScrobbling()
     {
-        if (_isTransitioningTrack || _isEligibilityMarked || !CurrentListenHistoryId.HasValue) return;
+        if (IsRequestPending || _isEligibilityMarked || !CurrentListenHistoryId.HasValue) return;
 
         if (!ListenRules.IsEligible(Duration, _audioPlayer.CurrentPosition)) return;
 

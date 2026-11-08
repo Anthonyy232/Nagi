@@ -141,10 +141,13 @@ internal sealed class PlaybackQueue
         Reindex();
     }
 
-    /// <summary>The song before or after the current one in play order, wrapping around when asked.</summary>
-    public Guid? GetAdjacent(bool forward, bool wrap)
+    /// <summary>
+    ///     The song before or after <paramref name="from" />, or the current one, in play order, wrapping around when
+    ///     asked.
+    /// </summary>
+    public Guid? GetAdjacent(bool forward, bool wrap, Guid? from = null)
     {
-        var position = CurrentPosition;
+        var position = from is { } songId ? PositionOf(songId) : CurrentPosition;
         if (position < 0) return null;
         var queue = ActiveOrder;
         var next = position + (forward ? 1 : -1);

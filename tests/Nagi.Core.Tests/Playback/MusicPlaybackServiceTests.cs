@@ -1588,6 +1588,50 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _service.PlayOrder.Should().Equal(_testSongs[1].Id);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task TrackChange_SupersededByARequestThatPlaysNothing_LeavesPlaybackAsItWas(bool newQueue)
+    {
+        _library.Listening.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(101L);
+        await _service.PlayAsync(Ids(_testSongs));
+        var lookup = new TaskCompletionSource<Song?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _library.Reader.GetSongByIdAsync(_testSongs[1].Id).Returns(lookup.Task);
+        var emptyPlaylist = Guid.NewGuid();
+        _smartPlaylists.GetMatchingSongIdsAsync(emptyPlaylist, token: Arg.Any<CancellationToken>()).Returns(new List<Guid>());
+        var change = newQueue ? _service.PlayAsync(Ids(_testSongs.Skip(1).Take(2))) : _service.NextAsync();
+
+        (await _service.PlaySmartPlaylistAsync(emptyPlaylist)).Should().BeFalse();
+        lookup.SetResult(_testSongs[1]);
+        await change;
+        await _service.FlushPendingFinalizationAsync();
+
+        _service.CurrentTrack.Should().BeSameAs(_testSongs[0]);
+        _service.PlayOrder.Should().Equal(Ids(_testSongs));
+        _service.NextTrackId.Should().Be(_testSongs[1].Id);
+        _service.CurrentListenHistoryId.Should().Be(101L);
+        await _library.Listening.DidNotReceiveWithAnyArgs().FinalizeListenSessionAsync(default, default, default);
+    }
+
+    [Fact]
+    public async Task PlayPauseAsync_WhileTheNextSongIsOpening_PausesTheCurrentOneInsteadOfStopping()
+    {
+        await _service.PlayAsync(Ids(_testSongs));
+        _audioPlayer.IsPlaying.Returns(true);
+        var lookup = new TaskCompletionSource<Song?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _library.Reader.GetSongByIdAsync(_testSongs[1].Id).Returns(lookup.Task);
+        var next = _service.NextAsync();
+
+        await _service.PlayPauseAsync();
+        lookup.SetResult(_testSongs[1]);
+        await next;
+
+        _service.CurrentTrack.Should().BeSameAs(_testSongs[0]);
+        await _audioPlayer.Received(1).PauseAsync();
+        await _audioPlayer.DidNotReceive().StopAsync();
+        await _audioPlayer.DidNotReceive().LoadAsync(_testSongs[1], Arg.Any<Uri?>());
+    }
+
     [Fact]
     public async Task PlaybackEnded_WhileAnotherTrackIsLoading_DoesNotSkipTheRequestedTrack()
     {
