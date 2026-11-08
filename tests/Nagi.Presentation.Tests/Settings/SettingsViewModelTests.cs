@@ -27,8 +27,7 @@ public class SettingsViewModelTests : IDisposable
 {
     private readonly ICredentialLockerService _credentials = Substitute.For<ICredentialLockerService>();
     private readonly SettingsService _settings;
-    private readonly ISettingsService _resetSettings = Substitute.For<ISettingsService>();
-    private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
+    private readonly IAppDataReset _appDataReset = Substitute.For<IAppDataReset>();
     private readonly IEqualizerService _equalizer = Substitute.For<IEqualizerService>();
     private readonly IAudioPlayer _audioPlayer = Substitute.For<IAudioPlayer>();
     private readonly IAppInfoService _appInfo = Substitute.For<IAppInfoService>();
@@ -40,7 +39,6 @@ public class SettingsViewModelTests : IDisposable
     private readonly ILastFmAuthService _lastFm = Substitute.For<ILastFmAuthService>();
     private readonly IListenBrainzScrobblerService _listenBrainz = Substitute.For<IListenBrainzScrobblerService>();
     private readonly LibraryFakes _library = new LibraryFakes();
-    private readonly ILibraryReset _libraryReset = Substitute.For<ILibraryReset>();
     private readonly IFFmpegService _ffmpeg = Substitute.For<IFFmpegService>();
     private readonly IReplayGainService _replayGain = Substitute.For<IReplayGainService>();
     private readonly GlobalOperationViewModel _operation = new();
@@ -49,7 +47,7 @@ public class SettingsViewModelTests : IDisposable
 
     public SettingsViewModelTests()
     {
-        _settings = TestSettings.Create(credentials: _credentials, autoLaunch: _autoLaunch);
+        _settings = TestSettings.Create(credentials: _credentials);
         _credentials.SaveCredential(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(true);
         _equalizer.Presets.Returns(Array.Empty<EqualizerPreset>());
         _dispatcher.HasThreadAccess.Returns(true);
@@ -67,7 +65,7 @@ public class SettingsViewModelTests : IDisposable
             new RomanizationPacksSettingsViewModel(Substitute.For<IRomanizationPackManager>(), _dispatcher,
                 NullLogger<RomanizationPacksSettingsViewModel>.Instance),
             new DataManagementSettingsViewModel(_ui, Substitute.For<IPlaylistExportService>(),
-                _backup, _lifecycle, _resetSettings, _libraryReset, _playback,
+                _backup, _lifecycle, _appDataReset,
                 NullLogger<DataManagementSettingsViewModel>.Instance),
             NullLogger<SettingsViewModel>.Instance, _timeProvider);
     }
@@ -260,7 +258,7 @@ public class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public async Task ResetApplicationData_ClearsEverythingBeforeRestarting()
+    public async Task ResetApplicationData_ResetsBeforeRestarting()
     {
         _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
             Arg.Any<bool>()).Returns(true);
@@ -269,24 +267,9 @@ public class SettingsViewModelTests : IDisposable
 
         Received.InOrder(() =>
         {
-            _resetSettings.ResetToDefaultsAsync();
-            _libraryReset.ClearAllLibraryDataAsync();
-            _playback.ClearQueueAsync();
+            _appDataReset.ResetAsync();
             _lifecycle.Restart();
         });
-    }
-
-    [Fact]
-    public async Task ResetApplicationData_WhenClearingFails_ReportsItAndDoesNotRestart()
-    {
-        _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
-            Arg.Any<bool>()).Returns(true);
-        _libraryReset.ClearAllLibraryDataAsync().Returns(Task.FromException(new IOException("locked")));
-
-        await _viewModel.DataManagement.ResetApplicationDataCommand.ExecuteAsync(null);
-
-        _lifecycle.DidNotReceive().Restart();
-        await _ui.Received(1).ShowMessageDialogAsync(Arg.Any<string>(), Arg.Is<string>(m => m.Contains("locked")));
     }
 
     [Fact]

@@ -3,10 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Backup;
-using Nagi.Core.Library;
-using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
-using Nagi.Core.Settings;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Shell;
@@ -22,9 +19,7 @@ public partial class DataManagementSettingsViewModel : ObservableObject
     private readonly IPlaylistExportService _playlistExportService;
     private readonly IBackupRestoreService _backupRestoreService;
     private readonly IApplicationLifecycle _applicationLifecycle;
-    private readonly ISettingsService _settingsService;
-    private readonly ILibraryReset _libraryReset;
-    private readonly IMusicPlaybackService _playbackService;
+    private readonly IAppDataReset _appDataReset;
     private readonly ILogger<DataManagementSettingsViewModel> _logger;
 
     public DataManagementSettingsViewModel(
@@ -32,18 +27,14 @@ public partial class DataManagementSettingsViewModel : ObservableObject
         IPlaylistExportService playlistExportService,
         IBackupRestoreService backupRestoreService,
         IApplicationLifecycle applicationLifecycle,
-        ISettingsService settingsService,
-        ILibraryReset libraryReset,
-        IMusicPlaybackService playbackService,
+        IAppDataReset appDataReset,
         ILogger<DataManagementSettingsViewModel> logger)
     {
         _uiService = uiService;
         _playlistExportService = playlistExportService;
         _backupRestoreService = backupRestoreService;
         _applicationLifecycle = applicationLifecycle;
-        _settingsService = settingsService;
-        _libraryReset = libraryReset;
-        _playbackService = playbackService;
+        _appDataReset = appDataReset;
         _logger = logger;
     }
 
@@ -58,21 +49,9 @@ public partial class DataManagementSettingsViewModel : ObservableObject
 
         if (!confirmed) return;
 
-        try
-        {
-            await _settingsService.ResetToDefaultsAsync();
-            await _libraryReset.ClearAllLibraryDataAsync();
-            await _playbackService.ClearQueueAsync();
-            _logger.LogInformation("Application data reset. Restarting.");
-            _applicationLifecycle.Restart();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogCritical(ex, "Application reset failed");
-            await _uiService.ShowMessageDialogAsync(
-                Strings.Settings_ResetError_Title,
-                ResourceFormatter.Format(Strings.Settings_ResetError_Message, ex.Message));
-        }
+        await _appDataReset.ResetAsync();
+        _logger.LogInformation("Application data reset. Restarting.");
+        _applicationLifecycle.Restart();
     }
 
     [RelayCommand]

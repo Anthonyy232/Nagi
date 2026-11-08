@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>重置</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>重置错误</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>重置应用程序数据时发生错误：{0}。请尝试手动重启应用程序。</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>错误</value>
   </data>

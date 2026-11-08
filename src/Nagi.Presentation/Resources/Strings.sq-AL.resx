@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>Rivendos</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>Gabim rivendosjeje</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>Ndodhi një gabim gjatë rivendosjes së të dhënave të aplikacionit: {0}. Ju lutemi provoni të rindizni aplikacionin manualisht.</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>Gabim</value>
   </data>

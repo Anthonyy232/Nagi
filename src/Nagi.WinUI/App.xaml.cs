@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
+using Nagi.Core.Backup;
 using Nagi.Core.Platform;
 using Nagi.Presentation.Logging;
 using Nagi.Presentation.Shell;
@@ -177,8 +178,7 @@ public partial class App : Application
         try
         {
             Log.Information("User requested a full application data reset from the crash dialog.");
-            await AppDataReset.ResetAsync(Services, PackagedAppData.CreatePathConfiguration(),
-                new ApplicationDataSettingsStore());
+            await Services!.GetRequiredService<IAppDataReset>().ResetAsync();
 
             Log.Information("Reset complete. Restarting application.");
             await Log.CloseAndFlushAsync();

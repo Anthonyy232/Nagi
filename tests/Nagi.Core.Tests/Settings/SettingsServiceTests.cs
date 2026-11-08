@@ -49,19 +49,15 @@ public class SettingsServiceTests
     }
 
     [Fact]
-    public async Task ResetToDefaults_SignsOutClearsThePlaybackSessionAndTurnsOffAutoLaunch()
+    public async Task ResetToDefaults_SignsOut()
     {
         var credentials = Substitute.For<ICredentialLockerService>();
-        var autoLaunch = Substitute.For<IAutoLaunchService>();
-        var playbackState = Substitute.For<IPlaybackStateStore>();
-        var settings = TestSettings.Create(credentials: credentials, autoLaunch: autoLaunch, playbackStateStore: playbackState);
+        var settings = TestSettings.Create(credentials: credentials);
         var credentialChanges = 0;
         settings.CredentialsChanged += _ => credentialChanges++;
 
         await settings.ResetToDefaultsAsync();
 
-        await autoLaunch.Received(1).SetEnabledAsync(false);
-        playbackState.Received(1).Clear();
         credentials.Received(1).RemoveCredential("Nagi/LastFm");
         credentials.Received(1).RemoveCredential("Nagi/ListenBrainz");
         credentialChanges.Should().Be(2);

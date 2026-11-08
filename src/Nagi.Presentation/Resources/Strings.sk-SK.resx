@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>Resetovať</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>Chyba resetovania</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>Počas resetovania aplikačných dát došlo k chybe: {0}. Skúste reštartovať aplikáciu manuálne.</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>Chyba</value>
   </data>

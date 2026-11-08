@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.OnlineProviders;
 using Nagi.Core.Platform;
-using Nagi.Core.Playback;
 using Nagi.Core.Settings;
 using NSubstitute;
 
@@ -13,15 +12,12 @@ namespace Nagi.Core.Tests.Utils;
 public static class TestSettings
 {
     public static SettingsService Create(IDictionary<string, object>? values = null,
-        ICredentialLockerService? credentials = null, IAutoLaunchService? autoLaunch = null,
-        IPlaybackStateStore? playbackStateStore = null)
+        ICredentialLockerService? credentials = null)
     {
         var store = Substitute.For<ISettingsStore>();
         store.Values.Returns(values ?? new Dictionary<string, object>());
         return new SettingsService(store, Setting.DeclaredIn(typeof(CoreSettings)),
-            playbackStateStore ?? Substitute.For<IPlaybackStateStore>(),
-            credentials ?? AcceptingCredentials(),
-            autoLaunch ?? Substitute.For<IAutoLaunchService>(), NullLogger<SettingsService>.Instance);
+            credentials ?? AcceptingCredentials(), NullLogger<SettingsService>.Instance);
     }
 
     private static ICredentialLockerService AcceptingCredentials()

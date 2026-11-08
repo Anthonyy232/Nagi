@@ -1,7 +1,6 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Platform;
-using Nagi.Core.Playback;
 using Nagi.Core.Scrobbling;
 
 namespace Nagi.Core.Settings;
@@ -12,23 +11,18 @@ public sealed class SettingsService : ISettingsService
     private const string ListenBrainzTokenResource = "Nagi/ListenBrainz";
     private const string ListenBrainzTokenUserName = "token";
 
-    private readonly IAutoLaunchService _autoLaunchService;
     private readonly ICredentialLockerService _credentialLockerService;
     private readonly ILogger<SettingsService> _logger;
-    private readonly IPlaybackStateStore _playbackStateStore;
     private readonly IReadOnlyList<Setting> _settings;
     private readonly ISettingsStore _store;
 
     /// <param name="settings">Every declared setting, which a reset and a backup cover.</param>
-    public SettingsService(ISettingsStore store, IEnumerable<Setting> settings, IPlaybackStateStore playbackStateStore,
-        ICredentialLockerService credentialLockerService, IAutoLaunchService autoLaunchService,
-        ILogger<SettingsService> logger)
+    public SettingsService(ISettingsStore store, IEnumerable<Setting> settings,
+        ICredentialLockerService credentialLockerService, ILogger<SettingsService> logger)
     {
         _store = store;
         _settings = settings.ToList();
-        _playbackStateStore = playbackStateStore;
         _credentialLockerService = credentialLockerService;
-        _autoLaunchService = autoLaunchService;
         _logger = logger;
     }
 
@@ -90,10 +84,8 @@ public sealed class SettingsService : ISettingsService
         foreach (var (setting, value) in previous)
             if (!Equals(value, setting.StoredFormOf(null))) SettingChanged?.Invoke(setting);
 
-        _playbackStateStore.Clear();
         await ClearLastFmCredentialsAsync().ConfigureAwait(false);
         await ClearListenBrainzUserTokenAsync().ConfigureAwait(false);
-        await _autoLaunchService.SetEnabledAsync(false).ConfigureAwait(false);
         _logger.LogInformation("All application settings have been reset to their default values.");
     }
 

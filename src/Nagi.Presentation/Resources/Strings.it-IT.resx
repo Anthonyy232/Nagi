@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>Ripristina</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>Errore di ripristino</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>Si è verificato un errore durante il ripristino dei dati dell'applicazione: {0}. Riprova a riavviare l'app manualmente.</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>Errore</value>
   </data>

@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>রিসেট করুন</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>রিসেট ত্রুটি</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>অ্যাপ্লিকেশন ডেটা রিসেট করার সময় একটি ত্রুটি ঘটেছে: {0}। অনুগ্রহ করে ম্যানুয়ালি অ্যাপটি পুনরায় চালু করার চেষ্টা করুন।</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>ত্রুটি</value>
   </data>

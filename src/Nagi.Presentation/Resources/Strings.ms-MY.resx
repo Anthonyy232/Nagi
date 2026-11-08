@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>Tetapkan Semula</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>Ralat Tetapan Semula</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>Ralat berlaku semasa menetapkan semula data aplikasi: {0}. Sila cuba mulakan semula aplikasi secara manual.</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>Ralat</value>
   </data>

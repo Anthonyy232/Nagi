@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>Athshocraigh</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>Earráid Athshocraithe</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>Tharla earráid agus sonraí feidhmchláir á n-athshocrú: {0}. Bain triail as an aip a atosú de láimh le do thoil.</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>Earráid</value>
   </data>

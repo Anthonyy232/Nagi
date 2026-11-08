@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>Nulstil</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>Nulstillingsfejl</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>Der opstod en fejl under nulstilling af programdata: {0}. Prøv venligst at genstarte appen manuelt.</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>Fejl</value>
   </data>

@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>Visszaállítás</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>Visszaállítási hiba</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>Hiba történt az alkalmazásadatok visszaállítása során: {0}. Kérjük, próbálja meg manuálisan újraindítani az alkalmazást.</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>Hiba</value>
   </data>

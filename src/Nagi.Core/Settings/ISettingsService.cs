@@ -42,8 +42,8 @@ public interface ISettingsService
     Task ClearListenBrainzUserTokenAsync();
 
     /// <summary>
-    ///     Resets every setting, signs out of both scrobbling accounts, clears the saved playback session and turns
-    ///     launching at sign-in off.
+    ///     Resets every setting and signs out of both scrobbling accounts. <see cref="Backup.IAppDataReset" /> resets
+    ///     the rest of the app too.
     /// </summary>
     Task ResetToDefaultsAsync();
 

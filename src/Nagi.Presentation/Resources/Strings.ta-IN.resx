@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>மீட்டமை</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>மீட்டமைப்பு பிழை</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>பயன்பாட்டு தரவை மீட்டமைக்கும்போது ஒரு பிழை ஏற்பட்டது: {0}. தயவுசெய்து பயன்பாட்டை கைமுறையாக மறுதொடக்கம் செய்ய முயற்சிக்கவும்.</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>பிழை</value>
   </data>

@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>Resetten</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>Resetfout</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>Er is een fout opgetreden bij het resetten van applicatiegegevens: {0}. Probeer de app handmatig opnieuw te starten.</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>Fout</value>
   </data>

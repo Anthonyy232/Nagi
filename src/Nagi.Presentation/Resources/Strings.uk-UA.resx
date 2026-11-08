@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>Скинути</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>Помилка скидання</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>Виникла помилка під час скидання даних програми: {0}. Будь ласка, спробуйте перезапустити програму вручну.</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>Помилка</value>
   </data>

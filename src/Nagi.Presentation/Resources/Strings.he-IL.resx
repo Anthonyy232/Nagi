@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>איפוס</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>שגיאת איפוס</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>אירעה שגיאה בעת איפוס נתוני היישום: {0}. אנא נסה להפעיל מחדש את האפליקציה ידנית.</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>שגיאה</value>
   </data>

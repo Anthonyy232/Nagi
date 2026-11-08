@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>Resetează</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>Eroare de resetare</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>A apărut o eroare la resetarea datelor aplicației: {0}. Te rugăm să încerci să repornești aplicația manual.</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>Eroare</value>
   </data>
