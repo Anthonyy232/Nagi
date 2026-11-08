@@ -28,6 +28,7 @@ public partial class UIService : IUIService
     private readonly ViewModelFactory _viewModelFactory;
     private readonly ILogger<UIService> _logger;
     private readonly MainWindow _window;
+    private readonly SemaphoreSlim _dialogTurn = new(1, 1);
 
     public UIService(MainWindow window, ViewModelFactory viewModelFactory,
         ILogger<UIService> logger)
@@ -257,20 +258,25 @@ public partial class UIService : IUIService
     }
 
     /// <summary>
-    ///     Shows <paramref name="dialog" /> in the app's theme. WinUI throws when another dialog is already open;
-    ///     that is reported as <see cref="ContentDialogResult.None" />, the same as a cancel.
+    ///     Shows <paramref name="dialog" /> in the app's theme once any dialog before it has closed, since WinUI
+    ///     throws when a second one opens. A dialog that can't show is reported as a cancel.
     /// </summary>
     private async Task<ContentDialogResult> ShowDialogAsync(ContentDialog dialog)
     {
-        DialogThemeHelper.ApplyThemeOverrides(dialog, _window.Content as FrameworkElement);
+        await _dialogTurn.WaitAsync();
         try
         {
+            DialogThemeHelper.ApplyThemeOverrides(dialog, _window.Content as FrameworkElement);
             return await dialog.ShowAsync();
         }
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Could not show dialog {Title}", dialog.Title);
             return ContentDialogResult.None;
+        }
+        finally
+        {
+            _dialogTurn.Release();
         }
     }
 }

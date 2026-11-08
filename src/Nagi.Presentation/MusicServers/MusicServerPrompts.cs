@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
@@ -23,8 +22,6 @@ public sealed class MusicServerPrompts : IDisposable
     private readonly IUIService _ui;
     private readonly IDispatcherService _dispatcher;
     private readonly ILogger<MusicServerPrompts> _logger;
-    // Only one dialog can be open at a time, so a prompt waits for the one before it instead of failing to show.
-    private readonly SemaphoreSlim _promptTurn = new(1, 1);
     // Playing a song again while its message is open fails again, and one message is enough.
     private bool _isExplainingSongFailure;
     // Offered once per server each run, so a user who declines isn't asked again at every sync.
@@ -63,7 +60,6 @@ public sealed class MusicServerPrompts : IDisposable
     {
         if (_isExplainingSongFailure) return;
         _isExplainingSongFailure = true;
-        await _promptTurn.WaitAsync();
         try
         {
             MusicServerError? error = null;
@@ -95,7 +91,6 @@ public sealed class MusicServerPrompts : IDisposable
         }
         finally
         {
-            _promptTurn.Release();
             _isExplainingSongFailure = false;
         }
     }
@@ -103,7 +98,6 @@ public sealed class MusicServerPrompts : IDisposable
     private async Task OfferSignInAsync(Guid folderId)
     {
         if (!_offeredSignIns.Add(folderId)) return;
-        await _promptTurn.WaitAsync();
         try
         {
             if (await _musicServers.GetServerAsync(folderId) is { } server)
@@ -112,10 +106,6 @@ public sealed class MusicServerPrompts : IDisposable
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to offer to sign in to server folder {FolderId} again.", folderId);
-        }
-        finally
-        {
-            _promptTurn.Release();
         }
     }
 }
