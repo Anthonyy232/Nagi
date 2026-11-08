@@ -201,6 +201,27 @@ public class LastFmScrobblerServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task SubmitPendingAsync_WhenLastFmRejectsTheKey_SendsWithAFreshKey()
+    {
+        SetupValidCredentials();
+        _apiKeyService.RefreshApiKeyAsync("lastfm").Returns("rotated-key");
+        _apiKeyService.RefreshApiKeyAsync("lastfm-secret").Returns("rotated-secret");
+        _httpMessageHandler.SendAsyncFunc = async (request, _) => new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent((await GetRequestParameters(request))["api_key"] == "rotated-key"
+                ? SuccessfulResponse
+                : "<lfm status='failed'><error code='26'>Suspended API key</error></lfm>", Encoding.UTF8, "application/xml")
+        };
+        await SeedPendingListensAsync((1, DateTime.UtcNow.AddMinutes(-5)));
+
+        await _scrobblerService.SubmitPendingAsync(CancellationToken.None);
+
+        _httpMessageHandler.Requests.Should().HaveCount(2);
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        (await context.ListenHistory.FindAsync(1L))!.IsScrobbled.Should().BeTrue();
+    }
+
+    [Fact]
     public async Task SubmitPendingAsync_WithNothingPending_DoesNotFetchTheApiKeys()
     {
         SetupValidCredentials();

@@ -17,10 +17,8 @@ namespace Nagi.Core.Scrobbling;
 /// </summary>
 public class LastFmScrobblerService : IListenSubmitter
 {
-    private readonly IApiKeyService _apiKeyService;
+    private readonly LastFmSignedClient _client;
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
-    private readonly HttpClient _httpClient;
-    private readonly ProviderPipelineProvider _pipelines;
     private readonly ILogger<LastFmScrobblerService> _logger;
     private readonly ISettingsService _settingsService;
     private readonly SemaphoreSlim _submitLock = new(1, 1);
@@ -33,9 +31,7 @@ public class LastFmScrobblerService : IListenSubmitter
         IDbContextFactory<MusicDbContext> contextFactory,
         ILogger<LastFmScrobblerService> logger)
     {
-        _httpClient = httpClientFactory.CreateClient();
-        _pipelines = pipelines;
-        _apiKeyService = apiKeyService;
+        _client = new LastFmSignedClient(httpClientFactory.CreateClient(), pipelines, apiKeyService, logger);
         _settingsService = settingsService;
         _contextFactory = contextFactory;
         _logger = logger;
@@ -52,20 +48,18 @@ public class LastFmScrobblerService : IListenSubmitter
         if (!_settingsService.Get(CoreSettings.LastFmNowPlaying)) return;
         try
         {
-            if (await GetApiCredentialsAsync(CancellationToken.None).ConfigureAwait(false) is not { } credentials) return;
+            if (await GetSessionKeyAsync().ConfigureAwait(false) is not { } sessionKey) return;
 
             var parameters = new Dictionary<string, string>
             {
                 { "method", "track.updateNowPlaying" },
                 { "artist", song.PrimaryArtistName },
                 { "track", song.Title },
-                { "api_key", credentials.ApiKey },
-                { "sk", credentials.SessionKey }
+                { "sk", sessionKey }
             };
             AddTrackDetails(parameters, song);
 
-            if (await PostToLastFmAsync(parameters, credentials.ApiSecret, CancellationToken.None).ConfigureAwait(false)
-                == SubmissionOutcome.Success)
+            if (await SendAsync(parameters, CancellationToken.None).ConfigureAwait(false) == SubmissionOutcome.Success)
                 _logger.LogDebug("Updated Last.fm 'Now Playing' for track '{TrackTitle}'.", song.Title);
         }
         catch (Exception ex)
@@ -88,14 +82,13 @@ public class LastFmScrobblerService : IListenSubmitter
                 .OrderBy(lh => lh.ListenTimestampUtc)
                 .ToListAsync(cancellationToken).ConfigureAwait(false);
             // Fetching the keys can take a while offline, so it waits until there is something to send.
-            if (pending.Count == 0 ||
-                await GetApiCredentialsAsync(cancellationToken).ConfigureAwait(false) is not { } credentials) return;
+            if (pending.Count == 0 || await GetSessionKeyAsync().ConfigureAwait(false) is not { } sessionKey) return;
 
             foreach (var entry in pending)
             {
                 if (cancellationToken.IsCancellationRequested) break;
 
-                var outcome = await ScrobbleAsync(entry.Song, entry.ListenTimestampUtc, credentials, cancellationToken)
+                var outcome = await ScrobbleAsync(entry.Song, entry.ListenTimestampUtc, sessionKey, cancellationToken)
                     .ConfigureAwait(false);
                 if (outcome == SubmissionOutcome.TransientFailure)
                 {
@@ -117,7 +110,7 @@ public class LastFmScrobblerService : IListenSubmitter
         }
     }
 
-    private Task<SubmissionOutcome> ScrobbleAsync(Song song, DateTime playStartUtc, LastFmCredentials credentials,
+    private Task<SubmissionOutcome> ScrobbleAsync(Song song, DateTime playStartUtc, string sessionKey,
         CancellationToken cancellationToken)
     {
         var parameters = new Dictionary<string, string>
@@ -126,11 +119,10 @@ public class LastFmScrobblerService : IListenSubmitter
             { "artist", song.PrimaryArtistName },
             { "track", song.Title },
             { "timestamp", new DateTimeOffset(playStartUtc).ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture) },
-            { "api_key", credentials.ApiKey },
-            { "sk", credentials.SessionKey }
+            { "sk", sessionKey }
         };
         AddTrackDetails(parameters, song);
-        return PostToLastFmAsync(parameters, credentials.ApiSecret, cancellationToken);
+        return SendAsync(parameters, cancellationToken);
     }
 
     private static void AddTrackDetails(Dictionary<string, string> parameters, Song song)
@@ -151,28 +143,14 @@ public class LastFmScrobblerService : IListenSubmitter
     }
 
     // Rate limit, retry and circuit breaker are handled by the provider pipeline; this only classifies the answer.
-    private async Task<SubmissionOutcome> PostToLastFmAsync(
-        Dictionary<string, string> parameters,
-        string apiSecret,
-        CancellationToken cancellationToken)
+    private Task<SubmissionOutcome> SendAsync(Dictionary<string, string> parameters, CancellationToken cancellationToken)
     {
-        parameters["api_sig"] = LastFmApiHelper.CreateSignature(parameters, apiSecret);
         var method = parameters["method"];
-
-        return await _pipelines.ExecuteWithFallbackAsync(
-            ProviderCatalog.LastFm.Policy.ProviderId,
-            async ct =>
+        return _client.SendAsync(HttpMethod.Post, parameters, reply =>
             {
-                using var formContent = new FormUrlEncodedContent(parameters);
-                _logger.LogDebug("Calling Last.fm method '{Method}'.", method);
-                return await _httpClient.PostAsync(LastFmApiHelper.BaseUrl, formContent, ct).ConfigureAwait(false);
-            },
-            async (response, ct) =>
-            {
-                var content = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
-                var document = XElement.Parse(content);
+                var document = XElement.Parse(reply.Body);
                 var status = (string?)document.Attribute("status");
-                if (response.IsSuccessStatusCode && document.Name == "lfm" && status == "ok")
+                if (reply.Response.IsSuccessStatusCode && document.Name == "lfm" && status == "ok")
                 {
                     var result = method == "track.scrobble"
                         ? document.Element("scrobbles")?.Element("scrobble")
@@ -189,11 +167,11 @@ public class LastFmScrobblerService : IListenSubmitter
 
                 _logger.LogWarning(
                     "Last.fm API call for method '{Method}' failed. Status: {StatusCode}, Response: {ResponseContent}.",
-                    method, response.StatusCode, content);
+                    method, reply.Response.StatusCode, reply.Body);
 
                 // Authentication can be repaired without changing the listen; keep it queued.
-                if (response.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden
-                    || HttpStatusClassification.IsTransient(response.StatusCode))
+                if (reply.Response.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden
+                    || HttpStatusClassification.IsTransient(reply.Response.StatusCode))
                     return SubmissionOutcome.TransientFailure;
 
                 if (document.Name != "lfm" || status != "failed")
@@ -205,29 +183,19 @@ public class LastFmScrobblerService : IListenSubmitter
                     _ => SubmissionOutcome.TransientFailure
                 };
             },
-            fallback: SubmissionOutcome.TransientFailure,
-            _logger,
-            $"call to '{method}'",
-            cancellationToken).ConfigureAwait(false);
+            fallback: SubmissionOutcome.TransientFailure, cancellationToken);
     }
 
-    /// <returns>The keys and the session, or null when Last.fm isn't signed in to or the keys can't be fetched.</returns>
-    private async Task<LastFmCredentials?> GetApiCredentialsAsync(CancellationToken cancellationToken)
+    /// <returns>The session key, or null when Last.fm isn't signed in to.</returns>
+    private async Task<string?> GetSessionKeyAsync()
     {
-        var keysTask = LastFmApiHelper.GetKeyAndSecretAsync(_apiKeyService, cancellationToken);
-        var credentialsTask = _settingsService.GetLastFmCredentialsAsync();
-
-        var keys = await keysTask.ConfigureAwait(false);
-        var credentials = await credentialsTask.ConfigureAwait(false);
-
-        if (keys is null || string.IsNullOrEmpty(credentials?.SessionKey))
+        var sessionKey = (await _settingsService.GetLastFmCredentialsAsync().ConfigureAwait(false))?.SessionKey;
+        if (string.IsNullOrEmpty(sessionKey))
         {
-            _logger.LogError("Cannot perform Last.fm action; API key, secret, or session key is unavailable.");
+            _logger.LogError("Cannot perform Last.fm action; the session key is unavailable.");
             return null;
         }
 
-        return new LastFmCredentials(keys.Value.ApiKey, keys.Value.ApiSecret, credentials.Value.SessionKey);
+        return sessionKey;
     }
-
-    private sealed record LastFmCredentials(string ApiKey, string ApiSecret, string SessionKey);
 }

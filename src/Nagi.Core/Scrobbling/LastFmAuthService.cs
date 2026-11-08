@@ -1,4 +1,4 @@
-using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.OnlineProviders;
 using Nagi.Core.OnlineProviders.Pipelines;
@@ -7,9 +7,7 @@ namespace Nagi.Core.Scrobbling;
 
 public class LastFmAuthService : ILastFmAuthService
 {
-    private readonly IApiKeyService _apiKeyService;
-    private readonly HttpClient _httpClient;
-    private readonly ProviderPipelineProvider _pipelines;
+    private readonly LastFmSignedClient _client;
     private readonly ILogger<LastFmAuthService> _logger;
 
     public LastFmAuthService(
@@ -18,123 +16,54 @@ public class LastFmAuthService : ILastFmAuthService
         IApiKeyService apiKeyService,
         ILogger<LastFmAuthService> logger)
     {
-        _httpClient = httpClientFactory.CreateClient();
-        _pipelines = pipelines;
-        _apiKeyService = apiKeyService;
+        _client = new LastFmSignedClient(httpClientFactory.CreateClient(), pipelines, apiKeyService, logger);
         _logger = logger;
     }
 
-    public async Task<(string Token, string AuthUrl)?> GetAuthenticationTokenAsync()
-    {
-        var credentials = await LastFmApiHelper.GetKeyAndSecretAsync(_apiKeyService).ConfigureAwait(false);
-        if (credentials is null)
-        {
-            _logger.LogError("Cannot get Last.fm auth token; API key or secret is unavailable.");
-            return null;
-        }
-        var (apiKey, apiSecret) = credentials.Value;
-
-        var parameters = new Dictionary<string, string>
-        {
-            { "method", "auth.getToken" },
-            { "api_key", apiKey }
-        };
-
-        var signature = LastFmApiHelper.CreateSignature(parameters, apiSecret);
-        var requestUrl = $"{LastFmApiHelper.BaseUrl}?method=auth.getToken&api_key={Uri.EscapeDataString(apiKey)}&api_sig={signature}&format=json";
-
-        return await _pipelines.ExecuteWithFallbackAsync<(string Token, string AuthUrl)?>(
-            ProviderCatalog.LastFm.Policy.ProviderId,
-            ct => new ValueTask<HttpResponseMessage>(_httpClient.GetAsync(requestUrl, ct)),
-            async (response, ct) =>
+    public Task<(string Token, string AuthUrl)?> GetAuthenticationTokenAsync() =>
+        _client.SendAsync<(string Token, string AuthUrl)?>(HttpMethod.Get,
+            new Dictionary<string, string> { ["method"] = "auth.getToken", ["format"] = "json" },
+            reply =>
             {
-                if (!response.IsSuccessStatusCode)
-                {
-                    var content = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
-                    _logger.LogError("Failed to get Last.fm auth token. Status: {StatusCode}, Response: {ResponseContent}",
-                        response.StatusCode, content);
-                    return null;
-                }
-
-                var tokenResponse = await response.Content.ReadFromJsonAsync<LastFmTokenResponse>(cancellationToken: ct)
-                    .ConfigureAwait(false);
-                if (string.IsNullOrEmpty(tokenResponse?.Token))
-                {
-                    _logger.LogError("Failed to extract token from the Last.fm auth response.");
-                    return null;
-                }
-
-                var authUrl = $"https://www.last.fm/api/auth/?api_key={Uri.EscapeDataString(apiKey)}&token={Uri.EscapeDataString(tokenResponse.Token)}";
-                return (tokenResponse.Token, authUrl);
+                if (Read<LastFmTokenResponse>(reply, "auth token")?.Token is not { Length: > 0 } token) return null;
+                var authUrl = $"https://www.last.fm/api/auth/?api_key={Uri.EscapeDataString(reply.ApiKey)}&token={Uri.EscapeDataString(token)}";
+                return (token, authUrl);
             },
-            fallback: null,
-            _logger,
-            "auth token fetch").ConfigureAwait(false);
+            fallback: null);
+
+    public Task<(string Username, string SessionKey)?> GetSessionAsync(string token) =>
+        _client.SendAsync<(string Username, string SessionKey)?>(HttpMethod.Get,
+            new Dictionary<string, string> { ["method"] = "auth.getSession", ["token"] = token, ["format"] = "json" },
+            reply =>
+            {
+                if (Read<LastFmSessionResponse>(reply, "session")?.Session is not
+                    { Name: { Length: > 0 } name, Key: { Length: > 0 } key }) return null;
+                _logger.LogInformation("Successfully retrieved Last.fm session for user {Username}.", name);
+                return (name, key);
+            },
+            fallback: null);
+
+    private T? Read<T>(LastFmReply reply, string subject) where T : class
+    {
+        if (reply.Response.IsSuccessStatusCode && JsonSerializer.Deserialize<T>(reply.Body, JsonSerializerOptions.Web) is { } body)
+            return body;
+
+        _logger.LogError("Failed to get the Last.fm {Subject}. Status: {StatusCode}, Response: {ResponseContent}",
+            subject, reply.Response.StatusCode, reply.Body);
+        return null;
     }
 
-    public async Task<(string Username, string SessionKey)?> GetSessionAsync(string token)
-    {
-        var credentials = await LastFmApiHelper.GetKeyAndSecretAsync(_apiKeyService).ConfigureAwait(false);
-        if (credentials is null)
-        {
-            _logger.LogError("Cannot get Last.fm session; API key or secret is unavailable.");
-            return null;
-        }
-        var (apiKey, apiSecret) = credentials.Value;
-
-        var parameters = new Dictionary<string, string>
-        {
-            { "method", "auth.getSession" },
-            { "api_key", apiKey },
-            { "token", token }
-        };
-
-        var signature = LastFmApiHelper.CreateSignature(parameters, apiSecret);
-        var requestUrl =
-            $"{LastFmApiHelper.BaseUrl}?method=auth.getSession&api_key={Uri.EscapeDataString(apiKey)}&token={Uri.EscapeDataString(token)}&api_sig={signature}&format=json";
-
-        return await _pipelines.ExecuteWithFallbackAsync<(string Username, string SessionKey)?>(
-            ProviderCatalog.LastFm.Policy.ProviderId,
-            ct => new ValueTask<HttpResponseMessage>(_httpClient.GetAsync(requestUrl, ct)),
-            async (response, ct) =>
-            {
-                if (!response.IsSuccessStatusCode)
-                {
-                    var content = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
-                    _logger.LogError("Failed to get Last.fm session. Status: {StatusCode}, Response: {ResponseContent}",
-                        response.StatusCode, content);
-                    return null;
-                }
-
-                var sessionResponse = await response.Content.ReadFromJsonAsync<LastFmSessionResponse>(cancellationToken: ct)
-                    .ConfigureAwait(false);
-                var session = sessionResponse?.Session;
-
-                if (session != null && !string.IsNullOrEmpty(session.Key) && !string.IsNullOrEmpty(session.Name))
-                {
-                    _logger.LogInformation("Successfully retrieved Last.fm session for user {Username}.", session.Name);
-                    return (session.Name, session.Key);
-                }
-
-                _logger.LogError("Failed to deserialize or extract session details from the Last.fm response.");
-                return null;
-            },
-            fallback: null,
-            _logger,
-            "session fetch").ConfigureAwait(false);
-    }
-
-    private class LastFmTokenResponse
+    private sealed class LastFmTokenResponse
     {
         public string? Token { get; set; }
     }
 
-    private class LastFmSessionResponse
+    private sealed class LastFmSessionResponse
     {
         public LastFmSession? Session { get; set; }
     }
 
-    private class LastFmSession
+    private sealed class LastFmSession
     {
         public string? Name { get; set; }
         public string? Key { get; set; }
