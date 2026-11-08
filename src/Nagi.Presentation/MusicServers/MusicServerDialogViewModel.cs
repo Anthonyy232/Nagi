@@ -30,12 +30,16 @@ public sealed partial class MusicServerDialogViewModel : ObservableObject
     public partial MusicServerKind Kind { get; set; }
 
     /// <summary>
-    ///     <see cref="Kind" /> as the dialog's "OpenSubsonic"/"Jellyfin" picker index.
+    ///     <see cref="Kind" /> as the index of the dialog's kind picker, which lists the kinds in declaration order.
     /// </summary>
     public int KindIndex
     {
-        get => Kind == MusicServerKind.OpenSubsonic ? 0 : 1;
-        set => Kind = value == 1 ? MusicServerKind.Jellyfin : MusicServerKind.OpenSubsonic;
+        get => (int)Kind;
+        set
+        {
+            // The picker reports -1 while it has no selection.
+            if (Enum.IsDefined((MusicServerKind)value)) Kind = (MusicServerKind)value;
+        }
     }
 
     /// <summary>
