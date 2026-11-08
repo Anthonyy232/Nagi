@@ -65,7 +65,7 @@
                         <Border
                             Background="{ThemeResource ControlFillColorSecondaryBrush}"
                             CornerRadius="{ThemeResource ControlCornerRadius}"
-                            Visibility="{Binding DataContext.IsLyricsPageActive, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            Visibility="{Binding IsLyricsPageShown, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <FontIcon
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"

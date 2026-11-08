@@ -150,8 +150,6 @@ public partial class PlayerViewModel : ObservableObject
         History.SetActive(value && IsHistoryVisible);
     }
 
-    [ObservableProperty] public partial bool IsLyricsPageActive { get; set; }
-
     [ObservableProperty] public partial bool IsVolumeControlVisible { get; set; }
 
     public ObservableRangeCollection<PlayerButtonSetting> MainTransportButtons { get; } = new();

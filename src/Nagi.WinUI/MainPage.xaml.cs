@@ -11,7 +11,6 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
-using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Platform;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Insights;
@@ -123,30 +122,23 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         return AppTitleBar;
     }
 
+    public static readonly DependencyProperty IsLyricsPageShownProperty =
+        DependencyProperty.Register(nameof(IsLyricsPageShown), typeof(bool), typeof(MainPage), new PropertyMetadata(false));
+
+    // Read by the lyrics button's template, which can only reach the page through a binding.
+    public bool IsLyricsPageShown
+    {
+        get => (bool)GetValue(IsLyricsPageShownProperty);
+        private set => SetValue(IsLyricsPageShownProperty, value);
+    }
+
     private void HandleNavigation(bool isSettings, object? selectedItem, NavigationTransitionInfo transitionInfo)
     {
-        if (isSettings)
-        {
-            if (ContentFrame.CurrentSourcePageType != typeof(SettingsPage))
-                ContentFrame.Navigate(typeof(SettingsPage), null, transitionInfo);
-            return;
-        }
-
-        if (selectedItem is NavigationViewItem { Tag: string tag }) _navigationService.NavigateToMenu(tag, transitionInfo);
+        var tag = isSettings ? AppDestinations.SettingsTag : (selectedItem as NavigationViewItem)?.Tag as string;
+        if (tag is not null) _navigationService.NavigateToMenu(tag, transitionInfo);
     }
 
-    private void TryGoBack()
-    {
-        if (ContentFrame.CanGoBack) ContentFrame.GoBack();
-    }
-
-    private void LyricsButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (ContentFrame.CurrentSourcePageType == typeof(LyricsPage))
-            TryGoBack();
-        else
-            ContentFrame.Navigate(typeof(LyricsPage));
-    }
+    private void LyricsButton_Click(object sender, RoutedEventArgs e) => _navigationService.ToggleLyrics();
 
     private void Queue_DragOver(object sender, DragEventArgs e)
     {
@@ -207,15 +199,10 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         _isUpdatingNavViewSelection = true;
         try
         {
-            if (ContentFrame.CurrentSourcePageType == typeof(SettingsPage))
-            {
-                NavView.SelectedItem = NavView.SettingsItem;
-                return;
-            }
-
             var tag = _navigationService.CurrentMenuTag;
-            NavView.SelectedItem = NavView.MenuItems.OfType<NavigationViewItem>()
-                .FirstOrDefault(item => Equals(item.Tag, tag));
+            NavView.SelectedItem = tag == AppDestinations.SettingsTag
+                ? NavView.SettingsItem
+                : NavView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault(item => Equals(item.Tag, tag));
         }
         finally
         {
@@ -296,7 +283,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             settingsItem.Content = Strings.NavItem_Settings;
         }
 
-        ContentFrame.Navigated += OnContentFrameNavigated;
+        _navigationService.Navigated += OnNavigated;
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
         SystemVisualSettings.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
         _settingsService.SettingChanged += OnSettingChanged;
@@ -325,7 +312,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         _isUnloaded = true;
         _hoverTimer.Stop();
         _isPointerOverPlayer = false;
-        ContentFrame.Navigated -= OnContentFrameNavigated;
+        _navigationService.Navigated -= OnNavigated;
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
         SystemVisualSettings.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
         _settingsService.SettingChanged -= OnSettingChanged;
@@ -391,20 +378,16 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void NavView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
     {
-        TryGoBack();
+        _navigationService.GoBack();
     }
 
-    private void OnContentFrameNavigated(object sender, NavigationEventArgs e)
+    private void OnNavigated(Type page)
     {
-        _logger.LogDebug("Navigated to {PageName}.", e.SourcePageType.Name);
-        var isLyricsPage = e.SourcePageType == typeof(LyricsPage);
-        ViewModel.IsLyricsPageActive = isLyricsPage;
-
-        AppTitleBar.IsBackButtonVisible = ContentFrame.CanGoBack && (_navigationService.IsOnDetailPage || isLyricsPage);
-
+        IsLyricsPageShown = page == typeof(LyricsPage);
+        AppTitleBar.IsBackButtonVisible = _navigationService.ShowsBackButton;
         UpdateNavViewSelection();
 
-        var isSettingsPage = e.SourcePageType == typeof(SettingsPage);
+        var isSettingsPage = page == typeof(SettingsPage);
         // Keep destination bounds stable while player space changes, so WinUI can finish the outgoing fade.
         var pageHeightAnimation = isSettingsPage ? HiddenPageHeightAnimation : VisiblePageHeightAnimation;
         var reservedHeight = isSettingsPage ? 0 : ShouldExpandPlayer ? ExpandedPlayerHeight : CollapsedPlayerHeight;
@@ -446,7 +429,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void AppTitleBar_BackRequested(TitleBar sender, object args)
     {
-        TryGoBack();
+        _navigationService.GoBack();
     }
 
     private void VolumeSliderContainer_PointerWheelChanged(object sender, PointerRoutedEventArgs e) =>
@@ -461,7 +444,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
         if (properties.PointerUpdateKind == Microsoft.UI.Input.PointerUpdateKind.XButton1Pressed)
         {
-            TryGoBack();
+            _navigationService.GoBack();
             e.Handled = true;
         }
         else if (properties.PointerUpdateKind == Microsoft.UI.Input.PointerUpdateKind.LeftButtonPressed &&
