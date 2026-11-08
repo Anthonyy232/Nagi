@@ -30,8 +30,6 @@ public class AppInfoService : IAppInfoService
         return $"{version.Major}.{version.Minor}.{version.Build}";
     }
 
-    public Task InitializeAsync() => GetAvailableLanguagesAsync();
-
     public async Task<IReadOnlyList<string>> GetAvailableLanguagesAsync()
     {
         if (_cachedAvailableLanguages != null)
