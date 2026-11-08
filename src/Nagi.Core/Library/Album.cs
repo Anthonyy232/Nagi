@@ -31,7 +31,7 @@ public class Album
     public virtual ICollection<Song> Songs { get; set; } = new List<Song>();
 
     /// <summary>
-    ///     The names of all associated artists joined by " & ".
+    ///     The names of all associated artists joined by <see cref="Artist.ArtistSeparator"/>, which is localized.
     ///     This is a denormalized field for efficient display and searching.
     /// </summary>
     [MaxLength(Artist.MaxCreditLength)]

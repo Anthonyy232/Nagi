@@ -173,7 +173,7 @@ public class Song
     public virtual ICollection<ListenHistory> ListenHistory { get; set; } = new List<ListenHistory>();
 
     /// <summary>
-    ///     The names of all associated artists joined by " & ".
+    ///     The names of all associated artists joined by <see cref="Artist.ArtistSeparator"/>, which is localized.
     ///     This is a denormalized field for efficient display and searching.
     /// </summary>
     [MaxLength(Artist.MaxCreditLength)]
