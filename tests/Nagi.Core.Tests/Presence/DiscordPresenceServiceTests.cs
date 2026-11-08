@@ -24,44 +24,48 @@ public class DiscordPresenceServiceTests
     public DiscordPresenceServiceTests() => _playback.PlaybackRate.Returns(1.0);
 
     [Fact]
-    public async Task InitializeAsync_AfterDeactivation_RecreatesClientAndUpdateTimer()
+    public void TurningRichPresenceOffAndOn_ReconnectsWithANewClient()
     {
         var configuration = Substitute.For<IConfiguration>();
         configuration["Discord:AppId"].Returns("123456789");
         var clients = new List<DiscordRpcClient>();
-        await using var service = new DiscordPresenceService(configuration,
-            NullLogger<DiscordPresenceService>.Instance, _playback, _albumCovers, Substitute.For<ISettingsService>(), appId =>
+        using var service = new DiscordPresenceService(configuration,
+            NullLogger<DiscordPresenceService>.Instance, _playback, _albumCovers, _settings, appId =>
             {
                 var client = new DiscordRpcClient(appId, client: Substitute.For<INamedPipeClient>());
                 clients.Add(client);
                 return client;
             });
 
-        await service.InitializeAsync();
-        await service.OnTrackChangedAsync(new Song { Title = "First activation" });
-        await service.DisposeAsync();
-        await service.InitializeAsync();
-        await service.OnTrackChangedAsync(new Song { Title = "Second activation" });
+        service.Start();
+        clients.Should().BeEmpty();
+        _settings.Set(CoreSettings.DiscordRichPresence, true);
+        _playback.CurrentTrack.Returns(new Song { Title = "First activation" });
+        _playback.TrackChanged += Raise.Event<Action>();
+        _settings.Set(CoreSettings.DiscordRichPresence, false);
+        _settings.Set(CoreSettings.DiscordRichPresence, true);
 
         clients.Should().HaveCount(2);
         clients[0].IsDisposed.Should().BeTrue();
         clients[1].IsInitialized.Should().BeTrue();
-        clients[1].IsDisposed.Should().BeFalse();
+        service.Stop();
+        clients[1].IsDisposed.Should().BeTrue();
     }
 
     [Theory]
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public async Task InitializeAsync_WhenAppIdIsMissing_DoesNotCreateClient(string? appId)
+    public void Start_WhenAppIdIsMissing_DoesNotCreateClient(string? appId)
     {
         var configuration = Substitute.For<IConfiguration>();
         configuration["Discord:AppId"].Returns(appId);
         var createClient = Substitute.For<Func<string, DiscordRpcClient>>();
-        await using var service = new DiscordPresenceService(configuration,
-            NullLogger<DiscordPresenceService>.Instance, _playback, _albumCovers, Substitute.For<ISettingsService>(), createClient);
+        _settings.Set(CoreSettings.DiscordRichPresence, true);
+        using var service = new DiscordPresenceService(configuration,
+            NullLogger<DiscordPresenceService>.Instance, _playback, _albumCovers, _settings, createClient);
 
-        await service.InitializeAsync();
+        service.Start();
 
         createClient.DidNotReceive().Invoke(Arg.Any<string>());
     }
@@ -93,7 +97,7 @@ public class DiscordPresenceServiceTests
         _albumCovers.FindCoverUrlAsync(default!, default)
             .ReturnsForAnyArgs(onlineMetadata ? ServiceResult<string>.FromSuccess(url) : null);
         var album = new Album { Title = "Album" };
-        await using var service = new DiscordPresenceService(Substitute.For<IConfiguration>(),
+        using var service = new DiscordPresenceService(Substitute.For<IConfiguration>(),
             NullLogger<DiscordPresenceService>.Instance, _playback, _albumCovers, Substitute.For<ISettingsService>(),
             Substitute.For<Func<string, DiscordRpcClient>>());
 

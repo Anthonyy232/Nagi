@@ -90,8 +90,7 @@ public static class CoreServiceRegistration
         services.AddSingleton<IListenBrainzScrobblerService>(sp => sp.GetRequiredService<ListenBrainzScrobblerService>());
         services.AddSingleton<IScrobblingAccounts, ScrobblingAccounts>();
         services.AddSingleton<IListenSubmitter>(sp => sp.GetRequiredService<ListenBrainzScrobblerService>());
-        services.AddSingleton<PresenceManager>();
-        services.AddSingleton<IPresenceService, DiscordPresenceService>();
+        services.AddSingleton<DiscordPresenceService>();
         services.AddSingleton<MusicServerService>();
         services.AddSingleton<IMusicServerService>(sp => sp.GetRequiredService<MusicServerService>());
         services.AddSingleton<IListenSubmitter>(sp => sp.GetRequiredService<MusicServerService>());

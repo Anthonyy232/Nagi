@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using DiscordRPC;
 using DiscordRPC.Message;
 using Microsoft.Extensions.Configuration;
@@ -11,8 +12,13 @@ using Nagi.Core.Settings;
 
 namespace Nagi.Core.Presence;
 
-public class DiscordPresenceService : IPresenceService, IAsyncDisposable
+/// <summary>
+///     Shows what is playing on the user's Discord profile while Discord Rich Presence is turned on.
+/// </summary>
+public class DiscordPresenceService : IDisposable
 {
+    private static readonly TimeSpan PositionCheckInterval = TimeSpan.FromSeconds(5);
+
     // Absorbs the small lag between reading the playback position and handling it, so normal
     // playback never spends an update from Discord's rate limit.
     private static readonly TimeSpan SyncTolerance = TimeSpan.FromSeconds(2);
@@ -36,6 +42,10 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     private volatile bool _isReady;
 
     private Timer? _debounceTimer;
+    private bool _isStarted;
+    private Guid? _currentSongId;
+    private long? _currentListenId;
+    private long? _lastPositionCheck;
 
     public DiscordPresenceService(IConfiguration configuration, ILogger<DiscordPresenceService> logger,
         IMusicPlaybackService playbackService, IAlbumCoverService albumCoverService, ISettingsService settingsService)
@@ -60,11 +70,45 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
             _logger.LogWarning("Discord AppId is not configured. Discord Rich Presence will be disabled.");
     }
 
-    public bool IsEnabled => _settingsService.Get(CoreSettings.DiscordRichPresence);
-
-    public Task InitializeAsync()
+    /// <summary>
+    ///     Follows playback, and connects to Discord whenever Rich Presence is turned on.
+    /// </summary>
+    public void Start()
     {
-        if (string.IsNullOrWhiteSpace(_discordAppId)) return Task.CompletedTask;
+        if (_isStarted) return;
+        _isStarted = true;
+        _playbackService.TrackChanged += OnTrackChanged;
+        _playbackService.PlaybackStateChanged += OnPlaybackStateChanged;
+        _playbackService.PositionChanged += OnPositionChanged;
+        _settingsService.SettingChanged += OnSettingChanged;
+        OnTrackChanged();
+        OnPlaybackStateChanged();
+        if (_settingsService.Get(CoreSettings.DiscordRichPresence)) Connect();
+    }
+
+    public void Stop()
+    {
+        if (!_isStarted) return;
+        _isStarted = false;
+        _playbackService.TrackChanged -= OnTrackChanged;
+        _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
+        _playbackService.PositionChanged -= OnPositionChanged;
+        _settingsService.SettingChanged -= OnSettingChanged;
+        Disconnect();
+    }
+
+    public void Dispose() => Stop();
+
+    private void OnSettingChanged(Setting setting)
+    {
+        if (setting != CoreSettings.DiscordRichPresence) return;
+        if (_settingsService.Get(CoreSettings.DiscordRichPresence)) Connect();
+        else Disconnect();
+    }
+
+    private void Connect()
+    {
+        if (string.IsNullOrWhiteSpace(_discordAppId)) return;
 
         lock (_clientLock)
         {
@@ -111,11 +155,28 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
                 _logger.LogError(ex, "Failed to initialize Discord RPC client.");
             }
         }
-        return Task.CompletedTask;
     }
 
-    public Task OnTrackChangedAsync(Song song)
+    private void OnTrackChanged()
     {
+        var song = _playbackService.CurrentTrack;
+        var listenId = _playbackService.CurrentListenHistoryId;
+        // A song played again gets a new listen, which restarts its time on the profile.
+        if (song?.Id == _currentSongId && listenId == _currentListenId) return;
+        _currentSongId = song?.Id;
+        _currentListenId = listenId;
+        _lastPositionCheck = null;
+
+        if (song is null)
+        {
+            // A stopped player still has a track loaded, so it shows as paused rather than clearing the presence,
+            // which is unstable in the library.
+            _isPlaying = false;
+            _timestamps = null;
+            RequestUpdate();
+            return;
+        }
+
         _currentSong = song;
         _currentProgress = TimeSpan.Zero;
         _timestamps = BuildTimestamps(TimeSpan.Zero);
@@ -123,7 +184,6 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
 
         // Without a Discord connection there is nothing to show the cover on, so skip the network lookup.
         if (_isReady) _ = ShowAlbumCoverAsync(song);
-        return Task.CompletedTask;
     }
 
     private async Task ShowAlbumCoverAsync(Song song)
@@ -157,24 +217,11 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
         return url;
     }
 
-    public Task OnPlaybackStateChangedAsync(bool isPlaying)
+    private void OnPlaybackStateChanged()
     {
-        _isPlaying = isPlaying;
-
-        _timestamps = isPlaying ? BuildTimestamps(_currentProgress) : null;
-
+        _isPlaying = _playbackService.IsPlaying;
+        _timestamps = _isPlaying ? BuildTimestamps(_currentProgress) : null;
         RequestUpdate();
-        return Task.CompletedTask;
-    }
-
-    public Task OnPlaybackStoppedAsync()
-    {
-        // Do NOT clear _currentSong — a stopped player still has a track loaded.
-        // We show the paused-track state rather than calling ClearPresence (which is unstable in the library).
-        _isPlaying = false;
-        _timestamps = null;
-        RequestUpdate();
-        return Task.CompletedTask;
     }
 
     private void RequestUpdate()
@@ -235,7 +282,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
         }
         catch (ObjectDisposedException)
         {
-            // Expected if timer callback fires during/after DisposeAsync — safe to ignore.
+            // Expected if the timer callback fires while disconnecting — safe to ignore.
         }
         catch (Exception ex)
         {
@@ -243,8 +290,16 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
         }
     }
 
-    public Task OnTrackProgressAsync(TimeSpan progress, TimeSpan duration)
+    private void OnPositionChanged()
     {
+        if (_currentSongId is null || _playbackService.Duration <= TimeSpan.Zero) return;
+
+        // Position changes many times a second, and drift only matters past the sync tolerance.
+        var now = Stopwatch.GetTimestamp();
+        if (_lastPositionCheck is { } lastCheck && Stopwatch.GetElapsedTime(lastCheck, now) < PositionCheckInterval) return;
+        _lastPositionCheck = now;
+
+        var progress = _playbackService.CurrentPosition;
         var previousProgress = _currentProgress;
         _currentProgress = progress;
 
@@ -263,8 +318,6 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
             // Seeking while paused changes the position shown in the paused text.
             RequestUpdate();
         }
-
-        return Task.CompletedTask;
     }
 
     // Discord's clock runs in real time, so scale by the playback speed to keep it in step with playback.
@@ -283,7 +336,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     internal static bool IsOutOfSync(Timestamps? timestamps, TimeSpan progress, double playbackRate, DateTime utcNow) =>
         timestamps?.Start is { } start && ((utcNow - start) * playbackRate - progress).Duration() > SyncTolerance;
 
-    public ValueTask DisposeAsync()
+    private void Disconnect()
     {
         DiscordRpcClient? client;
         lock (_clientLock)
@@ -302,8 +355,6 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
             // Dispose outside the lock so RPC callbacks can finish while the client shuts down.
             client.Dispose();
         }
-
-        return ValueTask.CompletedTask;
     }
 
     private void OnRpcError(object sender, ErrorMessage e)

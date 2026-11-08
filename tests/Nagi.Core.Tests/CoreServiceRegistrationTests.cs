@@ -8,7 +8,6 @@ using Nagi.Core.OnlineProviders;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
-using Nagi.Core.Presence;
 using Nagi.Core.Scrobbling;
 using NSubstitute;
 using Xunit;
@@ -48,12 +47,11 @@ public class CoreServiceRegistrationTests
     }
 
     [Fact]
-    public async Task AddNagiCore_RegistersEveryListenSubmitterAndPresenceService()
+    public async Task AddNagiCore_RegistersEveryListenSubmitter()
     {
         await using var provider = BuildProvider();
 
         provider.GetServices<IListenSubmitter>().Should().HaveCount(3);
-        provider.GetServices<IPresenceService>().Should().ContainSingle();
     }
 
     [Theory]
