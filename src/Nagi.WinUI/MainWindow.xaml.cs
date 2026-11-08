@@ -1,7 +1,5 @@
 using Windows.Graphics;
-using Windows.UI;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -142,28 +140,8 @@ public sealed partial class MainWindow : Window
     {
         if (_rootElement is null) return;
 
-        var titleBar = AppWindow.TitleBar;
-        titleBar.ButtonBackgroundColor = Colors.Transparent;
-        titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-
-        if (_rootElement.ActualTheme == ElementTheme.Dark)
-        {
-            titleBar.ButtonForegroundColor = Colors.White;
-            titleBar.ButtonHoverForegroundColor = Colors.White;
-            titleBar.ButtonHoverBackgroundColor = Color.FromArgb(0x20, 0xFF, 0xFF, 0xFF);
-            titleBar.ButtonPressedForegroundColor = Colors.White;
-            titleBar.ButtonPressedBackgroundColor = Color.FromArgb(0x40, 0xFF, 0xFF, 0xFF);
-            titleBar.ButtonInactiveForegroundColor = Color.FromArgb(0xFF, 0x99, 0x99, 0x99);
-        }
-        else
-        {
-            titleBar.ButtonForegroundColor = Colors.Black;
-            titleBar.ButtonHoverForegroundColor = Colors.Black;
-            titleBar.ButtonHoverBackgroundColor = Color.FromArgb(0x20, 0x00, 0x00, 0x00);
-            titleBar.ButtonPressedForegroundColor = Colors.Black;
-            titleBar.ButtonPressedBackgroundColor = Color.FromArgb(0x40, 0x00, 0x00, 0x00);
-            titleBar.ButtonInactiveForegroundColor = Color.FromArgb(0xFF, 0x66, 0x66, 0x66);
-        }
+        AppWindow.TitleBar.PreferredTheme =
+            _rootElement.ActualTheme == ElementTheme.Dark ? TitleBarTheme.Dark : TitleBarTheme.Light;
     }
 
     // Runs before the window is first shown, so it opens at the remembered place without a visible jump.
