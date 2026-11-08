@@ -58,7 +58,7 @@ public class WikipediaService : IWikipediaService
     private static string ToWikipediaLanguage(string? languageCode) =>
         languageCode?.ToLowerInvariant() switch
         {
-            null or "" or "iv" => FallbackLanguage,
+            null or "" => FallbackLanguage,
             "nb" => "no",
             "fil" => "tl",
             var code => code

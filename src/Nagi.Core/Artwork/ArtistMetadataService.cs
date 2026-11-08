@@ -70,7 +70,10 @@ public class ArtistMetadataService : IArtistMetadataService, IDisposable
             artistName, string.Join(", ", enabledProviders.Select(p => p.Id)));
 
         var enabledIds = enabledProviders.Select(p => p.Id).ToHashSet();
-        var language = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+        // The invariant culture names no language, so each provider uses its default.
+        var language = CultureInfo.CurrentCulture.Equals(CultureInfo.InvariantCulture)
+            ? null
+            : CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
         var lookups = new Dictionary<string, Task<ServiceResult<ArtistInfo>>>();
 
         var musicBrainzLookup = string.IsNullOrEmpty(musicBrainzId) && enabledIds.Contains(ServiceProviderIds.MusicBrainz)
