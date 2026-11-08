@@ -1,4 +1,5 @@
 using Nagi.Core.Library;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Scrobbling;
 
@@ -12,6 +13,18 @@ public interface IListenSubmitter
     ///     A name for logs.
     /// </summary>
     string Name { get; }
+
+    /// <summary>
+    ///     The settings that decide whether, what and where this destination sends. When one changes, the destination
+    ///     hears what is playing and sends its pending listens.
+    /// </summary>
+    IReadOnlyCollection<Setting> Settings { get; }
+
+    /// <summary>
+    ///     The account this destination signs in with, or null if it needs none. A sign-in change is handled like a
+    ///     change to one of <see cref="Settings" />.
+    /// </summary>
+    ScrobblingAccount? Account { get; }
 
     /// <summary>
     ///     Says what is playing now, when that is turned on. Failures are logged.

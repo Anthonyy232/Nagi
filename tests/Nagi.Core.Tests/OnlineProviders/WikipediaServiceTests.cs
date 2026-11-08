@@ -46,7 +46,7 @@ public class WikipediaServiceTests : IDisposable
 
         var result = await _service.GetArtistBiographyAsync(Mbid, language);
 
-        result.Data.Should().Be("Radiohead is a band.\nFormed in 1985.\n\nFrom Wikipedia, under the CC BY-SA license.");
+        result.Data.Should().Be("Radiohead is a band.\nFormed in 1985.");
         var urls = _httpHandler.Requests.Select(r => r.RequestUri!.AbsoluteUri).ToList();
         urls[0].Should().Contain($"haswbstatement:P434={Mbid}");
         urls[1].Should().Contain("ids=Q44191");

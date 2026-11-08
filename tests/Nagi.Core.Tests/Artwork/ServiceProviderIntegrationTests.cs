@@ -147,6 +147,7 @@ public class ServiceProviderIntegrationTests : IDisposable
         var result = await _library.Artwork.GetArtistDetailsAsync(artist.Id);
 
         result!.Biography.Should().Be("Last.fm biography");
+        result.BiographySource.Should().Be(ServiceProviderIds.LastFm);
         _httpHandler.Requests.Select(request => request.RequestUri!.AbsoluteUri)
             .Should().Equal("https://deezer.test/artist.jpg");
     }

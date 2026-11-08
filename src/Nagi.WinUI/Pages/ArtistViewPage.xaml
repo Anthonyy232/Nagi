@@ -176,6 +176,12 @@
                             Text="{x:Bind ViewModel.ArtistBio, Mode=OneWay}"
                             TextTrimming="CharacterEllipsis"
                             TextWrapping="Wrap" />
+                        <TextBlock
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{ThemeResource CaptionTextBlockStyle}"
+                            Text="{x:Bind ViewModel.BiographyCredit, Mode=OneWay}"
+                            TextWrapping="Wrap"
+                            Visibility="{x:Bind ViewModel.BiographyCredit, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}" />
                     </StackPanel>
                 </Grid>
 

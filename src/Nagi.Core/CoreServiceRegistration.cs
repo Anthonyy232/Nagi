@@ -90,8 +90,7 @@ public static class CoreServiceRegistration
         services.AddSingleton<IListenBrainzScrobblerService>(sp => sp.GetRequiredService<ListenBrainzScrobblerService>());
         services.AddSingleton<IScrobblingAccounts, ScrobblingAccounts>();
         services.AddSingleton<IListenSubmitter>(sp => sp.GetRequiredService<ListenBrainzScrobblerService>());
-        services.AddSingleton<PresenceManager>();
-        services.AddSingleton<IPresenceService, DiscordPresenceService>();
+        services.AddSingleton<DiscordPresenceService>();
         services.AddSingleton<MusicServerService>();
         services.AddSingleton<IMusicServerService>(sp => sp.GetRequiredService<MusicServerService>());
         services.AddSingleton<IListenSubmitter>(sp => sp.GetRequiredService<MusicServerService>());
@@ -128,7 +127,8 @@ public static class CoreServiceRegistration
     private static void AddHttpClients(IServiceCollection services)
     {
         services.ConfigureHttpClientDefaults(builder =>
-            builder.ConfigureHttpClient(client => client.DefaultRequestHeaders.UserAgent.ParseAdd(ProviderUserAgent.Value)));
+            builder.ConfigureHttpClient((provider, client) => client.DefaultRequestHeaders.UserAgent.ParseAdd(
+                ProviderUserAgent.For(provider.GetRequiredService<IAppInfoService>().GetAppVersion()))));
         services.AddHttpClient("")
             .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(20))
             .ConfigurePrimaryHttpMessageHandler(() =>

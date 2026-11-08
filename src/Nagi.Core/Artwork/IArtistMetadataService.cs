@@ -5,7 +5,9 @@ namespace Nagi.Core.Artwork;
 ///     No source failed, so missing data is final rather than worth retrying. True when no enabled source
 ///     can look the artist up.
 /// </param>
-public record ArtistMetadataResult(string? MusicBrainzId, string? ImageUrl, string? Biography, bool IsConclusive);
+/// <param name="BiographySource">The id of the provider the biography came from.</param>
+public record ArtistMetadataResult(string? MusicBrainzId, string? ImageUrl, string? Biography, string? BiographySource,
+    bool IsConclusive);
 
 public interface IArtistMetadataService
 {

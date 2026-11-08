@@ -131,6 +131,25 @@ public class LastFmAuthServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task GetAuthenticationTokenAsync_WhenLastFmRejectsTheKey_FetchesItAgainAndRetriesOnce()
+    {
+        SetupValidCredentials();
+        _apiKeyService.RefreshApiKeyAsync("lastfm").Returns("rotated-key");
+        _apiKeyService.RefreshApiKeyAsync("lastfm-secret").Returns("rotated-secret");
+        _httpMessageHandler.SendAsyncFunc = (request, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = request.RequestUri!.Query.Contains("api_key=rotated-key")
+                ? JsonContent.Create(new { token = "token" })
+                : JsonContent.Create(new { error = 10, message = "Invalid API key" })
+        });
+
+        var result = await _authService.GetAuthenticationTokenAsync();
+
+        result!.Value.AuthUrl.Should().Contain("api_key=rotated-key");
+        _httpMessageHandler.Requests.Should().HaveCount(2);
+    }
+
+    [Fact]
     public async Task AuthenticationUrls_EncodeParameterValuesWithoutChangingTokens()
     {
         const string key = "key+with&reserved=characters";

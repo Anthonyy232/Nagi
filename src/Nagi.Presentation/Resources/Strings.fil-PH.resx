@@ -1452,9 +1452,6 @@ Gusto mo bang magpatuloy?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Walang magagamit na compatible na romanization pack.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Hindi ma-load ang mga romanization pack: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Nabigo ang pag-install ng pack.</value>
   </data>

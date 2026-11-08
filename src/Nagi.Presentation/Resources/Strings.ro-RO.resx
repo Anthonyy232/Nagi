@@ -1452,9 +1452,6 @@ Vrei să continui?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Nu sunt disponibile pachete de romanizare compatibile.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Nu s-au putut încărca pachetele de romanizare: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Instalarea pachetului a eșuat.</value>
   </data>

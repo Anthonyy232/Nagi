@@ -123,8 +123,8 @@ public class TheAudioDbServiceTests : IDisposable
 
     [Theory]
     [InlineData("de", "German Bio", "German Bio")]
-    [InlineData("DE-de", " German Bio ", "German Bio")]
-    [InlineData("de-DE", "   ", "English Bio")]
+    [InlineData("DE", " German Bio ", "German Bio")]
+    [InlineData("de", "   ", "English Bio")]
     [InlineData("de", null, "English Bio")]
     [InlineData("fr", "German Bio", "English Bio")]
     [InlineData(null, "German Bio", "English Bio")]

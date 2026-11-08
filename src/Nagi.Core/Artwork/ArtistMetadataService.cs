@@ -51,7 +51,10 @@ public class ArtistMetadataService : IArtistMetadataService, IDisposable
             artistName, string.Join(", ", enabledProviders.Select(p => p.Id)));
 
         var enabledIds = enabledProviders.Select(p => p.Id).ToHashSet();
-        var language = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+        // The invariant culture names no language, so each provider uses its default.
+        var language = CultureInfo.CurrentCulture.Equals(CultureInfo.InvariantCulture)
+            ? null
+            : CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
         var lookups = new Dictionary<string, Task<ServiceResult<ArtistInfo>>>();
 
         var musicBrainzLookup = string.IsNullOrEmpty(musicBrainzId) && enabledIds.Contains(ServiceProviderIds.MusicBrainz)
@@ -97,20 +100,26 @@ public class ArtistMetadataService : IArtistMetadataService, IDisposable
 
         string? imageUrl = null;
         string? biography = null;
+        string? biographySource = null;
         var isFinal = await ProviderPriority.TakeInOrderAsync(
-            enabledProviders.Where(p => lookups.ContainsKey(p.Id)).Select(p => lookups[p.Id]),
-            info =>
+            enabledProviders.Where(p => lookups.ContainsKey(p.Id))
+                .Select(p => MapAsync(lookups[p.Id], info => new ProviderAnswer(p.Id, info))),
+            answer =>
             {
-                if (string.IsNullOrEmpty(imageUrl)) imageUrl = info.ImageUrl;
-                if (string.IsNullOrEmpty(biography)) biography = info.Biography;
+                if (string.IsNullOrEmpty(imageUrl)) imageUrl = answer.Info.ImageUrl;
+                if (string.IsNullOrEmpty(biography) && !string.IsNullOrEmpty(answer.Info.Biography))
+                    (biography, biographySource) = (answer.Info.Biography, answer.ProviderId);
                 return !string.IsNullOrEmpty(imageUrl) && !string.IsNullOrEmpty(biography);
             }, cancellationToken).ConfigureAwait(false);
 
         cancellationToken.ThrowIfCancellationRequested();
-        return new ArtistMetadataResult(resolvedMbid, imageUrl, biography, musicBrainzAnswered && isFinal);
+        return new ArtistMetadataResult(resolvedMbid, imageUrl, biography, biographySource, musicBrainzAnswered && isFinal);
     }
 
-    private static async Task<ServiceResult<ArtistInfo>> MapAsync<T>(Task<ServiceResult<T>> lookup, Func<T, ArtistInfo> map)
-        where T : class =>
+    private sealed record ProviderAnswer(string ProviderId, ArtistInfo Info);
+
+    private static async Task<ServiceResult<TResult>> MapAsync<T, TResult>(Task<ServiceResult<T>> lookup,
+        Func<T, TResult> map)
+        where T : class where TResult : class =>
         (await lookup.ConfigureAwait(false)).Map(map);
 }

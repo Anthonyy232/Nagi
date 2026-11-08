@@ -1452,9 +1452,6 @@
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Няма налични съвместими пакети за романизация.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Не могат да се заредят пакетите за романизация: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Инсталирането на пакета не бе успешно.</value>
   </data>

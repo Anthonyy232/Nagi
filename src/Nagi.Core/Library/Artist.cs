@@ -26,6 +26,13 @@ public class Artist
     [MaxLength(50000)]
     public string? Biography { get; set; }
 
+    /// <summary>
+    ///     The id of the provider the biography came from, or null if it isn't known, for one found before sources
+    ///     were recorded.
+    /// </summary>
+    [MaxLength(100)]
+    public string? BiographySource { get; set; }
+
     [MaxLength(1000)]
     public string? LocalImageCachePath { get; set; }
 

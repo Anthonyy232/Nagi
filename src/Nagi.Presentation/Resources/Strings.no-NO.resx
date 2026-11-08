@@ -1452,9 +1452,6 @@ Vil du fortsette?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Ingen kompatible romaniseringspakker er tilgjengelige.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Kunne ikke laste romaniseringspakker: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Pakkeinstallasjon mislyktes.</value>
   </data>

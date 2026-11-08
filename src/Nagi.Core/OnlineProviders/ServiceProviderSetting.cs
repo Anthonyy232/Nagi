@@ -1,24 +1,7 @@
 namespace Nagi.Core.OnlineProviders;
 
-public enum ServiceCategory
-{
-    Lyrics,
-
-    Metadata
-}
-
-public class ServiceProviderSetting
-{
-    public string Id { get; set; } = string.Empty;
-
-    public string DisplayName { get; set; } = string.Empty;
-
-    public ServiceCategory Category { get; set; }
-
-    public bool IsEnabled { get; set; } = true;
-
-    /// <summary>
-    ///     Priority order: lower is higher priority, 0 is highest.
-    /// </summary>
-    public int Order { get; set; }
-}
+/// <summary>
+///     Whether the user turned a provider on. Saved in a list in the user's priority order, highest first.
+/// </summary>
+/// <param name="Id">One of <see cref="ProviderCatalog" />'s provider ids.</param>
+public sealed record ServiceProviderSetting(string Id, bool IsEnabled = true);

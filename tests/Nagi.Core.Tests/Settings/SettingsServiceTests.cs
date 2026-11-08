@@ -56,7 +56,7 @@ public class SettingsServiceTests
         var playbackState = Substitute.For<IPlaybackStateStore>();
         var settings = TestSettings.Create(credentials: credentials, autoLaunch: autoLaunch, playbackStateStore: playbackState);
         var credentialChanges = 0;
-        settings.CredentialsChanged += () => credentialChanges++;
+        settings.CredentialsChanged += _ => credentialChanges++;
 
         await settings.ResetToDefaultsAsync();
 
@@ -76,7 +76,7 @@ public class SettingsServiceTests
         credentials.SaveCredential(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(accepted);
         var settings = TestSettings.Create(credentials: credentials);
         var credentialChanges = 0;
-        settings.CredentialsChanged += () => credentialChanges++;
+        settings.CredentialsChanged += _ => credentialChanges++;
 
         (await settings.SaveLastFmCredentialsAsync("user", "session")).Should().Be(accepted);
         (await settings.SaveListenBrainzUserTokenAsync("token")).Should().Be(accepted);
@@ -87,23 +87,32 @@ public class SettingsServiceTests
     [Fact]
     public void Providers_ReconcileSavedPriorityWithCurrentDefinitionsWithoutRewritingStorage()
     {
-        var saved = JsonSerializer.Serialize(new[]
-        {
-            new ServiceProviderSetting { Id = ServiceProviderIds.NetEase.ToUpperInvariant(), DisplayName = "Old", IsEnabled = false, Order = int.MaxValue },
-            new ServiceProviderSetting { Id = ServiceProviderIds.NetEase, IsEnabled = true, Order = 0 },
-            new ServiceProviderSetting { Id = "Removed", IsEnabled = true, Order = -1 }
-        });
+        // As older versions saved it, with a name, category and position for each provider.
+        const string saved = """
+            [{"Id":"NETEASE","DisplayName":"Old","Category":0,"IsEnabled":false,"Order":0},
+             {"Id":"netease","DisplayName":"NetEase","Category":0,"IsEnabled":true,"Order":1},
+             {"Id":"Removed","DisplayName":"Removed","Category":0,"IsEnabled":true,"Order":2}]
+            """;
         var values = new Dictionary<string, object> { ["LyricsServiceProviders"] = saved };
         var settings = TestSettings.Create(values);
 
         var providers = settings.Get(CoreSettings.LyricsProviders);
 
-        providers.Select(p => p.Id).Should().Equal(ServiceProviderIds.LrcLib, ServiceProviderIds.NetEase);
-        providers.Select(p => p.Order).Should().Equal(0, 1);
-        providers[1].IsEnabled.Should().BeFalse();
-        providers[1].DisplayName.Should().Be("NetEase");
-        providers.Should().OnlyContain(p => p.Category == ServiceCategory.Lyrics);
+        providers.Should().Equal(new ServiceProviderSetting(ServiceProviderIds.LrcLib),
+            new ServiceProviderSetting(ServiceProviderIds.NetEase, IsEnabled: false));
         values["LyricsServiceProviders"].Should().Be(saved);
+    }
+
+    [Fact]
+    public void Providers_AreSavedAsTheirIdAndToggleInPriorityOrder()
+    {
+        var values = new Dictionary<string, object>();
+        var settings = TestSettings.Create(values);
+
+        settings.Set(CoreSettings.LyricsProviders,
+            [new ServiceProviderSetting(ServiceProviderIds.NetEase, IsEnabled: false), new ServiceProviderSetting(ServiceProviderIds.LrcLib)]);
+
+        values["LyricsServiceProviders"].Should().Be("""[{"Id":"netease","IsEnabled":false},{"Id":"lrclib","IsEnabled":true}]""");
     }
 
     [Fact]
@@ -111,8 +120,8 @@ public class SettingsServiceTests
     {
         var saved = JsonSerializer.Serialize(new[]
         {
-            new ServiceProviderSetting { Id = ServiceProviderIds.MusicBrainz, Order = 0 },
-            new ServiceProviderSetting { Id = ServiceProviderIds.LastFm, Order = 1 }
+            new ServiceProviderSetting(ServiceProviderIds.MusicBrainz),
+            new ServiceProviderSetting(ServiceProviderIds.LastFm)
         });
         var settings = TestSettings.Create(new Dictionary<string, object> { ["MetadataServiceProviders"] = saved });
 
@@ -128,10 +137,10 @@ public class SettingsServiceTests
         // The pre-update default order, which ranked TheAudioDB above Fanart.tv.
         var saved = JsonSerializer.Serialize(new[]
         {
-            new ServiceProviderSetting { Id = ServiceProviderIds.MusicBrainz, Order = 0 },
-            new ServiceProviderSetting { Id = ServiceProviderIds.TheAudioDb, Order = 1 },
-            new ServiceProviderSetting { Id = ServiceProviderIds.FanartTv, Order = 2 },
-            new ServiceProviderSetting { Id = ServiceProviderIds.LastFm, Order = 3 }
+            new ServiceProviderSetting(ServiceProviderIds.MusicBrainz),
+            new ServiceProviderSetting(ServiceProviderIds.TheAudioDb),
+            new ServiceProviderSetting(ServiceProviderIds.FanartTv),
+            new ServiceProviderSetting(ServiceProviderIds.LastFm)
         });
         var settings = TestSettings.Create(new Dictionary<string, object> { ["MetadataServiceProviders"] = saved });
 

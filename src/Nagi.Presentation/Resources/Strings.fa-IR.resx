@@ -1452,9 +1452,6 @@
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>هیچ بسته رومی‌سازی سازگاری در دسترس نیست.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>امکان بارگذاری بسته‌های رومی‌سازی وجود نداشت: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>نصب بسته ناموفق بود.</value>
   </data>

@@ -2,6 +2,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Library;
 using Nagi.Core.MusicServers;
+using Nagi.Presentation.MusicServers;
 using Nagi.Presentation.Shell;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -77,18 +78,22 @@ public class OnboardingViewModelTests
         _viewModel.FinishCommand.CanExecute(null).Should().BeTrue();
     }
 
-    [Fact]
-    public async Task ConnectingAServerWhoseSyncFails_RemovesItSoItCanBeConnectedAgain()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ConnectingAServerWhoseSyncFails_RemovesItAndSaysWhatWentWrong(bool removalFails)
     {
         var server = new Folder { Name = "Navidrome", Path = "nagi-server:0123" };
         _ui.ShowAddMusicServerDialogAsync().Returns(server);
         _musicServers.SyncAsync(server.Id, Arg.Any<IProgress<ScanProgress>?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromException(new MusicServerException(MusicServerError.Unreachable, "timed out")));
+        if (removalFails) _musicServers.RemoveAsync(server.Id).ThrowsAsync(new IOException("locked"));
 
         await _viewModel.ConnectServerCommand.ExecuteAsync(null);
 
         await _musicServers.Received(1).RemoveAsync(server.Id);
         _viewModel.HasLibraryFailed.Should().BeTrue();
+        _viewModel.ScanStatus.Should().Be(MusicServerErrors.DescribeForServer(MusicServerError.Unreachable, "Navidrome"));
         _viewModel.ConnectServerCommand.CanExecute(null).Should().BeTrue();
     }
 

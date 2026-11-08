@@ -1452,9 +1452,6 @@ Pretende continuar?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Nenhum pacote de romanização compatível está disponível.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Não foi possível carregar pacotes de romanização: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>A instalação do pacote falhou.</value>
   </data>

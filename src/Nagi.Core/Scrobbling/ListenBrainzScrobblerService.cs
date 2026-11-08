@@ -56,6 +56,14 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
 
     public string Name => "ListenBrainz";
 
+    public IReadOnlyCollection<Setting> Settings { get; } =
+    [
+        CoreSettings.ListenBrainzScrobbling, CoreSettings.ListenBrainzNowPlaying, CoreSettings.ListenBrainzServerUrl,
+        CoreSettings.ListenBrainzEnabledSinceUtc
+    ];
+
+    public ScrobblingAccount? Account => ScrobblingAccount.ListenBrainz;
+
     public async Task UpdateNowPlayingAsync(Song song)
     {
         if (!_settingsService.Get(CoreSettings.ListenBrainzNowPlaying)) return;
@@ -71,14 +79,9 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
 
     public async Task SubmitPendingAsync(CancellationToken cancellationToken)
     {
-        if (!_settingsService.Get(CoreSettings.ListenBrainzScrobbling)) return;
-        // Connecting sets it; a token saved before that existed starts from the first time scrobbling runs, so the
-        // user's whole history isn't sent.
-        if (_settingsService.Get(CoreSettings.ListenBrainzEnabledSinceUtc) is not { } enabledSince)
-        {
-            enabledSince = DateTime.UtcNow;
-            _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, enabledSince);
-        }
+        // Connecting sets the cutoff, and every release with ListenBrainz did, so a token without one has nothing to send.
+        if (!_settingsService.Get(CoreSettings.ListenBrainzScrobbling) ||
+            _settingsService.Get(CoreSettings.ListenBrainzEnabledSinceUtc) is not { } enabledSince) return;
 
         await _submitLock.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
@@ -110,17 +113,7 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        SubmissionOutcome outcome;
-        try
-        {
-            outcome = await SubmitBatchAsync(entries, cancellationToken).ConfigureAwait(false);
-        }
-        catch (Exception ex) when (ex is not OperationCanceledException)
-        {
-            _logger.LogWarning(ex, "ListenBrainz submission failed; retaining {Count} listens for retry.", entries.Count);
-            return false;
-        }
-
+        var outcome = await SubmitBatchAsync(entries, cancellationToken).ConfigureAwait(false);
         if (outcome == SubmissionOutcome.TransientFailure) return false;
         if (outcome == SubmissionOutcome.PermanentFailure && entries.Count > 1)
         {

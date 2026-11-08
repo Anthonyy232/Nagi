@@ -99,9 +99,9 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
     public void Load()
     {
         LyricsProviders.Load(_settingsService.Get(CoreSettings.LyricsProviders)
-            .Select(ServiceProviderSettingViewModel.FromSetting));
+            .Select(setting => new ServiceProviderSettingViewModel(setting)));
         MetadataProviders.Load(_settingsService.Get(CoreSettings.MetadataProviders)
-            .Select(ServiceProviderSettingViewModel.FromSetting));
+            .Select(setting => new ServiceProviderSettingViewModel(setting)));
     }
 
     protected override void OnDisposing()
@@ -168,5 +168,5 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
     }
 
     private static List<ServiceProviderSetting> ToSettings(IReadOnlyList<ServiceProviderSettingViewModel> providers) =>
-        providers.Select((provider, order) => provider.ToSetting(order)).ToList();
+        providers.Select(provider => provider.ToSetting()).ToList();
 }

@@ -62,7 +62,7 @@ public class SettingsViewModelTests : IDisposable
                 NullLogger<AudioSettingsViewModel>.Instance, _timeProvider),
             new LibrarySettingsViewModel(_settings, _ui, _library.Folders, Substitute.For<IMusicServerService>(), _operation, _dispatcher,
                 NullLogger<LibrarySettingsViewModel>.Instance, _timeProvider),
-            new ScrobblingSettingsViewModel(_settings, _ui, _lastFm, _listenBrainz, new ScrobblingAccounts(_settings), _dispatcher,
+            new ScrobblingSettingsViewModel(_settings, _ui, _listenBrainz, new ScrobblingAccounts(_settings, _lastFm), _dispatcher,
                 NullLogger<ScrobblingSettingsViewModel>.Instance),
             new RomanizationPacksSettingsViewModel(Substitute.For<IRomanizationPackManager>(), _dispatcher,
                 NullLogger<RomanizationPacksSettingsViewModel>.Instance),
@@ -294,10 +294,12 @@ public class SettingsViewModelTests : IDisposable
     {
         _settings.Set(CoreSettings.LastFmAuthToken, "temporary");
         _lastFm.GetSessionAsync("temporary").Returns(("user", "session"));
+        _credentials.RetrieveCredential("Nagi/LastFm").Returns(("user", "session"));
 
         await _viewModel.Scrobbling.LastFmFinalizeAuthCommand.ExecuteAsync(null);
 
         _viewModel.Scrobbling.IsLastFmConnected.Should().BeTrue();
+        _viewModel.Scrobbling.LastFmUsername.Should().Be("user");
         _viewModel.Scrobbling.IsLastFmScrobblingEnabled.Should().BeTrue();
         _viewModel.Scrobbling.IsLastFmNowPlayingEnabled.Should().BeTrue();
         _settings.Get(CoreSettings.LastFmAuthToken).Should().BeNull();
@@ -316,6 +318,24 @@ public class SettingsViewModelTests : IDisposable
         _viewModel.Scrobbling.IsLastFmConnected.Should().BeFalse();
         _viewModel.Scrobbling.IsLastFmScrobblingEnabled.Should().BeFalse();
         await _ui.Received(1).ShowMessageDialogAsync(Arg.Any<string>(), Strings.MusicServer_Error_SignInNotSaved);
+    }
+
+    [Fact]
+    public async Task Accounts_SignedOutElsewhere_ShowAsDisconnected()
+    {
+        _credentials.RetrieveCredential("Nagi/LastFm").Returns(("user", "session"));
+        _credentials.RetrieveCredential("Nagi/ListenBrainz").Returns(("token", "lb-token"));
+        await _viewModel.LoadSettingsAsync();
+        _viewModel.Scrobbling.IsLastFmConnected.Should().BeTrue();
+        _viewModel.Scrobbling.ListenBrainzIsConnected.Should().BeTrue();
+        _credentials.RetrieveCredential(Arg.Any<string>()).Returns((ValueTuple<string?, string?>?)null);
+
+        await _settings.ResetToDefaultsAsync();
+
+        _viewModel.Scrobbling.IsLastFmConnected.Should().BeFalse();
+        _viewModel.Scrobbling.LastFmUsername.Should().BeNull();
+        _viewModel.Scrobbling.ListenBrainzIsConnected.Should().BeFalse();
+        _viewModel.Scrobbling.ListenBrainzUserToken.Should().BeEmpty();
     }
 
     [Fact]
@@ -551,8 +571,8 @@ public class SettingsViewModelTests : IDisposable
     {
         _settings.Set(CoreSettings.MetadataProviders, new List<ServiceProviderSetting>
         {
-            new() { Id = ServiceProviderIds.TheAudioDb, Category = ServiceCategory.Metadata, Order = 0 },
-            new() { Id = ServiceProviderIds.MusicBrainz, Category = ServiceCategory.Metadata, Order = 1 }
+            new(ServiceProviderIds.TheAudioDb),
+            new(ServiceProviderIds.MusicBrainz)
         });
         var changed = new List<Setting>();
         _settings.SettingChanged += changed.Add;

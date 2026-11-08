@@ -7,10 +7,18 @@ namespace Nagi.Presentation.Settings;
 
 public partial class ServiceProviderSettingViewModel : ObservableObject, IToggleItem
 {
+    private readonly OnlineProvider _provider;
+
+    public ServiceProviderSettingViewModel(ServiceProviderSetting setting)
+    {
+        _provider = ProviderCatalog.Get(setting.Id);
+        IsEnabled = setting.IsEnabled;
+    }
+
     [ObservableProperty] public partial bool IsEnabled { get; set; }
 
-    public string Id { get; init; } = string.Empty;
-    public string DisplayName { get; init; } = string.Empty;
+    public string Id => _provider.Id;
+    public string DisplayName => _provider.DisplayName;
     public AppIcon Icon => AppIcon.OnlineSource;
     public string? Description => Id switch
     {
@@ -27,31 +35,8 @@ public partial class ServiceProviderSettingViewModel : ObservableObject, IToggle
         _ => null
     };
 
-    public ServiceCategory Category { get; init; }
+    /// <summary>Other metadata providers look artists and albums up by the IDs this one finds, so it stays first.</summary>
+    public bool IsPinnedFirst => _provider.Can(ProviderCapabilities.IdResolver);
 
-    /// <summary>MusicBrainz looks up the IDs other metadata providers use, so it stays first.</summary>
-    public bool IsPinnedFirst => Id == ServiceProviderIds.MusicBrainz;
-
-    public static ServiceProviderSettingViewModel FromSetting(ServiceProviderSetting setting)
-    {
-        return new ServiceProviderSettingViewModel
-        {
-            Id = setting.Id,
-            DisplayName = setting.DisplayName,
-            Category = setting.Category,
-            IsEnabled = setting.IsEnabled
-        };
-    }
-
-    public ServiceProviderSetting ToSetting(int order)
-    {
-        return new ServiceProviderSetting
-        {
-            Id = Id,
-            DisplayName = DisplayName,
-            Category = Category,
-            IsEnabled = IsEnabled,
-            Order = order
-        };
-    }
+    public ServiceProviderSetting ToSetting() => new(Id, IsEnabled);
 }

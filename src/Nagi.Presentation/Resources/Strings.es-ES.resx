@@ -1452,9 +1452,6 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>No hay paquetes de romanización compatibles disponibles.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>No se pudieron cargar los paquetes de romanización: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Error al instalar el paquete.</value>
   </data>

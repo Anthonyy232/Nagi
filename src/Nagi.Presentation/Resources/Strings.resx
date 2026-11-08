@@ -1445,8 +1445,8 @@ Do you want to continue?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>No compatible romanization packs are available.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Could not load romanization packs: {0}</value>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>Could not load romanization packs. Check your internet connection, then refresh.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Pack install failed.</value>

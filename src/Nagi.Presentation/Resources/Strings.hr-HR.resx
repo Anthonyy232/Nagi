@@ -1452,9 +1452,6 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Nema dostupnih kompatibilnih paketa za romanizaciju.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Nije moguće učitati pakete za romanizaciju: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Instalacija paketa nije uspjela.</value>
   </data>

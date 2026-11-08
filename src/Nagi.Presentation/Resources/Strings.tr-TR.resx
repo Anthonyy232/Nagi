@@ -1452,9 +1452,6 @@ Devam etmek ister misiniz?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Uyumlu latinize etme paketi bulunmamaktadır.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Latinize etme paketleri yüklenemedi: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Paket yüklemesi başarısız oldu.</value>
   </data>

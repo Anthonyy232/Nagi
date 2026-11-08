@@ -11,6 +11,7 @@ namespace Nagi.Core.Tests.Scrobbling;
 public class ScrobblingAccountsTests
 {
     private readonly ICredentialLockerService _credentials = Substitute.For<ICredentialLockerService>();
+    private readonly ILastFmAuthService _lastFmAuth = Substitute.For<ILastFmAuthService>();
     private readonly SettingsService _settings;
     private readonly ScrobblingAccounts _accounts;
 
@@ -18,14 +19,17 @@ public class ScrobblingAccountsTests
     {
         _credentials.SaveCredential(default!, default!, default!).ReturnsForAnyArgs(true);
         _settings = TestSettings.Create(credentials: _credentials);
-        _accounts = new ScrobblingAccounts(_settings);
+        _lastFmAuth.GetAuthenticationTokenAsync().Returns(("token", "https://last.fm/auth"));
+        _lastFmAuth.GetSessionAsync("token").Returns(("user", "session"));
+        _accounts = new ScrobblingAccounts(_settings, _lastFmAuth);
     }
 
     [Fact]
     public async Task DisconnectLastFm_TurnsSubmissionOffAndDropsThePendingSignIn()
     {
-        await _accounts.ConnectLastFmAsync("user", "session");
-        _settings.Set(CoreSettings.LastFmAuthToken, "pending");
+        await _accounts.BeginLastFmSignInAsync();
+        await _accounts.FinishLastFmSignInAsync();
+        await _accounts.BeginLastFmSignInAsync();
 
         await _accounts.DisconnectLastFmAsync();
 
@@ -57,7 +61,8 @@ public class ScrobblingAccountsTests
     {
         _credentials.SaveCredential(default!, default!, default!).ReturnsForAnyArgs(false);
 
-        (await _accounts.ConnectLastFmAsync("user", "session")).Should().BeFalse();
+        await _accounts.BeginLastFmSignInAsync();
+        (await _accounts.FinishLastFmSignInAsync()).Should().Be(LastFmSignInResult.NotSaved);
         (await _accounts.ConnectListenBrainzAsync("token")).Should().BeFalse();
 
         _settings.Get(CoreSettings.LastFmScrobbling).Should().BeFalse();

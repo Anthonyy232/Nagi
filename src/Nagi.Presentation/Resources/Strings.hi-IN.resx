@@ -1452,9 +1452,6 @@
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>कोई संगत रोमानाइजेशन पैक उपलब्ध नहीं हैं।</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>रोमानाइजेशन पैक लोड नहीं हो सके: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>पैक इंस्टॉल विफल रहा।</value>
   </data>

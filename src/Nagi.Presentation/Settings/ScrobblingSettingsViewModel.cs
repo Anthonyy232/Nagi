@@ -18,7 +18,6 @@ namespace Nagi.Presentation.Settings;
 public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
 {
     private readonly IUIService _uiService;
-    private readonly ILastFmAuthService _lastFmAuthService;
     private readonly IListenBrainzScrobblerService _listenBrainzScrobblerService;
     private readonly IScrobblingAccounts _accounts;
     private int _lastFmAuthVersion;
@@ -27,7 +26,6 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
     public ScrobblingSettingsViewModel(
         ISettingsService settingsService,
         IUIService uiService,
-        ILastFmAuthService lastFmAuthService,
         IListenBrainzScrobblerService listenBrainzScrobblerService,
         IScrobblingAccounts accounts,
         IDispatcherService dispatcherService,
@@ -35,9 +33,9 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
         : base(settingsService, dispatcherService, logger)
     {
         _uiService = uiService;
-        _lastFmAuthService = lastFmAuthService;
         _listenBrainzScrobblerService = listenBrainzScrobblerService;
         _accounts = accounts;
+        _settingsService.CredentialsChanged += OnCredentialsChanged;
     }
 
     [ObservableProperty]
@@ -100,24 +98,44 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
     /// </summary>
     public async Task LoadAsync()
     {
-        var lastFmCredentialsTask = _settingsService.GetLastFmCredentialsAsync();
-        var listenBrainzTokenTask = _settingsService.GetListenBrainzUserTokenAsync();
-
-        await Task.WhenAll(lastFmCredentialsTask, listenBrainzTokenTask);
-
+        await Task.WhenAll(ReadAccountAsync(ScrobblingAccount.LastFm), ReadAccountAsync(ScrobblingAccount.ListenBrainz));
         if (_isDisposed) return;
+        IsConnectingToLastFm = _accounts.IsLastFmSignInPending;
+        ListenBrainzConnectionStatus = null;
+    }
 
-        ApplyWithoutSaving(() =>
+    protected override void OnDisposing() => _settingsService.CredentialsChanged -= OnCredentialsChanged;
+
+    // A sign-in made here, or a reset elsewhere, changes what the page shows.
+    private void OnCredentialsChanged(ScrobblingAccount account)
+    {
+        if (_dispatcherService.HasThreadAccess) _ = ReadAccountAsync(account);
+        else _dispatcherService.TryEnqueue(() => _ = ReadAccountAsync(account));
+    }
+
+    private async Task ReadAccountAsync(ScrobblingAccount account)
+    {
+        try
         {
-            var lastFmCredentials = lastFmCredentialsTask.Result;
-            LastFmUsername = lastFmCredentials?.Username;
-            IsLastFmConnected = lastFmCredentials is not null && !string.IsNullOrEmpty(lastFmCredentials.Value.SessionKey);
-            IsConnectingToLastFm = !string.IsNullOrEmpty(_settingsService.Get(CoreSettings.LastFmAuthToken));
-
-            ListenBrainzUserToken = listenBrainzTokenTask.Result ?? string.Empty;
-            ListenBrainzIsConnected = !string.IsNullOrEmpty(ListenBrainzUserToken);
-            ListenBrainzConnectionStatus = null;
-        });
+            if (account == ScrobblingAccount.LastFm)
+            {
+                var credentials = await _settingsService.GetLastFmCredentialsAsync();
+                if (_isDisposed) return;
+                LastFmUsername = credentials?.Username;
+                IsLastFmConnected = !string.IsNullOrEmpty(credentials?.SessionKey);
+            }
+            else
+            {
+                var token = await _settingsService.GetListenBrainzUserTokenAsync();
+                if (_isDisposed) return;
+                ListenBrainzUserToken = token ?? string.Empty;
+                ListenBrainzIsConnected = !string.IsNullOrEmpty(token);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to read the {Account} account.", account);
+        }
     }
 
     private bool IsLastFmAuthCurrent(int version) => !_isDisposed && version == _lastFmAuthVersion;
@@ -130,13 +148,9 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
         IsConnectingToLastFm = true;
         try
         {
-            var authData = await _lastFmAuthService.GetAuthenticationTokenAsync();
+            var authUrl = await _accounts.BeginLastFmSignInAsync();
             if (!IsLastFmAuthCurrent(version)) return;
-            if (authData is { Token: not null, AuthUrl: not null })
-            {
-                _settingsService.Set(CoreSettings.LastFmAuthToken, authData.Value.Token);
-                if (await _uiService.OpenUriAsync(new Uri(authData.Value.AuthUrl))) return;
-            }
+            if (authUrl is not null && await _uiService.OpenUriAsync(authUrl)) return;
         }
         catch (Exception ex)
         {
@@ -145,7 +159,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
 
         if (!IsLastFmAuthCurrent(version)) return;
         IsConnectingToLastFm = false;
-        Set(CoreSettings.LastFmAuthToken, null);
+        _accounts.CancelLastFmSignIn();
         await _uiService.ShowMessageDialogAsync(Strings.Settings_LastFm_AuthError_Title, Strings.Settings_LastFm_AuthError_Message);
     }
 
@@ -154,41 +168,24 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
     {
         if (_isDisposed) return;
         var version = _lastFmAuthVersion;
-        var failureMessage = Strings.Settings_LastFm_FinalizeError_Message;
+        LastFmSignInResult result;
         try
         {
-            var authToken = _settingsService.Get(CoreSettings.LastFmAuthToken);
-            if (string.IsNullOrEmpty(authToken)) return;
-
-            var sessionData = await _lastFmAuthService.GetSessionAsync(authToken);
-            if (!IsLastFmAuthCurrent(version)) return;
-            if (sessionData is { Username: not null, SessionKey: not null })
-            {
-                if (await _accounts.ConnectLastFmAsync(sessionData.Value.Username, sessionData.Value.SessionKey))
-                {
-                    LastFmUsername = sessionData.Value.Username;
-                    IsLastFmConnected = true;
-                    return;
-                }
-
-                failureMessage = Strings.MusicServer_Error_SignInNotSaved;
-            }
+            result = await _accounts.FinishLastFmSignInAsync();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to finish Last.fm authentication.");
-        }
-        finally
-        {
-            if (IsLastFmAuthCurrent(version))
-            {
-                IsConnectingToLastFm = false;
-                Set(CoreSettings.LastFmAuthToken, null);
-            }
+            result = LastFmSignInResult.Failed;
         }
 
-        if (IsLastFmAuthCurrent(version))
-            await _uiService.ShowMessageDialogAsync(Strings.Settings_LastFm_FinalizeError_Title, failureMessage);
+        if (!IsLastFmAuthCurrent(version)) return;
+        IsConnectingToLastFm = false;
+        if (result is LastFmSignInResult.Failed or LastFmSignInResult.NotSaved)
+            await _uiService.ShowMessageDialogAsync(Strings.Settings_LastFm_FinalizeError_Title,
+                result == LastFmSignInResult.NotSaved
+                    ? Strings.MusicServer_Error_SignInNotSaved
+                    : Strings.Settings_LastFm_FinalizeError_Message);
     }
 
     [RelayCommand]
@@ -196,7 +193,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
     {
         ++_lastFmAuthVersion;
         IsConnectingToLastFm = false;
-        Set(CoreSettings.LastFmAuthToken, null);
+        _accounts.CancelLastFmSignIn();
     }
 
     [RelayCommand]
@@ -211,12 +208,10 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
         if (!confirmed) return;
 
         ++_lastFmAuthVersion;
+        IsConnectingToLastFm = false;
         try
         {
             await _accounts.DisconnectLastFmAsync();
-            IsLastFmConnected = false;
-            LastFmUsername = null;
-            IsConnectingToLastFm = false;
         }
         catch (Exception ex)
         {
@@ -243,7 +238,6 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
             }
             else if (result.IsValid)
             {
-                ListenBrainzIsConnected = true;
                 ListenBrainzConnectionStatus = ResourceFormatter.Format(
                     Strings.SettingsPage_ListenBrainz_Connected,
                     result.Username);
@@ -282,9 +276,6 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
         try
         {
             await _accounts.DisconnectListenBrainzAsync();
-
-            ListenBrainzUserToken = string.Empty;
-            ListenBrainzIsConnected = false;
             ListenBrainzConnectionStatus = null;
         }
         catch (Exception ex)

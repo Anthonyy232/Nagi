@@ -63,8 +63,7 @@ public class TheAudioDbService : ITheAudioDbService
     private static string? GetLocalizedBiography(Dictionary<string, JsonElement> extensionData, string? languageCode)
     {
         if (string.IsNullOrWhiteSpace(languageCode)) return null;
-        var language = languageCode.Split('-')[0];
-        var fieldCode = BiographyFieldCodes.GetValueOrDefault(language, language.ToUpperInvariant());
+        var fieldCode = BiographyFieldCodes.GetValueOrDefault(languageCode, languageCode.ToUpperInvariant());
 
         return extensionData.TryGetValue($"strBiography{fieldCode}", out var biography) &&
                biography.ValueKind == JsonValueKind.String

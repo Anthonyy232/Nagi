@@ -76,7 +76,7 @@ public sealed class RomanizationPackTests : IDisposable
         {
             SendAsyncFunc = (request, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
             {
-                Content = request.RequestUri!.AbsoluteUri == RomanizationPackManager.DefaultCatalogUrl
+                Content = request.RequestUri!.AbsoluteUri == RomanizationPackManager.CatalogUrl
                     ? new StringContent(CreateCatalogJson(CreateEntry("hindi", "devanagari-v1", packBytes)))
                     : new StreamContent(body)
             })
@@ -232,6 +232,22 @@ public sealed class RomanizationPackTests : IDisposable
         installed.Should().ContainSingle();
         installed[0].Manifest.Id.Should().Be("hindi");
         installed[0].DirectoryPath.Should().Be(Path.Combine(packRoot, "hindi"));
+    }
+
+    [Fact]
+    public async Task GetInstalledPacksAsync_ReadsTheDiskAgainOnlyAfterAPackChanges()
+    {
+        var packRoot = Path.Combine(_tempRoot, "RomanizationPacks");
+        var packBytes = CreateDevanagariPack();
+        var manager = CreateManager(CreateCatalogJson(CreateEntry("hindi", "devanagari-v1", packBytes)), packBytes);
+        (await manager.GetInstalledPacksAsync()).Should().BeEmpty();
+        ExtractArchive(packBytes, Path.Combine(packRoot, "hindi"));
+
+        (await manager.GetInstalledPacksAsync()).Should().BeEmpty();
+        (await manager.InstallPackAsync("hindi")).Succeeded.Should().BeTrue();
+        (await manager.GetInstalledPacksAsync()).Should().ContainSingle();
+        await manager.RemovePackAsync("hindi");
+        (await manager.GetInstalledPacksAsync()).Should().BeEmpty();
     }
 
     [Theory]
@@ -434,7 +450,7 @@ public sealed class RomanizationPackTests : IDisposable
     {
         var responses = new Dictionary<string, byte[]>
         {
-            [RomanizationPackManager.DefaultCatalogUrl] = Encoding.UTF8.GetBytes(catalogJson),
+            [RomanizationPackManager.CatalogUrl] = Encoding.UTF8.GetBytes(catalogJson),
             ["https://packs.test/hindi.nagipack"] = packBytes,
             ["https://packs.test/unknown.nagipack"] = packBytes
         };

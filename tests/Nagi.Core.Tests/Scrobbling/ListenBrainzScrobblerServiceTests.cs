@@ -258,6 +258,18 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
         (await verify.ListenHistory.FindAsync(10L))!.IsSubmittedToListenBrainz.Should().BeFalse();
     }
 
+    [Fact]
+    public async Task SubmitPendingAsync_WithoutACutoff_SendsNothingAndLeavesItUnset()
+    {
+        _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, null);
+        await SeedPendingListensAsync((10, DateTime.UtcNow.AddMinutes(-5)));
+
+        await CreateService().SubmitPendingAsync(CancellationToken.None);
+
+        _httpMessageHandler.Requests.Should().BeEmpty();
+        _settingsService.Get(CoreSettings.ListenBrainzEnabledSinceUtc).Should().BeNull();
+    }
+
     [Theory]
     [InlineData(HttpStatusCode.InternalServerError)]
     [InlineData(HttpStatusCode.Unauthorized)]

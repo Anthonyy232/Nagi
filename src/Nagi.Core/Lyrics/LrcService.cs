@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
@@ -20,6 +21,10 @@ public class LrcService : ILrcService, IDisposable
     private readonly IMusicServerService _musicServers;
 
     private readonly OnlineLookupCancellation _onlineLookups = new();
+
+    // Server songs the server had no lyrics for this session. Only an online lookup marks a song as checked, so one
+    // played while online lyrics are off is still looked up online once they are turned on.
+    private readonly ConcurrentDictionary<Guid, byte> _songsWithoutServerLyrics = new();
 
     public LrcService(
         IFileSystemService fileSystemService,
@@ -61,7 +66,8 @@ public class LrcService : ILrcService, IDisposable
         if (LyricsParser.Parse(song.Lyrics) is { } embeddedLyrics) return embeddedLyrics;
 
         // Like lyrics embedded in a file, a server song's own lyrics come first and don't need online lyrics turned on.
-        if (song.IsFromServer && (forceOnlineRefresh || song.LyricsLastCheckedUtc == null))
+        if (song.IsFromServer && (forceOnlineRefresh || song.LyricsLastCheckedUtc == null) &&
+            !_songsWithoutServerLyrics.ContainsKey(song.Id))
         {
             string? serverLyrics;
             try
@@ -80,6 +86,8 @@ public class LrcService : ILrcService, IDisposable
                 await CacheLyricsAsync(song, serverLyrics).ConfigureAwait(false);
                 return LyricsParser.Parse(serverLyrics);
             }
+
+            _songsWithoutServerLyrics.TryAdd(song.Id, 0);
         }
 
         // Look online only if never checked before, unless the local file is missing or unsafe to reuse.

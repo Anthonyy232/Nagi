@@ -1452,9 +1452,6 @@ Vols continuar?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>No hi ha paquets de romanització compatibles disponibles.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>No s'han pogut carregar els paquets de romanització: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>La instal·lació del paquet ha fallat.</value>
   </data>

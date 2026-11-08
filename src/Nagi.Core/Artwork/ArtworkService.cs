@@ -319,6 +319,7 @@ public sealed class ArtworkService : IArtworkService
         if (!string.IsNullOrEmpty(found.Biography))
         {
             artist.Biography = found.Biography;
+            artist.BiographySource = found.BiographySource;
             updated = true;
         }
 

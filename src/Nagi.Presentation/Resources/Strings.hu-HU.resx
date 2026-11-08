@@ -1452,9 +1452,6 @@ Szeretné folytatni?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Nincsenek kompatibilis romanizációs csomagok elérhetőek.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Nem sikerült betölteni a romanizációs csomagokat: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>A csomag telepítése sikertelen.</value>
   </data>

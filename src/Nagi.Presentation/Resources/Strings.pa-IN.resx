@@ -1452,9 +1452,6 @@
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>ਕੋਈ ਅਨੁਕੂਲ ਰੋਮਨਾਈਜ਼ੇਸ਼ਨ ਪੈਕ ਉਪਲਬਧ ਨਹੀਂ ਹਨ।</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>ਰੋਮਨਾਈਜ਼ੇਸ਼ਨ ਪੈਕ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕੇ: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>ਪੈਕ ਸਥਾਪਨਾ ਅਸਫਲ ਰਹੀ।</value>
   </data>

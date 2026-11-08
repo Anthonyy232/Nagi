@@ -105,8 +105,12 @@ public static class MusicServerErrors
             ResourceFormatter.Format(Strings.MusicServer_Error_SavedSignIn_Format, serverName), Strings.MusicServerDialog_SignInButton)
         && await ui.ShowMusicServerSignInDialogAsync(folderId);
 
-    // Failures of a server in the library that signing in again can't fix, and that the user can do something about.
-    private static string? DescribeForServer(MusicServerError error, string serverName)
+    /// <summary>
+    ///     Advice for a failure of a server in the library that signing in again can't fix, and that the user can do
+    ///     something about.
+    /// </summary>
+    /// <returns>The advice, or null for a failure without any.</returns>
+    public static string? DescribeForServer(MusicServerError error, string serverName)
     {
         var format = error switch
         {

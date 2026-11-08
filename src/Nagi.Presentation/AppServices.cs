@@ -41,7 +41,7 @@ public static class AppServices
         var dbTask = InitializeDatabaseAsync(services);
 
         // Start non-EF services while database migration is still running.
-        var presenceTask = services.GetRequiredService<PresenceManager>().InitializeAsync();
+        services.GetRequiredService<DiscordPresenceService>().Start();
         services.GetRequiredService<TrayIconViewModel>().Initialize();
         var appInfoTask = services.GetRequiredService<IAppInfoService>().InitializeAsync();
         var equalizerTask = services.GetRequiredService<IEqualizerService>().InitializeAsync();
@@ -49,15 +49,13 @@ public static class AppServices
         // Playback and settings both need EF ready. Scrobbling queries ListenHistory, including columns
         // added by recent migrations, so start it only after database migration/backfill has completed.
         await dbTask;
-        var scrobbleCoordinator = services.GetRequiredService<ScrobbleCoordinator>();
-        scrobbleCoordinator.Start();
+        services.GetRequiredService<ScrobbleCoordinator>().Start();
         services.GetRequiredService<LibraryFolderWatcher>().Start();
         _ = Task.Run(services.GetRequiredService<ILibraryFolderService>().RefreshOnStartupAsync);
-        var scrobbleTask = scrobbleCoordinator.SubmitPendingAsync();
         var playbackTask = services.GetRequiredService<IMusicPlaybackService>().InitializeAsync(restoreSession);
         var settingsTask = services.GetRequiredService<SettingsViewModel>().LoadSettingsAsync();
 
-        await Task.WhenAll(presenceTask, scrobbleTask, appInfoTask, equalizerTask, playbackTask, settingsTask);
+        await Task.WhenAll(appInfoTask, equalizerTask, playbackTask, settingsTask);
 
         logger.LogInformation("Core services initialized successfully.");
     }
@@ -78,10 +76,8 @@ public static class AppServices
         services.GetRequiredService<PlayerViewModel>().Cleanup();
         services.GetRequiredService<TrayIconViewModel>().Cleanup();
 
-        var presenceTask = services.GetRequiredService<PresenceManager>().ShutdownAsync();
-        var saveStateTask = SaveSessionAsync(services, logger);
-
-        await Task.WhenAll(presenceTask, saveStateTask);
+        services.GetRequiredService<DiscordPresenceService>().Stop();
+        await SaveSessionAsync(services, logger);
 
         // Finalize listen history before disposing the database service provider.
         await services.GetRequiredService<IMusicPlaybackService>().DisposeAsync();
