@@ -1452,9 +1452,6 @@ Chcete pokračovat?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Nejsou k dispozici žádné kompatibilní romanizační balíčky.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Nepodařilo se načíst romanizační balíčky: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Instalace balíčku selhala.</value>
   </data>

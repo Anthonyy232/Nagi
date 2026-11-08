@@ -1452,9 +1452,6 @@
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>இணக்கமான ரோமனியப்படுத்தல் தொகுப்புகள் எதுவும் இல்லை.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>ரோமனியப்படுத்தல் தொகுப்புகளை ஏற்ற முடியவில்லை: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>தொகுப்பு நிறுவல் தோல்வியடைந்தது.</value>
   </data>

@@ -1452,9 +1452,6 @@ Adakah anda ingin meneruskan?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Tiada pek romanisasi yang serasi tersedia.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Gagal memuatkan pek romanisasi: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Pemasangan pek gagal.</value>
   </data>

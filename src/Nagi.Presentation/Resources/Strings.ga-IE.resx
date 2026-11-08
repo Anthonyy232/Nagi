@@ -1452,9 +1452,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Níl aon phacáistí rómhánaithe comhoiriúnacha ar fáil.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Níorbh fhéidir pacáistí rómhánaithe a luchtú: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Theip ar shuiteáil an phacáiste.</value>
   </data>

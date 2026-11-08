@@ -1452,9 +1452,6 @@ Kas soovite jätkata?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Ühilduvaid romaniseerimise pakette pole saadaval.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Romaniseerimise pakette ei saanud laadida: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Paketi installimine ebaõnnestus.</value>
   </data>

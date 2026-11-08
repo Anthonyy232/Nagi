@@ -1452,9 +1452,6 @@ Apakah Anda ingin melanjutkan?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Tidak ada paket romanisasi yang kompatibel tersedia.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Tidak dapat memuat paket romanisasi: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Pemasangan paket gagal.</value>
   </data>

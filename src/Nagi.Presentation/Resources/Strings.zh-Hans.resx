@@ -1452,9 +1452,6 @@
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>没有可用的兼容罗马化语言包。</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>无法加载罗马化语言包：{0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>语言包安装失败。</value>
   </data>

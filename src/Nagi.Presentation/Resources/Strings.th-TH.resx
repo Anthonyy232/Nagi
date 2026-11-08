@@ -1452,9 +1452,6 @@
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>ไม่มีชุดภาษาโรมาไนซ์ที่เข้ากันได้</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>ไม่สามารถโหลดชุดภาษาโรมาไนซ์ได้: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>การติดตั้งชุดภาษาล้มเหลว</value>
   </data>

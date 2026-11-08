@@ -1452,9 +1452,6 @@ Wil jy voortgaan?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Geen versoenbare romaniseringspakkette is beskikbaar nie.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Kon nie romaniseringspakkette laai nie: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Pakketinstallasie het misluk.</value>
   </data>

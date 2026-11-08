@@ -1452,9 +1452,6 @@ Ar norite tęsti?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Nėra suderinamų romanizavimo paketų.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Nepavyko įkelti romanizavimo paketų: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Paketo diegimas nepavyko.</value>
   </data>

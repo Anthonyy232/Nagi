@@ -1452,9 +1452,6 @@ Czy chcesz kontynuować?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Brak dostępnych zgodnych pakietów romanizacji.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Nie można załadować pakietów romanizacji: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Instalacja pakietu nie powiodła się.</value>
   </data>

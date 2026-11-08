@@ -1452,9 +1452,6 @@ Haluatko jatkaa?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Yhteensopivia romanisointipaketteja ei ole saatavilla.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Romanisointipaketteja ei voitu ladata: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Paketin asennus epäonnistui.</value>
   </data>
