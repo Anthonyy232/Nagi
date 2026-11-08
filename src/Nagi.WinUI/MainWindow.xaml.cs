@@ -11,7 +11,6 @@ using Nagi.Presentation.Settings;
 using Nagi.Presentation.Theme;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Pages;
 
 namespace Nagi.WinUI;
 
@@ -89,7 +88,7 @@ public sealed partial class MainWindow : Window
 
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(provider.GetAppTitleBarElement());
-        ((OverlappedPresenter)AppWindow.Presenter).SetBorderAndTitleBar(true, Content is not SplashPage);
+        ((OverlappedPresenter)AppWindow.Presenter).SetBorderAndTitleBar(true, provider.ShowsCaptionButtons);
         UpdateTitleBarTheme();
     }
 

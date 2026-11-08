@@ -28,4 +28,5 @@ public sealed partial class SplashPage : Page, ICustomTitleBarProvider
         return AppTitleBar;
     }
 
+    public bool ShowsCaptionButtons => false;
 }
