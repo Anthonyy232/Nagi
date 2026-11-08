@@ -7,8 +7,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
+    xmlns:controls="using:Nagi.WinUI.Controls"
     mc:Ignorable="d"
-    Visibility="{x:Bind ViewModel.IsSeeAllOpen, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+    Visibility="{x:Bind ViewModel.IsOpen, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
 
     <Grid>
         <VisualStateManager.VisualStateGroups>
@@ -70,7 +71,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0"
-                               Text="{x:Bind ViewModel.SeeAllCategory.Title, Mode=OneWay}"
+                               Text="{x:Bind ViewModel.Category.Title, Mode=OneWay}"
                                Style="{StaticResource InsightsCardHeaderStyle}"
                                Margin="0"
                                VerticalAlignment="Center" />
@@ -106,25 +107,25 @@
                     </Grid>
 
                     <DropDownButton Grid.Column="2"
-                                    Content="{x:Bind ViewModel.SeeAllCategory.SortLabel, Mode=OneWay}"
+                                    Content="{x:Bind ViewModel.Category.SortLabel, Mode=OneWay}"
                                     FontSize="11" Height="28" Padding="8,0"
                                     VerticalAlignment="Center" Margin="0,0,8,0">
                         <DropDownButton.Flyout>
                             <MenuFlyout>
                                 <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_PlayCount, Mode=OneTime}" GroupName="SeeAllSort"
-                                                     IsChecked="{x:Bind ViewModel.SeeAllCategory.IsByPlayCount, Mode=OneWay}"
-                                                     Command="{x:Bind ViewModel.SeeAllCategory.SetMetricCommand, Mode=OneWay}"
+                                                     IsChecked="{x:Bind ViewModel.Category.IsByPlayCount, Mode=OneWay}"
+                                                     Command="{x:Bind ViewModel.Category.SetMetricCommand, Mode=OneWay}"
                                                      CommandParameter="PlayCount" />
                                 <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_Duration, Mode=OneTime}" GroupName="SeeAllSort"
-                                                     IsChecked="{x:Bind ViewModel.SeeAllCategory.IsByDuration, Mode=OneWay}"
-                                                     Command="{x:Bind ViewModel.SeeAllCategory.SetMetricCommand, Mode=OneWay}"
+                                                     IsChecked="{x:Bind ViewModel.Category.IsByDuration, Mode=OneWay}"
+                                                     Command="{x:Bind ViewModel.Category.SetMetricCommand, Mode=OneWay}"
                                                      CommandParameter="Duration" />
                             </MenuFlyout>
                         </DropDownButton.Flyout>
                     </DropDownButton>
 
                     <Button Grid.Column="3"
-                            Command="{x:Bind ViewModel.CloseSeeAllCommand}"
+                            Command="{x:Bind ViewModel.CloseCommand}"
                             ToolTipService.ToolTip="{x:Bind resources:Strings.Generic_Close, Mode=OneTime}"
                             AutomationProperties.Name="{x:Bind resources:Strings.Generic_Close, Mode=OneTime}"
                             Style="{StaticResource SubtleButtonStyle}"
@@ -134,14 +135,14 @@
                 </Grid>
 
                 <Grid Grid.Row="1">
-                    <ProgressRing IsActive="{x:Bind ViewModel.IsSeeAllLoading, Mode=OneWay}"
-                                  Visibility="{x:Bind ViewModel.IsSeeAllLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                                  Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                   HorizontalAlignment="Center" VerticalAlignment="Center"
                                   Width="40" Height="40" />
 
                     <ListView uihelpers:ScrollEdgeFade.IsEnabled="True"
-                              Visibility="{x:Bind ViewModel.IsSeeAllLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
-                              ItemsSource="{x:Bind ViewModel.SeeAllItems}"
+                              Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                              ItemsSource="{x:Bind ViewModel.Items}"
                               SelectionMode="None"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                               Padding="16,0,16,8"
@@ -149,38 +150,8 @@
                               ItemTemplateSelector="{StaticResource InsightsItemTemplateSelector}" />
                 </Grid>
 
-                <Grid Grid.Row="2" Padding="16,8,16,16">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" VerticalAlignment="Center" FontSize="12"
-                               Foreground="{ThemeResource TextFillColorSecondaryBrush}">
-                        <Run Text="{x:Bind ViewModel.SeeAllCurrentPage, Mode=OneWay}"
-                             FontWeight="SemiBold"
-                             Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-                        <Run Text=" / " />
-                        <Run Text="{x:Bind ViewModel.SeeAllTotalPages, Mode=OneWay}" />
-                    </TextBlock>
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4">
-                        <Button Command="{x:Bind ViewModel.SeeAllPreviousPageCommand}"
-                                IsEnabled="{x:Bind ViewModel.HasSeeAllPreviousPage, Mode=OneWay}"
-                                ToolTipService.ToolTip="{x:Bind resources:Strings.PaginationControl_PreviousPage_ToolTip, Mode=OneTime}"
-                                AutomationProperties.Name="{x:Bind resources:Strings.PaginationControl_PreviousPage_ToolTip, Mode=OneTime}"
-                                Style="{StaticResource SubtleButtonStyle}"
-                                Width="32" Height="32" Padding="0">
-                            <FontIcon Glyph="&#xE76B;" FontSize="12" />
-                        </Button>
-                        <Button Command="{x:Bind ViewModel.SeeAllNextPageCommand}"
-                                IsEnabled="{x:Bind ViewModel.HasSeeAllNextPage, Mode=OneWay}"
-                                ToolTipService.ToolTip="{x:Bind resources:Strings.PaginationControl_NextPage_ToolTip, Mode=OneTime}"
-                                AutomationProperties.Name="{x:Bind resources:Strings.PaginationControl_NextPage_ToolTip, Mode=OneTime}"
-                                Style="{StaticResource SubtleButtonStyle}"
-                                Width="32" Height="32" Padding="0">
-                            <FontIcon Glyph="&#xE76C;" FontSize="12" />
-                        </Button>
-                    </StackPanel>
-                </Grid>
+                <controls:PaginationControl Grid.Row="2" Margin="16,8,16,16" HorizontalAlignment="Right"
+                                            ViewModel="{x:Bind ViewModel}" />
             </Grid>
         </Grid>
     </Grid>

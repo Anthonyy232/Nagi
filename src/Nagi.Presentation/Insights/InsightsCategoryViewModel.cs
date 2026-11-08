@@ -61,7 +61,7 @@ public sealed partial class InsightsCategoryViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private Task OpenSeeAllAsync() => _owner.OpenSeeAllAsync(this);
+    private Task OpenSeeAllAsync() => _owner.SeeAll.OpenAsync(this);
 
     internal Task<StatisticsPage<InsightsRankedItem>> LoadAsync(
         TimeRange range, int offset, int limit, string? searchTerm, CancellationToken ct) =>

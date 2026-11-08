@@ -18,7 +18,7 @@ public sealed partial class InsightsSeeAllOverlay : UserControl
 
     public InsightsSeeAllOverlay()
     {
-        ViewModel = App.Services!.GetRequiredService<InsightsViewModel>();
+        ViewModel = App.Services!.GetRequiredService<InsightsViewModel>().SeeAll;
         InitializeComponent();
         _search = new CollapsibleSearch(this, SeeAllSearchToggleButton, SeeAllSearchTextBox,
             Strings.InsightsPage_SeeAll_SearchButton_ToolTip, "SeeAllSearchExpanded", "SeeAllSearchCollapsed",
@@ -28,15 +28,15 @@ public sealed partial class InsightsSeeAllOverlay : UserControl
         Unloaded += (_, _) => ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
     }
 
-    public InsightsViewModel ViewModel { get; }
+    public InsightsSeeAllViewModel ViewModel { get; }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(InsightsViewModel.IsSeeAllOpen) && !ViewModel.IsSeeAllOpen)
+        if (e.PropertyName == nameof(InsightsSeeAllViewModel.IsOpen) && !ViewModel.IsOpen)
             _search.SetExpanded(false);
     }
 
-    private void OnBackdropTapped(object sender, TappedRoutedEventArgs e) => ViewModel.CloseSeeAllCommand.Execute(null);
+    private void OnBackdropTapped(object sender, TappedRoutedEventArgs e) => ViewModel.CloseCommand.Execute(null);
 
     private void OnPanelTapped(object sender, TappedRoutedEventArgs e) => e.Handled = true;
 
