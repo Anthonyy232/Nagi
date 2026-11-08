@@ -65,11 +65,9 @@ public partial class PlaylistViewModelItem : ObservableObject
     [ObservableProperty] public partial string Name { get; set; }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsArtworkAvailable))]
     [NotifyPropertyChangedFor(nameof(IsCustomImage))]
     public partial string? CoverImageUri { get; set; }
 
-    public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverImageUri);
     public bool IsCustomImage => ImageStorageHelper.IsCustomImage(CoverImageUri);
 
     public int SongCount { get; }

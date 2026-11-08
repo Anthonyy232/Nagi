@@ -1,0 +1,28 @@
+<UserControl
+    x:Class="Nagi.WinUI.Controls.ArtworkImage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:imageex="using:ImageEx"
+    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
+    IsTabStop="False">
+
+    <Grid Width="{x:Bind Size, Mode=OneWay}" Height="{x:Bind Size, Mode=OneWay}">
+        <imageex:ImageEx x:Name="Image"
+                         CornerRadius="{StaticResource ArtworkCornerRadius}"
+                         IsCacheEnabled="True"
+                         Source="{x:Bind uihelpers:BitmapImageFactory.Create(Source), Mode=OneWay}"
+                         DecodePixelWidth="{x:Bind ToPixels(Size), Mode=OneWay}"
+                         DecodePixelType="Logical"
+                         Stretch="UniformToFill"
+                         Visibility="{x:Bind ImageVisibility(Source), Mode=OneWay}" />
+        <Grid x:Name="Placeholder"
+              Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+              CornerRadius="{StaticResource ArtworkCornerRadius}"
+              Visibility="{x:Bind PlaceholderVisibility(Source), Mode=OneWay}">
+            <FontIcon HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      FontSize="{x:Bind PlaceholderGlyphSize, Mode=OneWay}"
+                      Glyph="{x:Bind PlaceholderGlyph, Mode=OneWay}" />
+        </Grid>
+    </Grid>
+</UserControl>

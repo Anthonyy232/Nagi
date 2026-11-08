@@ -35,7 +35,6 @@ public sealed class AlbumViewModelItem
     public ICollection<AlbumArtist> AlbumArtists { get; }
     public string? CoverArtUri { get; }
 
-    public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverArtUri);
 
     public override string ToString() => $"{Title} — {ArtistName}";
 }

@@ -55,10 +55,8 @@ public partial class AlbumViewViewModel : DetailSongListViewModelBase<AlbumViewN
     [ObservableProperty] public partial ICollection<AlbumArtist> AlbumArtists { get; set; } = new List<AlbumArtist>();
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsArtworkAvailable))]
     public partial string? CoverArtUri { get; set; }
 
-    public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverArtUri);
 
     [ObservableProperty] public partial string AlbumDetailsText { get; set; }
 

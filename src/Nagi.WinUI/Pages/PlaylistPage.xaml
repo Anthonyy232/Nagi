@@ -10,7 +10,6 @@
     xmlns:lists="using:Nagi.Presentation.Lists"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
-    xmlns:controls="using:ImageEx"
     x:Name="PlaylistPageRoot"
     Background="Transparent"
     mc:Ignorable="d">
@@ -115,26 +114,9 @@
                             Width="{StaticResource CollectionCardImageSize}"
                             Height="{StaticResource CollectionCardImageSize}"
                             HorizontalAlignment="Center">
-                            <Border
-                                CornerRadius="{StaticResource ArtworkCornerRadius}"
-                                Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                                <controls:ImageEx Width="{StaticResource CollectionCardImageSize}" Height="{StaticResource CollectionCardImageSize}"
-                                    IsCacheEnabled="True"
-                                    Source="{x:Bind CoverImageUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
-                                    DecodePixelWidth="{StaticResource CollectionCardImageSize}"
-                                    DecodePixelType="Logical"
-                                    Stretch="UniformToFill" />
-                            </Border>
-                            <Grid
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="{StaticResource ArtworkCornerRadius}"
-                                Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
-                                <FontIcon
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    FontSize="48"
-                                    Glyph="&#xE90B;" />
-                            </Grid>
+                            <uicontrols:ArtworkImage Size="{StaticResource CollectionCardImageSize}"
+                                                     Source="{x:Bind CoverImageUri, Mode=OneWay}"
+                                                     PlaceholderGlyph="&#xE90B;" />
                             <Border Style="{StaticResource PlaylistBadgeStyle}" Visibility="{x:Bind IsSmart, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <FontIcon Glyph="&#xE71C;" FontSize="12" Foreground="{StaticResource TextOnAppPrimaryBrush}" />
                             </Border>

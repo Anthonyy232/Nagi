@@ -47,6 +47,8 @@
 
     <x:Double x:Key="CollectionCardImageSize">160</x:Double>
     <x:Double x:Key="HeaderImageSize">150</x:Double>
+    <!--  Half of HeaderImageSize, for what covers a circular header image.  -->
+    <CornerRadius x:Key="HeaderImageCircleRadius">75</CornerRadius>
     <x:Double x:Key="AlbumCardImageSize">110</x:Double>
     <x:Double x:Key="FloatingPlayerArtSize">56</x:Double>
 

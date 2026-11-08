@@ -5,7 +5,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:ImageEx"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:library="using:Nagi.Core.Library"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
@@ -26,26 +25,9 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Grid Grid.Column="0" Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}">
-                    <Border CornerRadius="{StaticResource ArtworkCornerRadius}"
-                            Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                        <controls:ImageEx Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}"
-                            IsCacheEnabled="True"
-                            Source="{x:Bind ViewModel.CoverImageUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
-                            DecodePixelWidth="{StaticResource HeaderImageSize}"
-                            DecodePixelType="Logical"
-                            Stretch="UniformToFill" />
-                    </Border>
-                    <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                          CornerRadius="{StaticResource ArtworkCornerRadius}"
-                          Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
-                        <FontIcon
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="64"
-                            Glyph="&#xE90B;" />
-                    </Grid>
-                </Grid>
+                <uicontrols:ArtworkImage Grid.Column="0" Size="{StaticResource HeaderImageSize}"
+                                             Source="{x:Bind ViewModel.CoverImageUri, Mode=OneWay}"
+                                             PlaceholderGlyph="&#xE90B;" PlaceholderGlyphSize="64" />
 
                 <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Bottom" Spacing="8">
                     <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="{x:Bind resources:Strings.PlaylistSongViewPage_Header_Caption, Mode=OneTime}" />

@@ -24,10 +24,9 @@ public partial class ArtistViewModelItem : ObservableObject
     public Guid Id { get; init; }
     public string Name { get; init; } = string.Empty;
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsArtworkAvailable), nameof(IsCustomImage))]
+    [NotifyPropertyChangedFor(nameof(IsCustomImage))]
     public partial string? LocalImageCachePath { get; set; }
 
-    public bool IsArtworkAvailable => !string.IsNullOrEmpty(LocalImageCachePath);
     public bool IsCustomImage => ImageStorageHelper.IsCustomImage(LocalImageCachePath);
 
     public override string ToString() => Name;

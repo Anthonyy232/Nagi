@@ -268,7 +268,7 @@ public class PlaylistViewModelTests
 
         await viewModel.RemovePlaylistCoverCommand.ExecuteAsync(viewModel.Items.Single());
 
-        viewModel.Items.Should().ContainSingle().Which.IsArtworkAvailable.Should().BeFalse();
+        viewModel.Items.Should().ContainSingle().Which.CoverImageUri.Should().BeNull();
         viewModel.IsAnyOperationInProgress.Should().BeFalse();
         await _ui.DidNotReceive().ShowMessageDialogAsync(Arg.Any<string>(), Arg.Any<string>());
     }

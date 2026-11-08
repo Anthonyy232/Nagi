@@ -54,10 +54,8 @@ public partial class PlaylistSongListViewModel : DetailSongListViewModelBase<Pla
     public partial bool CanEditPlaylist { get; set; }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsArtworkAvailable))]
     public partial string? CoverImageUri { get; set; }
 
-    public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverImageUri);
 
     protected override void OnSearchTermChangedInternal(string value)
     {

@@ -3,7 +3,6 @@
     x:Class="Nagi.WinUI.Pages.ArtistViewPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:ImageEx"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:lists="using:Nagi.Presentation.Lists"
@@ -31,8 +30,7 @@
                             <VisualState.Setters>
                                 <Setter Target="AlbumCard.Width" Value="{StaticResource AlbumCardWidthLarge}" />
                                 <Setter Target="AlbumCard.MinHeight" Value="{StaticResource AlbumCardMinHeightLarge}" />
-                                <Setter Target="AlbumArtwork.Width" Value="{StaticResource AlbumCardImageSizeLarge}" />
-                                <Setter Target="AlbumArtwork.Height" Value="{StaticResource AlbumCardImageSizeLarge}" />
+                                <Setter Target="AlbumArtwork.Size" Value="{StaticResource AlbumCardImageSizeLarge}" />
                                 <Setter Target="AlbumName.MaxWidth" Value="{StaticResource AlbumCardImageSizeLarge}" />
                                 <Setter Target="AlbumYear.MaxWidth" Value="{StaticResource AlbumCardImageSizeLarge}" />
                             </VisualState.Setters>
@@ -58,24 +56,11 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Grid x:Name="AlbumArtwork" Grid.Row="0"
-                    Width="{StaticResource AlbumCardImageSize}"
-                    Height="{StaticResource AlbumCardImageSize}"
-                    HorizontalAlignment="Center">
-                    <controls:ImageEx
-                        CornerRadius="{StaticResource ArtworkCornerRadius}"
-                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        IsCacheEnabled="True"
-                        Source="{x:Bind CoverArtUri, Converter={StaticResource StringToImageSourceConverter}}"
-                        DecodePixelWidth="{StaticResource AlbumCardImageSizeLarge}"
-                        DecodePixelType="Logical"
-                        Stretch="UniformToFill" />
-                    <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                          CornerRadius="{StaticResource ArtworkCornerRadius}"
-                          Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                        <FontIcon HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Glyph="&#xE93C;" />
-                    </Grid>
-                </Grid>
+                <uicontrols:ArtworkImage x:Name="AlbumArtwork" Grid.Row="0"
+                                         HorizontalAlignment="Center"
+                                         Size="{StaticResource AlbumCardImageSize}"
+                                         Source="{x:Bind CoverArtUri}"
+                                         PlaceholderGlyph="&#xE93C;" />
                 <TextBlock x:Name="AlbumName"
                     Grid.Row="1"
                     Margin="4,8,4,0"
@@ -115,34 +100,18 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Grid Grid.Column="0" Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}" CornerRadius="75"
+                    <Grid Grid.Column="0" Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}" CornerRadius="{StaticResource HeaderImageCircleRadius}"
                           PointerEntered="ArtistImage_PointerEntered" PointerExited="ArtistImage_PointerExited"
                           Background="Transparent">
-                        <controls:ImageEx Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}"
-                            CornerRadius="75"
-                            IsCacheEnabled="True"
-                            Source="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
-                            Stretch="UniformToFill"
-                            DecodePixelWidth="{StaticResource HeaderImageSize}"
-                            DecodePixelType="Logical"
-                            Visibility="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}" />
-
-                        <Grid
-                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                            CornerRadius="75"
-                            Visibility="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource InverseStringToVisibilityConverter}}">
-                            <FontIcon
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontSize="64"
-                                Glyph="" />
-                        </Grid>
+                        <uicontrols:ArtworkImage Size="{StaticResource HeaderImageSize}" IsCircular="True"
+                                                 Source="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay}"
+                                                 PlaceholderGlyph="&#xE77B;" PlaceholderGlyphSize="64" />
                         <!-- A button, so the image menu is reachable by keyboard and screen readers, not only by pointer. -->
                         <Button x:Name="EditOverlay"
                                 Padding="0"
                                 BorderThickness="0"
                                 Background="Transparent"
-                                CornerRadius="75"
+                                CornerRadius="{StaticResource HeaderImageCircleRadius}"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 HorizontalContentAlignment="Stretch"
@@ -159,7 +128,7 @@
                                                     Visibility="{x:Bind ViewModel.IsCustomImage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 </MenuFlyout>
                             </Button.Flyout>
-                            <Grid Background="{StaticResource MediaOnImageHoverScrimBrush}" CornerRadius="75">
+                            <Grid Background="{StaticResource MediaOnImageHoverScrimBrush}" CornerRadius="{StaticResource HeaderImageCircleRadius}">
                                 <FontIcon Glyph="&#xE70F;" Foreground="{StaticResource MediaOnImageTextPrimaryBrush}" FontSize="32" />
                             </Grid>
                         </Button>
