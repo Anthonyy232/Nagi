@@ -212,7 +212,6 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     ///     Loads the current page. A load requested while one runs is queued and runs once it finishes, with whatever
     ///     sort, page size, search or library state the caller has just applied.
     /// </summary>
-    [RelayCommand]
     public Task LoadAsync(CancellationToken cancellationToken) => RunLoadAsync(stepsPage: false, cancellationToken);
 
     private async Task RunLoadAsync(bool stepsPage, CancellationToken cancellationToken)
