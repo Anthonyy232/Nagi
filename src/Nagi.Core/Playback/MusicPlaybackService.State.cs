@@ -44,7 +44,7 @@ public partial class MusicPlaybackService
 
         var restoredIds = savedIds.Where(librarySongs.ContainsKey).ToList();
         if (restoredIds.Count == 0) return false;
-        CurrentShuffleMode = Enum.IsDefined(state.ShuffleMode) ? state.ShuffleMode : ShuffleMode.Random;
+        SetShuffleMode(Enum.IsDefined(state.ShuffleMode) ? state.ShuffleMode : ShuffleMode.Random, IsShuffleEnabled);
 
         var restoredShuffle = (state.ShuffledQueueTrackIds ?? []).Where(librarySongs.ContainsKey).ToList();
         // Equal lengths alone do not rule out duplicate or unrelated tracks.

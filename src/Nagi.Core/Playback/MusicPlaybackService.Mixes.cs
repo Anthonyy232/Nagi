@@ -1,8 +1,22 @@
+using Nagi.Core.Settings;
+
 namespace Nagi.Core.Playback;
 
 public partial class MusicPlaybackService
 {
     public ShuffleMode CurrentShuffleMode { get; private set; }
+
+    /// <summary>
+    ///     Sets the shuffle mode once the queue's own shuffle has been set, saving the shuffle setting and raising
+    ///     <see cref="ShuffleModeChanged" /> when either changed.
+    /// </summary>
+    private void SetShuffleMode(ShuffleMode mode, bool wasShuffled)
+    {
+        if (mode == CurrentShuffleMode && wasShuffled == IsShuffleEnabled) return;
+        CurrentShuffleMode = mode;
+        if (wasShuffled != IsShuffleEnabled) _settingsService.Set(CoreSettings.IsShuffleEnabled, IsShuffleEnabled);
+        ShuffleModeChanged?.Invoke();
+    }
 
     public async Task<bool> PlayMixAsync(IEnumerable<Guid> songIds, ShuffleMode mode, TimeSpan? duration = null,
         PlaybackContext? context = null, int avoidRecentDays = PlaybackLimits.DefaultAvoidRecentDays)

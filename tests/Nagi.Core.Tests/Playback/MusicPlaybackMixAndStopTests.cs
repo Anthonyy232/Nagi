@@ -50,6 +50,21 @@ public partial class MusicPlaybackServiceTests
     }
 
     [Fact]
+    public async Task ClearQueueAsync_AfterAMix_ResetsTheShuffleModeAndSaysSo()
+    {
+        _library.Listening.GetMixCandidatesAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(_testSongs.Select(s => new MixCandidate(s.Id, "Artist", 1, 0, null)).ToArray());
+        await _service.InitializeAsync();
+        (await _service.PlayMixAsync(_testSongs.Select(s => s.Id), ShuffleMode.Unheard)).Should().BeTrue();
+        var tracker = new EventTracker(_service);
+
+        await _service.ClearQueueAsync();
+
+        _service.CurrentShuffleMode.Should().Be(ShuffleMode.Random);
+        tracker.ShuffleModeChangedCount.Should().Be(1);
+    }
+
+    [Fact]
     public async Task TimedMix_KeepsItsGeneratedOrderAndStopsAtQueueEndDespiteRepeat()
     {
         var candidates = _testSongs.Select((song, index) => new MixCandidate(song.Id, $"Artist {index}",

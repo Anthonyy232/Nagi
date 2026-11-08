@@ -231,6 +231,6 @@ public partial class MusicPlaybackService
         _queue.Clear();
         _transientTracks.Clear();
         CurrentTrack = null;
-        CurrentShuffleMode = ShuffleMode.Random;
+        SetShuffleMode(ShuffleMode.Random, IsShuffleEnabled);
     }
 }
