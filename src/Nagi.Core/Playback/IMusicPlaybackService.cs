@@ -23,10 +23,10 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     TimeSpan? StopTimeRemaining { get; }
 
     event Action? StopScheduleChanged;
-    Task<bool> PlayMixAsync(IEnumerable<Guid> songIds, ShuffleMode mode, TimeSpan? duration = null, PlaybackContext? context = null, int avoidRecentDays = PlaybackMixLimits.DefaultAvoidRecentDays);
+    Task<bool> PlayMixAsync(IEnumerable<Guid> songIds, ShuffleMode mode, TimeSpan? duration = null, PlaybackContext? context = null, int avoidRecentDays = PlaybackLimits.DefaultAvoidRecentDays);
 
     /// <param name="delay">
-    ///     For <see cref="PlaybackStopMode.Timer" />, up to <see cref="PlaybackMixLimits.MaxMinutes" />.
+    ///     For <see cref="PlaybackStopMode.Timer" />, up to <see cref="PlaybackLimits.MaxScheduledMinutes" />.
     /// </param>
     /// <param name="finishCurrentTrack">Whether a timer that runs out mid-song lets the song finish first.</param>
     void ScheduleStop(PlaybackStopMode mode, TimeSpan? delay = null, bool finishCurrentTrack = true);

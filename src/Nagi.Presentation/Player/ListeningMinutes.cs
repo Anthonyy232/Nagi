@@ -10,5 +10,5 @@ public static class ListeningMinutes
     public const int Default = 30;
 
     public static bool IsValid(double minutes) =>
-        minutes is >= 1 and <= PlaybackMixLimits.MaxMinutes && minutes == Math.Truncate(minutes);
+        minutes is >= 1 and <= PlaybackLimits.MaxScheduledMinutes && minutes == Math.Truncate(minutes);
 }

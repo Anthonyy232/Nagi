@@ -1,12 +1,11 @@
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
-using Nagi.Core.Listening;
 using Nagi.Core.Settings;
 
 namespace Nagi.Core.Playback;
 
 /// <summary>
-///     Reactions to audio player and settings events, scrobble eligibility, and ReplayGain.
+///     Reactions to audio player, media control and settings events, and ReplayGain.
 /// </summary>
 public partial class MusicPlaybackService
 {
@@ -42,31 +41,6 @@ public partial class MusicPlaybackService
     {
         PositionChanged?.Invoke();
         MaybeMarkEligibleForScrobbling();
-    }
-
-    private void MaybeMarkEligibleForScrobbling()
-    {
-        if (IsRequestPending || _isEligibilityMarked || !CurrentListenHistoryId.HasValue) return;
-
-        if (!ListenRules.IsEligible(Duration, _audioPlayer.CurrentPosition)) return;
-
-        _isEligibilityMarked = true;
-        var sessionId = CurrentListenHistoryId.Value;
-        RunInBackground(
-            async () =>
-            {
-                var marked = false;
-                try
-                {
-                    marked = await _listening.MarkListenAsEligibleForScrobblingAsync(sessionId);
-                    if (marked && !_isDisposed) ScrobbleEligibilityReached?.Invoke();
-                }
-                finally
-                {
-                    if (!marked && CurrentListenHistoryId == sessionId) _isEligibilityMarked = false;
-                }
-            },
-            "Mark listen eligible for scrobbling");
     }
 
     private void OnAudioPlayerDurationChanged()

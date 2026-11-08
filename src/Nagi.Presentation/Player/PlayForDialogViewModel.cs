@@ -20,7 +20,7 @@ public sealed class PlayForDialogViewModel
 
     public SettingOption<ShuffleMode> SelectedMode { get; set; }
 
-    public double AvoidRecentDays { get; set; } = PlaybackMixLimits.DefaultAvoidRecentDays;
+    public double AvoidRecentDays { get; set; } = PlaybackLimits.DefaultAvoidRecentDays;
 
     /// <summary>Only <see cref="ShuffleMode.MoreVariety" /> lets the user choose how many recent days to avoid.</summary>
     public bool ShowsAvoidRecentDays => SelectedMode.Value == ShuffleMode.MoreVariety;
@@ -28,8 +28,8 @@ public sealed class PlayForDialogViewModel
     public string ModeDescription => ShuffleModeText.GetDescription(SelectedMode.Value);
 
     public bool CanAccept => ListeningMinutes.IsValid(Minutes) && (!ShowsAvoidRecentDays ||
-        AvoidRecentDays is >= 0 and <= PlaybackMixLimits.MaxAvoidRecentDays && AvoidRecentDays == Math.Truncate(AvoidRecentDays));
+        AvoidRecentDays is >= 0 and <= PlaybackLimits.MaxAvoidRecentDays && AvoidRecentDays == Math.Truncate(AvoidRecentDays));
 
     public PlaybackMixOptions ToOptions() => new((int)Minutes, SelectedMode.Value,
-        ShowsAvoidRecentDays ? (int)AvoidRecentDays : PlaybackMixLimits.DefaultAvoidRecentDays);
+        ShowsAvoidRecentDays ? (int)AvoidRecentDays : PlaybackLimits.DefaultAvoidRecentDays);
 }

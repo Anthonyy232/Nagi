@@ -22,6 +22,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     private readonly IMusicServerService _musicServers;
     private readonly ISettingsService _settingsService;
     private readonly IPlaybackStateStore _playbackStateStore;
+    private readonly TimeProvider _timeProvider;
     private readonly object _pendingOperationsLock = new();
 
     // Each playback request cancels the one before it; replacing the queue cancels adds still resolving files.
@@ -33,7 +34,6 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     private bool _isDisposed;
     private bool _isInitialized;
     private Task? _initializationTask;
-    private bool _isEligibilityMarked;
     private PlaybackQueue _queue = new();
     private readonly TransientTrackCache _transientTracks = new();
 
@@ -482,40 +482,6 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         if (replacement is not null) ReplaceQueue(replacement);
         _queue.SetCurrent(songId);
         await StopInternalAsync(request);
-    }
-
-    /// <returns>The new listen, or null when none is recorded. A listen started for a superseded request is ended at once.</returns>
-    private async Task<long?> StartListenAsync(Song song, PlaybackContext context, CancellationToken request)
-    {
-        if (_transientTracks.ContainsKey(song.Id)) return null;
-        var sessionId = await _listening.StartListenSessionAsync(song.Id, context);
-        if (request.IsCancellationRequested && sessionId is { } abandoned)
-            await _listening.FinalizeListenSessionAsync(abandoned, TimeSpan.Zero, PlaybackEndReason.PausedAndAbandoned);
-        return sessionId;
-    }
-
-    private void BeginListen(long? sessionId)
-    {
-        CurrentListenHistoryId = sessionId;
-        _isEligibilityMarked = false;
-    }
-
-    /// <summary>
-    ///     Records the end of the current listen, if one is being recorded.
-    /// </summary>
-    /// <remarks>
-    ///     The session and position are taken at once: stopping the player resets its position, and a track ending
-    ///     at the same moment must not end the same session again.
-    /// </remarks>
-    /// <param name="position">How far the listen got, or null for where the player is now.</param>
-    /// <returns>The write, which logs its own failure.</returns>
-    private Task EndListenSession(PlaybackEndReason reason, TimeSpan? position = null)
-    {
-        if (CurrentListenHistoryId is not { } sessionId) return Task.CompletedTask;
-        var listened = position ?? _audioPlayer.CurrentPosition;
-        CurrentListenHistoryId = null;
-        return RunInBackground(() => _listening.FinalizeListenSessionAsync(sessionId, listened, reason),
-            "Finalizing a listen");
     }
 
     public async ValueTask DisposeAsync()

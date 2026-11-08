@@ -14,7 +14,7 @@ public partial class UIService
     {
         Header = Strings.Listening_Minutes,
         Minimum = 1,
-        Maximum = PlaybackMixLimits.MaxMinutes,
+        Maximum = PlaybackLimits.MaxScheduledMinutes,
         Value = minutes,
         SpinButtonPlacementMode = NumberBoxSpinButtonPlacementMode.Inline
     };
@@ -36,7 +36,7 @@ public partial class UIService
         {
             Header = Strings.Listening_AvoidRecentDays,
             Minimum = 0,
-            Maximum = PlaybackMixLimits.MaxAvoidRecentDays,
+            Maximum = PlaybackLimits.MaxAvoidRecentDays,
             Value = viewModel.AvoidRecentDays,
             SpinButtonPlacementMode = NumberBoxSpinButtonPlacementMode.Inline
         };
