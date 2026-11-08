@@ -5,6 +5,7 @@ using Nagi.Core.Data;
 using Nagi.Core.Lyrics;
 using Nagi.Core.Metadata;
 using Nagi.Core.Platform;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Library;
 
@@ -19,6 +20,7 @@ public sealed class LibraryImporter
     private readonly IPathConfiguration _pathConfig;
     private readonly ArtworkService _artwork;
     private readonly LibraryNotifier _notifier;
+    private readonly ISettingsService _settingsService;
     private readonly ILogger<LibraryImporter> _logger;
 
     public LibraryImporter(
@@ -27,6 +29,7 @@ public sealed class LibraryImporter
         IPathConfiguration pathConfig,
         ArtworkService artwork,
         LibraryNotifier notifier,
+        ISettingsService settingsService,
         ILogger<LibraryImporter> logger)
     {
         _contextFactory = contextFactory;
@@ -34,6 +37,7 @@ public sealed class LibraryImporter
         _pathConfig = pathConfig;
         _artwork = artwork;
         _notifier = notifier;
+        _settingsService = settingsService;
         _logger = logger;
     }
 
@@ -53,7 +57,8 @@ public sealed class LibraryImporter
         {
             context.ChangeTracker.AutoDetectChangesEnabled = false;
             var caches = await LoadCachesAsync(context, cancellationToken).ConfigureAwait(false);
-            return new SongImport(context, caches, folderId, existingPaths, keepMediaAssets);
+            return new SongImport(context, caches, folderId, existingPaths, keepMediaAssets,
+                _settingsService.Get(CoreSettings.ArtistSplitCharacters), _settingsService.Get(CoreSettings.GenreSplitCharacters));
         }
         catch
         {
@@ -266,7 +271,9 @@ internal sealed class SongImport(
     ImportCaches caches,
     Guid folderId,
     IReadOnlySet<string> existingPaths,
-    Func<string, bool> keepMediaAssets) : IAsyncDisposable
+    Func<string, bool> keepMediaAssets,
+    string artistSplitCharacters,
+    string genreSplitCharacters) : IAsyncDisposable
 {
     /// <summary>
     ///     The covers songs used before they were read again, which may be unused once the import is done.
@@ -290,17 +297,11 @@ internal sealed class SongImport(
                 .AsSplitQuery()
                 .ToDictionaryAsync(s => s.FilePath, StringComparer.OrdinalIgnoreCase, cancellationToken).ConfigureAwait(false);
 
-        var artistNames = batch.SelectMany(m =>
-                m.Artists.Select(ArtistNameHelper.Normalize).Concat(m.AlbumArtists.Select(ArtistNameHelper.Normalize)))
-            .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-        if (batch.Any(m => m.AlbumArtists.Count == 0 || m.Artists.Count == 0))
-            artistNames.Add(Artist.UnknownArtistName);
+        foreach (var metadata in batch) metadata.NormalizeTags(artistSplitCharacters, genreSplitCharacters);
 
-        var genreNames = batch.SelectMany(m => m.Genres)
-            .Select(TextNormalizer.Normalize)
-            .OfType<string>()
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList();
+        var artistNames = batch.SelectMany(m => m.Artists.Concat(m.AlbumArtists))
+            .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        var genreNames = batch.SelectMany(m => m.Genres).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
 
         var artistLookup = ResolveArtists(artistNames);
         await ApplyTaggedArtistIdsAsync(batch, artistLookup, cancellationToken).ConfigureAwait(false);
@@ -327,19 +328,8 @@ internal sealed class SongImport(
     internal static (string Title, string Artist) AlbumKey(string title, string artist) =>
         (title.ToUpperInvariant(), artist.ToUpperInvariant());
 
-    /// <summary>
-    ///     The album a song belongs to: its normalized title, and its album artists, else its artists, else Unknown.
-    /// </summary>
-    private static (string Title, List<string> ArtistNames)? AlbumOf(SongFileMetadata metadata)
-    {
-        var title = TextNormalizer.Normalize(metadata.Album);
-        if (title is null) return null;
-
-        var artistNames = metadata.AlbumArtists.Select(ArtistNameHelper.Normalize).ToList();
-        if (artistNames.Count == 0) artistNames = metadata.Artists.Select(ArtistNameHelper.Normalize).ToList();
-        if (artistNames.Count == 0) artistNames = [Artist.UnknownArtistName];
-        return (title, artistNames);
-    }
+    private static (string Title, string Artist) AlbumKey(SongFileMetadata metadata) =>
+        AlbumKey(metadata.Album!, metadata.AlbumArtists[0]);
 
     private static Dictionary<(string Title, string Artist), (string Title, List<string> ArtistNames, int? Year)> BuildAlbumDefinitions(
         IEnumerable<SongFileMetadata> batch)
@@ -348,9 +338,7 @@ internal sealed class SongImport(
 
         foreach (var metadata in batch)
         {
-            if (AlbumOf(metadata) is not var (title, artistNames)) continue;
-
-            var albumKey = AlbumKey(title, artistNames[0]);
+            var albumKey = AlbumKey(metadata);
             if (albumDefinitions.TryGetValue(albumKey, out var existing))
             {
                 if (existing.Year is null && metadata.Year.HasValue)
@@ -358,7 +346,7 @@ internal sealed class SongImport(
                 continue;
             }
 
-            albumDefinitions[albumKey] = (title, artistNames, metadata.Year);
+            albumDefinitions[albumKey] = (metadata.Album!, metadata.AlbumArtists, metadata.Year);
         }
 
         return albumDefinitions;
@@ -427,7 +415,7 @@ internal sealed class SongImport(
             if (names.Count != musicBrainzIds.Count) return;
             for (var i = 0; i < names.Count; i++)
             {
-                if (artistLookup.TryGetValue(ArtistNameHelper.Normalize(names[i]), out var artist))
+                if (artistLookup.TryGetValue(names[i], out var artist))
                     taggedIds.TryAdd(artist, musicBrainzIds[i]);
             }
         }
@@ -540,16 +528,8 @@ internal sealed class SongImport(
         Dictionary<string, Genre> genreLookup,
         Song? existingSong)
     {
-        Album? album = null;
-        if (AlbumOf(metadata) is var (albumTitle, albumArtistNames))
-            albumLookup.TryGetValue(AlbumKey(albumTitle, albumArtistNames[0]), out album);
-
-        var genres = metadata.Genres
-            .Select(TextNormalizer.Normalize)
-            .OfType<string>()
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .Select(name => genreLookup[name])
-            .ToList();
+        var album = albumLookup[AlbumKey(metadata)];
+        var genres = metadata.Genres.Select(name => genreLookup[name]).ToList();
 
         var song = existingSong ?? new Song();
 
@@ -580,9 +560,9 @@ internal sealed class SongImport(
         song.Lyrics = metadata.Lyrics;
 
         song.Album = album;
-        song.AlbumId = album?.Id;
+        song.AlbumId = album.Id;
 
-        var newSongArtists = metadata.Artists.Select(ArtistNameHelper.Normalize)
+        var newSongArtists = metadata.Artists
             .Select((name, index) => new SongArtist { Artist = artistLookup[name], Order = index })
             .ToList();
         if (!song.SongArtists.OrderBy(sa => sa.Order).Select(sa => (sa.ArtistId, sa.Order))
@@ -616,7 +596,7 @@ internal sealed class SongImport(
             context.Songs.Add(song);
         }
 
-        if (album is not null && string.IsNullOrEmpty(album.CoverArtUri) && !string.IsNullOrEmpty(metadata.CoverArtUri))
+        if (string.IsNullOrEmpty(album.CoverArtUri) && !string.IsNullOrEmpty(metadata.CoverArtUri))
         {
             album.CoverArtUri = metadata.CoverArtUri;
             // AutoDetectChangesEnabled=false: must explicitly mark the modified property.

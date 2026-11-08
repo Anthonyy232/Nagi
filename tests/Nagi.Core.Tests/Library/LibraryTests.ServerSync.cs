@@ -97,6 +97,20 @@ public partial class LibraryTests
     }
 
     [Fact]
+    public async Task SyncServerFolder_SongWithoutAlbumArtists_AddsNoUnknownArtist()
+    {
+        var folder = await AddServerAsync();
+        var song = ServerSong("s1", "One");
+        song.AlbumArtists = [];
+
+        await _library.Servers.SyncAsync(folder.Id, ServerWith(song));
+
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        (await context.Artists.Select(a => a.Name).ToListAsync()).Should().Equal("Harbor Lights");
+        (await context.Albums.SingleAsync()).ArtistName.Should().Be("Harbor Lights");
+    }
+
+    [Fact]
     public async Task SyncServerFolder_AfterTheSplitCharactersChange_SplitsTheServersNamesLikeTags()
     {
         var folder = await AddServerAsync();

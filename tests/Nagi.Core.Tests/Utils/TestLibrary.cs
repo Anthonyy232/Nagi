@@ -38,7 +38,8 @@ public sealed class TestLibrary : IDisposable
         Artwork = new ArtworkService(contextFactory, fileSystem, pathConfig, imageProcessor, artistMetadataService,
             albumCoverService, settingsService, httpClientFactory, pipelines, Notifier, WriteLock,
             NullLogger<ArtworkService>.Instance);
-        Importer = new LibraryImporter(contextFactory, fileSystem, pathConfig, Artwork, Notifier, NullLogger<LibraryImporter>.Instance);
+        Importer = new LibraryImporter(contextFactory, fileSystem, pathConfig, Artwork, Notifier, settingsService,
+            NullLogger<LibraryImporter>.Instance);
         Folders = new LibraryFolderService(contextFactory, fileSystem, metadataService, imageProcessor, replayGainService,
             settingsService, Importer, Artwork, Notifier, WriteLock, NullLogger<LibraryFolderService>.Instance);
         Listening = new ListeningService(contextFactory, Notifier, NullLogger<ListeningService>.Instance);

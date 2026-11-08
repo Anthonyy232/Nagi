@@ -183,15 +183,8 @@ public sealed class ServerLibrarySync : IServerLibrarySync
             song.FilePath = $"{rootPath}{Path.DirectorySeparatorChar}{Uri.EscapeDataString(song.RemoteId).Replace(".", "%2E")}{extension}";
             // There's no file, so the date the server added the song stands in for its creation date in sorts and smart playlists.
             song.FileCreatedDate = song.AddedUtc;
-            // Cleaned up and defaulted like tags read from files, with the user's split characters applied on top of the
-            // server's own lists of names. This comes before hashing, so changing the split characters updates the
-            // songs on the next sync.
-            song.Title = TextNormalizer.Normalize(song.Title) ?? Song.UnknownTitle;
-            song.Album = TextNormalizer.Normalize(song.Album) ?? Album.UnknownAlbumName;
-            var artists = ArtistNameHelper.SplitNames(song.Artists, artistSplitCharacters);
-            song.Artists = artists.Count > 0 ? artists : [Artist.UnknownArtistName];
-            song.AlbumArtists = ArtistNameHelper.SplitNames(song.AlbumArtists, artistSplitCharacters);
-            song.Genres = ArtistNameHelper.SplitNames(song.Genres, genreSplitCharacters);
+            // Before hashing, so changing the split characters updates the songs on the next sync.
+            song.NormalizeTags(artistSplitCharacters, genreSplitCharacters);
         }
         // A song can come back twice when the server's list changes between two pages.
         var listed = songs.DistinctBy(song => song.FilePath, StringComparer.OrdinalIgnoreCase).ToList();

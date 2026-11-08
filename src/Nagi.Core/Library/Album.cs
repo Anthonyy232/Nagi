@@ -7,7 +7,7 @@ public class Album
     public static string UnknownAlbumName => string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Album);
     [Key] public Guid Id { get; set; } = Guid.NewGuid();
 
-    [Required][MaxLength(500)] public string Title { get; set; } = string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Album);
+    [Required][MaxLength(500)] public string Title { get; set; } = UnknownAlbumName;
 
     /// <summary>
     ///     Denormalized sort key for <see cref="Title"/> with leading articles ("the", "a", "an") stripped.
