@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Nagi.Presentation.Common;
 
 namespace Nagi.Presentation.Lists;
 
@@ -10,7 +11,11 @@ public interface IPagedListViewModel : INotifyPropertyChanged
 {
     int CurrentPage { get; }
     int TotalPages { get; }
-    int PageSize { get; set; }
+    IReadOnlyList<SettingOption<int>> PageSizeOptions { get; }
+
+    /// <summary>Null when the saved page size isn't one of the options.</summary>
+    SettingOption<int>? SelectedPageSize { get; set; }
+
     int TotalItemCount { get; }
     bool CanPaginate { get; }
     bool HasNextPage { get; }
