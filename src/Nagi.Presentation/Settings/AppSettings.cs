@@ -43,38 +43,13 @@ public static class AppSettings
 
     /// <summary>Every destination in menu order, shown or not.</summary>
     public static readonly Setting<List<NavigationItemSetting>> NavigationItems =
-        Setting.Json("NavigationItems", DefaultNavigationItems, saved =>
-        {
-            var defaults = DefaultNavigationItems();
-            return saved.DistinctBy(item => item.Tag, StringComparer.OrdinalIgnoreCase)
-                .Join(defaults, item => item.Tag, item => item.Tag, (configuration, definition) =>
-                {
-                    definition.IsEnabled = configuration.IsEnabled;
-                    return definition;
-                }, StringComparer.OrdinalIgnoreCase)
-                .Concat(defaults)
-                .DistinctBy(item => item.Tag, StringComparer.OrdinalIgnoreCase)
-                .ToList();
-        });
+        Setting.Json("NavigationItems", DefaultNavigationItems,
+            saved => MergeWithDefaults(saved, DefaultNavigationItems(), item => item.Tag));
 
     /// <summary>Every player button in order, shown or not, with a separator between playback and the rest.</summary>
     public static readonly Setting<List<PlayerButtonSetting>> PlayerButtons =
-        Setting.Json("PlayerButtonSettings", DefaultPlayerButtons, saved =>
-        {
-            var defaults = DefaultPlayerButtons();
-            var buttons = saved.DistinctBy(item => item.Id, StringComparer.OrdinalIgnoreCase)
-                .Join(defaults, item => item.Id, item => item.Id, (configuration, definition) =>
-                {
-                    definition.IsEnabled = configuration.IsEnabled;
-                    return definition;
-                }, StringComparer.OrdinalIgnoreCase).ToList();
-
-            // Older saved layouts predate the divider between playback and auxiliary buttons.
-            var separatorIndex = defaults.FindIndex(item => item.IsSeparator);
-            if (!buttons.Any(item => item.IsSeparator))
-                buttons.Insert(Math.Min(separatorIndex, buttons.Count), defaults[separatorIndex]);
-            return buttons;
-        });
+        Setting.Json("PlayerButtonSettings", DefaultPlayerButtons,
+            saved => MergeWithDefaults(saved, DefaultPlayerButtons(), item => item.Id));
 
     public static readonly Setting<QueueDisplaySettings> QueueDisplay =
         Setting.Json("QueueDisplaySettings", () => new QueueDisplaySettings());
@@ -132,6 +107,25 @@ public static class AppSettings
             ? (first, second)
             : null,
         pair => pair is { } value ? JsonSerializer.Serialize(new[] { value.Item1, value.Item2 }) : null);
+
+    // Keeps the saved order and visibility of the items this version knows, with current labels and icons. An item
+    // the saved list lacks, such as one added since it was saved, goes in at its default position.
+    private static List<T> MergeWithDefaults<T>(List<T> saved, List<T> defaults, Func<T, string> key) where T : IToggleItem
+    {
+        var merged = saved.DistinctBy(key, StringComparer.OrdinalIgnoreCase)
+            .Join(defaults, key, key, (configuration, definition) =>
+            {
+                definition.IsEnabled = configuration.IsEnabled;
+                return definition;
+            }, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+        for (var i = 0; i < defaults.Count; i++)
+        {
+            if (!merged.Contains(defaults[i])) merged.Insert(Math.Min(i, merged.Count), defaults[i]);
+        }
+
+        return merged;
+    }
 
     private static List<NavigationItemSetting> DefaultNavigationItems() =>
     [
