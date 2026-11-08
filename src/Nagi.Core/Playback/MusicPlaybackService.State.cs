@@ -65,7 +65,16 @@ public partial class MusicPlaybackService
         // With nothing loaded, Play starts the song from the queue, which stops cleanly while it can't stream.
         if (song.IsFromServer && streamUri is null) return true;
         CurrentTrack = song;
-        await _audioPlayer.LoadAsync(song, streamUri);
+        try
+        {
+            await _audioPlayer.LoadAsync(song, streamUri);
+        }
+        catch (Exception ex)
+        {
+            // Like a song that can't stream: the queue is kept, and Play tries the song again.
+            _logger.LogError(ex, "Could not load the last song, so the session is restored stopped.");
+            CurrentTrack = null;
+        }
         return true;
     }
 }

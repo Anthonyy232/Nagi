@@ -581,8 +581,10 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         await _audioPlayer.DidNotReceive().SeekAsync(Arg.Any<TimeSpan>());
     }
 
-    [Fact]
-    public async Task InitializeAsync_WhenTheLoadedTrackCantBeRead_KeepsItsPositionStopped()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task InitializeAsync_WhenTheLoadedTrackCantBeReadOrLoaded_KeepsItsPositionStopped(bool audioFails)
     {
         var songIds = _testSongs.Select(s => s.Id).ToList();
         var savedState = new PlaybackState
@@ -594,14 +596,17 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _settingsService.Set(CoreSettings.RestorePlaybackState, true);
         _playbackStateStore.LoadAsync().Returns(savedState);
 
-        _library.Reader.GetSongByIdAsync(_testSongs[1].Id).Returns((Song?)null);
+        if (audioFails)
+            _audioPlayer.LoadAsync(Arg.Any<Song>(), Arg.Any<Uri?>()).ThrowsAsync(new InvalidOperationException("No audio output"));
+        else
+            _library.Reader.GetSongByIdAsync(_testSongs[1].Id).Returns((Song?)null);
 
         await _service.InitializeAsync();
 
         _service.PlayOrder.Should().BeEquivalentTo(songIds);
         _service.CurrentTrack.Should().BeNull();
         _service.UpcomingQueue[0].Should().Be(songIds[1]);
-        await _audioPlayer.DidNotReceive().LoadAsync(Arg.Any<Song>());
+        if (!audioFails) await _audioPlayer.DidNotReceive().LoadAsync(Arg.Any<Song>());
     }
 
     [Fact]
