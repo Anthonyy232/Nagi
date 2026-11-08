@@ -47,7 +47,7 @@ public sealed class FolderViewModelItem
 ///     Manages the library's folders and music servers: adding and removing them, rescanning folders and syncing
 ///     servers.
 /// </summary>
-public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderViewModelItem>
+public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderViewModelItem>, ICollectionViewModel
 {
     private readonly ILibraryReader _libraryReader;
     private readonly ILibraryFolderService _libraryFolders;
@@ -102,6 +102,10 @@ public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderVie
 
     public void OpenFolder(FolderViewModelItem folder) => _navigationService.OpenFolder(folder.Id, folder.Name);
 
+    void ICollectionViewModel.Open(object item) => OpenFolder((FolderViewModelItem)item);
+
+    ISortOrderSelection? ICollectionViewModel.Sort => null;
+
     [RelayCommand]
     private async Task PlayFolderAsync(Guid folderId)
     {
@@ -111,7 +115,7 @@ public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderVie
     }
 
     [RelayCommand]
-    private async Task PlayRandomFolderAsync()
+    private async Task PlayRandomAsync()
     {
         if (IsAnyOperationInProgress) return;
         await UserAction.RunAsync(async () =>

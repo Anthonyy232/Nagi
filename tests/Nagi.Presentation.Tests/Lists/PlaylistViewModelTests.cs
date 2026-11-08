@@ -234,7 +234,7 @@ public class PlaylistViewModelTests
         _smart.GetSmartPlaylistCountAsync().Returns(smart ? 1 : 0);
         using var viewModel = CreateViewModel();
 
-        await viewModel.PlayRandomPlaylistCommand.ExecuteAsync(null);
+        await viewModel.PlayRandomCommand.ExecuteAsync(null);
 
         await _ui.Received(1).ShowMessageDialogAsync(Strings.PlaylistPage_Title, Strings.Playlist_Status_NoPlaylists);
     }

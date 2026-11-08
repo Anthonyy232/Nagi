@@ -129,6 +129,15 @@
         <Setter Property="uihelpers:ScrollEdgeFade.IsEnabled" Value="True" />
     </Style>
 
+    <!--  CollectionPage.InitializeCollection opens the clicked item of a grid with this style.  -->
+    <Style x:Key="CollectionGridViewStyle" TargetType="GridView">
+        <Setter Property="Padding" Value="{StaticResource PageContentPadding}" />
+        <Setter Property="IsItemClickEnabled" Value="True" />
+        <Setter Property="SelectionMode" Value="None" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource AnimatedGridViewItemStyle}" />
+        <Setter Property="uihelpers:ScrollEdgeFade.IsEnabled" Value="True" />
+    </Style>
+
     <Style x:Key="SearchTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource DefaultTextBoxStyle}">
         <Setter Property="Background" Value="{ThemeResource ControlFillColorDefaultBrush}" />
         <Setter Property="BorderBrush" Value="Transparent" />

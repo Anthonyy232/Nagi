@@ -1,4 +1,4 @@
-<pages:ViewModelPage
+<pages:CollectionPage
     xmlns:pages="using:Nagi.WinUI.Pages"
     x:Class="Nagi.WinUI.Pages.FolderPage"
     NavigationCacheMode="Enabled"
@@ -20,23 +20,10 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="{StaticResource CollectionPageHeaderMargin}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <TextBlock Grid.Column="0" Text="{x:Bind resources:Strings.FolderPage_Title, Mode=OneTime}" Style="{StaticResource PageTitleTextStyle}" />
-
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
-                <Button
-                        ToolTipService.ToolTip="{x:Bind resources:Strings.Generic_PickRandom, Mode=OneTime}"
-                        AutomationProperties.Name="{x:Bind resources:Strings.Generic_PickRandom, Mode=OneTime}"
-                        Style="{StaticResource SongListViewPageIconButton}"
-                        Command="{x:Bind ViewModel.PlayRandomFolderCommand}"
-                        Margin="0,0,1,0"
-                        ContentTemplate="{StaticResource RandomPlayIconTemplate}" />
-
+        <uicontrols:CollectionPageHeader Grid.Row="0" Margin="{StaticResource CollectionPageHeaderMargin}"
+                                         ViewModel="{x:Bind ViewModel}"
+                                         Title="{x:Bind resources:Strings.FolderPage_Title}">
+            <uicontrols:CollectionPageHeader.ExtraContent>
                 <DropDownButton
                     IsEnabled="{x:Bind ViewModel.IsAnyOperationInProgress, Converter={StaticResource BooleanToInverseBooleanConverter}, Mode=OneWay}"
                     Style="{StaticResource AnimatedAccentButtonStyle}"
@@ -61,19 +48,13 @@
                         </MenuFlyout>
                     </DropDownButton.Flyout>
                 </DropDownButton>
+            </uicontrols:CollectionPageHeader.ExtraContent>
+        </uicontrols:CollectionPageHeader>
 
-            </StackPanel>
-        </Grid>
-
-        <GridView uihelpers:ScrollEdgeFade.IsEnabled="True"
+        <GridView x:Name="CollectionGrid" Style="{StaticResource CollectionGridViewStyle}"
             Grid.Row="1"
-            IsItemClickEnabled="True"
-            ItemClick="FoldersGridView_ItemClick"
-            ItemContainerStyle="{StaticResource AnimatedGridViewItemStyle}"
             ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
-            SelectionMode="None"
-            Padding="{StaticResource PageContentPadding}"
-            Visibility="{x:Bind ViewModel.HasItems, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+            Visibility="{x:Bind ViewModel.HasItems, Mode=OneWay}">
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsWrapGrid ItemWidth="{StaticResource CollectionGridItemWidth}" Orientation="Horizontal" />
@@ -162,4 +143,4 @@
                                IsShown="{x:Bind ViewModel.ShowEmptyState, Mode=OneWay}"
                                HasLoadError="{x:Bind ViewModel.HasLoadError, Mode=OneWay}" />
     </Grid>
-</pages:ViewModelPage>
+</pages:CollectionPage>

@@ -1,4 +1,4 @@
-<pages:ViewModelPage
+<pages:CollectionPage
     xmlns:pages="using:Nagi.WinUI.Pages"
     x:Class="Nagi.WinUI.Pages.PlaylistPage"
     NavigationCacheMode="Enabled"
@@ -33,70 +33,43 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0"
-              ColumnSpacing="8"
-              Margin="{StaticResource CollectionPageHeaderMargin}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <TextBlock Text="{x:Bind resources:Strings.PlaylistPage_Title, Mode=OneTime}" Style="{StaticResource PageTitleTextStyle}" />
-            </StackPanel>
-
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <uicontrols:SearchToggle SearchTerm="{x:Bind ViewModel.SearchTerm, Mode=TwoWay}" PlaceholderText="{x:Bind resources:Strings.PlaylistPage_SearchBox_Placeholder, Mode=OneTime}" SearchToolTip="{x:Bind resources:Strings.PlaylistPage_SearchButton_Search_ToolTip, Mode=OneTime}" />
-
-                <uicontrols:SortButton Selection="{x:Bind ViewModel.Sort}" />
-
-                <Button
-                        ToolTipService.ToolTip="{x:Bind resources:Strings.Generic_PickRandom, Mode=OneTime}"
-                        AutomationProperties.Name="{x:Bind resources:Strings.Generic_PickRandom, Mode=OneTime}"
-                        Style="{StaticResource SongListViewPageIconButton}"
-                        Command="{x:Bind ViewModel.PlayRandomPlaylistCommand}"
-                        Margin="0,0,1,0"
-                        ContentTemplate="{StaticResource RandomPlayIconTemplate}" />
-
-            </StackPanel>
-
-            <DropDownButton
-                Grid.Column="2"
-                IsEnabled="{x:Bind ViewModel.IsAnyOperationInProgress, Converter={StaticResource BooleanToInverseBooleanConverter}, Mode=OneWay}"
-                Style="{StaticResource AnimatedAccentButtonStyle}"
-                ToolTipService.ToolTip="{x:Bind resources:Strings.PlaylistPage_NewPlaylistButton_ToolTip, Mode=OneTime}"
-                AutomationProperties.Name="{x:Bind resources:Strings.PlaylistPage_NewPlaylistButton_ToolTip, Mode=OneTime}">
-                <StackPanel Orientation="Horizontal" Spacing="8">
-                    <FontIcon Glyph="&#xE710;" />
-                    <TextBlock Text="{x:Bind resources:Strings.PlaylistPage_NewPlaylistButton_Content, Mode=OneTime}" />
-                </StackPanel>
-                <DropDownButton.Flyout>
-                    <MenuFlyout Placement="Bottom">
-                        <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_NewPlaylistMenu_Regular, Mode=OneTime}" Command="{x:Bind ViewModel.CreatePlaylistCommand}">
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE90B;" />
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_NewPlaylistMenu_Smart, Mode=OneTime}" Command="{x:Bind ViewModel.CreateSmartPlaylistCommand}">
-                            <MenuFlyoutItem.Icon>
-                            <FontIcon Glyph="&#xE71C;" />
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
-                    </MenuFlyout>
-                </DropDownButton.Flyout>
-            </DropDownButton>
-        </Grid>
+        <uicontrols:CollectionPageHeader Grid.Row="0" Margin="{StaticResource CollectionPageHeaderMargin}"
+                                         ViewModel="{x:Bind ViewModel}"
+                                         Title="{x:Bind resources:Strings.PlaylistPage_Title}"
+                                         SearchPlaceholder="{x:Bind resources:Strings.PlaylistPage_SearchBox_Placeholder}"
+                                         SearchToolTip="{x:Bind resources:Strings.PlaylistPage_SearchButton_Search_ToolTip}">
+            <uicontrols:CollectionPageHeader.ExtraContent>
+                <DropDownButton
+                    IsEnabled="{x:Bind ViewModel.IsAnyOperationInProgress, Converter={StaticResource BooleanToInverseBooleanConverter}, Mode=OneWay}"
+                    Style="{StaticResource AnimatedAccentButtonStyle}"
+                    ToolTipService.ToolTip="{x:Bind resources:Strings.PlaylistPage_NewPlaylistButton_ToolTip, Mode=OneTime}"
+                    AutomationProperties.Name="{x:Bind resources:Strings.PlaylistPage_NewPlaylistButton_ToolTip, Mode=OneTime}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon Glyph="&#xE710;" />
+                        <TextBlock Text="{x:Bind resources:Strings.PlaylistPage_NewPlaylistButton_Content, Mode=OneTime}" />
+                    </StackPanel>
+                    <DropDownButton.Flyout>
+                        <MenuFlyout Placement="Bottom">
+                            <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_NewPlaylistMenu_Regular, Mode=OneTime}" Command="{x:Bind ViewModel.CreatePlaylistCommand}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE90B;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_NewPlaylistMenu_Smart, Mode=OneTime}" Command="{x:Bind ViewModel.CreateSmartPlaylistCommand}">
+                                <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE71C;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                    </DropDownButton.Flyout>
+                </DropDownButton>
+            </uicontrols:CollectionPageHeader.ExtraContent>
+        </uicontrols:CollectionPageHeader>
 
         <Grid Grid.Row="1">
-            <GridView uihelpers:ScrollEdgeFade.IsEnabled="True"
-                IsItemClickEnabled="True"
-                ItemClick="PlaylistsGridView_ItemClick"
-                Padding="{StaticResource PageContentPadding}"
-                ItemContainerStyle="{StaticResource AnimatedGridViewItemStyle}"
+            <GridView x:Name="CollectionGrid" Style="{StaticResource CollectionGridViewStyle}"
                 ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
-                SelectionMode="None"
-                Visibility="{x:Bind ViewModel.HasItems, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                Visibility="{x:Bind ViewModel.HasItems, Mode=OneWay}">
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsWrapGrid ItemWidth="{StaticResource CollectionGridItemWidth}" Orientation="Horizontal" />
@@ -198,4 +171,4 @@
                                    HasLoadError="{x:Bind ViewModel.HasLoadError, Mode=OneWay}" />
         </Grid>
     </Grid>
-</pages:ViewModelPage>
+</pages:CollectionPage>

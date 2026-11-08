@@ -1,4 +1,4 @@
-<pages:ViewModelPage
+<pages:CollectionPage
     xmlns:pages="using:Nagi.WinUI.Pages"
     x:Class="Nagi.WinUI.Pages.AlbumPage"
     NavigationCacheMode="Enabled"
@@ -23,48 +23,17 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0"
-              Margin="{StaticResource CollectionPageHeaderMargin}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <TextBlock Text="{x:Bind resources:Strings.AlbumPage_Title, Mode=OneTime}" Style="{StaticResource PageTitleTextStyle}" />
-                <TextBlock
-                    Margin="0,0,0,5"
-                    VerticalAlignment="Bottom"
-                    FontSize="13"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}" />
-            </StackPanel>
-
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <uicontrols:SearchToggle SearchTerm="{x:Bind ViewModel.SearchTerm, Mode=TwoWay}" PlaceholderText="{x:Bind resources:Strings.AlbumPage_SearchBox_Placeholder, Mode=OneTime}" SearchToolTip="{x:Bind resources:Strings.AlbumPage_SearchButton_Search_ToolTip, Mode=OneTime}" />
-
-                <uicontrols:SortButton Selection="{x:Bind ViewModel.Sort}" />
-
-                <Button
-                        ToolTipService.ToolTip="{x:Bind resources:Strings.Generic_PickRandom, Mode=OneTime}"
-                        AutomationProperties.Name="{x:Bind resources:Strings.Generic_PickRandom, Mode=OneTime}"
-                        Style="{StaticResource SongListViewPageIconButton}"
-                        Command="{x:Bind ViewModel.PlayRandomAlbumCommand}"
-                        Margin="0,0,1,0"
-                        ContentTemplate="{StaticResource RandomPlayIconTemplate}" />
-
-            </StackPanel>
-        </Grid>
+        <uicontrols:CollectionPageHeader Grid.Row="0" Margin="{StaticResource CollectionPageHeaderMargin}"
+                                         ViewModel="{x:Bind ViewModel}"
+                                         Title="{x:Bind resources:Strings.AlbumPage_Title}"
+                                         CountText="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}"
+                                         SearchPlaceholder="{x:Bind resources:Strings.AlbumPage_SearchBox_Placeholder}"
+                                         SearchToolTip="{x:Bind resources:Strings.AlbumPage_SearchButton_Search_ToolTip}" />
 
         <Grid Grid.Row="1">
-            <GridView uihelpers:ScrollEdgeFade.IsEnabled="True"
-                IsItemClickEnabled="True"
-                ItemClick="AlbumsGridView_ItemClick"
-                Padding="{StaticResource PageContentPadding}"
-                ItemContainerStyle="{StaticResource AnimatedGridViewItemStyle}"
-                ItemsSource="{x:Bind ViewModel.Albums, Mode=OneWay}"
-                SelectionMode="None"
-                Visibility="{x:Bind ViewModel.HasAlbums, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+            <GridView x:Name="CollectionGrid" Style="{StaticResource CollectionGridViewStyle}"
+                ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
+                Visibility="{x:Bind ViewModel.HasItems, Mode=OneWay}">
                 <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsWrapGrid ItemWidth="{StaticResource CollectionGridItemWidth}" Orientation="Horizontal" />
@@ -150,4 +119,4 @@
             HorizontalAlignment="Right"
             Margin="0,16,24,16" />
     </Grid>
-</pages:ViewModelPage>
+</pages:CollectionPage>

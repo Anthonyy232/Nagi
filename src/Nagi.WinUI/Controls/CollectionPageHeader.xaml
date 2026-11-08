@@ -1,0 +1,42 @@
+<UserControl
+    x:Class="Nagi.WinUI.Controls.CollectionPageHeader"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Nagi.WinUI.Controls"
+    xmlns:resources="using:Nagi.Presentation.Resources">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+            <TextBlock Text="{x:Bind Title, Mode=OneWay}" Style="{StaticResource PageTitleTextStyle}" />
+            <!--  Sits on the title's baseline rather than its middle.  -->
+            <TextBlock Margin="0,0,0,5"
+                       VerticalAlignment="Bottom"
+                       FontSize="13"
+                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                       Text="{x:Bind CountText, Mode=OneWay}" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+            <local:SearchToggle Visibility="{x:Bind ViewModel.Sort, Mode=OneWay, Converter={StaticResource ObjectToVisibilityConverter}}"
+                                SearchTerm="{x:Bind ViewModel.SearchTerm, Mode=TwoWay}"
+                                PlaceholderText="{x:Bind SearchPlaceholder, Mode=OneWay}"
+                                SearchToolTip="{x:Bind SearchToolTip, Mode=OneWay}" />
+
+            <local:SortButton Visibility="{x:Bind ViewModel.Sort, Mode=OneWay, Converter={StaticResource ObjectToVisibilityConverter}}" Selection="{x:Bind ViewModel.Sort, Mode=OneWay}" />
+
+            <Button ToolTipService.ToolTip="{x:Bind resources:Strings.Generic_PickRandom}"
+                    AutomationProperties.Name="{x:Bind resources:Strings.Generic_PickRandom}"
+                    Style="{StaticResource SongListViewPageIconButton}"
+                    Command="{x:Bind ViewModel.PlayRandomCommand, Mode=OneWay}"
+                    Margin="0,0,1,0"
+                    ContentTemplate="{StaticResource RandomPlayIconTemplate}" />
+
+            <ContentPresenter Content="{x:Bind ExtraContent, Mode=OneWay}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

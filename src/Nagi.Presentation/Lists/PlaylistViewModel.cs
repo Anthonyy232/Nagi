@@ -92,7 +92,7 @@ public partial class PlaylistViewModelItem : ObservableObject
     public override string ToString() => Name;
 }
 
-public partial class PlaylistViewModel : ClientFilteredListViewModelBase<PlaylistViewModelItem>
+public partial class PlaylistViewModel : ClientFilteredListViewModelBase<PlaylistViewModelItem>, ICollectionViewModel
 {
     private static readonly PlaylistSortOrder[] SortOrders =
     [
@@ -175,6 +175,10 @@ public partial class PlaylistViewModel : ClientFilteredListViewModelBase<Playlis
             _navigationService.OpenPlaylist(playlist.Id, playlist.Name, playlist.CoverImageUri);
     }
 
+    void ICollectionViewModel.Open(object item) => OpenPlaylist((PlaylistViewModelItem)item);
+
+    ISortOrderSelection? ICollectionViewModel.Sort => Sort;
+
     [RelayCommand]
     private async Task PlayPlaylistAsync(PlaylistViewModelItem? playlist)
     {
@@ -194,7 +198,7 @@ public partial class PlaylistViewModel : ClientFilteredListViewModelBase<Playlis
     ///     Picks a regular or smart playlist with odds in proportion to how many of each there are, and plays it.
     /// </summary>
     [RelayCommand]
-    private async Task PlayRandomPlaylistAsync()
+    private async Task PlayRandomAsync()
     {
         if (IsAnyOperationInProgress) return;
 
