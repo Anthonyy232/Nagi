@@ -50,7 +50,7 @@ public sealed partial class MiniPlayerView : UserControl
         BackButton.SizeChanged += OnInteractiveRegionChanged;
         RestoreButton.SizeChanged += OnInteractiveRegionChanged;
         QueueListView.SizeChanged += OnInteractiveRegionChanged;
-        ArtistTextBlock.SizeChanged += OnInteractiveRegionChanged;
+        Artists.SizeChanged += OnInteractiveRegionChanged;
         SizeChanged += OnInteractiveRegionChanged;
 
         Loaded += OnLoaded;
@@ -110,7 +110,7 @@ public sealed partial class MiniPlayerView : UserControl
             AddRectIfVisible(rects, BackButton, scale);
             AddRectIfVisible(rects, RestoreButton, scale);
             AddRectIfVisible(rects, QueueListView, scale);
-            AddRectIfVisible(rects, ArtistTextBlock, scale);
+            AddRectIfVisible(rects, Artists, scale);
 
             var windowId = _parentWindow.AppWindow.Id;
             var nonClientSource = InputNonClientPointerSource.GetForWindowId(windowId);

@@ -8,6 +8,7 @@
     xmlns:library="using:Nagi.Core.Library"
     xmlns:player="using:Nagi.Presentation.Player"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
+    xmlns:local="using:Nagi.WinUI.Controls"
     xmlns:resources="using:Nagi.Presentation.Resources"
     d:DataContext="{d:DesignInstance Type=player:PlayerViewModel, IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
@@ -87,21 +88,15 @@
                             TextAlignment="Center"
                             TextTrimming="CharacterEllipsis"
                             TextWrapping="NoWrap" />
-                        <Grid HorizontalAlignment="Center">
-                            <TextBlock
-                                x:Name="ArtistTextBlock"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontSize="12"
-                                Foreground="{StaticResource MediaOnImageTextSecondaryBrush}"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                TextAlignment="Center"
-                                TextTrimming="CharacterEllipsis"
-                                TextWrapping="NoWrap"
-                                uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
-                                uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay}"
-                                uihelpers:MultiArtistHyperlinkHelper.Command="{x:Bind ViewModel.GoToArtistCommand, Mode=OneWay}" />
-                        </Grid>
+                        <local:ArtistLinks
+                            x:Name="Artists"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="12"
+                            Foreground="{StaticResource MediaOnImageTextSecondaryBrush}"
+                            ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
+                            Song="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay}"
+                            Command="{x:Bind ViewModel.GoToArtistCommand}" />
                     </StackPanel>
 
                     <TextBlock
@@ -214,15 +209,13 @@
                                                Foreground="{StaticResource MediaOnImageTextPrimaryBrush}"
                                                TextTrimming="CharacterEllipsis"
                                                TextWrapping="NoWrap" />
-                                    <TextBlock
+                                    <local:ArtistLinks
                                         FontSize="11"
-                                        Style="{ThemeResource CaptionTextBlockStyle}"
                                         Foreground="{StaticResource MediaOnImageControlSecondaryBrush}"
-                                        TextTrimming="CharacterEllipsis"
-                                        TextWrapping="NoWrap"
-                                        uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
-                                        uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind}"
-                                        uihelpers:MultiArtistHyperlinkHelper.Command="{Binding DataContext.ViewModel.GoToArtistCommand, ElementName=HoverDetector}" />
+                                        HorizontalAlignment="Left"
+                                        ArtistName="{x:Bind ArtistName}"
+                                        Song="{x:Bind}"
+                                        Command="{Binding DataContext.ViewModel.GoToArtistCommand, ElementName=HoverDetector}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ListView.ItemTemplate>

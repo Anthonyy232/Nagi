@@ -124,17 +124,14 @@
                                 TextTrimming="CharacterEllipsis"
                                 TextWrapping="NoWrap" />
 
-                            <TextBlock
+                            <uicontrols:ArtistLinks
                                 Grid.Row="2"
                                 Margin="0,4,0,0"
                                 HorizontalAlignment="Center"
-                                Opacity="0.7"
-                                Style="{ThemeResource CaptionTextBlockStyle}"
-                                TextTrimming="CharacterEllipsis"
-                                TextWrapping="NoWrap"
-                                uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName, Mode=OneTime}"
-                                uihelpers:MultiArtistHyperlinkHelper.AlbumArtists="{x:Bind AlbumArtists, Mode=OneTime}"
-                                uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=AlbumPageRoot}" />
+                                FontSize="{StaticResource CaptionTextBlockFontSize}"
+                                ArtistName="{x:Bind ArtistName, Mode=OneTime}"
+                                AlbumArtists="{x:Bind AlbumArtists, Mode=OneTime}"
+                                Command="{Binding ViewModel.GoToArtistCommand, ElementName=AlbumPageRoot}" />
                         </Grid>
                     </DataTemplate>
                 </GridView.ItemTemplate>

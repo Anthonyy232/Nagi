@@ -9,6 +9,7 @@
     xmlns:muxm="using:Microsoft.UI.Xaml.Media"
     xmlns:library="using:Nagi.Core.Library"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
+    xmlns:controls="using:Nagi.WinUI.Controls"
     xmlns:resources="using:Nagi.Presentation.Resources"
     mc:Ignorable="d">
 
@@ -52,16 +53,12 @@
                                    Text="{Binding SongTitle}"
                                    HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap" />
-                        <Grid HorizontalAlignment="Center">
-                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"
-                                       TextWrapping="NoWrap"
-                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                       uihelpers:MultiArtistHyperlinkHelper.ArtistName="{Binding ArtistName}"
-                                       uihelpers:MultiArtistHyperlinkHelper.Song="{Binding CurrentPlayingTrack}"
-                                       uihelpers:MultiArtistHyperlinkHelper.Command="{Binding GoToArtistCommand}" />
-                        </Grid>
+                        <controls:ArtistLinks HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                              ArtistName="{Binding ArtistName}"
+                                              Song="{Binding CurrentPlayingTrack}"
+                                              Command="{Binding GoToArtistCommand}" />
                     </StackPanel>
 
                     <Slider x:Name="MediaSeekerSlider"
@@ -172,13 +169,12 @@
                                         Text="{x:Bind Title}"
                                         TextTrimming="CharacterEllipsis"
                                         TextWrapping="NoWrap" />
-                                    <TextBlock
-                                        Style="{ThemeResource CaptionTextBlockStyle}"
-                                        TextTrimming="CharacterEllipsis"
-                                        TextWrapping="NoWrap"
-                                        uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
-                                        uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind}"
-                                        uihelpers:MultiArtistHyperlinkHelper.Command="{Binding DataContext.GoToArtistCommand, ElementName=OuterBorder}" />
+                                    <controls:ArtistLinks
+                                        FontSize="{StaticResource CaptionTextBlockFontSize}"
+                                        HorizontalAlignment="Left"
+                                        ArtistName="{x:Bind ArtistName}"
+                                        Song="{x:Bind}"
+                                        Command="{Binding DataContext.GoToArtistCommand, ElementName=OuterBorder}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ListView.ItemTemplate>

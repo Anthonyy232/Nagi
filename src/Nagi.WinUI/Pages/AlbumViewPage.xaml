@@ -56,11 +56,10 @@
                     <TextBlock Style="{ThemeResource HeaderTextBlockStyle}"
                                Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}" />
                     <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                        <TextBlock FontWeight="SemiBold"
-                                   Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
-                                   uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
-                                   uihelpers:MultiArtistHyperlinkHelper.AlbumArtists="{x:Bind ViewModel.AlbumArtists, Mode=OneWay}"
-                                   uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=pageRoot}" />
+                        <uicontrols:ArtistLinks Style="{StaticResource SongListArtistLinksStyle}"
+                                                ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
+                                                AlbumArtists="{x:Bind ViewModel.AlbumArtists, Mode=OneWay}"
+                                                Command="{x:Bind ViewModel.GoToArtistCommand}" />
                         <TextBlock Opacity="0.8" Text="•"
                                    Visibility="{x:Bind ViewModel.AlbumDetailsText, Converter={StaticResource StringToVisibilityConverter}, Mode=OneWay}" />
                         <TextBlock Opacity="0.8" Text="{x:Bind ViewModel.AlbumDetailsText, Mode=OneWay}" />

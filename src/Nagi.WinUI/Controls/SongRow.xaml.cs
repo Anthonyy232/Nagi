@@ -190,9 +190,6 @@ public sealed partial class SongRow : UserControl, INowPlayingRow
         INowPlayingRow.HighlightTitle(SongTitle, isCurrent);
     }
 
-    // Keeps the artist links from growing past their column, so long multi-artist names trim.
-    private void ArtistCell_SizeChanged(object sender, SizeChangedEventArgs e) => ArtistLinks.MaxWidth = e.NewSize.Width;
-
     private void SongMenu_Opening(object sender, object e)
     {
         var viewModel = ViewModel!;
