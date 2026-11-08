@@ -4,7 +4,6 @@ namespace Nagi.WinUI.Pages;
 
 public sealed partial class SmartPlaylistSongViewPage : SongListPage
 {
-
     public SmartPlaylistSongViewPage()
     {
         InitializeComponent();
@@ -14,5 +13,4 @@ public sealed partial class SmartPlaylistSongViewPage : SongListPage
     }
 
     public SmartPlaylistSongListViewModel ViewModel { get; }
-
 }

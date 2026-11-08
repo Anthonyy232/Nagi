@@ -56,7 +56,6 @@ public partial class AlbumViewViewModel : DetailSongListViewModelBase<AlbumViewN
     [ObservableProperty]
     public partial string? CoverArtUri { get; set; }
 
-
     [ObservableProperty] public partial string AlbumDetailsText { get; set; }
 
     public ObservableRangeCollection<object> GroupedSongsFlat { get; } = new();
@@ -187,8 +186,6 @@ public partial class AlbumViewViewModel : DetailSongListViewModelBase<AlbumViewN
         (ChosenColumns & ~(SongListColumns.Artist | SongListColumns.Album | SongListColumns.Year)) | SongListColumns.TrackNumber;
 
     public override bool ShowsGoToAlbum => false;
-
-
 
     private void CancelDurationFetch()
     {

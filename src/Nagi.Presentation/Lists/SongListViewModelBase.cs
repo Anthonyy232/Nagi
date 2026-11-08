@@ -532,6 +532,5 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         _settingsService.SettingChanged -= OnSettingChanged;
 
         base.Dispose();
-
     }
 }

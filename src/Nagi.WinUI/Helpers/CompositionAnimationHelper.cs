@@ -152,5 +152,4 @@ public static class CompositionAnimationHelper
 
         visual.StartAnimation("Scale", animation);
     }
-
 }

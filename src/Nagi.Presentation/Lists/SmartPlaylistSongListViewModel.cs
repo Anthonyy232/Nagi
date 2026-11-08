@@ -94,7 +94,6 @@ public partial class SmartPlaylistSongListViewModel : DetailSongListViewModelBas
     [ObservableProperty]
     public partial string? CoverImageUri { get; set; }
 
-
     protected override string LoadErrorText => Strings.SmartPlaylist_ErrorLoading;
 
     // A smart playlist that no longer exists shows as an empty list under the name it was opened with.
@@ -166,7 +165,6 @@ public partial class SmartPlaylistSongListViewModel : DetailSongListViewModelBas
             ? _smartPlaylistService.SetSortOrderAsync(_currentSmartPlaylistId.Value, sortOrder)
             : Task.CompletedTask;
     }
-
 
     private string? ActiveSearchTerm => IsSearchActive ? SearchTerm : null;
 

@@ -152,7 +152,6 @@ public partial class ArtistViewViewModel : DetailSongListViewModelBase<ArtistVie
 
     public override bool ShowsGoToArtist => false;
 
-
     public override void Dispose()
     {
         _libraryNotifier.ArtistImagesChanged -= OnArtistImagesChanged;

@@ -463,7 +463,6 @@ public partial class PlayerViewModel : ObservableObject
         TotalDurationText = DurationFormatter.Format(TimeSpan.FromSeconds(value));
     }
 
-
     private void UpdateTrackDetails(Song? song)
     {
         CurrentPlayingTrack = song;
@@ -712,7 +711,6 @@ public partial class PlayerViewModel : ObservableObject
     {
         RunOnUIThread(() => TotalDuration = Math.Max(0, _playbackService.Duration.TotalSeconds));
     }
-
 
     private void OnSettingChanged(Setting setting)
     {

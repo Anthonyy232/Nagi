@@ -4,7 +4,6 @@ namespace Nagi.WinUI.Pages;
 
 public sealed partial class GenreViewPage : SongListPage
 {
-
     public GenreViewPage()
     {
         InitializeComponent();
@@ -14,5 +13,4 @@ public sealed partial class GenreViewPage : SongListPage
     }
 
     public GenreViewViewModel ViewModel { get; }
-
 }

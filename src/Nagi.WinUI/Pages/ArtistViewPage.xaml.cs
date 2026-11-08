@@ -27,7 +27,6 @@ public sealed partial class ArtistViewPage : SongListPage
 
     public ArtistViewViewModel ViewModel { get; }
 
-
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);

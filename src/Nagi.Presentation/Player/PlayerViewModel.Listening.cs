@@ -203,7 +203,6 @@ public partial class PlayerViewModel
             _ => string.Empty
         };
     }
-
 }
 
 public record PlaybackRateOption(double Rate, string DisplayName);

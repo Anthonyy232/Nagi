@@ -153,7 +153,6 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         _playbackService.PlaybackStateChanged -= OnPlaybackServicePlaybackStateChanged;
         _settingsService.SettingChanged -= OnSettingChanged;
         _romanizationPackManager.PacksChanged -= OnRomanizationPacksChanged;
-
     }
 
     public async Task SeekToLineAsync(LyricLine? line)

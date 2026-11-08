@@ -56,7 +56,6 @@ public partial class PlaylistSongListViewModel : DetailSongListViewModelBase<Pla
     [ObservableProperty]
     public partial string? CoverImageUri { get; set; }
 
-
     protected override void OnSearchTermChangedInternal(string value)
     {
         base.OnSearchTermChangedInternal(value);

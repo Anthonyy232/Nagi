@@ -32,7 +32,7 @@ public partial class ArtistViewModelItem : ObservableObject
 
 /// <summary>
 ///     Manages the artist list page. Only the current page is held in the VM; image
-///     metadata is fetched for the whole library out-of-band via the library service.
+///     metadata for the whole library is fetched in the background by <see cref="IArtworkService" />.
 /// </summary>
 public partial class ArtistViewModel : PagedListViewModelBase<Artist>, ICollectionViewModel
 {

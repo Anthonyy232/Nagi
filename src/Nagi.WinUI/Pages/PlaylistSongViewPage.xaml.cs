@@ -8,7 +8,6 @@ namespace Nagi.WinUI.Pages;
 
 public sealed partial class PlaylistSongViewPage : SongListPage
 {
-
     public PlaylistSongViewPage()
     {
         InitializeComponent();
@@ -18,7 +17,6 @@ public sealed partial class PlaylistSongViewPage : SongListPage
     }
 
     public PlaylistSongListViewModel ViewModel { get; }
-
 
     private void SongsListView_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
     {

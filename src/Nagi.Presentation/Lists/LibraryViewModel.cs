@@ -17,7 +17,6 @@ namespace Nagi.Presentation.Lists;
 
 public partial class LibraryViewModel : SongListViewModelBase
 {
-
     public LibraryViewModel(
         ILibraryReader libraryReader,
         IListeningService listening,

@@ -16,7 +16,6 @@ public partial class TrayIconViewModel : ObservableObject
     private readonly ITrayPopupService _trayPopupService;
     private readonly IWindowService _windowService;
 
-
     public TrayIconViewModel(
         ISettingsService settingsService,
         ITrayPopupService trayPopupService,

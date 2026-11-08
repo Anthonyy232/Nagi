@@ -130,7 +130,6 @@ public partial class FolderSongListViewModel : DetailSongListViewModelBase<Folde
         ? new SongScope.DirectoryTree(directory.RootFolderId, directory.Path)
         : CurrentDirectory;
 
-
     [RelayCommand]
     private Task NavigateToSubfolderAsync(Folder? folder) =>
         folder is null ? Task.CompletedTask : NavigateToDirectoryAsync(folder.Path);
@@ -185,7 +184,6 @@ public partial class FolderSongListViewModel : DetailSongListViewModelBase<Folde
 
         Breadcrumbs[^1].IsLast = true;
     }
-
 
     [RelayCommand]
     private Task PlaySubfolderAsync(Folder? folder)
