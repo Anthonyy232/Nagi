@@ -209,7 +209,6 @@
                     </controls:SettingsExpander.HeaderIcon>
                     <ComboBox
                         HorizontalAlignment="Right"
-                        AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_Theme_Header, Mode=OneTime}"
                         ItemsSource="{x:Bind ViewModel.Appearance.ThemeOptions}"
                         DisplayMemberPath="DisplayName"
                         SelectedItem="{x:Bind ViewModel.Appearance.SelectedTheme, Mode=TwoWay}" />

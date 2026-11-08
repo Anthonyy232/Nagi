@@ -77,7 +77,6 @@
                                 <FontIcon Glyph="&#xE793;" />
                             </controls:SettingsCard.HeaderIcon>
                             <ComboBox
-                                AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_Theme_Header, Mode=OneTime}"
                                 ItemsSource="{x:Bind Settings.Appearance.ThemeOptions}"
                                 DisplayMemberPath="DisplayName"
                                 SelectedItem="{x:Bind Settings.Appearance.SelectedTheme, Mode=TwoWay}" />
