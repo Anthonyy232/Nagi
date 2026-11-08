@@ -721,11 +721,6 @@
             </NavigationView>
         </Grid>
 
-        <localControls:TrayIconUserControl
-            x:Name="AppTrayIconHost"
-            VerticalAlignment="Top" HorizontalAlignment="Left"
-            Width="1" Height="1" Opacity="0" IsTabStop="False" />
-
         <Grid
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             IsHitTestVisible="{x:Bind GlobalOperation.IsInProgress, Mode=OneWay}"

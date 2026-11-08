@@ -40,10 +40,7 @@ public partial class App : Application
         UnhandledException += OnAppUnhandledException;
     }
 
-    /// <summary>
-    ///     For pages the navigation frame creates, which can't take constructor dependencies.
-    /// </summary>
-    public static IServiceProvider? Services { get; private set; }
+    private static IServiceProvider? Services { get; set; }
 
     private bool IsExiting => Services?.GetService<IWindowService>()?.IsExiting == true;
 

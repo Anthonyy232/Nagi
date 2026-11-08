@@ -1,17 +1,19 @@
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Presentation.Shell;
 
 namespace Nagi.WinUI.Controls;
 
+/// <summary>
+///     Hosts the tray icon in the main page, whose theme its context menu follows. The control itself is invisible.
+/// </summary>
 public sealed partial class TrayIconUserControl : UserControl, IDisposable
 {
     private bool _isDisposed;
 
-    public TrayIconUserControl()
+    public TrayIconUserControl(TrayIconViewModel viewModel)
     {
+        ViewModel = viewModel;
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<TrayIconViewModel>();
     }
 
     public TrayIconViewModel ViewModel { get; }

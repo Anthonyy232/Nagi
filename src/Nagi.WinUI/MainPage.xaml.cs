@@ -84,11 +84,13 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private bool _isUpdatingNavViewSelection;
 
     private bool _isUnloaded;
+    private readonly TrayIconUserControl _trayIcon;
 
     public MainPage(PlayerViewModel viewModel,
         GlobalOperationViewModel globalOperation, ISettingsService settingsService,
         IDispatcherService dispatcherService,
-        NavigationService navigationService, InsightsViewModel insights, ILogger<MainPage> logger)
+        NavigationService navigationService, InsightsViewModel insights, TrayIconViewModel trayIcon,
+        ILogger<MainPage> logger)
     {
         ViewModel = viewModel;
         GlobalOperation = globalOperation;
@@ -100,6 +102,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         InitializeComponent();
         DataContext = ViewModel;
         PlayerInputHelper.AttachSeekSlider(MediaSeekerSlider, ViewModel);
+        _trayIcon = new TrayIconUserControl(trayIcon);
+        RootGrid.Children.Insert(0, _trayIcon);
         // Last, so it covers the whole window, player included.
         RootGrid.Children.Add(new InsightsSeeAllOverlay(insights));
 
@@ -327,7 +331,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         SystemVisualSettings.TransparencyEffectsEnabledChanged -= OnTransparencyEffectsChanged;
 
         // Dispose the tray icon control to prevent "Exception Processing Message 0xc0000005" errors on exit.
-        AppTrayIconHost?.Dispose();
+        _trayIcon.Dispose();
 
         RemoveHandler(PointerPressedEvent, (PointerEventHandler)OnGlobalPointerPressed);
         KeyDown -= OnSelectionKeyDown;
