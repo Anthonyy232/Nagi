@@ -12,7 +12,7 @@
 
     <tb:TaskbarIcon
         x:Name="AppTrayIcon"
-        Visibility="{x:Bind ViewModel.IsTrayIconVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
+        Visibility="{x:Bind ViewModel.IsTrayIconVisible, Mode=OneWay}"
         IconSource="ms-appx:///Assets/AppLogo.ico"
         LeftClickCommand="{x:Bind ViewModel.ShowPopupCommand}"
         NoLeftClickDelay="True"

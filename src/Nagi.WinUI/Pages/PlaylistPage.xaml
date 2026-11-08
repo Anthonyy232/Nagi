@@ -97,7 +97,7 @@
                                     Command="{Binding DataContext.RemovePlaylistCoverCommand, ElementName=PlaylistPageRoot}"
                                     CommandParameter="{x:Bind}"
                                     Text="{x:Bind resources:Strings.Generic_RemoveImage, Mode=OneTime}"
-                                    Visibility="{x:Bind IsCustomImage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                    Visibility="{x:Bind IsCustomImage, Mode=OneWay}" />
                                 <MenuFlyoutSeparator Visibility="{x:Bind IsFromServer, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                                 <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_Context_Delete, Mode=OneTime}" Command="{Binding DataContext.DeletePlaylistCommand, ElementName=PlaylistPageRoot}" CommandParameter="{x:Bind}"
                                     Visibility="{x:Bind IsFromServer, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
@@ -117,10 +117,10 @@
                             <uicontrols:ArtworkImage Size="{StaticResource CollectionCardImageSize}"
                                                      Source="{x:Bind CoverImageUri, Mode=OneWay}"
                                                      PlaceholderGlyph="&#xE90B;" />
-                            <Border Style="{StaticResource PlaylistBadgeStyle}" Visibility="{x:Bind IsSmart, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Border Style="{StaticResource PlaylistBadgeStyle}" Visibility="{x:Bind IsSmart}">
                                 <FontIcon Glyph="&#xE71C;" FontSize="12" Foreground="{StaticResource TextOnAppPrimaryBrush}" />
                             </Border>
-                            <Border Style="{StaticResource PlaylistBadgeStyle}" Visibility="{x:Bind IsFromServer, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Border Style="{StaticResource PlaylistBadgeStyle}" Visibility="{x:Bind IsFromServer}">
                                 <FontIcon Glyph="&#xE8CE;" FontSize="12" Foreground="{StaticResource TextOnAppPrimaryBrush}" />
                             </Border>
                         </Grid>

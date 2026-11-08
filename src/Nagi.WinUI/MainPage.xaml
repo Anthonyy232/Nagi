@@ -374,7 +374,7 @@
                                                 <ProgressRing Width="16" Height="16" Margin="0,8"
                                                               IsHitTestVisible="False" HorizontalAlignment="Center"
                                                               IsActive="{x:Bind ViewModel.SidebarQueue.ShowMoreLoading, Mode=OneWay}"
-                                                              Visibility="{x:Bind ViewModel.SidebarQueue.ShowMoreLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                              Visibility="{x:Bind ViewModel.SidebarQueue.ShowMoreLoading, Mode=OneWay}" />
                                             </ListView.Footer>
                                             <ListView.ItemTemplate>
                                                 <DataTemplate x:DataType="player:QueueEntry">
@@ -416,7 +416,7 @@
                                             </ListView.ItemTemplate>
                                         </ListView>
                                         <StackPanel Margin="20" Spacing="8" VerticalAlignment="Center" IsHitTestVisible="False"
-                                                    Visibility="{x:Bind ViewModel.SidebarQueue.ShowEmptyState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                    Visibility="{x:Bind ViewModel.SidebarQueue.ShowEmptyState, Mode=OneWay}">
                                             <FontIcon Glyph="&#xE8D6;" FontSize="28" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                             <TextBlock Text="{x:Bind resources:Strings.QueuePanel_EmptyTitle}" FontWeight="SemiBold"
                                                        TextAlignment="Center" TextWrapping="Wrap" />
@@ -426,9 +426,9 @@
                                         <ProgressRing Width="32" Height="32" IsHitTestVisible="False"
                                                       HorizontalAlignment="Center" VerticalAlignment="Center"
                                                       IsActive="{x:Bind ViewModel.SidebarQueue.ShowInitialLoading, Mode=OneWay}"
-                                                      Visibility="{x:Bind ViewModel.SidebarQueue.ShowInitialLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                      Visibility="{x:Bind ViewModel.SidebarQueue.ShowInitialLoading, Mode=OneWay}" />
                                         </Grid>
-                                        <Grid Grid.Row="2" RowSpacing="12" Visibility="{x:Bind ViewModel.IsHistoryVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <Grid Grid.Row="2" RowSpacing="12" Visibility="{x:Bind ViewModel.IsHistoryVisible, Mode=OneWay}">
                                             <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
                                             <TextBox Style="{StaticResource SearchTextBoxStyle}" PlaceholderText="{x:Bind resources:Strings.Listening_HistorySearch}" Text="{x:Bind ViewModel.History.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                             <InfoBar Grid.Row="1" IsOpen="{x:Bind ViewModel.History.HasLoadError, Mode=OneWay}" Severity="Error" IsClosable="False" Message="{x:Bind resources:Strings.Listening_HistoryLoadError}">
@@ -450,7 +450,7 @@
                                                 <ListView.Footer>
                                                     <ProgressRing Width="16" Height="16" Margin="0,8" IsHitTestVisible="False" HorizontalAlignment="Center"
                                                                   IsActive="{x:Bind ViewModel.History.ShowMoreLoading, Mode=OneWay}"
-                                                                  Visibility="{x:Bind ViewModel.History.ShowMoreLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                                  Visibility="{x:Bind ViewModel.History.ShowMoreLoading, Mode=OneWay}" />
                                                 </ListView.Footer>
                                                 <ListView.ItemTemplateSelector>
                                                     <uihelpers:HeaderedListTemplateSelector>
@@ -482,8 +482,8 @@
                                                     </uihelpers:HeaderedListTemplateSelector>
                                                 </ListView.ItemTemplateSelector>
                                             </ListView>
-                                            <TextBlock Grid.Row="2" Text="{x:Bind ViewModel.History.EmptyStateText, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind ViewModel.History.ShowEmptyState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                            <ProgressRing Grid.Row="2" Width="24" Height="24" IsActive="{x:Bind ViewModel.History.ShowInitialLoading, Mode=OneWay}" Visibility="{x:Bind ViewModel.History.ShowInitialLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            <TextBlock Grid.Row="2" Text="{x:Bind ViewModel.History.EmptyStateText, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind ViewModel.History.ShowEmptyState, Mode=OneWay}" />
+                                            <ProgressRing Grid.Row="2" Width="24" Height="24" IsActive="{x:Bind ViewModel.History.ShowInitialLoading, Mode=OneWay}" Visibility="{x:Bind ViewModel.History.ShowInitialLoading, Mode=OneWay}" />
                                         </Grid>
                                     </Grid>
                                 </Border>
@@ -553,7 +553,7 @@
                                         VerticalContentAlignment="Stretch"
                                         Command="{x:Bind ViewModel.GoToAlbumCommand, Mode=OneWay}"
                                         Style="{StaticResource DefaultButtonStyle}"
-                                        Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                        Visibility="{x:Bind ViewModel.IsArtworkAvailable, Mode=OneWay}">
                                         <Border
                                             Width="{StaticResource FloatingPlayerArtSize}"
                                             Height="{StaticResource FloatingPlayerArtSize}"
@@ -590,7 +590,7 @@
                                             ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
                                             Song="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay}"
                                             Command="{x:Bind ViewModel.GoToArtistCommand}" />
-                                        <Button Content="{x:Bind ViewModel.StopScheduleText, Mode=OneWay}" Padding="0,2" Background="Transparent" BorderThickness="0" HorizontalAlignment="Left" FontSize="12" Visibility="{x:Bind ViewModel.IsStopScheduled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <Button Content="{x:Bind ViewModel.StopScheduleText, Mode=OneWay}" Padding="0,2" Background="Transparent" BorderThickness="0" HorizontalAlignment="Left" FontSize="12" Visibility="{x:Bind ViewModel.IsStopScheduled, Mode=OneWay}">
                                             <Button.Flyout><MenuFlyout Opening="TimerOptions_Opening" /></Button.Flyout>
                                         </Button>
                                     </StackPanel>
@@ -651,7 +651,7 @@
                                             AutomationProperties.Name="{x:Bind resources:Strings.Settings_Button_Volume, Mode=OneTime}"
                                             Foreground="{StaticResource PlayerAccentBrush}"
                                             Value="{x:Bind ViewModel.CurrentVolume, Mode=TwoWay}"
-                                            Visibility="{x:Bind ViewModel.IsVolumeControlVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                            Visibility="{x:Bind ViewModel.IsVolumeControlVisible, Mode=OneWay}">
                                             <Slider.Resources>
                                                 <x:Double x:Key="SliderTrackThemeHeight">4</x:Double>
                                             </Slider.Resources>
@@ -717,7 +717,7 @@
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             IsHitTestVisible="{x:Bind GlobalOperation.IsInProgress, Mode=OneWay}"
             Opacity="0.85"
-            Visibility="{x:Bind GlobalOperation.IsInProgress, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+            Visibility="{x:Bind GlobalOperation.IsInProgress, Mode=OneWay}">
             <StackPanel
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -742,7 +742,7 @@
                     HorizontalAlignment="Center"
                     Command="{x:Bind GlobalOperation.CancelCommand}"
                     Content="{x:Bind resources:Strings.Generic_Cancel, Mode=OneTime}"
-                    Visibility="{x:Bind GlobalOperation.IsCancellable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
+                    Visibility="{x:Bind GlobalOperation.IsCancellable, Mode=OneWay}" />
             </StackPanel>
         </Grid>
     </Grid>

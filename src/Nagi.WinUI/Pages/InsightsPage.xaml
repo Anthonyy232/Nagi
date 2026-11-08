@@ -157,14 +157,14 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-            Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
 
         <ScrollViewer uihelpers:ScrollEdgeFade.IsEnabled="True" Grid.Row="1"
                       HorizontalScrollBarVisibility="Disabled"
                       VerticalScrollBarVisibility="Auto"
                       Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
 
-            <Grid Visibility="{x:Bind ViewModel.HasData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid Visibility="{x:Bind ViewModel.HasData, Mode=OneWay}">
                 <StackPanel Padding="{StaticResource PageContentPadding}" Spacing="16">
                     <StackPanel.ChildrenTransitions>
                         <TransitionCollection>
@@ -364,7 +364,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Spacing="16"
-                    Visibility="{x:Bind ViewModel.ShowEmptyState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    Visibility="{x:Bind ViewModel.ShowEmptyState, Mode=OneWay}">
             <StackPanel.ChildrenTransitions>
                 <TransitionCollection>
                     <EntranceThemeTransition FromVerticalOffset="20" />

@@ -65,7 +65,7 @@
             Grid.Row="1"
             Style="{StaticResource LyricsProgressBarStyle}"
             Margin="{StaticResource PageHeaderMarginIndented}"
-            Visibility="{x:Bind ViewModel.HasLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+            Visibility="{x:Bind ViewModel.HasLyrics, Mode=OneWay}"
             MaxWidth="600" />
 
         <ScrollViewer
@@ -75,7 +75,7 @@
             VerticalScrollBarVisibility="Auto"
             Background="Transparent"
             SizeChanged="LyricsScrollViewer_SizeChanged"
-            Visibility="{x:Bind ViewModel.HasLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.HasLyrics, Mode=OneWay}">
             <StackPanel>
                 <Border x:Name="TopSpacer" />
                 <ItemsRepeater
@@ -103,11 +103,11 @@
                                     <TextBlock
                                         Text="{x:Bind RomanizedText}"
                                         Style="{StaticResource SecondaryLyricLineTextBlockStyle}"
-                                        Visibility="{x:Bind HasRomanizedText, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        Visibility="{x:Bind HasRomanizedText, Mode=OneTime}" />
                                     <TextBlock
                                         Text="{x:Bind TranslatedText}"
                                         Style="{StaticResource SecondaryLyricLineTextBlockStyle}"
-                                        Visibility="{x:Bind HasTranslatedText, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        Visibility="{x:Bind HasTranslatedText, Mode=OneTime}" />
                                 </StackPanel>
                                 <!-- Opacity is set through Composition. -->
                                 <StackPanel x:Name="ActiveLayer" Spacing="6">
@@ -119,12 +119,12 @@
                                         Text="{x:Bind RomanizedText}"
                                         Style="{StaticResource SecondaryLyricLineTextBlockStyle}"
                                         Foreground="{StaticResource AppPrimaryColorBrush}"
-                                        Visibility="{x:Bind HasRomanizedText, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        Visibility="{x:Bind HasRomanizedText, Mode=OneTime}" />
                                     <TextBlock
                                         Text="{x:Bind TranslatedText}"
                                         Style="{StaticResource SecondaryLyricLineTextBlockStyle}"
                                         Foreground="{StaticResource AppPrimaryColorBrush}"
-                                        Visibility="{x:Bind HasTranslatedText, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        Visibility="{x:Bind HasTranslatedText, Mode=OneTime}" />
                                 </StackPanel>
                                 <!-- Drawn beneath the text, out over the padding. -->
                                 <Border
@@ -152,7 +152,7 @@
             IsItemClickEnabled="False"
             HorizontalContentAlignment="Stretch"
             ItemContainerStyle="{StaticResource PaddedListViewItemStyle}"
-            Visibility="{x:Bind ViewModel.HasUnsyncedLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.HasUnsyncedLyrics, Mode=OneWay}">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="lyrics:LyricLine">
                     <StackPanel>
@@ -163,7 +163,7 @@
                         <TextBlock
                             Text="{x:Bind RomanizedText}"
                             Style="{StaticResource SecondaryInactiveLyricLineStyle}"
-                            Visibility="{x:Bind HasRomanizedText, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            Visibility="{x:Bind HasRomanizedText, Mode=OneTime}" />
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
@@ -174,7 +174,7 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Spacing="16"
-            Visibility="{x:Bind ViewModel.ShowNoLyricsMessage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.ShowNoLyricsMessage, Mode=OneWay}">
             <StackPanel.ChildrenTransitions>
                 <TransitionCollection>
                     <EntranceThemeTransition FromVerticalOffset="20" />

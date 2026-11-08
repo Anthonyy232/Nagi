@@ -61,7 +61,7 @@
                                         Text="{x:Bind resources:Strings.Generic_RemoveImage, Mode=OneTime}"
                                         Command="{Binding DataContext.RemoveArtistImageCommand, ElementName=ArtistPageRoot}"
                                         CommandParameter="{x:Bind Id}"
-                                        Visibility="{x:Bind IsCustomImage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        Visibility="{x:Bind IsCustomImage, Mode=OneWay}" />
                                 </MenuFlyout>
                             </Grid.ContextFlyout>
                             <Grid.RowDefinitions>

@@ -85,13 +85,13 @@
                                     Command="{Binding DataContext.SyncServerCommand, ElementName=FolderPageRoot}"
                                     CommandParameter="{x:Bind Id}"
                                     IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=FolderPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}"
-                                    Visibility="{x:Bind IsServer, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                    Visibility="{x:Bind IsServer}" />
                                 <MenuFlyoutItem
                                     Text="{x:Bind resources:Strings.FolderPage_Menu_SignIn, Mode=OneTime}"
                                     Command="{Binding DataContext.SignInToServerCommand, ElementName=FolderPageRoot}"
                                     CommandParameter="{x:Bind Id}"
                                     IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=FolderPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}"
-                                    Visibility="{x:Bind IsServer, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                    Visibility="{x:Bind IsServer}" />
                                 <MenuFlyoutItem Text="{x:Bind resources:Strings.FolderPage_Menu_Delete, Mode=OneTime}" Command="{Binding DataContext.DeleteFolderCommand, ElementName=FolderPageRoot}" CommandParameter="{x:Bind Id}" />
                             </MenuFlyout>
                         </Grid.ContextFlyout>
@@ -109,7 +109,7 @@
                             Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                             CornerRadius="{StaticResource ArtworkCornerRadius}">
                             <FontIcon HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Glyph="&#xE8CE;"
-                                      Visibility="{x:Bind IsServer, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                      Visibility="{x:Bind IsServer}" />
                             <FontIcon HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48"
                                       Visibility="{x:Bind IsServer, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
                                       Glyph="" />

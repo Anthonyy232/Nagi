@@ -60,7 +60,7 @@
                 x:Name="GroupedSongsListView"
                 ItemContainerStyle="{x:Null}"
                 ItemsSource="{x:Bind ViewModel.GroupedSongsFlat, Mode=OneWay}"
-                Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay}">
                 <ListView.ItemContainerStyleSelector>
                     <uihelpers:HeaderedListStyleSelector>
                         <uihelpers:HeaderedListStyleSelector.HeaderStyle>

@@ -33,7 +33,7 @@
                                     SearchToolTip="{x:Bind resources:Strings.LibraryPage_SearchButton_Search_ToolTip}" />
 
         <Border Grid.Row="1" Margin="24,0,24,16" Padding="12" CornerRadius="{ThemeResource ControlCornerRadius}" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                Visibility="{x:Bind ViewModel.ShowSuggestion, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.ShowSuggestion, Mode=OneWay}">
             <Grid ColumnSpacing="12"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                 <StackPanel Spacing="4"><TextBlock Text="{x:Bind resources:Strings.Listening_RediscoveryTitle}" Style="{ThemeResource CaptionTextBlockStyle}" />
                     <TextBlock Text="{x:Bind ViewModel.Suggestion.Title, Mode=OneWay}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" />

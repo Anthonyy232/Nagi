@@ -125,7 +125,7 @@
                                 <MenuFlyout>
                                     <MenuFlyoutItem Text="{x:Bind resources:Strings.Generic_ChangeImage, Mode=OneTime}" Command="{x:Bind ViewModel.ChangeArtistImageCommand}" />
                                     <MenuFlyoutItem Text="{x:Bind resources:Strings.Generic_RemoveImage, Mode=OneTime}" Command="{x:Bind ViewModel.RemoveArtistImageCommand}"
-                                                    Visibility="{x:Bind ViewModel.IsCustomImage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                    Visibility="{x:Bind ViewModel.IsCustomImage, Mode=OneWay}" />
                                 </MenuFlyout>
                             </Button.Flyout>
                             <Grid Background="{StaticResource MediaOnImageHoverScrimBrush}" CornerRadius="{StaticResource HeaderImageCircleRadius}">
@@ -155,7 +155,7 @@
                 </Grid>
 
                 <Grid x:Name="AlbumsViewport" VerticalAlignment="Top"
-                      Visibility="{x:Bind ViewModel.HasAlbums, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                      Visibility="{x:Bind ViewModel.HasAlbums, Mode=OneWay}">
                     <ScrollViewer VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden">
                         <StackPanel x:Name="AlbumsContent" VerticalAlignment="Top" SizeChanged="OnAlbumsContentSizeChanged">
                         <TextBlock Text="{x:Bind resources:Strings.ArtistViewPage_Albums_Title, Mode=OneTime}" Style="{StaticResource SectionHeaderTextBlockStyle}" Foreground="{StaticResource AppPrimaryColorBrush}" />

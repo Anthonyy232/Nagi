@@ -85,7 +85,7 @@
                             VerticalAlignment="Center"
                             FontSize="64"
                             Glyph="&#xE8CE;"
-                            Visibility="{x:Bind ViewModel.IsServer, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            Visibility="{x:Bind ViewModel.IsServer, Mode=OneWay}" />
                     </Grid>
                 </Grid>
 

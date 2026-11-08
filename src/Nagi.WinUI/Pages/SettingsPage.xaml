@@ -146,7 +146,7 @@
                             Width="20"
                             Height="20"
                             IsActive="{x:Bind IsBusy, Mode=OneWay}"
-                            Visibility="{x:Bind IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            Visibility="{x:Bind IsBusy, Mode=OneWay}" />
                         <Button
                             MinWidth="86"
                             Command="{Binding DataContext.Romanization.InstallRomanizationPackCommand, ElementName=SettingsPageRoot}"
@@ -160,14 +160,14 @@
                             CommandParameter="{x:Bind}"
                             Content="{x:Bind resources:Strings.SettingsPage_RomanizationPacks_Update, Mode=OneTime}"
                             IsEnabled="{x:Bind CanInstall, Mode=OneWay}"
-                            Visibility="{x:Bind IsUpdateAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            Visibility="{x:Bind IsUpdateAvailable, Mode=OneWay}" />
                         <Button
                             MinWidth="86"
                             Command="{Binding DataContext.Romanization.RemoveRomanizationPackCommand, ElementName=SettingsPageRoot}"
                             CommandParameter="{x:Bind}"
                             Content="{x:Bind resources:Strings.SettingsPage_RomanizationPacks_Remove, Mode=OneTime}"
                             IsEnabled="{x:Bind CanRemove, Mode=OneWay}"
-                            Visibility="{x:Bind IsInstalled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            Visibility="{x:Bind IsInstalled, Mode=OneWay}" />
                     </StackPanel>
                 </Grid>
             </Border>
@@ -678,7 +678,7 @@
                                                 Width="57"
                                                 Background="{ThemeResource SubtleFillColorSecondaryBrush}"
                                                 CornerRadius="{ThemeResource ControlCornerRadius}"
-                                                Visibility="{x:Bind IsNotSeparator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                Visibility="{x:Bind IsNotSeparator, Mode=OneWay}" />
 
                                             <Border
                                                 Width="2"
@@ -688,14 +688,14 @@
                                                 Background="{ThemeResource TextFillColorSecondaryBrush}"
                                                 Opacity="0.7"
                                                 CornerRadius="1"
-                                                Visibility="{x:Bind IsSeparator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                Visibility="{x:Bind IsSeparator, Mode=OneWay}" />
 
                                             <StackPanel
                                                 Width="57"
                                                 Padding="0,8"
                                                 Spacing="6"
                                                 VerticalAlignment="Center"
-                                                Visibility="{x:Bind IsNotSeparator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                Visibility="{x:Bind IsNotSeparator, Mode=OneWay}">
 
                                                 <FontIcon
                                                     HorizontalAlignment="Center"
@@ -715,10 +715,10 @@
                                                         <FontIcon
                                                             FontSize="14"
                                                             Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(Icon)}"
-                                                            Visibility="{x:Bind IsNotSeparator, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                            Visibility="{x:Bind IsNotSeparator}" />
                                                         <Rectangle Width="1" Height="20"
                                                                    Fill="{ThemeResource TextFillColorSecondaryBrush}"
-                                                                   Visibility="{x:Bind IsSeparator, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                                   Visibility="{x:Bind IsSeparator}" />
                                                     </Grid>
                                                 </Button>
 
@@ -921,7 +921,7 @@
                                         Width="24"
                                         Height="24"
                                         IsActive="{x:Bind ViewModel.Romanization.IsLoadingRomanizationPacks, Mode=OneWay}"
-                                        Visibility="{x:Bind ViewModel.Romanization.IsLoadingRomanizationPacks, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        Visibility="{x:Bind ViewModel.Romanization.IsLoadingRomanizationPacks, Mode=OneWay}" />
                                     <Button
                                         MinWidth="86"
                                         Command="{x:Bind ViewModel.Romanization.RefreshRomanizationPacksCommand}"
