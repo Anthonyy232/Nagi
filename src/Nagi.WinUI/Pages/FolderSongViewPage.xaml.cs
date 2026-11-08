@@ -41,12 +41,10 @@ public sealed partial class FolderSongViewPage : SongListPage
             await ViewModel.NavigateToSubfolderCommand.ExecuteAsync(folder);
     }
 
-    private async void FolderContentsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+    // ItemClick already opens folders, so a double-tap only plays songs.
+    private void FolderContentsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
-        if (e.OriginalSource is not FrameworkElement { DataContext: FolderContentItem contentItem }) return;
-        if (contentItem.Folder is { } folder)
-            await ViewModel.NavigateToSubfolderCommand.ExecuteAsync(folder);
-        else
+        if (e.OriginalSource is FrameworkElement { DataContext: FolderContentItem { IsFolder: false } })
             SongsListView_DoubleTapped(sender, e);
     }
 
