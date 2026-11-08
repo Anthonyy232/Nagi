@@ -70,7 +70,7 @@
                             </Grid.RowDefinitions>
 
                             <uicontrols:ArtworkImage Grid.Row="0" HorizontalAlignment="Center" Size="{StaticResource CollectionCardImageSize}" IsCircular="True"
-                                                         Source="{x:Bind LocalImageCachePath, Mode=OneWay}"
+                                                         Source="{x:Bind ImageUri, Mode=OneWay}"
                                                          PlaceholderGlyph="" />
 
                             <TextBlock
