@@ -5,7 +5,7 @@ namespace Nagi.Core.Scrobbling;
 /// <summary>
 ///     Payload for POST /1/submit-listens. See https://listenbrainz.readthedocs.io/en/latest/users/api/core.html
 /// </summary>
-public class ListenBrainzSubmitPayload
+internal sealed class ListenBrainzSubmitPayload
 {
     [JsonPropertyName("listen_type")]
     public string ListenType { get; set; } = "single";
@@ -14,7 +14,7 @@ public class ListenBrainzSubmitPayload
     public List<ListenBrainzListen> Payload { get; set; } = new();
 }
 
-public class ListenBrainzListen
+internal sealed class ListenBrainzListen
 {
     /// <summary>
     ///     Unix epoch seconds. Required for listen_type "single"; must be omitted for "playing_now".
@@ -26,7 +26,7 @@ public class ListenBrainzListen
     public ListenBrainzTrackMetadata TrackMetadata { get; set; } = new();
 }
 
-public class ListenBrainzTrackMetadata
+internal sealed class ListenBrainzTrackMetadata
 {
     [JsonPropertyName("artist_name")]
     public string ArtistName { get; set; } = string.Empty;
@@ -42,7 +42,7 @@ public class ListenBrainzTrackMetadata
 }
 
 /// <summary>MusicBrainz IDs let ListenBrainz link a listen without guessing from names.</summary>
-public class ListenBrainzAdditionalInfo
+internal sealed class ListenBrainzAdditionalInfo
 {
     [JsonPropertyName("recording_mbid")]
     public string? RecordingMbid { get; set; }
@@ -70,7 +70,7 @@ public class ListenBrainzAdditionalInfo
 }
 
 /// <summary>Response from GET /1/validate-token.</summary>
-public class ListenBrainzValidateTokenResponse
+internal sealed class ListenBrainzValidateTokenResponse
 {
     [JsonPropertyName("valid")]
     public bool Valid { get; set; }
