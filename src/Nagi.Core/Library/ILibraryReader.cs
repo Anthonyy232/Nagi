@@ -1,7 +1,3 @@
-using Nagi.Core.Listening;
-using Nagi.Core.Playback;
-using Nagi.Core.Playlists;
-
 namespace Nagi.Core.Library;
 
 /// <summary>
@@ -9,10 +5,6 @@ namespace Nagi.Core.Library;
 /// </summary>
 public interface ILibraryReader
 {
-    Task<IReadOnlyList<MixCandidate>> GetMixCandidatesAsync(IEnumerable<Guid> songIds, CancellationToken token = default);
-    Task<IReadOnlyList<RecentListen>> GetRecentListensAsync(string searchTerm, int skip, int take, CancellationToken token = default);
-    Task<RediscoverySuggestion?> GetRediscoverySuggestionAsync(CancellationToken token = default);
-
     /// <returns>The folder with its <see cref="Folder.MusicServer" />, or null.</returns>
     Task<Folder?> GetFolderByIdAsync(Guid folderId);
     Task<bool> HasAnyFolderAsync(CancellationToken token = default);
@@ -34,18 +26,12 @@ public interface ILibraryReader
     Task<IEnumerable<Album>> GetAlbumsForArtistAsync(Guid artistId);
 
     Task<Album?> GetAlbumByIdAsync(Guid albumId);
-    Task<IEnumerable<Playlist>> GetAllPlaylistsAsync(CancellationToken token = default);
-    Task<Playlist?> GetPlaylistByIdAsync(Guid playlistId);
-    Task<IEnumerable<Song>> GetSongsInPlaylistOrderedAsync(Guid playlistId, CancellationToken token = default);
     Task<IEnumerable<GenreSummary>> GetGenreSummariesAsync(CancellationToken token = default);
 
     Task<Guid?> GetRandomAlbumIdAsync();
     Task<Guid?> GetRandomArtistIdAsync();
     Task<Guid?> GetRandomFolderIdAsync();
     Task<Guid?> GetRandomGenreIdAsync();
-    Task<Guid?> GetRandomPlaylistIdAsync();
-
-    Task<int> GetPlaylistCountAsync();
 
     /// <summary>
     ///     One page of the songs in <paramref name="scope" /> that match <paramref name="searchTerm" />, as list rows

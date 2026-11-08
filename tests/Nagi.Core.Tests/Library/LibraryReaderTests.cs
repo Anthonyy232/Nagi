@@ -1,4 +1,6 @@
 using FluentAssertions;
+using Microsoft.Extensions.Logging.Abstractions;
+using Nagi.Core.Artwork;
 using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Library;
 using Nagi.Core.Listening;
@@ -794,8 +796,9 @@ public class LibraryReaderTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var first = await _libraryReader.GetRecentListensAsync("Same song", 0, 2);
-        var second = await _libraryReader.GetRecentListensAsync("Same song", 2, 2);
+        var listening = new ListeningService(_dbHelper.ContextFactory, new LibraryNotifier(), NullLogger<ListeningService>.Instance);
+        var first = await listening.GetRecentListensAsync("Same song", 0, 2);
+        var second = await listening.GetRecentListensAsync("Same song", 2, 2);
 
         first.Should().HaveCount(2);
         second.Should().ContainSingle();
@@ -815,7 +818,9 @@ public class LibraryReaderTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var exported = await _libraryReader.GetSongsInPlaylistOrderedAsync(playlist.Id);
+        var playlists = new PlaylistService(_dbHelper.ContextFactory, Substitute.For<IFileSystemService>(), Substitute.For<IImageProcessor>(),
+            Substitute.For<IPathConfiguration>(), Substitute.For<ILibraryNotifier>(), NullLogger<PlaylistService>.Instance);
+        var exported = await playlists.GetSongsInPlaylistOrderedAsync(playlist.Id);
         exported.Where(s => s.Title.StartsWith("Song")).Select(s => s.Id).Should().Equal(expectedIds);
 
         var page = await _libraryReader.GetSongsAsync(new SongScope.Playlist(playlist.Id), null, SongSortOrder.PlaylistOrder, 3, 1);

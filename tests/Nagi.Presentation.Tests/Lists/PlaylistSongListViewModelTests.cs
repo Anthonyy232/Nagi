@@ -206,7 +206,7 @@ public class PlaylistSongListViewModelTests
     {
         using var viewModel = CreateViewModel();
 
-        _library.Reader.GetPlaylistByIdAsync(_playlistId)
+        _playlists.GetPlaylistByIdAsync(_playlistId)
             .Returns(new Playlist { Id = _playlistId, Name = "Road Trip", ServerFolderId = Guid.NewGuid() });
 
         await viewModel.OpenAsync(new PlaylistSongViewNavigationParameter { Title = "Road Trip", PlaylistId = _playlistId });
@@ -218,7 +218,7 @@ public class PlaylistSongListViewModelTests
     public async Task AddToPlaylist_OffersOnlyNagisOwnPlaylists()
     {
         var mine = new Playlist { Name = "Mine" };
-        _library.Reader.GetAllPlaylistsAsync(Arg.Any<CancellationToken>())
+        _playlists.GetAllPlaylistsAsync(Arg.Any<CancellationToken>())
             .Returns([mine, new Playlist { Name = "Road Trip", ServerFolderId = Guid.NewGuid() }]);
         using var viewModel = CreateViewModel();
 

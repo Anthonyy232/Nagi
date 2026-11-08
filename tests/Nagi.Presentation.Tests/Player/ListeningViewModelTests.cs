@@ -83,13 +83,14 @@ public class RecentHistoryViewModelTests
     public async Task PlaybackRefresh_PrependsNewListensWithoutResettingRowsOrLosingLoadedPages(int daysLater)
     {
         var library = Substitute.For<ILibraryReader>();
+        var listening = Substitute.For<IListeningService>();
         var today = DateTime.Today.AddHours(12).ToUniversalTime();
         var listens = Enumerable.Range(0, 102)
             .Select(index => new RecentListen(index, Guid.NewGuid(), $"Song {index}", "Artist", today.AddMinutes(-index)))
             .ToArray();
-        library.GetRecentListensAsync("", 0, 100, Arg.Any<CancellationToken>()).Returns(listens.Take(100).ToArray());
-        library.GetRecentListensAsync("", 100, 100, Arg.Any<CancellationToken>()).Returns(listens.Skip(100).ToArray());
-        using var viewModel = new RecentHistoryViewModel(library, new ImmediateDispatcher(), NullLogger.Instance);
+        listening.GetRecentListensAsync("", 0, 100, Arg.Any<CancellationToken>()).Returns(listens.Take(100).ToArray());
+        listening.GetRecentListensAsync("", 100, 100, Arg.Any<CancellationToken>()).Returns(listens.Skip(100).ToArray());
+        using var viewModel = new RecentHistoryViewModel(library, listening, new ImmediateDispatcher(), NullLogger.Instance);
         viewModel.SetActive(true);
         await viewModel.SearchAsync();
         await ((IIncrementalItemSource)viewModel.Entries).LoadMoreItemsAsync();
@@ -97,7 +98,7 @@ public class RecentHistoryViewModelTests
         var changes = new List<System.Collections.Specialized.NotifyCollectionChangedAction>();
         viewModel.Entries.CollectionChanged += (_, args) => changes.Add(args.Action);
         var latest = new RecentListen(102, listens[0].SongId, "Played again", "Artist", today.AddDays(daysLater).AddMinutes(1));
-        library.GetRecentListensAsync("", 0, 100, Arg.Any<CancellationToken>())
+        listening.GetRecentListensAsync("", 0, 100, Arg.Any<CancellationToken>())
             .Returns(new[] { latest }.Concat(listens.Take(99)).ToArray());
 
         await viewModel.RefreshAsync();
@@ -122,18 +123,19 @@ public class RecentHistoryViewModelTests
         static RecentListen[] FullPage(string title) => Enumerable.Range(0, 100)
             .Select(index => new RecentListen(index, Guid.NewGuid(), title, "Artist", DateTime.UtcNow)).ToArray();
         var library = Substitute.For<ILibraryReader>();
-        library.GetRecentListensAsync("", 0, 100, Arg.Any<CancellationToken>()).Returns(FullPage("Original"));
-        library.GetRecentListensAsync("New", 0, 100, Arg.Any<CancellationToken>()).Returns(FullPage("New"));
-        library.GetRecentListensAsync("New", 100, 100, Arg.Any<CancellationToken>())
+        var listening = Substitute.For<IListeningService>();
+        listening.GetRecentListensAsync("", 0, 100, Arg.Any<CancellationToken>()).Returns(FullPage("Original"));
+        listening.GetRecentListensAsync("New", 0, 100, Arg.Any<CancellationToken>()).Returns(FullPage("New"));
+        listening.GetRecentListensAsync("New", 100, 100, Arg.Any<CancellationToken>())
             .Returns([new RecentListen(100, Guid.NewGuid(), "New page", "Artist", DateTime.UtcNow)]);
         var oldPage = new TaskCompletionSource<IReadOnlyList<RecentListen>>(TaskCreationOptions.RunContinuationsAsynchronously);
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        library.GetRecentListensAsync("", 100, 100, Arg.Any<CancellationToken>()).Returns(_ =>
+        listening.GetRecentListensAsync("", 100, 100, Arg.Any<CancellationToken>()).Returns(_ =>
         {
             entered.TrySetResult();
             return oldPage.Task;
         });
-        using var viewModel = new RecentHistoryViewModel(library, new ImmediateDispatcher(), NullLogger.Instance);
+        using var viewModel = new RecentHistoryViewModel(library, listening, new ImmediateDispatcher(), NullLogger.Instance);
         viewModel.SetActive(true);
         await viewModel.SearchAsync();
         var entries = (IIncrementalItemSource)viewModel.Entries;
@@ -153,19 +155,20 @@ public class RecentHistoryViewModelTests
     public async Task IncrementalHistory_CoalescesRequestsAndPreservesDateGroupsAcrossPages()
     {
         var library = Substitute.For<ILibraryReader>();
+        var listening = Substitute.For<IListeningService>();
         var today = DateTime.Today.AddHours(12).ToUniversalTime();
         var firstPage = Enumerable.Range(0, 100)
             .Select(index => new RecentListen(index, Guid.NewGuid(), $"Song {index}", "Artist", today.AddMinutes(-index)))
             .ToArray();
-        library.GetRecentListensAsync("", 0, 100, Arg.Any<CancellationToken>()).Returns(firstPage);
+        listening.GetRecentListensAsync("", 0, 100, Arg.Any<CancellationToken>()).Returns(firstPage);
         var nextPage = new TaskCompletionSource<IReadOnlyList<RecentListen>>(TaskCreationOptions.RunContinuationsAsynchronously);
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        library.GetRecentListensAsync("", 100, 100, Arg.Any<CancellationToken>()).Returns(_ =>
+        listening.GetRecentListensAsync("", 100, 100, Arg.Any<CancellationToken>()).Returns(_ =>
         {
             entered.TrySetResult();
             return nextPage.Task;
         });
-        using var viewModel = new RecentHistoryViewModel(library, new ImmediateDispatcher(), NullLogger.Instance);
+        using var viewModel = new RecentHistoryViewModel(library, listening, new ImmediateDispatcher(), NullLogger.Instance);
         viewModel.SetActive(true);
         await viewModel.SearchAsync();
         var entries = (IIncrementalItemSource)viewModel.Entries;
@@ -183,21 +186,22 @@ public class RecentHistoryViewModelTests
         viewModel.Entries.OfType<RecentListenDateHeader>().Select(header => header.Title)
             .Should().Equal(Strings.Listening_Today, Strings.Listening_Yesterday);
         entries.HasMoreItems.Should().BeFalse();
-        await library.Received(1).GetRecentListensAsync("", 100, 100, Arg.Any<CancellationToken>());
+        await listening.Received(1).GetRecentListensAsync("", 100, 100, Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task SearchSupersedesPendingLoadAndHistoryLoadsOnlyWhileVisible()
     {
         var library = Substitute.For<ILibraryReader>();
+        var listening = Substitute.For<IListeningService>();
         var old = new TaskCompletionSource<IReadOnlyList<RecentListen>>(TaskCreationOptions.RunContinuationsAsynchronously);
         var oldEntered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var latest = new RecentListen(2, Guid.NewGuid(), "Found", "Artist", DateTime.UtcNow);
-        library.GetRecentListensAsync("", 0, 100, Arg.Any<CancellationToken>()).Returns(_ => { oldEntered.TrySetResult(); return old.Task; });
-        library.GetRecentListensAsync("Found", 0, 100, Arg.Any<CancellationToken>()).Returns(new[] { latest });
-        using var viewModel = new RecentHistoryViewModel(library, new ImmediateDispatcher(), NullLogger.Instance);
+        listening.GetRecentListensAsync("", 0, 100, Arg.Any<CancellationToken>()).Returns(_ => { oldEntered.TrySetResult(); return old.Task; });
+        listening.GetRecentListensAsync("Found", 0, 100, Arg.Any<CancellationToken>()).Returns(new[] { latest });
+        using var viewModel = new RecentHistoryViewModel(library, listening, new ImmediateDispatcher(), NullLogger.Instance);
         await viewModel.SearchAsync();
-        await library.DidNotReceive().GetRecentListensAsync(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
+        await listening.DidNotReceive().GetRecentListensAsync(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
 
         viewModel.SetActive(true);
         await oldEntered.Task.WaitAsync(TimeSpan.FromSeconds(5));
@@ -208,6 +212,6 @@ public class RecentHistoryViewModelTests
 
         viewModel.Entries.OfType<RecentListenEntry>().Should().ContainSingle().Which.Listen.Should().Be(latest);
         await viewModel.SearchAsync();
-        await library.Received(1).GetRecentListensAsync("Found", 0, 100, Arg.Any<CancellationToken>());
+        await listening.Received(1).GetRecentListensAsync("Found", 0, 100, Arg.Any<CancellationToken>());
     }
 }

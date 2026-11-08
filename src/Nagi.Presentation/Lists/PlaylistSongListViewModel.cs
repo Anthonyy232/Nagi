@@ -89,7 +89,7 @@ public partial class PlaylistSongListViewModel : DetailSongListViewModelBase<Pla
         PageTitle = parameter.Title;
         _currentPlaylistId = parameter.PlaylistId;
         CoverImageUri = parameter.CoverImageUri;
-        var playlist = await _libraryReader.GetPlaylistByIdAsync(parameter.PlaylistId);
+        var playlist = await _playlistService.GetPlaylistByIdAsync(parameter.PlaylistId);
         if (token.IsCancellationRequested) return true;
         // A server's playlist follows the server at each sync, so it can't be changed here.
         CanEditPlaylist = playlist?.IsFromServer != true;

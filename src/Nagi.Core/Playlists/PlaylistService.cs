@@ -8,9 +8,6 @@ using Nagi.Core.Platform;
 
 namespace Nagi.Core.Playlists;
 
-/// <summary>
-///     Creates, edits, and reorders user playlists. Playlist reads live in <see cref="LibraryReader" />.
-/// </summary>
 public class PlaylistService : IPlaylistService
 {
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
@@ -34,6 +31,48 @@ public class PlaylistService : IPlaylistService
     public event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;
 
     public event EventHandler? PlaylistsChanged;
+
+    public async Task<IEnumerable<Playlist>> GetAllPlaylistsAsync(CancellationToken token = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
+        return await context.Playlists.AsNoTracking()
+            .Include(p => p.PlaylistSongs)
+            .Include(p => p.ServerFolder)
+            .OrderBy(p => p.Name).ThenBy(p => p.Id)
+            .ToListAsync(token).ConfigureAwait(false);
+    }
+
+    public async Task<Playlist?> GetPlaylistByIdAsync(Guid playlistId)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await context.Playlists.AsNoTracking().FirstOrDefaultAsync(p => p.Id == playlistId).ConfigureAwait(false);
+    }
+
+    public async Task<IEnumerable<Song>> GetSongsInPlaylistOrderedAsync(Guid playlistId, CancellationToken token = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
+        var query = context.PlaylistSongs.AsNoTracking()
+            .Where(ps => ps.PlaylistId == playlistId)
+            .OrderBy(ps => ps.Order).ThenBy(ps => ps.SongId)
+            .Select(ps => ps.Song!);
+
+        return await SongQuery.ExcludeHeavyFields(context, query)
+            .AsSplitQuery()
+            .ToListAsync(token).ConfigureAwait(false);
+    }
+
+    public async Task<int> GetPlaylistCountAsync()
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await context.Playlists.CountAsync().ConfigureAwait(false);
+    }
+
+    public async Task<Guid?> GetRandomPlaylistIdAsync()
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await context.Playlists.OrderBy(_ => EF.Functions.Random()).Select(p => (Guid?)p.Id)
+            .FirstOrDefaultAsync().ConfigureAwait(false);
+    }
 
     // Removing songs from the library removes them from their playlists, and removing a server removes its playlists.
     private void OnLibraryChanged(object? sender, LibraryChange change)

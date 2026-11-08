@@ -16,16 +16,19 @@ namespace Nagi.Presentation.Player;
 public partial class RecentHistoryViewModel : SearchableViewModelBase, IDisposable
 {
     private readonly ILibraryReader _library;
+    private readonly IListeningService _listening;
     private readonly HistoryEntries _entries;
     private CancellationTokenSource? _loadCts;
     private bool _isDisposed;
     private bool _isActive;
     public ObservableRangeCollection<object> Entries => _entries;
 
-    public RecentHistoryViewModel(ILibraryReader library, IDispatcherService dispatcher, ILogger logger)
+    public RecentHistoryViewModel(ILibraryReader library, IListeningService listening, IDispatcherService dispatcher,
+        ILogger logger)
         : base(dispatcher, logger)
     {
         _library = library;
+        _listening = listening;
         _entries = new HistoryEntries(this);
     }
 
@@ -96,7 +99,7 @@ public partial class RecentHistoryViewModel : SearchableViewModelBase, IDisposab
         {
             var (listens, songs) = await Task.Run(async () =>
             {
-                var listens = await _library.GetRecentListensAsync(searchTerm, offset, RecentListen.MaxPageSize, loadToken);
+                var listens = await _listening.GetRecentListensAsync(searchTerm, offset, RecentListen.MaxPageSize, loadToken);
                 if (preserveRows) listens = listens.TakeWhile(listen => listen.Id != newestListenId).ToArray();
                 var songs = await _library.GetQueueSongsAsync(listens.Select(listen => listen.SongId), loadToken);
                 return (listens, songs);
