@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Không có bài hát nào đang phát</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Phát</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Tạm dừng</value>
   </data>
@@ -418,9 +415,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Bạn có chắc chắn muốn ngắt kết nối tài khoản Last.fm của mình không? Lịch sử scrobbling của bạn sẽ được giữ lại trên Last.fm, nhưng Nagi sẽ không còn có thể scrobble nữa.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Ngắt kết nối</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Xuất thành công</value>
   </data>
@@ -601,9 +595,6 @@ Các tệp không thể nhập: {0}.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Xóa</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Hủy</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tìm kiếm trong thư mục</value>
@@ -810,9 +801,6 @@ Bạn có muốn tiếp tục không?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Lưu</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Hủy</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Trước</value>
   </data>
@@ -878,9 +866,6 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Tổng thời lượng</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Phát</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Di chuyển lên</value>
@@ -1476,10 +1461,7 @@ Bạn có muốn tiếp tục không?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Hoàn tất</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Hủy</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Ngắt kết nối</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -1989,7 +1971,7 @@ Bạn có muốn tiếp tục không?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Bỏ qua</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Không thể hoàn thành hành động này. Vui lòng thử lại.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">

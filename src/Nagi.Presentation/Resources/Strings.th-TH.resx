@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>ไม่มีเพลงกำลังเล่น</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>เล่น</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>หยุดชั่วคราว</value>
   </data>
@@ -418,9 +415,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการเชื่อมต่อบัญชี Last.fm ของคุณ? ประวัติการสกรอบเบิลของคุณจะยังคงอยู่ใน Last.fm แต่ Nagi จะไม่สามารถสกรอบเบิลได้อีกต่อไป</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>ยกเลิกการเชื่อมต่อ</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>ส่งออกสำเร็จ</value>
   </data>
@@ -601,9 +595,6 @@
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>ลบ</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>ยกเลิก</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ค้นหาในโฟลเดอร์</value>
@@ -810,9 +801,6 @@
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>บันทึก</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>ยกเลิก</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>ก่อนหน้า</value>
   </data>
@@ -878,9 +866,6 @@
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>ความยาวรวม</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>เล่น</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>ย้ายขึ้น</value>
@@ -1476,10 +1461,7 @@
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>เสร็จสิ้น</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>ยกเลิก</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>ยกเลิกการเชื่อมต่อ</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -1989,7 +1971,7 @@
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>ซ่อน</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>ไม่สามารถดำเนินการนี้ได้ กรุณาลองใหม่อีกครั้ง</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">

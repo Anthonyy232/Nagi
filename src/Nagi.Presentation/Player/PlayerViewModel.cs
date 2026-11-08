@@ -170,7 +170,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     public AppIcon PlayPauseIcon => IsPlaying ? AppIcon.Pause : AppIcon.Play;
     public string PlayPauseButtonToolTip => IsOpening ? Strings.Status_Loading
         : IsPlaying ? Strings.Tooltip_Pause
-        : Strings.Tooltip_Play;
+        : Strings.Generic_Play;
     public string ShuffleButtonToolTip => IsShuffleEnabled
         ? ShuffleModeText.GetName(_playbackService.CurrentShuffleMode)
         : Strings.Tooltip_ShuffleOff;

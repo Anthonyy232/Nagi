@@ -68,7 +68,7 @@
                     <TextBlock Text="{x:Bind ViewModel.Suggestion.ArtistName, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                     <TextBlock Text="{x:Bind ViewModel.SuggestionReason, Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                 </StackPanel>
-                <Button Grid.Column="1" VerticalAlignment="Center" Content="{x:Bind resources:Strings.QueuePanel_Play}" Command="{x:Bind ViewModel.PlaySuggestionCommand}" />
+                <Button Grid.Column="1" VerticalAlignment="Center" Content="{x:Bind resources:Strings.Generic_Play}" Command="{x:Bind ViewModel.PlaySuggestionCommand}" />
                 <Button Grid.Column="2" VerticalAlignment="Top" Command="{x:Bind ViewModel.DismissSuggestionCommand}" ToolTipService.ToolTip="{x:Bind resources:Strings.Listening_Dismiss}" AutomationProperties.Name="{x:Bind resources:Strings.Listening_Dismiss}"><FontIcon FontSize="12" Glyph="&#xE711;" /></Button>
             </Grid>
         </Border>

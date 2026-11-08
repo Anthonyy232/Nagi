@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Asnjë këngë nuk po luhet</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Luaj</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pauzë</value>
   </data>
@@ -418,9 +415,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Jeni të sigurt që dëshironi të shkëputni llogarinë tuaj Last.fm? Historia juaj e scrobbling-ut do të ruhet në Last.fm, por Nagi nuk do të jetë më në gjendje të scrobble-ojë.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Shkëput</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Eksportimi i suksesshëm</value>
   </data>
@@ -601,9 +595,6 @@ Skedarët që nuk u mundësuan të importohen: {0}.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Hiq</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Anulo</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Kërko në dosje</value>
@@ -810,9 +801,6 @@ Dëshironi të vazhdoni?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Ruaj</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Anulo</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>E mëparshmja</value>
   </data>
@@ -878,9 +866,6 @@ Dëshironi të vazhdoni?</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Kohëzgjatja totale</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Luaj</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Lëviz lart</value>
@@ -1476,10 +1461,7 @@ Dëshironi të vazhdoni?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Përfundo</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Anulo</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Shkëput</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -1989,7 +1971,7 @@ Dëshironi të vazhdoni?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Largo</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Nuk u mundësua kryerja e këtij veprimi. Ju lutemi provoni përsëri.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">

@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Nicio piesă în redare</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Redă</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pauză</value>
   </data>
@@ -418,9 +415,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Sigur vrei să îți deconectezi contul Last.fm? Istoricul tău de scrobbling va fi păstrat pe Last.fm, dar Nagi nu va mai putea scrobbla.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Deconectare</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Export reușit</value>
   </data>
@@ -601,9 +595,6 @@ Fișiere care nu au putut fi importate: {0}.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Elimină</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Anulează</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Caută în dosar</value>
@@ -810,9 +801,6 @@ Vrei să continui?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Salvează</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Anulează</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Anterior</value>
   </data>
@@ -878,9 +866,6 @@ Vrei să continui?</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Durată totală</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Redă</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Mută mai sus</value>
@@ -1476,11 +1461,8 @@ Vrei să continui?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Finalizează</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Anulează</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
-    <value>Deconectează</value>
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
+    <value>Deconectare</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
     <value>Activează scrobbling-ul</value>
@@ -1989,7 +1971,7 @@ Vrei să continui?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Respinge</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Acțiunea nu a putut fi finalizată. Încearcă din nou.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">

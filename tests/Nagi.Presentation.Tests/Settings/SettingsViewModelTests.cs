@@ -318,7 +318,7 @@ public class SettingsViewModelTests : IDisposable
 
         _viewModel.Scrobbling.IsLastFmConnected.Should().BeFalse();
         _viewModel.Scrobbling.IsLastFmScrobblingEnabled.Should().BeFalse();
-        await _ui.Received(1).ShowMessageDialogAsync(Arg.Any<string>(), Strings.MusicServer_Error_SignInNotSaved);
+        await _ui.Received(1).ShowMessageDialogAsync(Arg.Any<string>(), Strings.Generic_SignInNotSaved);
     }
 
     [Fact]
@@ -349,7 +349,7 @@ public class SettingsViewModelTests : IDisposable
         await _viewModel.Scrobbling.TestListenBrainzConnectionCommand.ExecuteAsync(null);
 
         _viewModel.Scrobbling.ListenBrainzIsConnected.Should().BeFalse();
-        _viewModel.Scrobbling.ListenBrainzConnectionStatus.Should().Contain(Strings.MusicServer_Error_SignInNotSaved);
+        _viewModel.Scrobbling.ListenBrainzConnectionStatus.Should().Contain(Strings.Generic_SignInNotSaved);
         _settings.Get(CoreSettings.ListenBrainzEnabledSinceUtc).Should().BeNull();
     }
 

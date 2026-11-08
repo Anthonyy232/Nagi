@@ -41,7 +41,7 @@ public static class MusicServerErrors
             // Only signing in again checks that an API key is the same account's.
             MusicServerError.DifferentAccount when server is not null =>
                 ResourceFormatter.Format(Strings.MusicServer_Error_DifferentAccount_Format, server.UserName),
-            MusicServerError.SignInNotSaved => Strings.MusicServer_Error_SignInNotSaved,
+            MusicServerError.SignInNotSaved => Strings.Generic_SignInNotSaved,
             _ => Strings.MusicServer_Error_ServerError
         };
     }

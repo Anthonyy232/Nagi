@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Aucun morceau en cours de lecture</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Lire</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pause</value>
   </data>
@@ -418,9 +415,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Êtes-vous sûr de vouloir déconnecter votre compte Last.fm ? Votre historique de scrobbling sera préservé sur Last.fm, mais Nagi ne pourra plus scrobbler.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Déconnecter</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Exportation réussie</value>
   </data>
@@ -601,9 +595,6 @@ Fichiers qui n'ont pas pu être importés : {0}.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Retirer</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Annuler</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Rechercher dans le dossier</value>
@@ -810,9 +801,6 @@ Voulez-vous continuer ?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Enregistrer</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Annuler</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Précédent</value>
   </data>
@@ -878,9 +866,6 @@ Voulez-vous continuer ?</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Durée totale</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Lire</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Déplacer vers le haut</value>
@@ -1476,10 +1461,7 @@ Voulez-vous continuer ?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Terminer</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Annuler</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Déconnecter</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -1989,7 +1971,7 @@ Voulez-vous continuer ?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Ignorer</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Impossible d'effectuer cette action. Veuillez réessayer.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">

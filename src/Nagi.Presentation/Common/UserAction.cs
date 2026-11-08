@@ -20,7 +20,7 @@ internal static class UserAction
         {
             logger.LogError(ex, "Action failed");
             if (isClosed?.Invoke() != true)
-                await uiService.ShowMessageDialogAsync(Strings.Generic_Error, failureMessage ?? Strings.Listening_ActionError);
+                await uiService.ShowMessageDialogAsync(Strings.Generic_Error, failureMessage ?? Strings.Generic_ActionError);
         }
     }
 }

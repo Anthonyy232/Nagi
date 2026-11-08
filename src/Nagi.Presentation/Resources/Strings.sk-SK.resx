@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Nehrá žiadna skladba</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Prehrať</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pozastaviť</value>
   </data>
@@ -418,9 +415,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Naozaj chcete odpojiť váš účet Last.fm? Vaša história scrobbleovania sa zachová na Last.fm, ale Nagi už nebude môcť scrobbleovať.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Odpojiť</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Export úspešný</value>
   </data>
@@ -601,9 +595,6 @@ Súbory, ktoré sa nepodarilo importovať: {0}.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Odstrániť</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Zrušiť</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hľadať v priečinku</value>
@@ -810,9 +801,6 @@ Chcete pokračovať?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Uložiť</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Zrušiť</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Predchádzajúce</value>
   </data>
@@ -878,9 +866,6 @@ Chcete pokračovať?</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Celkové trvanie</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Prehrať</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Posunúť nahor</value>
@@ -1476,10 +1461,7 @@ Chcete pokračovať?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Dokončiť</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Zrušiť</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Odpojiť</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -1989,7 +1971,7 @@ Chcete pokračovať?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Zrušiť</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Túto akciu sa nepodarilo dokončiť. Skúste to znova.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">

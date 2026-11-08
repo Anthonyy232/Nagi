@@ -57,7 +57,7 @@ public partial class UIService
         {
             Title = Strings.Listening_PlayFor,
             Content = content,
-            PrimaryButtonText = Strings.QueuePanel_Play,
+            PrimaryButtonText = Strings.Generic_Play,
             CloseButtonText = Strings.Generic_Cancel,
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = root

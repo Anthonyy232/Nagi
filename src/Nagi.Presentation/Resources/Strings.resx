@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>No song playing</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Play</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pause</value>
   </data>
@@ -425,9 +422,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Are you sure you want to disconnect your Last.fm account? Your scrobbling history will be preserved on Last.fm, but Nagi will no longer be able to scrobble.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Disconnect</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Export Successful</value>
   </data>
@@ -608,9 +602,6 @@ Files that could not be imported: {0}.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Remove</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Cancel</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Search in folder</value>
@@ -817,9 +808,6 @@ Do you want to continue?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Save</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Previous</value>
   </data>
@@ -880,7 +868,6 @@ Do you want to continue?</value>
   <data name="QueuePanel_ShowPosition" xml:space="preserve"><value>Queue Position</value></data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve"><value>Genre</value></data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve"><value>Total Duration</value></data>
-  <data name="QueuePanel_Play" xml:space="preserve"><value>Play</value></data>
   <data name="QueuePanel_MoveUp" xml:space="preserve"><value>Move Up</value></data>
   <data name="QueuePanel_MoveDown" xml:space="preserve"><value>Move Down</value></data>
   <data name="QueuePanel_Remove" xml:space="preserve"><value>Remove from Queue</value></data>
@@ -1472,10 +1459,7 @@ Do you want to continue?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Complete</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Disconnect</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -1985,7 +1969,7 @@ Do you want to continue?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Dismiss</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Could not complete this action. Please try again.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2207,7 +2191,7 @@ Do you want to continue?</value>
   <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
     <value>This server is already in your library.</value>
   </data>
-  <data name="MusicServer_Error_SignInNotSaved" xml:space="preserve">
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
     <value>Couldn't save the sign-in on this PC.</value>
   </data>
   <data name="MusicServer_Error_ServerError" xml:space="preserve">

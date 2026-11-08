@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Níl aon amhrán á sheinm</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Seinn</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Sos</value>
   </data>
@@ -418,9 +415,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>An bhfuil tú cinnte gur mhaith leat do chuntas Last.fm a dhínascadh? Caomhnófar do stair scrobbláil ar Last.fm, ach ní bheidh Nagi in ann scrobbláil a dhéanamh a thuilleadh.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Dínasc</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Easpórtáil Rathúil</value>
   </data>
@@ -601,9 +595,6 @@ Comhaid nárbh fhéidir a iompórtáil: {0}.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Bain</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Cealaigh</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cuardaigh san fhillteán</value>
@@ -810,9 +801,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Sábháil</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Cealaigh</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Roimhe Seo</value>
   </data>
@@ -878,9 +866,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Achar Iomlán</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Seinn</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Bog Suas</value>
@@ -1476,11 +1461,8 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Comhlánaigh</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Cealaigh</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
-    <value>Dícheangail</value>
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
+    <value>Dínasc</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
     <value>Cumasaigh Scrobbláil</value>
@@ -1989,7 +1971,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Díbh</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Níorbh fhéidir an gníomh seo a chur i gcrích. Bain triail as arís le do thoil.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">

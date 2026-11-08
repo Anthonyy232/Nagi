@@ -189,7 +189,7 @@ public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderVie
             ResourceFormatter.Format(folderToDelete.IsServer ? Strings.FolderPage_RemoveServerDialog_Format : Strings.FolderPage_DeleteDialog_Format,
                 folderToDelete.Name),
             Strings.FolderPage_DeleteDialog_PrimaryButton,
-            Strings.FolderPage_DeleteDialog_CloseButton);
+            Strings.Generic_Cancel);
         if (!confirmed) return;
 
         string? error = null;

@@ -19,12 +19,12 @@
                 Style="{StaticResource AccentButtonStyle}" />
             <Button
                 Command="{x:Bind ViewModel.CancelLastFmAuthCommand, Mode=OneWay}"
-                Content="{x:Bind resources:Strings.SettingsPage_LastFm_Cancel_Content, Mode=OneTime}" />
+                Content="{x:Bind resources:Strings.Generic_Cancel, Mode=OneTime}" />
         </StackPanel>
 
         <Button
             Command="{x:Bind ViewModel.LastFmDisconnectCommand, Mode=OneWay}"
-            Content="{x:Bind resources:Strings.SettingsPage_LastFm_Disconnect_Content, Mode=OneTime}"
+            Content="{x:Bind resources:Strings.SettingsPage_LastFm_Disconnect_Button, Mode=OneTime}"
             Visibility="{x:Bind ViewModel.IsLastFmConnected, Mode=OneWay}" />
     </StackPanel>
 </UserControl>
