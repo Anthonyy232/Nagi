@@ -217,11 +217,12 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     {
         _currentContext = replacement.Context;
         if (StopMode is PlaybackStopMode.AfterTrack or PlaybackStopMode.EndOfQueue) ScheduleStop(PlaybackStopMode.Off);
+        var shuffleChanged = replacement.Queue.IsShuffled != IsShuffleEnabled || replacement.Mode != CurrentShuffleMode;
         if (replacement.Queue.IsShuffled != IsShuffleEnabled)
             _settingsService.Set(CoreSettings.IsShuffleEnabled, replacement.Queue.IsShuffled);
         _queue = replacement.Queue;
         CurrentShuffleMode = replacement.Mode;
-        ShuffleModeChanged?.Invoke();
+        if (shuffleChanged) ShuffleModeChanged?.Invoke();
         CommitQueueChanges();
     }
 
