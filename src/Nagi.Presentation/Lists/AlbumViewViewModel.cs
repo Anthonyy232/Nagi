@@ -65,19 +65,7 @@ public partial class AlbumViewViewModel : DetailSongListViewModelBase<AlbumViewN
 
     [ObservableProperty] public partial bool IsGroupedByDisc { get; set; }
 
-    protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
-        SongSortOrder sortOrder, CancellationToken cancellationToken = default)
-    {
-        if (_albumId == Guid.Empty) return Task.FromResult(new PagedResult<Song>());
-        return _libraryReader.GetSongsAsync(new SongScope.Album(_albumId), SearchTerm, sortOrder, pageNumber, pageSize,
-            cancellationToken);
-    }
-
-    protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
-    {
-        if (_albumId == Guid.Empty) return Task.FromResult(new List<Guid>());
-        return _libraryReader.GetSongIdsAsync(new SongScope.Album(_albumId), SearchTerm, sortOrder, token);
-    }
+    protected override SongScope? Scope => _albumId != Guid.Empty ? new SongScope.Album(_albumId) : null;
 
     protected override string NotFoundTitle => Strings.AlbumView_AlbumNotFound;
 
@@ -205,8 +193,7 @@ public partial class AlbumViewViewModel : DetailSongListViewModelBase<AlbumViewN
 
     public override bool ShowsGoToAlbum => false;
 
-    protected override PlaybackContext GetPlaybackContext() =>
-        _albumId != Guid.Empty ? new(PlaybackContextType.Album, _albumId) : base.GetPlaybackContext();
+
 
     private void CancelDurationFetch()
     {

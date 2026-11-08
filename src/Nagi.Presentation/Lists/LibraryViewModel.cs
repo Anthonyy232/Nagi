@@ -34,17 +34,7 @@ public partial class LibraryViewModel : SongListViewModelBase
         PageTitle = Strings.LibraryPage_Title;
     }
 
-    protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
-        SongSortOrder sortOrder, CancellationToken cancellationToken = default) =>
-        _libraryReader.GetSongsAsync(Scope, SearchTerm, sortOrder, pageNumber, pageSize, cancellationToken);
-
-    protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default) =>
-        _libraryReader.GetSongIdsAsync(Scope, SearchTerm, sortOrder, token);
-
-    private SongScope Scope => ShowFavoritesOnly ? SongScope.Favorites : SongScope.Library;
-
-    protected override PlaybackContext GetPlaybackContext() =>
-        IsSearchActive ? new(PlaybackContextType.Search, null) : new(PlaybackContextType.Library, null);
+    protected override SongScope Scope => ShowFavoritesOnly ? SongScope.Favorites : SongScope.Library;
 
     public bool HasInitialized { get; private set; }
 

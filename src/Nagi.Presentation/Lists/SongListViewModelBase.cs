@@ -324,10 +324,19 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
             ? ResourceFormatter.Format(Strings.SongList_TotalItems_Format_Singular, result.TotalCount)
             : ResourceFormatter.Format(Strings.SongList_TotalItems_Format_Plural, result.TotalCount);
 
-    protected abstract Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder,
-        CancellationToken cancellationToken = default);
+    /// <summary>The songs this list shows, or <c>null</c> while nothing is open.</summary>
+    protected virtual SongScope? Scope => null;
 
-    protected abstract Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default);
+    protected virtual Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder,
+        CancellationToken cancellationToken = default) =>
+        Scope is { } scope
+            ? _libraryReader.GetSongsAsync(scope, SearchTerm, sortOrder, pageNumber, pageSize, cancellationToken)
+            : Task.FromResult(new PagedResult<Song>());
+
+    protected virtual Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default) =>
+        Scope is { } scope
+            ? _libraryReader.GetSongIdsAsync(scope, SearchTerm, sortOrder, token)
+            : Task.FromResult(new List<Guid>());
 
     protected override void ApplyItemsToCollection(PagedResult<Song> result, bool append)
     {
@@ -366,7 +375,18 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         UpdateSelectionStatus();
     }
 
-    protected virtual PlaybackContext GetPlaybackContext() => new(PlaybackContextType.Library, null);
+    protected virtual PlaybackContext GetPlaybackContext() => Scope switch
+    {
+        SongScope.Album album => new(PlaybackContextType.Album, album.AlbumId),
+        SongScope.Artist artist => new(PlaybackContextType.Artist, artist.ArtistId),
+        SongScope.Genre genre => new(PlaybackContextType.Genre, genre.GenreId),
+        SongScope.Playlist playlist => new(PlaybackContextType.Playlist, playlist.PlaylistId),
+        SongScope.Folder folder => new(PlaybackContextType.Folder, folder.RootFolderId),
+        SongScope.Directory directory => new(PlaybackContextType.Folder, directory.RootFolderId),
+        SongScope.DirectoryTree tree => new(PlaybackContextType.Folder, tree.RootFolderId),
+        SongScope.LibraryScope or SongScope.FavoritesScope when IsSearchActive => new(PlaybackContextType.Search, null),
+        _ => new(PlaybackContextType.Library, null)
+    };
 
     /// <summary>
     ///     Runs a user action, logging a failure and telling the user instead of letting it reach the view.

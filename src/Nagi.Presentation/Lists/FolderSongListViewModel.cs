@@ -133,17 +133,10 @@ public partial class FolderSongListViewModel : DetailSongListViewModelBase<Folde
     // Play all covers subfolders too, so a folder that holds only subfolders still has something to play.
     protected override bool HasPlayableSongs => TotalItemCount > 0;
 
-    protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
-    {
-        if (!_rootFolderId.HasValue || string.IsNullOrEmpty(_currentDirectoryPath))
-            return Task.FromResult(new List<Guid>());
-
-        // Searching plays what the page shows: the matching songs of this folder. Otherwise the folder plays with its subfolders.
-        SongScope scope = IsSearchActive
-            ? new SongScope.Directory(_rootFolderId.Value, _currentDirectoryPath)
-            : new SongScope.DirectoryTree(_rootFolderId.Value, _currentDirectoryPath);
-        return _libraryReader.GetSongIdsAsync(scope, SearchTerm, sortOrder, token);
-    }
+    // Searching plays what the page shows: the matching songs of this folder. Otherwise the folder plays with its subfolders.
+    protected override SongScope? Scope => CurrentDirectory is { } directory && !IsSearchActive
+        ? new SongScope.DirectoryTree(directory.RootFolderId, directory.Path)
+        : CurrentDirectory;
 
 
     [RelayCommand]
@@ -208,8 +201,6 @@ public partial class FolderSongListViewModel : DetailSongListViewModelBase<Folde
         Breadcrumbs[^1].IsLast = true;
     }
 
-    protected override PlaybackContext GetPlaybackContext() =>
-        _rootFolderId.HasValue ? new(PlaybackContextType.Folder, _rootFolderId.Value) : base.GetPlaybackContext();
 
     [RelayCommand]
     private Task PlaySubfolderAsync(Folder? folder)

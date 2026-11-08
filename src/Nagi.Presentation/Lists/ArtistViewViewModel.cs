@@ -86,21 +86,7 @@ public partial class ArtistViewViewModel : DetailSongListViewModelBase<ArtistVie
     public ObservableRangeCollection<ArtistAlbumViewModelItem> Albums { get; } = new();
     public bool HasAlbums => Albums.Any();
 
-    protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
-        SongSortOrder sortOrder, CancellationToken cancellationToken = default)
-    {
-        if (_artistId == Guid.Empty) return Task.FromResult(new PagedResult<Song>());
-
-        return _libraryReader.GetSongsAsync(new SongScope.Artist(_artistId), SearchTerm, sortOrder, pageNumber, pageSize,
-            cancellationToken);
-    }
-
-    protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
-    {
-        if (_artistId == Guid.Empty) return Task.FromResult(new List<Guid>());
-
-        return _libraryReader.GetSongIdsAsync(new SongScope.Artist(_artistId), SearchTerm, sortOrder, token);
-    }
+    protected override SongScope? Scope => _artistId != Guid.Empty ? new SongScope.Artist(_artistId) : null;
 
     // The details can wait on an online lookup, so the songs don't wait for them.
     protected override bool LoadsSongsWithDetails => true;
@@ -167,8 +153,6 @@ public partial class ArtistViewViewModel : DetailSongListViewModelBase<ArtistVie
 
     public override bool ShowsGoToArtist => false;
 
-    protected override PlaybackContext GetPlaybackContext() =>
-        _artistId != Guid.Empty ? new(PlaybackContextType.Artist, _artistId) : base.GetPlaybackContext();
 
     public override void Dispose()
     {
