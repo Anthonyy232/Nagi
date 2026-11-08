@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using Nagi.Core.Playback;
 using Nagi.Presentation.Common;
 
@@ -6,7 +7,7 @@ namespace Nagi.Presentation.Player;
 /// <summary>
 ///     The "Play for" dialog: how long to play and which kind of mix.
 /// </summary>
-public sealed class PlayForDialogViewModel
+public sealed partial class PlayForDialogViewModel : ObservableObject
 {
     public PlayForDialogViewModel()
     {
@@ -16,11 +17,17 @@ public sealed class PlayForDialogViewModel
     public IReadOnlyList<SettingOption<ShuffleMode>> ModeOptions { get; } =
         SettingOption<ShuffleMode>.For(Enum.GetValues<ShuffleMode>(), ShuffleModeText.GetName);
 
-    public double Minutes { get; set; } = ListeningMinutes.Default;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanAccept))]
+    public partial double Minutes { get; set; } = ListeningMinutes.Default;
 
-    public SettingOption<ShuffleMode> SelectedMode { get; set; }
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowsAvoidRecentDays), nameof(ModeDescription), nameof(CanAccept))]
+    public partial SettingOption<ShuffleMode> SelectedMode { get; set; }
 
-    public double AvoidRecentDays { get; set; } = PlaybackLimits.DefaultAvoidRecentDays;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanAccept))]
+    public partial double AvoidRecentDays { get; set; } = PlaybackLimits.DefaultAvoidRecentDays;
 
     /// <summary>Only <see cref="ShuffleMode.MoreVariety" /> lets the user choose how many recent days to avoid.</summary>
     public bool ShowsAvoidRecentDays => SelectedMode.Value == ShuffleMode.MoreVariety;

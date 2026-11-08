@@ -17,8 +17,14 @@ public enum FFmpegSetupStatus
 public partial class FFmpegSetupViewModel(Func<Task<bool>> isInstalled) : ObservableObject
 {
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(StatusText))]
+    [NotifyPropertyChangedFor(nameof(StatusText), nameof(IsChecking), nameof(IsDetected), nameof(IsMissing))]
     public partial FFmpegSetupStatus Status { get; private set; }
+
+    public bool IsChecking => Status == FFmpegSetupStatus.Checking;
+
+    public bool IsDetected => Status == FFmpegSetupStatus.Detected;
+
+    public bool IsMissing => Status is FFmpegSetupStatus.NotDetected or FFmpegSetupStatus.StillNotDetected;
 
     public string StatusText => Status switch
     {

@@ -213,44 +213,8 @@ public partial class UIService : IUIService
     {
         if (!TryGetXamlRoot(out var xamlRoot)) return false;
 
-        var viewModel = new FFmpegSetupViewModel(checkAction);
-        var statusBlock = new TextBlock { TextWrapping = TextWrapping.Wrap };
-        void ShowStatus()
-        {
-            statusBlock.Text = viewModel.StatusText;
-            statusBlock.Style = (Style)Application.Current.Resources[viewModel.Status switch
-            {
-                FFmpegSetupStatus.Checking => "FFmpegStatusCheckingTextStyle",
-                FFmpegSetupStatus.Detected => "FFmpegStatusDetectedTextStyle",
-                _ => "FFmpegStatusMissingTextStyle"
-            }];
-        }
-        viewModel.PropertyChanged += (_, _) => ShowStatus();
-        ShowStatus();
-
-        var contentPanel = new StackPanel { Spacing = 12 };
-        contentPanel.Children.Add(new TextBlock { Text = Strings.FFmpeg_SetupInstructions, TextWrapping = TextWrapping.Wrap });
-        contentPanel.Children.Add(statusBlock);
-
-        var dialog = new ContentDialog
-        {
-            Title = Strings.Settings_Dialog_FFmpegNotFound_Title,
-            Content = contentPanel,
-            PrimaryButtonText = Strings.Generic_Recheck,
-            CloseButtonText = Strings.Generic_Cancel,
-            XamlRoot = xamlRoot,
-            DefaultButton = ContentDialogButton.Primary
-        };
-
-        dialog.PrimaryButtonClick += async (_, args) =>
-        {
-            var deferral = args.GetDeferral();
-            args.Cancel = !await viewModel.RecheckAsync();
-            deferral.Complete();
-        };
-
-        var result = await ShowDialogAsync(dialog);
-        return result == ContentDialogResult.Primary;
+        var dialog = new FFmpegSetupDialog(new FFmpegSetupViewModel(checkAction)) { XamlRoot = xamlRoot };
+        return await ShowDialogAsync(dialog) == ContentDialogResult.Primary;
     }
 
     private bool TryGetXamlRoot(out XamlRoot? xamlRoot)

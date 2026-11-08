@@ -1,0 +1,26 @@
+<ContentDialog
+    x:Class="Nagi.WinUI.Dialogs.FFmpegSetupDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:resources="using:Nagi.Presentation.Resources"
+    Title="{x:Bind resources:Strings.Settings_Dialog_FFmpegNotFound_Title}"
+    PrimaryButtonText="{x:Bind resources:Strings.Generic_Recheck}"
+    CloseButtonText="{x:Bind resources:Strings.Generic_Cancel}"
+    DefaultButton="Primary"
+    PrimaryButtonClick="OnRecheckClick"
+    Style="{StaticResource DefaultContentDialogStyle}">
+
+    <StackPanel Spacing="12">
+        <TextBlock Text="{x:Bind resources:Strings.FFmpeg_SetupInstructions}" TextWrapping="Wrap" />
+        <!--  One status line per color, so each follows the dialog's theme.  -->
+        <TextBlock Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" TextWrapping="Wrap"
+                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                   Visibility="{x:Bind ViewModel.IsChecking, Mode=OneWay}" />
+        <TextBlock Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" TextWrapping="Wrap"
+                   Foreground="{ThemeResource SystemFillColorSuccessBrush}"
+                   Visibility="{x:Bind ViewModel.IsDetected, Mode=OneWay}" />
+        <TextBlock Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" TextWrapping="Wrap"
+                   Foreground="{ThemeResource SystemFillColorCautionBrush}"
+                   Visibility="{x:Bind ViewModel.IsMissing, Mode=OneWay}" />
+    </StackPanel>
+</ContentDialog>
