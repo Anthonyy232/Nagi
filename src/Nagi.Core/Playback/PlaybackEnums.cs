@@ -5,12 +5,12 @@ public enum PlaybackEndReason
     Finished = 0,
 
     /// <summary>
-    ///     The user manually skipped to another track or explicitly stopped playback.
+    ///     Another track was chosen before this one ended.
     /// </summary>
     Skipped = 1,
 
     /// <summary>
-    ///     The track was paused and never resumed before being cleared from the queue or the app closing.
+    ///     Playback stopped or the app closed before the track ended.
     /// </summary>
     PausedAndAbandoned = 2
 }
