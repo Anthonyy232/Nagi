@@ -6,6 +6,7 @@ using Nagi.Core.MusicServers;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
+using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
@@ -69,6 +70,28 @@ public partial class MusicPlaybackServiceTests
 
         _service.CurrentTrack.Should().BeNull();
         await _audioPlayer.DidNotReceive().LoadAsync(Arg.Any<Song>());
+    }
+
+    [Fact]
+    public async Task TimedMix_PlaysThroughOnceAndKeepsTheSavedRepeatMode()
+    {
+        var candidates = _testSongs.Select((song, index) => new MixCandidate(song.Id, $"Artist {index}",
+            TimeSpan.FromMinutes(2).Ticks, 0, null)).ToArray();
+        _library.Reader.GetMixCandidatesAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>()).Returns(candidates);
+        await _service.InitializeAsync();
+        await _service.SetRepeatModeAsync(RepeatMode.RepeatOne);
+
+        (await _service.PlayMixAsync(_testSongs.Select(s => s.Id), ShuffleMode.Unheard, TimeSpan.FromMinutes(4))).Should().BeTrue();
+        var order = _service.PlayOrder.ToList();
+        _audioPlayer.PlaybackEnded += Raise.Event<Action>();
+        await _service.FlushPendingFinalizationAsync();
+        _service.CurrentTrack!.Id.Should().Be(order[1]);
+        _audioPlayer.PlaybackEnded += Raise.Event<Action>();
+        await _service.FlushPendingFinalizationAsync();
+
+        _service.CurrentTrack.Should().BeNull();
+        _service.CurrentRepeatMode.Should().Be(RepeatMode.RepeatOne);
+        _settingsService.Get(CoreSettings.RepeatMode).Should().Be(RepeatMode.RepeatOne);
     }
 
     [Theory]

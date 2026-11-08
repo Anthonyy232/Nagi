@@ -41,12 +41,7 @@ public partial class MusicPlaybackService
             if (order.Count == 0) return;
             await PlayInternalAsync(order, 0, true, context ?? _currentContext, request, order, mode);
             request.ThrowIfCancellationRequested();
-            if (duration.HasValue)
-            {
-                await SetRepeatModeAsync(RepeatMode.Off);
-                request.ThrowIfCancellationRequested();
-                ScheduleStop(PlaybackStopMode.EndOfQueue);
-            }
+            if (duration.HasValue) ScheduleStop(PlaybackStopMode.EndOfQueue);
             played = true;
         });
         return played;
@@ -89,11 +84,5 @@ public partial class MusicPlaybackService
             ScheduleStop(PlaybackStopMode.AfterTrack);
         else
             _ = RunInBackground(StopAsync, "Sleep timer stop");
-    }
-
-    private bool ShouldStopAfterTrack()
-    {
-        if (StopMode == PlaybackStopMode.AfterTrack) return true;
-        return StopMode == PlaybackStopMode.EndOfQueue && _queue.CurrentPosition == _queue.Count - 1;
     }
 }

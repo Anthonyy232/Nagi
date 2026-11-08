@@ -303,15 +303,17 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
     private async Task AdvanceAfterTrackEndAsync(CancellationToken request)
     {
-        if (ShouldStopAfterTrack())
+        if (StopMode == PlaybackStopMode.AfterTrack)
         {
             await StopInternalAsync(request);
             return;
         }
 
-        var nextId = CurrentRepeatMode == RepeatMode.RepeatOne
+        // Stopping at the end of the queue plays it through once, whatever the repeat mode.
+        var repeat = StopMode == PlaybackStopMode.EndOfQueue ? RepeatMode.Off : CurrentRepeatMode;
+        var nextId = repeat == RepeatMode.RepeatOne
             ? CurrentTrack?.Id
-            : _queue.GetAdjacent(forward: true, wrap: CurrentRepeatMode == RepeatMode.RepeatAll);
+            : _queue.GetAdjacent(forward: true, wrap: repeat == RepeatMode.RepeatAll);
         if (nextId is { } id) await PlayQueueItemInternalAsync(id, request);
         else await StopInternalAsync(request);
     }
