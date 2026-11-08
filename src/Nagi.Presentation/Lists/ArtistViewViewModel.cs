@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Artwork;
 using Nagi.Core.Library;
 using Nagi.Core.Listening;
-using Nagi.Core.Metadata;
 using Nagi.Core.OnlineProviders;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
@@ -177,31 +176,11 @@ public partial class ArtistViewViewModel : DetailSongListViewModelBase<ArtistVie
         base.Dispose();
     }
 
-    /// <summary>
-    ///     Lets the user pick an image file and stores it as this artist's custom image.
-    /// </summary>
     [RelayCommand]
-    private async Task ChangeArtistImageAsync()
-    {
-        try
-        {
-            var localPath = await _uiService.PickSingleFileAsync(FileExtensions.ImageFileExtensions);
-            if (string.IsNullOrWhiteSpace(localPath)) return;
-
-            _logger.LogInformation("Updating custom image for current artist ({ArtistName}) from {Path}", PageTitle, localPath);
-            await _artwork.UpdateArtistImageAsync(_artistId, localPath);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to change the image of artist {ArtistName}", PageTitle);
-        }
-    }
+    private Task ChangeArtistImageAsync() =>
+        ArtistImageActions.ChangeAsync(_artistId, _uiService, _artwork, _logger, () => _isDisposed);
 
     [RelayCommand]
-    private async Task RemoveArtistImageAsync()
-    {
-        _logger.LogInformation("Removing custom image for current artist ({ArtistName})", PageTitle);
-        try { await _artwork.RemoveArtistImageAsync(_artistId); }
-        catch (Exception ex) { _logger.LogError(ex, "Failed to remove the image of artist {ArtistName}", PageTitle); }
-    }
+    private Task RemoveArtistImageAsync() =>
+        ArtistImageActions.RemoveAsync(_artistId, _uiService, _artwork, _logger, () => _isDisposed);
 }

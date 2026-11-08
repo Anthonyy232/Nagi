@@ -7,7 +7,6 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Artwork;
 using Nagi.Core.Library;
-using Nagi.Core.Metadata;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Settings;
@@ -152,28 +151,11 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
         base.Dispose();
     }
 
-    /// <summary>
-    ///     Lets the user pick an image file and stores it as the artist's custom image.
-    /// </summary>
     [RelayCommand]
-    private async Task ChangeArtistImageAsync(Guid artistId)
-    {
-        try
-        {
-            var localPath = await _uiService.PickSingleFileAsync(FileExtensions.ImageFileExtensions);
-            if (string.IsNullOrWhiteSpace(localPath)) return;
-            await _artwork.UpdateArtistImageAsync(artistId, localPath);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to change the image of artist {ArtistId}", artistId);
-        }
-    }
+    private Task ChangeArtistImageAsync(Guid artistId) =>
+        ArtistImageActions.ChangeAsync(artistId, _uiService, _artwork, _logger, () => _isDisposed);
 
     [RelayCommand]
-    private async Task RemoveArtistImageAsync(Guid artistId)
-    {
-        try { await _artwork.RemoveArtistImageAsync(artistId); }
-        catch (Exception ex) { _logger.LogError(ex, "Failed to remove the image of artist {ArtistId}", artistId); }
-    }
+    private Task RemoveArtistImageAsync(Guid artistId) =>
+        ArtistImageActions.RemoveAsync(artistId, _uiService, _artwork, _logger, () => _isDisposed);
 }
