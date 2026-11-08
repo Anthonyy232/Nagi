@@ -25,8 +25,9 @@ public abstract class SongListPage : ViewModelPage
     private ListView[] _songLists = [];
 
     /// <summary>
-    ///     Call after InitializeComponent. The column header goes in <paramref name="columnHeaderHost" /> above the
-    ///     lists, not in them, so it stays in view and re-sorting doesn't make a list follow its old first row.
+    ///     Call after InitializeComponent, with lists styled <c>SongListViewStyle</c>; this wires their selection,
+    ///     double-tap and rows. The column header goes in <paramref name="columnHeaderHost" /> above the lists, not in
+    ///     them, so it stays in view and re-sorting doesn't make a list follow its old first row.
     /// </summary>
     protected void InitializeSongList(SongListViewModelBase viewModel, Border columnHeaderHost, params ListView[] songLists)
     {
@@ -34,6 +35,12 @@ public abstract class SongListPage : ViewModelPage
         _songLists = songLists;
         _player = GetViewModel<PlayerViewModel>();
         columnHeaderHost.Child = CreateColumnHeader(viewModel);
+        foreach (var list in songLists)
+        {
+            list.SelectionChanged += OnSelectionChanged;
+            list.DoubleTapped += OnDoubleTapped;
+            list.ContainerContentChanging += OnContainerContentChanging;
+        }
         Loaded += AttachNowPlayingBinders;
         Unloaded += DetachNowPlayingBinders;
     }
@@ -64,12 +71,17 @@ public abstract class SongListPage : ViewModelPage
         return true;
     }
 
-    protected void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (sender is ListViewBase listView) _viewModel!.OnSongsSelectionChanged(listView.SelectedItems);
     }
 
-    protected void SongsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+    private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+    {
+        if (args.ItemContainer.ContentTemplateRoot is SongRow row) row.ViewModel = _viewModel;
+    }
+
+    private void OnDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
         if (e.OriginalSource is FrameworkElement { DataContext: var item } && GetSong(item) is { } song)
             _viewModel!.PlaySongCommand.Execute(song);

@@ -1,7 +1,5 @@
 using System.Linq;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
 using Nagi.Core.Library;
 using Nagi.Presentation.Lists;
 using Nagi.WinUI.Helpers;
@@ -37,13 +35,6 @@ public sealed partial class FolderSongViewPage : SongListPage
     {
         if (e.ClickedItem is FolderContentItem { Folder: { } folder })
             await ViewModel.NavigateToSubfolderCommand.ExecuteAsync(folder);
-    }
-
-    // ItemClick already opens folders, so a double-tap only plays songs.
-    private void FolderContentsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-    {
-        if (e.OriginalSource is FrameworkElement { DataContext: FolderContentItem { IsFolder: false } })
-            SongsListView_DoubleTapped(sender, e);
     }
 
     private void FolderItemMenuFlyout_Opening(object sender, object e)

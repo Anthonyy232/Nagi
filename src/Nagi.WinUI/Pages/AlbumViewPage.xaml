@@ -11,7 +11,6 @@
     xmlns:lists="using:Nagi.Presentation.Lists"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
     xmlns:resources="using:Nagi.Presentation.Resources"
-    x:Name="pageRoot"
     Background="Transparent"
     mc:Ignorable="d">
 
@@ -74,15 +73,11 @@
 
         <Grid Grid.Row="1" RowDefinitions="Auto,*">
             <Border x:Name="ColumnHeaderHost" Padding="{StaticResource PageContentPadding}" />
-            <ListView uihelpers:ScrollEdgeFade.IsEnabled="True"
+            <ListView Style="{StaticResource SongListViewStyle}"
                 Grid.Row="1"
                 x:Name="GroupedSongsListView"
-                Padding="{StaticResource PageContentPadding}"
-                IsItemClickEnabled="True"
+                ItemContainerStyle="{x:Null}"
                 ItemsSource="{x:Bind ViewModel.GroupedSongsFlat, Mode=OneWay}"
-                SelectionChanged="SongsListView_SelectionChanged"
-                SelectionMode="Extended"
-                DoubleTapped="SongsListView_DoubleTapped"
                 Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <ListView.ItemContainerStyleSelector>
                     <uihelpers:HeaderedListStyleSelector>
@@ -112,27 +107,21 @@
                         </uihelpers:HeaderedListTemplateSelector.HeaderTemplate>
                         <uihelpers:HeaderedListTemplateSelector.SongTemplate>
                             <DataTemplate x:DataType="library:Song">
-                                <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" ShowDiscNumber="False" />
+                                <uicontrols:SongRow Song="{x:Bind}" ShowDiscNumber="False" />
                             </DataTemplate>
                         </uihelpers:HeaderedListTemplateSelector.SongTemplate>
                     </uihelpers:HeaderedListTemplateSelector>
                 </ListView.ItemTemplateSelector>
             </ListView>
 
-            <ListView uihelpers:ScrollEdgeFade.IsEnabled="True"
+            <ListView Style="{StaticResource SongListViewStyle}"
                 Grid.Row="1"
                 x:Name="SongsListView"
-                Padding="{StaticResource PageContentPadding}"
-                IsItemClickEnabled="True"
-                ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
                 ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
-                SelectionChanged="SongsListView_SelectionChanged"
-                SelectionMode="Extended"
-                DoubleTapped="SongsListView_DoubleTapped"
                 Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="library:Song">
-                        <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" />
+                        <uicontrols:SongRow Song="{x:Bind}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

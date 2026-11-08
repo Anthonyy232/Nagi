@@ -10,7 +10,6 @@
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
-    x:Name="pageRoot"
     Background="Transparent"
     mc:Ignorable="d">
 
@@ -47,19 +46,13 @@
         </Border>
         <Grid Grid.Row="2" RowDefinitions="Auto,*">
             <Border x:Name="ColumnHeaderHost" Padding="{StaticResource PageContentPadding}" />
-            <ListView uihelpers:ScrollEdgeFade.IsEnabled="True"
+            <ListView Style="{StaticResource SongListViewStyle}"
                 x:Name="SongsListView"
                 Grid.Row="1"
-                Padding="{StaticResource PageContentPadding}"
-                IsItemClickEnabled="True"
-                ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
-                ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
-                SelectionChanged="SongsListView_SelectionChanged"
-                SelectionMode="Extended"
-                DoubleTapped="SongsListView_DoubleTapped">
+                ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="library:Song">
-                        <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" />
+                        <uicontrols:SongRow Song="{x:Bind}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

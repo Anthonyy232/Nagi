@@ -11,8 +11,7 @@
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
     mc:Ignorable="d"
-    Background="Transparent"
-    x:Name="pageRoot">
+    Background="Transparent">
 
     <Grid
           Padding="{StaticResource DetailPageContainerPadding}">
@@ -84,18 +83,12 @@
 
         <Grid Grid.Row="1" RowDefinitions="Auto,*">
             <Border x:Name="ColumnHeaderHost" Padding="{StaticResource PageContentPadding}" />
-            <ListView uihelpers:ScrollEdgeFade.IsEnabled="True" Grid.Row="1"
+            <ListView Style="{StaticResource SongListViewStyle}" Grid.Row="1"
                       x:Name="SongsListView"
-                      SelectionMode="Extended"
-                      IsItemClickEnabled="True"
-                      Padding="{StaticResource PageContentPadding}"
-                      ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
-                      ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
-                      SelectionChanged="SongsListView_SelectionChanged"
-                      DoubleTapped="SongsListView_DoubleTapped">
+                      ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="library:Song">
-                        <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" />
+                        <uicontrols:SongRow Song="{x:Bind}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
