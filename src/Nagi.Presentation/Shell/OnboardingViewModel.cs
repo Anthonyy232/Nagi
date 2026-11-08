@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
 using Nagi.Core.MusicServers;
+using Nagi.Presentation.MusicServers;
 using Nagi.Presentation.Resources;
 
 namespace Nagi.Presentation.Shell;
@@ -146,7 +147,15 @@ public partial class OnboardingViewModel : ObservableObject
             catch
             {
                 // Setup can't finish with an empty server, and connecting to it again would be refused as already added.
-                await _musicServers.RemoveAsync(server.Id);
+                try
+                {
+                    await _musicServers.RemoveAsync(server.Id);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Couldn't remove server folder {FolderId} after its first sync failed", server.Id);
+                }
+
                 throw;
             }
 
@@ -174,6 +183,7 @@ public partial class OnboardingViewModel : ObservableObject
             IsScanProgressIndeterminate = report.IsIndeterminate;
         });
 
+        string? advice = null;
         try
         {
             if (await buildAsync(progress))
@@ -187,10 +197,11 @@ public partial class OnboardingViewModel : ObservableObject
         catch (Exception ex)
         {
             _logger.LogError(ex, "Onboarding library scan failed");
+            if (ex is MusicServerException serverError) advice = MusicServerErrors.DescribeForServer(serverError.Error, source);
         }
 
         LibraryState = OnboardingLibraryState.Failed;
-        ScanStatus = Strings.Onboarding_Error;
+        ScanStatus = advice ?? Strings.Onboarding_Error;
     }
 
     [RelayCommand(CanExecute = nameof(IsLibraryReady))]
