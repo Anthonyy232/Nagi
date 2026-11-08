@@ -34,12 +34,15 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     private readonly ILibraryNotifier _libraryNotifier;
     private readonly TimeProvider _timeProvider;
 
-    private bool _isUpdatingFromService;
     private bool _isCleanedUp;
 
     private double _lastReportedPosition;
     private int _lastDisplayedSecond = -1;
     private const double PositionThrottleSeconds = 0.1;
+
+    // The slider writes its value back through the two-way binding and can round it to its step, so a position this
+    // close to the service's is an echo, not a seek.
+    private const double SeekThresholdSeconds = 0.5;
 
     private CancellationTokenSource? _queueDisplayCts;
 
@@ -421,7 +424,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     partial void OnCurrentVolumeChanged(double value)
     {
         UpdateButtonState(PlayerButtonIds.Volume, VolumeIcon, VolumeButtonToolTip);
-        if (_isUpdatingFromService) return;
         var serviceVolume = Math.Clamp(value / 100.0, 0.0, 1.0);
         if (Math.Abs(_playbackService.Volume - serviceVolume) > 0.001)
             _ = _playbackService.SetVolumeAsync(serviceVolume);
@@ -436,23 +438,18 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
             CurrentTimeText = DurationFormatter.Format(TimeSpan.FromSeconds(value));
         }
 
-        if (_isUpdatingFromService || IsUserDraggingSlider) return;
-
-        var newPosition = TimeSpan.FromSeconds(value);
-        if (Math.Abs(_playbackService.CurrentPosition.TotalSeconds - newPosition.TotalSeconds) > 0.5)
-            _ = _playbackService.SeekAsync(newPosition);
+        if (!IsUserDraggingSlider) SeekIfMoved();
     }
 
     partial void OnIsUserDraggingSliderChanged(bool value)
     {
-        if (!value && !_isUpdatingFromService)
-        {
-            var newPosition = TimeSpan.FromSeconds(CurrentPosition);
-            if (Math.Abs(_playbackService.CurrentPosition.TotalSeconds - newPosition.TotalSeconds) > 0.1)
-            {
-                _ = _playbackService.SeekAsync(newPosition);
-            }
-        }
+        if (!value) SeekIfMoved();
+    }
+
+    private void SeekIfMoved()
+    {
+        if (Math.Abs(_playbackService.CurrentPosition.TotalSeconds - CurrentPosition) > SeekThresholdSeconds)
+            _ = _playbackService.SeekAsync(TimeSpan.FromSeconds(CurrentPosition));
     }
 
     partial void OnTotalDurationChanged(double value)
@@ -564,17 +561,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     {
         void ApplyUpdate()
         {
-            if (_isCleanedUp) return;
-            var wasUpdating = _isUpdatingFromService;
-            _isUpdatingFromService = true;
-            try
-            {
-                action();
-            }
-            finally
-            {
-                _isUpdatingFromService = wasUpdating;
-            }
+            if (!_isCleanedUp) action();
         }
 
         if (_dispatcherService.HasThreadAccess) ApplyUpdate();
@@ -655,12 +642,12 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     {
         RunOnUIThread(() =>
         {
-            _lastReportedPosition = 0;
             _lastDisplayedSecond = -1;
             UpdateTrackDetails(_playbackService.CurrentTrack);
             // A song loaded paused reports no duration of its own, so take the library's until it plays.
             TotalDuration = Math.Max(0, _playbackService.Duration.TotalSeconds);
-            CurrentPosition = 0;
+            _lastReportedPosition = _playbackService.CurrentPosition.TotalSeconds;
+            CurrentPosition = _lastReportedPosition;
             UpdateCurrentQueueDisplay();
             SidebarQueue.Refresh();
         });

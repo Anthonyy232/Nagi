@@ -87,10 +87,10 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     public long? CurrentListenHistoryId { get; private set; }
     public bool IsPlaying => _audioPlayer.IsPlaying;
     public bool IsOpening => _audioPlayer.IsOpening;
-    public TimeSpan CurrentPosition => _audioPlayer.CurrentPosition;
-    public TimeSpan Duration => _audioPlayer.Duration > TimeSpan.Zero
-        ? _audioPlayer.Duration
-        : (CurrentTrack?.Duration ?? TimeSpan.Zero);
+    // A stop clears the track before the player unloads it, so the player's values only count while there is a track.
+    public TimeSpan CurrentPosition => CurrentTrack is null ? TimeSpan.Zero : _audioPlayer.CurrentPosition;
+    public TimeSpan Duration => CurrentTrack is null ? TimeSpan.Zero
+        : _audioPlayer.Duration > TimeSpan.Zero ? _audioPlayer.Duration : CurrentTrack.Duration;
     public double Volume => _audioPlayer.Volume;
     public bool IsMuted => _audioPlayer.IsMuted;
     public IReadOnlyList<Guid> PlayOrder => _queue.PlayOrder;

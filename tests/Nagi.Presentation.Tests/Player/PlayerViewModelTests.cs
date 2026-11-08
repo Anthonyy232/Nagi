@@ -136,7 +136,7 @@ public partial class PlayerViewModelTests : IDisposable
     }
 
     [Fact]
-    public void NestedServiceEvent_DoesNotAllowOuterUpdateToSeekBack()
+    public void TrackChange_NeverSeeks()
     {
         _playback.CurrentPosition.Returns(TimeSpan.FromSeconds(10));
         _playback.PositionChanged += Raise.Event<Action>();
@@ -148,6 +148,8 @@ public partial class PlayerViewModelTests : IDisposable
         _playback.CurrentTrack.Returns(new Song { Title = "Next track" });
 
         _playback.TrackChanged += Raise.Event<Action>();
+        _playback.CurrentPosition.Returns(TimeSpan.Zero);
+        _playback.PositionChanged += Raise.Event<Action>();
 
         _viewModel.CurrentPosition.Should().Be(0);
         _playback.DidNotReceive().SeekAsync(Arg.Any<TimeSpan>());

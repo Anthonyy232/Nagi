@@ -826,6 +826,21 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Stop_ReportsNoPositionOrDurationWhileThePlayerStillHoldsTheSong()
+    {
+        await _service.PlayAsync(Ids(_testSongs), 0);
+        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(5));
+        _audioPlayer.Duration.Returns(TimeSpan.FromSeconds(30));
+        (TimeSpan Position, TimeSpan Duration)? seenOnTrackChange = null;
+        _service.TrackChanged += () => seenOnTrackChange = (_service.CurrentPosition, _service.Duration);
+
+        await _service.StopAsync();
+
+        seenOnTrackChange.Should().Be((TimeSpan.Zero, TimeSpan.Zero));
+    }
+
+
+    [Fact]
     public async Task StopAsync_WithActiveSession_FinalizesSessionAsPausedAndAbandoned()
     {
         await _service.InitializeAsync();
