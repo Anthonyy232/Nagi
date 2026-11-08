@@ -173,11 +173,7 @@ public partial class DataManagementSettingsViewModel : ObservableObject
             await _uiService.ShowMessageDialogAsync(
                 Strings.Settings_Restore_Success_Title,
                 Strings.Settings_Restore_Success_Message);
-
-            if (result.RequiresRestart)
-            {
-                _applicationLifecycle.Restart();
-            }
+            _applicationLifecycle.Restart();
         }
         else
         {

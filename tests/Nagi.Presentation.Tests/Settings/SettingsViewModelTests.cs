@@ -246,17 +246,17 @@ public class SettingsViewModelTests : IDisposable
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task RestoreFromBackup_RestartsOnlyWhenTheRestoreRequiresIt(bool requiresRestart)
+    public async Task RestoreFromBackup_RestartsOnlyAfterASuccessfulRestore(bool success)
     {
         _ui.PickSingleFileAsync(Arg.Any<IEnumerable<string>>()).Returns("backup.zip");
         _backup.ValidateBackupAsync("backup.zip").Returns(true);
         _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
             Arg.Any<bool>()).Returns(true);
-        _backup.RestoreFromBackupAsync("backup.zip").Returns(new RestoreResult(true, 1, requiresRestart));
+        _backup.RestoreFromBackupAsync("backup.zip").Returns(new RestoreResult(success));
 
         await _viewModel.DataManagement.RestoreFromBackupCommand.ExecuteAsync(null);
 
-        _lifecycle.Received(requiresRestart ? 1 : 0).Restart();
+        _lifecycle.Received(success ? 1 : 0).Restart();
     }
 
     [Fact]
