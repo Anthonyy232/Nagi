@@ -7,14 +7,13 @@ namespace Nagi.Core.Artwork;
 
 public class ArtistMetadataService : IArtistMetadataService, IDisposable
 {
-    private readonly OnlineLookupCancellation _onlineLookups = new();
+    private readonly OnlineLookupGate _gate;
     private readonly ILastFmMetadataService _lastFmService;
     private readonly IMusicBrainzService _musicBrainzService;
     private readonly IFanartTvService _fanartTvService;
     private readonly ITheAudioDbService _theAudioDbService;
     private readonly IDeezerService _deezerService;
     private readonly IWikipediaService _wikipediaService;
-    private readonly ISettingsService _settingsService;
     private readonly ILogger<ArtistMetadataService> _logger;
 
     public ArtistMetadataService(
@@ -33,35 +32,17 @@ public class ArtistMetadataService : IArtistMetadataService, IDisposable
         _theAudioDbService = theAudioDbService;
         _deezerService = deezerService;
         _wikipediaService = wikipediaService;
-        _settingsService = settingsService;
         _logger = logger;
-        _settingsService.SettingChanged += OnSettingChanged;
+        // Any enabled source, so an artist none of them can describe is marked as looked up rather than retried.
+        _gate = new OnlineLookupGate(settingsService, capabilities: null);
     }
 
-    public async Task<ArtistMetadataResult?> FindAsync(string artistName, string? musicBrainzId,
-        CancellationToken cancellationToken = default)
-    {
-        var turnedOff = _onlineLookups.Token;
-        if (!_settingsService.Get(CoreSettings.FetchOnlineMetadata)) return null;
-        var enabledProviders = _settingsService.Get(CoreSettings.MetadataProviders).Where(p => p.IsEnabled).ToList();
-        if (enabledProviders.Count == 0) return null;
+    public Task<ArtistMetadataResult?> FindAsync(string artistName, string? musicBrainzId,
+        CancellationToken cancellationToken = default) =>
+        _gate.RunAsync((enabledProviders, token) => AskSourcesAsync(artistName, musicBrainzId, enabledProviders, token),
+            cancellationToken);
 
-        using var linked = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, turnedOff);
-        try
-        {
-            return await AskSourcesAsync(artistName, musicBrainzId, enabledProviders, linked.Token).ConfigureAwait(false);
-        }
-        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
-        {
-            return null;
-        }
-    }
-
-    public void Dispose()
-    {
-        _settingsService.SettingChanged -= OnSettingChanged;
-        _onlineLookups.CancelRunning();
-    }
+    public void Dispose() => _gate.Dispose();
 
     private async Task<ArtistMetadataResult> AskSourcesAsync(string artistName, string? musicBrainzId,
         IReadOnlyList<ServiceProviderSetting> enabledProviders, CancellationToken cancellationToken)
@@ -127,12 +108,6 @@ public class ArtistMetadataService : IArtistMetadataService, IDisposable
 
         cancellationToken.ThrowIfCancellationRequested();
         return new ArtistMetadataResult(resolvedMbid, imageUrl, biography, musicBrainzAnswered && isFinal);
-    }
-
-    private void OnSettingChanged(Setting setting)
-    {
-        if (setting == CoreSettings.FetchOnlineMetadata && !_settingsService.Get(CoreSettings.FetchOnlineMetadata))
-            _onlineLookups.CancelRunning();
     }
 
     private static async Task<ServiceResult<ArtistInfo>> MapAsync<T>(Task<ServiceResult<T>> lookup, Func<T, ArtistInfo> map)
