@@ -16,7 +16,8 @@ public sealed class ServerLibrarySync : IServerLibrarySync
     private readonly IImageProcessor _imageProcessor;
     private readonly ISettingsService _settingsService;
     private readonly LibraryImporter _importer;
-    private readonly ArtworkService _artwork;
+    private readonly IArtworkService _artwork;
+    private readonly LibraryArtwork _libraryArtwork;
     private readonly PlaylistService _playlists;
     private readonly LibraryNotifier _notifier;
     private readonly LibraryWriteLock _writeLock;
@@ -28,7 +29,8 @@ public sealed class ServerLibrarySync : IServerLibrarySync
         IImageProcessor imageProcessor,
         ISettingsService settingsService,
         LibraryImporter importer,
-        ArtworkService artwork,
+        IArtworkService artwork,
+        LibraryArtwork libraryArtwork,
         PlaylistService playlists,
         LibraryNotifier notifier,
         LibraryWriteLock writeLock,
@@ -40,6 +42,7 @@ public sealed class ServerLibrarySync : IServerLibrarySync
         _settingsService = settingsService;
         _importer = importer;
         _artwork = artwork;
+        _libraryArtwork = libraryArtwork;
         _playlists = playlists;
         _notifier = notifier;
         _writeLock = writeLock;
@@ -117,7 +120,7 @@ public sealed class ServerLibrarySync : IServerLibrarySync
                 await _writeLock.WaitAsync(operationToken).ConfigureAwait(false);
                 try
                 {
-                    var albumCovers = await _artwork.UpdateAlbumCoversAsync(folderId, import.ReplacedCovers, false, operationToken)
+                    var albumCovers = await _libraryArtwork.UpdateAlbumCoversAsync(folderId, import.ReplacedCovers, false, operationToken)
                         .ConfigureAwait(false);
                     coverUpdates += albumCovers.Albums + albumCovers.Tracks;
                 }

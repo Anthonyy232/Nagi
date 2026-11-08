@@ -211,38 +211,17 @@ public partial class AtlMetadataService : IMetadataService
     private async Task<(string? Uri, string? Light, string? Dark)> ProcessAlbumArtAsync(
         string filePath, Track track, string? baseFolderPath)
     {
-        var directoryArt = await ProcessCoverArtFromDirectoryAsync(filePath, baseFolderPath).ConfigureAwait(false);
-        if (directoryArt.Uri != null) return directoryArt;
+        var finder = new MediaFileFinder(_fileSystem, _logger);
+        if (finder.FindCoverArt(filePath, baseFolderPath) is { } coverArtPath)
+        {
+            var directoryArt = await finder.SaveCoverArtAsync(coverArtPath, _imageProcessor).ConfigureAwait(false);
+            if (directoryArt.Uri != null) return directoryArt;
+        }
 
         var picture = track.EmbeddedPictures?.FirstOrDefault();
         return picture?.PictureData is { Length: > 0 } pictureData
             ? await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData).ConfigureAwait(false)
             : default;
-    }
-
-    private async Task<(string? Uri, string? Light, string? Dark)> ProcessCoverArtFromDirectoryAsync(
-        string filePath, string? baseFolderPath)
-    {
-        try
-        {
-            var coverArtPath = new MediaFileFinder(_fileSystem, _logger).FindCoverArt(filePath, baseFolderPath);
-            if (string.IsNullOrEmpty(coverArtPath)) return default;
-
-            var imageBytes = await _fileSystem.ReadAllBytesAsync(coverArtPath).ConfigureAwait(false);
-            if (imageBytes.Length == 0) return default;
-
-            var result =
-                await _imageProcessor.SaveCoverArtAndExtractColorsAsync(imageBytes).ConfigureAwait(false);
-
-            _logger.LogDebug("Found cover art from directory for '{FilePath}': {CoverArtPath}",
-                filePath, coverArtPath);
-            return result;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to process directory cover art for '{FilePath}'.", filePath);
-            return default;
-        }
     }
 
     // The user's override wins; lyrics extracted from the tags are reused until the audio file changes.

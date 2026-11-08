@@ -35,18 +35,20 @@ public sealed class TestLibrary : IDisposable
     {
         WriteLock = new LibraryWriteLock(NullLogger<LibraryWriteLock>.Instance);
         Reader = new LibraryReader(contextFactory, fileSystem, settingsService);
+        var libraryArtwork = new LibraryArtwork(contextFactory, fileSystem, pathConfig, imageProcessor, Notifier,
+            NullLogger<LibraryArtwork>.Instance);
         Artwork = new ArtworkService(contextFactory, fileSystem, pathConfig, imageProcessor, artistMetadataService,
-            albumCoverService, settingsService, httpClientFactory, pipelines, Notifier, WriteLock,
+            albumCoverService, settingsService, httpClientFactory, pipelines, libraryArtwork, Notifier, WriteLock,
             NullLogger<ArtworkService>.Instance);
-        Importer = new LibraryImporter(contextFactory, fileSystem, pathConfig, Artwork, Notifier, settingsService,
+        Importer = new LibraryImporter(contextFactory, fileSystem, pathConfig, libraryArtwork, Notifier, settingsService,
             NullLogger<LibraryImporter>.Instance);
         Folders = new LibraryFolderService(contextFactory, fileSystem, metadataService, imageProcessor, replayGainService,
-            settingsService, Importer, Artwork, Notifier, WriteLock, NullLogger<LibraryFolderService>.Instance);
+            settingsService, Importer, Artwork, libraryArtwork, Notifier, WriteLock, NullLogger<LibraryFolderService>.Instance);
         Listening = new ListeningService(contextFactory, Notifier, NullLogger<ListeningService>.Instance);
         Playlists = new PlaylistService(contextFactory, fileSystem, imageProcessor, pathConfig, Notifier,
             NullLogger<PlaylistService>.Instance);
         Servers = new ServerLibrarySync(contextFactory, fileSystem, imageProcessor, settingsService, Importer, Artwork,
-            Playlists, Notifier, WriteLock, NullLogger<ServerLibrarySync>.Instance);
+            libraryArtwork, Playlists, Notifier, WriteLock, NullLogger<ServerLibrarySync>.Instance);
         MusicServers = Substitute.For<IMusicServerService>();
         Reset = new LibraryReset(contextFactory, fileSystem, pathConfig, MusicServers,
             Artwork, Notifier, WriteLock, NullLogger<LibraryReset>.Instance);

@@ -41,7 +41,6 @@ public class CoreServiceRegistrationTests
         await using var provider = BuildProvider();
 
         provider.GetRequiredService<ILibraryNotifier>().Should().BeSameAs(provider.GetRequiredService<LibraryNotifier>());
-        provider.GetRequiredService<IArtworkService>().Should().BeSameAs(provider.GetRequiredService<ArtworkService>());
         provider.GetRequiredService<IPlaylistService>().Should().BeSameAs(provider.GetRequiredService<PlaylistService>());
     }
 

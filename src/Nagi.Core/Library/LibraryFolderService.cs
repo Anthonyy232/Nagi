@@ -21,7 +21,8 @@ public sealed class LibraryFolderService : ILibraryFolderService
     private readonly IReplayGainService _replayGainService;
     private readonly ISettingsService _settingsService;
     private readonly LibraryImporter _importer;
-    private readonly ArtworkService _artwork;
+    private readonly IArtworkService _artwork;
+    private readonly LibraryArtwork _libraryArtwork;
     private readonly LibraryNotifier _notifier;
     private readonly LibraryWriteLock _writeLock;
     private readonly ILogger<LibraryFolderService> _logger;
@@ -34,7 +35,8 @@ public sealed class LibraryFolderService : ILibraryFolderService
         IReplayGainService replayGainService,
         ISettingsService settingsService,
         LibraryImporter importer,
-        ArtworkService artwork,
+        IArtworkService artwork,
+        LibraryArtwork libraryArtwork,
         LibraryNotifier notifier,
         LibraryWriteLock writeLock,
         ILogger<LibraryFolderService> logger)
@@ -47,6 +49,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
         _settingsService = settingsService;
         _importer = importer;
         _artwork = artwork;
+        _libraryArtwork = libraryArtwork;
         _notifier = notifier;
         _writeLock = writeLock;
         _logger = logger;
@@ -296,7 +299,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
             .ConfigureAwait(false);
 
         // Before the folder image check, so it can replace the images that are gone.
-        var clearedArtistImages = await _artwork.ClearMissingArtistImagesAsync(folderId, token).ConfigureAwait(false);
+        var clearedArtistImages = await _libraryArtwork.ClearMissingArtistImagesAsync(folderId, token).ConfigureAwait(false);
 
         var filesToRead = changes.Added.Concat(changes.Updated).ToList();
         var import = filesToRead.Count > 0
@@ -309,12 +312,12 @@ public sealed class LibraryFolderService : ILibraryFolderService
         var lookForMediaFiles = changes.Untouched > 0 || changes.KeepMediaAssets.Count > 0;
         var lrcTask = lookForMediaFiles ? UpdateMissingLrcPathsAsync(folderId, token) : Task.FromResult(0);
         var coverArtTask = lookForMediaFiles ? UpdateMissingCoverArtAsync(folderId, folder.Path, token) : Task.FromResult(0);
-        var artistImageTask = _artwork.UpdateMissingArtistImagesFromFoldersAsync(folderId, token);
+        var artistImageTask = _libraryArtwork.UpdateMissingArtistImagesFromFoldersAsync(folderId, token);
         await Task.WhenAll(lrcTask, coverArtTask, artistImageTask,
             EnsureSubFoldersExistAsync(folderId, folder.Path, import.Directories, token)).ConfigureAwait(false);
         // Adding songs to an album leaves it the cover it has.
         var onlyAdded = changes.Added.Count > 0 && changes.Updated.Count == 0 && removed == 0;
-        var covers = await _artwork.UpdateAlbumCoversAsync(folderId, import.ReplacedCovers, onlyAdded, token).ConfigureAwait(false);
+        var covers = await _libraryArtwork.UpdateAlbumCoversAsync(folderId, import.ReplacedCovers, onlyAdded, token).ConfigureAwait(false);
 
         if (removed > 0 || changes.Updated.Count > 0)
         {
@@ -896,7 +899,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
 
             if (!savedArt.TryGetValue(coverArtPath, out var cover))
             {
-                cover = await SaveCoverArtAsync(coverArtPath).ConfigureAwait(false);
+                cover = await finder.SaveCoverArtAsync(coverArtPath, _imageProcessor).ConfigureAwait(false);
                 savedArt.Add(coverArtPath, cover);
             }
 
@@ -911,21 +914,6 @@ public sealed class LibraryFolderService : ILibraryFolderService
         }, cancellationToken).ConfigureAwait(false);
         if (updated > 0) _logger.LogInformation("Updated {Count} songs with newly discovered cover art files.", updated);
         return updated;
-    }
-
-    private async Task<(string? Uri, string? LightSwatchId, string? DarkSwatchId)> SaveCoverArtAsync(string coverArtPath)
-    {
-        try
-        {
-            var imageBytes = await _fileSystem.ReadAllBytesAsync(coverArtPath).ConfigureAwait(false);
-            if (imageBytes.Length > 0) return await _imageProcessor.SaveCoverArtAndExtractColorsAsync(imageBytes).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to process cover art file {CoverArtPath}.", coverArtPath);
-        }
-
-        return default;
     }
 
     private static async Task<int> UpdateSongsAsync<T>(MusicDbContext context, Dictionary<Guid, T> values,

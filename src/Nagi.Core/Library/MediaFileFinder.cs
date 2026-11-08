@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Artwork;
 using Nagi.Core.Metadata;
 using Nagi.Core.Platform;
 
@@ -38,6 +39,25 @@ internal sealed class MediaFileFinder(IFileSystemService fileSystem, ILogger log
         }
 
         return null;
+    }
+
+    /// <summary>
+    ///     Stores the image file as a cached cover with its theme colours, or returns nothing when it can't be read.
+    /// </summary>
+    public async Task<(string? Uri, string? LightSwatchId, string? DarkSwatchId)> SaveCoverArtAsync(string coverArtPath,
+        IImageProcessor imageProcessor)
+    {
+        try
+        {
+            var imageBytes = await fileSystem.ReadAllBytesAsync(coverArtPath).ConfigureAwait(false);
+            if (imageBytes.Length > 0) return await imageProcessor.SaveCoverArtAndExtractColorsAsync(imageBytes).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Failed to process cover art file {CoverArtPath}.", coverArtPath);
+        }
+
+        return default;
     }
 
     /// <summary>

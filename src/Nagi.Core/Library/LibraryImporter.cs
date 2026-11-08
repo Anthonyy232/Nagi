@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Artwork;
 using Nagi.Core.Data;
 using Nagi.Core.Lyrics;
 using Nagi.Core.Metadata;
@@ -18,7 +17,7 @@ public sealed class LibraryImporter
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly IFileSystemService _fileSystem;
     private readonly IPathConfiguration _pathConfig;
-    private readonly ArtworkService _artwork;
+    private readonly LibraryArtwork _artwork;
     private readonly LibraryNotifier _notifier;
     private readonly ISettingsService _settingsService;
     private readonly ILogger<LibraryImporter> _logger;
@@ -27,7 +26,7 @@ public sealed class LibraryImporter
         IDbContextFactory<MusicDbContext> contextFactory,
         IFileSystemService fileSystem,
         IPathConfiguration pathConfig,
-        ArtworkService artwork,
+        LibraryArtwork artwork,
         LibraryNotifier notifier,
         ISettingsService settingsService,
         ILogger<LibraryImporter> logger)
