@@ -229,6 +229,35 @@ public class FolderSongListViewModelTests
         viewModel.PlayAllSongsCommand.CanExecute(null).Should().BeTrue();
     }
 
+    [Fact]
+    public async Task NavigatingWhileThePageLoads_OpensTheNewDirectoryOnceThatLoadEnds()
+    {
+        var library = new LibraryFakes();
+        var root = ConfigureRoot(library);
+        var child = new Folder { Name = "Album", Path = @"C:\Music\Album" };
+        var song = new Song { Title = "Track" };
+        library.Reader.GetDirectoryPageAsync(new SongScope.Directory(root.Id, child.Path), Arg.Any<string?>(), Arg.Any<SongSortOrder>(),
+            Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>()).Returns(new DirectoryPage { Items = [song], TotalCount = 1 });
+        using var viewModel = CreateViewModel(library);
+        await viewModel.OpenAsync(new FolderSongViewNavigationParameter { Title = root.Name, FolderId = root.Id });
+        var slowReload = new TaskCompletionSource<DirectoryPage>(TaskCreationOptions.RunContinuationsAsynchronously);
+        library.Reader.GetDirectoryPageAsync(new SongScope.Directory(root.Id, root.Path), Arg.Any<string?>(), Arg.Any<SongSortOrder>(),
+            Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>()).Returns(slowReload.Task);
+        var childShown = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        viewModel.Songs.CollectionChanged += (_, _) =>
+        {
+            if (viewModel.Songs.Contains(song)) childShown.TrySetResult();
+        };
+        var reloading = viewModel.LoadAsync(CancellationToken.None);
+
+        await viewModel.NavigateToSubfolderCommand.ExecuteAsync(child);
+        slowReload.SetResult(new DirectoryPage());
+        await reloading.WaitAsync(TimeSpan.FromSeconds(5));
+
+        await childShown.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        viewModel.Breadcrumbs[^1].Path.Should().Be(child.Path);
+    }
+
     private static Folder ConfigureRoot(LibraryFakes library)
     {
         var root = new Folder { Name = "Music", Path = @"C:\Music" };

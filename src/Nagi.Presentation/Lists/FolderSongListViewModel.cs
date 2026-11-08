@@ -40,8 +40,6 @@ public partial class FolderSongListViewModel : DetailSongListViewModelBase<Folde
     private string? _rootFolderPath;
     private readonly List<Folder> _selectedFolders = new();
 
-    private bool _isNavigating;
-
     public FolderSongListViewModel(
         ILibraryReader libraryReader,
         IListeningService listening,
@@ -147,25 +145,18 @@ public partial class FolderSongListViewModel : DetailSongListViewModelBase<Folde
     private Task NavigateToBreadcrumbAsync(BreadcrumbItem? breadcrumb) =>
         breadcrumb is null || breadcrumb.IsLast ? Task.CompletedTask : NavigateToDirectoryAsync(breadcrumb.Path);
 
-    private async Task NavigateToDirectoryAsync(string path)
+    // A load already running finishes first and is then followed by one for the new directory.
+    private Task NavigateToDirectoryAsync(string path)
     {
-        if (_isDisposed || IsLoading || _isNavigating || !_rootFolderId.HasValue) return;
+        if (_isDisposed || !_rootFolderId.HasValue) return Task.CompletedTask;
 
-        try
-        {
-            _isNavigating = true;
-            DeselectAll();
-            _currentDirectoryPath = path;
-            Songs.Clear();
-            FolderContents.Clear();
-            UpdateBreadcrumbs();
-            CurrentPage = 1;
-            await LoadAsync(CancellationToken.None);
-        }
-        finally
-        {
-            _isNavigating = false;
-        }
+        DeselectAll();
+        _currentDirectoryPath = path;
+        Songs.Clear();
+        FolderContents.Clear();
+        UpdateBreadcrumbs();
+        CurrentPage = 1;
+        return LoadAsync(CancellationToken.None);
     }
 
     private void UpdateBreadcrumbs()
