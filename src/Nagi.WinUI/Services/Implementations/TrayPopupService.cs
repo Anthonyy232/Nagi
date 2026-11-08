@@ -110,7 +110,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         _logger.LogDebug("Showing tray popup.");
         _isAnimating = true;
         var popup = _popupWindow!;
-        popup.ViewModel.ShowPlayerViewCommand.Execute(null);
+        popup.ShowPlayerView();
 
         var windowHandle = WindowNative.GetWindowHandle(popup);
         var scale = NativeMethods.GetDpiScale(windowHandle);

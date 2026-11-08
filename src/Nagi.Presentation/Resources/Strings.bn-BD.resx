@@ -747,23 +747,14 @@
   <data name="TrayIcon_Exit" xml:space="preserve">
     <value>প্রস্থান</value>
   </data>
-  <data name="MiniPlayer_BackButton_ToolTip" xml:space="preserve">
+  <data name="Player_BackButton_ToolTip" xml:space="preserve">
     <value>প্লেয়ারে ফিরে যান</value>
   </data>
-  <data name="MiniPlayer_UpNextHeader" xml:space="preserve">
+  <data name="Player_UpNextHeader" xml:space="preserve">
     <value>এরপর যা আছে</value>
   </data>
   <data name="MiniPlayer_RestoreButton_ToolTip" xml:space="preserve">
     <value>Nagi দেখান</value>
-  </data>
-  <data name="MiniPlayer_PreviousButton_ToolTip" xml:space="preserve">
-    <value>পূর্ববর্তী</value>
-  </data>
-  <data name="MiniPlayer_NextButton_ToolTip" xml:space="preserve">
-    <value>পরবর্তী</value>
-  </data>
-  <data name="MiniPlayer_QueueButton_ToolTip" xml:space="preserve">
-    <value>এরপর যা আছে</value>
   </data>
   <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
     <value>এটি রিপোর্ট করতে অনুগ্রহ করে </value>
@@ -848,21 +839,6 @@
   </data>
   <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
     <value>বাতিল করুন</value>
-  </data>
-  <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
-    <value>পূর্ববর্তী</value>
-  </data>
-  <data name="TrayPopup_NextButton_ToolTip" xml:space="preserve">
-    <value>পরবর্তী</value>
-  </data>
-  <data name="TrayPopup_QueueButton_ToolTip" xml:space="preserve">
-    <value>এরপর যা আছে</value>
-  </data>
-  <data name="TrayPopup_BackButton_ToolTip" xml:space="preserve">
-    <value>প্লেয়ারে ফিরে যান</value>
-  </data>
-  <data name="TrayPopup_UpNextHeader" xml:space="preserve">
-    <value>এরপর যা আছে</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>পূর্ববর্তী</value>

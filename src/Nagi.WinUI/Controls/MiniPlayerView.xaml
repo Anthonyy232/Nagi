@@ -2,16 +2,9 @@
     x:Class="Nagi.WinUI.Controls.MiniPlayerView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:media="using:CommunityToolkit.WinUI.Media"
-    xmlns:library="using:Nagi.Core.Library"
-    xmlns:player="using:Nagi.Presentation.Player"
-    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:local="using:Nagi.WinUI.Controls"
-    xmlns:resources="using:Nagi.Presentation.Resources"
-    d:DataContext="{d:DesignInstance Type=player:PlayerViewModel, IsDesignTimeCreatable=True}"
-    mc:Ignorable="d">
+    xmlns:resources="using:Nagi.Presentation.Resources">
 
     <!--  The root grid handles pointer enter/exit events to show or hide the controls.  -->
     <Grid x:Name="HoverDetector" Background="Transparent">
@@ -42,186 +35,23 @@
                 <StaticResource x:Key="SliderTrackFill" ResourceKey="MediaOnImageControlTrackBrush" />
                 <StaticResource x:Key="SliderTrackFillPointerOver" ResourceKey="MediaOnImageControlTrackBrush" />
                 <StaticResource x:Key="SliderTrackFillPressed" ResourceKey="MediaOnImageControlTrackBrush" />
-                <Style TargetType="Button" BasedOn="{StaticResource MediaOnImageControlButtonStyle}" />
-                <Style TargetType="Slider" BasedOn="{StaticResource MediaOnImageSeekerSliderStyle}" />
             </Grid.Resources>
 
             <!--  Overlay for control readability  -->
             <Border Background="{StaticResource MediaOnImageControlsScrimBrush}" IsHitTestVisible="False" />
 
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                <Grid Grid.Row="0" Margin="16,16,16,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-                    <Button
-                        x:Name="BackButton"
-                        Grid.Column="0"
-                        ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_BackButton_ToolTip, Mode=OneTime}"
-                        AutomationProperties.Name="{x:Bind resources:Strings.MiniPlayer_BackButton_ToolTip, Mode=OneTime}"
-                        Command="{x:Bind ViewModel.ShowPlayerViewCommand}"
-                        Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
-                    </Button>
-
-                    <StackPanel
-                        Grid.Column="0"
-                        Grid.ColumnSpan="3"
-                        Margin="44,0"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Spacing="2"
-                        Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            Foreground="{StaticResource MediaOnImageTextPrimaryBrush}"
-                            Style="{ThemeResource BodyStrongTextBlockStyle}"
-                            Text="{x:Bind ViewModel.SongTitle, Mode=OneWay}"
-                            TextAlignment="Center"
-                            TextTrimming="CharacterEllipsis"
-                            TextWrapping="NoWrap" />
-                        <local:ArtistLinks
-                            x:Name="Artists"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="12"
-                            Foreground="{StaticResource MediaOnImageTextSecondaryBrush}"
-                            ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
-                            Song="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay}"
-                            Command="{x:Bind ViewModel.GoToArtistCommand}" />
-                    </StackPanel>
-
-                    <TextBlock
-                        Grid.Column="0"
-                        Grid.ColumnSpan="3"
-                        Text="{x:Bind resources:Strings.MiniPlayer_UpNextHeader, Mode=OneTime}"
-                        Margin="44,0"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="18"
-                        FontWeight="SemiBold"
-                        Foreground="{StaticResource MediaOnImageTextPrimaryBrush}"
-                        Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
+            <local:CompactPlayerView x:Name="Player" ViewModel="{x:Bind ViewModel}" IsOnImage="True">
+                <local:CompactPlayerView.HeaderTrailingContent>
                     <Button
                         x:Name="RestoreButton"
-                        Grid.Column="2"
-                        ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_RestoreButton_ToolTip, Mode=OneTime}"
-                        AutomationProperties.Name="{x:Bind resources:Strings.MiniPlayer_RestoreButton_ToolTip, Mode=OneTime}">
-                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="20" Glyph="" />
+                        Style="{StaticResource MediaOnImageControlButtonStyle}"
+                        Click="RestoreButton_Click"
+                        ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_RestoreButton_ToolTip}"
+                        AutomationProperties.Name="{x:Bind resources:Strings.MiniPlayer_RestoreButton_ToolTip}">
+                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="20" Glyph="&#xE73F;" />
                     </Button>
-                </Grid>
-
-                <Grid Grid.Row="1">
-                    <Grid Padding="16,0,16,16"
-                          Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                        <StackPanel VerticalAlignment="Bottom" Spacing="12">
-                            <Slider
-                                x:Name="MediaSeekerSlider"
-                                AutomationProperties.Name="{x:Bind resources:Strings.Player_SeekSlider_Name, Mode=OneTime}"
-                                Margin="4,0"
-                                IsThumbToolTipEnabled="True"
-                                Maximum="{x:Bind ViewModel.TotalDuration, Mode=OneWay, Converter={StaticResource SliderMaximumConverter}}"
-                                ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"
-                                Value="{x:Bind ViewModel.CurrentPosition, Mode=TwoWay}" />
-
-                            <StackPanel x:Name="MediaControlsPanel" HorizontalAlignment="Center" Orientation="Horizontal" Spacing="2">
-
-                                <Button Command="{x:Bind ViewModel.ToggleShuffleCommand}"
-                                        ToolTipService.ToolTip="{x:Bind ViewModel.ShuffleButtonToolTip, Mode=OneWay}"
-                                        AutomationProperties.Name="{x:Bind ViewModel.ShuffleButtonToolTip, Mode=OneWay}">
-                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                              Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.ShuffleIcon)}"
-                                              Opacity="{x:Bind ViewModel.IsShuffleEnabled, Mode=OneWay, Converter={StaticResource ToggleIconOpacityConverter}}" />
-                                </Button>
-                                <Button Command="{x:Bind ViewModel.PreviousCommand}"
-                                        ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_PreviousButton_ToolTip, Mode=OneTime}"
-                                        AutomationProperties.Name="{x:Bind resources:Strings.MiniPlayer_PreviousButton_ToolTip, Mode=OneTime}">
-                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
-                                </Button>
-                                <Button Command="{x:Bind ViewModel.PlayPauseCommand}"
-                                        ToolTipService.ToolTip="{x:Bind ViewModel.PlayPauseButtonToolTip, Mode=OneWay}"
-                                        AutomationProperties.Name="{x:Bind ViewModel.PlayPauseButtonToolTip, Mode=OneWay}">
-                                    <Grid>
-                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="24"
-                                                  Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.PlayPauseIcon), Mode=OneWay}"
-                                                  Visibility="{x:Bind ViewModel.IsOpening, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                                        <ProgressRing Width="20" Height="20" IsActive="{x:Bind ViewModel.IsOpening, Mode=OneWay}" />
-                                    </Grid>
-                                </Button>
-                                <Button Command="{x:Bind ViewModel.NextCommand}"
-                                        ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_NextButton_ToolTip, Mode=OneTime}"
-                                        AutomationProperties.Name="{x:Bind resources:Strings.MiniPlayer_NextButton_ToolTip, Mode=OneTime}">
-                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
-                                </Button>
-                                <Button Command="{x:Bind ViewModel.CycleRepeatCommand}"
-                                        ToolTipService.ToolTip="{x:Bind ViewModel.RepeatButtonToolTip, Mode=OneWay}"
-                                        AutomationProperties.Name="{x:Bind ViewModel.RepeatButtonToolTip, Mode=OneWay}">
-                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                              Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.RepeatIcon), Mode=OneWay}" />
-                                </Button>
-                                <Button Command="{x:Bind ViewModel.ShowQueueViewCommand}"
-                                        ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_QueueButton_ToolTip, Mode=OneTime}"
-                                        AutomationProperties.Name="{x:Bind resources:Strings.MiniPlayer_QueueButton_ToolTip, Mode=OneTime}">
-                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
-                                </Button>
-                                <Button Command="{x:Bind ViewModel.ToggleMuteCommand}"
-                                        PointerWheelChanged="VolumeButton_PointerWheelChanged"
-                                        ToolTipService.ToolTip="{x:Bind ViewModel.VolumeButtonToolTip, Mode=OneWay}"
-                                        AutomationProperties.Name="{x:Bind ViewModel.VolumeButtonToolTip, Mode=OneWay}">
-                                    <Grid Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                  FontSize="20"
-                                                  Foreground="{StaticResource MediaOnImageControlSecondaryBrush}"
-                                                  Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.VolumeIcon), Mode=OneWay}" />
-                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                  FontSize="20"
-                                                  Foreground="{StaticResource MediaOnImageAccentBrush}"
-                                                  Clip="{x:Bind ViewModel.CurrentVolume, Mode=OneWay, Converter={StaticResource VolumeToClipRectConverter}, ConverterParameter='20'}"
-                                                  Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.VolumeIcon), Mode=OneWay}" />
-                                    </Grid>
-                                </Button>
-                            </StackPanel>
-                        </StackPanel>
-                    </Grid>
-
-                    <ListView
-                        uihelpers:ScrollEdgeFade.IsEnabled="True"
-                        x:Name="QueueListView"
-                        Padding="16,12,16,16"
-                        ItemContainerStyle="{StaticResource PaddedListViewItemStyle}"
-                        ItemsSource="{x:Bind ViewModel.CurrentQueue}"
-                        SelectionMode="None"
-                        VirtualizingStackPanel.VirtualizationMode="Recycling"
-                        Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="library:Song">
-                                <StackPanel>
-                                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}"
-                                               Foreground="{StaticResource MediaOnImageTextPrimaryBrush}"
-                                               TextTrimming="CharacterEllipsis"
-                                               TextWrapping="NoWrap" />
-                                    <local:ArtistLinks
-                                        FontSize="11"
-                                        Foreground="{StaticResource MediaOnImageControlSecondaryBrush}"
-                                        HorizontalAlignment="Left"
-                                        ArtistName="{x:Bind ArtistName}"
-                                        Song="{x:Bind}"
-                                        Command="{Binding DataContext.ViewModel.GoToArtistCommand, ElementName=HoverDetector}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </Grid>
-            </Grid>
+                </local:CompactPlayerView.HeaderTrailingContent>
+            </local:CompactPlayerView>
         </Grid>
     </Grid>
 </UserControl>

@@ -105,15 +105,34 @@ public partial class PlayerViewModelTests : IDisposable
         _playback.TrackChanged += Raise.Event<Action>();
         await _playback.DidNotReceive().GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>());
 
-        _viewModel.IsQueueViewVisible = true;
+        var preview = _viewModel.PreviewQueue();
         _viewModel.CurrentQueue.Should().ContainSingle().Which.Should().BeSameAs(first);
-        _viewModel.IsQueueViewVisible = false;
+        preview.Dispose();
         _playback.ClearReceivedCalls();
         _playback.UpcomingQueue.Returns(new[] { next.Id });
         _playback.QueueChanged += Raise.Event<Action>();
         await _playback.DidNotReceive().GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>());
 
-        _viewModel.IsQueueViewVisible = true;
+        using var reopened = _viewModel.PreviewQueue();
+        _viewModel.CurrentQueue.Should().ContainSingle().Which.Should().BeSameAs(next);
+    }
+
+    // The mini player and the tray popup each show the queue on their own.
+    [Fact]
+    public void QueuePreview_ClosedInOneView_KeepsFollowingTheQueueForAnother()
+    {
+        var first = new Song { Title = "First" };
+        var next = new Song { Title = "Next" };
+        _playback.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(new Dictionary<Guid, Song> { [first.Id] = first, [next.Id] = next });
+        _playback.UpcomingQueue.Returns(new[] { first.Id });
+        using var miniPlayer = _viewModel.PreviewQueue();
+        var trayPopup = _viewModel.PreviewQueue();
+
+        trayPopup.Dispose();
+        _playback.UpcomingQueue.Returns(new[] { next.Id });
+        _playback.QueueChanged += Raise.Event<Action>();
+
         _viewModel.CurrentQueue.Should().ContainSingle().Which.Should().BeSameAs(next);
     }
 
@@ -125,7 +144,7 @@ public partial class PlayerViewModelTests : IDisposable
         _playback.UpcomingQueue.Returns(ids);
         _playback.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
             .Returns(songs.ToDictionary(song => song.Id));
-        _viewModel.IsQueueViewVisible = true;
+        using var preview = _viewModel.PreviewQueue();
         _playback.QueueChanged += Raise.Event<Action>();
         _viewModel.CurrentQueue.Should().Equal(songs.Take(100));
 
