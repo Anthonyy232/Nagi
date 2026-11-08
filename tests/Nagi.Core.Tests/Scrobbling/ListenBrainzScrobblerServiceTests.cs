@@ -36,7 +36,7 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     {
         _httpClientFactory = Substitute.For<IHttpClientFactory>();
         _credentials = Substitute.For<ICredentialLockerService>();
-        _settingsService = TestSettings.Create(credentials: _credentials);
+        _settingsService = TestSettings.Create();
         _httpMessageHandler = new TestHttpMessageHandler();
         _logger = Substitute.For<ILogger<ListenBrainzScrobblerService>>();
         _dbHelper = new DbContextFactoryTestHelper();
@@ -67,6 +67,7 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
             _pipelines,
             _dbHelper.ContextFactory,
             _settingsService,
+            TestSettings.Accounts(_settingsService, _credentials),
             _appInfoService,
             _logger);
     }

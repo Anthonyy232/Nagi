@@ -35,7 +35,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
         _uiService = uiService;
         _listenBrainzScrobblerService = listenBrainzScrobblerService;
         _accounts = accounts;
-        _settingsService.CredentialsChanged += OnCredentialsChanged;
+        _accounts.CredentialsChanged += OnCredentialsChanged;
     }
 
     [ObservableProperty]
@@ -104,7 +104,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
         ListenBrainzConnectionStatus = null;
     }
 
-    protected override void OnDisposing() => _settingsService.CredentialsChanged -= OnCredentialsChanged;
+    protected override void OnDisposing() => _accounts.CredentialsChanged -= OnCredentialsChanged;
 
     // A sign-in made here, or a reset elsewhere, changes what the page shows.
     private void OnCredentialsChanged(ScrobblingAccount account)
@@ -119,14 +119,14 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
         {
             if (account == ScrobblingAccount.LastFm)
             {
-                var credentials = await _settingsService.GetLastFmCredentialsAsync();
+                var credentials = await _accounts.GetLastFmCredentialsAsync();
                 if (_isDisposed) return;
                 LastFmUsername = credentials?.Username;
                 IsLastFmConnected = !string.IsNullOrEmpty(credentials?.SessionKey);
             }
             else
             {
-                var token = await _settingsService.GetListenBrainzUserTokenAsync();
+                var token = await _accounts.GetListenBrainzUserTokenAsync();
                 if (_isDisposed) return;
                 ListenBrainzUserToken = token ?? string.Empty;
                 ListenBrainzIsConnected = !string.IsNullOrEmpty(token);

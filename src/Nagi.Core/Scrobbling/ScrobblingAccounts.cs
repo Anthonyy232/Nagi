@@ -1,21 +1,40 @@
+using Microsoft.Extensions.Logging;
+using Nagi.Core.Platform;
 using Nagi.Core.Settings;
 
 namespace Nagi.Core.Scrobbling;
 
 public sealed class ScrobblingAccounts : IScrobblingAccounts
 {
+    private const string LastFmCredentialResource = "Nagi/LastFm";
+    private const string ListenBrainzTokenResource = "Nagi/ListenBrainz";
+    private const string ListenBrainzTokenUserName = "token";
+
     private readonly ISettingsService _settingsService;
+    private readonly ICredentialLockerService _credentials;
     private readonly ILastFmAuthService _lastFmAuth;
+    private readonly ILogger<ScrobblingAccounts> _logger;
     // Bumped when a Last.fm sign-in starts or ends, so a reply that arrives after the user cancelled is ignored.
     private int _lastFmSignInVersion;
 
-    public ScrobblingAccounts(ISettingsService settingsService, ILastFmAuthService lastFmAuth)
+    public ScrobblingAccounts(ISettingsService settingsService, ICredentialLockerService credentials,
+        ILastFmAuthService lastFmAuth, ILogger<ScrobblingAccounts> logger)
     {
         _settingsService = settingsService;
+        _credentials = credentials;
         _lastFmAuth = lastFmAuth;
+        _logger = logger;
     }
 
+    public event Action<ScrobblingAccount>? CredentialsChanged;
+
     public bool IsLastFmSignInPending => !string.IsNullOrEmpty(_settingsService.Get(CoreSettings.LastFmAuthToken));
+
+    public Task<(string? Username, string? SessionKey)?> GetLastFmCredentialsAsync() =>
+        Task.FromResult(_credentials.RetrieveCredential(LastFmCredentialResource));
+
+    public Task<string?> GetListenBrainzUserTokenAsync() =>
+        Task.FromResult(_credentials.RetrieveCredential(ListenBrainzTokenResource)?.Password);
 
     public async Task<Uri?> BeginLastFmSignInAsync()
     {
@@ -38,7 +57,7 @@ public sealed class ScrobblingAccounts : IScrobblingAccounts
             var session = await _lastFmAuth.GetSessionAsync(token).ConfigureAwait(false);
             if (version != Volatile.Read(ref _lastFmSignInVersion)) return LastFmSignInResult.NotStarted;
             if (session is not { } signedIn) return LastFmSignInResult.Failed;
-            return await ConnectLastFmAsync(signedIn.Username, signedIn.SessionKey).ConfigureAwait(false)
+            return ConnectLastFm(signedIn.Username, signedIn.SessionKey)
                 ? LastFmSignInResult.Connected
                 : LastFmSignInResult.NotSaved;
         }
@@ -54,36 +73,57 @@ public sealed class ScrobblingAccounts : IScrobblingAccounts
         _settingsService.Set(CoreSettings.LastFmAuthToken, null);
     }
 
-    private async Task<bool> ConnectLastFmAsync(string username, string sessionKey)
+    private bool ConnectLastFm(string username, string sessionKey)
     {
-        if (!await _settingsService.SaveLastFmCredentialsAsync(username, sessionKey).ConfigureAwait(false)) return false;
+        if (!SaveCredential(ScrobblingAccount.LastFm, LastFmCredentialResource, username, sessionKey)) return false;
         _settingsService.Set(CoreSettings.LastFmScrobbling, true);
         _settingsService.Set(CoreSettings.LastFmNowPlaying, true);
         return true;
     }
 
-    public async Task DisconnectLastFmAsync()
+    public Task DisconnectLastFmAsync()
     {
         CancelLastFmSignIn();
-        await _settingsService.ClearLastFmCredentialsAsync().ConfigureAwait(false);
+        RemoveCredential(ScrobblingAccount.LastFm, LastFmCredentialResource);
         _settingsService.Set(CoreSettings.LastFmScrobbling, false);
         _settingsService.Set(CoreSettings.LastFmNowPlaying, false);
+        return Task.CompletedTask;
     }
 
-    public async Task<bool> ConnectListenBrainzAsync(string token)
+    public Task<bool> ConnectListenBrainzAsync(string token)
     {
-        if (!await _settingsService.SaveListenBrainzUserTokenAsync(token).ConfigureAwait(false)) return false;
+        if (!SaveCredential(ScrobblingAccount.ListenBrainz, ListenBrainzTokenResource, ListenBrainzTokenUserName, token))
+            return Task.FromResult(false);
         // Sending every listen ever made would flood the account with history it may already have.
         if (_settingsService.Get(CoreSettings.ListenBrainzEnabledSinceUtc) is null)
             _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, DateTime.UtcNow);
-        return true;
+        return Task.FromResult(true);
     }
 
-    public async Task DisconnectListenBrainzAsync()
+    public Task DisconnectListenBrainzAsync()
     {
-        await _settingsService.ClearListenBrainzUserTokenAsync().ConfigureAwait(false);
+        RemoveCredential(ScrobblingAccount.ListenBrainz, ListenBrainzTokenResource);
         _settingsService.Set(CoreSettings.ListenBrainzScrobbling, false);
         _settingsService.Set(CoreSettings.ListenBrainzNowPlaying, false);
         _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, null);
+        return Task.CompletedTask;
+    }
+
+    private bool SaveCredential(ScrobblingAccount account, string resource, string userName, string secret)
+    {
+        if (!_credentials.SaveCredential(resource, userName, secret))
+        {
+            _logger.LogWarning("The credential store refused the sign-in for {Resource}.", resource);
+            return false;
+        }
+
+        CredentialsChanged?.Invoke(account);
+        return true;
+    }
+
+    private void RemoveCredential(ScrobblingAccount account, string resource)
+    {
+        _credentials.RemoveCredential(resource);
+        CredentialsChanged?.Invoke(account);
     }
 }

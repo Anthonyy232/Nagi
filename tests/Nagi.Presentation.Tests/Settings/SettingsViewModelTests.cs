@@ -27,6 +27,7 @@ public class SettingsViewModelTests : IDisposable
 {
     private readonly ICredentialLockerService _credentials = Substitute.For<ICredentialLockerService>();
     private readonly SettingsService _settings;
+    private readonly ScrobblingAccounts _accounts;
     private readonly IAppDataReset _appDataReset = Substitute.For<IAppDataReset>();
     private readonly IEqualizerService _equalizer = Substitute.For<IEqualizerService>();
     private readonly IAudioPlayer _audioPlayer = Substitute.For<IAudioPlayer>();
@@ -47,7 +48,8 @@ public class SettingsViewModelTests : IDisposable
 
     public SettingsViewModelTests()
     {
-        _settings = TestSettings.Create(credentials: _credentials);
+        _settings = TestSettings.Create();
+        _accounts = TestSettings.Accounts(_settings, _credentials, _lastFm);
         _credentials.SaveCredential(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(true);
         _equalizer.Presets.Returns(Array.Empty<EqualizerPreset>());
         _dispatcher.HasThreadAccess.Returns(true);
@@ -60,7 +62,7 @@ public class SettingsViewModelTests : IDisposable
                 NullLogger<AudioSettingsViewModel>.Instance, _timeProvider),
             new LibrarySettingsViewModel(_settings, _ui, _library.Folders, Substitute.For<IMusicServerService>(), _operation, _dispatcher,
                 NullLogger<LibrarySettingsViewModel>.Instance, _timeProvider),
-            new ScrobblingSettingsViewModel(_settings, _ui, _listenBrainz, new ScrobblingAccounts(_settings, _lastFm), _dispatcher,
+            new ScrobblingSettingsViewModel(_settings, _ui, _listenBrainz, _accounts, _dispatcher,
                 NullLogger<ScrobblingSettingsViewModel>.Instance),
             new RomanizationPacksSettingsViewModel(Substitute.For<IRomanizationPackManager>(), _dispatcher,
                 NullLogger<RomanizationPacksSettingsViewModel>.Instance),
@@ -313,7 +315,8 @@ public class SettingsViewModelTests : IDisposable
         _viewModel.Scrobbling.ListenBrainzIsConnected.Should().BeTrue();
         _credentials.RetrieveCredential(Arg.Any<string>()).Returns((ValueTuple<string?, string?>?)null);
 
-        await _settings.ResetToDefaultsAsync();
+        await _accounts.DisconnectLastFmAsync();
+        await _accounts.DisconnectListenBrainzAsync();
 
         _viewModel.Scrobbling.IsLastFmConnected.Should().BeFalse();
         _viewModel.Scrobbling.LastFmUsername.Should().BeNull();

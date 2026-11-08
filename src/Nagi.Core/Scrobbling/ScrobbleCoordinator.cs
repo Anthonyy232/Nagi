@@ -21,6 +21,7 @@ public sealed class ScrobbleCoordinator : IDisposable
     private readonly IMusicPlaybackService _playback;
     private readonly IReadOnlyList<Destination> _destinations;
     private readonly ISettingsService _settingsService;
+    private readonly IScrobblingAccounts _accounts;
     private readonly TimeProvider _timeProvider;
     private readonly ILogger<ScrobbleCoordinator> _logger;
     private readonly CancellationTokenSource _shutdownCts = new();
@@ -33,12 +34,14 @@ public sealed class ScrobbleCoordinator : IDisposable
         IMusicPlaybackService playback,
         IEnumerable<IListenSubmitter> submitters,
         ISettingsService settingsService,
+        IScrobblingAccounts accounts,
         ILogger<ScrobbleCoordinator> logger,
         TimeProvider? timeProvider = null)
     {
         _playback = playback;
         _destinations = submitters.Select(submitter => new Destination(submitter)).ToList();
         _settingsService = settingsService;
+        _accounts = accounts;
         _logger = logger;
         _timeProvider = timeProvider ?? TimeProvider.System;
         _shutdown = _shutdownCts.Token;
@@ -54,7 +57,7 @@ public sealed class ScrobbleCoordinator : IDisposable
         _playback.TrackChanged += OnTrackChanged;
         _playback.ScrobbleEligibilityReached += OnScrobbleEligibilityReached;
         _settingsService.SettingChanged += OnSettingChanged;
-        _settingsService.CredentialsChanged += OnCredentialsChanged;
+        _accounts.CredentialsChanged += OnCredentialsChanged;
         RequestRuns(_destinations, announce: false);
         _retryTimer = _timeProvider.CreateTimer(_ => RequestRuns(_destinations, announce: false), null, RetryInterval,
             RetryInterval);
@@ -66,7 +69,7 @@ public sealed class ScrobbleCoordinator : IDisposable
         _playback.TrackChanged -= OnTrackChanged;
         _playback.ScrobbleEligibilityReached -= OnScrobbleEligibilityReached;
         _settingsService.SettingChanged -= OnSettingChanged;
-        _settingsService.CredentialsChanged -= OnCredentialsChanged;
+        _accounts.CredentialsChanged -= OnCredentialsChanged;
         _retryTimer?.Dispose();
         _shutdownCts.Cancel();
         _shutdownCts.Dispose();

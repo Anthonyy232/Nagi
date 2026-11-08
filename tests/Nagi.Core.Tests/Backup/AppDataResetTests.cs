@@ -5,6 +5,7 @@ using Nagi.Core.Backup;
 using Nagi.Core.Library;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
+using Nagi.Core.Scrobbling;
 using Nagi.Core.Settings;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -18,6 +19,7 @@ public class AppDataResetTests : IDisposable
     private readonly Dictionary<string, object> _storedSettings = new() { ["AppVolume"] = 0.5 };
     private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
     private readonly ISettingsService _settings = Substitute.For<ISettingsService>();
+    private readonly IScrobblingAccounts _accounts = Substitute.For<IScrobblingAccounts>();
     private readonly IAutoLaunchService _autoLaunch = Substitute.For<IAutoLaunchService>();
     private readonly ILibraryReset _libraryReset = Substitute.For<ILibraryReset>();
     private readonly AppDataReset _reset;
@@ -26,7 +28,7 @@ public class AppDataResetTests : IDisposable
     {
         var store = Substitute.For<ISettingsStore>();
         store.Values.Returns(_storedSettings);
-        _reset = new AppDataReset(_playback, _settings, _autoLaunch, _libraryReset, store, _paths,
+        _reset = new AppDataReset(_playback, _settings, _accounts, _autoLaunch, _libraryReset, store, _paths,
             new FileSystemService(), NullLogger<AppDataReset>.Instance);
 
         File.WriteAllText(_paths.PlaybackStateFilePath, "{}");
@@ -41,14 +43,16 @@ public class AppDataResetTests : IDisposable
     }
 
     [Fact]
-    public async Task Reset_ClearsThePlaybackSettingsAndLibrary_AndDeletesTheSessionAndPacks()
+    public async Task Reset_ClearsTheQueueAccountsSettingsAndLibrary_AndDeletesTheSessionAndPacks()
     {
         await _reset.ResetAsync();
 
         Received.InOrder(() =>
         {
             _playback.ClearQueueAsync();
-            _settings.ResetToDefaultsAsync();
+            _accounts.DisconnectLastFmAsync();
+            _accounts.DisconnectListenBrainzAsync();
+            _settings.ResetToDefaults();
             _autoLaunch.SetEnabledAsync(false);
             _libraryReset.ClearAllLibraryDataAsync();
         });

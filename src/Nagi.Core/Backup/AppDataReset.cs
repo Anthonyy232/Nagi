@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
+using Nagi.Core.Scrobbling;
 using Nagi.Core.Settings;
 
 namespace Nagi.Core.Backup;
@@ -11,6 +12,7 @@ public sealed class AppDataReset : IAppDataReset
 {
     private readonly IMusicPlaybackService _playback;
     private readonly ISettingsService _settings;
+    private readonly IScrobblingAccounts _accounts;
     private readonly IAutoLaunchService _autoLaunch;
     private readonly ILibraryReset _libraryReset;
     private readonly ISettingsStore _settingsStore;
@@ -18,12 +20,13 @@ public sealed class AppDataReset : IAppDataReset
     private readonly IFileSystemService _fileSystem;
     private readonly ILogger<AppDataReset> _logger;
 
-    public AppDataReset(IMusicPlaybackService playback, ISettingsService settings, IAutoLaunchService autoLaunch,
-        ILibraryReset libraryReset, ISettingsStore settingsStore, IPathConfiguration paths, IFileSystemService fileSystem,
-        ILogger<AppDataReset> logger)
+    public AppDataReset(IMusicPlaybackService playback, ISettingsService settings, IScrobblingAccounts accounts,
+        IAutoLaunchService autoLaunch, ILibraryReset libraryReset, ISettingsStore settingsStore, IPathConfiguration paths,
+        IFileSystemService fileSystem, ILogger<AppDataReset> logger)
     {
         _playback = playback;
         _settings = settings;
+        _accounts = accounts;
         _autoLaunch = autoLaunch;
         _libraryReset = libraryReset;
         _settingsStore = settingsStore;
@@ -39,7 +42,9 @@ public sealed class AppDataReset : IAppDataReset
         {
             // The session is saved again at shutdown, so it has to be empty by then.
             await _playback.ClearQueueAsync().ConfigureAwait(false);
-            await _settings.ResetToDefaultsAsync().ConfigureAwait(false);
+            await _accounts.DisconnectLastFmAsync().ConfigureAwait(false);
+            await _accounts.DisconnectListenBrainzAsync().ConfigureAwait(false);
+            _settings.ResetToDefaults();
             await _autoLaunch.SetEnabledAsync(false).ConfigureAwait(false);
             await _libraryReset.ClearAllLibraryDataAsync().ConfigureAwait(false);
         }

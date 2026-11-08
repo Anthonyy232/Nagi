@@ -1,11 +1,9 @@
 using System.Text.Json;
 using FluentAssertions;
 using Nagi.Core.OnlineProviders;
-using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
-using NSubstitute;
 using Xunit;
 
 namespace Nagi.Core.Tests.Settings;
@@ -30,7 +28,7 @@ public class SettingsServiceTests
     }
 
     [Fact]
-    public async Task ResetToDefaults_NotifiesChangedSettingsAfterRemovingSavedValues()
+    public void ResetToDefaults_NotifiesChangedSettingsAfterRemovingSavedValues()
     {
         var values = new Dictionary<string, object> { ["ObsoleteSetting"] = true };
         var settings = TestSettings.Create(values);
@@ -40,44 +38,12 @@ public class SettingsServiceTests
         var notifications = new List<string>();
         settings.SettingChanged += setting => notifications.Add($"{setting.Key}:{values.ContainsKey(setting.Key)}");
 
-        await settings.ResetToDefaultsAsync();
+        settings.ResetToDefaults();
 
         notifications.Should().BeEquivalentTo("VolumeNormalizationEnabled:False", "IgnoreLeadingArticlesOnSort:False");
         values.Should().NotContainKey("ObsoleteSetting");
         settings.Get(CoreSettings.VolumeNormalization).Should().BeFalse();
         settings.Get(CoreSettings.IgnoreLeadingArticlesOnSort).Should().BeTrue();
-    }
-
-    [Fact]
-    public async Task ResetToDefaults_SignsOut()
-    {
-        var credentials = Substitute.For<ICredentialLockerService>();
-        var settings = TestSettings.Create(credentials: credentials);
-        var credentialChanges = 0;
-        settings.CredentialsChanged += _ => credentialChanges++;
-
-        await settings.ResetToDefaultsAsync();
-
-        credentials.Received(1).RemoveCredential("Nagi/LastFm");
-        credentials.Received(1).RemoveCredential("Nagi/ListenBrainz");
-        credentialChanges.Should().Be(2);
-    }
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task SavingCredentials_ReportsWhetherTheCredentialStoreAcceptedThem(bool accepted)
-    {
-        var credentials = Substitute.For<ICredentialLockerService>();
-        credentials.SaveCredential(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(accepted);
-        var settings = TestSettings.Create(credentials: credentials);
-        var credentialChanges = 0;
-        settings.CredentialsChanged += _ => credentialChanges++;
-
-        (await settings.SaveLastFmCredentialsAsync("user", "session")).Should().Be(accepted);
-        (await settings.SaveListenBrainzUserTokenAsync("token")).Should().Be(accepted);
-
-        credentialChanges.Should().Be(accepted ? 2 : 0);
     }
 
     [Fact]
