@@ -287,7 +287,26 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
         using var archive = new ZipArchive(stream);
         foreach (var entry in archive.Entries)
             EnsureDataOnlyEntry(entry);
-        archive.ExtractToDirectory(destinationPath, overwriteFiles: true);
+
+        var root = Path.TrimEndingDirectorySeparator(Path.GetFullPath(destinationPath)) + Path.DirectorySeparatorChar;
+        _fileSystem.CreateDirectory(root);
+        foreach (var entry in archive.Entries)
+        {
+            var path = Path.GetFullPath(Path.Combine(root, entry.FullName));
+            if (!path.StartsWith(root, StringComparison.Ordinal))
+                throw new InvalidOperationException("Pack contains a file outside its folder.");
+
+            if (string.IsNullOrEmpty(entry.Name))
+            {
+                _fileSystem.CreateDirectory(path);
+                continue;
+            }
+
+            _fileSystem.CreateDirectory(Path.GetDirectoryName(path)!);
+            using var source = entry.Open();
+            using var target = _fileSystem.CreateFile(path);
+            source.CopyTo(target);
+        }
     }
 
     private static void EnsureDataOnlyEntry(ZipArchiveEntry entry)
