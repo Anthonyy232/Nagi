@@ -14,6 +14,11 @@ public interface IPathConfiguration
 
     string LrcCachePath { get; }
 
+    /// <summary>
+    ///     The library's cached images and lyrics, which belong with the database in a backup and a reset.
+    /// </summary>
+    IReadOnlyList<string> LibraryCacheFolders { get; }
+
     string RomanizationPacksPath { get; }
 
     string DatabasePath { get; }

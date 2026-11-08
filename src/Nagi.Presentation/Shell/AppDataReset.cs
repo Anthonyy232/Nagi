@@ -58,10 +58,7 @@ public static class AppDataReset
 
         SafelyDeleteFile(pathConfig.PlaybackStateFilePath);
         DeleteDatabaseFiles(pathConfig.DatabasePath);
-        SafelyDeleteDir(pathConfig.AlbumArtCachePath);
-        SafelyDeleteDir(pathConfig.ArtistImageCachePath);
-        SafelyDeleteDir(pathConfig.PlaylistImageCachePath);
-        SafelyDeleteDir(pathConfig.LrcCachePath);
+        foreach (var folder in pathConfig.LibraryCacheFolders) SafelyDeleteDir(folder);
         SafelyDeleteDir(pathConfig.RomanizationPacksPath);
 
         Log.Information("Manual file reset completed.");

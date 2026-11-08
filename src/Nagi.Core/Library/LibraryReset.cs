@@ -87,8 +87,7 @@ public sealed class LibraryReset : ILibraryReset
 
         try
         {
-            foreach (var path in new[] { _pathConfig.AlbumArtCachePath, _pathConfig.ArtistImageCachePath,
-                         _pathConfig.PlaylistImageCachePath, _pathConfig.LrcCachePath })
+            foreach (var path in _pathConfig.LibraryCacheFolders)
             {
                 if (_fileSystem.DirectoryExists(path)) _fileSystem.DeleteDirectory(path, true);
                 _fileSystem.CreateDirectory(path);
