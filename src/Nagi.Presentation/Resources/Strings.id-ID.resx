@@ -2069,4 +2069,82 @@ Apakah Anda ingin melanjutkan?</value>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Tampilkan label setiap kolom di atas daftar lagu.</value>
   </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A ke Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z ke A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Terbaru)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Terlama)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Menaik)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Menurun)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Terpendek Dahulu</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Terpanjang Dahulu</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Paling lambat dahulu ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Tercepat Dahulu ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>{0} Terbanyak</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Paling sedikit {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Urutkan Berdasarkan: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Berkas</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Tahun</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Tanggal Ditambahkan</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Tanggal Dibuat</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Tanggal Dimodifikasi</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Terakhir Diputar</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Durasi</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Nomor Trek</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Pemutaran</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Lagu</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Urutan Manual</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Acak</value>
+  </data>
 </root>

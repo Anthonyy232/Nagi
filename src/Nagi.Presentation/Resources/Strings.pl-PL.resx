@@ -2069,4 +2069,82 @@ Czy chcesz kontynuować?</value>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Wyświetlaj nazwę każdej kolumny nad listami utworów.</value>
   </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A do Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z do A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Najnowsze)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Najstarsze)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (rosnąco)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (malejąco)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Najkrótsze najpierw</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Najdłuższe najpierw</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Najwolniejsze najpierw ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Najszybsze najpierw ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Najwięcej: {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Najmniej: {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Sortuj według: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Plik</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Rok</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Data dodania</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Data utworzenia</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Data modyfikacji</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Ostatnie odtworzenie</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Czas trwania</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Numer utworu</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Odtworzenia</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Utwory</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Kolejność ręczna</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Losowo</value>
+  </data>
 </root>

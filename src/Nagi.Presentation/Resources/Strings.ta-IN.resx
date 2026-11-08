@@ -2069,4 +2069,82 @@
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>பாடல் பட்டியல்களுக்கு மேலே ஒவ்வொரு நெடுவரிசையின் தலைப்பையும் காட்டவும்.</value>
   </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (அ முதல் ஃ வரை)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (ஃ முதல் அ வரை)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (புதியது)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (பழையது)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (ஏறுவரிசை)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (இறங்குவரிசை)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>குறைவான நேரம் முதலில்</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>அதிக நேரம் முதலில்</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>மெதுவானது முதலில் ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>வேகமானது முதலில் ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>அதிகபட்ச {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>மிகக் குறைந்த {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>வரிசைப்படுத்து: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>கோப்பு</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>வருடம்</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>சேர்க்கப்பட்ட தேதி</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>உருவாக்கப்பட்ட தேதி</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>மாற்றப்பட்ட தேதி</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>கடைசியாக இயக்கப்பட்டது</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>கால அளவு</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>ட்ராக் எண்</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>இயக்கங்கள்</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>பாடல்கள்</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>கைமுறை வரிசை</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>சீரற்ற</value>
+  </data>
 </root>

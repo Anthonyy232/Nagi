@@ -2069,4 +2069,82 @@
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>गीत सूचियों के ऊपर प्रत्येक कॉलम का लेबल दिखाएँ।</value>
   </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (ए से ज़ेड तक)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (ज़ेड से ए तक)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (नवीनतम)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (सबसे पुराना)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (आरोही)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (अवरोही)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>सबसे छोटा पहले</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>सबसे लंबा पहले</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>सबसे धीमा पहले ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>सबसे तेज़ पहले ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>सबसे अधिक {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>सबसे कम {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>क्रमबद्ध करें: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>फ़ाइल</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>वर्ष</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>जोड़ी गई दिनांक</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>बनाई गई दिनांक</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>संशोधित दिनांक</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>अंतिम बार बजाया गया</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>अवधि</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>बीपीएम</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>ट्रैक संख्या</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>प्ले</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>गाने</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>मैन्युअल क्रम</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>रैंडम</value>
+  </data>
 </root>

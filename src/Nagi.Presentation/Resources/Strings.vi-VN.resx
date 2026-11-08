@@ -2069,4 +2069,82 @@ Bạn có muốn tiếp tục không?</value>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Hiển thị nhãn của từng cột phía trên danh sách bài hát.</value>
   </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A đến Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z đến A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Mới nhất)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Cũ nhất)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Tăng dần)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Giảm dần)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Ngắn nhất trước</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Dài nhất trước</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Chậm nhất trước ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Nhanh nhất trước ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Nhiều {0} nhất</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>{0} ít nhất</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Sắp xếp theo: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Tệp</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Năm</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Ngày thêm</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Ngày tạo</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Ngày sửa đổi</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Phát gần nhất</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Thời lượng</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Số thứ tự bài hát</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Lượt phát</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Bài hát</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Thứ tự thủ công</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Ngẫu nhiên</value>
+  </data>
 </root>

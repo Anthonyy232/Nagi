@@ -2069,4 +2069,82 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Taispeáin ceanntásc os cionn gach colúin i liostaí amhrán.</value>
   </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A go Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z go A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Is Nuaí)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Is Sine)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Ag dul i méid)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Ag dul i laghad)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>An Ceann is Giorra ar dTús</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>An Ceann is Faide ar dTús</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>An Ceann is Moille ar dTús ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>An Ceann is Tapa ar dTús ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>An líon is mó {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>An líon is lú {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Sórtáil De Réir: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Comhad</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Bliain</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Dáta Curtha Leis</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Dáta Cruthaithe</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Dáta Athraithe</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Seinnte Go Deireanach</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Fad</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Uimhir an Riain</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Seinnte</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Amhráin</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Ord Láimhe</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Randamach</value>
+  </data>
 </root>

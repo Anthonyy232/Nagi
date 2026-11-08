@@ -2069,4 +2069,82 @@ Chcete pokračovať?</value>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Zobrazovať názov každého stĺpca nad zoznamami skladieb.</value>
   </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A až Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z až A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Najnovšie)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Najstaršie)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Vzostupne)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Zostupne)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Najkratšie prvé</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Najdlhšie prvé</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Najpomalšie prvé ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Najrýchlejšie prvé ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Najviac {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Najmenej {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Zoradiť podľa: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Súbor</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Rok</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Dátum pridania</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Dátum vytvorenia</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Dátum úpravy</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Naposledy prehrané</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Dĺžka</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Číslo stopy</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Počet prehratí</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Skladby</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Manuálne poradie</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Náhodne</value>
+  </data>
 </root>

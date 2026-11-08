@@ -74,47 +74,8 @@
   <data name="Label_Playlist" xml:space="preserve">
     <value>Lista de reprodução</value>
   </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>Ficheiro</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>Ano</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>Data de Adição</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>Data de Criação</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>Data de Modificação</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>Última Reprodução</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>Duração</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>Número da Faixa</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>Reproduções</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>Músicas</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Pasta</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>Ordem Manual</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>Aleatório</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
@@ -125,42 +86,6 @@
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} não encontrado.</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (A a Z)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (Z a A)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Mais recentes)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Mais antigos)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Crescente)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Decrescente)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>Mais curtos primeiro</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>Mais longos primeiro</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>Mais lentos primeiro ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>Mais rápidos primeiro ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>Mais {0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>Menos {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>A verificar a pasta {0} de {1}: {2} - {3}</value>
@@ -233,9 +158,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> &amp; </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Ordenar por: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Nenhuma lista de reprodução para exportar.</value>

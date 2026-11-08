@@ -74,47 +74,8 @@
   <data name="Label_Playlist" xml:space="preserve">
     <value>Playlist</value>
   </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>File</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>Anno</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>Data aggiunta</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>Data creazione</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>Data modifica</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>Ultima riproduzione</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>Durata</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>Numero traccia</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>Riproduzioni</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>Brani</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Cartella</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>Ordine manuale</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>Casuale</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
@@ -125,42 +86,6 @@
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} non trovato.</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (dalla A alla Z)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (dalla Z alla A)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Più recente)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Meno recente)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (crescente)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (decrescente)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>Più breve prima</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>Più lungo prima</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>Più lento prima ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>Più veloce prima ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>Più {0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>Meno {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Scansione cartella {0} di {1}: {2} - {3}</value>
@@ -233,9 +158,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> &amp; </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Ordina per: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Nessuna playlist da esportare.</value>

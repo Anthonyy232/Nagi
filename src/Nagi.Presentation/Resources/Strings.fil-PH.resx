@@ -2069,4 +2069,82 @@ Gusto mo bang magpatuloy?</value>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Lagyan ng label ang bawat column sa itaas ng mga listahan ng kanta.</value>
   </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A hanggang Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z hanggang A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Pinakabago)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Pinakaluma)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Pataas)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Pababa)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Pinakamaikli Muna</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Pinakamahaba Muna</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Pinakamabagal Muna ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Pinakamabilis Muna ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Pinakamaraming {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Pinakakaunting {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Pagbukud-bukurin Ayon sa: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Taon</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Petsa ng Pagdagdag</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Petsa ng Pagkagawa</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Petsa ng Pagbabago</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Huling Pinatugtog</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Tagal</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Numero ng Track</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Mga Pagpapatugtog</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Mga Kanta</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Manu-manong Pagkakasunod</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Random</value>
+  </data>
 </root>

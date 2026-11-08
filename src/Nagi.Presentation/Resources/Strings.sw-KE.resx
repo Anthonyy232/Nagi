@@ -2069,4 +2069,82 @@ Je, unataka kuendelea?</value>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Onyesha kichwa cha kila safu juu ya orodha za nyimbo.</value>
   </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A hadi Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z hadi A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Mpya Zaidi)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Kongwe Zaidi)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Kupanda)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Kushuka)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Mfupi Kwanza</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Mrefu Kwanza</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Polepole Kwanza ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Haraka Zaidi Kwanza ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>{0} Zaidi</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>{0} Chache Zaidi</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Panga Kwa: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Faili</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Mwaka</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Tarehe Iliyoongezwa</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Tarehe Iliyoundwa</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Tarehe Iliyorekebishwa</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Iliyochezwa Mwisho</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Muda</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Namba ya Wimbo</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Mara za Kucheza</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Nyimbo</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Mpangilio wa Mwongozo</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Nasibu</value>
+  </data>
 </root>

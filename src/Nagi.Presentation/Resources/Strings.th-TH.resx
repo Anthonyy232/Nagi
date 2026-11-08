@@ -2069,4 +2069,82 @@
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>แสดงชื่อของแต่ละคอลัมน์เหนือรายการเพลง</value>
   </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A ถึง Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z ถึง A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (ใหม่ที่สุด)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (เก่าที่สุด)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (จากน้อยไปมาก)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (จากมากไปน้อย)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>สั้นที่สุดก่อน</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>ยาวที่สุดก่อน</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>ช้าที่สุดก่อน ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>เร็วที่สุดก่อน ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>{0} มากที่สุด</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>{0} น้อยที่สุด</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>จัดเรียงตาม: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>ไฟล์</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>ปี</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>วันที่เพิ่ม</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>วันที่สร้าง</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>วันที่แก้ไข</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>เล่นล่าสุด</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>ระยะเวลา</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>หมายเลขแทร็ก</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>จำนวนการเล่น</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>เพลง</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>ลำดับเอง</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>สุ่ม</value>
+  </data>
 </root>

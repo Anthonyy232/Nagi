@@ -2069,4 +2069,82 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Prikaži naziv svakog stupca iznad popisa pjesama.</value>
   </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A do Ž)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Ž do A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Najnovije)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Najstarije)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (uzlazno)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (silazno)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Prvo najkraće</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Prvo najdulje</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Prvo najsporije ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Prvo najbrže ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Najviše {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Najmanje {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Sortiraj po: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Datoteka</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Godina</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Datum dodavanja</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Datum stvaranja</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Datum izmjene</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Zadnje reproducirano</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Trajanje</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Broj pjesme</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Broj reprodukcija</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Pjesme</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Ručni redoslijed</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Nasumično</value>
+  </data>
 </root>

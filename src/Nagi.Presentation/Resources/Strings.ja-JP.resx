@@ -2069,4 +2069,82 @@
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>曲リストの上に各列の見出しを表示します。</value>
   </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A-Z順)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z-A順)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (新しい順)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (古い順)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0}（昇順）</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0}（降順）</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>最短から</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>最長から</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>最も遅い順 ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>最も速い順 ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>最も多い{0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>{0}が最も少ない</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>並べ替え: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>ファイル</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>年</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>追加日</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>作成日</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>更新日</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>最終再生日</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>再生時間</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>トラック番号</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>再生回数</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>曲</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>手動順</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>ランダム</value>
+  </data>
 </root>

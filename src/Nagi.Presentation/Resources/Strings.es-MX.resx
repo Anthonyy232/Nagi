@@ -2069,4 +2069,82 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Muestra una etiqueta sobre cada columna de las listas de canciones.</value>
   </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A a Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z a A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Más reciente)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Más antiguo)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (ascendente)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (descendente)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Más corto primero</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Más largo primero</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Más lento primero ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Más rápido primero ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Más {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Menos {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Ordenar por: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Archivo</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Año</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Fecha de adición</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Fecha de creación</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Fecha de modificación</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Última reproducción</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Duración</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Número de pista</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Reproducciones</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Canciones</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Orden manual</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Aleatorio</value>
+  </data>
 </root>

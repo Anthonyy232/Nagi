@@ -2069,4 +2069,82 @@ Vil du fortsette?</value>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Vis en overskrift over hver kolonne i sanglister.</value>
   </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A til Å)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Å til A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Nyeste)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Eldste)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (stigende)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (synkende)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Kortest først</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Lengst først</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Saktest først ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Raskest først ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Flest {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Færrest {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Sorter etter: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Fil</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>År</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Dato lagt til</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Dato opprettet</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Dato endret</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Sist spilt</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Varighet</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Spornummer</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Avspillinger</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Sanger</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Manuell rekkefølge</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Tilfeldig</value>
+  </data>
 </root>

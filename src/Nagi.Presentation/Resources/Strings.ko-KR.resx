@@ -2069,4 +2069,82 @@
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>곡 목록 위에 각 열의 머리글을 표시합니다.</value>
   </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (오름차순)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (내림차순)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (최신순)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (오래된 순)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (오름차순)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (내림차순)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>짧은 순</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>긴 순</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>느린 순 ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>빠른 순 ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>가장 많은 {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>가장 적은 {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>정렬 기준: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>파일</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>연도</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>추가된 날짜</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>생성된 날짜</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>수정된 날짜</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>마지막 재생일</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>재생 시간</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>트랙 번호</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>재생 횟수</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>노래</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>수동 정렬</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>무작위</value>
+  </data>
 </root>

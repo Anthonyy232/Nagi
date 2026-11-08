@@ -2069,4 +2069,82 @@
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>عرض عنوان لكل عمود أعلى قوائم الأغاني.</value>
   </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (ألف إلى ياء)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (ياء إلى ألف)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (الأحدث)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (الأقدم)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (تصاعدي)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (تنازلي)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>الأقصر أولاً</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>الأطول أولاً</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>الأبطأ أولاً ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>الأسرع أولاً ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>الأكثر {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>أقل {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>فرز حسب: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>ملف</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>سنة</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>تاريخ الإضافة</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>تاريخ الإنشاء</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>تاريخ التعديل</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>آخر تشغيل</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>المدة</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>رقم المسار</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>عدد التشغيلات</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>الأغاني</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>ترتيب يدوي</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>عشوائي</value>
+  </data>
 </root>

@@ -2069,4 +2069,82 @@
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Показувати назву кожного стовпця над списками пісень.</value>
   </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (від А до Я)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (від Я до А)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (новіші)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (старіші)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (за зростанням)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (за спаданням)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Найкоротші спочатку</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Найдовші спочатку</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Найповільніші спочатку ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Найшвидші спочатку ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Найбільше {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Найменше {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Сортувати за: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Рік</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Дата додавання</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Дата створення</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Дата зміни</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Востаннє відтворено</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Тривалість</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Номер треку</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Відтворень</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Пісні</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Порядок вручну</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Випадково</value>
+  </data>
 </root>

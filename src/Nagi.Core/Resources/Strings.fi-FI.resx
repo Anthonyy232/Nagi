@@ -74,47 +74,8 @@
   <data name="Label_Playlist" xml:space="preserve">
     <value>Soittolista</value>
   </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>Tiedosto</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>Vuosi</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>Lisätty</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>Luontipäivämäärä</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>Muokkauspäivämäärä</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>Viimeksi toistettu</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>Kesto</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>Raidan numero</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>Toistokerrat</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>Kappaleet</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Kansio</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>Manuaalinen järjestys</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>Satunnainen</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
@@ -125,42 +86,6 @@
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} ei löydy.</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (A–Z)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (Z–A)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Uusin)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Vanhin)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (nouseva)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (laskeva)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>Lyhin ensin</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>Pisin ensin</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>Hitain ensin ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>Nopein ensin ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>Eniten {0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>Vähiten {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Skannataan kansiota {0}/{1}: {2} - {3}</value>
@@ -233,9 +158,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> &amp; </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Järjestä: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Ei soittolistoja vietäväksi.</value>

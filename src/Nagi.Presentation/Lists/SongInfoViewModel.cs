@@ -46,33 +46,33 @@ public sealed class SongInfoViewModel(
                 (CoreStrings.Label_Album, song.Album?.Title),
                 (Strings.Label_AlbumArtist, song.Album?.ArtistName),
                 (CoreStrings.Label_Genre, string.Join(", ", song.Genres.Select(g => g.Name).Order())),
-                (CoreStrings.Label_Year, song.Year?.ToString()),
-                (CoreStrings.Label_TrackNumber, NumberOfTotal(song.TrackNumber, song.TrackCount)),
+                (Strings.Label_Year, song.Year?.ToString()),
+                (Strings.Label_TrackNumber, NumberOfTotal(song.TrackNumber, song.TrackCount)),
                 (Strings.Label_DiscNumber, NumberOfTotal(song.DiscNumber, song.DiscCount)),
                 (Strings.Label_Composer, song.Composer),
                 (Strings.Label_Conductor, song.Conductor),
                 (Strings.Label_Grouping, song.Grouping),
-                (CoreStrings.Label_Bpm, song.Bpm?.ToString("0.#")),
+                (Strings.Label_Bpm, song.Bpm?.ToString("0.#")),
                 (Strings.Label_ReplayGain, Format(Strings.SongInfo_Gain_Format, song.ReplayGainTrackGain)),
                 (Strings.Label_Comment, song.Comment),
                 (Strings.Label_Copyright, song.Copyright)),
-            Section(CoreStrings.Label_File,
+            Section(Strings.Label_File,
                 // A server song's path is a library key, not a file, so its server is shown instead.
                 song.IsFromServer ? (Strings.Label_Server, song.Folder?.Name) : (Strings.Label_Path, song.FilePath),
                 (Strings.Label_Format, song.FileExtension.TrimStart('.').ToUpperInvariant()),
-                (CoreStrings.Label_Duration, DurationFormatter.Format(song.Duration)),
+                (Strings.Label_Duration, DurationFormatter.Format(song.Duration)),
                 (Strings.Label_Bitrate, Format(Strings.SongInfo_Bitrate_Format, song.Bitrate)),
                 (Strings.Label_SampleRate, Format(Strings.SongInfo_SampleRate_Format, song.SampleRate)),
                 (Strings.Label_Channels, song.Channels?.ToString()),
                 (Strings.Label_FileSize, song.IsFromServer ? null : Format(Strings.SongInfo_FileSize_Format, GetFileSizeInMegabytes(song.FilePath))),
                 // A server song's creation date is the date its server added it, already shown as Date Added.
-                (CoreStrings.Label_DateCreated, song.IsFromServer ? null : FormatDate(song.FileCreatedDate)),
-                (CoreStrings.Label_DateModified, FormatDate(song.FileModifiedDate))),
+                (Strings.Label_DateCreated, song.IsFromServer ? null : FormatDate(song.FileCreatedDate)),
+                (Strings.Label_DateModified, FormatDate(song.FileModifiedDate))),
             Section(Strings.SongInfo_Section_Listening,
-                (CoreStrings.Label_DateAdded, FormatDate(song.DateAddedToLibrary)),
-                (CoreStrings.Label_PlayCount, song.PlayCount.ToString("N0")),
+                (Strings.Label_DateAdded, FormatDate(song.DateAddedToLibrary)),
+                (Strings.Label_PlayCount, song.PlayCount.ToString("N0")),
                 (Strings.Label_SkipCount, song.SkipCount.ToString("N0")),
-                (CoreStrings.Label_LastPlayed, FormatDate(song.LastPlayedDate)))
+                (Strings.Label_LastPlayed, FormatDate(song.LastPlayedDate)))
         ];
     }
 
