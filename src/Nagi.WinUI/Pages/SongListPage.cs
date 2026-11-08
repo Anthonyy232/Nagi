@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Library;
 using Nagi.Presentation.Lists;
 using Nagi.Presentation.Navigation;
+using Nagi.Presentation.Player;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;
 
@@ -20,6 +21,7 @@ public abstract class SongListPage : ViewModelPage
 {
     private readonly List<NowPlayingIndicatorBinder> _nowPlayingBinders = new();
     private SongListViewModelBase? _viewModel;
+    private PlayerViewModel? _player;
     private ListView[] _songLists = [];
 
     /// <summary>
@@ -30,6 +32,7 @@ public abstract class SongListPage : ViewModelPage
     {
         _viewModel = viewModel;
         _songLists = songLists;
+        _player = GetViewModel<PlayerViewModel>();
         columnHeaderHost.Child = CreateColumnHeader(viewModel);
         Loaded += AttachNowPlayingBinders;
         Unloaded += DetachNowPlayingBinders;
@@ -89,7 +92,7 @@ public abstract class SongListPage : ViewModelPage
     {
         if (_nowPlayingBinders.Count > 0) return;
         foreach (var list in _songLists)
-            _nowPlayingBinders.Add(new NowPlayingIndicatorBinder(list, _viewModel!, item => GetSong(item)?.Id));
+            _nowPlayingBinders.Add(new NowPlayingIndicatorBinder(list, _player!, item => GetSong(item)?.Id));
     }
 
     private void DetachNowPlayingBinders(object sender, RoutedEventArgs e)

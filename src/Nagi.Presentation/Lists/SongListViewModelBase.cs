@@ -14,7 +14,6 @@ using Nagi.Core.Playlists;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Navigation;
-using Nagi.Presentation.Player;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Settings;
 using Nagi.Presentation.Shell;
@@ -24,7 +23,7 @@ namespace Nagi.Presentation.Lists;
 /// <summary>
 ///     Adds selection, playback, and infinite scrolling to song lists.
 /// </summary>
-public abstract partial class SongListViewModelBase : PagedListViewModelBase<Song>, INowPlayingSource
+public abstract partial class SongListViewModelBase : PagedListViewModelBase<Song>
 {
     protected readonly IListeningService _listening;
     protected readonly IMusicPlaybackService _playbackService;
@@ -32,15 +31,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     protected readonly IUIService _uiService;
     protected readonly IMusicNavigationService _musicNavigationService;
     public bool HasLoadedPlaylists { get; private set; }
-
-    /// <summary>
-    ///     The Id of the song that is currently playing in the player, mirrored from
-    ///     <see cref="IMusicPlaybackService.CurrentTrack"/> so list rows can show a
-    ///     "now playing" indicator. Null when nothing is playing.
-    /// </summary>
-    [ObservableProperty] public partial Guid? CurrentPlayingSongId { get; set; }
-
-    [ObservableProperty] public partial bool IsPlaying { get; set; }
 
     // Loaded on demand unless a view requires it for editing.
     private readonly object _fullSongIdsLock = new();
@@ -76,35 +66,9 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
         _playlistService.PlaylistsChanged += OnPlaylistsChanged;
 
-        CurrentPlayingSongId = _playbackService.CurrentTrack?.Id;
-        _playbackService.TrackChanged += OnPlaybackTrackChanged;
-        IsPlaying = _playbackService.IsPlaying;
-        _playbackService.PlaybackStateChanged += OnPlaybackStateChanged;
         ChosenColumns = _settingsService.Get(AppSettings.SongListColumns);
         ShowsColumnHeader = _settingsService.Get(AppSettings.ShowSongListHeader);
         _settingsService.SettingChanged += OnSettingChanged;
-    }
-
-    private void OnPlaybackTrackChanged()
-    {
-        if (_isDisposed) return;
-        var newId = _playbackService.CurrentTrack?.Id;
-        _dispatcherService.TryEnqueue(() =>
-        {
-            if (_isDisposed) return;
-            CurrentPlayingSongId = newId;
-        });
-    }
-
-    private void OnPlaybackStateChanged()
-    {
-        if (_isDisposed) return;
-        var isPlaying = _playbackService.IsPlaying;
-        _dispatcherService.TryEnqueue(() =>
-        {
-            if (_isDisposed) return;
-            IsPlaying = isPlaying;
-        });
     }
 
     private void OnPlaylistsChanged(object? sender, EventArgs e)
@@ -548,8 +512,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         ResetState();
 
         _playlistService.PlaylistsChanged -= OnPlaylistsChanged;
-        _playbackService.TrackChanged -= OnPlaybackTrackChanged;
-        _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
         _settingsService.SettingChanged -= OnSettingChanged;
 
         base.Dispose();

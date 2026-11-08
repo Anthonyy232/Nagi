@@ -18,7 +18,7 @@ using Nagi.Presentation.Shell;
 
 namespace Nagi.Presentation.Player;
 
-public partial class PlayerViewModel : ObservableObject, INowPlayingSource
+public partial class PlayerViewModel : ObservableObject
 {
     private const double VolumeLowThreshold = 33;
     private const double VolumeMediumThreshold = 66;

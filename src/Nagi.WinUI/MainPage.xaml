@@ -378,7 +378,7 @@
                                             </ListView.Footer>
                                             <ListView.ItemTemplate>
                                                 <DataTemplate x:DataType="player:QueueEntry">
-                                                    <Grid Background="Transparent" Tag="{x:Bind}" DoubleTapped="QueueEntry_DoubleTapped"
+                                                    <localControls:NowPlayingGrid Background="Transparent" Tag="{x:Bind}" DoubleTapped="QueueEntry_DoubleTapped"
                                                           ToolTipService.ToolTip="{x:Bind Title}">
                                                         <Grid.ContextFlyout>
                                                             <MenuFlyout>
@@ -398,7 +398,7 @@
                                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                                    Visibility="{Binding DataContext.QueueDisplaySettings.ShowPosition, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                                         <StackPanel Grid.Column="1" Margin="0,0,12,0" Spacing="4">
-                                                            <TextBlock x:Name="SongTitle" Text="{x:Bind Title}" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
+                                                            <TextBlock localControls:NowPlayingGrid.IsTitle="True" Text="{x:Bind Title}" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
                                                             <StackPanel Visibility="{Binding DataContext.QueueDisplaySettings.ShowArtist, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}">
                                                                 <TextBlock Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
                                                                            uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
@@ -412,7 +412,7 @@
                                                         <TextBlock Grid.Column="2" Text="{x:Bind Duration, Converter={StaticResource TimeSpanToTimeStringConverter}}"
                                                                    Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                                    Visibility="{Binding DataContext.QueueDisplaySettings.ShowDuration, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                                    </Grid>
+                                                    </localControls:NowPlayingGrid>
                                                 </DataTemplate>
                                             </ListView.ItemTemplate>
                                         </ListView>
@@ -462,7 +462,7 @@
                                                         </uihelpers:HeaderedListTemplateSelector.HeaderTemplate>
                                                         <uihelpers:HeaderedListTemplateSelector.SongTemplate>
                                                             <DataTemplate x:DataType="player:RecentListenEntry">
-                                                                <Grid Background="Transparent" Tag="{x:Bind}" DoubleTapped="HistoryEntry_DoubleTapped"
+                                                                <localControls:NowPlayingGrid Background="Transparent" Tag="{x:Bind}" DoubleTapped="HistoryEntry_DoubleTapped"
                                                                       ToolTipService.ToolTip="{x:Bind Title}">
                                                                     <Grid.ContextFlyout><MenuFlyout>
                                                                         <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_Play}" Command="{Binding DataContext.PlayHistoryNowCommand, ElementName=MainPageRoot}" CommandParameter="{x:Bind}" />
@@ -470,7 +470,7 @@
                                                                     </MenuFlyout></Grid.ContextFlyout>
                                                                     <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                                                                     <StackPanel Margin="0,0,12,0" Spacing="4">
-                                                                        <TextBlock x:Name="SongTitle" Text="{x:Bind Title}" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
+                                                                        <TextBlock localControls:NowPlayingGrid.IsTitle="True" Text="{x:Bind Title}" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
                                                                         <StackPanel>
                                                                             <TextBlock Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
                                                                                        uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
@@ -479,7 +479,7 @@
                                                                         </StackPanel>
                                                                     </StackPanel>
                                                                     <TextBlock Grid.Column="1" Text="{x:Bind TimeText}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                                                                </Grid>
+                                                                </localControls:NowPlayingGrid>
                                                             </DataTemplate>
                                                         </uihelpers:HeaderedListTemplateSelector.SongTemplate>
                                                     </uihelpers:HeaderedListTemplateSelector>

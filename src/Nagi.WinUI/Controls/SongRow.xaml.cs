@@ -18,7 +18,7 @@ namespace Nagi.WinUI.Controls;
 ///     A row of a song list with its context menu, shared by every song list page. Created with
 ///     <c>isHeader</c> it is instead the list's column header, so the two always line up.
 /// </summary>
-public sealed partial class SongRow : UserControl
+public sealed partial class SongRow : UserControl, INowPlayingRow
 {
     public static readonly DependencyProperty SongProperty = DependencyProperty.Register(
         nameof(Song), typeof(Song), typeof(SongRow),
@@ -182,6 +182,13 @@ public sealed partial class SongRow : UserControl
     }
 
     private static Visibility ToVisibility(bool isVisible) => isVisible ? Visibility.Visible : Visibility.Collapsed;
+
+    public void SetNowPlaying(bool isCurrent, bool isPlaying)
+    {
+        NowPlayingIndicator.IsActive = isCurrent;
+        NowPlayingIndicator.IsPlaying = isPlaying;
+        INowPlayingRow.HighlightTitle(SongTitle, isCurrent);
+    }
 
     // Keeps the artist links from growing past their column, so long multi-artist names trim.
     private void ArtistCell_SizeChanged(object sender, SizeChangedEventArgs e) => ArtistLinks.MaxWidth = e.NewSize.Width;
