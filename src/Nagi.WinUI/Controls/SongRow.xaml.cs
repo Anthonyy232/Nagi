@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation;
@@ -7,6 +8,8 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Nagi.Core.Library;
 using Nagi.Presentation.Lists;
+using Nagi.Presentation.Navigation;
+using Nagi.Presentation.Resources;
 using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Controls;
@@ -207,8 +210,50 @@ public sealed partial class SongRow : UserControl
 
         PlaylistMenuFlyoutHelper.Populate(AddToPlaylistSubMenu, viewModel.AvailablePlaylists,
             viewModel.AddSelectedSongsToPlaylistCommand);
-        if (isSingle && viewModel.ShowsGoToArtist)
-            ArtistMenuFlyoutHelper.PopulateSubMenu(GoToArtistSubMenu, Song!, viewModel.GoToArtistCommand,
-                viewModel.GetArtistsForSongAsync, DispatcherQueue);
+        if (isSingle && viewModel.ShowsGoToArtist) PopulateArtistMenu(Song!, viewModel);
+    }
+
+    // A song read without its artists loads them while the menu is open.
+    private void PopulateArtistMenu(Song song, SongListViewModelBase viewModel)
+    {
+        GoToArtistSubMenu.Items.Clear();
+        var artists = song.GetCreditedArtists();
+        if (artists.Count > 0)
+        {
+            AddArtistItems(song, artists, viewModel);
+            return;
+        }
+
+        var loadingItem = new MenuFlyoutItem { Text = Strings.Status_Loading, IsEnabled = false };
+        GoToArtistSubMenu.Items.Add(loadingItem);
+        _ = LoadArtistMenuAsync(song, loadingItem, viewModel);
+    }
+
+    private async Task LoadArtistMenuAsync(Song song, MenuFlyoutItem loadingItem, SongListViewModelBase viewModel)
+    {
+        var artists = await viewModel.GetArtistsForSongAsync(song);
+        if (!GoToArtistSubMenu.Items.Contains(loadingItem)) return;
+        if (artists is null)
+        {
+            loadingItem.Text = Strings.Error_FailedToLoadArtists;
+            return;
+        }
+
+        GoToArtistSubMenu.Items.Remove(loadingItem);
+        if (artists.Count == 0)
+            GoToArtistSubMenu.Items.Add(new MenuFlyoutItem { Text = Artist.UnknownArtistName, IsEnabled = false });
+        else
+            AddArtistItems(song, artists, viewModel);
+    }
+
+    private void AddArtistItems(Song song, IEnumerable<Artist> artists, SongListViewModelBase viewModel)
+    {
+        foreach (var artist in artists)
+            GoToArtistSubMenu.Items.Add(new MenuFlyoutItem
+            {
+                Text = artist.Name,
+                Command = viewModel.GoToArtistCommand,
+                CommandParameter = new ArtistNavigationRequest { Song = song, ArtistName = artist.Name }
+            });
     }
 }
