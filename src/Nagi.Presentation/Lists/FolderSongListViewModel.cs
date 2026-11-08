@@ -114,14 +114,8 @@ public partial class FolderSongListViewModel : DetailSongListViewModelBase<Folde
     {
         var page = (DirectoryPage)result;
         var parts = new List<string>();
-        if (page.FolderCount > 0)
-            parts.Add(ResourceFormatter.Format(page.FolderCount == 1
-                ? Strings.Folders_Count_Singular
-                : Strings.Folders_Count_Plural, page.FolderCount));
-        if (page.SongCount > 0)
-            parts.Add(ResourceFormatter.Format(page.SongCount == 1
-                ? Strings.Songs_Count_Singular
-                : Strings.Songs_Count_Plural, page.SongCount));
+        if (page.FolderCount > 0) parts.Add(ResourceFormatter.Format(Strings.Folders_Count, page.FolderCount));
+        if (page.SongCount > 0) parts.Add(ResourceFormatter.Format(Strings.Songs_Count, page.SongCount));
 
         return parts.Count == 0 ? Strings.Generic_NoItems : string.Join(", ", parts);
     }

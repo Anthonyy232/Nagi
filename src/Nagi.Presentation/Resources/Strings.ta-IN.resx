@@ -250,12 +250,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>கலைஞர்</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} பாடல்</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} பாடல்கள்</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>கலைஞர் காணப்படவில்லை</value>
   </data>
@@ -310,29 +304,17 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>கோப்புறையை மறு ஸ்கேன் செய்வதில் பிழை: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0} கோப்புறை</value>
+  <data name="Folders_Count" xml:space="preserve">
+    <value>{0, plural, one {# கோப்புறை} other {# கோப்புறைகள்}}</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} கோப்புறைகள்</value>
+  <data name="Songs_Count" xml:space="preserve">
+    <value>{0, plural, one {# பாடல்} other {# பாடல்கள்}}</value>
   </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} பாடல்</value>
+  <data name="Albums_Count" xml:space="preserve">
+    <value>{0, plural, one {# ஆல்பம்} other {# ஆல்பங்கள்}}</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} பாடல்கள்</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
-    <value>{0} ஆல்பம்</value>
-  </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} ஆல்பங்கள்</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} கலைஞர்</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} கலைஞர்கள்</value>
+  <data name="Artists_Count" xml:space="preserve">
+    <value>{0, plural, one {# கலைஞர்} other {# கலைஞர்கள்}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>பொருட்கள் இல்லை</value>
@@ -358,17 +340,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>உங்கள் லைப்ரரி தயாராக உள்ளது.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>ஸ்மார்ட் • {0} பாடல்</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>ஸ்மார்ட் • {0} பாடல்கள்</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} பாடல்</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} பாடல்கள்</value>
+  <data name="Playlist_Smart_Count" xml:space="preserve">
+    <value>ஸ்மார்ட் • {0, plural, one {# பாடல்} other {# பாடல்கள்}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>இந்த ஸ்மார்ட் பிளேலிஸ்ட்டின் விதிகளுடன் எந்த பாடல்களும் பொருந்தவில்லை.</value>
@@ -489,7 +462,7 @@
     <value>விதிகள் எதுவும் வரையறுக்கப்படவில்லை • அனைத்து பாடல்களும் பொருந்துகின்றன</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>{1} {2} இல் {0} பொருந்தும்</value>
+    <value>{1, plural, one {# விதி} other {# விதிகள்}} இல் {0} பொருந்தும்</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>அனைத்து</value>
@@ -497,17 +470,8 @@
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>ஏதாவது</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>விதி</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>விதிகள்</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} பொருள்</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>{0} பொருட்கள்</value>
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
+    <value>{0, plural, one {# பொருள்} other {# பொருட்கள்}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} தேர்ந்தெடுக்கப்பட்டது</value>

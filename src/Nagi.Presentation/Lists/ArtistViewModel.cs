@@ -79,9 +79,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
     public bool HasArtists => Artists.Any();
 
     protected override string FormatTotalItemsText(PagedResult<Artist> result) =>
-        result.TotalCount == 1
-            ? ResourceFormatter.Format(Strings.Artists_Count_Singular, result.TotalCount)
-            : ResourceFormatter.Format(Strings.Artists_Count_Plural, result.TotalCount);
+        ResourceFormatter.Format(Strings.Artists_Count, result.TotalCount);
 
     protected override Task<PagedResult<Artist>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token) =>
         _libraryReader.GetArtistsAsync(SearchTerm, Sort.Current, pageNumber, pageSize, token);

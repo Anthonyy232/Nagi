@@ -250,12 +250,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Artista</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} música</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} músicas</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Artista Não Encontrado</value>
   </data>
@@ -310,29 +304,17 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Erro ao verificar novamente a pasta: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0} pasta</value>
+  <data name="Folders_Count" xml:space="preserve">
+    <value>{0, plural, one {# pasta} other {# pastas}}</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} pastas</value>
+  <data name="Songs_Count" xml:space="preserve">
+    <value>{0, plural, one {# música} other {# músicas}}</value>
   </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} música</value>
+  <data name="Albums_Count" xml:space="preserve">
+    <value>{0, plural, one {# álbum} other {# álbuns}}</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} músicas</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
-    <value>{0} álbum</value>
-  </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} álbuns</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} artista</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} artistas</value>
+  <data name="Artists_Count" xml:space="preserve">
+    <value>{0, plural, one {# artista} other {# artistas}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Nenhum item</value>
@@ -358,17 +340,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Sua biblioteca está pronta.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>Inteligente • {0} música</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Inteligente • {0} músicas</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} música</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} músicas</value>
+  <data name="Playlist_Smart_Count" xml:space="preserve">
+    <value>Inteligente • {0, plural, one {# música} other {# músicas}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Nenhuma música corresponde às regras desta playlist inteligente.</value>
@@ -489,7 +462,7 @@ Arquivos que não puderam ser importados: {0}.</value>
     <value>Nenhuma regra definida • Todas as músicas correspondem</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Corresponder {0} de {1} {2}</value>
+    <value>Corresponder {0} de {1, plural, one {# regra} other {# regras}}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>todas</value>
@@ -497,17 +470,8 @@ Arquivos que não puderam ser importados: {0}.</value>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>qualquer</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>regra</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>regras</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} item</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>{0} itens</value>
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
+    <value>{0, plural, one {# item} other {# itens}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0, plural, one {# selecionado} other {# selecionados}}</value>

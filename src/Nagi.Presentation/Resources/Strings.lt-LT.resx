@@ -250,12 +250,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Atlikėjas</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} kūrinys</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0, plural, one {# kūrinys} few {# kūriniai} many {# kūrinio} other {# kūrinių}}</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Atlikėjas nerastas</value>
   </data>
@@ -310,28 +304,16 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Klaida iš naujo nuskenuojant aplanką: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0} aplankas</value>
-  </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0, plural, one {# aplankas} few {# aplankai} many {# aplanko} other {# aplankų}}</value>
   </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} kūrinys</value>
-  </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
+  <data name="Songs_Count" xml:space="preserve">
     <value>{0, plural, one {# kūrinys} few {# kūriniai} many {# kūrinio} other {# kūrinių}}</value>
   </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
-    <value>{0} albumas</value>
-  </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0, plural, one {# albumas} few {# albumai} many {# albumo} other {# albumų}}</value>
   </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} atlikėjas</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
+  <data name="Artists_Count" xml:space="preserve">
     <value>{0, plural, one {# atlikėjas} few {# atlikėjai} many {# atlikėjo} other {# atlikėjų}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
@@ -358,17 +340,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Jūsų biblioteka paruošta.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>Išmanusis • {0} kūrinys</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
+  <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Išmanusis • {0, plural, one {# kūrinys} few {# kūriniai} many {# kūrinio} other {# kūrinių}}</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} kūrinys</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one {# kūrinys} few {# kūriniai} many {# kūrinio} other {# kūrinių}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Nėra kūrinių, atitinkančių šio išmaniojo grojaraščio taisykles.</value>
@@ -489,7 +462,7 @@ Failai, kurių nepavyko importuoti: {0}.</value>
     <value>Nėra apibrėžtų taisyklių • Visi kūriniai atitinka</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Atitinka {0} iš {1} {2}</value>
+    <value>Atitinka {0} iš {1, plural, one {# taisyklė} other {# taisyklės}}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>visus</value>
@@ -497,16 +470,7 @@ Failai, kurių nepavyko importuoti: {0}.</value>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>bet kuriuos</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>taisyklė</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>taisyklės</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} elementas</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# elementas} few {# elementai} many {# elemento} other {# elementų}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">

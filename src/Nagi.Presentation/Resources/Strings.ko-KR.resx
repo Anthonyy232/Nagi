@@ -250,12 +250,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>아티스트</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0}곡</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0}곡</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>아티스트를 찾을 수 없음</value>
   </data>
@@ -310,28 +304,16 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>폴더 재스캔 오류: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0}개 폴더</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0}개 폴더</value>
-  </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
+  <data name="Songs_Count" xml:space="preserve">
     <value>{0}곡</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0}곡</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0}개 앨범</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0}개 앨범</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>아티스트 {0}명</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
+  <data name="Artists_Count" xml:space="preserve">
     <value>아티스트 {0}명</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
@@ -358,17 +340,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>라이브러리가 준비되었습니다.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+  <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>스마트 • {0}곡</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>스마트 • {0}곡</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0}곡</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0}곡</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>이 스마트 재생 목록의 규칙과 일치하는 곡이 없습니다.</value>
@@ -489,7 +462,7 @@
     <value>정의된 규칙 없음 • 모든 곡 일치</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>{1} {2} 중 {0} 일치</value>
+    <value>{1} 규칙 중 {0} 일치</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>모두</value>
@@ -497,16 +470,7 @@
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>어느 하나</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>규칙</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>규칙</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0}개 항목</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0}개 항목</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">

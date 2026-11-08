@@ -250,12 +250,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>هنرمند</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} آهنگ</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} آهنگ</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>هنرمند یافت نشد</value>
   </data>
@@ -310,28 +304,16 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>خطا در اسکن مجدد پوشه: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0} پوشه</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} پوشه</value>
-  </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
+  <data name="Songs_Count" xml:space="preserve">
     <value>{0} آهنگ</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} آهنگ</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0} آلبوم</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} آلبوم</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} هنرمند</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
+  <data name="Artists_Count" xml:space="preserve">
     <value>{0} هنرمند</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
@@ -358,17 +340,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>کتابخانه شما آماده است.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+  <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>هوشمند • {0} آهنگ</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>هوشمند • {0} آهنگ</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} آهنگ</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} آهنگ</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>هیچ آهنگی با قوانین این لیست پخش هوشمند مطابقت ندارد.</value>
@@ -489,7 +462,7 @@
     <value>هیچ قانونی تعریف نشده است • همه آهنگ‌ها مطابقت دارند</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>مطابقت {0} از {1} {2}</value>
+    <value>مطابقت {0} از {1, plural, one {# قانون} other {# قوانین}}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>همه</value>
@@ -497,16 +470,7 @@
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>هر کدام</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>قانون</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>قوانین</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} مورد</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} مورد</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">

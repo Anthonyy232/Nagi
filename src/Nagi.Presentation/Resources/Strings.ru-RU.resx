@@ -250,12 +250,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Исполнитель</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0, plural, one {# песня} few {# песни} many {# песен} other {# песен}}</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0, plural, one {# песня} few {# песни} many {# песен} other {# песен}}</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Исполнитель не найден</value>
   </data>
@@ -310,28 +304,16 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Ошибка повторного сканирования папки: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0, plural, one {# папка} few {# папки} many {# папок} other {# папок}}</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one {# папка} few {# папки} many {# папок} other {# папок}}</value>
-  </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
+  <data name="Songs_Count" xml:space="preserve">
     <value>{0, plural, one {# песня} few {# песни} many {# песен} other {# песен}}</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one {# песня} few {# песни} many {# песен} other {# песен}}</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0, plural, one {# альбом} few {# альбома} many {# альбомов} other {# альбомов}}</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one {# альбом} few {# альбома} many {# альбомов} other {# альбомов}}</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0, plural, one {# исполнитель} few {# исполнителя} many {# исполнителей} other {# исполнителей}}</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
+  <data name="Artists_Count" xml:space="preserve">
     <value>{0, plural, one {# исполнитель} few {# исполнителя} many {# исполнителей} other {# исполнителей}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
@@ -358,17 +340,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Ваша библиотека готова.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+  <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Умный • {0, plural, one {# песня} few {# песни} many {# песен} other {# песен}}</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Умный • {0, plural, one {# песня} few {# песни} many {# песен} other {# песен}}</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0, plural, one {# песня} few {# песни} many {# песен} other {# песен}}</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one {# песня} few {# песни} many {# песен} other {# песен}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Ни одна песня не соответствует правилам этого умного плейлиста.</value>
@@ -489,7 +462,7 @@
     <value>Правила не определены • Все песни соответствуют</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Соответствует {0} из {1} {2}</value>
+    <value>Соответствует {0} из {1, plural, one {# правило} other {# правила}}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>всем</value>
@@ -497,16 +470,7 @@
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>любому</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>правило</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>правила</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0, plural, one {# элемент} few {# элемента} many {# элементов} other {# элементов}}</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# элемент} few {# элемента} many {# элементов} other {# элементов}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">

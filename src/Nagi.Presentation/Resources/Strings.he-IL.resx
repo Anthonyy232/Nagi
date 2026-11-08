@@ -250,12 +250,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>אמן</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} שיר</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} שירים</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>אמן לא נמצא</value>
   </data>
@@ -310,29 +304,17 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>שגיאה בסריקה מחדש של תיקיה: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0} תיקיה</value>
+  <data name="Folders_Count" xml:space="preserve">
+    <value>{0, plural, one {# תיקיה} other {# תיקיות}}</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} תיקיות</value>
+  <data name="Songs_Count" xml:space="preserve">
+    <value>{0, plural, one {# שיר} other {# שירים}}</value>
   </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} שיר</value>
+  <data name="Albums_Count" xml:space="preserve">
+    <value>{0, plural, one {# אלבום} other {# אלבומים}}</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} שירים</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
-    <value>{0} אלבום</value>
-  </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} אלבומים</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} אמן</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} אמנים</value>
+  <data name="Artists_Count" xml:space="preserve">
+    <value>{0, plural, one {# אמן} other {# אמנים}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>אין פריטים</value>
@@ -358,17 +340,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>הספרייה שלך מוכנה.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>חכם • {0} שיר</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>חכם • {0} שירים</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} שיר</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} שירים</value>
+  <data name="Playlist_Smart_Count" xml:space="preserve">
+    <value>חכם • {0, plural, one {# שיר} other {# שירים}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>אין שירים התואמים את כללי רשימת השמעה חכמה זו.</value>
@@ -489,7 +462,7 @@
     <value>לא הוגדרו כללים • כל השירים תואמים</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>התאם {0} מתוך {1} {2}</value>
+    <value>התאם {0} מתוך {1, plural, one {# כלל} other {# כללים}}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>כל</value>
@@ -497,17 +470,8 @@
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>כלשהו</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>כלל</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>כללים</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} פריט</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>{0} פריטים</value>
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
+    <value>{0, plural, one {# פריט} other {# פריטים}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} נבחרו</value>

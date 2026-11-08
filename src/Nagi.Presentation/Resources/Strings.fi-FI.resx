@@ -250,12 +250,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Artisti</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} kappale</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} kappaletta</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Artistia ei löydy</value>
   </data>
@@ -310,29 +304,17 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Virhe kansion uudelleenskannauksessa: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0} kansio</value>
+  <data name="Folders_Count" xml:space="preserve">
+    <value>{0, plural, one {# kansio} other {# kansiota}}</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} kansiota</value>
+  <data name="Songs_Count" xml:space="preserve">
+    <value>{0, plural, one {# kappale} other {# kappaletta}}</value>
   </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} kappale</value>
+  <data name="Albums_Count" xml:space="preserve">
+    <value>{0, plural, one {# albumi} other {# albumia}}</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} kappaletta</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
-    <value>{0} albumi</value>
-  </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} albumia</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} artisti</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} artistia</value>
+  <data name="Artists_Count" xml:space="preserve">
+    <value>{0, plural, one {# artisti} other {# artistia}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Ei kohteita</value>
@@ -358,17 +340,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Kirjastosi on valmis.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>Älykäs • {0} kappale</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Älykäs • {0} kappaletta</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} kappale</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} kappaletta</value>
+  <data name="Playlist_Smart_Count" xml:space="preserve">
+    <value>Älykäs • {0, plural, one {# kappale} other {# kappaletta}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Yksikään kappale ei vastaa tämän älykkään soittolistan sääntöjä.</value>
@@ -489,7 +462,7 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
     <value>Ei sääntöjä määritetty • Kaikki kappaleet vastaavat</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Vastaavuus: {0} ({1} {2})</value>
+    <value>Vastaavuus: {0} ({1, plural, one {# sääntö} other {# sääntöä}})</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>kaikki</value>
@@ -497,17 +470,8 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>mikä tahansa</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>sääntö</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>sääntöä</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} kohde</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>{0} kohdetta</value>
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
+    <value>{0, plural, one {# kohde} other {# kohdetta}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} valittu</value>

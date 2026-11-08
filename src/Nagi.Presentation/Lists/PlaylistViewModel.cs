@@ -77,13 +77,7 @@ public partial class PlaylistViewModelItem : ObservableObject
     {
         get
         {
-            var count = ResourceFormatter.Format((IsSmart, SongCount == 1) switch
-            {
-                (true, true) => Strings.Playlist_Smart_Count_Singular,
-                (true, false) => Strings.Playlist_Smart_Count_Plural,
-                (false, true) => Strings.Playlist_Count_Singular,
-                _ => Strings.Playlist_Count_Plural
-            }, SongCount);
+            var count = ResourceFormatter.Format(IsSmart ? Strings.Playlist_Smart_Count : Strings.Songs_Count, SongCount);
             return ServerName is null ? count : ResourceFormatter.Format(Strings.Playlist_FromServer_Format, ServerName, count);
         }
     }

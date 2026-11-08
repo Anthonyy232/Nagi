@@ -250,12 +250,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Nghệ sĩ</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} bài hát</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} bài hát</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Không tìm thấy Nghệ sĩ</value>
   </data>
@@ -310,28 +304,16 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Lỗi khi quét lại thư mục: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0} thư mục</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} thư mục</value>
-  </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
+  <data name="Songs_Count" xml:space="preserve">
     <value>{0} bài hát</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} bài hát</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0} album</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} album</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} nghệ sĩ</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
+  <data name="Artists_Count" xml:space="preserve">
     <value>{0} nghệ sĩ</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
@@ -358,17 +340,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Thư viện của bạn đã sẵn sàng.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+  <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Thông minh • {0} bài hát</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Thông minh • {0} bài hát</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} bài hát</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} bài hát</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Không có bài hát nào khớp với quy tắc của danh sách phát thông minh này.</value>
@@ -489,7 +462,7 @@ Các tệp không thể nhập: {0}.</value>
     <value>Không có quy tắc nào được định nghĩa • Tất cả bài hát khớp</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Khớp {0} trong {1} {2}</value>
+    <value>Khớp {0} trong {1} quy tắc</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>tất cả</value>
@@ -497,16 +470,7 @@ Các tệp không thể nhập: {0}.</value>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>bất kỳ</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>quy tắc</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>quy tắc</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} mục</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} mục</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">

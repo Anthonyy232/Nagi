@@ -36,9 +36,7 @@ public sealed class FolderViewModelItem
 
     public bool IsServer { get; }
 
-    public string SongCountText => SongCount == 1
-        ? ResourceFormatter.Format(Strings.Songs_Count_Singular, SongCount)
-        : ResourceFormatter.Format(Strings.Songs_Count_Plural, SongCount);
+    public string SongCountText => ResourceFormatter.Format(Strings.Songs_Count, SongCount);
 
     public override string ToString() => Name;
 }

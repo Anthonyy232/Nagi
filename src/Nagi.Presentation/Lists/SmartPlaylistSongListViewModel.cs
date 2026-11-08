@@ -134,11 +134,8 @@ public partial class SmartPlaylistSongListViewModel : DetailSongListViewModelBas
         var matchType = smartPlaylist.MatchAllRules
             ? Strings.SmartPlaylist_MatchAll
             : Strings.SmartPlaylist_MatchAny;
-        var ruleWord = ruleCount == 1
-            ? Strings.SmartPlaylist_Rule_Singular
-            : Strings.SmartPlaylist_Rule_Plural;
 
-        return ResourceFormatter.Format(Strings.SmartPlaylist_RuleSummary_Format, matchType, ruleCount, ruleWord);
+        return ResourceFormatter.Format(Strings.SmartPlaylist_RuleSummary_Format, matchType, ruleCount);
     }
 
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,

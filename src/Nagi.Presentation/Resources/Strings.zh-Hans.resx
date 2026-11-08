@@ -250,12 +250,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>艺术家</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} 首歌曲</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} 首歌曲</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>艺术家未找到</value>
   </data>
@@ -310,28 +304,16 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>重新扫描文件夹出错：{0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0} 个文件夹</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} 个文件夹</value>
-  </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
+  <data name="Songs_Count" xml:space="preserve">
     <value>{0} 首歌曲</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} 首歌曲</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0} 张专辑</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} 张专辑</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} 位艺术家</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
+  <data name="Artists_Count" xml:space="preserve">
     <value>{0} 位艺术家</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
@@ -358,17 +340,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>音乐库已就绪。</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+  <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>智能 • {0} 首歌曲</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>智能 • {0} 首歌曲</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} 首歌曲</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} 首歌曲</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>没有歌曲符合此智能播放列表的规则。</value>
@@ -489,7 +462,7 @@
     <value>未定义规则 • 所有歌曲均匹配</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>匹配 {1} 条{2}中的{0}</value>
+    <value>匹配 {1} 条规则中的{0}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>所有</value>
@@ -497,16 +470,7 @@
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>任意</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>规则</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>规则</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} 个项目</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} 个项目</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">

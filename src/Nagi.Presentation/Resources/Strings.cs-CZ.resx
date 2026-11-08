@@ -250,12 +250,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Interpret</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Interpret nenalezen</value>
   </data>
@@ -310,28 +304,16 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Chyba při opětovném skenování složky: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0, plural, one{# složka} few{# složky} many{# složky} other{# složek}}</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one{# složka} few{# složky} many{# složky} other{# složek}}</value>
-  </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
+  <data name="Songs_Count" xml:space="preserve">
     <value>{0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0, plural, one{# album} few{# alba} many{# alba} other{# alb}}</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one{# album} few{# alba} many{# alba} other{# alb}}</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0, plural, one{# interpret} few{# interpreti} many{# interpreta} other{# interpretů}}</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
+  <data name="Artists_Count" xml:space="preserve">
     <value>{0, plural, one{# interpret} few{# interpreti} many{# interpreta} other{# interpretů}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
@@ -358,17 +340,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Vaše knihovna je připravena.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+  <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Chytrý • {0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Chytrý • {0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Žádné skladby neodpovídají pravidlům tohoto chytrého seznamu skladeb.</value>
@@ -489,7 +462,7 @@ Soubory, které se nepodařilo importovat: {0}.</value>
     <value>Nejsou definována žádná pravidla • Všechny skladby odpovídají</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Odpovídá {0} z {1} {2}</value>
+    <value>Odpovídá {0} z {1, plural, one {# pravidla} other {# pravidel}}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>všem</value>
@@ -497,16 +470,7 @@ Soubory, které se nepodařilo importovat: {0}.</value>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>kterémukoli</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>pravidla</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>pravidel</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0, plural, one{# položka} few{# položky} many{# položky} other{# položek}}</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one{# položka} few{# položky} many{# položky} other{# položek}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">

@@ -250,12 +250,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Izvođač</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} pjesma</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0, plural, one {# pjesma} few {# pjesme} other {# pjesama}}</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Izvođač nije pronađen</value>
   </data>
@@ -310,28 +304,16 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Pogreška pri ponovnom skeniranju mape: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0} mapa</value>
-  </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0, plural, one {# mapa} few {# mape} other {# mapa}}</value>
   </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} pjesma</value>
-  </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
+  <data name="Songs_Count" xml:space="preserve">
     <value>{0, plural, one {# pjesma} few {# pjesme} other {# pjesama}}</value>
   </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
-    <value>{0} album</value>
-  </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0, plural, one {# album} few {# albuma} other {# albuma}}</value>
   </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} izvođač</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
+  <data name="Artists_Count" xml:space="preserve">
     <value>{0, plural, one {# izvođač} few {# izvođača} other {# izvođača}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
@@ -358,17 +340,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Vaša biblioteka je spremna.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>Pametno • {0} pjesma</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
+  <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Pametno • {0, plural, one {# pjesma} few {# pjesme} other {# pjesama}}</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} pjesma</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one {# pjesma} few {# pjesme} other {# pjesama}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Nijedna pjesma ne odgovara pravilima ovog pametnog popisa pjesama.</value>
@@ -489,7 +462,7 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
     <value>Nema definiranih pravila • Sve pjesme odgovaraju</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Podudaranje {0} od {1} {2}</value>
+    <value>Podudaranje {0} od {1, plural, one {# pravilo} other {# pravila}}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>svi</value>
@@ -497,16 +470,7 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>bilo koji</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>pravilo</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>pravila</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} stavka</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# stavka} few {# stavke} other {# stavki}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">

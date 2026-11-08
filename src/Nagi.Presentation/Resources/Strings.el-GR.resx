@@ -250,12 +250,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Καλλιτέχνης</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} τραγούδι</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} τραγούδια</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Ο καλλιτέχνης δεν βρέθηκε</value>
   </data>
@@ -310,29 +304,17 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Σφάλμα επανασάρωσης φακέλου: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0} φάκελος</value>
+  <data name="Folders_Count" xml:space="preserve">
+    <value>{0, plural, one {# φάκελος} other {# φάκελοι}}</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} φάκελοι</value>
+  <data name="Songs_Count" xml:space="preserve">
+    <value>{0, plural, one {# τραγούδι} other {# τραγούδια}}</value>
   </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} τραγούδι</value>
-  </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} τραγούδια</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0} άλμπουμ</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} άλμπουμ</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} καλλιτέχνης</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} καλλιτέχνες</value>
+  <data name="Artists_Count" xml:space="preserve">
+    <value>{0, plural, one {# καλλιτέχνης} other {# καλλιτέχνες}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Κανένα αντικείμενο</value>
@@ -358,17 +340,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Η βιβλιοθήκη σας είναι έτοιμη.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>Έξυπνη • {0} τραγούδι</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Έξυπνη • {0} τραγούδια</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} τραγούδι</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} τραγούδια</value>
+  <data name="Playlist_Smart_Count" xml:space="preserve">
+    <value>Έξυπνη • {0, plural, one {# τραγούδι} other {# τραγούδια}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Κανένα τραγούδι δεν ταιριάζει με τους κανόνες αυτής της έξυπνης λίστας αναπαραγωγής.</value>
@@ -489,7 +462,7 @@
     <value>Δεν ορίστηκαν κανόνες • Όλα τα τραγούδια ταιριάζουν</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Ταιριάζει με {0} από {1} {2}</value>
+    <value>Ταιριάζει με {0} από {1, plural, one {# κανόνας} other {# κανόνες}}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>όλους</value>
@@ -497,17 +470,8 @@
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>οποιονδήποτε</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>κανόνας</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>κανόνες</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} αντικείμενο</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>{0} αντικείμενα</value>
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
+    <value>{0, plural, one {# αντικείμενο} other {# αντικείμενα}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} επιλεγμένα</value>

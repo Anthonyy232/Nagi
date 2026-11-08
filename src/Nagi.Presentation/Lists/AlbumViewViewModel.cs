@@ -140,10 +140,7 @@ public partial class AlbumViewViewModel : DetailSongListViewModelBase<AlbumViewN
         if (_albumYear.HasValue)
             detailsParts.Add(_albumYear.Value.ToString());
 
-        var songCountText = _totalSongCount == 1
-            ? ResourceFormatter.Format(Strings.AlbumView_SongCount_Singular, _totalSongCount)
-            : ResourceFormatter.Format(Strings.AlbumView_SongCount_Plural, _totalSongCount);
-        detailsParts.Add(songCountText);
+        detailsParts.Add(ResourceFormatter.Format(Strings.Songs_Count, _totalSongCount));
 
         if (_totalDuration > TimeSpan.Zero) detailsParts.Add(DurationFormatter.Format(_totalDuration));
 

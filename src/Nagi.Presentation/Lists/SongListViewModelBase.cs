@@ -320,9 +320,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     }
 
     protected override string FormatTotalItemsText(PagedResult<Song> result) =>
-        result.TotalCount == 1
-            ? ResourceFormatter.Format(Strings.SongList_TotalItems_Format_Singular, result.TotalCount)
-            : ResourceFormatter.Format(Strings.SongList_TotalItems_Format_Plural, result.TotalCount);
+        ResourceFormatter.Format(Strings.SongList_TotalItems_Format, result.TotalCount);
 
     /// <summary>The songs this list shows, or <c>null</c> while nothing is open.</summary>
     protected virtual SongScope? Scope => null;

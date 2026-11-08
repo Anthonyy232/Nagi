@@ -250,12 +250,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Msanii</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>wimbo {0}</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>nyimbo {0}</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Msanii Hakupatikana</value>
   </data>
@@ -310,29 +304,17 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Hitilafu wakati wa kuchanganua upya folda: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>folda {0}</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>folda {0}</value>
+  <data name="Songs_Count" xml:space="preserve">
+    <value>{0, plural, one {wimbo #} other {nyimbo #}}</value>
   </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>wimbo {0}</value>
-  </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>nyimbo {0}</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>albamu {0}</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>albamu {0}</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>msanii {0}</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>wasanii {0}</value>
+  <data name="Artists_Count" xml:space="preserve">
+    <value>{0, plural, one {msanii #} other {wasanii #}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Hakuna vitu</value>
@@ -358,17 +340,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Maktaba yako iko tayari.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>Nadhifu • wimbo {0}</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Nadhifu • nyimbo {0}</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>wimbo {0}</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>nyimbo {0}</value>
+  <data name="Playlist_Smart_Count" xml:space="preserve">
+    <value>Nadhifu • {0, plural, one {wimbo #} other {nyimbo #}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Hakuna nyimbo zinazolingana na sheria za orodha hii ya kucheza nadhifu.</value>
@@ -489,7 +462,7 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
     <value>Hakuna sheria zilizofafanuliwa • Nyimbo zote zinalingana</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Linganisha {0} ya {1} {2}</value>
+    <value>Linganisha {0} ya {1} sheria</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>zote</value>
@@ -497,17 +470,8 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>yoyote</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>sheria</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>sheria</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>kitu {0}</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>vitu {0}</value>
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
+    <value>{0, plural, one {kitu #} other {vitu #}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} imechaguliwa</value>
