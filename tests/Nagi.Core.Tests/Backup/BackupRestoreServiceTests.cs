@@ -22,6 +22,10 @@ public class BackupRestoreServiceTests : IDisposable
     public BackupRestoreServiceTests()
     {
         _pathConfig = Substitute.For<IPathConfiguration>();
+        _pathConfig.DatabasePath.Returns(_ => Path.Combine(_pathConfig.AppDataRoot, "nagi.db"));
+        _pathConfig.PlaybackStateFilePath.Returns(_ => Path.Combine(_pathConfig.AppDataRoot, "playback_state.json"));
+        _pathConfig.LibraryCacheFolders.Returns(_ => [Path.Combine(_pathConfig.AppDataRoot, "AlbumArt")]);
+        _pathConfig.RomanizationPacksPath.Returns(_ => Path.Combine(_pathConfig.AppDataRoot, "RomanizationPacks"));
         var logger = Substitute.For<ILogger<BackupRestoreService>>();
         _service = new BackupRestoreService(_pathConfig, _settings, logger);
     }
@@ -186,69 +190,28 @@ public class BackupRestoreServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task CreateBackupAsync_ExcludesTemporaryAndLockFiles()
+    public async Task CreateBackupAsync_IncludesOnlyTheAppsOwnData()
     {
         var sourceDir = CreateTempDir();
         var destDir = CreateTempDir();
+        using (OpenTestDatabase(Path.Combine(sourceDir, "nagi.db"), "Track")) { }
         await File.WriteAllTextAsync(Path.Combine(sourceDir, "playback_state.json"), "{ }");
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, ".libvlc-cache-version"), "1");
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "temp.tmp"), "tmp");
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "data.lock"), "lock");
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "nagi.db-wal"), "wal");
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "nagi.db-shm"), "shm");
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "nagi.db-journal"), "journal");
-        _pathConfig.AppDataRoot.Returns(sourceDir);
-
-        var result = await _service.CreateBackupAsync(destDir);
-
-        result.Success.Should().BeTrue();
-        using var archive = ZipFile.OpenRead(result.BackupFilePath!);
-        archive.Entries.Should().NotContain(e => e.FullName.EndsWith(".tmp", StringComparison.OrdinalIgnoreCase));
-        archive.Entries.Should().NotContain(e => e.FullName.EndsWith(".lock", StringComparison.OrdinalIgnoreCase));
-        archive.Entries.Should().NotContain(e => e.FullName.EndsWith(".db-wal", StringComparison.OrdinalIgnoreCase));
-        archive.Entries.Should().NotContain(e => e.FullName.EndsWith(".db-shm", StringComparison.OrdinalIgnoreCase));
-        archive.Entries.Should().NotContain(e => e.FullName.EndsWith(".db-journal", StringComparison.OrdinalIgnoreCase));
-        archive.Entries.Should().NotContain(e => e.FullName.Equals(".libvlc-cache-version", StringComparison.OrdinalIgnoreCase));
-    }
-
-    [Fact]
-    public async Task CreateBackupAsync_ExcludesTransientDirectories()
-    {
-        var sourceDir = CreateTempDir();
-        var destDir = CreateTempDir();
-        foreach (var dirName in new[] { "Logs", "Cache", "Temp", "EBWebView", "crashdumps" })
+        foreach (var (folder, file) in new[] { ("AlbumArt", "cover.jpg"), ("RomanizationPacks", "pack.json"),
+                     ("Logs", "log.txt"), ("EBWebView", "data"), ("crashdumps", "dump.dmp") })
         {
-            var dir = Directory.CreateDirectory(Path.Combine(sourceDir, dirName));
-            await File.WriteAllTextAsync(Path.Combine(dir.FullName, "file.txt"), "content");
+            Directory.CreateDirectory(Path.Combine(sourceDir, folder));
+            await File.WriteAllTextAsync(Path.Combine(sourceDir, folder, file), "content");
         }
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "playback_state.json"), "{ }");
+        foreach (var file in new[] { ".libvlc-cache-version", "temp.tmp", "data.lock" })
+            await File.WriteAllTextAsync(Path.Combine(sourceDir, file), "stray");
         _pathConfig.AppDataRoot.Returns(sourceDir);
 
         var result = await _service.CreateBackupAsync(destDir);
 
-        result.Success.Should().BeTrue();
+        result.Success.Should().BeTrue(result.ErrorMessage);
         using var archive = ZipFile.OpenRead(result.BackupFilePath!);
-        foreach (var excluded in new[] { "Logs/", "Cache/", "Temp/", "EBWebView/", "crashdumps/" })
-            archive.Entries.Should().NotContain(e => e.FullName.StartsWith(excluded, StringComparison.OrdinalIgnoreCase),
-                $"{excluded} should be excluded from backups");
-    }
-
-    [Fact]
-    public async Task CreateBackupAsync_IncludesNonExcludedSubdirectories()
-    {
-        var sourceDir = CreateTempDir();
-        var destDir = CreateTempDir();
-        var albumArtDir = Directory.CreateDirectory(Path.Combine(sourceDir, "AlbumArt"));
-        await File.WriteAllTextAsync(Path.Combine(albumArtDir.FullName, "cover.jpg"), "fake image");
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "playback_state.json"), "{ }");
-        _pathConfig.AppDataRoot.Returns(sourceDir);
-
-        var result = await _service.CreateBackupAsync(destDir);
-
-        result.Success.Should().BeTrue();
-        using var archive = ZipFile.OpenRead(result.BackupFilePath!);
-        archive.Entries.Should().Contain(e => e.FullName.StartsWith("AlbumArt/", StringComparison.OrdinalIgnoreCase),
-            "non-excluded subdirectories should be included in the backup");
+        archive.Entries.Select(e => e.FullName).Should().BeEquivalentTo(
+            "nagi.db", "playback_state.json", "AlbumArt/cover.jpg", "RomanizationPacks/pack.json", "settings.json");
     }
 
     [Fact]
