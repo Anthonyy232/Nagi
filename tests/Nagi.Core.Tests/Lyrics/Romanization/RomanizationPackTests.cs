@@ -234,6 +234,22 @@ public sealed class RomanizationPackTests : IDisposable
         installed[0].DirectoryPath.Should().Be(Path.Combine(packRoot, "hindi"));
     }
 
+    [Fact]
+    public async Task GetInstalledPacksAsync_ReadsTheDiskAgainOnlyAfterAPackChanges()
+    {
+        var packRoot = Path.Combine(_tempRoot, "RomanizationPacks");
+        var packBytes = CreateDevanagariPack();
+        var manager = CreateManager(CreateCatalogJson(CreateEntry("hindi", "devanagari-v1", packBytes)), packBytes);
+        (await manager.GetInstalledPacksAsync()).Should().BeEmpty();
+        ExtractArchive(packBytes, Path.Combine(packRoot, "hindi"));
+
+        (await manager.GetInstalledPacksAsync()).Should().BeEmpty();
+        (await manager.InstallPackAsync("hindi")).Succeeded.Should().BeTrue();
+        (await manager.GetInstalledPacksAsync()).Should().ContainSingle();
+        await manager.RemovePackAsync("hindi");
+        (await manager.GetInstalledPacksAsync()).Should().BeEmpty();
+    }
+
     [Theory]
     [InlineData(".")]
     [InlineData("..")]

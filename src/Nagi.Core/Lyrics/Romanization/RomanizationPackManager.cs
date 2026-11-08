@@ -36,6 +36,10 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
     private readonly IFileSystemService _fileSystem;
     private readonly IAppInfoService _appInfo;
     private RomanizationPackCatalog? _cachedCatalog;
+    // Lyrics ask for the installed packs on every load, so the list is read from disk only after a change.
+    private readonly object _installedLock = new();
+    private IReadOnlyList<InstalledRomanizationPack>? _installedPacks;
+    private int _installedVersion;
 
     public event Action? PacksChanged;
 
@@ -77,6 +81,36 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
     }
 
     public async Task<IReadOnlyList<InstalledRomanizationPack>> GetInstalledPacksAsync(CancellationToken cancellationToken = default)
+    {
+        int version;
+        lock (_installedLock)
+        {
+            if (_installedPacks is { } cached) return cached;
+            version = _installedVersion;
+        }
+
+        var packs = await ReadInstalledPacksAsync(cancellationToken).ConfigureAwait(false);
+        lock (_installedLock)
+        {
+            // A pack installed or removed while the list was read makes it out of date.
+            if (version == _installedVersion) _installedPacks = packs;
+        }
+
+        return packs;
+    }
+
+    private void OnPacksChanged()
+    {
+        lock (_installedLock)
+        {
+            _installedVersion++;
+            _installedPacks = null;
+        }
+
+        PacksChanged?.Invoke();
+    }
+
+    private async Task<IReadOnlyList<InstalledRomanizationPack>> ReadInstalledPacksAsync(CancellationToken cancellationToken)
     {
         _fileSystem.CreateDirectory(PackRoot);
         var packs = new List<InstalledRomanizationPack>();
@@ -160,7 +194,7 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
 
                 cancellationToken.ThrowIfCancellationRequested();
                 ReplacePackDirectory(tempExtractPath, GetPackDirectory(pack.Id));
-                PacksChanged?.Invoke();
+                OnPacksChanged();
                 return RomanizationPackOperationResult.Success();
             }
             finally
@@ -190,7 +224,7 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
             if (_fileSystem.DirectoryExists(path))
             {
                 _fileSystem.DeleteDirectory(path, true);
-                PacksChanged?.Invoke();
+                OnPacksChanged();
             }
             return Task.FromResult(RomanizationPackOperationResult.Success());
         }
