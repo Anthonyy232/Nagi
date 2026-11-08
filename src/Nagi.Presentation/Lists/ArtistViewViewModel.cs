@@ -28,7 +28,7 @@ public sealed class ArtistAlbumViewModelItem
         Id = album.Id;
         Name = album.Title;
         YearText = album.Year?.ToString() ?? string.Empty;
-        CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
+        CoverArtUri = album.CoverArtUri;
     }
 
     public Guid Id { get; }
@@ -102,7 +102,7 @@ public partial class ArtistViewViewModel : DetailSongListViewModelBase<ArtistVie
         if (token.IsCancellationRequested) return true;
 
         PageTitle = artist.Name;
-        ArtistImageUri = ImageUriHelper.GetUriWithCacheBuster(artist.LocalImageCachePath);
+        ArtistImageUri = artist.ImageUri;
         ArtistBio = string.IsNullOrWhiteSpace(artist.Biography) ? Strings.ArtistView_NoBiography : artist.Biography;
         BiographyCredit = artist.BiographySource == ServiceProviderIds.Wikipedia && !string.IsNullOrWhiteSpace(artist.Biography)
             ? CoreStrings.Biography_WikipediaAttribution
@@ -145,7 +145,7 @@ public partial class ArtistViewViewModel : DetailSongListViewModelBase<ArtistVie
         _dispatcherService.TryEnqueue(() =>
         {
             if (token.IsCancellationRequested || _isDisposed) return;
-            ArtistImageUri = ImageUriHelper.GetUriWithCacheBuster(change.ImagePath, DateTime.UtcNow);
+            ArtistImageUri = change.ImageUri;
         });
     }
 

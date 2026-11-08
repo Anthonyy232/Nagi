@@ -33,7 +33,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
     private void UpdateCoverImage()
     {
         CoverImagePreview.Source = ViewModel.HasCoverImage
-            ? BitmapImageFactory.Create(ImageUriHelper.GetUriWithCacheBuster(ViewModel.CoverImageUri))
+            ? BitmapImageFactory.Create(ViewModel.CoverPreviewUri)
             : null;
     }
 

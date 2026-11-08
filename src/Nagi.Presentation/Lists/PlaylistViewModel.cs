@@ -25,7 +25,7 @@ public partial class PlaylistViewModelItem : ObservableObject
     {
         Id = playlist.Id;
         Name = playlist.Name;
-        CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(playlist.CoverImageUri);
+        CoverImageUri = playlist.CoverUri;
         IsSmart = false;
         DateCreated = playlist.DateCreated;
         DateModified = playlist.DateModified;
@@ -38,7 +38,7 @@ public partial class PlaylistViewModelItem : ObservableObject
     {
         Id = smartPlaylist.Id;
         Name = smartPlaylist.Name;
-        CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(smartPlaylist.CoverImageUri);
+        CoverImageUri = smartPlaylist.CoverUri;
         IsSmart = true;
         DateCreated = smartPlaylist.DateCreated;
         DateModified = smartPlaylist.DateModified;
@@ -409,7 +409,7 @@ public partial class PlaylistViewModel : ClientFilteredListViewModelBase<Playlis
             // Visible entries share these instances. Also update hidden entries so changing
             // the search filter cannot bring back stale artwork or modification dates.
             if (AllItems.FirstOrDefault(p => p.Id == e.PlaylistId) is not { } item) return;
-            item.CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(e.CoverImageUri, e.DateModified);
+            item.CoverImageUri = e.CoverUri;
             item.DateModified = e.DateModified;
             if (Sort.Current is PlaylistSortOrder.DateModifiedAsc or PlaylistSortOrder.DateModifiedDesc)
                 ApplyFilter();

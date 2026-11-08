@@ -1,3 +1,4 @@
+using Nagi.Core.Artwork;
 using Nagi.Core.Library;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -22,6 +23,10 @@ public class Playlist
 
     [MaxLength(2000)]
     public string? CoverImageUri { get; set; }
+
+    /// <summary>The cover for display, or null when the playlist has none.</summary>
+    [NotMapped]
+    public string? CoverUri => ArtworkUri.Versioned(CoverImageUri, DateModified);
 
     public virtual ICollection<PlaylistSong> PlaylistSongs { get; set; } = new List<PlaylistSong>();
 

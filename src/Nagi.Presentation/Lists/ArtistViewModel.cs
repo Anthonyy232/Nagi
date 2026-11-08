@@ -96,7 +96,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
             {
                 Id = artist.Id,
                 Name = artist.Name,
-                LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(artist.LocalImageCachePath)
+                LocalImageCachePath = artist.ImageUri
             };
             _artistLookup[artist.Id] = vm;
             items.Add(vm);
@@ -136,11 +136,10 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
         _dispatcherService.TryEnqueue(() =>
         {
             if (_isDisposed) return;
-            var timestamp = DateTime.UtcNow;
             foreach (var change in changes)
             {
                 if (_artistLookup.TryGetValue(change.ArtistId, out var artistVm))
-                    artistVm.LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(change.ImagePath, timestamp);
+                    artistVm.LocalImageCachePath = change.ImageUri;
             }
         });
     }

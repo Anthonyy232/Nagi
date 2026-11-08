@@ -61,7 +61,7 @@ public sealed class LibraryArtwork
                 .SetProperty(a => a.MetadataLastCheckedUtc, (DateTime?)null), cancellationToken)
             .ConfigureAwait(false);
         _logger.LogInformation("Cleared the missing cached image of {Count} artists.", artistIds.Count);
-        _notifier.RaiseArtistImagesChanged(artistIds.Select(id => new ArtistImageChange(id, null)).ToList());
+        _notifier.RaiseArtistImagesChanged(artistIds.Select(id => new ArtistImageChange(id, null, null)).ToList());
         return artistIds.Count;
     }
 
@@ -96,7 +96,7 @@ public sealed class LibraryArtwork
 
             var dirs = songDirsByArtistId.GetValueOrDefault(artist.Id, []);
             if (await UseFolderImageAsync(artist, dirs, cancellationToken, directoryCache).ConfigureAwait(false))
-                changes.Add(new ArtistImageChange(artist.Id, artist.LocalImageCachePath));
+                changes.Add(new ArtistImageChange(artist));
         }
 
         if (changes.Count > 0)
@@ -129,6 +129,7 @@ public sealed class LibraryArtwork
             if (string.IsNullOrEmpty(localPath)) return false;
 
             artist.LocalImageCachePath = localPath;
+            artist.ImageModifiedUtc = DateTime.UtcNow;
             return true;
         }
         catch (Exception ex)

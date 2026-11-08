@@ -25,7 +25,7 @@ public sealed class AlbumViewModelItem
         Title = album.Title;
         ArtistName = album.ArtistName;
         AlbumArtists = album.AlbumArtists;
-        CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
+        CoverArtUri = album.CoverArtUri;
     }
 
     public Guid Id { get; }

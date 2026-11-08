@@ -465,7 +465,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         {
             SongTitle = song.Title;
             ArtistName = song.ArtistName;
-            AlbumArtUri = ImageUriHelper.GetUriWithCacheBuster(song.AlbumArtUriFromTrack);
+            AlbumArtUri = song.AlbumArtUriFromTrack;
         }
         else
         {

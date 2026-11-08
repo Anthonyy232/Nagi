@@ -37,7 +37,7 @@ public sealed class SongInfoViewModel(
 
         Title = song.Title;
         ArtistName = song.ArtistName;
-        ArtworkUri = ImageUriHelper.GetUriWithCacheBuster(song.AlbumArtUriFromTrack, song.FileModifiedDate);
+        ArtworkUri = song.AlbumArtUriFromTrack;
         Sections =
         [
             Section(Strings.SongInfo_Section_Tags,

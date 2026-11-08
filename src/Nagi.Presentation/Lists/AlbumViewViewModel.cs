@@ -81,7 +81,7 @@ public partial class AlbumViewViewModel : DetailSongListViewModelBase<AlbumViewN
         ArtistName = album.ArtistName;
         AlbumArtists = album.AlbumArtists;
         _albumYear = album.Year;
-        CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
+        CoverArtUri = album.CoverArtUri;
         return true;
     }
 

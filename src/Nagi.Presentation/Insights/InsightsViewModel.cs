@@ -116,7 +116,7 @@ public partial class InsightsViewModel : ObservableObject
                     Rank = song.GlobalRank,
                     Title = song.Song.Title,
                     Artist = song.Song.ArtistName,
-                    ArtworkUri = ImageUriHelper.GetUriWithCacheBuster(song.Song.AlbumArtUriFromTrack),
+                    ArtworkUri = song.Song.AlbumArtUriFromTrack,
                     StatText = FormatStat(metric, song.TotalPlays, song.TotalDuration)
                 }));
         Artists = new InsightsCategoryViewModel(this, Strings.InsightsPage_TopArtists, SortMetric.Duration,
@@ -127,7 +127,7 @@ public partial class InsightsViewModel : ObservableObject
                     ArtistId = artist.Artist.Id,
                     Rank = artist.GlobalRank,
                     Name = artist.Artist.Name,
-                    ImageUri = ImageUriHelper.GetUriWithCacheBuster(artist.Artist.LocalImageCachePath),
+                    ImageUri = artist.Artist.ImageUri,
                     StatText = FormatStat(metric, artist.TotalPlays, artist.TotalDuration),
                     Command = GoToArtistCommand
                 }));
@@ -140,7 +140,7 @@ public partial class InsightsViewModel : ObservableObject
                     Rank = album.GlobalRank,
                     Title = album.Album.Title,
                     ArtistName = album.Album.ArtistName,
-                    ArtworkUri = ImageUriHelper.GetUriWithCacheBuster(album.Album.CoverArtUri),
+                    ArtworkUri = album.Album.CoverArtUri,
                     StatText = FormatStat(metric, album.TotalPlays, album.TotalDuration),
                     Command = GoToAlbumCommand
                 }));

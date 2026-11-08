@@ -7,7 +7,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="using:Nagi.WinUI.Controls"
-    xmlns:common="using:Nagi.Presentation.Common"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     mc:Ignorable="d">
@@ -82,7 +81,7 @@
                                   Stretch="UniformToFill"
                                   DecodePixelWidth="48"
                                   DecodePixelType="Logical"
-                                  Source="{x:Bind common:ImageUriHelper.GetUriWithCacheBuster(Song.AlbumArtUriFromTrack, Song.FileModifiedDate), Mode=OneWay}" />
+                                  Source="{x:Bind Song.AlbumArtUriFromTrack, Mode=OneWay}" />
             </Border>
         </Button>
         <local:NowPlayingIndicator x:Name="NowPlayingIndicator"

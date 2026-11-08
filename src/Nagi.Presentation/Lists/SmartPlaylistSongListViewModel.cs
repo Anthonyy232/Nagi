@@ -119,7 +119,7 @@ public partial class SmartPlaylistSongListViewModel : DetailSongListViewModelBas
         }
 
         PageTitle = smartPlaylist.Name;
-        CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(smartPlaylist.CoverImageUri, smartPlaylist.DateModified);
+        CoverImageUri = smartPlaylist.CoverUri;
         RuleSummary = BuildRuleSummary(smartPlaylist);
         Sort.Current = smartPlaylist.SortOrder;
         return true;

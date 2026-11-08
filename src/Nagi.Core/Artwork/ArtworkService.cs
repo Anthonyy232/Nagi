@@ -81,7 +81,7 @@ public sealed class ArtworkService : IArtworkService
                         .ConfigureAwait(false)).GetValueOrDefault(artist.Id, []);
                 var (_, updated) = await FetchArtistMetadataAsync(artist, songDirectories, cancellationToken).ConfigureAwait(false);
                 await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-                if (updated) _notifier.RaiseArtistImagesChanged([new ArtistImageChange(artist.Id, artist.LocalImageCachePath)]);
+                if (updated) _notifier.RaiseArtistImagesChanged([new ArtistImageChange(artist)]);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
@@ -165,9 +165,10 @@ public sealed class ArtworkService : IArtworkService
             if (newPath is null) return false;
 
             artist.LocalImageCachePath = newPath;
+            artist.ImageModifiedUtc = DateTime.UtcNow;
             await context.SaveChangesAsync().ConfigureAwait(false);
 
-            _notifier.RaiseArtistImagesChanged([new ArtistImageChange(artist.Id, artist.LocalImageCachePath)]);
+            _notifier.RaiseArtistImagesChanged([new ArtistImageChange(artist)]);
             return true;
         }
         catch (Exception ex)
@@ -190,9 +191,10 @@ public sealed class ArtworkService : IArtworkService
             ImageStorageHelper.DeleteImage(_fileSystem, cachePath, artistId.ToString(), CachedImageKind.Custom);
             artist.LocalImageCachePath = ImageStorageHelper.FindImage(_fileSystem, cachePath, artistId.ToString(), CachedImageKind.Folder)
                                          ?? ImageStorageHelper.FindImage(_fileSystem, cachePath, artistId.ToString(), CachedImageKind.Fetched);
+            artist.ImageModifiedUtc = DateTime.UtcNow;
 
             await context.SaveChangesAsync().ConfigureAwait(false);
-            _notifier.RaiseArtistImagesChanged([new ArtistImageChange(artist.Id, artist.LocalImageCachePath)]);
+            _notifier.RaiseArtistImagesChanged([new ArtistImageChange(artist)]);
             return true;
         }
         catch (Exception ex)
@@ -232,7 +234,7 @@ public sealed class ArtworkService : IArtworkService
                 {
                     var (lookedUp, updated) = await FetchArtistMetadataAsync(artist,
                         directoriesByArtist.GetValueOrDefault(artist.Id, []), token).ConfigureAwait(false);
-                    if (updated) pendingUpdates.Add(new ArtistImageChange(artist.Id, artist.LocalImageCachePath));
+                    if (updated) pendingUpdates.Add(new ArtistImageChange(artist));
 
                     if (!lookedUp)
                     {
@@ -331,6 +333,7 @@ public sealed class ArtworkService : IArtworkService
             if (!string.IsNullOrEmpty(downloadedPath))
             {
                 artist.LocalImageCachePath = downloadedPath;
+                artist.ImageModifiedUtc = DateTime.UtcNow;
                 updated = true;
             }
             else
