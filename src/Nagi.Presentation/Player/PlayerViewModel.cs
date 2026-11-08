@@ -171,7 +171,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     public string PlayPauseButtonToolTip => IsOpening ? Strings.Status_Loading
         : IsPlaying ? Strings.Tooltip_Pause
         : Strings.Tooltip_Play;
-    public AppIcon ShuffleIcon => AppIcon.Shuffle;
     public string ShuffleButtonToolTip => IsShuffleEnabled
         ? ShuffleModeText.GetName(_playbackService.CurrentShuffleMode)
         : Strings.Tooltip_ShuffleOff;
@@ -205,7 +204,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 
     partial void OnIsShuffleEnabledChanged(bool value)
     {
-        UpdateButtonState(PlayerButtonIds.Shuffle, ShuffleIcon, ShuffleButtonToolTip, IsShuffleEnabled);
+        UpdateButtonState(PlayerButtonIds.Shuffle, AppIcon.Shuffle, ShuffleButtonToolTip, IsShuffleEnabled);
     }
 
     partial void OnCurrentRepeatModeChanged(RepeatMode value)
@@ -270,7 +269,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
                 case PlayerButtonIds.Shuffle:
                     button.Command = ToggleShuffleCommand;
                     button.IsIconActive = IsShuffleEnabled;
-                    button.DynamicIcon = ShuffleIcon;
+                    button.DynamicIcon = AppIcon.Shuffle;
                     button.DynamicToolTip = ShuffleButtonToolTip;
                     break;
                 case PlayerButtonIds.Repeat:
@@ -654,7 +653,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         {
             IsShuffleEnabled = _playbackService.IsShuffleEnabled;
             OnPropertyChanged(nameof(ShuffleButtonToolTip));
-            UpdateButtonState(PlayerButtonIds.Shuffle, ShuffleIcon, ShuffleButtonToolTip, IsShuffleEnabled);
+            UpdateButtonState(PlayerButtonIds.Shuffle, AppIcon.Shuffle, ShuffleButtonToolTip, IsShuffleEnabled);
             UpdateCurrentQueueDisplay();
             SidebarQueue.Refresh();
         });
