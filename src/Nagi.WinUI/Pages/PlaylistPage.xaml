@@ -1,4 +1,5 @@
-<Page
+<pages:ViewModelPage
+    xmlns:pages="using:Nagi.WinUI.Pages"
     x:Class="Nagi.WinUI.Pages.PlaylistPage"
     NavigationCacheMode="Enabled"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -197,4 +198,4 @@
                                    HasLoadError="{x:Bind ViewModel.HasLoadError, Mode=OneWay}" />
         </Grid>
     </Grid>
-</Page>
+</pages:ViewModelPage>

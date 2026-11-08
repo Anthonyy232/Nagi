@@ -1,11 +1,9 @@
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Nagi.Core.Library;
 using Nagi.Presentation.Lists;
-using Nagi.Presentation;
 using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Pages;
@@ -16,7 +14,7 @@ public sealed partial class FolderSongViewPage : SongListPage
     public FolderSongViewPage()
     {
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<ViewModelFactory>().Create<FolderSongListViewModel>();
+        ViewModel = GetViewModel<FolderSongListViewModel>();
         DataContext = ViewModel;
         InitializeSongList(ViewModel, ColumnHeaderHost, FolderContentsListView);
     }

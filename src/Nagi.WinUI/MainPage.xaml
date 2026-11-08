@@ -102,7 +102,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid x:Name="RootGrid">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="PlayerVisibilityStates">
                 <VisualState x:Name="PlayerVisible">
@@ -758,8 +758,5 @@
                     Visibility="{x:Bind GlobalOperation.IsCancellable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
             </StackPanel>
         </Grid>
-
-        <localControls:InsightsSeeAllOverlay />
-
     </Grid>
 </UserControl>

@@ -59,6 +59,7 @@ public partial class App : Application
                 .AddJsonFile("appsettings.json", optional: true)
                 .Build();
             Services = new ServiceCollection().AddNagiApp(configuration).BuildServiceProvider();
+            ViewModelPage.Initialize(Services.GetRequiredService<IServiceScopeFactory>());
             Services.GetRequiredService<ILogger<App>>().LogInformation("Application starting up.");
 
             _window = Services.GetRequiredService<MainWindow>();

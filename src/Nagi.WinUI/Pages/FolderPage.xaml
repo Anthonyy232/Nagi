@@ -1,4 +1,5 @@
-<Page
+<pages:ViewModelPage
+    xmlns:pages="using:Nagi.WinUI.Pages"
     x:Class="Nagi.WinUI.Pages.FolderPage"
     NavigationCacheMode="Enabled"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -161,4 +162,4 @@
                                IsShown="{x:Bind ViewModel.ShowEmptyState, Mode=OneWay}"
                                HasLoadError="{x:Bind ViewModel.HasLoadError, Mode=OneWay}" />
     </Grid>
-</Page>
+</pages:ViewModelPage>

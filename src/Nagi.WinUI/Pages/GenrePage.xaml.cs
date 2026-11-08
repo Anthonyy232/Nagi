@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Library;
@@ -6,12 +5,12 @@ using Nagi.Presentation.Lists;
 
 namespace Nagi.WinUI.Pages;
 
-public sealed partial class GenrePage : Page
+public sealed partial class GenrePage : ViewModelPage
 {
     public GenrePage()
     {
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<GenreViewModel>();
+        ViewModel = GetViewModel<GenreViewModel>();
         DataContext = ViewModel;
     }
 

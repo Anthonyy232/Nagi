@@ -16,7 +16,7 @@ namespace Nagi.WinUI.Pages;
 ///     list's own Ctrl+A. Also handles double-click to play, the now-playing indicator and the column
 ///     header; each row's context menu is part of <see cref="SongRow" />.
 /// </summary>
-public abstract class SongListPage : Page
+public abstract class SongListPage : ViewModelPage
 {
     private readonly List<NowPlayingIndicatorBinder> _nowPlayingBinders = new();
     private SongListViewModelBase? _viewModel;
@@ -49,13 +49,6 @@ public abstract class SongListPage : Page
         if (!_viewModel!.HasLoadedPlaylists) _ = _viewModel.LoadAvailablePlaylistsAsync();
         if (_viewModel is IDetailListViewModel detail && e.Parameter is INavigationParameter parameter)
             await detail.OpenAsync(parameter);
-    }
-
-    // A cached page keeps its view model, which is shared, for the next visit.
-    protected override void OnNavigatedFrom(NavigationEventArgs e)
-    {
-        base.OnNavigatedFrom(e);
-        if (NavigationCacheMode == NavigationCacheMode.Disabled) _viewModel!.Dispose();
     }
 
     internal void ClearSelection() => ActiveSongList.SelectedItems.Clear();

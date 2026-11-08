@@ -1,12 +1,10 @@
 using CommunityToolkit.WinUI;
 using System.Numerics;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Presentation.Lists;
-using Nagi.Presentation;
 using Microsoft.UI.Xaml.Controls.Primitives;
 
 namespace Nagi.WinUI.Pages;
@@ -21,7 +19,7 @@ public sealed partial class ArtistViewPage : SongListPage
     public ArtistViewPage()
     {
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<ViewModelFactory>().Create<ArtistViewViewModel>();
+        ViewModel = GetViewModel<ArtistViewViewModel>();
         DataContext = ViewModel;
         InitializeSongList(ViewModel, ColumnHeaderHost, SongsListView);
         SongsListView.Loaded += OnSongsListViewLoaded;

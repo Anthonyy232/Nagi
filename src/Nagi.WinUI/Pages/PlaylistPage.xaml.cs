@@ -1,16 +1,15 @@
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Presentation.Lists;
 
 namespace Nagi.WinUI.Pages;
 
-public sealed partial class PlaylistPage : Page
+public sealed partial class PlaylistPage : ViewModelPage
 {
     public PlaylistPage()
     {
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<PlaylistViewModel>();
+        ViewModel = GetViewModel<PlaylistViewModel>();
         DataContext = ViewModel;
     }
 

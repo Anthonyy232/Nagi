@@ -1,16 +1,16 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Presentation.Insights;
 
 namespace Nagi.WinUI.Pages;
 
-public sealed partial class InsightsPage : Page
+public sealed partial class InsightsPage : ViewModelPage
 {
     public InsightsPage()
     {
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<InsightsViewModel>();
+        ViewModel = GetViewModel<InsightsViewModel>();
         DataContext = ViewModel;
     }
 

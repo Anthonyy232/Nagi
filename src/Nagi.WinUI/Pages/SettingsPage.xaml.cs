@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Playback;
@@ -6,12 +5,12 @@ using Nagi.Presentation.Settings;
 
 namespace Nagi.WinUI.Pages;
 
-public sealed partial class SettingsPage : Page
+public sealed partial class SettingsPage : ViewModelPage
 {
     public SettingsPage()
     {
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<SettingsViewModel>();
+        ViewModel = GetViewModel<SettingsViewModel>();
         DataContext = ViewModel;
     }
 

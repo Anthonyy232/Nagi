@@ -1,4 +1,5 @@
-<Page
+<pages:ViewModelPage
+    xmlns:pages="using:Nagi.WinUI.Pages"
     x:Class="Nagi.WinUI.Pages.LyricsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -204,4 +205,4 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center" />
     </Grid>
-</Page>
+</pages:ViewModelPage>

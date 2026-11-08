@@ -14,6 +14,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Platform;
 using Nagi.Core.Settings;
+using Nagi.Presentation.Insights;
 using Nagi.Presentation.Lists;
 using Nagi.Presentation.Player;
 using Nagi.Presentation.Resources;
@@ -88,7 +89,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     public MainPage(PlayerViewModel viewModel,
         GlobalOperationViewModel globalOperation, ISettingsService settingsService,
         IDispatcherService dispatcherService,
-        NavigationService navigationService, ILogger<MainPage> logger)
+        NavigationService navigationService, InsightsViewModel insights, ILogger<MainPage> logger)
     {
         ViewModel = viewModel;
         GlobalOperation = globalOperation;
@@ -100,6 +101,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         InitializeComponent();
         DataContext = ViewModel;
         PlayerInputHelper.AttachSeekSlider(MediaSeekerSlider, ViewModel);
+        // Last, so it covers the whole window, player included.
+        RootGrid.Children.Add(new InsightsSeeAllOverlay(insights));
 
         navigationService.Initialize(ContentFrame);
         _hoverTimer.Tick += OnHoverTimerTick;

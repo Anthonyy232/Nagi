@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Numerics;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
@@ -8,12 +7,11 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using Nagi.Core.Lyrics;
 using Nagi.Presentation.Lyrics;
-using Nagi.Presentation;
 using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Pages;
 
-public sealed partial class LyricsPage : Page
+public sealed partial class LyricsPage : ViewModelPage
 {
     private const double ScrollIntoViewRatio = 0.30;
     private const int AnimationDurationMs = 300;
@@ -37,7 +35,7 @@ public sealed partial class LyricsPage : Page
 
     public LyricsPage()
     {
-        ViewModel = App.Services!.GetRequiredService<ViewModelFactory>().Create<LyricsPageViewModel>();
+        ViewModel = GetViewModel<LyricsPageViewModel>();
         InitializeComponent();
         Storyboard.SetTarget(_progressBarAnimation, LyricsProgressBar);
         Storyboard.SetTargetProperty(_progressBarAnimation, nameof(ProgressBar.Value));
@@ -81,7 +79,6 @@ public sealed partial class LyricsPage : Page
         ViewModel.LyricsReplaced -= OnLyricsReplaced;
         Unloaded -= OnPageUnloaded;
         _progressBarStoryboard.Stop();
-        ViewModel.Dispose();
     }
 
     private void OnAnimationsEnabledChanged(bool isEnabled)

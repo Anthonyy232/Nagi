@@ -1,17 +1,16 @@
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Presentation.Lists;
 
 namespace Nagi.WinUI.Pages;
 
-public sealed partial class FolderPage : Page
+public sealed partial class FolderPage : ViewModelPage
 {
     public FolderPage()
     {
         InitializeComponent();
 
-        ViewModel = App.Services!.GetRequiredService<FolderViewModel>();
+        ViewModel = GetViewModel<FolderViewModel>();
         DataContext = ViewModel;
     }
 

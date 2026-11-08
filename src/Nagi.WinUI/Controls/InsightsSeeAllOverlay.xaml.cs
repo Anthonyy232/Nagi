@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -16,9 +15,9 @@ public sealed partial class InsightsSeeAllOverlay : UserControl
 {
     private readonly CollapsibleSearch _search;
 
-    public InsightsSeeAllOverlay()
+    public InsightsSeeAllOverlay(InsightsViewModel viewModel)
     {
-        ViewModel = App.Services!.GetRequiredService<InsightsViewModel>();
+        ViewModel = viewModel;
         InitializeComponent();
         _search = new CollapsibleSearch(this, SeeAllSearchToggleButton, SeeAllSearchTextBox,
             Strings.InsightsPage_SeeAll_SearchButton_ToolTip, "SeeAllSearchExpanded", "SeeAllSearchCollapsed",

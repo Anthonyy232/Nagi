@@ -1,17 +1,16 @@
 using System.Threading;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Presentation.Lists;
 
 namespace Nagi.WinUI.Pages;
 
-public sealed partial class ArtistPage : Page
+public sealed partial class ArtistPage : ViewModelPage
 {
     public ArtistPage()
     {
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<ArtistViewModel>();
+        ViewModel = GetViewModel<ArtistViewModel>();
         DataContext = ViewModel;
     }
 
