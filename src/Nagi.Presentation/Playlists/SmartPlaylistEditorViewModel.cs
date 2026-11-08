@@ -13,7 +13,6 @@ using Nagi.Core.Playlists;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Lists;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Shell;
 
 namespace Nagi.Presentation.Playlists;
 
@@ -109,10 +108,14 @@ public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposabl
     [ObservableProperty] public partial SortOrderOption SelectedSortOption { get; set; }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasCoverImage))]
+    [NotifyPropertyChangedFor(nameof(HasCoverImage), nameof(CoverPreviewUri))]
     public partial string? CoverImageUri { get; set; }
 
     public bool HasCoverImage => !string.IsNullOrWhiteSpace(CoverImageUri);
+
+    /// <summary>The chosen cover for display, which shows the saved cover as it is now.</summary>
+    public string? CoverPreviewUri =>
+        CoverImageUri == _editingPlaylist?.CoverImageUri ? _editingPlaylist?.CoverUri : CoverImageUri;
 
     [ObservableProperty] public partial string MatchCountText { get; set; } = Strings.SmartPlaylist_Status_Calculating;
 

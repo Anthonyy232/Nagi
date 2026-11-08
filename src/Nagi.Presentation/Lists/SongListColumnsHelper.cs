@@ -20,18 +20,18 @@ public static class SongListColumnsHelper
 
     public static string GetLabel(SongListColumns column) => column switch
     {
-        SongListColumns.TrackNumber => CoreStrings.Label_TrackNumber,
+        SongListColumns.TrackNumber => Strings.Label_TrackNumber,
         SongListColumns.Title => CoreStrings.Label_Title,
         SongListColumns.Artist => CoreStrings.Label_Artist,
         SongListColumns.Album => CoreStrings.Label_Album,
-        SongListColumns.Year => CoreStrings.Label_Year,
-        SongListColumns.Bpm => CoreStrings.Label_Bpm,
+        SongListColumns.Year => Strings.Label_Year,
+        SongListColumns.Bpm => Strings.Label_Bpm,
         SongListColumns.Bitrate => Strings.Label_Bitrate,
-        SongListColumns.PlayCount => CoreStrings.Label_PlayCount,
-        SongListColumns.LastPlayed => CoreStrings.Label_LastPlayed,
-        SongListColumns.DateAdded => CoreStrings.Label_DateAdded,
-        SongListColumns.FileCreatedDate => CoreStrings.Label_DateCreated,
-        SongListColumns.Duration => CoreStrings.Label_Duration,
+        SongListColumns.PlayCount => Strings.Label_PlayCount,
+        SongListColumns.LastPlayed => Strings.Label_LastPlayed,
+        SongListColumns.DateAdded => Strings.Label_DateAdded,
+        SongListColumns.FileCreatedDate => Strings.Label_DateCreated,
+        SongListColumns.Duration => Strings.Label_Duration,
         _ => throw new ArgumentOutOfRangeException(nameof(column), column, null)
     };
 

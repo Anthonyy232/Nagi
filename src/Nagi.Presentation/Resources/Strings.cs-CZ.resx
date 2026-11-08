@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Nic se nepřehrává</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Přehrát</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pozastavit</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Interpret</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Interpret nenalezen</value>
   </data>
@@ -310,28 +301,16 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Chyba při opětovném skenování složky: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0, plural, one{# složka} few{# složky} many{# složky} other{# složek}}</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one{# složka} few{# složky} many{# složky} other{# složek}}</value>
-  </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
+  <data name="Songs_Count" xml:space="preserve">
     <value>{0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0, plural, one{# album} few{# alba} many{# alba} other{# alb}}</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one{# album} few{# alba} many{# alba} other{# alb}}</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0, plural, one{# interpret} few{# interpreti} many{# interpreta} other{# interpretů}}</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
+  <data name="Artists_Count" xml:space="preserve">
     <value>{0, plural, one{# interpret} few{# interpreti} many{# interpreta} other{# interpretů}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Vaše knihovna je připravena.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+  <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Chytrý • {0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Chytrý • {0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Žádné skladby neodpovídají pravidlům tohoto chytrého seznamu skladeb.</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Opravdu chcete odpojit svůj účet Last.fm? Vaše historie scrobblingu zůstane na Last.fm zachována, ale Nagi již nebude moci scrobblovat.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Odpojit</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Export úspěšný</value>
   </data>
@@ -483,7 +450,7 @@ Soubory, které se nepodařilo importovat: {0}.</value>
     <value>Nejsou definována žádná pravidla • Všechny skladby odpovídají</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Odpovídá {0} z {1} {2}</value>
+    <value>Odpovídá {0} z {1, plural, one {# pravidla} other {# pravidel}}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>všem</value>
@@ -491,16 +458,7 @@ Soubory, které se nepodařilo importovat: {0}.</value>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>kterémukoli</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>pravidla</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>pravidel</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0, plural, one{# položka} few{# položky} many{# položky} other{# položek}}</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one{# položka} few{# položky} many{# položky} other{# položek}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
@@ -631,9 +589,6 @@ Soubory, které se nepodařilo importovat: {0}.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Odebrat</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Zrušit</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hledat ve složce</value>
@@ -840,9 +795,6 @@ Chcete pokračovat?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Uložit</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Zrušit</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Předchozí</value>
   </data>
@@ -908,9 +860,6 @@ Chcete pokračovat?</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Celková délka</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Přehrát</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Posunout nahoru</value>
@@ -1506,10 +1455,7 @@ Chcete pokračovat?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Dokončit</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Zrušit</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Odpojit</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -2019,7 +1965,7 @@ Chcete pokračovat?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Odmítnout</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Tuto akci se nepodařilo dokončit. Zkuste to prosím znovu.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@ Chcete pokračovat?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Zobrazovat název každého sloupce nad seznamy skladeb.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A až Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z až A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Nejnovější)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Nejstarší)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (vzestupně)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (sestupně)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Nejkratší první</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Nejdelší první</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Nejpomalejší první ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Nejrychlejší první ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Nejvíce: {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Nejméně: {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Seřadit podle: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Soubor</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Rok</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Datum přidání</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Datum vytvoření</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Datum úpravy</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Naposledy přehráno</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Délka</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Číslo stopy</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Přehrání</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Skladby</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Ruční pořadí</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Náhodně</value>
   </data>
 </root>

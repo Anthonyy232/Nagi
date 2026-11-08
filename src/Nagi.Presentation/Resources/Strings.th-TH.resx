@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>ไม่มีเพลงกำลังเล่น</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>เล่น</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>หยุดชั่วคราว</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>ศิลปิน</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} เพลง</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} เพลง</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>ไม่พบศิลปิน</value>
   </data>
@@ -310,28 +301,16 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>ข้อผิดพลาดในการสแกนโฟลเดอร์ซ้ำ: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0} โฟลเดอร์</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} โฟลเดอร์</value>
-  </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
+  <data name="Songs_Count" xml:space="preserve">
     <value>{0} เพลง</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} เพลง</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0} อัลบั้ม</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} อัลบั้ม</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} ศิลปิน</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
+  <data name="Artists_Count" xml:space="preserve">
     <value>{0} ศิลปิน</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>คลังเพลงของคุณพร้อมแล้ว</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+  <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>อัจฉริยะ • {0} เพลง</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>อัจฉริยะ • {0} เพลง</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} เพลง</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} เพลง</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>ไม่มีเพลงใดตรงตามกฎของเพลย์ลิสต์อัจฉริยะนี้</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการเชื่อมต่อบัญชี Last.fm ของคุณ? ประวัติการสกรอบเบิลของคุณจะยังคงอยู่ใน Last.fm แต่ Nagi จะไม่สามารถสกรอบเบิลได้อีกต่อไป</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>ยกเลิกการเชื่อมต่อ</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>ส่งออกสำเร็จ</value>
   </data>
@@ -483,7 +450,7 @@
     <value>ไม่ได้กำหนดกฎ • ทุกเพลงตรงกัน</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>ตรงตาม {0} จาก {1} {2}</value>
+    <value>ตรงตาม {0} จาก {1} กฎ</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>ทั้งหมด</value>
@@ -491,16 +458,7 @@
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>ใดๆ</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>กฎ</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>กฎ</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} รายการ</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} รายการ</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
@@ -631,9 +589,6 @@
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>ลบ</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>ยกเลิก</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ค้นหาในโฟลเดอร์</value>
@@ -840,9 +795,6 @@
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>บันทึก</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>ยกเลิก</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>ก่อนหน้า</value>
   </data>
@@ -908,9 +860,6 @@
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>ความยาวรวม</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>เล่น</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>ย้ายขึ้น</value>
@@ -1506,10 +1455,7 @@
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>เสร็จสิ้น</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>ยกเลิก</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>ยกเลิกการเชื่อมต่อ</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -2019,7 +1965,7 @@
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>ซ่อน</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>ไม่สามารถดำเนินการนี้ได้ กรุณาลองใหม่อีกครั้ง</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>แสดงชื่อของแต่ละคอลัมน์เหนือรายการเพลง</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A ถึง Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z ถึง A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (ใหม่ที่สุด)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (เก่าที่สุด)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (จากน้อยไปมาก)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (จากมากไปน้อย)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>สั้นที่สุดก่อน</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>ยาวที่สุดก่อน</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>ช้าที่สุดก่อน ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>เร็วที่สุดก่อน ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>{0} มากที่สุด</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>{0} น้อยที่สุด</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>จัดเรียงตาม: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>ไฟล์</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>ปี</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>วันที่เพิ่ม</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>วันที่สร้าง</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>วันที่แก้ไข</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>เล่นล่าสุด</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>ระยะเวลา</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>หมายเลขแทร็ก</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>จำนวนการเล่น</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>เพลง</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>ลำดับเอง</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>สุ่ม</value>
   </data>
 </root>

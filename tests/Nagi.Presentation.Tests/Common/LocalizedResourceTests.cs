@@ -72,23 +72,22 @@ public class LocalizedResourceTests
                     if (text.Count(c => c == '\n') != original.Count(c => c == '\n'))
                         problems.Add($"{where}: line breaks differ from the source");
 
-                    // A translation may switch a plain count to an ICU plural, but it must still use the
-                    // same arguments, and plain .NET placeholders must keep their exact format.
-                    if (IsIcu(text))
+                    // A translation may use an ICU plural where the source is plain, or plain text where the
+                    // language has no plurals, but it must still use the same arguments. Plain .NET placeholders
+                    // on both sides must keep their exact format.
+                    if (IsIcu(text) || IsIcu(original))
                     {
                         if (!ArgumentIndexes(text).SetEquals(ArgumentIndexes(original)))
-                            problems.Add($"{where}: ICU pattern uses different arguments than the source");
-                        if (!TryFormatIcu(text, ArgumentIndexes(original).Count))
-                            problems.Add($"{where}: ICU pattern does not format");
+                            problems.Add($"{where}: uses different arguments than the source ({original} -> {text})");
                     }
                     else if (!NetPlaceholders(text).SetEquals(NetPlaceholders(original)))
                     {
                         problems.Add($"{where}: placeholders differ from the source ({original} -> {text})");
                     }
-                    else if (!TryFormatNet(text, ArgumentIndexes(original).Count))
-                    {
+
+                    var argumentCount = ArgumentIndexes(original).Count;
+                    if (!(IsIcu(text) ? TryFormatIcu(text, argumentCount) : TryFormatNet(text, argumentCount)))
                         problems.Add($"{where}: string does not format");
-                    }
                 }
         }
 

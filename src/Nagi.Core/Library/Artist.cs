@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Nagi.Core.Artwork;
 
 namespace Nagi.Core.Library;
 
@@ -35,6 +37,13 @@ public class Artist
 
     [MaxLength(1000)]
     public string? LocalImageCachePath { get; set; }
+
+    /// <summary>When <see cref="LocalImageCachePath" /> last got a new image, or null if not since this was recorded.</summary>
+    public DateTime? ImageModifiedUtc { get; set; }
+
+    /// <summary>The artist's image for display, or null when it has none.</summary>
+    [NotMapped]
+    public string? ImageUri => ArtworkUri.Versioned(LocalImageCachePath, ImageModifiedUtc);
 
     /// <summary>
     ///     The date and time when the artist's metadata was last successfully checked.

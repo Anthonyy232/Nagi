@@ -74,47 +74,8 @@
   <data name="Label_Playlist" xml:space="preserve">
     <value>لیست پخش</value>
   </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>فایل</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>سال</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>تاریخ افزودن</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>تاریخ ایجاد</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>تاریخ اصلاح</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>آخرین پخش</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>مدت زمان</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>شماره قطعه</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>تعداد پخش</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>آهنگ‌ها</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>پوشه</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>ترتیب دستی</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>تصادفی</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
@@ -125,42 +86,6 @@
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} یافت نشد.</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (الف تا ی)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (ی تا الف)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (جدیدترین)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (قدیمی‌ترین)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (صعودی)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (نزولی)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>کوتاه‌ترین اول</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>بلندترین اول</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>کندترین اول ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>سریع‌ترین اول ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>بیشترین {0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>کم‌ترین {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>اسکن پوشه {0} از {1}: {2} - {3}</value>
@@ -233,9 +158,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> و </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>مرتب‌سازی بر اساس: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>هیچ لیست پخشی برای خروجی گرفتن وجود ندارد.</value>

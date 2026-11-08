@@ -16,7 +16,6 @@ using Nagi.Presentation.Common;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Settings;
-using Nagi.Presentation.Shell;
 
 namespace Nagi.Presentation.Lists;
 
@@ -40,8 +39,6 @@ public partial class FolderSongListViewModel : DetailSongListViewModelBase<Folde
     private Guid? _rootFolderId;
     private string? _rootFolderPath;
     private readonly List<Folder> _selectedFolders = new();
-
-    private bool _isNavigating;
 
     public FolderSongListViewModel(
         ILibraryReader libraryReader,
@@ -117,14 +114,8 @@ public partial class FolderSongListViewModel : DetailSongListViewModelBase<Folde
     {
         var page = (DirectoryPage)result;
         var parts = new List<string>();
-        if (page.FolderCount > 0)
-            parts.Add(ResourceFormatter.Format(page.FolderCount == 1
-                ? Strings.Folders_Count_Singular
-                : Strings.Folders_Count_Plural, page.FolderCount));
-        if (page.SongCount > 0)
-            parts.Add(ResourceFormatter.Format(page.SongCount == 1
-                ? Strings.Songs_Count_Singular
-                : Strings.Songs_Count_Plural, page.SongCount));
+        if (page.FolderCount > 0) parts.Add(ResourceFormatter.Format(Strings.Folders_Count, page.FolderCount));
+        if (page.SongCount > 0) parts.Add(ResourceFormatter.Format(Strings.Songs_Count, page.SongCount));
 
         return parts.Count == 0 ? Strings.Generic_NoItems : string.Join(", ", parts);
     }
@@ -134,17 +125,10 @@ public partial class FolderSongListViewModel : DetailSongListViewModelBase<Folde
     // Play all covers subfolders too, so a folder that holds only subfolders still has something to play.
     protected override bool HasPlayableSongs => TotalItemCount > 0;
 
-    protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
-    {
-        if (!_rootFolderId.HasValue || string.IsNullOrEmpty(_currentDirectoryPath))
-            return Task.FromResult(new List<Guid>());
-
-        // Searching plays what the page shows: the matching songs of this folder. Otherwise the folder plays with its subfolders.
-        SongScope scope = IsSearchActive
-            ? new SongScope.Directory(_rootFolderId.Value, _currentDirectoryPath)
-            : new SongScope.DirectoryTree(_rootFolderId.Value, _currentDirectoryPath);
-        return _libraryReader.GetSongIdsAsync(scope, SearchTerm, sortOrder, token);
-    }
+    // Searching plays what the page shows: the matching songs of this folder. Otherwise the folder plays with its subfolders.
+    protected override SongScope? Scope => CurrentDirectory is { } directory && !IsSearchActive
+        ? new SongScope.DirectoryTree(directory.RootFolderId, directory.Path)
+        : CurrentDirectory;
 
 
     [RelayCommand]
@@ -155,25 +139,18 @@ public partial class FolderSongListViewModel : DetailSongListViewModelBase<Folde
     private Task NavigateToBreadcrumbAsync(BreadcrumbItem? breadcrumb) =>
         breadcrumb is null || breadcrumb.IsLast ? Task.CompletedTask : NavigateToDirectoryAsync(breadcrumb.Path);
 
-    private async Task NavigateToDirectoryAsync(string path)
+    // A load already running finishes first and is then followed by one for the new directory.
+    private Task NavigateToDirectoryAsync(string path)
     {
-        if (_isDisposed || IsLoading || _isNavigating || !_rootFolderId.HasValue) return;
+        if (_isDisposed || !_rootFolderId.HasValue) return Task.CompletedTask;
 
-        try
-        {
-            _isNavigating = true;
-            DeselectAll();
-            _currentDirectoryPath = path;
-            Songs.Clear();
-            FolderContents.Clear();
-            UpdateBreadcrumbs();
-            CurrentPage = 1;
-            await LoadAsync(CancellationToken.None);
-        }
-        finally
-        {
-            _isNavigating = false;
-        }
+        DeselectAll();
+        _currentDirectoryPath = path;
+        Songs.Clear();
+        FolderContents.Clear();
+        UpdateBreadcrumbs();
+        CurrentPage = 1;
+        return LoadAsync(CancellationToken.None);
     }
 
     private void UpdateBreadcrumbs()
@@ -209,8 +186,6 @@ public partial class FolderSongListViewModel : DetailSongListViewModelBase<Folde
         Breadcrumbs[^1].IsLast = true;
     }
 
-    protected override PlaybackContext GetPlaybackContext() =>
-        _rootFolderId.HasValue ? new(PlaybackContextType.Folder, _rootFolderId.Value) : base.GetPlaybackContext();
 
     [RelayCommand]
     private Task PlaySubfolderAsync(Folder? folder)

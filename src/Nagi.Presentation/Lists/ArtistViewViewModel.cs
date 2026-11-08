@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Artwork;
 using Nagi.Core.Library;
 using Nagi.Core.Listening;
-using Nagi.Core.Metadata;
 using Nagi.Core.OnlineProviders;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
@@ -18,7 +17,6 @@ using Nagi.Presentation.Common;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Settings;
-using Nagi.Presentation.Shell;
 using CoreStrings = Nagi.Core.Resources.Strings;
 
 namespace Nagi.Presentation.Lists;
@@ -30,7 +28,7 @@ public sealed class ArtistAlbumViewModelItem
         Id = album.Id;
         Name = album.Title;
         YearText = album.Year?.ToString() ?? string.Empty;
-        CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
+        CoverArtUri = album.CoverArtUri;
     }
 
     public Guid Id { get; }
@@ -88,21 +86,7 @@ public partial class ArtistViewViewModel : DetailSongListViewModelBase<ArtistVie
     public ObservableRangeCollection<ArtistAlbumViewModelItem> Albums { get; } = new();
     public bool HasAlbums => Albums.Any();
 
-    protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
-        SongSortOrder sortOrder, CancellationToken cancellationToken = default)
-    {
-        if (_artistId == Guid.Empty) return Task.FromResult(new PagedResult<Song>());
-
-        return _libraryReader.GetSongsAsync(new SongScope.Artist(_artistId), SearchTerm, sortOrder, pageNumber, pageSize,
-            cancellationToken);
-    }
-
-    protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
-    {
-        if (_artistId == Guid.Empty) return Task.FromResult(new List<Guid>());
-
-        return _libraryReader.GetSongIdsAsync(new SongScope.Artist(_artistId), SearchTerm, sortOrder, token);
-    }
+    protected override SongScope? Scope => _artistId != Guid.Empty ? new SongScope.Artist(_artistId) : null;
 
     // The details can wait on an online lookup, so the songs don't wait for them.
     protected override bool LoadsSongsWithDetails => true;
@@ -118,7 +102,7 @@ public partial class ArtistViewViewModel : DetailSongListViewModelBase<ArtistVie
         if (token.IsCancellationRequested) return true;
 
         PageTitle = artist.Name;
-        ArtistImageUri = ImageUriHelper.GetUriWithCacheBuster(artist.LocalImageCachePath);
+        ArtistImageUri = artist.ImageUri;
         ArtistBio = string.IsNullOrWhiteSpace(artist.Biography) ? Strings.ArtistView_NoBiography : artist.Biography;
         BiographyCredit = artist.BiographySource == ServiceProviderIds.Wikipedia && !string.IsNullOrWhiteSpace(artist.Biography)
             ? CoreStrings.Biography_WikipediaAttribution
@@ -161,7 +145,7 @@ public partial class ArtistViewViewModel : DetailSongListViewModelBase<ArtistVie
         _dispatcherService.TryEnqueue(() =>
         {
             if (token.IsCancellationRequested || _isDisposed) return;
-            ArtistImageUri = ImageUriHelper.GetUriWithCacheBuster(change.ImagePath, DateTime.UtcNow);
+            ArtistImageUri = change.ImageUri;
         });
     }
 
@@ -169,8 +153,6 @@ public partial class ArtistViewViewModel : DetailSongListViewModelBase<ArtistVie
 
     public override bool ShowsGoToArtist => false;
 
-    protected override PlaybackContext GetPlaybackContext() =>
-        _artistId != Guid.Empty ? new(PlaybackContextType.Artist, _artistId) : base.GetPlaybackContext();
 
     public override void Dispose()
     {
@@ -178,31 +160,11 @@ public partial class ArtistViewViewModel : DetailSongListViewModelBase<ArtistVie
         base.Dispose();
     }
 
-    /// <summary>
-    ///     Lets the user pick an image file and stores it as this artist's custom image.
-    /// </summary>
     [RelayCommand]
-    private async Task ChangeArtistImageAsync()
-    {
-        try
-        {
-            var localPath = await _uiService.PickSingleFileAsync(FileExtensions.ImageFileExtensions);
-            if (string.IsNullOrWhiteSpace(localPath)) return;
-
-            _logger.LogInformation("Updating custom image for current artist ({ArtistName}) from {Path}", PageTitle, localPath);
-            await _artwork.UpdateArtistImageAsync(_artistId, localPath);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to change the image of artist {ArtistName}", PageTitle);
-        }
-    }
+    private Task ChangeArtistImageAsync() =>
+        ArtistImageActions.ChangeAsync(_artistId, _uiService, _artwork, _logger, () => _isDisposed);
 
     [RelayCommand]
-    private async Task RemoveArtistImageAsync()
-    {
-        _logger.LogInformation("Removing custom image for current artist ({ArtistName})", PageTitle);
-        try { await _artwork.RemoveArtistImageAsync(_artistId); }
-        catch (Exception ex) { _logger.LogError(ex, "Failed to remove the image of artist {ArtistName}", PageTitle); }
-    }
+    private Task RemoveArtistImageAsync() =>
+        ArtistImageActions.RemoveAsync(_artistId, _uiService, _artwork, _logger, () => _isDisposed);
 }

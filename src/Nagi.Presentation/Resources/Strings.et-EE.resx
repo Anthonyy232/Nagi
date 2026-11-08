@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Lugu ei esitata</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Esita</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Peata</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Artist</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} laul</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} laulu</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Artisti ei leitud</value>
   </data>
@@ -310,29 +301,17 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Kausta uuesti skaneerimise viga: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0} kaust</value>
+  <data name="Folders_Count" xml:space="preserve">
+    <value>{0, plural, one {# kaust} other {# kausta}}</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} kausta</value>
+  <data name="Songs_Count" xml:space="preserve">
+    <value>{0, plural, one {# laul} other {# laulu}}</value>
   </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} laul</value>
+  <data name="Albums_Count" xml:space="preserve">
+    <value>{0, plural, one {# album} other {# albumit}}</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} laulu</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
-    <value>{0} album</value>
-  </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} albumit</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} artist</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} artisti</value>
+  <data name="Artists_Count" xml:space="preserve">
+    <value>{0, plural, one {# artist} other {# artisti}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Ühtegi objekti pole</value>
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Sinu muusikakogu on valmis.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>Nutikas • {0} laul</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Nutikas • {0} laulu</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} laul</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} laulu</value>
+  <data name="Playlist_Smart_Count" xml:space="preserve">
+    <value>Nutikas • {0, plural, one {# laul} other {# laulu}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Ükski lugu ei vasta selle nutika esitusloendi reeglitele.</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Kas olete kindel, et soovite Last.fm-i konto lahti ühendada? Teie skroblimise ajalugu säilib Last.fm-is, kuid Nagi ei saa enam skroblida.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Ühenda lahti</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Eksportimine õnnestus</value>
   </data>
@@ -483,7 +450,7 @@ Failid, mida ei õnnestunud importida: {0}.</value>
     <value>Reegleid pole määratud • Kõik laulud sobivad</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Sobita: {0} ({1} {2})</value>
+    <value>Sobita: {0} ({1, plural, one {# reegel} other {# reeglit}})</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>kõik</value>
@@ -491,17 +458,8 @@ Failid, mida ei õnnestunud importida: {0}.</value>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>mis tahes</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>reegel</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>reeglit</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} objekt</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>{0} objekti</value>
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
+    <value>{0, plural, one {# objekt} other {# objekti}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} valitud</value>
@@ -631,9 +589,6 @@ Failid, mida ei õnnestunud importida: {0}.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Eemalda</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Tühista</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Otsi kaustast</value>
@@ -840,9 +795,6 @@ Kas soovite jätkata?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Salvesta</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Tühista</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Eelmine</value>
   </data>
@@ -908,9 +860,6 @@ Kas soovite jätkata?</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Kogukestus</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Esita</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Liiguta üles</value>
@@ -1506,10 +1455,7 @@ Kas soovite jätkata?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Lõpeta</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Tühista</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Katkesta ühendus</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -2019,7 +1965,7 @@ Kas soovite jätkata?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Loobu</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Seda toimingut ei õnnestunud lõpule viia. Palun proovi uuesti.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@ Kas soovite jätkata?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Kuva loendites iga veeru kohal päis.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A-Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z-A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Uusim)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Vanim)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (kasvavalt)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (kahanevalt)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Lühimad enne</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Pikimad enne</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Aeglasemad enne ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Kiiremad enne ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Kõige rohkem {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Kõige vähem {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Sorteeri: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Fail</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Aasta</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Lisamise kuupäev</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Loomise kuupäev</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Muutmise kuupäev</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Viimati mängitud</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Kestus</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Loo number</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Esituskorrad</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Laulud</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Käsitsi järjestus</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Juhuslik</value>
   </data>
 </root>

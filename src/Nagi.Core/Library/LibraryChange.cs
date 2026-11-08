@@ -1,3 +1,5 @@
+using Nagi.Core.Artwork;
+
 namespace Nagi.Core.Library;
 
 public enum LibraryChangeKind
@@ -45,4 +47,13 @@ public sealed record LibraryChange(LibraryChangeKind Kind, Guid? FolderId = null
 }
 
 /// <param name="ImagePath">The artist's new cached image, or null when it has none.</param>
-public sealed record ArtistImageChange(Guid ArtistId, string? ImagePath);
+/// <param name="ImageModifiedUtc">When the image was saved, which <see cref="ImageUri" /> carries.</param>
+public sealed record ArtistImageChange(Guid ArtistId, string? ImagePath, DateTime? ImageModifiedUtc)
+{
+    public ArtistImageChange(Artist artist) : this(artist.Id, artist.LocalImageCachePath, artist.ImageModifiedUtc)
+    {
+    }
+
+    /// <summary>The artist's new image for display, or null when it has none.</summary>
+    public string? ImageUri => ArtworkUri.Versioned(ImagePath, ImageModifiedUtc);
+}

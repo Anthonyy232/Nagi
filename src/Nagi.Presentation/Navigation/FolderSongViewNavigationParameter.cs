@@ -1,6 +1,4 @@
-using Nagi.Presentation.Navigation;
-
-namespace Nagi.Presentation.Lists;
+namespace Nagi.Presentation.Navigation;
 
 public record FolderSongViewNavigationParameter : INavigationParameter
 {

@@ -4,9 +4,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Platform;
-using Nagi.Presentation.Common;
 
-namespace Nagi.Presentation.Lists;
+namespace Nagi.Presentation.Common;
 
 /// <summary>
 ///     Base class for ViewModels that provide debounced search functionality.

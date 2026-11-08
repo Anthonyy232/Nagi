@@ -1,3 +1,5 @@
+using Nagi.Presentation.Common;
+
 namespace Nagi.Presentation.Lyrics;
 
 /// <summary>

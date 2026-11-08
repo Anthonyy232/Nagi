@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Δεν αναπαράγεται τραγούδι</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Αναπαραγωγή</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Παύση</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Καλλιτέχνης</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} τραγούδι</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} τραγούδια</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Ο καλλιτέχνης δεν βρέθηκε</value>
   </data>
@@ -310,29 +301,17 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Σφάλμα επανασάρωσης φακέλου: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0} φάκελος</value>
+  <data name="Folders_Count" xml:space="preserve">
+    <value>{0, plural, one {# φάκελος} other {# φάκελοι}}</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} φάκελοι</value>
+  <data name="Songs_Count" xml:space="preserve">
+    <value>{0, plural, one {# τραγούδι} other {# τραγούδια}}</value>
   </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} τραγούδι</value>
-  </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} τραγούδια</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0} άλμπουμ</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} άλμπουμ</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} καλλιτέχνης</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} καλλιτέχνες</value>
+  <data name="Artists_Count" xml:space="preserve">
+    <value>{0, plural, one {# καλλιτέχνης} other {# καλλιτέχνες}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Κανένα αντικείμενο</value>
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Η βιβλιοθήκη σας είναι έτοιμη.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>Έξυπνη • {0} τραγούδι</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Έξυπνη • {0} τραγούδια</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} τραγούδι</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} τραγούδια</value>
+  <data name="Playlist_Smart_Count" xml:space="preserve">
+    <value>Έξυπνη • {0, plural, one {# τραγούδι} other {# τραγούδια}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Κανένα τραγούδι δεν ταιριάζει με τους κανόνες αυτής της έξυπνης λίστας αναπαραγωγής.</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Είστε βέβαιοι ότι θέλετε να αποσυνδέσετε τον λογαριασμό σας Last.fm; Το ιστορικό scrobbling σας θα διατηρηθεί στο Last.fm, αλλά το Nagi δεν θα μπορεί πλέον να κάνει scrobble.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Αποσύνδεση</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Επιτυχής Εξαγωγή</value>
   </data>
@@ -483,7 +450,7 @@
     <value>Δεν ορίστηκαν κανόνες • Όλα τα τραγούδια ταιριάζουν</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Ταιριάζει με {0} από {1} {2}</value>
+    <value>Ταιριάζει με {0} από {1, plural, one {# κανόνας} other {# κανόνες}}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>όλους</value>
@@ -491,17 +458,8 @@
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>οποιονδήποτε</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>κανόνας</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>κανόνες</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} αντικείμενο</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>{0} αντικείμενα</value>
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
+    <value>{0, plural, one {# αντικείμενο} other {# αντικείμενα}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} επιλεγμένα</value>
@@ -631,9 +589,6 @@
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Αφαίρεση</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Ακύρωση</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Αναζήτηση σε φάκελο</value>
@@ -840,9 +795,6 @@
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Αποθήκευση</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Ακύρωση</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Προηγούμενο</value>
   </data>
@@ -908,9 +860,6 @@
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Συνολική διάρκεια</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Αναπαραγωγή</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Μετακίνηση πάνω</value>
@@ -1506,10 +1455,7 @@
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Ολοκλήρωση</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Ακύρωση</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Αποσύνδεση</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -2019,7 +1965,7 @@
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Παράβλεψη</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Δεν ήταν δυνατή η ολοκλήρωση αυτής της ενέργειας. Δοκιμάστε ξανά.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Εμφάνιση του ονόματος κάθε στήλης πάνω από τις λίστες τραγουδιών.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (Α προς Ω)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Ω προς Α)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Νεότερα)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Παλαιότερα)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Αύξουσα)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Φθίνουσα)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Πρώτα τα μικρότερα</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Πρώτα τα μεγαλύτερα</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Πρώτα τα πιο αργά ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Πρώτα τα πιο γρήγορα ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Πιο πολλά {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Λιγότερα {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Ταξινόμηση ανά: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Αρχείο</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Έτος</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Ημερομηνία προσθήκης</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Ημερομηνία δημιουργίας</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Ημερομηνία τροποποίησης</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Τελευταία αναπαραγωγή</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Διάρκεια</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Αριθμός κομματιού</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Αναπαραγωγές</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Τραγούδια</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Χειροκίνητη σειρά</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Τυχαία</value>
   </data>
 </root>

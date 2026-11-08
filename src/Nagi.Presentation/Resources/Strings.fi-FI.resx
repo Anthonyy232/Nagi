@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Ei kappaletta toistossa</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Toista</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Keskeytä</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Artisti</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} kappale</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} kappaletta</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Artistia ei löydy</value>
   </data>
@@ -310,29 +301,17 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Virhe kansion uudelleenskannauksessa: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0} kansio</value>
+  <data name="Folders_Count" xml:space="preserve">
+    <value>{0, plural, one {# kansio} other {# kansiota}}</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} kansiota</value>
+  <data name="Songs_Count" xml:space="preserve">
+    <value>{0, plural, one {# kappale} other {# kappaletta}}</value>
   </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} kappale</value>
+  <data name="Albums_Count" xml:space="preserve">
+    <value>{0, plural, one {# albumi} other {# albumia}}</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} kappaletta</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
-    <value>{0} albumi</value>
-  </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} albumia</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} artisti</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} artistia</value>
+  <data name="Artists_Count" xml:space="preserve">
+    <value>{0, plural, one {# artisti} other {# artistia}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Ei kohteita</value>
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Kirjastosi on valmis.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>Älykäs • {0} kappale</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Älykäs • {0} kappaletta</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} kappale</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} kappaletta</value>
+  <data name="Playlist_Smart_Count" xml:space="preserve">
+    <value>Älykäs • {0, plural, one {# kappale} other {# kappaletta}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Yksikään kappale ei vastaa tämän älykkään soittolistan sääntöjä.</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Haluatko varmasti katkaista yhteyden Last.fm-tiliisi? Kuunteluhistoriasi säilyy Last.fm:ssä, mutta Nagi ei voi enää scrobblata.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Katkaise yhteys</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Vienti onnistui</value>
   </data>
@@ -483,7 +450,7 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
     <value>Ei sääntöjä määritetty • Kaikki kappaleet vastaavat</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Vastaavuus: {0} ({1} {2})</value>
+    <value>Vastaavuus: {0} ({1, plural, one {# sääntö} other {# sääntöä}})</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>kaikki</value>
@@ -491,17 +458,8 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>mikä tahansa</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>sääntö</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>sääntöä</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} kohde</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>{0} kohdetta</value>
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
+    <value>{0, plural, one {# kohde} other {# kohdetta}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} valittu</value>
@@ -631,9 +589,6 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Poista</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Peruuta</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hae kansiosta</value>
@@ -840,9 +795,6 @@ Haluatko jatkaa?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Tallenna</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Peruuta</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Edellinen</value>
   </data>
@@ -908,9 +860,6 @@ Haluatko jatkaa?</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Kokonaiskesto</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Toista</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Siirrä ylös</value>
@@ -1506,10 +1455,7 @@ Haluatko jatkaa?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Valmis</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Peruuta</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Katkaise yhteys</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -2019,7 +1965,7 @@ Haluatko jatkaa?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Hylkää</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Toimintoa ei voitu suorittaa. Yritä uudelleen.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@ Haluatko jatkaa?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Näytä otsikko kappaleluettelon jokaisen sarakkeen yläpuolella.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A–Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z–A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Uusin)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Vanhin)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (nouseva)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (laskeva)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Lyhin ensin</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Pisin ensin</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Hitain ensin ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Nopein ensin ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Eniten {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Vähiten {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Järjestä: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Tiedosto</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Vuosi</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Lisätty</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Luontipäivämäärä</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Muokkauspäivämäärä</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Viimeksi toistettu</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Kesto</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Raidan numero</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Toistokerrat</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Kappaleet</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Manuaalinen järjestys</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Satunnainen</value>
   </data>
 </root>

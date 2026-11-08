@@ -1,13 +1,12 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nagi.Core.Artwork;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Lists;
 using Nagi.Presentation.Navigation;
-using Nagi.Presentation.Playlists;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Shell;
 using Nagi.Presentation.Tests.Utils;
 using NSubstitute;
 using Xunit;
@@ -306,7 +305,7 @@ public class PlaylistViewModelTests
 
         await viewModel.ChangePlaylistCoverCommand.ExecuteAsync(viewModel.Items.Single());
 
-        viewModel.Items.Should().ContainSingle().Which.CoverImageUri.Should().Be(ImageUriHelper.GetUriWithCacheBuster(cachedImage, CoverDate));
+        viewModel.Items.Should().ContainSingle().Which.CoverImageUri.Should().Be(ArtworkUri.Versioned(cachedImage, CoverDate));
         viewModel.Items[0].IsCustomImage.Should().BeTrue();
     }
 

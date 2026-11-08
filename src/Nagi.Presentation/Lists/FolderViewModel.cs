@@ -36,9 +36,7 @@ public sealed class FolderViewModelItem
 
     public bool IsServer { get; }
 
-    public string SongCountText => SongCount == 1
-        ? ResourceFormatter.Format(Strings.Songs_Count_Singular, SongCount)
-        : ResourceFormatter.Format(Strings.Songs_Count_Plural, SongCount);
+    public string SongCountText => ResourceFormatter.Format(Strings.Songs_Count, SongCount);
 
     public override string ToString() => Name;
 }
@@ -96,24 +94,31 @@ public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderVie
 
     private void OnGlobalOperationPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(GlobalOperationViewModel.IsInProgress))
-            OnPropertyChanged(nameof(IsAnyOperationInProgress));
+        if (e.PropertyName != nameof(GlobalOperationViewModel.IsInProgress)) return;
+        OnPropertyChanged(nameof(IsAnyOperationInProgress));
+        foreach (var command in new IRelayCommand[]
+                 {
+                     PlayFolderCommand, PlayRandomFolderCommand, AddFolderCommand, DeleteFolderCommand, RescanFolderCommand,
+                     AddServerCommand, SyncServerCommand, SignInToServerCommand
+                 })
+            command.NotifyCanExecuteChanged();
     }
+
+    private bool CanStartAction() => !IsAnyOperationInProgress;
 
     public void OpenFolder(FolderViewModelItem folder) => _navigationService.OpenFolder(folder.Id, folder.Name);
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanStartAction))]
     private async Task PlayFolderAsync(Guid folderId)
     {
-        if (IsAnyOperationInProgress || folderId == Guid.Empty) return;
+        if (folderId == Guid.Empty) return;
         await UserAction.RunAsync(() => _musicPlaybackService.PlayScopeAsync(new SongScope.Folder(folderId)), _logger, _uiService,
             failureMessage: Strings.Folders_Error_Playback);
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanStartAction))]
     private async Task PlayRandomFolderAsync()
     {
-        if (IsAnyOperationInProgress) return;
         await UserAction.RunAsync(async () =>
         {
             if (await _libraryReader.GetRandomFolderIdAsync() is { } folderId)
@@ -126,17 +131,16 @@ public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderVie
     /// <summary>
     ///     Lets the user pick a folder, then adds it to the library and scans it.
     /// </summary>
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanStartAction))]
     private async Task AddFolderAsync()
     {
-        if (IsAnyOperationInProgress) return;
         var folderPath = await _uiService.PickSingleFolderAsync();
         if (folderPath is not null) await AddFolderAndScanAsync(folderPath);
     }
 
     private async Task AddFolderAndScanAsync(string folderPath)
     {
-        if (string.IsNullOrWhiteSpace(folderPath) || IsAnyOperationInProgress) return;
+        if (string.IsNullOrWhiteSpace(folderPath)) return;
 
         // Adding a folder that is already in the library hands it back, so say so here rather than rescanning it.
         var canonicalNew = PathCanonicalizer.Normalize(folderPath);
@@ -148,7 +152,9 @@ public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderVie
 
         var title = Strings.Generic_Error;
         string? error = null;
-        using (_globalOperation.Begin(Strings.Folders_AddFolder_InProgress))
+        using (var operation = _globalOperation.TryBegin(Strings.Folders_AddFolder_InProgress))
+        {
+            if (operation is null) return;
             try
             {
                 var folder = await _libraryFolders.AddFolderAsync(folderPath);
@@ -167,15 +173,14 @@ public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderVie
                 error = ResourceFormatter.Format(Strings.Folders_Error_AddFolder, ex.Message);
                 _logger.LogError(ex, "Failed to add and scan folder '{FolderPath}'", folderPath);
             }
+        }
 
         if (error != null) await _uiService.ShowMessageDialogAsync(title, error);
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanStartAction))]
     private async Task DeleteFolderAsync(Guid folderId)
     {
-        if (IsAnyOperationInProgress) return;
-
         var folderToDelete = AllItems.FirstOrDefault(f => f.Id == folderId);
         if (folderToDelete == null) return;
 
@@ -184,11 +189,13 @@ public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderVie
             ResourceFormatter.Format(folderToDelete.IsServer ? Strings.FolderPage_RemoveServerDialog_Format : Strings.FolderPage_DeleteDialog_Format,
                 folderToDelete.Name),
             Strings.FolderPage_DeleteDialog_PrimaryButton,
-            Strings.FolderPage_DeleteDialog_CloseButton);
-        if (!confirmed || IsAnyOperationInProgress) return;
+            Strings.Generic_Cancel);
+        if (!confirmed) return;
 
         string? error = null;
-        using (_globalOperation.Begin(ResourceFormatter.Format(Strings.Folders_Delete_InProgress, folderToDelete.Name)))
+        using (var operation = _globalOperation.TryBegin(ResourceFormatter.Format(Strings.Folders_Delete_InProgress, folderToDelete.Name)))
+        {
+            if (operation is null) return;
             try
             {
                 var removed = folderToDelete.IsServer
@@ -202,21 +209,22 @@ public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderVie
                 error = ResourceFormatter.Format(Strings.Folders_Error_DeleteFolder, ex.Message);
                 _logger.LogError(ex, "Failed to delete folder {FolderId}", folderId);
             }
+        }
 
         if (error != null) await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, error);
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanStartAction))]
     private async Task RescanFolderAsync(Guid folderId, CancellationToken cancellationToken)
     {
-        if (IsAnyOperationInProgress) return;
-
         var folderItem = AllItems.FirstOrDefault(f => f.Id == folderId);
         if (folderItem == null) return;
 
         string? error = null;
-        using (_globalOperation.Begin(ResourceFormatter.Format(Strings.Folders_Rescan_InProgress, folderItem.Name),
+        using (var operation = _globalOperation.TryBegin(ResourceFormatter.Format(Strings.Folders_Rescan_InProgress, folderItem.Name),
                    RescanFolderCommand.Cancel))
+        {
+            if (operation is null) return;
             try
             {
                 await _libraryFolders.RescanFolderForMusicAsync(folderId, _globalOperation.CreateProgress(cancellationToken), cancellationToken);
@@ -230,6 +238,7 @@ public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderVie
                 error = ResourceFormatter.Format(Strings.Folders_Error_RescanFolder, ex.Message);
                 _logger.LogError(ex, "Failed to rescan folder {FolderId}", folderId);
             }
+        }
 
         if (error != null) await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, error);
     }
@@ -237,24 +246,23 @@ public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderVie
     /// <summary>
     ///     Lets the user add a music server, then syncs its songs into the library.
     /// </summary>
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanStartAction))]
     private async Task AddServerAsync()
     {
-        if (IsAnyOperationInProgress) return;
         if (await _uiService.ShowAddMusicServerDialogAsync() is { } server) await RunServerSyncAsync(server.Id, server.Name);
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanStartAction))]
     private async Task SyncServerAsync(Guid folderId)
     {
-        if (IsAnyOperationInProgress || AllItems.FirstOrDefault(f => f.Id == folderId) is not { } server) return;
+        if (AllItems.FirstOrDefault(f => f.Id == folderId) is not { } server) return;
         await RunServerSyncAsync(server.Id, server.Name);
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanStartAction))]
     private async Task SignInToServerAsync(Guid folderId)
     {
-        if (IsAnyOperationInProgress || AllItems.FirstOrDefault(f => f.Id == folderId) is not { } server) return;
+        if (AllItems.FirstOrDefault(f => f.Id == folderId) is not { } server) return;
         if (await _uiService.ShowMusicServerSignInDialogAsync(folderId)) await RunServerSyncAsync(server.Id, server.Name);
     }
 
@@ -265,7 +273,8 @@ public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderVie
     private async Task SyncServerWithProgressAsync(Guid folderId, string name)
     {
         using var syncCts = new CancellationTokenSource();
-        using (_globalOperation.Begin(ResourceFormatter.Format(Strings.Folders_Sync_InProgress, name), syncCts.Cancel))
-            await _musicServers.SyncAsync(folderId, _globalOperation.CreateProgress(syncCts.Token), syncCts.Token);
+        using var operation = _globalOperation.TryBegin(ResourceFormatter.Format(Strings.Folders_Sync_InProgress, name), syncCts.Cancel);
+        if (operation is null) return;
+        await _musicServers.SyncAsync(folderId, _globalOperation.CreateProgress(syncCts.Token), syncCts.Token);
     }
 }

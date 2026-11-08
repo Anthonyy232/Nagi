@@ -14,7 +14,6 @@ using Nagi.Presentation.Common;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Settings;
-using Nagi.Presentation.Shell;
 
 namespace Nagi.Presentation.Lists;
 
@@ -66,19 +65,7 @@ public partial class AlbumViewViewModel : DetailSongListViewModelBase<AlbumViewN
 
     [ObservableProperty] public partial bool IsGroupedByDisc { get; set; }
 
-    protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
-        SongSortOrder sortOrder, CancellationToken cancellationToken = default)
-    {
-        if (_albumId == Guid.Empty) return Task.FromResult(new PagedResult<Song>());
-        return _libraryReader.GetSongsAsync(new SongScope.Album(_albumId), SearchTerm, sortOrder, pageNumber, pageSize,
-            cancellationToken);
-    }
-
-    protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
-    {
-        if (_albumId == Guid.Empty) return Task.FromResult(new List<Guid>());
-        return _libraryReader.GetSongIdsAsync(new SongScope.Album(_albumId), SearchTerm, sortOrder, token);
-    }
+    protected override SongScope? Scope => _albumId != Guid.Empty ? new SongScope.Album(_albumId) : null;
 
     protected override string NotFoundTitle => Strings.AlbumView_AlbumNotFound;
 
@@ -94,7 +81,7 @@ public partial class AlbumViewViewModel : DetailSongListViewModelBase<AlbumViewN
         ArtistName = album.ArtistName;
         AlbumArtists = album.AlbumArtists;
         _albumYear = album.Year;
-        CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
+        CoverArtUri = album.CoverArtUri;
         return true;
     }
 
@@ -153,10 +140,7 @@ public partial class AlbumViewViewModel : DetailSongListViewModelBase<AlbumViewN
         if (_albumYear.HasValue)
             detailsParts.Add(_albumYear.Value.ToString());
 
-        var songCountText = _totalSongCount == 1
-            ? ResourceFormatter.Format(Strings.AlbumView_SongCount_Singular, _totalSongCount)
-            : ResourceFormatter.Format(Strings.AlbumView_SongCount_Plural, _totalSongCount);
-        detailsParts.Add(songCountText);
+        detailsParts.Add(ResourceFormatter.Format(Strings.Songs_Count, _totalSongCount));
 
         if (_totalDuration > TimeSpan.Zero) detailsParts.Add(DurationFormatter.Format(_totalDuration));
 
@@ -206,8 +190,7 @@ public partial class AlbumViewViewModel : DetailSongListViewModelBase<AlbumViewN
 
     public override bool ShowsGoToAlbum => false;
 
-    protected override PlaybackContext GetPlaybackContext() =>
-        _albumId != Guid.Empty ? new(PlaybackContextType.Album, _albumId) : base.GetPlaybackContext();
+
 
     private void CancelDurationFetch()
     {

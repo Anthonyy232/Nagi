@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Library;
 using Nagi.Core.MusicServers;
 using Nagi.Core.Playback;
+using Nagi.Presentation.Common;
 using Nagi.Presentation.Lists;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
@@ -173,8 +174,31 @@ public class FolderViewModelTests
         viewModel.IsAnyOperationInProgress.Should().BeFalse();
     }
 
-    private static FolderViewModel CreateViewModel(LibraryFakes library, IUIService ui, IMusicServerService? musicServers = null) =>
+    [Fact]
+    public async Task AddServer_OperationStartedWhileTheDialogWasOpen_IsNotTakenOver()
+    {
+        var library = new LibraryFakes();
+        var operation = new GlobalOperationViewModel();
+        var musicServers = Substitute.For<IMusicServerService>();
+        var ui = Substitute.For<IUIService>();
+        var dialog = new TaskCompletionSource<Folder?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        ui.ShowAddMusicServerDialogAsync().Returns(dialog.Task);
+        using var viewModel = CreateViewModel(library, ui, musicServers, operation);
+        var adding = viewModel.AddServerCommand.ExecuteAsync(null);
+
+        using (operation.TryBegin("Scanning"))
+        {
+            dialog.SetResult(new Folder { Name = "Navidrome", Path = "nagi-server:0123" });
+            await adding.WaitAsync(TimeSpan.FromSeconds(5));
+            operation.StatusMessage.Should().Be("Scanning");
+        }
+
+        await musicServers.DidNotReceiveWithAnyArgs().SyncAsync(default, default, default);
+    }
+
+    private static FolderViewModel CreateViewModel(LibraryFakes library, IUIService ui, IMusicServerService? musicServers = null,
+        GlobalOperationViewModel? operation = null) =>
         new(library.Reader, library.Folders, library.Notifier, musicServers ?? Substitute.For<IMusicServerService>(),
-            new GlobalOperationViewModel(), Substitute.For<IMusicPlaybackService>(), Substitute.For<IMusicNavigationService>(), ui,
+            operation ?? new GlobalOperationViewModel(), Substitute.For<IMusicPlaybackService>(), Substitute.For<IMusicNavigationService>(), ui,
             new ImmediateDispatcher(), NullLogger<FolderViewModel>.Instance);
 }

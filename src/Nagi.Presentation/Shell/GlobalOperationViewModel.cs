@@ -13,7 +13,7 @@ public partial class GlobalOperationViewModel : ObservableObject
 {
     private Action? _cancel;
 
-    [ObservableProperty] public partial bool IsInProgress { get; set; }
+    [ObservableProperty] public partial bool IsInProgress { get; private set; }
     [ObservableProperty] public partial string StatusMessage { get; set; } = string.Empty;
     [ObservableProperty] public partial double ProgressValue { get; set; }
     [ObservableProperty] public partial bool IsIndeterminate { get; set; }
@@ -26,8 +26,10 @@ public partial class GlobalOperationViewModel : ObservableObject
     ///     Shows an operation as running until the returned scope is disposed, offering <paramref name="cancel" />
     ///     through <see cref="CancelCommand" /> meanwhile.
     /// </summary>
-    public IDisposable Begin(string status, Action? cancel = null)
+    /// <returns>The scope, or <c>null</c> when another operation is already running.</returns>
+    public IDisposable? TryBegin(string status, Action? cancel = null)
     {
+        if (IsInProgress) return null;
         IsInProgress = true;
         StatusMessage = status;
         ProgressValue = 0;

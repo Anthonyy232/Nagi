@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>எந்தப் பாடலும் இயங்கவில்லை</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>இயக்கு</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>இடைநிறுத்து</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>கலைஞர்</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} பாடல்</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} பாடல்கள்</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>கலைஞர் காணப்படவில்லை</value>
   </data>
@@ -310,29 +301,17 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>கோப்புறையை மறு ஸ்கேன் செய்வதில் பிழை: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0} கோப்புறை</value>
+  <data name="Folders_Count" xml:space="preserve">
+    <value>{0, plural, one {# கோப்புறை} other {# கோப்புறைகள்}}</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} கோப்புறைகள்</value>
+  <data name="Songs_Count" xml:space="preserve">
+    <value>{0, plural, one {# பாடல்} other {# பாடல்கள்}}</value>
   </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} பாடல்</value>
+  <data name="Albums_Count" xml:space="preserve">
+    <value>{0, plural, one {# ஆல்பம்} other {# ஆல்பங்கள்}}</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} பாடல்கள்</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
-    <value>{0} ஆல்பம்</value>
-  </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} ஆல்பங்கள்</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} கலைஞர்</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} கலைஞர்கள்</value>
+  <data name="Artists_Count" xml:space="preserve">
+    <value>{0, plural, one {# கலைஞர்} other {# கலைஞர்கள்}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>பொருட்கள் இல்லை</value>
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>உங்கள் லைப்ரரி தயாராக உள்ளது.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>ஸ்மார்ட் • {0} பாடல்</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>ஸ்மார்ட் • {0} பாடல்கள்</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} பாடல்</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} பாடல்கள்</value>
+  <data name="Playlist_Smart_Count" xml:space="preserve">
+    <value>ஸ்மார்ட் • {0, plural, one {# பாடல்} other {# பாடல்கள்}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>இந்த ஸ்மார்ட் பிளேலிஸ்ட்டின் விதிகளுடன் எந்த பாடல்களும் பொருந்தவில்லை.</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>உங்கள் Last.fm கணக்கைத் துண்டிக்க விரும்புகிறீர்களா? உங்கள் ஸ்க்ரோப்ளிங் வரலாறு Last.fm இல் பாதுகாக்கப்படும், ஆனால் Nagi இனி ஸ்க்ரோபிள் செய்ய முடியாது.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>துண்டி</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>ஏற்றுமதி வெற்றிகரமாக முடிந்தது</value>
   </data>
@@ -483,7 +450,7 @@
     <value>விதிகள் எதுவும் வரையறுக்கப்படவில்லை • அனைத்து பாடல்களும் பொருந்துகின்றன</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>{1} {2} இல் {0} பொருந்தும்</value>
+    <value>{1, plural, one {# விதி} other {# விதிகள்}} இல் {0} பொருந்தும்</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>அனைத்து</value>
@@ -491,17 +458,8 @@
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>ஏதாவது</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>விதி</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>விதிகள்</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} பொருள்</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>{0} பொருட்கள்</value>
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
+    <value>{0, plural, one {# பொருள்} other {# பொருட்கள்}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} தேர்ந்தெடுக்கப்பட்டது</value>
@@ -631,9 +589,6 @@
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>அகற்று</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>ரத்துசெய்</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>கோப்புறையில் தேடு</value>
@@ -840,9 +795,6 @@
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>சேமி</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>ரத்துசெய்</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>முந்தையது</value>
   </data>
@@ -908,9 +860,6 @@
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>மொத்த கால அளவு</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>இயக்கு</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>மேலே நகர்த்து</value>
@@ -1506,10 +1455,7 @@
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>முடிந்தது</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>ரத்துசெய்</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>துண்டி</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -2019,7 +1965,7 @@
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>நிராகரி</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>இந்தச் செயலை முடிக்க முடியவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>பாடல் பட்டியல்களுக்கு மேலே ஒவ்வொரு நெடுவரிசையின் தலைப்பையும் காட்டவும்.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (அ முதல் ஃ வரை)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (ஃ முதல் அ வரை)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (புதியது)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (பழையது)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (ஏறுவரிசை)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (இறங்குவரிசை)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>குறைவான நேரம் முதலில்</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>அதிக நேரம் முதலில்</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>மெதுவானது முதலில் ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>வேகமானது முதலில் ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>அதிகபட்ச {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>மிகக் குறைந்த {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>வரிசைப்படுத்து: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>கோப்பு</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>வருடம்</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>சேர்க்கப்பட்ட தேதி</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>உருவாக்கப்பட்ட தேதி</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>மாற்றப்பட்ட தேதி</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>கடைசியாக இயக்கப்பட்டது</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>கால அளவு</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>ட்ராக் எண்</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>இயக்கங்கள்</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>பாடல்கள்</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>கைமுறை வரிசை</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>சீரற்ற</value>
   </data>
 </root>

@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Níl aon amhrán á sheinm</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Seinn</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Sos</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Ealaíontóir</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} amhrán</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} amhrán</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Ealaíontóir Gan Aimsiú</value>
   </data>
@@ -310,28 +301,16 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Earráid ag athscanadh fillteáin: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0} fillteán</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} fillteán</value>
-  </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
+  <data name="Songs_Count" xml:space="preserve">
     <value>{0} amhrán</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} amhrán</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0} albam</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} albam</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} ealaíontóir</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
+  <data name="Artists_Count" xml:space="preserve">
     <value>{0} ealaíontóir</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Tá do leabharlann réidh.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+  <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Cliste • {0} amhrán</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Cliste • {0} amhrán</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} amhrán</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} amhrán</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Níl aon amhráin ag teacht le rialacha an tseinmliosta chliste seo.</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>An bhfuil tú cinnte gur mhaith leat do chuntas Last.fm a dhínascadh? Caomhnófar do stair scrobbláil ar Last.fm, ach ní bheidh Nagi in ann scrobbláil a dhéanamh a thuilleadh.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Dínasc</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Easpórtáil Rathúil</value>
   </data>
@@ -483,7 +450,7 @@ Comhaid nárbh fhéidir a iompórtáil: {0}.</value>
     <value>Níl aon rialacha sainithe • Meaitseálann gach amhrán</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Meaitseáil {0} de {1} {2}</value>
+    <value>Meaitseáil {0} de {1, plural, one {# riail} other {# rialacha}}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>go léir</value>
@@ -491,16 +458,7 @@ Comhaid nárbh fhéidir a iompórtáil: {0}.</value>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>ar bith</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>riail</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>rialacha</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} mír</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} mír</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
@@ -631,9 +589,6 @@ Comhaid nárbh fhéidir a iompórtáil: {0}.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Bain</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Cealaigh</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cuardaigh san fhillteán</value>
@@ -840,9 +795,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Sábháil</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Cealaigh</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Roimhe Seo</value>
   </data>
@@ -908,9 +860,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Achar Iomlán</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Seinn</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Bog Suas</value>
@@ -1506,11 +1455,8 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Comhlánaigh</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Cealaigh</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
-    <value>Dícheangail</value>
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
+    <value>Dínasc</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
     <value>Cumasaigh Scrobbláil</value>
@@ -2019,7 +1965,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Díbh</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Níorbh fhéidir an gníomh seo a chur i gcrích. Bain triail as arís le do thoil.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Taispeáin ceanntásc os cionn gach colúin i liostaí amhrán.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A go Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z go A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Is Nuaí)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Is Sine)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Ag dul i méid)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Ag dul i laghad)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>An Ceann is Giorra ar dTús</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>An Ceann is Faide ar dTús</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>An Ceann is Moille ar dTús ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>An Ceann is Tapa ar dTús ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>An líon is mó {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>An líon is lú {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Sórtáil De Réir: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Comhad</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Bliain</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Dáta Curtha Leis</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Dáta Cruthaithe</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Dáta Athraithe</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Seinnte Go Deireanach</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Fad</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Uimhir an Riain</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Seinnte</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Amhráin</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Ord Láimhe</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Randamach</value>
   </data>
 </root>

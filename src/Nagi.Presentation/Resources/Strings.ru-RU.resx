@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Ничего не воспроизводится</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Воспроизвести</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Пауза</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Исполнитель</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0, plural, one {# песня} few {# песни} many {# песен} other {# песен}}</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0, plural, one {# песня} few {# песни} many {# песен} other {# песен}}</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Исполнитель не найден</value>
   </data>
@@ -310,28 +301,16 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Ошибка повторного сканирования папки: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0, plural, one {# папка} few {# папки} many {# папок} other {# папок}}</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one {# папка} few {# папки} many {# папок} other {# папок}}</value>
-  </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
+  <data name="Songs_Count" xml:space="preserve">
     <value>{0, plural, one {# песня} few {# песни} many {# песен} other {# песен}}</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one {# песня} few {# песни} many {# песен} other {# песен}}</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0, plural, one {# альбом} few {# альбома} many {# альбомов} other {# альбомов}}</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one {# альбом} few {# альбома} many {# альбомов} other {# альбомов}}</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0, plural, one {# исполнитель} few {# исполнителя} many {# исполнителей} other {# исполнителей}}</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
+  <data name="Artists_Count" xml:space="preserve">
     <value>{0, plural, one {# исполнитель} few {# исполнителя} many {# исполнителей} other {# исполнителей}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Ваша библиотека готова.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+  <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Умный • {0, plural, one {# песня} few {# песни} many {# песен} other {# песен}}</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Умный • {0, plural, one {# песня} few {# песни} many {# песен} other {# песен}}</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0, plural, one {# песня} few {# песни} many {# песен} other {# песен}}</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one {# песня} few {# песни} many {# песен} other {# песен}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Ни одна песня не соответствует правилам этого умного плейлиста.</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Вы уверены, что хотите отключить свою учетную запись Last.fm? Ваша история скробблинга сохранится на Last.fm, но Nagi больше не сможет скробблить.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Отключить</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Экспорт успешно завершен</value>
   </data>
@@ -483,7 +450,7 @@
     <value>Правила не определены • Все песни соответствуют</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Соответствует {0} из {1} {2}</value>
+    <value>Соответствует {0} из {1, plural, one {# правило} other {# правила}}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>всем</value>
@@ -491,16 +458,7 @@
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>любому</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>правило</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>правила</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0, plural, one {# элемент} few {# элемента} many {# элементов} other {# элементов}}</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# элемент} few {# элемента} many {# элементов} other {# элементов}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
@@ -631,9 +589,6 @@
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Удалить</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Отмена</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Искать в папке</value>
@@ -840,9 +795,6 @@
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Сохранить</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Отмена</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Предыдущая</value>
   </data>
@@ -908,9 +860,6 @@
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Общая длительность</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Воспроизвести</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Переместить вверх</value>
@@ -1506,10 +1455,7 @@
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Завершить</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Отмена</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Отключить</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -2019,7 +1965,7 @@
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Скрыть</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Не удалось выполнить действие. Попробуйте ещё раз.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Показывать название каждого столбца над списками песен.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (А до Я)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Я до А)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (сначала новые)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (сначала старые)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (по возрастанию)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (по убыванию)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Сначала короткие</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Сначала длинные</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Сначала медленные ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Сначала быстрые ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Наиболее {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Меньше всего: {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Сортировать по: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Год</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Дата добавления</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Дата создания</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Дата изменения</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Последнее воспроизведение</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Длительность</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Номер трека</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Воспроизведений</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Песни</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Ручной порядок</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Случайно</value>
   </data>
 </root>

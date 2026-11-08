@@ -1,6 +1,6 @@
 using Nagi.Core.Playback;
 
-namespace Nagi.Presentation.Player;
+namespace Nagi.Presentation.Common;
 
 /// <summary>
 ///     The choices of the "Play for" dialog.

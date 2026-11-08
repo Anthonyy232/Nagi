@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Tidak ada lagu yang diputar</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Putar</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Jeda</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Artis</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} lagu</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} lagu</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Artis Tidak Ditemukan</value>
   </data>
@@ -310,28 +301,16 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Kesalahan memindai ulang folder: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0} folder</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} folder</value>
-  </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
+  <data name="Songs_Count" xml:space="preserve">
     <value>{0} lagu</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} lagu</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0} album</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} album</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} artis</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
+  <data name="Artists_Count" xml:space="preserve">
     <value>{0} artis</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Pustaka Anda siap.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+  <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Cerdas • {0} lagu</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Cerdas • {0} lagu</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} lagu</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} lagu</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Tidak ada lagu yang cocok dengan aturan daftar putar cerdas ini.</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Apakah Anda yakin ingin memutuskan akun Last.fm Anda? Riwayat scrobbling Anda akan tetap tersimpan di Last.fm, tetapi Nagi tidak akan lagi dapat melakukan scrobble.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Putuskan</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Ekspor Berhasil</value>
   </data>
@@ -483,7 +450,7 @@ Berkas yang tidak dapat diimpor: {0}.</value>
     <value>Tidak ada aturan yang ditentukan • Semua lagu cocok</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Cocokkan {0} dari {1} {2}</value>
+    <value>Cocokkan {0} dari {1} aturan</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>semua</value>
@@ -491,16 +458,7 @@ Berkas yang tidak dapat diimpor: {0}.</value>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>apa pun</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>aturan</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>aturan</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} item</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} item</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
@@ -631,9 +589,6 @@ Berkas yang tidak dapat diimpor: {0}.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Hapus</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Batal</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari di folder</value>
@@ -840,9 +795,6 @@ Apakah Anda ingin melanjutkan?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Simpan</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Batal</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Sebelumnya</value>
   </data>
@@ -908,9 +860,6 @@ Apakah Anda ingin melanjutkan?</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Total Durasi</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Putar</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Pindahkan ke Atas</value>
@@ -1506,10 +1455,7 @@ Apakah Anda ingin melanjutkan?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Selesai</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Batal</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Putuskan Sambungan</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -2019,7 +1965,7 @@ Apakah Anda ingin melanjutkan?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Abaikan</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Gagal menyelesaikan tindakan ini. Silakan coba lagi.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@ Apakah Anda ingin melanjutkan?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Tampilkan label setiap kolom di atas daftar lagu.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A ke Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z ke A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Terbaru)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Terlama)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Menaik)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Menurun)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Terpendek Dahulu</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Terpanjang Dahulu</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Paling lambat dahulu ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Tercepat Dahulu ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>{0} Terbanyak</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Paling sedikit {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Urutkan Berdasarkan: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Berkas</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Tahun</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Tanggal Ditambahkan</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Tanggal Dibuat</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Tanggal Dimodifikasi</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Terakhir Diputar</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Durasi</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Nomor Trek</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Pemutaran</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Lagu</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Urutan Manual</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Acak</value>
   </data>
 </root>

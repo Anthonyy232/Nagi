@@ -1,7 +1,7 @@
 using System.Threading.Channels;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
-using Nagi.Presentation.Lists;
+using Nagi.Presentation.Common;
 using Nagi.Presentation.Tests.Utils;
 using Xunit;
 

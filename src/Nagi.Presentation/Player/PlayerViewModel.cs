@@ -34,12 +34,15 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     private readonly ILibraryNotifier _libraryNotifier;
     private readonly TimeProvider _timeProvider;
 
-    private bool _isUpdatingFromService;
     private bool _isCleanedUp;
 
     private double _lastReportedPosition;
     private int _lastDisplayedSecond = -1;
     private const double PositionThrottleSeconds = 0.1;
+
+    // The slider writes its value back through the two-way binding and can round it to its step, so a position this
+    // close to the service's is an echo, not a seek.
+    private const double SeekThresholdSeconds = 0.5;
 
     private CancellationTokenSource? _queueDisplayCts;
 
@@ -78,7 +81,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         InitializeListeningEvents();
         _libraryNotifier.Changed += OnQueueLibraryChanged;
         _settingsService.SettingChanged += OnSettingChanged;
-        SubscribeToWindowServiceEvents();
         InitializeStateFromService();
         LoadPlayerButtonSettings();
         QueueDisplaySettings = _settingsService.Get(AppSettings.QueueDisplay);
@@ -168,8 +170,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     public AppIcon PlayPauseIcon => IsPlaying ? AppIcon.Pause : AppIcon.Play;
     public string PlayPauseButtonToolTip => IsOpening ? Strings.Status_Loading
         : IsPlaying ? Strings.Tooltip_Pause
-        : Strings.Tooltip_Play;
-    public AppIcon ShuffleIcon => AppIcon.Shuffle;
+        : Strings.Generic_Play;
     public string ShuffleButtonToolTip => IsShuffleEnabled
         ? ShuffleModeText.GetName(_playbackService.CurrentShuffleMode)
         : Strings.Tooltip_ShuffleOff;
@@ -203,7 +204,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 
     partial void OnIsShuffleEnabledChanged(bool value)
     {
-        UpdateButtonState(PlayerButtonIds.Shuffle, ShuffleIcon, ShuffleButtonToolTip, IsShuffleEnabled);
+        UpdateButtonState(PlayerButtonIds.Shuffle, AppIcon.Shuffle, ShuffleButtonToolTip, IsShuffleEnabled);
     }
 
     partial void OnCurrentRepeatModeChanged(RepeatMode value)
@@ -235,7 +236,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         CleanupListening();
         _libraryNotifier.Changed -= OnQueueLibraryChanged;
         _settingsService.SettingChanged -= OnSettingChanged;
-        UnsubscribeFromWindowServiceEvents();
+
         QueueDisplaySettings.PropertyChanged -= OnQueueDisplaySettingChanged;
         SidebarQueue.Dispose();
         _queueDisplayCts?.Cancel();
@@ -268,7 +269,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
                 case PlayerButtonIds.Shuffle:
                     button.Command = ToggleShuffleCommand;
                     button.IsIconActive = IsShuffleEnabled;
-                    button.DynamicIcon = ShuffleIcon;
+                    button.DynamicIcon = AppIcon.Shuffle;
                     button.DynamicToolTip = ShuffleButtonToolTip;
                     break;
                 case PlayerButtonIds.Repeat:
@@ -421,7 +422,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     partial void OnCurrentVolumeChanged(double value)
     {
         UpdateButtonState(PlayerButtonIds.Volume, VolumeIcon, VolumeButtonToolTip);
-        if (_isUpdatingFromService) return;
         var serviceVolume = Math.Clamp(value / 100.0, 0.0, 1.0);
         if (Math.Abs(_playbackService.Volume - serviceVolume) > 0.001)
             _ = _playbackService.SetVolumeAsync(serviceVolume);
@@ -436,23 +436,18 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
             CurrentTimeText = DurationFormatter.Format(TimeSpan.FromSeconds(value));
         }
 
-        if (_isUpdatingFromService || IsUserDraggingSlider) return;
-
-        var newPosition = TimeSpan.FromSeconds(value);
-        if (Math.Abs(_playbackService.CurrentPosition.TotalSeconds - newPosition.TotalSeconds) > 0.5)
-            _ = _playbackService.SeekAsync(newPosition);
+        if (!IsUserDraggingSlider) SeekIfMoved();
     }
 
     partial void OnIsUserDraggingSliderChanged(bool value)
     {
-        if (!value && !_isUpdatingFromService)
-        {
-            var newPosition = TimeSpan.FromSeconds(CurrentPosition);
-            if (Math.Abs(_playbackService.CurrentPosition.TotalSeconds - newPosition.TotalSeconds) > 0.1)
-            {
-                _ = _playbackService.SeekAsync(newPosition);
-            }
-        }
+        if (!value) SeekIfMoved();
+    }
+
+    private void SeekIfMoved()
+    {
+        if (Math.Abs(_playbackService.CurrentPosition.TotalSeconds - CurrentPosition) > SeekThresholdSeconds)
+            _ = _playbackService.SeekAsync(TimeSpan.FromSeconds(CurrentPosition));
     }
 
     partial void OnTotalDurationChanged(double value)
@@ -460,17 +455,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         TotalDurationText = DurationFormatter.Format(TimeSpan.FromSeconds(value));
     }
 
-    private void UpdateEfficiencyMode()
-    {
-        var (isVisible, isMiniPlayerActive, isMinimized, isPlaying) =
-            (_windowService.IsVisible, _windowService.IsMiniPlayerActive,
-             _windowService.IsMinimized, _playbackService.IsPlaying);
-
-        var isInBackgroundState = !isVisible || isMiniPlayerActive || isMinimized;
-        var shouldBeEfficient = !isPlaying && isInBackgroundState;
-
-        _windowService.SetEfficiencyMode(shouldBeEfficient);
-    }
 
     private void UpdateTrackDetails(Song? song)
     {
@@ -481,7 +465,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         {
             SongTitle = song.Title;
             ArtistName = song.ArtistName;
-            AlbumArtUri = ImageUriHelper.GetUriWithCacheBuster(song.AlbumArtUriFromTrack);
+            AlbumArtUri = song.AlbumArtUriFromTrack;
         }
         else
         {
@@ -564,17 +548,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     {
         void ApplyUpdate()
         {
-            if (_isCleanedUp) return;
-            var wasUpdating = _isUpdatingFromService;
-            _isUpdatingFromService = true;
-            try
-            {
-                action();
-            }
-            finally
-            {
-                _isUpdatingFromService = wasUpdating;
-            }
+            if (!_isCleanedUp) action();
         }
 
         if (_dispatcherService.HasThreadAccess) ApplyUpdate();
@@ -618,7 +592,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
             TotalDuration = Math.Max(0, _playbackService.Duration.TotalSeconds);
             CurrentPosition = _playbackService.CurrentPosition.TotalSeconds;
             UpdateCurrentQueueDisplay();
-            UpdateEfficiencyMode();
         });
     }
 
@@ -628,7 +601,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         {
             IsPlaying = _playbackService.IsPlaying;
             UpdateOpening();
-            UpdateEfficiencyMode();
         });
     }
 
@@ -655,12 +627,12 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     {
         RunOnUIThread(() =>
         {
-            _lastReportedPosition = 0;
             _lastDisplayedSecond = -1;
             UpdateTrackDetails(_playbackService.CurrentTrack);
             // A song loaded paused reports no duration of its own, so take the library's until it plays.
             TotalDuration = Math.Max(0, _playbackService.Duration.TotalSeconds);
-            CurrentPosition = 0;
+            _lastReportedPosition = _playbackService.CurrentPosition.TotalSeconds;
+            CurrentPosition = _lastReportedPosition;
             UpdateCurrentQueueDisplay();
             SidebarQueue.Refresh();
         });
@@ -681,7 +653,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         {
             IsShuffleEnabled = _playbackService.IsShuffleEnabled;
             OnPropertyChanged(nameof(ShuffleButtonToolTip));
-            UpdateButtonState(PlayerButtonIds.Shuffle, ShuffleIcon, ShuffleButtonToolTip, IsShuffleEnabled);
+            UpdateButtonState(PlayerButtonIds.Shuffle, AppIcon.Shuffle, ShuffleButtonToolTip, IsShuffleEnabled);
             UpdateCurrentQueueDisplay();
             SidebarQueue.Refresh();
         });
@@ -733,20 +705,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         RunOnUIThread(() => TotalDuration = Math.Max(0, _playbackService.Duration.TotalSeconds));
     }
 
-    private void SubscribeToWindowServiceEvents()
-    {
-        _windowService.UIStateChanged += OnWindowService_UIStateChanged;
-    }
-
-    private void UnsubscribeFromWindowServiceEvents()
-    {
-        _windowService.UIStateChanged -= OnWindowService_UIStateChanged;
-    }
-
-    private void OnWindowService_UIStateChanged()
-    {
-        RunOnUIThread(UpdateEfficiencyMode);
-    }
 
     private void OnSettingChanged(Setting setting)
     {

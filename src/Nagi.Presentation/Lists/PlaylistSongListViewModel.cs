@@ -12,9 +12,9 @@ using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
 using Nagi.Core.Settings;
+using Nagi.Presentation.Common;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Shell;
 
 namespace Nagi.Presentation.Lists;
 
@@ -96,24 +96,8 @@ public partial class PlaylistSongListViewModel : DetailSongListViewModelBase<Pla
         return true;
     }
 
-    protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
-        SongSortOrder sortOrder, CancellationToken cancellationToken = default)
-    {
-        if (!_currentPlaylistId.HasValue) return Task.FromResult(new PagedResult<Song>());
-
-        return _libraryReader.GetSongsAsync(new SongScope.Playlist(_currentPlaylistId.Value), SearchTerm, sortOrder,
-            pageNumber, pageSize, cancellationToken);
-    }
-
-    protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
-    {
-        if (!_currentPlaylistId.HasValue) return Task.FromResult(new List<Guid>());
-
-        return _libraryReader.GetSongIdsAsync(new SongScope.Playlist(_currentPlaylistId.Value), SearchTerm, sortOrder, token);
-    }
-
-    protected override PlaybackContext GetPlaybackContext() =>
-        _currentPlaylistId.HasValue ? new(PlaybackContextType.Playlist, _currentPlaylistId.Value) : base.GetPlaybackContext();
+    protected override SongScope? Scope =>
+        _currentPlaylistId is { } playlistId ? new SongScope.Playlist(playlistId) : null;
 
     [RelayCommand(CanExecute = nameof(CanRemoveSongs))]
     private Task RemoveSelectedSongsFromPlaylistAsync() =>

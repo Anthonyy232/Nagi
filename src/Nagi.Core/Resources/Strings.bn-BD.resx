@@ -74,47 +74,8 @@
   <data name="Label_Playlist" xml:space="preserve">
     <value>প্লেলিস্ট</value>
   </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>ফাইল</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>বছর</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>যোগ করার তারিখ</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>তৈরির তারিখ</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>পরিবর্তনের তারিখ</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>শেষবার চালানো হয়েছে</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>সময়কাল</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>বিপিএম</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>ট্র্যাক নম্বর</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>প্লে সংখ্যা</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>গান</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>ফোল্ডার</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>ম্যানুয়াল ক্রম</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>এলোমেলো</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
@@ -125,42 +86,6 @@
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} পাওয়া যায়নি।</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (এ থেকে জেড)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (জেড থেকে এ)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (সর্বশেষ)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (সবচেয়ে পুরানো)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (ঊর্ধ্বক্রম)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (অধোক্রম)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>সবচেয়ে ছোট প্রথমে</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>সবচেয়ে লম্বা প্রথমে</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>সবচেয়ে ধীর প্রথমে ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>সবচেয়ে দ্রুত প্রথমে ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>সর্বাধিক {0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>সর্বনিম্ন {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>ফোল্ডার স্ক্যান করা হচ্ছে {1} এর মধ্যে {0}: {2} - {3}</value>
@@ -233,9 +158,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> ও </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>সাজান: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>এক্সপোর্ট করার জন্য কোনো প্লেলিস্ট নেই।</value>

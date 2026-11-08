@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Asnjë këngë nuk po luhet</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Luaj</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pauzë</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Artist</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} këngë</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} këngë</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Artisti nuk u gjet</value>
   </data>
@@ -310,29 +301,17 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Gabim në riskanimin e dosjes: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0} dosje</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} dosje</value>
-  </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
+  <data name="Songs_Count" xml:space="preserve">
     <value>{0} këngë</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} këngë</value>
+  <data name="Albums_Count" xml:space="preserve">
+    <value>{0, plural, one {# album} other {# albume}}</value>
   </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
-    <value>{0} album</value>
-  </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} albume</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} artist</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} artistë</value>
+  <data name="Artists_Count" xml:space="preserve">
+    <value>{0, plural, one {# artist} other {# artistë}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Asnjë artikull</value>
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Biblioteka juaj është gati.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+  <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Inteligjente • {0} këngë</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Inteligjente • {0} këngë</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} këngë</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} këngë</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Asnjë këngë nuk përputhet me rregullat e kësaj liste luajtjeje inteligjente.</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Jeni të sigurt që dëshironi të shkëputni llogarinë tuaj Last.fm? Historia juaj e scrobbling-ut do të ruhet në Last.fm, por Nagi nuk do të jetë më në gjendje të scrobble-ojë.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Shkëput</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Eksportimi i suksesshëm</value>
   </data>
@@ -483,7 +450,7 @@ Skedarët që nuk u mundësuan të importohen: {0}.</value>
     <value>Asnjë rregull e përcaktuar • Të gjitha këngët përputhen</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Përputh {0} nga {1} {2}</value>
+    <value>Përputh {0} nga {1, plural, one {# rregull} other {# rregulla}}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>të gjitha</value>
@@ -491,17 +458,8 @@ Skedarët që nuk u mundësuan të importohen: {0}.</value>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>cilindo</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>rregull</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>rregulla</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} artikull</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>{0} artikuj</value>
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
+    <value>{0, plural, one {# artikull} other {# artikuj}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} të zgjedhura</value>
@@ -631,9 +589,6 @@ Skedarët që nuk u mundësuan të importohen: {0}.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Hiq</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Anulo</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Kërko në dosje</value>
@@ -840,9 +795,6 @@ Dëshironi të vazhdoni?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Ruaj</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Anulo</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>E mëparshmja</value>
   </data>
@@ -908,9 +860,6 @@ Dëshironi të vazhdoni?</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Kohëzgjatja totale</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Luaj</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Lëviz lart</value>
@@ -1506,10 +1455,7 @@ Dëshironi të vazhdoni?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Përfundo</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Anulo</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Shkëput</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -2019,7 +1965,7 @@ Dëshironi të vazhdoni?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Largo</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Nuk u mundësua kryerja e këtij veprimi. Ju lutemi provoni përsëri.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@ Dëshironi të vazhdoni?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Shfaq titullin e çdo kolone mbi listat e këngëve.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A në Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z në A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Më e reja)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Më e vjetra)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Rritës)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Zbritës)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Më e shkurtra fillimisht</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Më e gjata fillimisht</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Më e ngadalta fillimisht ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Më e shpejta fillimisht ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Më shumë {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Më pak {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Rendit sipas: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Skedar</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Vit</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Data e shtimit</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Data e krijimit</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Data e modifikimit</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Luajtur së fundi</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Kohëzgjatja</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Numri i këngës</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Dëgjimet</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Këngët</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Renditje manuale</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Rastësor</value>
   </data>
 </root>

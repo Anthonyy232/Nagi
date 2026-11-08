@@ -11,7 +11,6 @@ using Nagi.Core.Playback;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Shell;
 
 namespace Nagi.Presentation.Insights;
 
@@ -82,7 +81,6 @@ public sealed record InsightsTimeRange(string Label, Func<DateTime, DateTime>? S
 public partial class InsightsViewModel : ObservableObject
 {
     private const int TopCount = 10;
-    private const int SeeAllPageSize = 25;
 
     private static readonly InsightsTimeRange Last30Days = new(Strings.Insights_TimeRange_Last30Days, now => now.AddDays(-30));
 
@@ -92,8 +90,6 @@ public partial class InsightsViewModel : ObservableObject
     private readonly IListeningService _listening;
     private readonly IUIService _uiService;
     private readonly ILogger<InsightsViewModel> _logger;
-    private readonly Debouncer _seeAllSearchDebouncer = new(TimeSpan.FromMilliseconds(300));
-    private CancellationTokenSource? _seeAllCts;
     private CancellationTokenSource? _loadCts;
     private InsightsTimeRange _selectedTimeRange = Last30Days;
 
@@ -120,7 +116,7 @@ public partial class InsightsViewModel : ObservableObject
                     Rank = song.GlobalRank,
                     Title = song.Song.Title,
                     Artist = song.Song.ArtistName,
-                    ArtworkUri = ImageUriHelper.GetUriWithCacheBuster(song.Song.AlbumArtUriFromTrack),
+                    ArtworkUri = song.Song.AlbumArtUriFromTrack,
                     StatText = FormatStat(metric, song.TotalPlays, song.TotalDuration)
                 }));
         Artists = new InsightsCategoryViewModel(this, Strings.InsightsPage_TopArtists, SortMetric.Duration,
@@ -131,7 +127,7 @@ public partial class InsightsViewModel : ObservableObject
                     ArtistId = artist.Artist.Id,
                     Rank = artist.GlobalRank,
                     Name = artist.Artist.Name,
-                    ImageUri = ImageUriHelper.GetUriWithCacheBuster(artist.Artist.LocalImageCachePath),
+                    ImageUri = artist.Artist.ImageUri,
                     StatText = FormatStat(metric, artist.TotalPlays, artist.TotalDuration),
                     Command = GoToArtistCommand
                 }));
@@ -144,7 +140,7 @@ public partial class InsightsViewModel : ObservableObject
                     Rank = album.GlobalRank,
                     Title = album.Album.Title,
                     ArtistName = album.Album.ArtistName,
-                    ArtworkUri = ImageUriHelper.GetUriWithCacheBuster(album.Album.CoverArtUri),
+                    ArtworkUri = album.Album.CoverArtUri,
                     StatText = FormatStat(metric, album.TotalPlays, album.TotalDuration),
                     Command = GoToAlbumCommand
                 }));
@@ -160,6 +156,7 @@ public partial class InsightsViewModel : ObservableObject
                     Command = GoToGenreCommand
                 }));
         Categories = [Songs, Artists, Albums, Genres];
+        SeeAll = new InsightsSeeAllViewModel(BuildTimeRange, dispatcherService, logger);
     }
 
     public static IReadOnlyList<InsightsTimeRange> TimeRanges { get; } =
@@ -185,8 +182,8 @@ public partial class InsightsViewModel : ObservableObject
 
     private async Task ReloadForTimeRangeAsync()
     {
-        if (IsSeeAllOpen)
-            await CloseSeeAll();
+        if (SeeAll.IsOpen)
+            await SeeAll.CloseCommand.ExecuteAsync(null);
         await LoadInsightsAsync();
     }
 
@@ -212,45 +209,10 @@ public partial class InsightsViewModel : ObservableObject
 
     private IReadOnlyList<InsightsCategoryViewModel> Categories { get; }
 
+    public InsightsSeeAllViewModel SeeAll { get; }
+
     [ObservableProperty]
     public partial ObservableRangeCollection<SourceSegment> SourceSegments { get; set; } = new();
-
-    /// <summary>
-    ///     The category shown in the "See all" overlay, or null while the overlay is closed.
-    /// </summary>
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsSeeAllOpen))]
-    public partial InsightsCategoryViewModel? SeeAllCategory { get; set; }
-
-    public bool IsSeeAllOpen => SeeAllCategory is not null;
-
-    [ObservableProperty] public partial bool IsSeeAllLoading { get; set; }
-
-    [ObservableProperty] public partial string SearchTerm { get; set; } = string.Empty;
-
-    async partial void OnSearchTermChanged(string value)
-    {
-        if (!IsSeeAllOpen) return;
-        await _seeAllSearchDebouncer.RunAsync(token => _dispatcherService.EnqueueAsync(async () =>
-        {
-            token.ThrowIfCancellationRequested();
-            if (SeeAllCategory is { } category)
-                await OpenSeeAllAsync(category);
-        }));
-    }
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasSeeAllNextPage), nameof(HasSeeAllPreviousPage))]
-    public partial int SeeAllCurrentPage { get; set; } = 1;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasSeeAllNextPage))]
-    public partial int SeeAllTotalPages { get; set; } = 1;
-
-    public bool HasSeeAllNextPage => SeeAllCurrentPage < SeeAllTotalPages;
-    public bool HasSeeAllPreviousPage => SeeAllCurrentPage > 1;
-
-    public ObservableRangeCollection<InsightsRankedItem> SeeAllItems { get; } = new();
 
     /// <summary>
     ///     Loads all insights data for the selected time range.
@@ -350,89 +312,12 @@ public partial class InsightsViewModel : ObservableObject
         }
     }
 
-    internal Task OpenSeeAllAsync(InsightsCategoryViewModel category) => ShowSeeAllPageAsync(category, 1, 1);
-
     internal async Task OnMetricChangedAsync(InsightsCategoryViewModel category)
     {
-        if (SeeAllCategory == category)
-            await OpenSeeAllAsync(category);
+        if (SeeAll.Category == category)
+            await SeeAll.OpenAsync(category);
         await ReloadTopItemsAsync(category);
     }
-
-    private async Task ShowSeeAllPageAsync(InsightsCategoryViewModel category, int page, int previousPage)
-    {
-        var newCts = new CancellationTokenSource();
-        var ct = newCts.Token;
-        var oldCts = Interlocked.Exchange(ref _seeAllCts, newCts);
-        oldCts?.Cancel();
-        oldCts?.Dispose();
-
-        try
-        {
-            await _dispatcherService.EnqueueAsync(() =>
-            {
-                ct.ThrowIfCancellationRequested();
-                SeeAllCategory = category;
-                SeeAllCurrentPage = page;
-                IsSeeAllLoading = true;
-                return Task.CompletedTask;
-            });
-
-            var result = await category.LoadAsync(BuildTimeRange(), (page - 1) * SeeAllPageSize, SeeAllPageSize, SearchTerm, ct);
-            await _dispatcherService.EnqueueAsync(() =>
-            {
-                ct.ThrowIfCancellationRequested();
-                SeeAllTotalPages = Math.Max(1, (int)Math.Ceiling(result.TotalCount / (double)SeeAllPageSize));
-                SeeAllItems.ReplaceRange(result.Items);
-                return Task.CompletedTask;
-            });
-        }
-        catch (OperationCanceledException) when (ct.IsCancellationRequested)
-        {
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to load see-all data for {Category}, page {Page}", category.Title, page);
-            await _dispatcherService.EnqueueAsync(() =>
-            {
-                if (!ct.IsCancellationRequested) SeeAllCurrentPage = previousPage;
-                return Task.CompletedTask;
-            });
-        }
-        finally
-        {
-            await _dispatcherService.EnqueueAsync(() =>
-            {
-                if (!ct.IsCancellationRequested) IsSeeAllLoading = false;
-                return Task.CompletedTask;
-            });
-        }
-    }
-
-    [RelayCommand]
-    private async Task CloseSeeAll()
-    {
-        _seeAllCts?.Cancel();
-        _seeAllSearchDebouncer.Cancel();
-
-        await _dispatcherService.EnqueueAsync(() =>
-        {
-            SeeAllCategory = null;
-            SearchTerm = string.Empty;
-            IsSeeAllLoading = false;
-            return Task.CompletedTask;
-        });
-    }
-
-    [RelayCommand]
-    private Task SeeAllNextPage() => HasSeeAllNextPage && SeeAllCategory is { } category
-        ? ShowSeeAllPageAsync(category, SeeAllCurrentPage + 1, SeeAllCurrentPage)
-        : Task.CompletedTask;
-
-    [RelayCommand]
-    private Task SeeAllPreviousPage() => HasSeeAllPreviousPage && SeeAllCategory is { } category
-        ? ShowSeeAllPageAsync(category, SeeAllCurrentPage - 1, SeeAllCurrentPage)
-        : Task.CompletedTask;
 
     [RelayCommand]
     private void GoToArtist(TopArtistItem item) =>

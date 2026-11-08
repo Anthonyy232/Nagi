@@ -78,7 +78,7 @@
                                 ToolTipService.ToolTip="{Binding ShuffleButtonToolTip}"
                                 AutomationProperties.Name="{Binding ShuffleButtonToolTip}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                      Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.ShuffleIcon), Mode=OneWay}"
+                                      Glyph=""
                                       Opacity="{Binding IsShuffleEnabled, Converter={StaticResource ToggleIconOpacityConverter}}" />
                         </Button>
                         <Button Command="{Binding PreviousCommand}" Style="{StaticResource MediaControlButtonStyle}"

@@ -377,7 +377,7 @@ public sealed class TaskbarService : IDisposable
                     iId = PlayPauseButtonId,
                     dwMask = THB.ICON | THB.TOOLTIP | THB.FLAGS,
                     hIcon = _playbackService.IsPlaying ? _pauseIcon : _playIcon,
-                    szTip = _playbackService.IsPlaying ? Strings.Tooltip_Pause : Strings.Tooltip_Play,
+                    szTip = _playbackService.IsPlaying ? Strings.Tooltip_Pause : Strings.Generic_Play,
                     dwFlags = THBF.ENABLED
                 },
                 new THUMBBUTTON
@@ -413,7 +413,7 @@ public sealed class TaskbarService : IDisposable
             else
             {
                 _buttons[1].hIcon = _playIcon;
-                _buttons[1].szTip = Strings.Tooltip_Play;
+                _buttons[1].szTip = Strings.Generic_Play;
             }
             _buttons[1].dwFlags = THBF.ENABLED;
             _buttons[2].hIcon = _nextIcon;

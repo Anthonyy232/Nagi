@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Hakuna wimbo unaochezwa</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Cheza</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Sitisha</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Msanii</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>wimbo {0}</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>nyimbo {0}</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Msanii Hakupatikana</value>
   </data>
@@ -310,29 +301,17 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Hitilafu wakati wa kuchanganua upya folda: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>folda {0}</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>folda {0}</value>
+  <data name="Songs_Count" xml:space="preserve">
+    <value>{0, plural, one {wimbo #} other {nyimbo #}}</value>
   </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>wimbo {0}</value>
-  </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>nyimbo {0}</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>albamu {0}</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>albamu {0}</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>msanii {0}</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>wasanii {0}</value>
+  <data name="Artists_Count" xml:space="preserve">
+    <value>{0, plural, one {msanii #} other {wasanii #}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Hakuna vitu</value>
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Maktaba yako iko tayari.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>Nadhifu • wimbo {0}</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Nadhifu • nyimbo {0}</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>wimbo {0}</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>nyimbo {0}</value>
+  <data name="Playlist_Smart_Count" xml:space="preserve">
+    <value>Nadhifu • {0, plural, one {wimbo #} other {nyimbo #}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Hakuna nyimbo zinazolingana na sheria za orodha hii ya kucheza nadhifu.</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Una uhakika unataka kukata akaunti yako ya Last.fm? Historia yako ya scrobbling itahifadhiwa kwenye Last.fm, lakini Nagi haitaweza tena kufanya scrobbling.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Tenganisha</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Usafirishaji Umefanikiwa</value>
   </data>
@@ -483,7 +450,7 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
     <value>Hakuna sheria zilizofafanuliwa • Nyimbo zote zinalingana</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Linganisha {0} ya {1} {2}</value>
+    <value>Linganisha {0} ya {1} sheria</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>zote</value>
@@ -491,17 +458,8 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>yoyote</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>sheria</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>sheria</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>kitu {0}</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>vitu {0}</value>
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
+    <value>{0, plural, one {kitu #} other {vitu #}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} imechaguliwa</value>
@@ -631,9 +589,6 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Ondoa</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Ghairi</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tafuta ndani ya folda</value>
@@ -840,9 +795,6 @@ Je, unataka kuendelea?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Hifadhi</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Ghairi</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Iliyotangulia</value>
   </data>
@@ -908,9 +860,6 @@ Je, unataka kuendelea?</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Jumla ya Muda</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Cheza</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Sogeza Juu</value>
@@ -1506,10 +1455,7 @@ Je, unataka kuendelea?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Kamilisha</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Ghairi</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Kata Muunganisho</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -2019,7 +1965,7 @@ Je, unataka kuendelea?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Puuza</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Haikuweza kukamilisha kitendo hiki. Tafadhali jaribu tena.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@ Je, unataka kuendelea?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Onyesha kichwa cha kila safu juu ya orodha za nyimbo.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A hadi Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z hadi A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Mpya Zaidi)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Kongwe Zaidi)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Kupanda)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Kushuka)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Mfupi Kwanza</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Mrefu Kwanza</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Polepole Kwanza ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Haraka Zaidi Kwanza ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>{0} Zaidi</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>{0} Chache Zaidi</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Panga Kwa: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Faili</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Mwaka</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Tarehe Iliyoongezwa</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Tarehe Iliyoundwa</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Tarehe Iliyorekebishwa</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Iliyochezwa Mwisho</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Muda</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Namba ya Wimbo</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Mara za Kucheza</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Nyimbo</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Mpangilio wa Mwongozo</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Nasibu</value>
   </data>
 </root>

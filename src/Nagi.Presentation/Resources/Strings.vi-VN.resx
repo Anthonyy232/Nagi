@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Không có bài hát nào đang phát</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Phát</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Tạm dừng</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Nghệ sĩ</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} bài hát</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} bài hát</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Không tìm thấy Nghệ sĩ</value>
   </data>
@@ -310,28 +301,16 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Lỗi khi quét lại thư mục: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0} thư mục</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} thư mục</value>
-  </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
+  <data name="Songs_Count" xml:space="preserve">
     <value>{0} bài hát</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} bài hát</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0} album</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} album</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} nghệ sĩ</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
+  <data name="Artists_Count" xml:space="preserve">
     <value>{0} nghệ sĩ</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Thư viện của bạn đã sẵn sàng.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+  <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Thông minh • {0} bài hát</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Thông minh • {0} bài hát</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} bài hát</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} bài hát</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Không có bài hát nào khớp với quy tắc của danh sách phát thông minh này.</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Bạn có chắc chắn muốn ngắt kết nối tài khoản Last.fm của mình không? Lịch sử scrobbling của bạn sẽ được giữ lại trên Last.fm, nhưng Nagi sẽ không còn có thể scrobble nữa.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Ngắt kết nối</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Xuất thành công</value>
   </data>
@@ -483,7 +450,7 @@ Các tệp không thể nhập: {0}.</value>
     <value>Không có quy tắc nào được định nghĩa • Tất cả bài hát khớp</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Khớp {0} trong {1} {2}</value>
+    <value>Khớp {0} trong {1} quy tắc</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>tất cả</value>
@@ -491,16 +458,7 @@ Các tệp không thể nhập: {0}.</value>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>bất kỳ</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>quy tắc</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>quy tắc</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} mục</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} mục</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
@@ -631,9 +589,6 @@ Các tệp không thể nhập: {0}.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Xóa</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Hủy</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tìm kiếm trong thư mục</value>
@@ -840,9 +795,6 @@ Bạn có muốn tiếp tục không?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Lưu</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Hủy</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Trước</value>
   </data>
@@ -908,9 +860,6 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Tổng thời lượng</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Phát</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Di chuyển lên</value>
@@ -1506,10 +1455,7 @@ Bạn có muốn tiếp tục không?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Hoàn tất</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Hủy</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Ngắt kết nối</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -2019,7 +1965,7 @@ Bạn có muốn tiếp tục không?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Bỏ qua</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Không thể hoàn thành hành động này. Vui lòng thử lại.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Hiển thị nhãn của từng cột phía trên danh sách bài hát.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A đến Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z đến A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Mới nhất)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Cũ nhất)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Tăng dần)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Giảm dần)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Ngắn nhất trước</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Dài nhất trước</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Chậm nhất trước ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Nhanh nhất trước ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Nhiều {0} nhất</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>{0} ít nhất</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Sắp xếp theo: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Tệp</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Năm</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Ngày thêm</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Ngày tạo</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Ngày sửa đổi</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Phát gần nhất</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Thời lượng</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Số thứ tự bài hát</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Lượt phát</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Bài hát</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Thứ tự thủ công</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Ngẫu nhiên</value>
   </data>
 </root>

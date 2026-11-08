@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>কোনো গান বাজছে না</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>চালান</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>বিরতি দিন</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>শিল্পী</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} গান</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} গান</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>শিল্পী পাওয়া যায়নি</value>
   </data>
@@ -310,28 +301,16 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>ফোল্ডার পুনরায় স্ক্যান করতে ত্রুটি: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0} ফোল্ডার</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} ফোল্ডার</value>
-  </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
+  <data name="Songs_Count" xml:space="preserve">
     <value>{0} গান</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} গান</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0} অ্যালবাম</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} অ্যালবাম</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} শিল্পী</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
+  <data name="Artists_Count" xml:space="preserve">
     <value>{0} শিল্পী</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>আপনার লাইব্রেরি প্রস্তুত।</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+  <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>স্মার্ট • {0} গান</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>স্মার্ট • {0} গান</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} গান</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} গান</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>এই স্মার্ট প্লেলিস্টের নিয়মের সাথে কোনো গান মিলছে না।</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>আপনি কি আপনার Last.fm অ্যাকাউন্ট সংযোগ বিচ্ছিন্ন করতে নিশ্চিত? আপনার স্ক্রোবলিং ইতিহাস Last.fm এ সংরক্ষিত থাকবে, তবে Nagi আর স্ক্রোবল করতে সক্ষম হবে না।</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>সংযোগ বিচ্ছিন্ন করুন</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>রপ্তানি সফল হয়েছে</value>
   </data>
@@ -483,7 +450,7 @@
     <value>কোনো নিয়ম সংজ্ঞায়িত করা হয়নি • সব গান মিলেছে</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>{1}টি {2} এর মধ্যে {0}টি মিলছে</value>
+    <value>{1}টি নিয়ম এর মধ্যে {0}টি মিলছে</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>সব</value>
@@ -491,16 +458,7 @@
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>কোনো</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>নিয়ম</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>নিয়ম</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0}টি আইটেম</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0}টি আইটেম</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
@@ -631,9 +589,6 @@
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>সরান</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>বাতিল করুন</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ফোল্ডারে অনুসন্ধান করুন</value>
@@ -840,9 +795,6 @@
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>সংরক্ষণ করুন</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>বাতিল করুন</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>পূর্ববর্তী</value>
   </data>
@@ -908,9 +860,6 @@
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>মোট সময়কাল</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>চালান</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>উপরে সরান</value>
@@ -1506,10 +1455,7 @@
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>সম্পূর্ণ</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>বাতিল করুন</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>সংযোগ বিচ্ছিন্ন করুন</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -2019,7 +1965,7 @@
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>বাদ দিন</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>এই কাজটি সম্পন্ন করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>গানের তালিকার উপরে প্রতিটি কলামের নাম দেখান।</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (এ থেকে জেড)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (জেড থেকে এ)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (সর্বশেষ)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (সবচেয়ে পুরানো)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (ঊর্ধ্বক্রম)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (অধোক্রম)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>সবচেয়ে ছোট প্রথমে</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>সবচেয়ে লম্বা প্রথমে</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>সবচেয়ে ধীর প্রথমে ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>সবচেয়ে দ্রুত প্রথমে ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>সর্বাধিক {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>সর্বনিম্ন {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>সাজান: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>ফাইল</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>বছর</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>যোগ করার তারিখ</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>তৈরির তারিখ</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>পরিবর্তনের তারিখ</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>শেষবার চালানো হয়েছে</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>সময়কাল</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>বিপিএম</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>ট্র্যাক নম্বর</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>প্লে সংখ্যা</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>গান</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>ম্যানুয়াল ক্রম</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>এলোমেলো</value>
   </data>
 </root>

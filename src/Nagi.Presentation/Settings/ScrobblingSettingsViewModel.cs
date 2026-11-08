@@ -7,7 +7,6 @@ using Nagi.Core.Scrobbling;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Shell;
 using CoreStrings = Nagi.Core.Resources.Strings;
 
 namespace Nagi.Presentation.Settings;
@@ -184,7 +183,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
         if (result is LastFmSignInResult.Failed or LastFmSignInResult.NotSaved)
             await _uiService.ShowMessageDialogAsync(Strings.Settings_LastFm_FinalizeError_Title,
                 result == LastFmSignInResult.NotSaved
-                    ? Strings.MusicServer_Error_SignInNotSaved
+                    ? Strings.Generic_SignInNotSaved
                     : Strings.Settings_LastFm_FinalizeError_Message);
     }
 
@@ -202,7 +201,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
             Strings.Settings_LastFm_Disconnect_Title,
             Strings.Settings_LastFm_Disconnect_Message,
-            Strings.Settings_LastFm_Disconnect_Button,
+            Strings.SettingsPage_LastFm_Disconnect_Button,
             null);
 
         if (!confirmed) return;
@@ -234,7 +233,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
                 ListenBrainzIsConnected = false;
                 ListenBrainzConnectionStatus = ResourceFormatter.Format(
                     Strings.SettingsPage_ListenBrainz_ConnectionFailed,
-                    Strings.MusicServer_Error_SignInNotSaved);
+                    Strings.Generic_SignInNotSaved);
             }
             else if (result.IsValid)
             {

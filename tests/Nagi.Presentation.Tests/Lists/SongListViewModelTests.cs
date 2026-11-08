@@ -4,10 +4,10 @@ using Nagi.Core.Library;
 using Nagi.Core.Listening;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
+using Nagi.Presentation.Common;
 using Nagi.Presentation.Lists;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Shell;
 using Nagi.Presentation.Tests.Utils;
 using NSubstitute;
 using Xunit;
@@ -191,6 +191,6 @@ public class SongListViewModelTests
 
         await viewModel.PlaySongCommand.ExecuteAsync(new Song());
 
-        await ui.Received(1).ShowMessageDialogAsync(Strings.Generic_Error, Strings.Listening_ActionError);
+        await ui.Received(1).ShowMessageDialogAsync(Strings.Generic_Error, Strings.Generic_ActionError);
     }
 }

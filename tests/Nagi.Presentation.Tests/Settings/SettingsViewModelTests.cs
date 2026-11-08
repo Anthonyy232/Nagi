@@ -11,6 +11,7 @@ using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
 using Nagi.Core.Scrobbling;
 using Nagi.Core.Settings;
+using Nagi.Presentation.Common;
 using Nagi.Presentation.Lists;
 using Nagi.Presentation.Player;
 using Nagi.Presentation.Resources;
@@ -302,7 +303,7 @@ public class SettingsViewModelTests : IDisposable
 
         _viewModel.Scrobbling.IsLastFmConnected.Should().BeFalse();
         _viewModel.Scrobbling.IsLastFmScrobblingEnabled.Should().BeFalse();
-        await _ui.Received(1).ShowMessageDialogAsync(Arg.Any<string>(), Strings.MusicServer_Error_SignInNotSaved);
+        await _ui.Received(1).ShowMessageDialogAsync(Arg.Any<string>(), Strings.Generic_SignInNotSaved);
     }
 
     [Fact]
@@ -334,7 +335,7 @@ public class SettingsViewModelTests : IDisposable
         await _viewModel.Scrobbling.TestListenBrainzConnectionCommand.ExecuteAsync(null);
 
         _viewModel.Scrobbling.ListenBrainzIsConnected.Should().BeFalse();
-        _viewModel.Scrobbling.ListenBrainzConnectionStatus.Should().Contain(Strings.MusicServer_Error_SignInNotSaved);
+        _viewModel.Scrobbling.ListenBrainzConnectionStatus.Should().Contain(Strings.Generic_SignInNotSaved);
         _settings.Get(CoreSettings.ListenBrainzEnabledSinceUtc).Should().BeNull();
     }
 
@@ -364,7 +365,7 @@ public class SettingsViewModelTests : IDisposable
         var confirmation = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(confirmation.Task);
         var scan = _viewModel.Library.RescanMetadataCommand.ExecuteAsync(null);
-        _operation.IsInProgress = true;
+        using var otherOperation = _operation.TryBegin("Scanning");
 
         confirmation.SetResult(true);
         await scan.WaitAsync(TimeSpan.FromSeconds(5));

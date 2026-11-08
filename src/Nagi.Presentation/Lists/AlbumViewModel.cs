@@ -14,7 +14,6 @@ using Nagi.Presentation.Common;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Settings;
-using Nagi.Presentation.Shell;
 
 namespace Nagi.Presentation.Lists;
 
@@ -26,7 +25,7 @@ public sealed class AlbumViewModelItem
         Title = album.Title;
         ArtistName = album.ArtistName;
         AlbumArtists = album.AlbumArtists;
-        CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
+        CoverArtUri = album.CoverArtUri;
     }
 
     public Guid Id { get; }
@@ -79,9 +78,7 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
     public bool HasAlbums => Albums.Any();
 
     protected override string FormatTotalItemsText(PagedResult<Album> result) =>
-        result.TotalCount == 1
-            ? ResourceFormatter.Format(Strings.Albums_Count_Singular, result.TotalCount)
-            : ResourceFormatter.Format(Strings.Albums_Count_Plural, result.TotalCount);
+        ResourceFormatter.Format(Strings.Albums_Count, result.TotalCount);
 
     protected override Task<PagedResult<Album>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token) =>
         _libraryReader.GetAlbumsAsync(SearchTerm, Sort.Current, pageNumber, pageSize, token);

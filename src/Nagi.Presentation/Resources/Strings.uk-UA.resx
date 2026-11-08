@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Нічого не відтворюється</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Відтворити</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Пауза</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Виконавець</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} пісня</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0, plural, one {# пісня} few {# пісні} many {# пісень} other {# пісні}}</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Виконавця не знайдено</value>
   </data>
@@ -310,28 +301,16 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Помилка повторного сканування папки: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0} папка</value>
-  </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0, plural, one {# папка} few {# папки} many {# папок} other {# папки}}</value>
   </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} пісня</value>
-  </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
+  <data name="Songs_Count" xml:space="preserve">
     <value>{0, plural, one {# пісня} few {# пісні} many {# пісень} other {# пісні}}</value>
   </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
-    <value>{0} альбом</value>
-  </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0, plural, one {# альбом} few {# альбоми} many {# альбомів} other {# альбому}}</value>
   </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} виконавець</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
+  <data name="Artists_Count" xml:space="preserve">
     <value>{0, plural, one {# виконавець} few {# виконавці} many {# виконавців} other {# виконавця}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Ваша бібліотека готова.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>Розумний • {0} пісня</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
+  <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Розумний • {0, plural, one {# пісня} few {# пісні} many {# пісень} other {# пісні}}</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} пісня</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one {# пісня} few {# пісні} many {# пісень} other {# пісні}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Жодна пісня не відповідає правилам цього розумного списку відтворення.</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Ви впевнені, що хочете відключити свій обліковий запис Last.fm? Ваша історія скроблінгу буде збережена на Last.fm, але Nagi більше не зможе скроблювати.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Відключити</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Експорт успішний</value>
   </data>
@@ -483,7 +450,7 @@
     <value>Правил не визначено • Усі пісні відповідають</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Відповідає {0} з {1} {2}</value>
+    <value>Відповідає {0} з {1, plural, one {# правило} other {# правил}}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>усім</value>
@@ -491,16 +458,7 @@
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>будь-якому</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>правило</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>правил</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} елемент</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# елемент} few {# елементи} many {# елементів} other {# елемента}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
@@ -631,9 +589,6 @@
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Вилучити</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Скасувати</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Пошук у папці</value>
@@ -840,9 +795,6 @@
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Зберегти</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Скасувати</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Попередня</value>
   </data>
@@ -908,9 +860,6 @@
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Загальна тривалість</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Відтворити</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Перемістити вгору</value>
@@ -1506,10 +1455,7 @@
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Завершити</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Скасувати</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Відключити</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -2019,7 +1965,7 @@
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Відхилити</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Не вдалося виконати цю дію. Спробуйте ще раз.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Показувати назву кожного стовпця над списками пісень.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (від А до Я)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (від Я до А)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (новіші)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (старіші)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (за зростанням)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (за спаданням)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Найкоротші спочатку</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Найдовші спочатку</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Найповільніші спочатку ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Найшвидші спочатку ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Найбільше {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Найменше {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Сортувати за: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Рік</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Дата додавання</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Дата створення</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Дата зміни</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Востаннє відтворено</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Тривалість</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Номер треку</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Відтворень</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Пісні</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Порядок вручну</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Випадково</value>
   </data>
 </root>

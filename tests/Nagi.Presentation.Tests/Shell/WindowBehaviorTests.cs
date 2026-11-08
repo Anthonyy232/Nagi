@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nagi.Core.Playback;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Settings;
 using Nagi.Presentation.Shell;
@@ -14,10 +15,11 @@ public class WindowBehaviorTests
     private readonly IWindowService _window = Substitute.For<IWindowService>();
     private readonly IApplicationLifecycle _lifecycle = Substitute.For<IApplicationLifecycle>();
     private readonly SettingsService _settings = TestSettings.Create();
+    private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
     private readonly WindowBehavior _behavior;
 
     public WindowBehaviorTests() =>
-        _behavior = new WindowBehavior(_window, _lifecycle, _settings, new ImmediateDispatcher(),
+        _behavior = new WindowBehavior(_window, _lifecycle, _settings, _playback, new ImmediateDispatcher(),
             NullLogger<WindowBehavior>.Instance);
 
     [Theory]
@@ -72,5 +74,19 @@ public class WindowBehaviorTests
         _window.Received(expected == "window" ? 1 : 0).ShowAndActivate();
         _window.Received(expected == "mini player" ? 1 : 0).ShowMiniPlayer();
         _window.Received(expected == "minimized" ? 1 : 0).ShowMinimized();
+    }
+
+    [Fact]
+    public void StartingInTheTray_RunsEfficientlyUntilSomethingPlays()
+    {
+        _settings.Set(AppSettings.StartMinimized, true);
+        _settings.Set(AppSettings.HideToTray, true);
+
+        _behavior.ShowWhenLoaded(activatedExternally: false);
+        _window.Received(1).SetEfficiencyMode(true);
+
+        _playback.IsPlaying.Returns(true);
+        _playback.PlaybackStateChanged += Raise.Event<Action>();
+        _window.Received(1).SetEfficiencyMode(false);
     }
 }

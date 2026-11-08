@@ -74,47 +74,8 @@
   <data name="Label_Playlist" xml:space="preserve">
     <value>Плейлист</value>
   </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>Файл</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>Година</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>Дата на добавяне</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>Дата на създаване</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>Дата на промяна</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>Последно пуснато</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>Продължителност</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>Номер на песен</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>Възпроизвеждания</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>Песни</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Папка</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>Ръчен ред</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>Разбъркано</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
@@ -125,42 +86,6 @@
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} не е намерено.</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (А до Я)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (Я до А)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Най-ново)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Най-старо)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Възходящо)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Низходящо)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>Най-кратките първи</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>Най-дългите първи</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>Най-бавните първи ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>Най-бързите първи ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>Най-много {0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>Най-малко {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Сканиране на папка {0} от {1}: {2} - {3}</value>
@@ -233,9 +158,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> &amp; </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Сортирай по: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Няма плейлисти за експортиране.</value>

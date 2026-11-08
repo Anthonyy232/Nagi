@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>재생 중인 곡 없음</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>재생</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>일시 정지</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>아티스트</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0}곡</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0}곡</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>아티스트를 찾을 수 없음</value>
   </data>
@@ -310,28 +301,16 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>폴더 재스캔 오류: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0}개 폴더</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0}개 폴더</value>
-  </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
+  <data name="Songs_Count" xml:space="preserve">
     <value>{0}곡</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0}곡</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0}개 앨범</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0}개 앨범</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>아티스트 {0}명</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
+  <data name="Artists_Count" xml:space="preserve">
     <value>아티스트 {0}명</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>라이브러리가 준비되었습니다.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+  <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>스마트 • {0}곡</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>스마트 • {0}곡</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0}곡</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0}곡</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>이 스마트 재생 목록의 규칙과 일치하는 곡이 없습니다.</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Last.fm 계정 연결을 해제하시겠습니까? 스크로블링 기록은 Last.fm에 보존되지만, Nagi는 더 이상 스크로블할 수 없습니다.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>연결 해제</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>내보내기 성공</value>
   </data>
@@ -483,7 +450,7 @@
     <value>정의된 규칙 없음 • 모든 곡 일치</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>{1} {2} 중 {0} 일치</value>
+    <value>{1} 규칙 중 {0} 일치</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>모두</value>
@@ -491,16 +458,7 @@
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>어느 하나</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>규칙</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>규칙</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0}개 항목</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0}개 항목</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
@@ -631,9 +589,6 @@
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>제거</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>취소</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>폴더에서 검색</value>
@@ -840,9 +795,6 @@
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>저장</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>취소</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>이전</value>
   </data>
@@ -908,9 +860,6 @@
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>총 재생 시간</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>재생</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>위로 이동</value>
@@ -1506,10 +1455,7 @@
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>완료</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>취소</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>연결 해제</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -2019,7 +1965,7 @@
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>닫기</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>이 작업을 완료할 수 없습니다. 다시 시도해 주세요.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>곡 목록 위에 각 열의 머리글을 표시합니다.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (오름차순)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (내림차순)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (최신순)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (오래된 순)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (오름차순)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (내림차순)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>짧은 순</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>긴 순</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>느린 순 ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>빠른 순 ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>가장 많은 {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>가장 적은 {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>정렬 기준: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>파일</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>연도</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>추가된 날짜</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>생성된 날짜</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>수정된 날짜</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>마지막 재생일</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>재생 시간</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>트랙 번호</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>재생 횟수</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>노래</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>수동 정렬</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>무작위</value>
   </data>
 </root>

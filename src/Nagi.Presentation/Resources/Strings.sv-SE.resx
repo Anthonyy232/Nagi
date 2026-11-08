@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Ingen låt spelas</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Spela</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Paus</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Artist</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} låt</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} låtar</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Artist hittades inte</value>
   </data>
@@ -310,29 +301,17 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Fel vid omsökning av mapp: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0} mapp</value>
+  <data name="Folders_Count" xml:space="preserve">
+    <value>{0, plural, one {# mapp} other {# mappar}}</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} mappar</value>
+  <data name="Songs_Count" xml:space="preserve">
+    <value>{0, plural, one {# låt} other {# låtar}}</value>
   </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} låt</value>
-  </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} låtar</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0} album</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} album</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} artist</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} artister</value>
+  <data name="Artists_Count" xml:space="preserve">
+    <value>{0, plural, one {# artist} other {# artister}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Inga objekt</value>
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Ditt bibliotek är redo.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>Smart • {0} låt</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Smart • {0} låtar</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} låt</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} låtar</value>
+  <data name="Playlist_Smart_Count" xml:space="preserve">
+    <value>Smart • {0, plural, one {# låt} other {# låtar}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Inga låtar matchar den här smarta spellistans regler.</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Är du säker på att du vill koppla bort ditt Last.fm-konto? Din scrobbling-historik kommer att bevaras på Last.fm, men Nagi kommer inte längre att kunna scrobbla.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Koppla från</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Export lyckades</value>
   </data>
@@ -483,7 +450,7 @@ Filer som inte kunde importeras: {0}.</value>
     <value>Inga regler definierade • Alla låtar matchar</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Matcha {0} av {1} {2}</value>
+    <value>Matcha {0} av {1, plural, one {# regel} other {# regler}}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>alla</value>
@@ -491,16 +458,7 @@ Filer som inte kunde importeras: {0}.</value>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>någon</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>regel</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>regler</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} objekt</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} objekt</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
@@ -631,9 +589,6 @@ Filer som inte kunde importeras: {0}.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Ta bort</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Avbryt</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Sök i mapp</value>
@@ -840,9 +795,6 @@ Vill du fortsätta?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Spara</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Avbryt</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Föregående</value>
   </data>
@@ -908,9 +860,6 @@ Vill du fortsätta?</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Total längd</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Spela</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Flytta upp</value>
@@ -1506,10 +1455,7 @@ Vill du fortsätta?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Slutför</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Avbryt</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Koppla från</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -2019,7 +1965,7 @@ Vill du fortsätta?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Avfärda</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Kunde inte slutföra åtgärden. Försök igen.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@ Vill du fortsätta?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Visa en rubrik ovanför varje kolumn i låtlistor.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A till Ö)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Ö till A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Nyaste)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Äldsta)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (stigande)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (fallande)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Kortast först</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Längst först</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Långsammast först ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Snabbast först ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Mest {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Minst {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Sortera efter: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Fil</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>År</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Datum tillagt</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Datum skapat</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Datum ändrat</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Senast spelad</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Speltid</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Spårnummer</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Spelningar</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Låtar</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Manuell ordning</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Slumpmässigt</value>
   </data>
 </root>

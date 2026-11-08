@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
 using Nagi.Core.MusicServers;
+using Nagi.Presentation.Common;
 using Nagi.Presentation.MusicServers;
 using Nagi.Presentation.Resources;
 
@@ -205,16 +206,9 @@ public partial class OnboardingViewModel : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(IsLibraryReady))]
-    private async Task FinishAsync()
+    private Task FinishAsync() => UserAction.RunAsync(() =>
     {
-        try
-        {
-            _applicationLifecycle.ShowMainShell();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to open the library after onboarding");
-            await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, Strings.Listening_ActionError);
-        }
-    }
+        _applicationLifecycle.ShowMainShell();
+        return Task.CompletedTask;
+    }, _logger, _uiService);
 }

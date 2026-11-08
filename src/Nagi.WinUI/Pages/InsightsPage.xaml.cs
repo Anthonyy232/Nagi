@@ -25,6 +25,6 @@ public sealed partial class InsightsPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        ViewModel.CloseSeeAllCommand.Execute(null);
+        ViewModel.SeeAll.CloseCommand.Execute(null);
     }
 }

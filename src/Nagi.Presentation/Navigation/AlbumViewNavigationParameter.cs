@@ -1,5 +1,3 @@
-using Nagi.Presentation.Navigation;
-
-namespace Nagi.Presentation.Lists;
+namespace Nagi.Presentation.Navigation;
 
 public sealed record AlbumViewNavigationParameter(Guid AlbumId) : INavigationParameter;

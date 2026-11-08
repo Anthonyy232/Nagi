@@ -8,7 +8,6 @@ using Nagi.Core.Library;
 using Nagi.Core.Listening;
 using Nagi.Core.Platform;
 using Nagi.Presentation.Common;
-using Nagi.Presentation.Lists;
 using Nagi.Presentation.Resources;
 
 namespace Nagi.Presentation.Player;

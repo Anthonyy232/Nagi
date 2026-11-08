@@ -144,7 +144,7 @@
                                         ToolTipService.ToolTip="{x:Bind ViewModel.ShuffleButtonToolTip, Mode=OneWay}"
                                         AutomationProperties.Name="{x:Bind ViewModel.ShuffleButtonToolTip, Mode=OneWay}">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                              Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.ShuffleIcon)}"
+                                              Glyph=""
                                               Opacity="{x:Bind ViewModel.IsShuffleEnabled, Mode=OneWay, Converter={StaticResource ToggleIconOpacityConverter}}" />
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.PreviousCommand}"

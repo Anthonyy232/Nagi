@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Joks kūrinys negroja</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Groti</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pristabdyti</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Atlikėjas</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} kūrinys</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0, plural, one {# kūrinys} few {# kūriniai} many {# kūrinio} other {# kūrinių}}</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Atlikėjas nerastas</value>
   </data>
@@ -310,28 +301,16 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Klaida iš naujo nuskenuojant aplanką: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0} aplankas</value>
-  </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0, plural, one {# aplankas} few {# aplankai} many {# aplanko} other {# aplankų}}</value>
   </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} kūrinys</value>
-  </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
+  <data name="Songs_Count" xml:space="preserve">
     <value>{0, plural, one {# kūrinys} few {# kūriniai} many {# kūrinio} other {# kūrinių}}</value>
   </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
-    <value>{0} albumas</value>
-  </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0, plural, one {# albumas} few {# albumai} many {# albumo} other {# albumų}}</value>
   </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} atlikėjas</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
+  <data name="Artists_Count" xml:space="preserve">
     <value>{0, plural, one {# atlikėjas} few {# atlikėjai} many {# atlikėjo} other {# atlikėjų}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Jūsų biblioteka paruošta.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>Išmanusis • {0} kūrinys</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
+  <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Išmanusis • {0, plural, one {# kūrinys} few {# kūriniai} many {# kūrinio} other {# kūrinių}}</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} kūrinys</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one {# kūrinys} few {# kūriniai} many {# kūrinio} other {# kūrinių}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Nėra kūrinių, atitinkančių šio išmaniojo grojaraščio taisykles.</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Ar tikrai norite atsijungti nuo Last.fm paskyros? Jūsų klausymosi istorija bus išsaugota Last.fm, tačiau "Nagi" nebegalės siųsti klausymosi duomenų.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Atsijungti</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Eksportavimas sėkmingas</value>
   </data>
@@ -483,7 +450,7 @@ Failai, kurių nepavyko importuoti: {0}.</value>
     <value>Nėra apibrėžtų taisyklių • Visi kūriniai atitinka</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Atitinka {0} iš {1} {2}</value>
+    <value>Atitinka {0} iš {1, plural, one {# taisyklė} other {# taisyklės}}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>visus</value>
@@ -491,16 +458,7 @@ Failai, kurių nepavyko importuoti: {0}.</value>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>bet kuriuos</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>taisyklė</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>taisyklės</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} elementas</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# elementas} few {# elementai} many {# elemento} other {# elementų}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
@@ -631,9 +589,6 @@ Failai, kurių nepavyko importuoti: {0}.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Pašalinti</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Atšaukti</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Ieškoti aplanke</value>
@@ -840,9 +795,6 @@ Ar norite tęsti?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Išsaugoti</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Atšaukti</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Ankstesnis</value>
   </data>
@@ -908,9 +860,6 @@ Ar norite tęsti?</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Bendra trukmė</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Groti</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Perkelti aukštyn</value>
@@ -1506,10 +1455,7 @@ Ar norite tęsti?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Baigti</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Atšaukti</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Atsijungti</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -2019,7 +1965,7 @@ Ar norite tęsti?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Atmesti</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Nepavyko atlikti šio veiksmo. Pabandykite dar kartą.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@ Ar norite tęsti?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Rodyti antraštę virš kiekvieno dainų sąrašo stulpelio.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A iki Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z iki A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Naujausia)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Seniausia)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (didėjančia tvarka)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (mažėjančia tvarka)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Trumpiausi pirmiausia</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Ilgiausi pirmiausia</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Lėčiausi pirmiausia ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Greičiausi pirmiausia ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Daugiausia {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Mažiausiai {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Rūšiuoti pagal: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Failas</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Metai</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Pridėjimo data</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Sukūrimo data</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Pakeitimo data</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Paskutinį kartą grota</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Trukmė</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Takelio numeris</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Perklausos</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Dainos</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Rankinė tvarka</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Atsitiktinis</value>
   </data>
 </root>

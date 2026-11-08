@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Ingen sang afspilles</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Afspil</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pause</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Kunstner</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} sang</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} sange</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Kunstner ikke fundet</value>
   </data>
@@ -310,29 +301,17 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Fejl ved genscanning af mappe: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0} mappe</value>
+  <data name="Folders_Count" xml:space="preserve">
+    <value>{0, plural, one {# mappe} other {# mapper}}</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} mapper</value>
+  <data name="Songs_Count" xml:space="preserve">
+    <value>{0, plural, one {# sang} other {# sange}}</value>
   </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} sang</value>
+  <data name="Albums_Count" xml:space="preserve">
+    <value>{0, plural, one {# album} other {# albummer}}</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} sange</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
-    <value>{0} album</value>
-  </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} albummer</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} kunstner</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} kunstnere</value>
+  <data name="Artists_Count" xml:space="preserve">
+    <value>{0, plural, one {# kunstner} other {# kunstnere}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Ingen elementer</value>
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Dit bibliotek er klar.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>Smart • {0} sang</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Smart • {0} sange</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} sang</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} sange</value>
+  <data name="Playlist_Smart_Count" xml:space="preserve">
+    <value>Smart • {0, plural, one {# sang} other {# sange}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Ingen sange matcher denne smarte afspilningslistes regler.</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Er du sikker på, at du vil frakoble din Last.fm-konto? Din scrobbling-historik vil blive bevaret på Last.fm, men Nagi vil ikke længere kunne scrobble.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Frakobl</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Eksport lykkedes</value>
   </data>
@@ -483,7 +450,7 @@ Filer, der ikke kunne importeres: {0}.</value>
     <value>Ingen regler defineret • Alle sange matcher</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Match {0} af {1} {2}</value>
+    <value>Match {0} af {1, plural, one {# regel} other {# regler}}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>alle</value>
@@ -491,17 +458,8 @@ Filer, der ikke kunne importeres: {0}.</value>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>enhver</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>regel</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>regler</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} element</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>{0} elementer</value>
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
+    <value>{0, plural, one {# element} other {# elementer}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} valgt</value>
@@ -631,9 +589,6 @@ Filer, der ikke kunne importeres: {0}.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Fjern</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Annuller</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Søg i mappe</value>
@@ -840,9 +795,6 @@ Vil du fortsætte?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Gem</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Annuller</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Forrige</value>
   </data>
@@ -908,9 +860,6 @@ Vil du fortsætte?</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Samlet varighed</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Afspil</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Flyt op</value>
@@ -1506,10 +1455,7 @@ Vil du fortsætte?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Fuldfør</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Annuller</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Frakobl</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -2019,7 +1965,7 @@ Vil du fortsætte?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Afvis</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Kunne ikke gennemføre handlingen. Prøv igen.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@ Vil du fortsætte?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Vis en overskrift over hver kolonne i sanglister.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A til Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z til A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Nyeste)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Ældste)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (stigende)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (faldende)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Korteste først</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Længste først</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Langsomste først ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Hurtigste først ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Mest {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Færrest {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Sortér efter: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Fil</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>År</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Dato tilføjet</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Dato oprettet</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Dato ændret</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Sidst afspillet</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Varighed</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Sporenummer</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Afspilninger</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Sange</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Manuel rækkefølge</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Tilfældig</value>
   </data>
 </root>

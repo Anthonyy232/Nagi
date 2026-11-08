@@ -127,6 +127,9 @@ namespace Nagi.Core.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime?>("ImageModifiedUtc")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("LocalImageCachePath")
                         .HasMaxLength(1000)
                         .HasColumnType("TEXT");

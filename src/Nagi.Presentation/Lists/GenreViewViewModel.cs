@@ -9,10 +9,10 @@ using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
 using Nagi.Core.Settings;
+using Nagi.Presentation.Common;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Settings;
-using Nagi.Presentation.Shell;
 
 namespace Nagi.Presentation.Lists;
 
@@ -36,21 +36,7 @@ public partial class GenreViewViewModel : DetailSongListViewModelBase<GenreViewN
         PageTitle = Strings.GenreView_DefaultName;
     }
 
-    protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
-        SongSortOrder sortOrder, CancellationToken cancellationToken = default)
-    {
-        if (_genreId == Guid.Empty) return Task.FromResult(new PagedResult<Song>());
-
-        return _libraryReader.GetSongsAsync(new SongScope.Genre(_genreId), SearchTerm, sortOrder, pageNumber, pageSize,
-            cancellationToken);
-    }
-
-    protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
-    {
-        if (_genreId == Guid.Empty) return Task.FromResult(new List<Guid>());
-
-        return _libraryReader.GetSongIdsAsync(new SongScope.Genre(_genreId), SearchTerm, sortOrder, token);
-    }
+    protected override SongScope? Scope => _genreId != Guid.Empty ? new SongScope.Genre(_genreId) : null;
 
     protected override Task<bool> OpenDetailsAsync(GenreViewNavigationParameter parameter, CancellationToken token)
     {
@@ -58,8 +44,4 @@ public partial class GenreViewViewModel : DetailSongListViewModelBase<GenreViewN
         PageTitle = parameter.GenreName;
         return Task.FromResult(true);
     }
-
-    protected override PlaybackContext GetPlaybackContext() =>
-        _genreId != Guid.Empty ? new(PlaybackContextType.Genre, _genreId) : base.GetPlaybackContext();
-
 }

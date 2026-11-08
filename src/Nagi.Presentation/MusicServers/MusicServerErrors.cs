@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.MusicServers;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Shell;
 
 namespace Nagi.Presentation.MusicServers;
 
@@ -42,7 +41,7 @@ public static class MusicServerErrors
             // Only signing in again checks that an API key is the same account's.
             MusicServerError.DifferentAccount when server is not null =>
                 ResourceFormatter.Format(Strings.MusicServer_Error_DifferentAccount_Format, server.UserName),
-            MusicServerError.SignInNotSaved => Strings.MusicServer_Error_SignInNotSaved,
+            MusicServerError.SignInNotSaved => Strings.Generic_SignInNotSaved,
             _ => Strings.MusicServer_Error_ServerError
         };
     }

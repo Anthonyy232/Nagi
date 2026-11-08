@@ -10,7 +10,7 @@
     xmlns:resources="using:Nagi.Presentation.Resources"
     mc:Ignorable="d"
     PrimaryButtonText="{x:Bind resources:Strings.SmartPlaylist_Dialog_PrimaryButton, Mode=OneTime}"
-    CloseButtonText="{x:Bind resources:Strings.SmartPlaylist_Dialog_CloseButton, Mode=OneTime}"
+    CloseButtonText="{x:Bind resources:Strings.Generic_Cancel, Mode=OneTime}"
     DefaultButton="Primary"
     PrimaryButtonClick="OnPrimaryButtonClick"
     Title="{x:Bind ViewModel.Title, Mode=OneWay}"

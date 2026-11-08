@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Nem szól dal</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Lejátszás</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Szünet</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Előadó</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} dal</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} dal</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Előadó nem található</value>
   </data>
@@ -310,28 +301,16 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Hiba a mappa újraolvasásakor: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0} mappa</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} mappa</value>
-  </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
+  <data name="Songs_Count" xml:space="preserve">
     <value>{0} dal</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} dal</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0} album</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} album</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} előadó</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
+  <data name="Artists_Count" xml:space="preserve">
     <value>{0} előadó</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>A könyvtár készen áll.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+  <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Intelligens • {0} dal</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Intelligens • {0} dal</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} dal</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} dal</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Egy dal sem egyezik ezzel az intelligens lejátszási lista szabályaival.</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Biztosan le szeretné választani Last.fm fiókját? A scrobble előzményei megmaradnak a Last.fm-en, de a Nagi többé nem fog tudni scrobble-t végezni.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Leválasztás</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Exportálás sikeres</value>
   </data>
@@ -483,7 +450,7 @@ Nem importálható fájlok: {0}.</value>
     <value>Nincsenek definiált szabályok • Az összes dal egyezik</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>{1} {2} közül {0} teljesül</value>
+    <value>{1} szabály közül {0} teljesül</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>mind</value>
@@ -491,16 +458,7 @@ Nem importálható fájlok: {0}.</value>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>bármelyik</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>szabály</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>szabály</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} elem</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} elem</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
@@ -631,9 +589,6 @@ Nem importálható fájlok: {0}.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Eltávolítás</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Mégse</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Keresés mappában</value>
@@ -840,9 +795,6 @@ Szeretné folytatni?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Mentés</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Mégse</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Előző</value>
   </data>
@@ -908,9 +860,6 @@ Szeretné folytatni?</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Teljes időtartam</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Lejátszás</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Mozgatás felfelé</value>
@@ -1506,10 +1455,7 @@ Szeretné folytatni?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Befejezés</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Mégse</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Leválasztás</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -2019,7 +1965,7 @@ Szeretné folytatni?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Elvetés</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Nem sikerült végrehajtani a műveletet. Kérjük, próbálja újra.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@ Szeretné folytatni?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Az oszlopok nevének megjelenítése a dallisták felett.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A-tól Z-ig)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z-től A-ig)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Legújabb)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Legrégebbi)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (növekvő)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (csökkenő)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Legrövidebb elöl</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Leghosszabb elöl</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Leglassabb elöl ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Leggyorsabb elöl ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Legtöbb {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Legkevesebb {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Rendezés: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Fájl</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Év</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Hozzáadás dátuma</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Létrehozás dátuma</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Módosítás dátuma</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Utoljára lejátszott</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Időtartam</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Szám sorszáma</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Lejátszások</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Dalok</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Kézi sorrend</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Véletlenszerű</value>
   </data>
 </root>

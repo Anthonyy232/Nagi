@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Nagi.Core.Artwork;
 using Nagi.Core.Library;
 
 namespace Nagi.Core.Playlists;
@@ -21,6 +23,10 @@ public class SmartPlaylist
 
     [MaxLength(2000)]
     public string? CoverImageUri { get; set; }
+
+    /// <summary>The cover for display, or null when the playlist has none.</summary>
+    [NotMapped]
+    public string? CoverUri => ArtworkUri.Versioned(CoverImageUri, DateModified);
 
     public bool MatchAllRules { get; set; } = true;
 

@@ -7,7 +7,6 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Artwork;
 using Nagi.Core.Library;
-using Nagi.Core.Metadata;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Settings;
@@ -15,7 +14,6 @@ using Nagi.Presentation.Common;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Settings;
-using Nagi.Presentation.Shell;
 
 namespace Nagi.Presentation.Lists;
 
@@ -81,9 +79,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
     public bool HasArtists => Artists.Any();
 
     protected override string FormatTotalItemsText(PagedResult<Artist> result) =>
-        result.TotalCount == 1
-            ? ResourceFormatter.Format(Strings.Artists_Count_Singular, result.TotalCount)
-            : ResourceFormatter.Format(Strings.Artists_Count_Plural, result.TotalCount);
+        ResourceFormatter.Format(Strings.Artists_Count, result.TotalCount);
 
     protected override Task<PagedResult<Artist>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token) =>
         _libraryReader.GetArtistsAsync(SearchTerm, Sort.Current, pageNumber, pageSize, token);
@@ -98,7 +94,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
             {
                 Id = artist.Id,
                 Name = artist.Name,
-                LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(artist.LocalImageCachePath)
+                LocalImageCachePath = artist.ImageUri
             };
             _artistLookup[artist.Id] = vm;
             items.Add(vm);
@@ -138,11 +134,10 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
         _dispatcherService.TryEnqueue(() =>
         {
             if (_isDisposed) return;
-            var timestamp = DateTime.UtcNow;
             foreach (var change in changes)
             {
                 if (_artistLookup.TryGetValue(change.ArtistId, out var artistVm))
-                    artistVm.LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(change.ImagePath, timestamp);
+                    artistVm.LocalImageCachePath = change.ImageUri;
             }
         });
     }
@@ -153,28 +148,11 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
         base.Dispose();
     }
 
-    /// <summary>
-    ///     Lets the user pick an image file and stores it as the artist's custom image.
-    /// </summary>
     [RelayCommand]
-    private async Task ChangeArtistImageAsync(Guid artistId)
-    {
-        try
-        {
-            var localPath = await _uiService.PickSingleFileAsync(FileExtensions.ImageFileExtensions);
-            if (string.IsNullOrWhiteSpace(localPath)) return;
-            await _artwork.UpdateArtistImageAsync(artistId, localPath);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to change the image of artist {ArtistId}", artistId);
-        }
-    }
+    private Task ChangeArtistImageAsync(Guid artistId) =>
+        ArtistImageActions.ChangeAsync(artistId, _uiService, _artwork, _logger, () => _isDisposed);
 
     [RelayCommand]
-    private async Task RemoveArtistImageAsync(Guid artistId)
-    {
-        try { await _artwork.RemoveArtistImageAsync(artistId); }
-        catch (Exception ex) { _logger.LogError(ex, "Failed to remove the image of artist {ArtistId}", artistId); }
-    }
+    private Task RemoveArtistImageAsync(Guid artistId) =>
+        ArtistImageActions.RemoveAsync(artistId, _uiService, _artwork, _logger, () => _isDisposed);
 }

@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>कोई गाना नहीं बज रहा है</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>चलाएँ</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>रोकें</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>कलाकार</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} गाना</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} गाने</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>कलाकार नहीं मिला</value>
   </data>
@@ -310,28 +301,16 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>फ़ोल्डर को पुन: स्कैन करने में त्रुटि: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0} फ़ोल्डर</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} फ़ोल्डर</value>
+  <data name="Songs_Count" xml:space="preserve">
+    <value>{0, plural, one {# गाना} other {# गाने}}</value>
   </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} गाना</value>
-  </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} गाने</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0} एल्बम</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} एल्बम</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} कलाकार</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
+  <data name="Artists_Count" xml:space="preserve">
     <value>{0} कलाकार</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>आपकी लाइब्रेरी तैयार है।</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>स्मार्ट • {0} गाना</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>स्मार्ट • {0} गाने</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} गाना</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} गाने</value>
+  <data name="Playlist_Smart_Count" xml:space="preserve">
+    <value>स्मार्ट • {0, plural, one {# गाना} other {# गाने}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>इस स्मार्ट प्लेलिस्ट के नियमों से कोई गाना मेल नहीं खाता।</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>क्या आप अपना Last.fm खाता डिस्कनेक्ट करना चाहते हैं? आपका स्क्रॉबलिंग इतिहास Last.fm पर संरक्षित रहेगा, लेकिन Nagi अब स्क्रॉबल नहीं कर पाएगा।</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>डिस्कनेक्ट करें</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>निर्यात सफल</value>
   </data>
@@ -483,7 +450,7 @@
     <value>कोई नियम परिभाषित नहीं • सभी गाने मेल खाते हैं</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>मिलान {1} में से {0} {2}</value>
+    <value>मिलान {1} में से {0} नियम</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>सभी</value>
@@ -491,16 +458,7 @@
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>कोई भी</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>नियम</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>नियम</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} आइटम</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} आइटम</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
@@ -631,9 +589,6 @@
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>हटाएँ</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>रद्द करें</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>फ़ोल्डर में खोजें</value>
@@ -840,9 +795,6 @@
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>सहेजें</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>रद्द करें</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>पिछला</value>
   </data>
@@ -908,9 +860,6 @@
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>कुल अवधि</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>चलाएँ</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>ऊपर ले जाएँ</value>
@@ -1506,10 +1455,7 @@
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>पूर्ण</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>रद्द करें</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>डिस्कनेक्ट करें</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -2019,7 +1965,7 @@
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>खारिज करें</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>यह कार्रवाई पूरी नहीं की जा सकी। कृपया पुनः प्रयास करें।</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>गीत सूचियों के ऊपर प्रत्येक कॉलम का लेबल दिखाएँ।</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (ए से ज़ेड तक)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (ज़ेड से ए तक)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (नवीनतम)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (सबसे पुराना)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (आरोही)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (अवरोही)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>सबसे छोटा पहले</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>सबसे लंबा पहले</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>सबसे धीमा पहले ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>सबसे तेज़ पहले ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>सबसे अधिक {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>सबसे कम {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>क्रमबद्ध करें: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>फ़ाइल</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>वर्ष</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>जोड़ी गई दिनांक</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>बनाई गई दिनांक</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>संशोधित दिनांक</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>अंतिम बार बजाया गया</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>अवधि</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>बीपीएम</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>ट्रैक संख्या</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>प्ले</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>गाने</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>मैन्युअल क्रम</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>रैंडम</value>
   </data>
 </root>

@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Aucun morceau en cours de lecture</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Lire</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pause</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Artiste</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} morceau</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} morceaux</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Artiste introuvable</value>
   </data>
@@ -310,29 +301,17 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Erreur lors de la réanalyse du dossier : {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0} dossier</value>
+  <data name="Folders_Count" xml:space="preserve">
+    <value>{0, plural, one {# dossier} other {# dossiers}}</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} dossiers</value>
+  <data name="Songs_Count" xml:space="preserve">
+    <value>{0, plural, one {# morceau} other {# morceaux}}</value>
   </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} morceau</value>
+  <data name="Albums_Count" xml:space="preserve">
+    <value>{0, plural, one {# album} other {# albums}}</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} morceaux</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
-    <value>{0} album</value>
-  </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} albums</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} artiste</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} artistes</value>
+  <data name="Artists_Count" xml:space="preserve">
+    <value>{0, plural, one {# artiste} other {# artistes}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Aucun élément</value>
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Votre bibliothèque est prête.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>Intelligente • {0} morceau</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Intelligente • {0} morceaux</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} morceau</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} morceaux</value>
+  <data name="Playlist_Smart_Count" xml:space="preserve">
+    <value>Intelligente • {0, plural, one {# morceau} other {# morceaux}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Aucun morceau ne correspond aux règles de cette liste de lecture intelligente.</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Êtes-vous sûr de vouloir déconnecter votre compte Last.fm ? Votre historique de scrobbling sera préservé sur Last.fm, mais Nagi ne pourra plus scrobbler.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Déconnecter</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Exportation réussie</value>
   </data>
@@ -483,7 +450,7 @@ Fichiers qui n'ont pas pu être importés : {0}.</value>
     <value>Aucune règle définie • Tous les morceaux correspondent</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Correspond à {0} parmi {1} {2}</value>
+    <value>Correspond à {0} parmi {1, plural, one {# règle} other {# règles}}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>toutes</value>
@@ -491,17 +458,8 @@ Fichiers qui n'ont pas pu être importés : {0}.</value>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>n'importe quelle</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>règle</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>règles</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} élément</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>{0} éléments</value>
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
+    <value>{0, plural, one {# élément} other {# éléments}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} sélectionnés</value>
@@ -631,9 +589,6 @@ Fichiers qui n'ont pas pu être importés : {0}.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Retirer</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Annuler</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Rechercher dans le dossier</value>
@@ -840,9 +795,6 @@ Voulez-vous continuer ?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Enregistrer</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Annuler</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Précédent</value>
   </data>
@@ -908,9 +860,6 @@ Voulez-vous continuer ?</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Durée totale</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Lire</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Déplacer vers le haut</value>
@@ -1506,10 +1455,7 @@ Voulez-vous continuer ?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Terminer</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Annuler</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Déconnecter</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -2019,7 +1965,7 @@ Voulez-vous continuer ?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Ignorer</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Impossible d'effectuer cette action. Veuillez réessayer.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@ Voulez-vous continuer ?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Afficher un libellé au-dessus de chaque colonne des listes de morceaux.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A à Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z à A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Plus récent)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Plus ancien)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (croissant)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (décroissant)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Plus court d'abord</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Plus long d'abord</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Plus lent d'abord ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Plus rapide d'abord ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Le plus de {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Moins de {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Trier par : </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Fichier</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Année</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Date d'ajout</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Date de création</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Date de modification</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Dernière lecture</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Durée</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Numéro de piste</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Lectures</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Chansons</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Ordre manuel</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Aléatoire</value>
   </data>
 </root>

@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Çalan şarkı yok</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Oynat</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Duraklat</value>
   </data>
@@ -250,12 +247,6 @@
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
     <value>Sanatçı</value>
   </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} şarkı</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} şarkı</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Sanatçı Bulunamadı</value>
   </data>
@@ -310,28 +301,16 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Klasör yeniden taranırken hata oluştu: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
+  <data name="Folders_Count" xml:space="preserve">
     <value>{0} klasör</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} klasör</value>
-  </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
+  <data name="Songs_Count" xml:space="preserve">
     <value>{0} şarkı</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} şarkı</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
+  <data name="Albums_Count" xml:space="preserve">
     <value>{0} albüm</value>
   </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} albüm</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} sanatçı</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
+  <data name="Artists_Count" xml:space="preserve">
     <value>{0} sanatçı</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
@@ -358,17 +337,8 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>Kitaplığınız hazır.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+  <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Akıllı • {0} şarkı</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Akıllı • {0} şarkı</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} şarkı</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} şarkı</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Bu akıllı çalma listesinin kurallarıyla eşleşen şarkı yok.</value>
@@ -439,9 +409,6 @@
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Last.fm hesabınızın bağlantısını kesmek istediğinizden emin misiniz? Scrobble geçmişiniz Last.fm'de korunacak ancak Nagi artık scrobble yapamayacaktır.</value>
   </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Bağlantıyı Kes</value>
-  </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Dışa Aktarma Başarılı</value>
   </data>
@@ -483,7 +450,7 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
     <value>Kural tanımlanmamış • Tüm şarkılar eşleşiyor</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>{1} {2} arasından {0} eşleştir</value>
+    <value>{1, plural, one {# kural} other {# kurallar}} arasından {0} eşleştir</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>tümü</value>
@@ -491,16 +458,7 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
     <value>herhangi biri</value>
   </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>kural</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>kurallar</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} öğe</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} öğe</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
@@ -631,9 +589,6 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Kaldır</value>
-  </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>İptal</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Klasörde ara</value>
@@ -840,9 +795,6 @@ Devam etmek ister misiniz?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Kaydet</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>İptal</value>
-  </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Önceki</value>
   </data>
@@ -908,9 +860,6 @@ Devam etmek ister misiniz?</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Toplam Süre</value>
-  </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Oynat</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Yukarı Taşı</value>
@@ -1506,10 +1455,7 @@ Devam etmek ister misiniz?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Tamamla</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>İptal</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Bağlantıyı Kes</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -2019,7 +1965,7 @@ Devam etmek ister misiniz?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Yoksay</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Bu işlem tamamlanamadı. Lütfen tekrar deneyin.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2116,5 +2062,83 @@ Devam etmek ister misiniz?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Şarkı listelerinin üstünde her sütunun başlığını gösterin.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A'dan Z'ye)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z'den A'ya)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (En Yeni)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (En Eski)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Artan)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Azalan)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>En Kısa Önce</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>En Uzun Önce</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>En Yavaş Önce ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>En Hızlı Önce ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>En Çok {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>En az {0}</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Sırala: </value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Dosya</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Yıl</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Ekleme Tarihi</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Oluşturulma Tarihi</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Değiştirilme Tarihi</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Son Çalma</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Süre</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Parça Numarası</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Çalma Sayısı</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Şarkılar</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Manuel Sıra</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Rastgele</value>
   </data>
 </root>
