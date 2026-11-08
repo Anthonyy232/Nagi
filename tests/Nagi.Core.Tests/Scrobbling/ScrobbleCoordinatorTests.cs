@@ -89,9 +89,13 @@ public sealed class ScrobbleCoordinatorTests : IDisposable
         Create(lastFm, listenBrainz).Start();
         _time.Advance(ScrobbleCoordinator.CoalesceDelay);
         await Task.WhenAll(lastFm.WaitForRunsAsync(1), listenBrainz.WaitForRunsAsync(1));
-        var accounts = new ScrobblingAccounts(_settingsService);
+        var lastFmAuth = Substitute.For<ILastFmAuthService>();
+        lastFmAuth.GetAuthenticationTokenAsync().Returns(("token", "https://last.fm/auth"));
+        lastFmAuth.GetSessionAsync("token").Returns(("user", "session"));
+        var accounts = new ScrobblingAccounts(_settingsService, lastFmAuth);
 
-        await accounts.ConnectLastFmAsync("user", "session");
+        await accounts.BeginLastFmSignInAsync();
+        await accounts.FinishLastFmSignInAsync();
         _time.Advance(ScrobbleCoordinator.CoalesceDelay);
         await lastFm.WaitForRunsAsync(2);
         await accounts.ConnectListenBrainzAsync("token");
