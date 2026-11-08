@@ -1,0 +1,58 @@
+<UserControl
+    x:Class="Nagi.WinUI.Controls.SongListToolbar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Nagi.WinUI.Controls">
+
+    <Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="TitleStates">
+                <VisualState x:Name="SectionTitle" />
+                <!--  A page title is taller, so the counts sit on its baseline rather than its middle.  -->
+                <VisualState x:Name="PageTitle">
+                    <VisualState.Setters>
+                        <Setter Target="TitleText.Style" Value="{StaticResource PageTitleTextStyle}" />
+                        <Setter Target="TitleText.Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
+                        <Setter Target="SelectedCountText.VerticalAlignment" Value="Bottom" />
+                        <Setter Target="SelectedCountText.Margin" Value="0,0,0,5" />
+                        <Setter Target="TotalCountText.VerticalAlignment" Value="Bottom" />
+                        <Setter Target="TotalCountText.Margin" Value="0,0,0,5" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+            <TextBlock x:Name="TitleText"
+                       Style="{StaticResource SectionHeaderTextBlockStyle}"
+                       Foreground="{StaticResource AppPrimaryColorBrush}"
+                       Text="{x:Bind Title, Mode=OneWay}" />
+            <TextBlock x:Name="SelectedCountText"
+                       VerticalAlignment="Center"
+                       FontSize="13"
+                       Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                       Text="{x:Bind ViewModel.SelectedItemsCountText, Mode=OneWay}"
+                       Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay}" />
+            <TextBlock x:Name="TotalCountText"
+                       VerticalAlignment="Center"
+                       FontSize="13"
+                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                       Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}"
+                       Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+            <local:SearchToggle SearchTerm="{x:Bind ViewModel.SearchTerm, Mode=TwoWay}"
+                                PlaceholderText="{x:Bind SearchPlaceholder, Mode=OneWay}"
+                                SearchToolTip="{x:Bind SearchToolTip, Mode=OneWay}" />
+            <local:SortButton Selection="{x:Bind ViewModel.Sort, Mode=OneWay}" />
+            <ContentPresenter Content="{x:Bind ExtraContent, Mode=OneWay}" />
+            <local:SongListPlayButtons ViewModel="{x:Bind ViewModel, Mode=OneWay}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

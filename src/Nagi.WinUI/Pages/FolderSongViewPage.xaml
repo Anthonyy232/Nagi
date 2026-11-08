@@ -108,35 +108,9 @@
                     </BreadcrumbBar.ItemTemplate>
                 </BreadcrumbBar>
             </Border>
-            <Grid Margin="{StaticResource SectionHeaderMargin}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                    <TextBlock Text="{x:Bind resources:Strings.SongList_Songs, Mode=OneTime}" Style="{StaticResource SectionHeaderTextBlockStyle}" Foreground="{StaticResource AppPrimaryColorBrush}" />
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        FontSize="13"
-                        Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                        Text="{x:Bind ViewModel.SelectedItemsCountText, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    <TextBlock Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}"
-                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"
-                               FontSize="13"
-                               Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                </StackPanel>
-
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                    <uicontrols:SearchToggle SearchTerm="{x:Bind ViewModel.SearchTerm, Mode=TwoWay}" PlaceholderText="{x:Bind resources:Strings.FolderSongViewPage_SearchBox_Placeholder, Mode=OneTime}" SearchToolTip="{x:Bind resources:Strings.FolderSongViewPage_SearchButton_Search_ToolTip, Mode=OneTime}" />
-
-                    <uicontrols:SortButton Selection="{x:Bind ViewModel.Sort}" />
-
-                    <uicontrols:SongListPlayButtons ViewModel="{x:Bind ViewModel}" />
-
-                </StackPanel>
-            </Grid>
+            <uicontrols:SongListToolbar Margin="{StaticResource SectionHeaderMargin}" ViewModel="{x:Bind ViewModel}"
+                                        SearchPlaceholder="{x:Bind resources:Strings.FolderSongViewPage_SearchBox_Placeholder}"
+                                        SearchToolTip="{x:Bind resources:Strings.FolderSongViewPage_SearchButton_Search_ToolTip}" />
         </StackPanel>
 
         <Grid Grid.Row="1" RowDefinitions="Auto,*">
