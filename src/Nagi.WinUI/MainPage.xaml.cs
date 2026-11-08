@@ -15,7 +15,6 @@ using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Platform;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Insights;
-using Nagi.Presentation.Lists;
 using Nagi.Presentation.Player;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Settings;
@@ -498,13 +497,9 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
         var cleared = false;
         if (page is SongListPage songListPage &&
-            page.DataContext is SongListViewModelBase { HasSelectedSongs: true } &&
             !(clickedList?.FindAscendant<FrameworkElement>(ancestor => ancestor == page) is not null &&
               (clickedItem || clickedScrollBar)))
-        {
-            cleared = true;
-            songListPage.ClearSelection();
-        }
+            cleared = songListPage.ClearSelection();
 
         if (QueueListView.SelectedItem is not null &&
             !(clickedList == QueueListView && (clickedItem || clickedScrollBar)))

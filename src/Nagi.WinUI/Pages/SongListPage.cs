@@ -51,7 +51,15 @@ public abstract class SongListPage : ViewModelPage
             await detail.OpenAsync(parameter);
     }
 
-    internal void ClearSelection() => ActiveSongList.SelectedItems.Clear();
+    internal SongListViewModelBase SongList => _viewModel!;
+
+    /// <returns>Whether anything was selected.</returns>
+    internal bool ClearSelection()
+    {
+        if (ActiveSongList.SelectedItems.Count == 0) return false;
+        ActiveSongList.SelectedItems.Clear();
+        return true;
+    }
 
     protected void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
