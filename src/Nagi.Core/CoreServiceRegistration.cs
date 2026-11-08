@@ -128,7 +128,8 @@ public static class CoreServiceRegistration
     private static void AddHttpClients(IServiceCollection services)
     {
         services.ConfigureHttpClientDefaults(builder =>
-            builder.ConfigureHttpClient(client => client.DefaultRequestHeaders.UserAgent.ParseAdd(ProviderUserAgent.Value)));
+            builder.ConfigureHttpClient((provider, client) => client.DefaultRequestHeaders.UserAgent.ParseAdd(
+                ProviderUserAgent.For(provider.GetRequiredService<IAppInfoService>().GetAppVersion()))));
         services.AddHttpClient("")
             .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(20))
             .ConfigurePrimaryHttpMessageHandler(() =>

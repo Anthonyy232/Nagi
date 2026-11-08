@@ -25,7 +25,9 @@ public class CoreServiceRegistrationTests
         services.AddSingleton(Substitute.For<IPathConfiguration>());
         services.AddSingleton(Substitute.For<ISettingsStore>());
         services.AddSingleton(Substitute.For<IAutoLaunchService>());
-        services.AddSingleton(Substitute.For<IAppInfoService>());
+        var appInfo = Substitute.For<IAppInfoService>();
+        appInfo.GetAppVersion().Returns("2.7.0");
+        services.AddSingleton(appInfo);
         services.AddSingleton(Substitute.For<ICredentialLockerService>());
         services.AddSingleton(Substitute.For<IAudioPlayer>());
         services.AddSingleton(Substitute.For<ISystemMediaControls>());
@@ -64,6 +66,6 @@ public class CoreServiceRegistrationTests
 
         using var client = provider.GetRequiredService<IHttpClientFactory>().CreateClient(clientName);
 
-        client.DefaultRequestHeaders.UserAgent.ToString().Should().Be(ProviderUserAgent.Value);
+        client.DefaultRequestHeaders.UserAgent.ToString().Should().Be("Nagi/2.7.0 (+" + AppLinks.Repository + ")");
     }
 }
