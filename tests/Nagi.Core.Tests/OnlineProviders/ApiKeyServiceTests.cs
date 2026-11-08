@@ -113,6 +113,32 @@ public class ApiKeyServiceTests : IDisposable
         result.Should().BeNull();
     }
 
+    [Theory]
+    [InlineData(HttpStatusCode.Unauthorized)]
+    [InlineData(HttpStatusCode.Forbidden)]
+    public async Task GetApiKeyAsync_AfterTheServerRejectedNagi_RecoversOnTheNextCall(HttpStatusCode rejection)
+    {
+        SetupValidConfiguration();
+        _httpMessageHandler.RespondSequence(
+            (rejection, "{}"),
+            (HttpStatusCode.OK, JsonSerializer.Serialize(new { Value = "recovered-key" })));
+
+        (await _apiKeyService.GetApiKeyAsync(ApiKeyNames.LastFm)).Should().BeNull();
+        (await _apiKeyService.GetApiKeyAsync(ApiKeyNames.LastFm)).Should().Be("recovered-key");
+    }
+
+    [Theory]
+    [InlineData("api.test.com")]
+    [InlineData("localhost:7443/nagi/")]
+    public async Task GetApiKeyAsync_WithAnAddressThatIsNotAnHttpUrl_ReturnsNullWithoutHttpCall(string configuredUrl)
+    {
+        SetupValidConfiguration(configuredUrl);
+
+        (await _apiKeyService.GetApiKeyAsync(ApiKeyNames.FanartTv)).Should().BeNull();
+
+        _httpMessageHandler.Requests.Should().BeEmpty();
+    }
+
     [Fact]
     public async Task GetApiKeyAsync_WhenConfigurationIsMissing_ReturnsNullWithoutHttpCall()
     {
@@ -184,10 +210,8 @@ public class ApiKeyServiceTests : IDisposable
 
     [Theory]
     [InlineData("https://api.test.com/", "https://api.test.com/api/fanarttv-key")]
-    [InlineData("api.test.com", "https://api.test.com/api/fanarttv-key")]
     [InlineData("HTTPS://api.test.com/", "https://api.test.com/api/fanarttv-key")]
     [InlineData("https://api.test.com/nagi?region=west", "https://api.test.com/nagi/api/fanarttv-key?region=west")]
-    [InlineData("localhost:7443/nagi/", "https://localhost:7443/nagi/api/fanarttv-key")]
     public async Task GetApiKeyAsync_ConstructsRequestUrlCorrectly(string configuredUrl, string expectedRequestUrl)
     {
         SetupValidConfiguration(configuredUrl);

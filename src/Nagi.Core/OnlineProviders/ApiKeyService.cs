@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using System.Net;
 using System.Net.Http.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -21,7 +20,6 @@ public class ApiKeyService : IApiKeyService
     private readonly ProviderClient _client;
     private readonly IConfiguration _configuration;
     private readonly ILogger<ApiKeyService> _logger;
-    private volatile bool _globalAuthFailed;
 
     public ApiKeyService(
         IHttpClientFactory httpClientFactory,
@@ -36,11 +34,6 @@ public class ApiKeyService : IApiKeyService
 
     public async Task<string?> GetApiKeyAsync(string keyName, CancellationToken cancellationToken = default)
     {
-        if (_globalAuthFailed)
-        {
-            return null;
-        }
-
         // Lazy coalesces concurrent callers even when GetOrAdd invokes its factory more than once.
         var lazyTask = _cachedApiKeys.GetOrAdd(keyName,
             _ => new Lazy<Task<string?>>(() => FetchKeyFromServerAsync(keyName)));
@@ -73,9 +66,11 @@ public class ApiKeyService : IApiKeyService
             return null;
         }
 
-        if (!Uri.TryCreate(serverUrl, UriKind.Absolute, out var serverUri) ||
-            serverUri.Scheme is not ("http" or "https"))
-            serverUri = new Uri("https://" + serverUrl);
+        if (!Uri.TryCreate(serverUrl, UriKind.Absolute, out var serverUri) || serverUri.Scheme is not ("http" or "https"))
+        {
+            _logger.LogCritical("Nagi API Server URL is not an absolute http(s) URL. API key retrieval will fail.");
+            return null;
+        }
         var requestUri = new UriBuilder(serverUri)
         {
             Path = $"{serverUri.AbsolutePath.TrimEnd('/')}/api/{keyName}-key"
@@ -106,15 +101,6 @@ public class ApiKeyService : IApiKeyService
                 }
 
                 var errorContent = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
-
-                if (response.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
-                {
-                    _globalAuthFailed = true;
-                    _logger.LogCritical(
-                        "Authentication failed for Nagi API Server. All future requests disabled. Status: {StatusCode}. Response: {ErrorContent}",
-                        response.StatusCode, errorContent);
-                    return ServiceResult<string>.FromTemporaryError();
-                }
 
                 _logger.LogError("Error fetching API key '{ApiKeyName}'. Status: {StatusCode}. Response: {ErrorContent}",
                     keyName, response.StatusCode, errorContent);
