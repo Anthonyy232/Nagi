@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Library;
-using Nagi.Presentation.Lists;
 using Nagi.Presentation.Navigation;
 using NSubstitute;
 using Xunit;

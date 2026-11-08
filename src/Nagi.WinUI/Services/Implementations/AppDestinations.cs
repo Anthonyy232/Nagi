@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Nagi.Presentation.Lists;
 using Nagi.Presentation.Navigation;
 using Nagi.WinUI.Pages;
 
