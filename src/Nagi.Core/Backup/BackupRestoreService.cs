@@ -4,6 +4,7 @@ using System.Text.Json;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Platform;
+using Nagi.Core.Playback;
 using Nagi.Core.Settings;
 
 namespace Nagi.Core.Backup;
@@ -15,17 +16,23 @@ public class BackupRestoreService : IBackupRestoreService
 
     private readonly IPathConfiguration _pathConfiguration;
     private readonly ISettingsService _settingsService;
+    private readonly IMusicPlaybackService _playback;
     private readonly ILogger<BackupRestoreService> _logger;
 
     public BackupRestoreService(
         IPathConfiguration pathConfiguration,
         ISettingsService settingsService,
+        IMusicPlaybackService playback,
         ILogger<BackupRestoreService> logger)
     {
         _pathConfiguration = pathConfiguration;
         _settingsService = settingsService;
+        _playback = playback;
         _logger = logger;
     }
+
+    // Entries sit at the archive's root under the names they have in the data folder.
+    private string DatabaseFileName => Path.GetFileName(_pathConfiguration.DatabasePath);
 
     public async Task<BackupResult> CreateBackupAsync(string destinationFolderPath)
     {
@@ -42,59 +49,18 @@ public class BackupRestoreService : IBackupRestoreService
 
             try
             {
-                var directoryInfo = new DirectoryInfo(sourcePath);
-
-                var excludedDirectories = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                var databasePath = _pathConfiguration.DatabasePath;
+                if (File.Exists(databasePath))
                 {
-                    "Logs",
-                    "EBWebView",
-                    "Temp",
-                    "Cache",
-                    "crashdumps"
-
-                };
-
-                foreach (var file in directoryInfo.EnumerateFiles())
-                {
-
-                    if (file.Extension.Equals(".tmp", StringComparison.OrdinalIgnoreCase) ||
-                        file.Extension.Equals(".lock", StringComparison.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
-
-                    if (file.Name.Equals(".libvlc-cache-version", StringComparison.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
-
-                    if (file.Extension.Equals(".db-wal", StringComparison.OrdinalIgnoreCase) ||
-                        file.Extension.Equals(".db-shm", StringComparison.OrdinalIgnoreCase) ||
-                        file.Extension.Equals(".db-journal", StringComparison.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
-
-                    var targetPath = Path.Combine(stagingPath, file.Name);
-                    if (file.Name.Equals("nagi.db", StringComparison.OrdinalIgnoreCase))
-                    {
-                        // SQLite takes a consistent snapshot, including committed WAL data.
-                        // A checkpoint followed by a file copy can lose writes or race a writer.
-                        await Task.Run(() => BackupDatabase(file.FullName, targetPath)).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        await CopyFileAsync(file.FullName, targetPath).ConfigureAwait(false);
-                    }
+                    // SQLite takes a consistent snapshot, including committed WAL data.
+                    // A checkpoint followed by a file copy can lose writes or race a writer.
+                    var target = Path.Combine(stagingPath, DatabaseFileName);
+                    await Task.Run(() => BackupDatabase(databasePath, target)).ConfigureAwait(false);
                 }
 
-                foreach (var dir in directoryInfo.EnumerateDirectories())
-                {
-                    if (excludedDirectories.Contains(dir.Name)) continue;
-
-                    var destDir = Path.Combine(stagingPath, dir.Name);
-                    await CopyDirectoryAsync(dir.FullName, destDir).ConfigureAwait(false);
-                }
+                foreach (var folder in _pathConfiguration.LibraryCacheFolders.Append(_pathConfiguration.RomanizationPacksPath))
+                    if (Directory.Exists(folder))
+                        await CopyDirectoryAsync(folder, Path.Combine(stagingPath, Path.GetFileName(folder))).ConfigureAwait(false);
 
                 await File.WriteAllTextAsync(Path.Combine(stagingPath, SettingsFileName),
                     await _settingsService.ExportAsync().ConfigureAwait(false)).ConfigureAwait(false);
@@ -185,19 +151,10 @@ public class BackupRestoreService : IBackupRestoreService
                     File.Delete(incomingSettings);
                 }
 
-                try
-                {
-                    SqliteConnection.ClearAllPools();
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Failed to clear SQLite connection pools. Restore may fail if DB is locked.");
-                }
-
                 var journal = new List<RestoreJournalEntry>();
                 var restoredCount = 0;
-                var incomingDatabase = Path.Combine(incomingPath, "nagi.db");
-                var existingDatabase = Path.Combine(destPath, "nagi.db");
+                var incomingDatabase = Path.Combine(incomingPath, DatabaseFileName);
+                var existingDatabase = Path.Combine(destPath, DatabaseFileName);
                 if (File.Exists(incomingDatabase))
                 {
                     using var database = new SqliteConnection(new SqliteConnectionStringBuilder
@@ -211,6 +168,20 @@ public class BackupRestoreService : IBackupRestoreService
                     check.CommandText = "PRAGMA quick_check;";
                     if (check.ExecuteScalar() is not "ok")
                         throw new InvalidDataException("The backup database failed SQLite's integrity check.");
+                }
+
+                // The app restarts through its normal shutdown after a restore, which ends the current listen by its
+                // row ID and saves the queue. Ending them now keeps the listen in the database it belongs to and leaves
+                // nothing to write over the restored data.
+                await _playback.ClearQueueAsync().ConfigureAwait(false);
+
+                try
+                {
+                    SqliteConnection.ClearAllPools();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to clear SQLite connection pools. Restore may fail if DB is locked.");
                 }
 
                 // On Windows, deny database reads/writes during replacement and rollback,
@@ -232,7 +203,7 @@ public class BackupRestoreService : IBackupRestoreService
                     {
                         foreach (var suffix in new[] { "-wal", "-shm", "-journal" })
                         {
-                            var journalName = "nagi.db" + suffix;
+                            var journalName = DatabaseFileName + suffix;
                             var existingJournal = Path.Combine(destPath, journalName);
                             if (!EntryExists(existingJournal)) continue;
 
@@ -387,7 +358,7 @@ public class BackupRestoreService : IBackupRestoreService
 
                 using var archive = ZipFile.OpenRead(backupFilePath);
 
-                var hasDb = archive.Entries.Any(e => e.FullName.Equals("nagi.db", StringComparison.OrdinalIgnoreCase));
+                var hasDb = archive.Entries.Any(e => e.FullName.Equals(DatabaseFileName, StringComparison.OrdinalIgnoreCase));
                 var hasSettings = archive.Entries.Any(e => e.FullName.Equals(SettingsFileName, StringComparison.OrdinalIgnoreCase));
 
                 return hasDb || hasSettings;

@@ -29,7 +29,8 @@ public class ScrobbleQueueCancellationTests
         var credentials = Substitute.For<ICredentialLockerService>();
         credentials.RetrieveCredential("Nagi/LastFm").Returns(("user", "session"));
         credentials.RetrieveCredential("Nagi/ListenBrainz").Returns(("token", "token"));
-        var settings = TestSettings.Create(credentials: credentials);
+        var settings = TestSettings.Create();
+        var accounts = TestSettings.Accounts(settings, credentials);
         settings.Set(CoreSettings.LastFmScrobbling, true);
         settings.Set(CoreSettings.ListenBrainzScrobbling, true);
         settings.Set(CoreSettings.ListenBrainzEnabledSinceUtc, DateTime.UtcNow.AddDays(-1));
@@ -60,9 +61,9 @@ public class ScrobbleQueueCancellationTests
         }
 
         IListenSubmitter submitter = provider == ServiceProviderIds.LastFm
-            ? new LastFmScrobblerService(httpFactory, pipeline, keys, settings, db.ContextFactory,
+            ? new LastFmScrobblerService(httpFactory, pipeline, keys, settings, accounts, db.ContextFactory,
                 NullLogger<LastFmScrobblerService>.Instance)
-            : new ListenBrainzScrobblerService(httpFactory, pipeline, db.ContextFactory, settings,
+            : new ListenBrainzScrobblerService(httpFactory, pipeline, db.ContextFactory, settings, accounts,
                 Substitute.For<IAppInfoService>(), NullLogger<ListenBrainzScrobblerService>.Instance);
         var successBody = provider == ServiceProviderIds.LastFm ? "<lfm status='ok'><scrobbles accepted='1' ignored='0'><scrobble><ignoredMessage code='0'/></scrobble></scrobbles></lfm>" : "{}";
         handler.RespondSequence((HttpStatusCode.OK, successBody));

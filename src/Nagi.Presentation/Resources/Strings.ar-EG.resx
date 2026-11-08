@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>إعادة ضبط</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>خطأ في إعادة الضبط</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>حدث خطأ أثناء إعادة تعيين بيانات التطبيق: {0}. يرجى محاولة إعادة تشغيل التطبيق يدويًا.</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>خطأ</value>
   </data>

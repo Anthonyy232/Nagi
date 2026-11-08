@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.OnlineProviders;
 using Nagi.Core.Platform;
-using Nagi.Core.Playback;
+using Nagi.Core.Scrobbling;
 using Nagi.Core.Settings;
 using NSubstitute;
 
@@ -12,17 +12,20 @@ namespace Nagi.Core.Tests.Utils;
 /// </summary>
 public static class TestSettings
 {
-    public static SettingsService Create(IDictionary<string, object>? values = null,
-        ICredentialLockerService? credentials = null, IAutoLaunchService? autoLaunch = null,
-        IPlaybackStateStore? playbackStateStore = null)
+    public static SettingsService Create(IDictionary<string, object>? values = null)
     {
         var store = Substitute.For<ISettingsStore>();
         store.Values.Returns(values ?? new Dictionary<string, object>());
-        return new SettingsService(store, Setting.DeclaredIn(typeof(CoreSettings)),
-            playbackStateStore ?? Substitute.For<IPlaybackStateStore>(),
-            credentials ?? AcceptingCredentials(),
-            autoLaunch ?? Substitute.For<IAutoLaunchService>(), NullLogger<SettingsService>.Instance);
+        return new SettingsService(store, Setting.DeclaredIn(typeof(CoreSettings)), NullLogger<SettingsService>.Instance);
     }
+
+    /// <summary>
+    ///     The real scrobbling accounts, over a credential store that accepts every sign-in unless one is given.
+    /// </summary>
+    public static ScrobblingAccounts Accounts(ISettingsService settings, ICredentialLockerService? credentials = null,
+        ILastFmAuthService? lastFmAuth = null) =>
+        new(settings, credentials ?? AcceptingCredentials(), lastFmAuth ?? Substitute.For<ILastFmAuthService>(),
+            NullLogger<ScrobblingAccounts>.Instance);
 
     private static ICredentialLockerService AcceptingCredentials()
     {

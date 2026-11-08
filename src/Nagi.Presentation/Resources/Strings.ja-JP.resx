@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>リセット</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>リセットエラー</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>アプリケーションデータのリセット中にエラーが発生しました: {0}。アプリを手動で再起動してみてください。</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>エラー</value>
   </data>

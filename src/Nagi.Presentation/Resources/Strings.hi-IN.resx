@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>रीसेट करें</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>रीसेट त्रुटि</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>एप्लिकेशन डेटा रीसेट करते समय एक त्रुटि हुई: {0}। कृपया ऐप को मैन्युअल रूप से पुनरारंभ करने का प्रयास करें।</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>त्रुटि</value>
   </data>

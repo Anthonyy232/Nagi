@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>Weka Upya</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>Hitilafu ya Kuweka Upya</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>Hitilafu imetokea wakati wa kuweka upya data ya programu: {0}. Tafadhali jaribu kuanzisha upya programu mwenyewe.</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>Hitilafu</value>
   </data>

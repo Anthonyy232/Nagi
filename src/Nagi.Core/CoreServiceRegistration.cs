@@ -104,6 +104,7 @@ public static class CoreServiceRegistration
         services.AddSingleton<ILyricRomanizationService, LyricRomanizationService>();
         services.AddSingleton<IPlaylistExportService, M3uPlaylistExportService>();
         services.AddSingleton<IBackupRestoreService, BackupRestoreService>();
+        services.AddSingleton<IAppDataReset, AppDataReset>();
         services.AddSingleton<IStatisticsService, StatisticsService>();
 
         services.AddSingleton<IFFmpegService, FFmpegService>();

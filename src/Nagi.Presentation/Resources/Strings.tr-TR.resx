@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>Sıfırla</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>Sıfırlama Hatası</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>Uygulama verileri sıfırlanırken bir hata oluştu: {0}. Lütfen uygulamayı manuel olarak yeniden başlatmayı deneyin.</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>Hata</value>
   </data>

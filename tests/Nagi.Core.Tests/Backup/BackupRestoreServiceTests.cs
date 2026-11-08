@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Data.Sqlite;
 using Nagi.Core.Backup;
 using Nagi.Core.Platform;
+using Nagi.Core.Playback;
 using Nagi.Core.Settings;
 using NSubstitute;
 using Xunit;
@@ -15,6 +16,7 @@ public class BackupRestoreServiceTests : IDisposable
 {
     private readonly IPathConfiguration _pathConfig;
     private readonly ISettingsService _settings = Substitute.For<ISettingsService>();
+    private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
     private readonly BackupRestoreService _service;
 
     private readonly List<string> _tempDirs = [];
@@ -22,8 +24,11 @@ public class BackupRestoreServiceTests : IDisposable
     public BackupRestoreServiceTests()
     {
         _pathConfig = Substitute.For<IPathConfiguration>();
+        _pathConfig.DatabasePath.Returns(_ => Path.Combine(_pathConfig.AppDataRoot, "nagi.db"));
+        _pathConfig.LibraryCacheFolders.Returns(_ => [Path.Combine(_pathConfig.AppDataRoot, "AlbumArt")]);
+        _pathConfig.RomanizationPacksPath.Returns(_ => Path.Combine(_pathConfig.AppDataRoot, "RomanizationPacks"));
         var logger = Substitute.For<ILogger<BackupRestoreService>>();
-        _service = new BackupRestoreService(_pathConfig, _settings, logger);
+        _service = new BackupRestoreService(_pathConfig, _settings, _playback, logger);
     }
 
     public void Dispose()
@@ -74,26 +79,6 @@ public class BackupRestoreServiceTests : IDisposable
 
         result.Success.Should().BeFalse();
         result.BackupFilePath.Should().BeNull();
-    }
-
-    [Fact]
-    public async Task CreateBackupAsync_CreatesZipContainingSourceFiles()
-    {
-        var sourceDir = CreateTempDir();
-        var destDir = CreateTempDir();
-        using (OpenTestDatabase(Path.Combine(sourceDir, "nagi.db"), "Track")) { }
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "playback_state.json"), "{ }");
-        _pathConfig.AppDataRoot.Returns(sourceDir);
-
-        var result = await _service.CreateBackupAsync(destDir);
-
-        result.Success.Should().BeTrue();
-        result.BackupFilePath.Should().NotBeNull();
-        File.Exists(result.BackupFilePath!).Should().BeTrue("the ZIP file should be created at the reported path");
-
-        using var archive = ZipFile.OpenRead(result.BackupFilePath!);
-        archive.Entries.Should().Contain(e => e.FullName == "nagi.db");
-        archive.Entries.Should().Contain(e => e.FullName == "playback_state.json");
     }
 
     [Theory]
@@ -169,7 +154,7 @@ public class BackupRestoreServiceTests : IDisposable
 
         for (var i = 0; i < 4; i++)
         {
-            await File.WriteAllTextAsync(Path.Combine(sourceDir, "playback_state.json"), $"{{\"version\":{i}}}");
+            _settings.ExportAsync().Returns($"version {i}");
             var result = await _service.CreateBackupAsync(destinationDir);
             result.Success.Should().BeTrue(result.ErrorMessage);
             paths.Add(result.BackupFilePath!);
@@ -179,76 +164,35 @@ public class BackupRestoreServiceTests : IDisposable
         for (var i = 0; i < paths.Count; i++)
         {
             using var archive = ZipFile.OpenRead(paths[i]);
-            using var reader = new StreamReader(archive.GetEntry("playback_state.json")!.Open());
-            (await reader.ReadToEndAsync()).Should().Be($"{{\"version\":{i}}}");
+            using var reader = new StreamReader(archive.GetEntry("settings.json")!.Open());
+            (await reader.ReadToEndAsync()).Should().Be($"version {i}");
         }
         Directory.GetFiles(destinationDir, "*.tmp").Should().BeEmpty();
     }
 
     [Fact]
-    public async Task CreateBackupAsync_ExcludesTemporaryAndLockFiles()
+    public async Task CreateBackupAsync_IncludesOnlyTheAppsOwnData()
     {
         var sourceDir = CreateTempDir();
         var destDir = CreateTempDir();
+        using (OpenTestDatabase(Path.Combine(sourceDir, "nagi.db"), "Track")) { }
         await File.WriteAllTextAsync(Path.Combine(sourceDir, "playback_state.json"), "{ }");
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, ".libvlc-cache-version"), "1");
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "temp.tmp"), "tmp");
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "data.lock"), "lock");
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "nagi.db-wal"), "wal");
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "nagi.db-shm"), "shm");
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "nagi.db-journal"), "journal");
-        _pathConfig.AppDataRoot.Returns(sourceDir);
-
-        var result = await _service.CreateBackupAsync(destDir);
-
-        result.Success.Should().BeTrue();
-        using var archive = ZipFile.OpenRead(result.BackupFilePath!);
-        archive.Entries.Should().NotContain(e => e.FullName.EndsWith(".tmp", StringComparison.OrdinalIgnoreCase));
-        archive.Entries.Should().NotContain(e => e.FullName.EndsWith(".lock", StringComparison.OrdinalIgnoreCase));
-        archive.Entries.Should().NotContain(e => e.FullName.EndsWith(".db-wal", StringComparison.OrdinalIgnoreCase));
-        archive.Entries.Should().NotContain(e => e.FullName.EndsWith(".db-shm", StringComparison.OrdinalIgnoreCase));
-        archive.Entries.Should().NotContain(e => e.FullName.EndsWith(".db-journal", StringComparison.OrdinalIgnoreCase));
-        archive.Entries.Should().NotContain(e => e.FullName.Equals(".libvlc-cache-version", StringComparison.OrdinalIgnoreCase));
-    }
-
-    [Fact]
-    public async Task CreateBackupAsync_ExcludesTransientDirectories()
-    {
-        var sourceDir = CreateTempDir();
-        var destDir = CreateTempDir();
-        foreach (var dirName in new[] { "Logs", "Cache", "Temp", "EBWebView", "crashdumps" })
+        foreach (var (folder, file) in new[] { ("AlbumArt", "cover.jpg"), ("RomanizationPacks", "pack.json"),
+                     ("Logs", "log.txt"), ("EBWebView", "data"), ("crashdumps", "dump.dmp") })
         {
-            var dir = Directory.CreateDirectory(Path.Combine(sourceDir, dirName));
-            await File.WriteAllTextAsync(Path.Combine(dir.FullName, "file.txt"), "content");
+            Directory.CreateDirectory(Path.Combine(sourceDir, folder));
+            await File.WriteAllTextAsync(Path.Combine(sourceDir, folder, file), "content");
         }
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "playback_state.json"), "{ }");
+        foreach (var file in new[] { ".libvlc-cache-version", "temp.tmp", "data.lock" })
+            await File.WriteAllTextAsync(Path.Combine(sourceDir, file), "stray");
         _pathConfig.AppDataRoot.Returns(sourceDir);
 
         var result = await _service.CreateBackupAsync(destDir);
 
-        result.Success.Should().BeTrue();
+        result.Success.Should().BeTrue(result.ErrorMessage);
         using var archive = ZipFile.OpenRead(result.BackupFilePath!);
-        foreach (var excluded in new[] { "Logs/", "Cache/", "Temp/", "EBWebView/", "crashdumps/" })
-            archive.Entries.Should().NotContain(e => e.FullName.StartsWith(excluded, StringComparison.OrdinalIgnoreCase),
-                $"{excluded} should be excluded from backups");
-    }
-
-    [Fact]
-    public async Task CreateBackupAsync_IncludesNonExcludedSubdirectories()
-    {
-        var sourceDir = CreateTempDir();
-        var destDir = CreateTempDir();
-        var albumArtDir = Directory.CreateDirectory(Path.Combine(sourceDir, "AlbumArt"));
-        await File.WriteAllTextAsync(Path.Combine(albumArtDir.FullName, "cover.jpg"), "fake image");
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "playback_state.json"), "{ }");
-        _pathConfig.AppDataRoot.Returns(sourceDir);
-
-        var result = await _service.CreateBackupAsync(destDir);
-
-        result.Success.Should().BeTrue();
-        using var archive = ZipFile.OpenRead(result.BackupFilePath!);
-        archive.Entries.Should().Contain(e => e.FullName.StartsWith("AlbumArt/", StringComparison.OrdinalIgnoreCase),
-            "non-excluded subdirectories should be included in the backup");
+        archive.Entries.Select(e => e.FullName).Should().BeEquivalentTo(
+            "nagi.db", "AlbumArt/cover.jpg", "RomanizationPacks/pack.json", "settings.json");
     }
 
     [Fact]
@@ -291,6 +235,7 @@ public class BackupRestoreServiceTests : IDisposable
         result.Success.Should().BeTrue();
         File.Exists(Path.Combine(destDir, "nagi.db")).Should().BeTrue("nagi.db should be restored to AppDataRoot");
         File.Exists(Path.Combine(destDir, "playback_state.json")).Should().BeTrue("playback_state.json should be restored to AppDataRoot");
+        await _playback.Received(1).ClearQueueAsync();
         using var database = new SqliteConnection(new SqliteConnectionStringBuilder
         {
             DataSource = Path.Combine(destDir, "nagi.db"),
@@ -448,6 +393,7 @@ public class BackupRestoreServiceTests : IDisposable
         result.Success.Should().BeFalse();
         (await File.ReadAllBytesAsync(databasePath)).Should().Equal(originalDatabase);
         (await File.ReadAllTextAsync(statePath)).Should().Be("live state");
+        await _playback.DidNotReceive().ClearQueueAsync();
     }
 
     [Fact]

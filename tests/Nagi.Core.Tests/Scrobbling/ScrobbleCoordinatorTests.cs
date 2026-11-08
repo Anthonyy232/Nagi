@@ -16,6 +16,8 @@ public sealed class ScrobbleCoordinatorTests : IDisposable
 {
     private readonly ICredentialLockerService _credentials = Substitute.For<ICredentialLockerService>();
     private readonly SettingsService _settingsService;
+    private readonly ILastFmAuthService _lastFmAuth = Substitute.For<ILastFmAuthService>();
+    private readonly ScrobblingAccounts _accounts;
     private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
     private readonly FakeTimeProvider _time = new();
     private readonly List<ScrobbleCoordinator> _coordinators = [];
@@ -23,7 +25,8 @@ public sealed class ScrobbleCoordinatorTests : IDisposable
     public ScrobbleCoordinatorTests()
     {
         _credentials.SaveCredential(default!, default!, default!).ReturnsForAnyArgs(true);
-        _settingsService = TestSettings.Create(credentials: _credentials);
+        _settingsService = TestSettings.Create();
+        _accounts = TestSettings.Accounts(_settingsService, _credentials, _lastFmAuth);
     }
 
     public void Dispose()
@@ -89,19 +92,17 @@ public sealed class ScrobbleCoordinatorTests : IDisposable
         Create(lastFm, listenBrainz).Start();
         _time.Advance(ScrobbleCoordinator.CoalesceDelay);
         await Task.WhenAll(lastFm.WaitForRunsAsync(1), listenBrainz.WaitForRunsAsync(1));
-        var lastFmAuth = Substitute.For<ILastFmAuthService>();
-        lastFmAuth.GetAuthenticationTokenAsync().Returns(("token", "https://last.fm/auth"));
-        lastFmAuth.GetSessionAsync("token").Returns(("user", "session"));
-        var accounts = new ScrobblingAccounts(_settingsService, lastFmAuth);
+        _lastFmAuth.GetAuthenticationTokenAsync().Returns(("token", "https://last.fm/auth"));
+        _lastFmAuth.GetSessionAsync("token").Returns(("user", "session"));
 
-        await accounts.BeginLastFmSignInAsync();
-        await accounts.FinishLastFmSignInAsync();
+        await _accounts.BeginLastFmSignInAsync();
+        await _accounts.FinishLastFmSignInAsync();
         _time.Advance(ScrobbleCoordinator.CoalesceDelay);
         await lastFm.WaitForRunsAsync(2);
-        await accounts.ConnectListenBrainzAsync("token");
+        await _accounts.ConnectListenBrainzAsync("token");
         _time.Advance(ScrobbleCoordinator.CoalesceDelay);
         await listenBrainz.WaitForRunsAsync(2);
-        await accounts.DisconnectLastFmAsync();
+        await _accounts.DisconnectLastFmAsync();
         _time.Advance(ScrobbleCoordinator.CoalesceDelay);
         await lastFm.WaitForRunsAsync(3);
 
@@ -137,7 +138,7 @@ public sealed class ScrobbleCoordinatorTests : IDisposable
         coordinator.Dispose();
 
         _settingsService.Set(CoreSettings.LastFmScrobbling, true);
-        await _settingsService.SaveListenBrainzUserTokenAsync("token");
+        await _accounts.ConnectListenBrainzAsync("token");
         _playback.ScrobbleEligibilityReached += Raise.Event<Action>();
         _time.Advance(TimeSpan.FromHours(1));
 
@@ -182,7 +183,7 @@ public sealed class ScrobbleCoordinatorTests : IDisposable
 
     private ScrobbleCoordinator Create(params IListenSubmitter[] submitters)
     {
-        var coordinator = new ScrobbleCoordinator(_playback, submitters, _settingsService,
+        var coordinator = new ScrobbleCoordinator(_playback, submitters, _settingsService, _accounts,
             NullLogger<ScrobbleCoordinator>.Instance, _time);
         _coordinators.Add(coordinator);
         return coordinator;

@@ -35,6 +35,7 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
     private readonly ProviderPipelineProvider _pipelines;
     private readonly ILogger<ListenBrainzScrobblerService> _logger;
     private readonly ISettingsService _settingsService;
+    private readonly IScrobblingAccounts _accounts;
     private readonly IAppInfoService _appInfoService;
     private readonly SemaphoreSlim _submitLock = new(1, 1);
 
@@ -43,6 +44,7 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
         ProviderPipelineProvider pipelines,
         IDbContextFactory<MusicDbContext> contextFactory,
         ISettingsService settingsService,
+        IScrobblingAccounts accounts,
         IAppInfoService appInfoService,
         ILogger<ListenBrainzScrobblerService> logger)
     {
@@ -50,6 +52,7 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
         _pipelines = pipelines;
         _contextFactory = contextFactory;
         _settingsService = settingsService;
+        _accounts = accounts;
         _appInfoService = appInfoService;
         _logger = logger;
     }
@@ -86,7 +89,7 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
         await _submitLock.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            if (string.IsNullOrEmpty(await _settingsService.GetListenBrainzUserTokenAsync().ConfigureAwait(false))) return;
+            if (string.IsNullOrEmpty(await _accounts.GetListenBrainzUserTokenAsync().ConfigureAwait(false))) return;
             await using var ctx = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
 
             var pending = await ctx.ListenHistory
@@ -238,7 +241,7 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
     private async Task<SubmissionOutcome> PostPayloadAsync(
         ListenBrainzSubmitPayload payload, CancellationToken cancellationToken)
     {
-        var token = await _settingsService.GetListenBrainzUserTokenAsync().ConfigureAwait(false);
+        var token = await _accounts.GetListenBrainzUserTokenAsync().ConfigureAwait(false);
         if (string.IsNullOrEmpty(token))
         {
             _logger.LogWarning("Cannot submit to ListenBrainz; user token is not configured.");

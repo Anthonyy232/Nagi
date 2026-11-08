@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>Återställ</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>Återställningsfel</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>Ett fel uppstod vid återställning av programdata: {0}. Försök att starta om appen manuellt.</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>Fel</value>
   </data>

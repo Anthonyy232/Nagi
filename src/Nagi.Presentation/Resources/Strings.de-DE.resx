@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>Zurücksetzen</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>Fehler beim Zurücksetzen</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>Beim Zurücksetzen der Anwendungsdaten ist ein Fehler aufgetreten: {0}. Bitte versuchen Sie, die App manuell neu zu starten.</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>Fehler</value>
   </data>

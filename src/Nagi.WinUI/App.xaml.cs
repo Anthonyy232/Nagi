@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
+using Microsoft.Windows.AppLifecycle;
+using Nagi.Core.Backup;
 using Nagi.Core.Platform;
 using Nagi.Presentation.Logging;
 using Nagi.Presentation.Shell;
@@ -100,11 +102,13 @@ public partial class App : Application
         // Keep the window until the services have stopped; the process exits afterwards.
         args.Handled = true;
         _window!.Closed -= OnWindowClosed;
+        var services = Services!;
+        var lifecycle = services.GetRequiredService<ApplicationLifecycle>();
 
         try
         {
             _window.SaveWindowState();
-            await AppServices.StopAsync(Services!, Services!.GetRequiredService<ILogger<App>>());
+            await AppServices.StopAsync(services, services.GetRequiredService<ILogger<App>>());
         }
         catch (Exception ex)
         {
@@ -114,7 +118,7 @@ public partial class App : Application
         {
             try
             {
-                if (Services is IAsyncDisposable asyncDisposableServices)
+                if (services is IAsyncDisposable asyncDisposableServices)
                     await asyncDisposableServices.DisposeAsync();
             }
             catch (Exception ex)
@@ -123,19 +127,22 @@ public partial class App : Application
             }
             finally
             {
-                await ExitAsync(0);
+                await ExitAsync(0, lifecycle.IsRestarting);
             }
         }
     }
 
-    private static async Task ExitAsync(int exitCode)
+    private static async Task ExitAsync(int exitCode, bool restart = false)
     {
         try
         {
+            if (restart) Log.Information("Restarting the application.");
             await Log.CloseAndFlushAsync();
         }
         finally
         {
+            // A restart that succeeds ends this process.
+            if (restart) AppInstance.Restart("");
             Environment.Exit(exitCode);
         }
     }
@@ -150,6 +157,7 @@ public partial class App : Application
     {
         if (_isReportingCrash) return;
         _isReportingCrash = true;
+        var restarting = false;
         try
         {
             Log.Fatal(ex, "A critical error occurred. Application will now terminate. Logs are in {LogsDirectory}",
@@ -159,40 +167,21 @@ public partial class App : Application
 
             await Services.GetRequiredService<IDispatcherService>().EnqueueAsync(async () =>
             {
-                if (await uiService.ShowCrashReportDialogAsync(fullCrashReport)) await ResetApplicationDataAsync();
+                if (!await uiService.ShowCrashReportDialogAsync(fullCrashReport)) return;
+                Log.Information("User requested a full application data reset from the crash dialog.");
+                await Services.GetRequiredService<IAppDataReset>().ResetAsync();
+                Services.GetRequiredService<IApplicationLifecycle>().Restart();
+                restarting = true;
             });
         }
         catch (Exception dialogEx)
         {
-            Debug.WriteLine($"Failed to show the crash report dialog: {dialogEx}");
+            Debug.WriteLine($"Failed to show the crash report dialog or reset the app: {dialogEx}");
         }
         finally
         {
-            await ExitAsync(1);
-        }
-    }
-
-    private static async Task ResetApplicationDataAsync()
-    {
-        try
-        {
-            Log.Information("User requested a full application data reset from the crash dialog.");
-            await AppDataReset.ResetAsync(Services, PackagedAppData.CreatePathConfiguration(),
-                new ApplicationDataSettingsStore());
-
-            Log.Information("Reset complete. Restarting application.");
-            await Log.CloseAndFlushAsync();
-
-            ElevationHelper.RestartWithoutElevation();
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Critical failure during app reset: {ex}");
-            Log.Fatal(ex, "Critical failure during app reset.");
-        }
-        finally
-        {
-            await ExitAsync(0);
+            // A restart exits once the main window has closed and the services have stopped.
+            if (!restarting) await ExitAsync(1);
         }
     }
 }

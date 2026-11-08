@@ -16,14 +16,24 @@ public enum LastFmSignInResult
 
 /// <summary>
 ///     Connects and disconnects the scrobbling accounts, Last.fm and ListenBrainz, keeping their settings in step with
-///     their sign-in.
+///     their sign-in. Their credentials live in the operating system's credential store.
 /// </summary>
 public interface IScrobblingAccounts
 {
     /// <summary>
+    ///     Raised when the credential of an account is saved or removed.
+    /// </summary>
+    event Action<ScrobblingAccount>? CredentialsChanged;
+
+    /// <summary>
     ///     Whether a Last.fm sign-in waits for the user to approve it in the browser, across restarts too.
     /// </summary>
     bool IsLastFmSignInPending { get; }
+
+    /// <returns>The username and session key, or null if not signed in.</returns>
+    Task<(string? Username, string? SessionKey)?> GetLastFmCredentialsAsync();
+
+    Task<string?> GetListenBrainzUserTokenAsync();
 
     /// <summary>
     ///     Starts a Last.fm sign-in, which waits until it is finished or cancelled.

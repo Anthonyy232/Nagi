@@ -21,6 +21,7 @@ public class LastFmScrobblerService : IListenSubmitter
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly ILogger<LastFmScrobblerService> _logger;
     private readonly ISettingsService _settingsService;
+    private readonly IScrobblingAccounts _accounts;
     private readonly SemaphoreSlim _submitLock = new(1, 1);
 
     public LastFmScrobblerService(
@@ -28,11 +29,13 @@ public class LastFmScrobblerService : IListenSubmitter
         ProviderPipelineProvider pipelines,
         IApiKeyService apiKeyService,
         ISettingsService settingsService,
+        IScrobblingAccounts accounts,
         IDbContextFactory<MusicDbContext> contextFactory,
         ILogger<LastFmScrobblerService> logger)
     {
         _client = new LastFmSignedClient(httpClientFactory.CreateClient(), pipelines, apiKeyService, logger);
         _settingsService = settingsService;
+        _accounts = accounts;
         _contextFactory = contextFactory;
         _logger = logger;
     }
@@ -189,7 +192,7 @@ public class LastFmScrobblerService : IListenSubmitter
     /// <returns>The session key, or null when Last.fm isn't signed in to.</returns>
     private async Task<string?> GetSessionKeyAsync()
     {
-        var sessionKey = (await _settingsService.GetLastFmCredentialsAsync().ConfigureAwait(false))?.SessionKey;
+        var sessionKey = (await _accounts.GetLastFmCredentialsAsync().ConfigureAwait(false))?.SessionKey;
         if (string.IsNullOrEmpty(sessionKey))
         {
             _logger.LogError("Cannot perform Last.fm action; the session key is unavailable.");

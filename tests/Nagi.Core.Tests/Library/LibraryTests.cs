@@ -67,6 +67,8 @@ public partial class LibraryTests : IDisposable
         _pathConfig.ArtistImageCachePath.Returns("C:\\cache\\artistimages");
         _pathConfig.PlaylistImageCachePath.Returns("C:\\cache\\playlistimages");
         _pathConfig.LrcCachePath.Returns("C:\\cache\\lrc");
+        _pathConfig.LibraryCacheFolders.Returns(["C:\\cache\\albumart", "C:\\cache\\artistimages",
+            "C:\\cache\\playlistimages", "C:\\cache\\lrc"]);
 
         _pipelines = TestProviderPipeline.Build(ProviderCatalog.ImageDownload.ProviderId);
 

@@ -1,11 +1,5 @@
-﻿using Nagi.Core.Scrobbling;
+﻿namespace Nagi.Core.Settings;
 
-namespace Nagi.Core.Settings;
-
-/// <summary>
-///     Reads and writes the app's settings, and keeps the scrobbling accounts' credentials in the operating
-///     system's credential store.
-/// </summary>
 public interface ISettingsService
 {
     /// <summary>
@@ -13,39 +7,14 @@ public interface ISettingsService
     /// </summary>
     event Action<Setting>? SettingChanged;
 
-    /// <summary>
-    ///     Raised when the credential of a scrobbling account is saved or removed.
-    /// </summary>
-    event Action<ScrobblingAccount>? CredentialsChanged;
-
     T Get<T>(Setting<T> setting);
 
     void Set<T>(Setting<T> setting, T value);
 
-    /// <returns>The username and session key, or null if not signed in.</returns>
-    Task<(string? Username, string? SessionKey)?> GetLastFmCredentialsAsync();
-
-    /// <returns>False if the credential store refused them, for example because it is full.</returns>
-    Task<bool> SaveLastFmCredentialsAsync(string username, string sessionKey);
-
     /// <summary>
-    ///     Removes the Last.fm credentials. <see cref="IScrobblingAccounts.DisconnectLastFmAsync" /> also turns its
-    ///     submissions off.
+    ///     Returns every setting to its default. <see cref="Backup.IAppDataReset" /> resets the rest of the app.
     /// </summary>
-    Task ClearLastFmCredentialsAsync();
-
-    Task<string?> GetListenBrainzUserTokenAsync();
-
-    /// <returns>False if the credential store refused it, for example because it is full.</returns>
-    Task<bool> SaveListenBrainzUserTokenAsync(string token);
-
-    Task ClearListenBrainzUserTokenAsync();
-
-    /// <summary>
-    ///     Resets every setting, signs out of both scrobbling accounts, clears the saved playback session and turns
-    ///     launching at sign-in off.
-    /// </summary>
-    Task ResetToDefaultsAsync();
+    void ResetToDefaults();
 
     /// <summary>
     ///     Captures every stored setting, for a backup. Account credentials live in the operating system's

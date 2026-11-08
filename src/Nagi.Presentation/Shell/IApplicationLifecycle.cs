@@ -14,5 +14,9 @@ public interface IApplicationLifecycle
 
     void ShowOnboarding();
 
+    /// <summary>
+    ///     Exits the way closing the app does, saving the window and the playback session and stopping the services,
+    ///     then starts the app again. It returns before the app has closed.
+    /// </summary>
     void Restart();
 }

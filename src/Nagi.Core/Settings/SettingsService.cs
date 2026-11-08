@@ -1,39 +1,24 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Platform;
-using Nagi.Core.Playback;
-using Nagi.Core.Scrobbling;
 
 namespace Nagi.Core.Settings;
 
 public sealed class SettingsService : ISettingsService
 {
-    private const string LastFmCredentialResource = "Nagi/LastFm";
-    private const string ListenBrainzTokenResource = "Nagi/ListenBrainz";
-    private const string ListenBrainzTokenUserName = "token";
-
-    private readonly IAutoLaunchService _autoLaunchService;
-    private readonly ICredentialLockerService _credentialLockerService;
     private readonly ILogger<SettingsService> _logger;
-    private readonly IPlaybackStateStore _playbackStateStore;
     private readonly IReadOnlyList<Setting> _settings;
     private readonly ISettingsStore _store;
 
     /// <param name="settings">Every declared setting, which a reset and a backup cover.</param>
-    public SettingsService(ISettingsStore store, IEnumerable<Setting> settings, IPlaybackStateStore playbackStateStore,
-        ICredentialLockerService credentialLockerService, IAutoLaunchService autoLaunchService,
-        ILogger<SettingsService> logger)
+    public SettingsService(ISettingsStore store, IEnumerable<Setting> settings, ILogger<SettingsService> logger)
     {
         _store = store;
         _settings = settings.ToList();
-        _playbackStateStore = playbackStateStore;
-        _credentialLockerService = credentialLockerService;
-        _autoLaunchService = autoLaunchService;
         _logger = logger;
     }
 
     public event Action<Setting>? SettingChanged;
-    public event Action<ScrobblingAccount>? CredentialsChanged;
 
     public T Get<T>(Setting<T> setting)
     {
@@ -57,43 +42,13 @@ public sealed class SettingsService : ISettingsService
         if (!Equals(previous, stored)) SettingChanged?.Invoke(setting);
     }
 
-    public Task<(string? Username, string? SessionKey)?> GetLastFmCredentialsAsync() =>
-        Task.FromResult(_credentialLockerService.RetrieveCredential(LastFmCredentialResource));
-
-    public Task<bool> SaveLastFmCredentialsAsync(string username, string sessionKey) =>
-        Task.FromResult(SaveCredential(ScrobblingAccount.LastFm, LastFmCredentialResource, username, sessionKey));
-
-    public Task ClearLastFmCredentialsAsync()
-    {
-        _credentialLockerService.RemoveCredential(LastFmCredentialResource);
-        CredentialsChanged?.Invoke(ScrobblingAccount.LastFm);
-        return Task.CompletedTask;
-    }
-
-    public Task<string?> GetListenBrainzUserTokenAsync() =>
-        Task.FromResult(_credentialLockerService.RetrieveCredential(ListenBrainzTokenResource)?.Password);
-
-    public Task<bool> SaveListenBrainzUserTokenAsync(string token) =>
-        Task.FromResult(SaveCredential(ScrobblingAccount.ListenBrainz, ListenBrainzTokenResource, ListenBrainzTokenUserName, token));
-
-    public Task ClearListenBrainzUserTokenAsync()
-    {
-        _credentialLockerService.RemoveCredential(ListenBrainzTokenResource);
-        CredentialsChanged?.Invoke(ScrobblingAccount.ListenBrainz);
-        return Task.CompletedTask;
-    }
-
-    public async Task ResetToDefaultsAsync()
+    public void ResetToDefaults()
     {
         var previous = _settings.Select(setting => (Setting: setting, Value: StoredFormOf(setting))).ToList();
         _store.Values.Clear();
         foreach (var (setting, value) in previous)
             if (!Equals(value, setting.StoredFormOf(null))) SettingChanged?.Invoke(setting);
 
-        _playbackStateStore.Clear();
-        await ClearLastFmCredentialsAsync().ConfigureAwait(false);
-        await ClearListenBrainzUserTokenAsync().ConfigureAwait(false);
-        await _autoLaunchService.SetEnabledAsync(false).ConfigureAwait(false);
         _logger.LogInformation("All application settings have been reset to their default values.");
     }
 
@@ -125,18 +80,6 @@ public sealed class SettingsService : ISettingsService
         foreach (var (key, value) in values) _store.Values[key] = value;
         _logger.LogInformation("Imported {Count} settings.", values.Count);
         return Task.CompletedTask;
-    }
-
-    private bool SaveCredential(ScrobblingAccount account, string resource, string userName, string secret)
-    {
-        if (!_credentialLockerService.SaveCredential(resource, userName, secret))
-        {
-            _logger.LogWarning("The credential store refused the sign-in for {Resource}.", resource);
-            return false;
-        }
-
-        CredentialsChanged?.Invoke(account);
-        return true;
     }
 
     private object? StoredFormOf(Setting setting)

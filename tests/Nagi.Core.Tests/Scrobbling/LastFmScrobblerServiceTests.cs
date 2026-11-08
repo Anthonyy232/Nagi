@@ -42,7 +42,7 @@ public class LastFmScrobblerServiceTests : IDisposable
         _httpClientFactory = Substitute.For<IHttpClientFactory>();
         _apiKeyService = Substitute.For<IApiKeyService>();
         _credentials = Substitute.For<ICredentialLockerService>();
-        _settingsService = TestSettings.Create(credentials: _credentials);
+        _settingsService = TestSettings.Create();
         _httpMessageHandler = new TestHttpMessageHandler();
         _logger = Substitute.For<ILogger<LastFmScrobblerService>>();
         _dbHelper = new DbContextFactoryTestHelper();
@@ -70,6 +70,7 @@ public class LastFmScrobblerServiceTests : IDisposable
             _pipelines,
             _apiKeyService,
             _settingsService,
+            TestSettings.Accounts(_settingsService, _credentials),
             _dbHelper.ContextFactory,
             _logger);
     }

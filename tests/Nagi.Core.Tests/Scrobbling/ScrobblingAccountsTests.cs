@@ -18,10 +18,10 @@ public class ScrobblingAccountsTests
     public ScrobblingAccountsTests()
     {
         _credentials.SaveCredential(default!, default!, default!).ReturnsForAnyArgs(true);
-        _settings = TestSettings.Create(credentials: _credentials);
+        _settings = TestSettings.Create();
         _lastFmAuth.GetAuthenticationTokenAsync().Returns(("token", "https://last.fm/auth"));
         _lastFmAuth.GetSessionAsync("token").Returns(("user", "session"));
-        _accounts = new ScrobblingAccounts(_settings, _lastFmAuth);
+        _accounts = TestSettings.Accounts(_settings, _credentials, _lastFmAuth);
     }
 
     [Fact]
@@ -60,6 +60,8 @@ public class ScrobblingAccountsTests
     public async Task Connect_TokenTheCredentialStoreRefuses_ChangesNoSettings()
     {
         _credentials.SaveCredential(default!, default!, default!).ReturnsForAnyArgs(false);
+        var credentialChanges = 0;
+        _accounts.CredentialsChanged += _ => credentialChanges++;
 
         await _accounts.BeginLastFmSignInAsync();
         (await _accounts.FinishLastFmSignInAsync()).Should().Be(LastFmSignInResult.NotSaved);
@@ -67,5 +69,6 @@ public class ScrobblingAccountsTests
 
         _settings.Get(CoreSettings.LastFmScrobbling).Should().BeFalse();
         _settings.Get(CoreSettings.ListenBrainzEnabledSinceUtc).Should().BeNull();
+        credentialChanges.Should().Be(0);
     }
 }

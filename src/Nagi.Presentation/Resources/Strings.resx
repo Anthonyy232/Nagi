@@ -428,12 +428,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>Reset</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>Reset Error</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>An error occurred while resetting application data: {0}. Please try restarting the app manually.</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>Error</value>
   </data>

@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>Ресетуј</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>Грешка ресетовања</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>Дошло је до грешке при ресетовању података апликације: {0}. Молимо покушајте ручно поново покренути апликацију.</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>Грешка</value>
   </data>

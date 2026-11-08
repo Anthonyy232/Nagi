@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>Нулиране</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>Грешка при нулиране</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>Възникна грешка при нулиране на данните на приложението: {0}. Моля, опитайте да рестартирате приложението ръчно.</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>Грешка</value>
   </data>

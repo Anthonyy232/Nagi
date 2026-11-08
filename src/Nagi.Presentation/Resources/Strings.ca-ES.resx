@@ -421,12 +421,6 @@
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>Restablir</value>
   </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>Error de restabliment</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>S'ha produït un error en restablir les dades de l'aplicació: {0}. Intenta reiniciar l'aplicació manualment.</value>
-  </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>Error</value>
   </data>
