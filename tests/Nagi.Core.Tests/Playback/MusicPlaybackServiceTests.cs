@@ -1656,6 +1656,23 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task PlaySmartPlaylistAsync_SupersededDuringItsQuery_EndsQuietlyWithoutReportingItEmpty()
+    {
+        var playlist = Guid.NewGuid();
+        _smartPlaylists.GetMatchingSongIdsAsync(playlist, token: Arg.Any<CancellationToken>()).Returns(async call =>
+        {
+            await Task.Delay(Timeout.Infinite, call.Arg<CancellationToken>());
+            return new List<Guid>();
+        });
+        var playing = _service.PlaySmartPlaylistAsync(playlist);
+
+        await _service.PlayAsync(_testSongs[1].Id);
+
+        (await playing).Should().BeTrue();
+        _service.CurrentTrack.Should().BeSameAs(_testSongs[1]);
+    }
+
+    [Fact]
     public async Task NextAsync_WhenTheNextSongIsRemovedWhileItOpens_KeepsPlayingAndAbandonsItsListen()
     {
         _library.Listening.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(101L);

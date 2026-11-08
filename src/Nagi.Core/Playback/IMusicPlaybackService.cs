@@ -23,6 +23,8 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     TimeSpan? StopTimeRemaining { get; }
 
     event Action? StopScheduleChanged;
+
+    /// <returns>False when the mix has no songs, so nothing plays.</returns>
     Task<bool> PlayMixAsync(IEnumerable<Guid> songIds, ShuffleMode mode, TimeSpan? duration = null, PlaybackContext? context = null, int avoidRecentDays = PlaybackLimits.DefaultAvoidRecentDays);
 
     /// <param name="delay">

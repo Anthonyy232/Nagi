@@ -26,7 +26,7 @@ public partial class MusicPlaybackService
             throw new ArgumentOutOfRangeException(nameof(duration));
         if (avoidRecentDays is < 0 or > PlaybackLimits.MaxAvoidRecentDays) throw new ArgumentOutOfRangeException(nameof(avoidRecentDays));
 
-        var played = false;
+        var isEmpty = false;
         await RunPlaybackRequest(async request =>
         {
             var ids = songIds.Distinct().ToArray();
@@ -39,13 +39,11 @@ public partial class MusicPlaybackService
                 candidates.AddRange(transient);
                 return PlaybackMixBuilder.Build(candidates, mode, now, duration, avoidRecentDays);
             });
-            request.ThrowIfCancellationRequested();
-            if (order.Count == 0) return;
+            isEmpty = order.Count == 0;
+            if (isEmpty || request.IsCancellationRequested) return;
             await PlayInternalAsync(order, 0, true, context ?? _currentContext, request, order, mode);
-            request.ThrowIfCancellationRequested();
-            if (duration.HasValue) ScheduleStop(PlaybackStopMode.EndOfQueue);
-            played = true;
+            if (duration.HasValue && !request.IsCancellationRequested) ScheduleStop(PlaybackStopMode.EndOfQueue);
         });
-        return played;
+        return !isEmpty;
     }
 }

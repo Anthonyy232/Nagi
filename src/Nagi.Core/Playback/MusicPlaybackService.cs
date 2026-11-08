@@ -346,15 +346,15 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
     public async Task<bool> PlaySmartPlaylistAsync(Guid smartPlaylistId)
     {
-        var played = false;
+        var isEmpty = false;
         await RunPlaybackRequest(async request =>
         {
             var songIds = await _smartPlaylists.GetMatchingSongIdsAsync(smartPlaylistId, token: request);
-            if (songIds.Count == 0 || request.IsCancellationRequested) return;
-            await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.SmartPlaylist, smartPlaylistId), request);
-            played = true;
+            isEmpty = songIds.Count == 0;
+            if (!isEmpty && !request.IsCancellationRequested)
+                await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.SmartPlaylist, smartPlaylistId), request);
         });
-        return played;
+        return !isEmpty;
     }
 
     public Task SetVolumeAsync(double volume) => _audioPlayer.SetVolumeAsync(volume);
@@ -546,9 +546,22 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         if (_isDisposed) return Task.CompletedTask;
         _requestCts.Cancel();
         _requestCts = new CancellationTokenSource();
-        _request = action(_requestCts.Token);
+        var request = _requestCts.Token;
+        _request = RunAsync();
         TrackPendingOperation(_request);
         return _request;
+
+        // A superseded request ends quietly, however its work noticed: a check of the token or a cancelled await.
+        async Task RunAsync()
+        {
+            try
+            {
+                await action(request).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (request.IsCancellationRequested)
+            {
+            }
+        }
     }
 
     // Until the latest request finishes, the player's events can still be about the track it replaces.
