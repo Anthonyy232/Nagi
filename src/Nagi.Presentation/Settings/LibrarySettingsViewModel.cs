@@ -125,21 +125,20 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
     [RelayCommand(CanExecute = nameof(CanRescanMetadata))]
     private async Task RescanMetadataAsync()
     {
-        if (_globalOperation.IsInProgress) return;
-
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
             Strings.Settings_Dialog_Rescan_Title,
             Strings.Settings_Dialog_Rescan_Content,
             Strings.Settings_Dialog_Rescan_PrimaryButton,
             null);
 
-        if (!confirmed || _isDisposed || _globalOperation.IsInProgress) return;
+        if (!confirmed || _isDisposed) return;
 
         using var rescanCts = new CancellationTokenSource();
-        _metadataRescanCts = rescanCts;
-        var token = rescanCts.Token;
-
-        using (_globalOperation.Begin(Strings.Settings_Status_Rescan_Preparing, rescanCts.Cancel))
+        using (var operation = _globalOperation.TryBegin(Strings.Settings_Status_Rescan_Preparing, rescanCts.Cancel))
+        {
+            if (operation is null) return;
+            _metadataRescanCts = rescanCts;
+            var token = rescanCts.Token;
             try
             {
                 var progress = _globalOperation.CreateProgress(token);
@@ -165,6 +164,7 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
                 rescanCts.Cancel();
                 _metadataRescanCts = null;
             }
+        }
     }
 
     private static List<ServiceProviderSetting> ToSettings(IReadOnlyList<ServiceProviderSettingViewModel> providers) =>

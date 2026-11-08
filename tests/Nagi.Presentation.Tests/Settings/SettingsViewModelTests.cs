@@ -378,7 +378,7 @@ public class SettingsViewModelTests : IDisposable
         var confirmation = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(confirmation.Task);
         var scan = _viewModel.Library.RescanMetadataCommand.ExecuteAsync(null);
-        _operation.IsInProgress = true;
+        using var otherOperation = _operation.TryBegin("Scanning");
 
         confirmation.SetResult(true);
         await scan.WaitAsync(TimeSpan.FromSeconds(5));

@@ -379,14 +379,15 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
 
     private async Task ScanLibraryForReplayGainAsync()
     {
-        if (_isDisposed || _globalOperation.IsInProgress) return;
+        if (_isDisposed) return;
 
         using var scanCts = new CancellationTokenSource();
-        _replayGainScanCts = scanCts;
-        var cancellationToken = scanCts.Token;
-
         string? error = null;
-        using (_globalOperation.Begin(Strings.Settings_Status_VolumeNorm_Preparing, scanCts.Cancel))
+        using (var operation = _globalOperation.TryBegin(Strings.Settings_Status_VolumeNorm_Preparing, scanCts.Cancel))
+        {
+            if (operation is null) return;
+            _replayGainScanCts = scanCts;
+            var cancellationToken = scanCts.Token;
             try
             {
                 await _replayGainService.ScanLibraryAsync(_globalOperation.CreateProgress(cancellationToken), cancellationToken);
@@ -402,6 +403,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
                 scanCts.Cancel();
                 _replayGainScanCts = null;
             }
+        }
 
         if (error != null && !_isDisposed) await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, error);
     }
