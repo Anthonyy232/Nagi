@@ -74,9 +74,7 @@ public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderVie
         _globalOperation.PropertyChanged += OnGlobalOperationPropertyChanged;
     }
 
-    protected override bool ShouldReloadOnLibraryChange(LibraryChangeKind kind) =>
-        kind is LibraryChangeKind.RootAdded or LibraryChangeKind.RootRemoved or LibraryChangeKind.FolderRescanned
-            or LibraryChangeKind.LibraryRescanned or LibraryChangeKind.LibraryCleared;
+    protected override bool ShouldReloadOnLibraryChange(LibraryChange change) => change.AffectsFolders;
 
     protected override async Task<IEnumerable<FolderViewModelItem>> LoadItemsAsync(CancellationToken token) =>
         (await _libraryReader.GetRootFoldersWithCountsAsync(token))

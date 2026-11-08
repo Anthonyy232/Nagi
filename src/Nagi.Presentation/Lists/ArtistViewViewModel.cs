@@ -109,16 +109,28 @@ public partial class ArtistViewViewModel : DetailSongListViewModelBase<ArtistVie
     protected override async Task<bool> OpenDetailsAsync(ArtistViewNavigationParameter parameter, CancellationToken token)
     {
         _artistId = parameter.ArtistId;
-        var artistTask = _artwork.GetArtistDetailsAsync(parameter.ArtistId, token);
-        var albumsTask = _libraryReader.GetAlbumsForArtistAsync(parameter.ArtistId);
-        await Task.WhenAll(artistTask, albumsTask);
-        if (artistTask.Result is not { } artist || token.IsCancellationRequested) return artistTask.Result is not null;
+        if (await _artwork.GetArtistDetailsAsync(parameter.ArtistId, token) is not { } artist) return false;
+        if (token.IsCancellationRequested) return true;
 
         PageTitle = artist.Name;
         ArtistImageUri = ImageUriHelper.GetUriWithCacheBuster(artist.LocalImageCachePath);
         ArtistBio = string.IsNullOrWhiteSpace(artist.Biography) ? Strings.ArtistView_NoBiography : artist.Biography;
-        Albums.ReplaceRange(albumsTask.Result.Select(album => new ArtistAlbumViewModelItem(album)));
         return true;
+    }
+
+    // With the songs, so the albums follow rescans as well. A search doesn't change them.
+    protected override async Task OnAuxiliaryLoadAsync(CancellationToken token)
+    {
+        await base.OnAuxiliaryLoadAsync(token);
+        if (_artistId == Guid.Empty || IsSearchActive) return;
+
+        var albums = await _libraryReader.GetAlbumsForArtistAsync(_artistId);
+        await _dispatcherService.EnqueueAsync(() =>
+        {
+            if (!token.IsCancellationRequested && !_isDisposed)
+                Albums.ReplaceRange(albums.Select(album => new ArtistAlbumViewModelItem(album)));
+            return Task.CompletedTask;
+        });
     }
 
     protected override void ClearDetails()

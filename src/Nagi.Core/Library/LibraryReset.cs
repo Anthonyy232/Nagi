@@ -13,7 +13,7 @@ public sealed class LibraryReset : ILibraryReset
     private readonly IFileSystemService _fileSystem;
     private readonly IPathConfiguration _pathConfig;
     private readonly IMusicServerService _musicServers;
-    private readonly ArtworkService _artwork;
+    private readonly IArtworkService _artwork;
     private readonly LibraryNotifier _notifier;
     private readonly LibraryWriteLock _writeLock;
     private readonly ILogger<LibraryReset> _logger;
@@ -23,7 +23,7 @@ public sealed class LibraryReset : ILibraryReset
         IFileSystemService fileSystem,
         IPathConfiguration pathConfig,
         IMusicServerService musicServers,
-        ArtworkService artwork,
+        IArtworkService artwork,
         LibraryNotifier notifier,
         LibraryWriteLock writeLock,
         ILogger<LibraryReset> logger)

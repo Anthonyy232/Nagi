@@ -12,7 +12,7 @@ public class Artist
 
     [Required]
     [MaxLength(500)]
-    public string Name { get; set; } = string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Artist);
+    public string Name { get; set; } = UnknownArtistName;
 
     /// <summary>
     ///     Denormalized sort key for <see cref="Name"/> with leading articles ("the", "a", "an") stripped.

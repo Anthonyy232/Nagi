@@ -134,7 +134,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
         {
             Directory.CreateDirectory(directoryPath);
 
-            var playlists = await _libraryReader.GetAllPlaylistsAsync().ConfigureAwait(false);
+            var playlists = await _playlistService.GetAllPlaylistsAsync().ConfigureAwait(false);
             var playlistList = playlists.ToList();
 
             if (playlistList.Count == 0)
@@ -149,7 +149,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
             foreach (var playlist in playlistList)
             {
                 // A server song has no file other players could open, and its stream URL would give away the sign-in.
-                var songs = (await _libraryReader.GetSongsInPlaylistOrderedAsync(playlist.Id).ConfigureAwait(false))
+                var songs = (await _playlistService.GetSongsInPlaylistOrderedAsync(playlist.Id).ConfigureAwait(false))
                     .Where(song => !song.IsFromServer)
                     .ToList();
 

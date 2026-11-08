@@ -227,6 +227,28 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task OpenedFile_GetsItsTagsCleanedUpLikeALibrarySong()
+    {
+        const string path = "C:\\temp\\opened.mp3";
+        _metadataService.ExtractMetadataAsync(path).Returns(new SongFileMetadata
+        {
+            Title = " Opened ",
+            Artists = [" Artist "],
+            Album = " Album ",
+            Genres = [" Jazz ", "jazz"]
+        });
+        await _service.InitializeAsync();
+
+        await _service.PlayTransientFileAsync(path);
+
+        var song = _service.CurrentTrack!;
+        song.Title.Should().Be("Opened");
+        song.Album!.Title.Should().Be("Album");
+        song.Album.PrimaryArtistName.Should().Be("Artist");
+        song.Genres.Select(g => g.Name).Should().Equal("Jazz");
+    }
+
+    [Fact]
     public async Task QueueMetadata_IncludesTransientGenresAndDurationWithoutDoubleCounting()
     {
         const string path = "C:\\temp\\queue.mp3";

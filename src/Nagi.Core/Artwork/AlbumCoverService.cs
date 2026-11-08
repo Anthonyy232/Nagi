@@ -7,13 +7,12 @@ namespace Nagi.Core.Artwork;
 
 public class AlbumCoverService : IAlbumCoverService, IDisposable
 {
-    private readonly OnlineLookupCancellation _onlineLookups = new();
+    private readonly OnlineLookupGate _gate;
     private readonly ICoverArtArchiveService _coverArtArchive;
     private readonly IMusicBrainzService _musicBrainz;
     private readonly IAppleMusicService _appleMusic;
     private readonly IDeezerService _deezer;
     private readonly ILastFmMetadataService _lastFm;
-    private readonly ISettingsService _settingsService;
     private readonly ILogger<AlbumCoverService> _logger;
 
     public AlbumCoverService(
@@ -30,35 +29,15 @@ public class AlbumCoverService : IAlbumCoverService, IDisposable
         _appleMusic = appleMusic;
         _deezer = deezer;
         _lastFm = lastFm;
-        _settingsService = settingsService;
         _logger = logger;
-        _settingsService.SettingChanged += OnSettingChanged;
+        _gate = new OnlineLookupGate(settingsService, ProviderCapabilities.AlbumCover);
     }
 
-    public async Task<ServiceResult<string>?> FindCoverUrlAsync(AlbumCoverQuery album,
-        CancellationToken cancellationToken = default)
-    {
-        var turnedOff = _onlineLookups.Token;
-        if (!_settingsService.Get(CoreSettings.FetchOnlineMetadata)) return null;
-        var enabledProviders = _settingsService.Get(CoreSettings.MetadataProviders).Where(p => p.IsEnabled).ToList();
-        if (!enabledProviders.Any(p => ProviderCatalog.Can(p.Id, ProviderCapabilities.AlbumCover))) return null;
+    public Task<ServiceResult<string>?> FindCoverUrlAsync(AlbumCoverQuery album,
+        CancellationToken cancellationToken = default) =>
+        _gate.RunAsync((enabledProviders, token) => AskSourcesAsync(album, enabledProviders, token), cancellationToken);
 
-        using var linked = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, turnedOff);
-        try
-        {
-            return await AskSourcesAsync(album, enabledProviders, linked.Token).ConfigureAwait(false);
-        }
-        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
-        {
-            return null;
-        }
-    }
-
-    public void Dispose()
-    {
-        _settingsService.SettingChanged -= OnSettingChanged;
-        _onlineLookups.CancelRunning();
-    }
+    public void Dispose() => _gate.Dispose();
 
     private async Task<ServiceResult<string>> AskSourcesAsync(AlbumCoverQuery album,
         IReadOnlyList<ServiceProviderSetting> enabledProviders, CancellationToken cancellationToken)
@@ -100,12 +79,6 @@ public class AlbumCoverService : IAlbumCoverService, IDisposable
         if (result.Data is not null)
             _logger.LogDebug("Using {Provider} cover for album '{AlbumTitle}'.", providerId, album.Title);
         return result;
-    }
-
-    private void OnSettingChanged(Setting setting)
-    {
-        if (setting == CoreSettings.FetchOnlineMetadata && !_settingsService.Get(CoreSettings.FetchOnlineMetadata))
-            _onlineLookups.CancelRunning();
     }
 
     private async Task<ServiceResult<string>> FindInCoverArtArchiveAsync(AlbumCoverQuery album, bool canSearchMusicBrainz,

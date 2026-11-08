@@ -97,6 +97,20 @@ public partial class LibraryTests
     }
 
     [Fact]
+    public async Task SyncServerFolder_SongWithoutAlbumArtists_AddsNoUnknownArtist()
+    {
+        var folder = await AddServerAsync();
+        var song = ServerSong("s1", "One");
+        song.AlbumArtists = [];
+
+        await _library.Servers.SyncAsync(folder.Id, ServerWith(song));
+
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        (await context.Artists.Select(a => a.Name).ToListAsync()).Should().Equal("Harbor Lights");
+        (await context.Albums.SingleAsync()).ArtistName.Should().Be("Harbor Lights");
+    }
+
+    [Fact]
     public async Task SyncServerFolder_AfterTheSplitCharactersChange_SplitsTheServersNamesLikeTags()
     {
         var folder = await AddServerAsync();
@@ -226,6 +240,24 @@ public partial class LibraryTests
         (await context.Songs.ToListAsync()).Should().OnlyContain(s =>
             s.AlbumArtUriFromTrack == @"C:\cache\albumart\cover.jpg" && s.LightSwatchId == "light" && s.DarkSwatchId == "dark");
         (await context.Albums.SingleAsync()).CoverArtUri.Should().Be(@"C:\cache\albumart\cover.jpg");
+    }
+
+    [Fact]
+    public async Task SyncServerFolder_AnnouncesTheSongsAndThenTheirCovers()
+    {
+        var folder = await AddServerAsync();
+        var client = ServerWith(ServerSong("s1", "One", coverArtId: "al-1"));
+        client.GetCoverArtAsync("al-1", Arg.Any<CancellationToken>()).Returns(new byte[] { 1, 2, 3 });
+        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>())
+            .Returns((@"C:\cache\albumart\cover.jpg", "light", "dark"));
+        var changes = new List<LibraryChange>();
+        _library.Notifier.Changed += (_, e) => changes.Add(e);
+
+        await _library.Servers.SyncAsync(folder.Id, client);
+
+        // Song lists reload for covers, which they do on SongsChanged.
+        changes.Should().Equal(new LibraryChange(LibraryChangeKind.FolderRescanned, folder.Id),
+            new LibraryChange(LibraryChangeKind.SongsChanged));
     }
 
     [Fact]

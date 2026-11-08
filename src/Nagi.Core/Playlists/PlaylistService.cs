@@ -8,9 +8,6 @@ using Nagi.Core.Platform;
 
 namespace Nagi.Core.Playlists;
 
-/// <summary>
-///     Creates, edits, and reorders user playlists. Playlist reads live in <see cref="LibraryReader" />.
-/// </summary>
 public class PlaylistService : IPlaylistService
 {
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
@@ -35,11 +32,52 @@ public class PlaylistService : IPlaylistService
 
     public event EventHandler? PlaylistsChanged;
 
+    public async Task<IEnumerable<Playlist>> GetAllPlaylistsAsync(CancellationToken token = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
+        return await context.Playlists.AsNoTracking()
+            .Include(p => p.PlaylistSongs)
+            .Include(p => p.ServerFolder)
+            .OrderBy(p => p.Name).ThenBy(p => p.Id)
+            .ToListAsync(token).ConfigureAwait(false);
+    }
+
+    public async Task<Playlist?> GetPlaylistByIdAsync(Guid playlistId)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await context.Playlists.AsNoTracking().FirstOrDefaultAsync(p => p.Id == playlistId).ConfigureAwait(false);
+    }
+
+    public async Task<IEnumerable<Song>> GetSongsInPlaylistOrderedAsync(Guid playlistId, CancellationToken token = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
+        var query = context.PlaylistSongs.AsNoTracking()
+            .Where(ps => ps.PlaylistId == playlistId)
+            .OrderBy(ps => ps.Order).ThenBy(ps => ps.SongId)
+            .Select(ps => ps.Song!);
+
+        return await SongQuery.ExcludeHeavyFields(context, query)
+            .AsSplitQuery()
+            .ToListAsync(token).ConfigureAwait(false);
+    }
+
+    public async Task<int> GetPlaylistCountAsync()
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await context.Playlists.CountAsync().ConfigureAwait(false);
+    }
+
+    public async Task<Guid?> GetRandomPlaylistIdAsync()
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await context.Playlists.OrderBy(_ => EF.Functions.Random()).Select(p => (Guid?)p.Id)
+            .FirstOrDefaultAsync().ConfigureAwait(false);
+    }
+
     // Removing songs from the library removes them from their playlists, and removing a server removes its playlists.
     private void OnLibraryChanged(object? sender, LibraryChange change)
     {
-        if (change.Kind is LibraryChangeKind.RootRemoved or LibraryChangeKind.FolderRescanned
-            or LibraryChangeKind.LibraryRescanned or LibraryChangeKind.LibraryCleared)
+        if (change.AddsOrRemovesSongs)
             PlaylistsChanged?.Invoke(this, EventArgs.Empty);
     }
 
@@ -273,23 +311,53 @@ public class PlaylistService : IPlaylistService
         return updated;
     }
 
-    public async Task<bool> MovePlaylistSongAsync(Guid playlistId, Guid songId, double newOrder)
+    public async Task<bool> MoveSongAsync(Guid playlistId, Guid songId, Guid? previousSongId, Guid? nextSongId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var playlist = await FindOwnPlaylistAsync(context, playlistId).ConfigureAwait(false);
+        if (playlist is null) return false;
 
-        var playlistSong = await context.PlaylistSongs
-            .Include(ps => ps.Playlist)
-            .FirstOrDefaultAsync(ps => ps.PlaylistId == playlistId && ps.SongId == songId && ps.Playlist.ServerFolderId == null)
-            .ConfigureAwait(false);
+        Guid[] ids = [songId, .. new[] { previousSongId, nextSongId }.OfType<Guid>()];
+        var entries = await context.PlaylistSongs.Where(ps => ps.PlaylistId == playlistId && ids.Contains(ps.SongId))
+            .ToDictionaryAsync(ps => ps.SongId).ConfigureAwait(false);
+        if (!entries.TryGetValue(songId, out var moved)) return false;
+        var previous = previousSongId is { } previousId ? entries.GetValueOrDefault(previousId)?.Order : null;
+        var next = nextSongId is { } nextId ? entries.GetValueOrDefault(nextId)?.Order : null;
 
-        if (playlistSong is null) return false;
+        if (OrderBetween(previous, next) is { } order)
+        {
+            moved.Order = order;
+        }
+        else
+        {
+            // No position is left between the neighbours, so the playlist is numbered again with the song in its new place.
+            var others = await context.PlaylistSongs.Where(ps => ps.PlaylistId == playlistId && ps.SongId != songId)
+                .OrderBy(ps => ps.Order).ThenBy(ps => ps.SongId).ToListAsync().ConfigureAwait(false);
+            var index = nextSongId is { } before ? others.FindIndex(ps => ps.SongId == before) : -1;
+            others.Insert(index < 0 ? others.Count : index, moved);
+            for (var i = 0; i < others.Count; i++) others[i].Order = i + 1;
+            _logger.LogDebug("Renumbered playlist {PlaylistId} to make room for song {SongId}.", playlistId, songId);
+        }
 
-        playlistSong.Order = newOrder;
-        _logger.LogDebug("Saving new order {Order} for song {SongId} in playlist {PlaylistId}", newOrder, songId, playlistId);
-
-        await SaveChangesAsync(context, playlistSong.Playlist).ConfigureAwait(false);
-        _logger.LogDebug("Successfully moved song {SongId} in playlist {PlaylistId} to order {Order}", songId, playlistId, newOrder);
+        await SaveChangesAsync(context, playlist).ConfigureAwait(false);
         return true;
+    }
+
+    /// <returns>A position strictly between the two, or null when there is none.</returns>
+    private static double? OrderBetween(double? previous, double? next)
+    {
+        var order = (previous, next) switch
+        {
+            (null, null) => 1,
+            (null, { } n) => n > 0.5 ? n / 2 : n - 1,
+            ({ } p, null) => Math.Floor(p) + 1,
+            ({ } p, { } n) => p + (n - p) / 2
+        };
+        var tooClose = previous is { } low && next is { } high && high - low < 1e-9;
+        return double.IsFinite(order) && !tooClose && order > (previous ?? double.NegativeInfinity) &&
+               order < (next ?? double.PositiveInfinity)
+            ? order
+            : null;
     }
 
     /// <summary>

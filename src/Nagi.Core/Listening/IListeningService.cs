@@ -22,4 +22,15 @@ public interface IListeningService
     Task<bool> MarkListenAsEligibleForScrobblingAsync(long listenHistoryId);
 
     Task ClearListenHistoryAsync();
+
+    /// <summary>
+    ///     One page of the listen history, newest first. A search term matches the same song details as in song lists.
+    /// </summary>
+    Task<IReadOnlyList<RecentListen>> GetRecentListensAsync(string searchTerm, int skip, int take, CancellationToken token = default);
+
+    /// <summary>A song the user played often but not for a long while, or null when there is none.</summary>
+    Task<RediscoverySuggestion?> GetRediscoverySuggestionAsync(CancellationToken token = default);
+
+    /// <summary>What a mix needs to know about each of the songs.</summary>
+    Task<IReadOnlyList<MixCandidate>> GetMixCandidatesAsync(IEnumerable<Guid> songIds, CancellationToken token = default);
 }

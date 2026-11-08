@@ -50,8 +50,8 @@ public partial class LibraryTests
             await context.SaveChangesAsync();
         }
 
-        (await _libraryReader.GetRediscoverySuggestionAsync())!.SongId.Should().Be(songs[0].Id);
+        (await _library.Listening.GetRediscoverySuggestionAsync())!.SongId.Should().Be(songs[0].Id);
         await _library.Listening.SetSongsLovedAsync([songs[0].Id], false);
-        (await _libraryReader.GetRediscoverySuggestionAsync())!.SongId.Should().Be(songs[1].Id);
+        (await _library.Listening.GetRediscoverySuggestionAsync())!.SongId.Should().Be(songs[1].Id);
     }
 }

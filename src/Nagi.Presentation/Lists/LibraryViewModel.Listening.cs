@@ -70,7 +70,7 @@ public partial class LibraryViewModel
         {
             try
             {
-                var suggestion = await _libraryReader.GetRediscoverySuggestionAsync(token);
+                var suggestion = await _listening.GetRediscoverySuggestionAsync(token);
                 await _dispatcherService.EnqueueAsync(() =>
                 {
                     if (!token.IsCancellationRequested && !_isDisposed && !_suggestionDismissed) Suggestion = suggestion;

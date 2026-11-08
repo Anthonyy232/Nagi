@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
 using Nagi.Core.Library;
-using Nagi.Core.Metadata;
 using Nagi.Core.OnlineProviders;
 using Nagi.Core.OnlineProviders.Pipelines;
 using Nagi.Core.Platform;
@@ -25,6 +24,7 @@ public sealed class ArtworkService : IArtworkService
     private readonly IAlbumCoverService _albumCoverService;
     private readonly ISettingsService _settingsService;
     private readonly ProviderClient _imageDownloads;
+    private readonly LibraryArtwork _libraryArtwork;
     private readonly LibraryNotifier _notifier;
     private readonly LibraryWriteLock _writeLock;
     private readonly ILogger<ArtworkService> _logger;
@@ -41,6 +41,7 @@ public sealed class ArtworkService : IArtworkService
         ISettingsService settingsService,
         IHttpClientFactory httpClientFactory,
         ProviderPipelineProvider pipelines,
+        LibraryArtwork libraryArtwork,
         LibraryNotifier notifier,
         LibraryWriteLock writeLock,
         ILogger<ArtworkService> logger)
@@ -54,6 +55,7 @@ public sealed class ArtworkService : IArtworkService
         _settingsService = settingsService;
         _imageDownloads = new ProviderClient(ProviderCatalog.ImageDownload, httpClientFactory.CreateClient(ImageHttpClientName),
             pipelines, logger);
+        _libraryArtwork = libraryArtwork;
         _notifier = notifier;
         _writeLock = writeLock;
         _logger = logger;
@@ -75,7 +77,7 @@ public sealed class ArtworkService : IArtworkService
         {
             try
             {
-                var songDirectories = (await LoadSongDirectoriesByArtistAsync(context, [artist.Id], cancellationToken)
+                var songDirectories = (await LibraryArtwork.LoadSongDirectoriesByArtistAsync(context, [artist.Id], cancellationToken)
                         .ConfigureAwait(false)).GetValueOrDefault(artist.Id, []);
                 var (_, updated) = await FetchArtistMetadataAsync(artist, songDirectories, cancellationToken).ConfigureAwait(false);
                 await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -124,11 +126,7 @@ public sealed class ArtworkService : IArtworkService
         }
     }
 
-    /// <summary>
-    ///     Cancels a running metadata fetch and keeps a new one from starting until <paramref name="action" /> finishes,
-    ///     so the fetch can't write images or covers for a library that is being cleared.
-    /// </summary>
-    internal async Task RunWithoutMetadataFetchAsync(Func<Task> action)
+    public async Task RunWithoutMetadataFetchAsync(Func<Task> action)
     {
         try
         {
@@ -204,161 +202,6 @@ public sealed class ArtworkService : IArtworkService
         }
     }
 
-    /// <summary>
-    ///     Clears the image of artists linked to songs or albums in the given folder whose cached image file is missing,
-    ///     so the folder scan and the online lookup look for one again.
-    /// </summary>
-    /// <returns>The number of artists cleared.</returns>
-    internal async Task<int> ClearMissingArtistImagesAsync(Guid folderId, CancellationToken cancellationToken)
-    {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
-        var cachedImages = await context.Artists
-            .Where(a => a.LocalImageCachePath != null &&
-                        (a.SongArtists.Any(sa => sa.Song.FolderId == folderId) ||
-                         a.AlbumArtists.Any(aa => aa.Album.Songs.Any(s => s.FolderId == folderId))))
-            .Select(a => new { a.Id, Path = a.LocalImageCachePath! })
-            .ToListAsync(cancellationToken)
-            .ConfigureAwait(false);
-        var artistIds = cachedImages.Where(a => !_fileSystem.FileExists(a.Path)).Select(a => a.Id).ToList();
-        if (artistIds.Count == 0) return 0;
-
-        await context.Artists.Where(a => artistIds.Contains(a.Id))
-            .ExecuteUpdateAsync(setters => setters
-                .SetProperty(a => a.LocalImageCachePath, (string?)null)
-                .SetProperty(a => a.MetadataLastCheckedUtc, (DateTime?)null), cancellationToken)
-            .ConfigureAwait(false);
-        _logger.LogInformation("Cleared the missing cached image of {Count} artists.", artistIds.Count);
-        _notifier.RaiseArtistImagesChanged(artistIds.Select(id => new ArtistImageChange(id, null)).ToList());
-        return artistIds.Count;
-    }
-
-    /// <summary>Looks for an artist image (such as artist.jpg) beside the songs in the folder.</summary>
-    /// <returns>The number of artists updated with newly found local images.</returns>
-    internal async Task<int> UpdateMissingArtistImagesFromFoldersAsync(Guid folderId, CancellationToken cancellationToken)
-    {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
-
-        // A folder image replaces a fetched one, but never a custom image or an earlier folder image.
-        var artistsNeedingImages = await context.Artists
-            .Where(a => a.SongArtists.Any(sa => sa.Song.FolderId == folderId))
-            .Where(ImageStorageHelper.HasNoUserOrFolderImage())
-            .ToListAsync(cancellationToken)
-            .ConfigureAwait(false);
-
-        if (artistsNeedingImages.Count == 0) return 0;
-
-        _logger.LogDebug("Checking local artist images for {Count} artists in folder {FolderId}.",
-            artistsNeedingImages.Count, folderId);
-
-        var songDirsByArtistId = await LoadSongDirectoriesByArtistAsync(context,
-            artistsNeedingImages.Select(a => a.Id).ToList(), cancellationToken).ConfigureAwait(false);
-
-        // Artists often share directories, which are then listed once.
-        var directoryCache = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
-
-        var changes = new List<ArtistImageChange>();
-        foreach (var artist in artistsNeedingImages)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var dirs = songDirsByArtistId.GetValueOrDefault(artist.Id, []);
-            if (await UseFolderImageAsync(artist, dirs, cancellationToken, directoryCache).ConfigureAwait(false))
-                changes.Add(new ArtistImageChange(artist.Id, artist.LocalImageCachePath));
-        }
-
-        if (changes.Count > 0)
-        {
-            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-            _logger.LogInformation("Updated {Count} artists with local folder images.", changes.Count);
-            _notifier.RaiseArtistImagesChanged(changes);
-        }
-
-        return changes.Count;
-    }
-
-    internal void DeleteArtistImages(IEnumerable<Guid> artistIds)
-    {
-        foreach (var artistId in artistIds)
-        {
-            try
-            {
-                foreach (var suffix in Enum.GetValues<CachedImageKind>().Select(kind => kind.Suffix()).Append(""))
-                    ImageStorageHelper.DeleteImage(_fileSystem, _pathConfig.ArtistImageCachePath, artistId.ToString(), suffix);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Failed to delete images for removed artist {ArtistId}.", artistId);
-            }
-        }
-    }
-
-    /// <summary>
-    ///     Brings album covers in line with their tracks after the folder's songs changed: an album whose cover none of
-    ///     its tracks use takes its first track's art, tracks without art take their album's cover, and covers that
-    ///     nothing uses any more are deleted. Runs after the folder art check, so a track's own art wins over its
-    ///     album's cover.
-    /// </summary>
-    /// <param name="replacedCovers">Covers songs used before they were read again, to delete once unused.</param>
-    /// <param name="keepAlbumCovers">Whether albums keep their covers, because songs were only added to them.</param>
-    /// <returns>The number of albums and tracks that got another cover.</returns>
-    internal async Task<(int Albums, int Tracks)> UpdateAlbumCoversAsync(Guid folderId, IEnumerable<string> replacedCovers,
-        bool keepAlbumCovers, CancellationToken cancellationToken)
-    {
-        var albums = keepAlbumCovers ? 0 : await SyncAlbumCoversWithTracksAsync(folderId, cancellationToken).ConfigureAwait(false);
-        var tracks = await ApplyAlbumCoversToTracksWithoutArtAsync(folderId, cancellationToken).ConfigureAwait(false);
-        // Only after every song is saved, since songs read later may reuse a replaced cover.
-        await DeleteUnreferencedCoverArtAsync(replacedCovers, cancellationToken).ConfigureAwait(false);
-        return (albums, tracks);
-    }
-
-    /// <summary>
-    ///     Deletes cached covers that no song or album uses. Covers are named by their content, so songs and albums
-    ///     share them.
-    /// </summary>
-    internal async Task DeleteUnreferencedCoverArtAsync(IEnumerable<string> paths, CancellationToken token)
-    {
-        await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
-        foreach (var batch in paths.Distinct(StringComparer.OrdinalIgnoreCase).Chunk(MusicDbContext.MaxParametersPerQuery))
-        {
-            var references = await context.Songs
-                .Where(s => s.AlbumArtUriFromTrack != null && batch.Contains(s.AlbumArtUriFromTrack))
-                .Select(s => s.AlbumArtUriFromTrack!)
-                .Union(context.Albums
-                    .Where(a => a.CoverArtUri != null && batch.Contains(a.CoverArtUri) && a.Songs.Any())
-                    .Select(a => a.CoverArtUri!))
-                .ToListAsync(token).ConfigureAwait(false);
-
-            foreach (var path in batch.Except(references, StringComparer.OrdinalIgnoreCase))
-            {
-                if (!IsExistingCacheFile(path, _pathConfig.AlbumArtCachePath)) continue;
-                try
-                {
-                    _fileSystem.DeleteFile(path);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Failed to delete unreferenced cover art {FilePath}.", path);
-                }
-            }
-        }
-    }
-
-    private bool IsExistingCacheFile(string? filePath, string cachePath)
-    {
-        if (string.IsNullOrWhiteSpace(filePath)) return false;
-
-        try
-        {
-            return PathCanonicalizer.IsSameOrInside(Path.GetFullPath(filePath), Path.GetFullPath(cachePath))
-                   && _fileSystem.FileExists(filePath);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Could not validate cache path for {FilePath}", filePath);
-            return false;
-        }
-    }
-
     private async Task FetchMissingArtistMetadataAsync(CancellationToken token)
     {
         const int batchSize = 50;
@@ -375,7 +218,7 @@ public sealed class ArtworkService : IArtworkService
             if (artistsInBatch.Count == 0) break;
             // A failed lookup stays retryable, but must not loop forever in this run.
             afterId = artistsInBatch[^1].Id;
-            var directoriesByArtist = await LoadSongDirectoriesByArtistAsync(batchContext,
+            var directoriesByArtist = await LibraryArtwork.LoadSongDirectoriesByArtistAsync(batchContext,
                 artistsInBatch.Select(a => a.Id).ToList(), token).ConfigureAwait(false);
 
             var pendingUpdates = new List<ArtistImageChange>();
@@ -450,7 +293,7 @@ public sealed class ArtworkService : IArtworkService
         // As in Navidrome, a folder image (artist.*, album/artist.*) comes before the online sources, and replaces a
         // fetched image but never a custom image or an earlier folder image.
         var updated = !ImageStorageHelper.IsUserOrFolderImage(artist.LocalImageCachePath)
-                      && await UseFolderImageAsync(artist, songDirectories, cancellationToken).ConfigureAwait(false);
+                      && await _libraryArtwork.UseFolderImageAsync(artist, songDirectories, cancellationToken).ConfigureAwait(false);
         if (updated) _logger.LogInformation("Using local folder image for artist '{ArtistName}'.", artist.Name);
 
         var found = await _artistMetadataService.FindAsync(artist.Name, artist.MusicBrainzId, cancellationToken)
@@ -461,32 +304,6 @@ public sealed class ArtworkService : IArtworkService
         return (found is not null, updated);
     }
 
-    /// <returns>Whether the artist's image was found and saved as its folder image.</returns>
-    private async Task<bool> UseFolderImageAsync(Artist artist, IReadOnlyList<string?> songDirectories,
-        CancellationToken cancellationToken, Dictionary<string, string?>? directoryCache = null)
-    {
-        var imageBytes = await FindArtistImageInDirectoriesAsync(songDirectories, artist.Name, cancellationToken, directoryCache)
-            .ConfigureAwait(false);
-        if (imageBytes is null) return false;
-
-        try
-        {
-            var processed = await _imageProcessor.ProcessImageBytesAsync(imageBytes).ConfigureAwait(false);
-            var localPath = await ImageStorageHelper.SaveImageBytesAsync(_fileSystem,
-                _pathConfig.ArtistImageCachePath, artist.Id.ToString(), CachedImageKind.Folder, processed).ConfigureAwait(false);
-            if (string.IsNullOrEmpty(localPath)) return false;
-
-            artist.LocalImageCachePath = localPath;
-            return true;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to process local artist image for '{ArtistName}'.", artist.Name);
-            return false;
-        }
-    }
-
-    /// <returns>Whether anything about the artist changed.</returns>
     private async Task<bool> ApplyOnlineMetadataAsync(Artist artist, ArtistMetadataResult found,
         CancellationToken cancellationToken)
     {
@@ -581,84 +398,6 @@ public sealed class ArtworkService : IArtworkService
     private async Task<byte[]?> DownloadImageBytesAsync(Uri imageUrl, CancellationToken cancellationToken) =>
         (await _imageDownloads.GetBytesAsync(imageUrl, $"image download {imageUrl}", cancellationToken).ConfigureAwait(false)).Data;
 
-    /// <summary>
-    ///     The directories of each artist's songs on disk, where an artist image may sit beside them.
-    /// </summary>
-    private static async Task<Dictionary<Guid, IReadOnlyList<string?>>> LoadSongDirectoriesByArtistAsync(
-        MusicDbContext context, List<Guid> artistIds, CancellationToken ct)
-    {
-        var rows = await context.Songs
-            .AsNoTracking()
-            .OnDisk()
-            .SelectMany(s => s.SongArtists.Where(sa => artistIds.Contains(sa.ArtistId)),
-                (s, sa) => new { sa.ArtistId, s.DirectoryPath })
-            .Distinct()
-            .ToListAsync(ct)
-            .ConfigureAwait(false);
-
-        return rows.GroupBy(r => r.ArtistId)
-            .ToDictionary(g => g.Key, g => (IReadOnlyList<string?>)g.Select(r => r.DirectoryPath).ToList());
-    }
-
-    /// <summary>
-    ///     Searches the song directories in two passes following Navidrome's priority: first their parent directories
-    ///     ("artist folder", e.g. F:/Music/Daft Punk/), then the song directories themselves ("album folder", e.g.
-    ///     F:/Music/Daft Punk/Discovery/). Drive roots are left out of the first pass.
-    /// </summary>
-    private async Task<byte[]?> FindArtistImageInDirectoriesAsync(IReadOnlyList<string?> songDirectories, string artistName,
-        CancellationToken ct, Dictionary<string, string?>? directoryCache = null)
-    {
-        var directories = songDirectories.OfType<string>().Where(dir => dir.Length > 0)
-            .Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
-        var parents = directories.Select(Path.GetDirectoryName).OfType<string>()
-            .Where(parent => parent.Length > 0 && !string.IsNullOrEmpty(Path.GetDirectoryName(parent)));
-
-        foreach (var dir in parents.Concat(directories).Distinct(StringComparer.OrdinalIgnoreCase))
-        {
-            ct.ThrowIfCancellationRequested();
-
-            if (directoryCache == null || !directoryCache.TryGetValue(dir, out var imagePath))
-            {
-                imagePath = FindArtistImageInDirectory(dir);
-                if (directoryCache != null) directoryCache[dir] = imagePath;
-            }
-
-            if (imagePath == null) continue;
-
-            try
-            {
-                var bytes = await _fileSystem.ReadAllBytesAsync(imagePath).ConfigureAwait(false);
-                if (bytes.Length > 0)
-                {
-                    _logger.LogDebug("Found artist image for '{ArtistName}' at '{ImagePath}'.", artistName, imagePath);
-                    return bytes;
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Failed to read artist image at '{ImagePath}'.", imagePath);
-            }
-        }
-
-        return null;
-    }
-
-    private string? FindArtistImageInDirectory(string directory)
-    {
-        try
-        {
-            return _fileSystem.GetFiles(directory, "*.*").FirstOrDefault(filePath =>
-                FileExtensions.ImageFileExtensions.Contains(Path.GetExtension(filePath)) &&
-                Path.GetFileNameWithoutExtension(filePath)
-                    .Equals(FileExtensions.ArtistImageFileName, StringComparison.OrdinalIgnoreCase));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to enumerate artist images in directory '{Directory}'.", directory);
-            return null;
-        }
-    }
-
     private async Task FetchMissingAlbumCoversAsync(CancellationToken token)
     {
         const int batchSize = 50;
@@ -722,127 +461,56 @@ public sealed class ArtworkService : IArtworkService
             new AlbumCoverQuery(album.Title, album.ArtistName, album.ReleaseId, album.ReleaseGroupId), token).ConfigureAwait(false);
         if (result is null) return null;
 
-        (string? Uri, string? LightSwatchId, string? DarkSwatchId) cover = default;
-        if (result.Data is not null)
-        {
-            var imageBytes = await DownloadImageBytesAsync(new Uri(result.Data), token).ConfigureAwait(false);
-            if (imageBytes is not null)
-                cover = await _imageProcessor.SaveCoverArtAndExtractColorsAsync(imageBytes).ConfigureAwait(false);
-        }
-
+        var imageBytes = result.Data is null
+            ? null
+            : await DownloadImageBytesAsync(new Uri(result.Data), token).ConfigureAwait(false);
         // A cover that failed to download stays retryable, like a source that failed.
-        if (cover.Uri is null && (result.Data is not null || !result.IsConclusive)) return false;
+        if (imageBytes is null && (result.Data is not null || !result.IsConclusive)) return false;
+
+        // Covers are shared by content, so a scan deleting an unused cover could delete the one stored here.
+        await _writeLock.WaitAsync(token).ConfigureAwait(false);
+        try
+        {
+            return await StoreAlbumCoverAsync(album.Id, imageBytes, token).ConfigureAwait(false);
+        }
+        finally
+        {
+            _writeLock.Release();
+        }
+    }
+
+    private async Task<bool> StoreAlbumCoverAsync(Guid albumId, byte[]? imageBytes, CancellationToken token)
+    {
+        (string? Uri, string? LightSwatchId, string? DarkSwatchId) cover = default;
+        if (imageBytes is not null)
+        {
+            cover = await _imageProcessor.SaveCoverArtAndExtractColorsAsync(imageBytes).ConfigureAwait(false);
+            if (cover.Uri is null) return false;
+        }
 
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
         var checkedAt = DateTime.UtcNow;
         // Art a scan found in the meantime wins, so only an album still without a cover takes the online one.
-        var stored = cover.Uri is not null && await context.Albums.Where(a => a.Id == album.Id && a.CoverArtUri == null)
+        var stored = cover.Uri is not null && await context.Albums.Where(a => a.Id == albumId && a.CoverArtUri == null)
             .ExecuteUpdateAsync(setters => setters
                 .SetProperty(a => a.CoverArtUri, cover.Uri)
                 .SetProperty(a => a.CoverArtLastCheckedUtc, checkedAt), token)
             .ConfigureAwait(false) > 0;
         if (!stored)
         {
-            await context.Albums.Where(a => a.Id == album.Id)
+            await context.Albums.Where(a => a.Id == albumId)
                 .ExecuteUpdateAsync(setters => setters.SetProperty(a => a.CoverArtLastCheckedUtc, checkedAt), token)
                 .ConfigureAwait(false);
             return false;
         }
 
-        await context.Songs.Where(s => s.AlbumId == album.Id && s.AlbumArtUriFromTrack == null)
+        await context.Songs.Where(s => s.AlbumId == albumId && s.AlbumArtUriFromTrack == null)
             .ExecuteUpdateAsync(setters => setters
                 .SetProperty(s => s.AlbumArtUriFromTrack, cover.Uri)
                 .SetProperty(s => s.LightSwatchId, cover.LightSwatchId)
                 .SetProperty(s => s.DarkSwatchId, cover.DarkSwatchId), token)
             .ConfigureAwait(false);
         return true;
-    }
-
-    /// <summary>
-    ///     Gives each album whose cover none of its tracks use the art of its first track that has some. Without such
-    ///     art, a cover whose cached file is missing is cleared so the online pass looks for one again. Replaced covers
-    ///     are deleted when nothing else uses them.
-    /// </summary>
-    /// <returns>The number of albums updated.</returns>
-    private async Task<int> SyncAlbumCoversWithTracksAsync(Guid folderId, CancellationToken cancellationToken)
-    {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
-        // A cover a track uses is current; if its file is missing, scanning the folder of that track recreates it.
-        var albums = await context.Albums
-            .Where(a => a.Songs.Any(s => s.FolderId == folderId) &&
-                        (a.CoverArtUri == null || !a.Songs.Any(s => s.AlbumArtUriFromTrack == a.CoverArtUri)))
-            .Select(a => new
-            {
-                a.Id,
-                a.CoverArtUri,
-                TrackArt = a.Songs
-                    .Where(s => s.AlbumArtUriFromTrack != null)
-                    .OrderBy(s => s.DiscNumber).ThenBy(s => s.TrackNumber).ThenBy(s => s.FilePath)
-                    .Select(s => s.AlbumArtUriFromTrack)
-                    .FirstOrDefault()
-            })
-            .ToListAsync(cancellationToken).ConfigureAwait(false);
-
-        var updatedCount = 0;
-        var replacedCovers = new List<string>();
-        foreach (var album in albums)
-        {
-            // A track re-read without art of its own drops the album cover it showed, which doesn't make that cover
-            // out of date.
-            if (album.TrackArt is null && (album.CoverArtUri is null || _fileSystem.FileExists(album.CoverArtUri)))
-                continue;
-
-            updatedCount += await context.Albums.Where(a => a.Id == album.Id)
-                .ExecuteUpdateAsync(setters => setters
-                    .SetProperty(a => a.CoverArtUri, album.TrackArt)
-                    .SetProperty(a => a.CoverArtLastCheckedUtc, (DateTime?)null), cancellationToken)
-                .ConfigureAwait(false);
-            if (album.CoverArtUri is not null) replacedCovers.Add(album.CoverArtUri);
-        }
-
-        await DeleteUnreferencedCoverArtAsync(replacedCovers, cancellationToken).ConfigureAwait(false);
-        if (updatedCount > 0)
-            _logger.LogInformation("Updated the cover of {Count} albums to match their tracks.", updatedCount);
-        return updatedCount;
-    }
-
-    /// <summary>
-    ///     Gives tracks without embedded or folder art the cover of their album, which may come from another
-    ///     track or an online source.
-    /// </summary>
-    /// <returns>The number of tracks updated.</returns>
-    private async Task<int> ApplyAlbumCoversToTracksWithoutArtAsync(Guid folderId, CancellationToken cancellationToken)
-    {
-        // "Unknown Album" groups unrelated tracks, so one of them must not lend its art to the rest.
-        var unknownAlbum = Album.UnknownAlbumName;
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
-        var tracksWithoutArt = context.Songs.Where(s => s.FolderId == folderId && s.AlbumArtUriFromTrack == null &&
-                                                        s.Album != null && s.Album.CoverArtUri != null &&
-                                                        s.Album.Title != unknownAlbum);
-        var covers = await tracksWithoutArt.Select(s => s.Album!.CoverArtUri!).Distinct()
-            .ToListAsync(cancellationToken).ConfigureAwait(false);
-
-        var updatedCount = 0;
-        foreach (var cover in covers)
-        {
-            // The album's cover came from one of its tracks or the online pass, which stored its theme colors.
-            var swatches = await context.Songs.Where(s => s.AlbumArtUriFromTrack == cover)
-                .Select(s => new { s.LightSwatchId, s.DarkSwatchId })
-                .FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
-            var lightSwatchId = swatches?.LightSwatchId;
-            var darkSwatchId = swatches?.DarkSwatchId;
-
-            updatedCount += await tracksWithoutArt.Where(s => s.Album!.CoverArtUri == cover)
-                .ExecuteUpdateAsync(setters => setters
-                    .SetProperty(s => s.AlbumArtUriFromTrack, cover)
-                    .SetProperty(s => s.LightSwatchId, lightSwatchId)
-                    .SetProperty(s => s.DarkSwatchId, darkSwatchId), cancellationToken)
-                .ConfigureAwait(false);
-        }
-
-        if (updatedCount > 0)
-            _logger.LogInformation("Gave {Count} tracks without art their album cover.", updatedCount);
-        return updatedCount;
     }
 
     private sealed record AlbumCoverCandidate(Guid Id, string Title, string ArtistName, string? ReleaseId, string? ReleaseGroupId);

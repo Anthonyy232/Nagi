@@ -143,7 +143,7 @@ public class BackupRestoreService : IBackupRestoreService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to create backup.");
-            return new BackupResult(false, null, 0, ex.Message);
+            return new BackupResult(false, null, 0);
         }
     }
 
@@ -153,7 +153,7 @@ public class BackupRestoreService : IBackupRestoreService
         {
             if (!await ValidateBackupAsync(backupFilePath).ConfigureAwait(false))
             {
-                return new RestoreResult(false, 0, false, Resources.Strings.Backup_InvalidFile);
+                return new RestoreResult(false, Resources.Strings.Backup_InvalidFile);
             }
 
             var destinationDirectory = new DirectoryInfo(Path.GetFullPath(_pathConfiguration.AppDataRoot));
@@ -275,11 +275,11 @@ public class BackupRestoreService : IBackupRestoreService
                             "{Message} Rollback errors: {RollbackErrors}",
                             rollbackMessage,
                             string.Join(" | ", rollbackErrors.Select(error => error.Message)));
-                        return new RestoreResult(false, 0, false, rollbackMessage);
+                        return new RestoreResult(false, rollbackMessage);
                     }
 
                     _logger.LogError(restoreException, "Restore failed; all replaced items were rolled back.");
-                    return new RestoreResult(false, 0, false, restoreException.Message);
+                    return new RestoreResult(false);
                 }
 
                 if (settingsSnapshot is not null)
@@ -297,7 +297,7 @@ public class BackupRestoreService : IBackupRestoreService
                 }
 
                 _logger.LogInformation("Restore completed successfully. {Count} items restored.", restoredCount);
-                return new RestoreResult(true, restoredCount, true);
+                return new RestoreResult(true);
             }
             finally
             {
@@ -317,7 +317,7 @@ public class BackupRestoreService : IBackupRestoreService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to restore backup from {Path}", backupFilePath);
-            return new RestoreResult(false, 0, false, ex.Message);
+            return new RestoreResult(false);
         }
     }
 

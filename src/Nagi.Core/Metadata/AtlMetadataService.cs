@@ -48,7 +48,7 @@ public partial class AtlMetadataService : IMetadataService
             var fileInfo = _fileSystem.GetFileInfo(filePath);
             metadata.FileCreatedDate = fileInfo.CreationTimeUtc;
             metadata.FileModifiedDate = fileInfo.LastWriteTimeUtc;
-            metadata.Title = TextNormalizer.Normalize(Path.GetFileNameWithoutExtension(filePath)) ?? Path.GetFileNameWithoutExtension(filePath);
+            metadata.Title = Path.GetFileNameWithoutExtension(filePath);
 
             // ATL parsing is synchronous, so enforce the timeout while awaiting it.
             var track = await Task.Run(() => new Track(filePath)).WaitAsync(TimeSpan.FromSeconds(30)).ConfigureAwait(false);
@@ -70,7 +70,7 @@ public partial class AtlMetadataService : IMetadataService
                 try
                 {
                     metadata.LrcFilePath = await GetLrcPathAsync(filePath, fileInfo.LastWriteTimeUtc,
-                            metadata.Artists?.FirstOrDefault() ?? Artist.UnknownArtistName, metadata.Album,
+                            metadata.Artists[0], metadata.Album,
                             metadata.Title, track)
                         .WaitAsync(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
                 }
@@ -120,18 +120,13 @@ public partial class AtlMetadataService : IMetadataService
 
     private static void PopulateMetadataFromTrack(SongFileMetadata metadata, Track track, string splitCharacters, string genreSplitCharacters)
     {
-        var rawArtist = TextNormalizer.Normalize(track.Artist) ?? Artist.UnknownArtistName;
-        var rawAlbumArtist = TextNormalizer.Normalize(track.AlbumArtist) ?? rawArtist;
+        if (!string.IsNullOrWhiteSpace(track.Title)) metadata.Title = track.Title;
+        metadata.Artists = MultiValues(track.Artist, splitCharacters);
+        metadata.AlbumArtists = MultiValues(track.AlbumArtist, splitCharacters);
+        metadata.Album = track.Album;
+        metadata.Genres = MultiValues(track.Genre, genreSplitCharacters);
+        metadata.NormalizeTags(splitCharacters, genreSplitCharacters);
 
-        var artists = SplitMetadataList(rawArtist, splitCharacters);
-        var albumArtists = SplitMetadataList(rawAlbumArtist, splitCharacters);
-
-        var album = TextNormalizer.Normalize(track.Album) ?? Album.UnknownAlbumName;
-
-        metadata.Title = TextNormalizer.Normalize(track.Title) ?? metadata.Title;
-        metadata.Artists = artists;
-        metadata.Album = album;
-        metadata.AlbumArtists = albumArtists;
         metadata.Duration = TimeSpan.FromSeconds(track.Duration);
         metadata.Year = track.Year > 0 ? track.Year : null;
         metadata.TrackNumber = track.TrackNumber > 0 ? track.TrackNumber : null;
@@ -154,9 +149,6 @@ public partial class AtlMetadataService : IMetadataService
         metadata.Conductor = TextNormalizer.Normalize(track.Conductor);
 
         PopulateMusicBrainzIds(metadata, track);
-
-        var genreString = TextNormalizer.Normalize(track.Genre);
-        metadata.Genres = SplitMetadataList(genreString, genreSplitCharacters);
 
         // ATL doesn't have a direct Grouping property, check additional fields
         if (track.AdditionalFields.TryGetValue("GRP1", out var grouping) ||
@@ -205,55 +197,31 @@ public partial class AtlMetadataService : IMetadataService
     private static List<string> ParseMusicBrainzIds(string value) =>
         MusicBrainzIdRegex().Matches(value).Select(match => match.Value.ToLowerInvariant()).ToList();
 
-    private static List<string> SplitMetadataList(string? input, string splitCharacters)
+    // ATL joins a tag's values with its separator. Without split characters they stay one name joined by ';', which
+    // is how files' names have always been stored, while a server's lists of names stay separate names.
+    private static List<string> MultiValues(string? tag, string splitCharacters)
     {
-        if (string.IsNullOrWhiteSpace(input)) return [];
-
-        if (string.IsNullOrEmpty(splitCharacters))
-        {
-            var normalized = TextNormalizer.Normalize(
-                input.Replace(AtlMultiValueSeparator, CombinedValueSeparator));
-            return normalized != null ? [normalized] : [];
-        }
-
-        return ArtistNameHelper.SplitNames(input.Split(AtlMultiValueSeparator), splitCharacters);
+        // Normalized first, so null characters become a separator that split characters can divide.
+        if (TextNormalizer.Normalize(tag) is not { } value) return [];
+        return splitCharacters.Length == 0
+            ? [value.Replace(AtlMultiValueSeparator, CombinedValueSeparator)]
+            : [.. value.Split(AtlMultiValueSeparator)];
     }
 
     private async Task<(string? Uri, string? Light, string? Dark)> ProcessAlbumArtAsync(
         string filePath, Track track, string? baseFolderPath)
     {
-        var directoryArt = await ProcessCoverArtFromDirectoryAsync(filePath, baseFolderPath).ConfigureAwait(false);
-        if (directoryArt.Uri != null) return directoryArt;
+        var finder = new MediaFileFinder(_fileSystem, _logger);
+        if (finder.FindCoverArt(filePath, baseFolderPath) is { } coverArtPath)
+        {
+            var directoryArt = await finder.SaveCoverArtAsync(coverArtPath, _imageProcessor).ConfigureAwait(false);
+            if (directoryArt.Uri != null) return directoryArt;
+        }
 
         var picture = track.EmbeddedPictures?.FirstOrDefault();
         return picture?.PictureData is { Length: > 0 } pictureData
             ? await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData).ConfigureAwait(false)
             : default;
-    }
-
-    private async Task<(string? Uri, string? Light, string? Dark)> ProcessCoverArtFromDirectoryAsync(
-        string filePath, string? baseFolderPath)
-    {
-        try
-        {
-            var coverArtPath = new MediaFileFinder(_fileSystem, _logger).FindCoverArt(filePath, baseFolderPath);
-            if (string.IsNullOrEmpty(coverArtPath)) return default;
-
-            var imageBytes = await _fileSystem.ReadAllBytesAsync(coverArtPath).ConfigureAwait(false);
-            if (imageBytes.Length == 0) return default;
-
-            var result =
-                await _imageProcessor.SaveCoverArtAndExtractColorsAsync(imageBytes).ConfigureAwait(false);
-
-            _logger.LogDebug("Found cover art from directory for '{FilePath}': {CoverArtPath}",
-                filePath, coverArtPath);
-            return result;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to process directory cover art for '{FilePath}'.", filePath);
-            return default;
-        }
     }
 
     // The user's override wins; lyrics extracted from the tags are reused until the audio file changes.

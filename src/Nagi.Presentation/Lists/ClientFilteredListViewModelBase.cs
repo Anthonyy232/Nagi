@@ -58,7 +58,7 @@ public abstract partial class ClientFilteredListViewModelBase<TItem> : Searchabl
 
     protected abstract Task<IEnumerable<TItem>> LoadItemsAsync(CancellationToken token);
 
-    protected abstract bool ShouldReloadOnLibraryChange(LibraryChangeKind kind);
+    protected abstract bool ShouldReloadOnLibraryChange(LibraryChange change);
 
     protected virtual bool MatchesSearch(TItem item, string searchTerm) => true;
 
@@ -71,7 +71,7 @@ public abstract partial class ClientFilteredListViewModelBase<TItem> : Searchabl
 
     private void OnLibraryChanged(object? sender, LibraryChange change)
     {
-        if (!ShouldReloadOnLibraryChange(change.Kind)) return;
+        if (!ShouldReloadOnLibraryChange(change)) return;
 
         _libraryChangeDebouncer.Trigger(async token =>
         {

@@ -276,7 +276,7 @@ public class BackupRestoreServiceTests : IDisposable
         var result = await _service.RestoreFromBackupAsync(zipPath);
 
         result.Success.Should().BeFalse();
-        result.RestoredFileCount.Should().Be(0);
+        result.ErrorMessage.Should().Be(Nagi.Core.Resources.Strings.Backup_InvalidFile);
     }
 
     [Fact]

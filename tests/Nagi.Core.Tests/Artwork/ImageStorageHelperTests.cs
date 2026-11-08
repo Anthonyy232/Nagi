@@ -25,7 +25,7 @@ public class ImageStorageHelperTests
         _fs.FileExists(Path.Combine(dir, "abc.custom.png")).Returns(true);
         _fs.FileExists(jpgPath).Returns(true);
 
-        var result = ImageStorageHelper.FindImage(_fs, dir, "abc", ".custom");
+        var result = ImageStorageHelper.FindImage(_fs, dir, "abc", CachedImageKind.Custom);
 
         result.Should().Be(jpgPath);
     }
@@ -41,7 +41,7 @@ public class ImageStorageHelperTests
         _fs.FileExists(jpgPath).Returns(true);
         _fs.FileExists(pngPath).Returns(true);
 
-        ImageStorageHelper.DeleteImage(_fs, dir, "abc", ".custom");
+        ImageStorageHelper.DeleteImage(_fs, dir, "abc", CachedImageKind.Custom);
 
         _fs.Received(1).DeleteFile(jpgPath);
         _fs.Received(1).DeleteFile(pngPath);
@@ -76,12 +76,12 @@ public class ImageStorageHelperTests
                 File.Move(call.ArgAt<string>(0), call.ArgAt<string>(1), true);
             });
 
-            var save = () => ImageStorageHelper.SaveImageBytesAsync(_fs, directory.FullName, "abc", ".custom", replacement, ".png");
+            var save = () => ImageStorageHelper.SaveImageBytesAsync(_fs, directory.FullName, "abc", CachedImageKind.Custom, replacement);
             if (outcome == "success")
             {
-                (await save()).Should().Be(png);
-                Directory.GetFiles(directory.FullName).Should().Equal(png);
-                (await File.ReadAllBytesAsync(png)).Should().Equal(replacement);
+                (await save()).Should().Be(jpg);
+                Directory.GetFiles(directory.FullName).Should().Equal(jpg);
+                (await File.ReadAllBytesAsync(jpg)).Should().Equal(replacement);
             }
             else
             {

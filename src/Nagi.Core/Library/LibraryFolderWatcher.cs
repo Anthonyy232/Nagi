@@ -16,6 +16,7 @@ public sealed class LibraryFolderWatcher : IDisposable
     private readonly TimeProvider _timeProvider;
     private readonly CancellationTokenSource _shutdownCts = new();
     private readonly CancellationToken _shutdownToken;
+    private readonly SemaphoreSlim _syncTurn = new(1, 1);
     private readonly Lock _lock = new();
     private readonly Dictionary<Guid, WatchedFolder> _folders = new();
 
@@ -56,7 +57,7 @@ public sealed class LibraryFolderWatcher : IDisposable
 
     private void OnLibraryChanged(object? sender, LibraryChange change)
     {
-        if (change.Kind is LibraryChangeKind.RootAdded or LibraryChangeKind.RootRemoved or LibraryChangeKind.LibraryCleared)
+        if (change.AffectsRoots)
             _ = SyncFoldersAsync();
     }
 
@@ -64,26 +65,32 @@ public sealed class LibraryFolderWatcher : IDisposable
     {
         try
         {
-            var roots = (await _libraryReader.GetRootFoldersWithCountsAsync(_shutdownToken).ConfigureAwait(false))
-                .Where(summary => !summary.IsFromServer)
-                .Select(summary => summary.Folder)
-                .ToList();
-
-            lock (_lock)
+            // One sync at a time: an older query that finished last would unwatch a folder a newer one just added.
+            await _syncTurn.WaitAsync(_shutdownToken).ConfigureAwait(false);
+            try
             {
-                if (_shutdownToken.IsCancellationRequested) return;
+                var roots = await _libraryReader.GetRootFoldersOnDiskAsync(_shutdownToken).ConfigureAwait(false);
 
-                foreach (var id in _folders.Keys.Except(roots.Select(f => f.Id)).ToList())
+                lock (_lock)
                 {
-                    _folders[id].Dispose();
-                    _folders.Remove(id);
-                }
+                    if (_shutdownToken.IsCancellationRequested) return;
 
-                foreach (var folder in roots.Where(f => !_folders.ContainsKey(f.Id)))
-                {
-                    var watched = TryWatch(folder.Id, folder.Path);
-                    if (watched is not null) _folders[folder.Id] = watched;
+                    foreach (var id in _folders.Keys.Except(roots.Select(f => f.Id)).ToList())
+                    {
+                        _folders[id].Dispose();
+                        _folders.Remove(id);
+                    }
+
+                    foreach (var folder in roots.Where(f => !_folders.ContainsKey(f.Id)))
+                    {
+                        var watched = TryWatch(folder.Id, folder.Path);
+                        if (watched is not null) _folders[folder.Id] = watched;
+                    }
                 }
+            }
+            finally
+            {
+                _syncTurn.Release();
             }
         }
         catch (OperationCanceledException)

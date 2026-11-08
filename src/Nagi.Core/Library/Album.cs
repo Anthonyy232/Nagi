@@ -7,7 +7,7 @@ public class Album
     public static string UnknownAlbumName => string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Album);
     [Key] public Guid Id { get; set; } = Guid.NewGuid();
 
-    [Required][MaxLength(500)] public string Title { get; set; } = string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Album);
+    [Required][MaxLength(500)] public string Title { get; set; } = UnknownAlbumName;
 
     /// <summary>
     ///     Denormalized sort key for <see cref="Title"/> with leading articles ("the", "a", "an") stripped.
@@ -31,7 +31,7 @@ public class Album
     public virtual ICollection<Song> Songs { get; set; } = new List<Song>();
 
     /// <summary>
-    ///     The names of all associated artists joined by " & ".
+    ///     The names of all associated artists joined by <see cref="Artist.ArtistSeparator"/>, which is localized.
     ///     This is a denormalized field for efficient display and searching.
     /// </summary>
     [MaxLength(Artist.MaxCreditLength)]

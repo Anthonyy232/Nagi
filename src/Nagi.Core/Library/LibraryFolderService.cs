@@ -21,7 +21,8 @@ public sealed class LibraryFolderService : ILibraryFolderService
     private readonly IReplayGainService _replayGainService;
     private readonly ISettingsService _settingsService;
     private readonly LibraryImporter _importer;
-    private readonly ArtworkService _artwork;
+    private readonly IArtworkService _artwork;
+    private readonly LibraryArtwork _libraryArtwork;
     private readonly LibraryNotifier _notifier;
     private readonly LibraryWriteLock _writeLock;
     private readonly ILogger<LibraryFolderService> _logger;
@@ -34,7 +35,8 @@ public sealed class LibraryFolderService : ILibraryFolderService
         IReplayGainService replayGainService,
         ISettingsService settingsService,
         LibraryImporter importer,
-        ArtworkService artwork,
+        IArtworkService artwork,
+        LibraryArtwork libraryArtwork,
         LibraryNotifier notifier,
         LibraryWriteLock writeLock,
         ILogger<LibraryFolderService> logger)
@@ -47,6 +49,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
         _settingsService = settingsService;
         _importer = importer;
         _artwork = artwork;
+        _libraryArtwork = libraryArtwork;
         _notifier = notifier;
         _writeLock = writeLock;
         _logger = logger;
@@ -123,15 +126,12 @@ public sealed class LibraryFolderService : ILibraryFolderService
                 return false;
             }
 
-            if (!await _importer.RemoveRootAsync(folderId, _writeLock.ShutdownToken).ConfigureAwait(false)) return false;
+            return await _importer.RemoveRootAsync(folderId, _writeLock.ShutdownToken).ConfigureAwait(false);
         }
         finally
         {
             _writeLock.Release();
         }
-
-        _notifier.Raise(LibraryChangeKind.RootRemoved, folderId);
-        return true;
     }
 
     public Task<bool> RescanFolderForMusicAsync(Guid folderId, IProgress<ScanProgress>? progress = null,
@@ -179,11 +179,19 @@ public sealed class LibraryFolderService : ILibraryFolderService
                 }
 
                 changed = false;
-                foreach (var (index, folder) in folders.Index())
+                try
                 {
-                    token.ThrowIfCancellationRequested();
-                    changed |= await ScanFolderAsync(kind, folder.Id, FolderProgress(progress, index, folders.Count, folder.Name), token)
-                        .ConfigureAwait(false);
+                    foreach (var (index, folder) in folders.Index())
+                    {
+                        token.ThrowIfCancellationRequested();
+                        changed |= await ScanFolderAsync(kind, folder.Id, FolderProgress(progress, index, folders.Count, folder.Name), token)
+                            .ConfigureAwait(false);
+                    }
+                }
+                finally
+                {
+                    // Once for every folder, also when a later folder fails or the scan is cancelled.
+                    if (changed) _notifier.Raise(LibraryChangeKind.LibraryRescanned);
                 }
             }
 
@@ -192,10 +200,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
                 await RunReplayGainAnalysisAsync(progress, token).ConfigureAwait(false);
 
             if (folderId is null)
-            {
                 progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_LibraryRefreshComplete, Percentage = 100 });
-                if (changed) _notifier.Raise(LibraryChangeKind.LibraryRescanned);
-            }
 
             if (changed) _ = _artwork.StartMetadataBackgroundFetchAsync();
             return changed;
@@ -278,9 +283,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
             progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_ScanFailed, Percentage = 100 });
             _logger.LogWarning("Folder path '{FolderPath}' no longer exists. Removing folder {FolderId} from library.",
                 folder.Path, folder.Id);
-            if (!await _importer.RemoveRootAsync(folderId, token).ConfigureAwait(false)) return false;
-            _notifier.Raise(LibraryChangeKind.RootRemoved, folderId);
-            return true;
+            return await _importer.RemoveRootAsync(folderId, token).ConfigureAwait(false);
         }
 
         progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_PreparingScanCaches, IsIndeterminate = true });
@@ -290,23 +293,13 @@ public sealed class LibraryFolderService : ILibraryFolderService
                 changes.Added.Count, changes.Updated.Count, changes.Removed.Count);
         token.ThrowIfCancellationRequested();
 
-        var removed = changes.Removed;
-        if (removed.Count > 0 && LibraryImporter.IsLikelyMissedListing(removed.Count, changes.ExistingCount, changes.Added.Count))
-        {
-            _logger.LogError(
-                "Scan safety guard tripped for folder {FolderId}: proposed to delete {DeleteCount}/{ExistingCount} songs while only adding {AddCount}. Skipping delete pass; likely a transient enumeration failure (NAS blip / unmounted drive).",
-                folderId, removed.Count, changes.ExistingCount, changes.Added.Count);
-            removed = [];
-        }
-
-        if (removed.Count > 0)
-        {
+        if (changes.Removed.Count > 0)
             progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_CleaningUpLibrary, IsIndeterminate = true });
-            await _importer.DeleteSongsAsync(folderId, removed, token).ConfigureAwait(false);
-        }
+        var removed = await _importer.DeleteSongsAsync(folderId, changes.Removed, changes.ExistingCount, changes.Added.Count, token)
+            .ConfigureAwait(false);
 
         // Before the folder image check, so it can replace the images that are gone.
-        var clearedArtistImages = await _artwork.ClearMissingArtistImagesAsync(folderId, token).ConfigureAwait(false);
+        var clearedArtistImages = await _libraryArtwork.ClearMissingArtistImagesAsync(folderId, token).ConfigureAwait(false);
 
         var filesToRead = changes.Added.Concat(changes.Updated).ToList();
         var import = filesToRead.Count > 0
@@ -319,14 +312,14 @@ public sealed class LibraryFolderService : ILibraryFolderService
         var lookForMediaFiles = changes.Untouched > 0 || changes.KeepMediaAssets.Count > 0;
         var lrcTask = lookForMediaFiles ? UpdateMissingLrcPathsAsync(folderId, token) : Task.FromResult(0);
         var coverArtTask = lookForMediaFiles ? UpdateMissingCoverArtAsync(folderId, folder.Path, token) : Task.FromResult(0);
-        var artistImageTask = _artwork.UpdateMissingArtistImagesFromFoldersAsync(folderId, token);
+        var artistImageTask = _libraryArtwork.UpdateMissingArtistImagesFromFoldersAsync(folderId, token);
         await Task.WhenAll(lrcTask, coverArtTask, artistImageTask,
             EnsureSubFoldersExistAsync(folderId, folder.Path, import.Directories, token)).ConfigureAwait(false);
         // Adding songs to an album leaves it the cover it has.
-        var onlyAdded = changes.Added.Count > 0 && changes.Updated.Count == 0 && removed.Count == 0;
-        var covers = await _artwork.UpdateAlbumCoversAsync(folderId, import.ReplacedCovers, onlyAdded, token).ConfigureAwait(false);
+        var onlyAdded = changes.Added.Count > 0 && changes.Updated.Count == 0 && removed == 0;
+        var covers = await _libraryArtwork.UpdateAlbumCoversAsync(folderId, import.ReplacedCovers, onlyAdded, token).ConfigureAwait(false);
 
-        if (removed.Count > 0 || changes.Updated.Count > 0)
+        if (removed > 0 || changes.Updated.Count > 0)
         {
             progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_Finalizing, IsIndeterminate = true });
             await _importer.CleanUpOrphansAsync(token).ConfigureAwait(false);
@@ -341,9 +334,10 @@ public sealed class LibraryFolderService : ILibraryFolderService
             Percentage = 100
         });
 
-        var changed = removed.Count > 0 || import.SongCount > 0 || lrcUpdates > 0 || coverArtUpdates > 0 ||
+        var changed = removed > 0 || import.SongCount > 0 || lrcUpdates > 0 || coverArtUpdates > 0 ||
                       artistImageUpdates > 0 || covers.Albums > 0 || clearedArtistImages > 0;
-        if (changed) _notifier.Raise(LibraryChangeKind.FolderRescanned, folderId);
+        // A scan of every folder announces them together when it is done.
+        if (changed && kind is ScanKind.Manual or ScanKind.Background) _notifier.Raise(LibraryChangeKind.FolderRescanned, folderId);
         return changed;
 
         // A forced scan reports every folder that fails; the others skip it.
@@ -905,7 +899,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
 
             if (!savedArt.TryGetValue(coverArtPath, out var cover))
             {
-                cover = await SaveCoverArtAsync(coverArtPath).ConfigureAwait(false);
+                cover = await finder.SaveCoverArtAsync(coverArtPath, _imageProcessor).ConfigureAwait(false);
                 savedArt.Add(coverArtPath, cover);
             }
 
@@ -920,21 +914,6 @@ public sealed class LibraryFolderService : ILibraryFolderService
         }, cancellationToken).ConfigureAwait(false);
         if (updated > 0) _logger.LogInformation("Updated {Count} songs with newly discovered cover art files.", updated);
         return updated;
-    }
-
-    private async Task<(string? Uri, string? LightSwatchId, string? DarkSwatchId)> SaveCoverArtAsync(string coverArtPath)
-    {
-        try
-        {
-            var imageBytes = await _fileSystem.ReadAllBytesAsync(coverArtPath).ConfigureAwait(false);
-            if (imageBytes.Length > 0) return await _imageProcessor.SaveCoverArtAndExtractColorsAsync(imageBytes).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to process cover art file {CoverArtPath}.", coverArtPath);
-        }
-
-        return default;
     }
 
     private static async Task<int> UpdateSongsAsync<T>(MusicDbContext context, Dictionary<Guid, T> values,

@@ -21,8 +21,7 @@ public sealed class LibraryFolderWatcherTests : IDisposable
 
     public LibraryFolderWatcherTests()
     {
-        _reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>())
-            .Returns(_ => _folders.Select(f => new FolderSummary(f, 0, IsFromServer: false)).ToList());
+        _reader.GetRootFoldersOnDiskAsync(Arg.Any<CancellationToken>()).Returns(_ => _folders.ToList());
         _folderService.RefreshFolderInBackgroundAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(true);
         _watcher = new LibraryFolderWatcher(_reader, _notifier, _folderService, NullLogger<LibraryFolderWatcher>.Instance, _time);
     }
@@ -87,7 +86,7 @@ public sealed class LibraryFolderWatcherTests : IDisposable
             _notifier.Changed += Raise.Event<EventHandler<LibraryChange>>(_notifier, new LibraryChange(LibraryChangeKind.RootAdded, added.Id));
             await File.WriteAllTextAsync(Path.Combine(second, "song.flac"), "audio");
             await _time.Scheduled.WaitAsync(EventTimeout);
-            _time.Advance(LibraryFolderWatcher.QuietPeriod);
+            await AdvanceUntilRefreshedAsync();
 
             await _folderService.Received(1).RefreshFolderInBackgroundAsync(added.Id, Arg.Any<CancellationToken>());
         }
@@ -95,6 +94,40 @@ public sealed class LibraryFolderWatcherTests : IDisposable
         {
             _watcher.Dispose();
             Directory.Delete(second, recursive: true);
+        }
+    }
+
+    [Fact]
+    public async Task FolderAddedWhileAnOlderSyncIsQuerying_StaysWatched()
+    {
+        var root = new Folder { Name = "Root", Path = _root };
+        _folders.Add(root);
+        var startupQuery = new TaskCompletionSource<IReadOnlyList<Folder>>();
+        _reader.GetRootFoldersOnDiskAsync(Arg.Any<CancellationToken>())
+            .Returns(_ => startupQuery.Task, _ => Task.FromResult<IReadOnlyList<Folder>>(_folders.ToList()));
+        _watcher.Start();
+
+        var added = new Folder { Name = "Second", Path = Directory.CreateDirectory(Path.Combine(_root, "Second")).FullName };
+        _folders.Add(added);
+        _notifier.Changed += Raise.Event<EventHandler<LibraryChange>>(_notifier, new LibraryChange(LibraryChangeKind.RootAdded, added.Id));
+        startupQuery.SetResult([root]);
+        await _time.SecondFolderWatched.WaitAsync(EventTimeout);
+
+        _time.UnwatchedFolders.Should().Be(0);
+    }
+
+    // A fresh write raises Created and then Changed events on the watcher's thread. A late one re-arms the debounce,
+    // as in production, and one that lands inside FakeTimeProvider.Advance can make it skip the due timer, so the
+    // test keeps advancing until the refresh fires. The timer callback runs inside Advance, so the call is visible
+    // as soon as it returns.
+    private async Task AdvanceUntilRefreshedAsync()
+    {
+        var deadline = DateTime.UtcNow + EventTimeout;
+        while (true)
+        {
+            _time.Advance(LibraryFolderWatcher.QuietPeriod);
+            if (_folderService.ReceivedCalls().Any() || DateTime.UtcNow > deadline) return;
+            await Task.Delay(10);
         }
     }
 
@@ -109,26 +142,42 @@ public sealed class LibraryFolderWatcherTests : IDisposable
 
     /// <summary>
     ///     A fake clock that tells when the watcher schedules a refresh, which a file system event on another thread does.
+    ///     The watcher creates one timer per watched folder and disposes it when it stops watching the folder.
     /// </summary>
     private sealed class SchedulingTimeProvider : FakeTimeProvider
     {
         private readonly TaskCompletionSource _scheduled = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly TaskCompletionSource _secondFolderWatched = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private int _created;
+        private int _disposed;
 
         public Task Scheduled => _scheduled.Task;
 
-        public override ITimer CreateTimer(TimerCallback callback, object? state, TimeSpan dueTime, TimeSpan period) =>
-            new SignallingTimer(base.CreateTimer(callback, state, dueTime, period), _scheduled);
+        public Task SecondFolderWatched => _secondFolderWatched.Task;
 
-        private sealed class SignallingTimer(ITimer timer, TaskCompletionSource scheduled) : ITimer
+        public int UnwatchedFolders => Volatile.Read(ref _disposed);
+
+        public override ITimer CreateTimer(TimerCallback callback, object? state, TimeSpan dueTime, TimeSpan period)
+        {
+            var timer = new SignallingTimer(base.CreateTimer(callback, state, dueTime, period), this);
+            if (Interlocked.Increment(ref _created) == 2) _secondFolderWatched.TrySetResult();
+            return timer;
+        }
+
+        private sealed class SignallingTimer(ITimer timer, SchedulingTimeProvider owner) : ITimer
         {
             public bool Change(TimeSpan dueTime, TimeSpan period)
             {
                 var changed = timer.Change(dueTime, period);
-                scheduled.TrySetResult();
+                owner._scheduled.TrySetResult();
                 return changed;
             }
 
-            public void Dispose() => timer.Dispose();
+            public void Dispose()
+            {
+                Interlocked.Increment(ref owner._disposed);
+                timer.Dispose();
+            }
 
             public ValueTask DisposeAsync() => timer.DisposeAsync();
         }

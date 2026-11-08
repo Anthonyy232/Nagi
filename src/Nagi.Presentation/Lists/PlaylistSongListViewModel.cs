@@ -89,7 +89,7 @@ public partial class PlaylistSongListViewModel : DetailSongListViewModelBase<Pla
         PageTitle = parameter.Title;
         _currentPlaylistId = parameter.PlaylistId;
         CoverImageUri = parameter.CoverImageUri;
-        var playlist = await _libraryReader.GetPlaylistByIdAsync(parameter.PlaylistId);
+        var playlist = await _playlistService.GetPlaylistByIdAsync(parameter.PlaylistId);
         if (token.IsCancellationRequested) return true;
         // A server's playlist follows the server at each sync, so it can't be changed here.
         CanEditPlaylist = playlist?.IsFromServer != true;
@@ -143,30 +143,11 @@ public partial class PlaylistSongListViewModel : DetailSongListViewModelBase<Pla
     public async Task OnSongsReorderedAsync(IReadOnlyCollection<Song> movedSongs)
     {
         if (!IsReorderingEnabled || !_currentPlaylistId.HasValue || movedSongs.Count == 0) return;
-        var songs = Songs.ToList();
-        var orderedIds = songs.Select(song => song.Id).ToList();
+        var orderedIds = Songs.Select(song => song.Id).ToList();
         var visibleIds = orderedIds.ToHashSet();
         if (movedSongs.Any(song => !visibleIds.Contains(song.Id)) || !ReplaceCachedSongIds(orderedIds)) return;
         var playlistId = _currentPlaylistId.Value;
         var token = OpenToken;
-        var normalize = movedSongs.Count > 1;
-        var moved = movedSongs.First();
-        var newOrder = moved.Order;
-
-        if (!normalize)
-        {
-            var index = songs.FindIndex(song => song.Id == moved.Id);
-            var previous = index > 0 ? songs[index - 1].Order : double.NegativeInfinity;
-            var next = index < songs.Count - 1 ? songs[index + 1].Order : double.PositiveInfinity;
-            newOrder = double.IsNegativeInfinity(previous)
-                ? double.IsPositiveInfinity(next) ? 1 : next > 0.5 ? next / 2 : next - 1
-                : double.IsPositiveInfinity(next) ? Math.Floor(previous) + 1
-                : previous + (next - previous) / 2;
-            // Normalize immediately when fractional positions can no longer represent this move.
-            // The new integer positions must also be reflected in memory before the next drag.
-            normalize = !double.IsFinite(newOrder) || newOrder <= previous || newOrder >= next ||
-                (double.IsFinite(previous) && double.IsFinite(next) && next - previous < 1e-9);
-        }
 
         _isSavingOrder = true;
         OnPropertyChanged(nameof(IsReorderingEnabled));
@@ -174,15 +155,15 @@ public partial class PlaylistSongListViewModel : DetailSongListViewModelBase<Pla
         var saved = false;
         try
         {
-            saved = normalize
-                ? await _playlistService.UpdatePlaylistOrderAsync(playlistId, orderedIds)
-                : await _playlistService.MovePlaylistSongAsync(playlistId, moved.Id, newOrder);
-            if (saved && !_isDisposed && !token.IsCancellationRequested)
+            if (movedSongs.Count > 1)
             {
-                if (normalize)
-                    for (var i = 0; i < songs.Count; i++) songs[i].Order = i + 1;
-                else
-                    moved.Order = newOrder;
+                saved = await _playlistService.UpdatePlaylistOrderAsync(playlistId, orderedIds);
+            }
+            else
+            {
+                var index = orderedIds.IndexOf(movedSongs.First().Id);
+                saved = await _playlistService.MoveSongAsync(playlistId, orderedIds[index],
+                    index > 0 ? orderedIds[index - 1] : null, index < orderedIds.Count - 1 ? orderedIds[index + 1] : null);
             }
         }
         catch (Exception ex)

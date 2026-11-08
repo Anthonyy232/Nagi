@@ -100,7 +100,7 @@ public class ImageSharpProcessor : IImageProcessor
     {
         try
         {
-            var searchPattern = $"{contentHash}.*.fetched.jpg";
+            var searchPattern = $"{contentHash}.*{CachedImageKind.Fetched.Suffix()}.jpg";
             var matches = _fileSystem.GetFiles(_albumArtStoragePath, searchPattern);
             return matches.FirstOrDefault();
         }
@@ -154,7 +154,7 @@ public class ImageSharpProcessor : IImageProcessor
         var baseFileName = $"{contentHash}.{safeLight}.{safeDark}";
 
         return (await ImageStorageHelper.SaveImageBytesAsync(_fileSystem, _albumArtStoragePath,
-            baseFileName, ".fetched", await EncodeCachedJpegAsync(image).ConfigureAwait(false)).ConfigureAwait(false))!;
+            baseFileName, CachedImageKind.Fetched, await EncodeCachedJpegAsync(image).ConfigureAwait(false)).ConfigureAwait(false))!;
     }
 
     // Works on a small copy of the image already decoded for the cache, so the file is decoded once.

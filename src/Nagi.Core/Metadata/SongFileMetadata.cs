@@ -1,4 +1,7 @@
-﻿namespace Nagi.Core.Metadata;
+using Nagi.Core.Library;
+using Nagi.Core.Platform;
+
+namespace Nagi.Core.Metadata;
 
 public class SongFileMetadata
 {
@@ -43,6 +46,22 @@ public class SongFileMetadata
 
     /// <summary>Album artist IDs in tag order; they pair with <see cref="AlbumArtists"/> only when the counts match.</summary>
     public List<string> MusicBrainzAlbumArtistIds { get; set; } = new();
+
+    /// <summary>
+    ///     Cleans up the tags the way the library stores them, whether they came from a file or a music server: NFC
+    ///     and trimmed, names split on the user's split characters without repeats, Unknown for a missing title,
+    ///     artist or album, and the artists for missing album artists. Running it again changes nothing.
+    /// </summary>
+    internal void NormalizeTags(string artistSplitCharacters, string genreSplitCharacters)
+    {
+        Title = TextNormalizer.Normalize(Title) ?? Song.UnknownTitle;
+        Artists = ArtistNameHelper.SplitNames(Artists, artistSplitCharacters);
+        if (Artists.Count == 0) Artists = [Artist.UnknownArtistName];
+        AlbumArtists = ArtistNameHelper.NormalizeAlbumArtists(
+            ArtistNameHelper.SplitNames(AlbumArtists, artistSplitCharacters), Artists);
+        Album = TextNormalizer.Normalize(Album) ?? Library.Album.UnknownAlbumName;
+        Genres = ArtistNameHelper.SplitNames(Genres, genreSplitCharacters);
+    }
 }
 
 public enum ExtractionFailure

@@ -1,7 +1,10 @@
 using FluentAssertions;
+using Microsoft.Extensions.Logging.Abstractions;
+using Nagi.Core.Artwork;
 using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Library;
 using Nagi.Core.Listening;
+using Nagi.Core.MusicServers;
 using Nagi.Core.Platform;
 using Nagi.Core.Playlists;
 using Nagi.Core.Settings;
@@ -123,6 +126,51 @@ public class LibraryReaderTests : IDisposable
                 [other.Id] = 1
             });
         summaries.Should().OnlyContain(item => item.Folder.Songs.Count == 0);
+    }
+
+    [Fact]
+    public async Task GetRootFoldersOnDiskAsync_SkipsServersAndSubfolders()
+    {
+        var music = new Folder { Name = "Music", Path = @"C:\Music" };
+        var child = new Folder { Name = "Album", Path = @"C:\Music\Album", ParentFolder = music };
+        var server = new Folder { Name = "Server", Path = "nagi-server://server" };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.AddRange(music, child, server);
+            context.MusicServers.Add(new MusicServer { Folder = server, BaseUrl = "https://music.example.com", UserName = "alex" });
+            await context.SaveChangesAsync();
+        }
+
+        var roots = await _libraryReader.GetRootFoldersOnDiskAsync();
+
+        roots.Select(folder => folder.Id).Should().Equal(music.Id);
+    }
+
+    [Fact]
+    public async Task StoredTimes_ReadBackAsUtc()
+    {
+        var time = new DateTime(2024, 5, 6, 7, 8, 9, DateTimeKind.Utc);
+        var folder = new Folder { Name = "Music", Path = @"C:\Music", LastModifiedDate = time };
+        var song = new Song
+        {
+            Folder = folder,
+            FilePath = @"C:\Music\song.flac",
+            DirectoryPath = folder.Path,
+            DateAddedToLibrary = time,
+            FileCreatedDate = time,
+            FileModifiedDate = time,
+            LastPlayedDate = time
+        };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Songs.Add(song);
+            await context.SaveChangesAsync();
+        }
+
+        var stored = (await _libraryReader.GetSongByIdAsync(song.Id))!;
+
+        new[] { stored.DateAddedToLibrary, stored.FileCreatedDate, stored.FileModifiedDate, stored.LastPlayedDate, stored.Folder.LastModifiedDate }
+            .Should().AllSatisfy(value => value!.Value.Kind.Should().Be(DateTimeKind.Utc));
     }
 
     [Fact]
@@ -748,8 +796,9 @@ public class LibraryReaderTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var first = await _libraryReader.GetRecentListensAsync("Same song", 0, 2);
-        var second = await _libraryReader.GetRecentListensAsync("Same song", 2, 2);
+        var listening = new ListeningService(_dbHelper.ContextFactory, new LibraryNotifier(), NullLogger<ListeningService>.Instance);
+        var first = await listening.GetRecentListensAsync("Same song", 0, 2);
+        var second = await listening.GetRecentListensAsync("Same song", 2, 2);
 
         first.Should().HaveCount(2);
         second.Should().ContainSingle();
@@ -769,21 +818,21 @@ public class LibraryReaderTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var exported = await _libraryReader.GetSongsInPlaylistOrderedAsync(playlist.Id);
+        var playlists = new PlaylistService(_dbHelper.ContextFactory, Substitute.For<IFileSystemService>(), Substitute.For<IImageProcessor>(),
+            Substitute.For<IPathConfiguration>(), Substitute.For<ILibraryNotifier>(), NullLogger<PlaylistService>.Instance);
+        var exported = await playlists.GetSongsInPlaylistOrderedAsync(playlist.Id);
         exported.Where(s => s.Title.StartsWith("Song")).Select(s => s.Id).Should().Equal(expectedIds);
 
         var page = await _libraryReader.GetSongsAsync(new SongScope.Playlist(playlist.Id), null, SongSortOrder.PlaylistOrder, 3, 1);
         page.TotalCount.Should().Be(4);
         var row = page.Items.Should().ContainSingle().Subject;
         row.Id.Should().Be(songs[2].Id);
-        row.Order.Should().Be(2);
         row.Grouping.Should().Be("Group");
         row.Lyrics.Should().BeNull();
 
         var search = await _libraryReader.GetSongsAsync(new SongScope.Playlist(playlist.Id), "Song", SongSortOrder.PlaylistOrder, 2, 1);
         search.TotalCount.Should().Be(3);
         search.Items.Should().ContainSingle().Which.Id.Should().Be(songs[2].Id);
-        search.Items.Single().Order.Should().Be(2);
         var ids = await _libraryReader.GetSongIdsAsync(new SongScope.Playlist(playlist.Id), "Song", SongSortOrder.PlaylistOrder);
         ids.Should().Equal(expectedIds);
     }

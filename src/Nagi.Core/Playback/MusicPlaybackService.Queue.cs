@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
 using Nagi.Core.Metadata;
-using Nagi.Core.Platform;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Playback;
 
@@ -103,8 +103,11 @@ public partial class MusicPlaybackService
     private async Task<Song> CreateTransientSongAsync(string filePath)
     {
         var metadata = await _metadataService.ExtractMetadataAsync(filePath);
-        var artists = metadata.Artists.Select(ArtistNameHelper.Normalize).DefaultIfEmpty(Artist.UnknownArtistName).ToList();
-        var albumArtists = ArtistNameHelper.NormalizeAlbumArtists(metadata.AlbumArtists, artists);
+        // As the library imports them, also for a file whose tags couldn't be read.
+        metadata.NormalizeTags(_settingsService.Get(CoreSettings.ArtistSplitCharacters),
+            _settingsService.Get(CoreSettings.GenreSplitCharacters));
+        var artists = metadata.Artists;
+        var albumArtists = metadata.AlbumArtists;
 
         return new Song
         {
@@ -115,14 +118,13 @@ public partial class MusicPlaybackService
             SongArtists = artists.Select((name, i) => new SongArtist { Artist = new Artist { Name = name }, Order = i }).ToList(),
             Album = new Album
             {
-                Title = TextNormalizer.Normalize(metadata.Album) ?? Album.UnknownAlbumName,
+                Title = metadata.Album!,
                 ArtistName = Artist.GetDisplayName(albumArtists),
                 PrimaryArtistName = albumArtists[0],
                 AlbumArtists = albumArtists.Select((name, i) => new AlbumArtist { Artist = new Artist { Name = name }, Order = i }).ToList()
             },
             Duration = metadata.Duration,
-            Genres = metadata.Genres.Where(g => !string.IsNullOrWhiteSpace(g))
-                .Distinct(StringComparer.OrdinalIgnoreCase).Select(g => new Genre { Name = g }).ToList(),
+            Genres = metadata.Genres.Select(g => new Genre { Name = g }).ToList(),
             AlbumArtUriFromTrack = metadata.CoverArtUri,
             Lyrics = metadata.Lyrics,
             LrcFilePath = metadata.LrcFilePath

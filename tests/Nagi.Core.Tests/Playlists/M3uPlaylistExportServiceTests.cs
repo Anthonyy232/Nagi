@@ -136,7 +136,7 @@ public class M3uPlaylistExportServiceTests : IDisposable
     public async Task ExportAllPlaylistsAsync_WhenNoPlaylistsExist_ReturnsFailure()
     {
         var tempDir = Path.Combine(_tempDirectory, "exports");
-        _libraryReader.GetAllPlaylistsAsync().Returns(Enumerable.Empty<Playlist>());
+        _playlistService.GetAllPlaylistsAsync().Returns(Enumerable.Empty<Playlist>());
 
         var result = await _service.ExportAllPlaylistsAsync(tempDir);
 
@@ -154,16 +154,16 @@ public class M3uPlaylistExportServiceTests : IDisposable
         song.SongArtists.Add(new SongArtist { Song = song, Artist = new Artist { Name = "A" }, Order = 0 });
         song.SyncDenormalizedFields();
 
-        _libraryReader.GetAllPlaylistsAsync().Returns(new[] { emptyPlaylist, filledPlaylist });
-        _libraryReader.GetSongsInPlaylistOrderedAsync(emptyPlaylist.Id).Returns(Enumerable.Empty<Song>());
-        _libraryReader.GetSongsInPlaylistOrderedAsync(filledPlaylist.Id).Returns(new List<Song> { song });
+        _playlistService.GetAllPlaylistsAsync().Returns(new[] { emptyPlaylist, filledPlaylist });
+        _playlistService.GetSongsInPlaylistOrderedAsync(emptyPlaylist.Id).Returns(Enumerable.Empty<Song>());
+        _playlistService.GetSongsInPlaylistOrderedAsync(filledPlaylist.Id).Returns(new List<Song> { song });
 
         var result = await _service.ExportAllPlaylistsAsync(tempDir);
 
         result.Success.Should().BeTrue();
         result.PlaylistsExported.Should().Be(1, "the empty playlist should be skipped");
         result.TotalSongs.Should().Be(1);
-        await _libraryReader.Received(1).GetSongsInPlaylistOrderedAsync(filledPlaylist.Id);
+        await _playlistService.Received(1).GetSongsInPlaylistOrderedAsync(filledPlaylist.Id);
     }
 
     [Fact]
@@ -175,9 +175,9 @@ public class M3uPlaylistExportServiceTests : IDisposable
         var local = CreateSong("On disk", @"C:\music\local.mp3");
         var remote = CreateSong("Streamed", @"nagi-server:0123\s1");
         remote.RemoteId = "s1";
-        _libraryReader.GetAllPlaylistsAsync().Returns(new[] { mixed, streamedOnly });
-        _libraryReader.GetSongsInPlaylistOrderedAsync(mixed.Id).Returns(new[] { local, remote });
-        _libraryReader.GetSongsInPlaylistOrderedAsync(streamedOnly.Id).Returns(new[] { remote });
+        _playlistService.GetAllPlaylistsAsync().Returns(new[] { mixed, streamedOnly });
+        _playlistService.GetSongsInPlaylistOrderedAsync(mixed.Id).Returns(new[] { local, remote });
+        _playlistService.GetSongsInPlaylistOrderedAsync(streamedOnly.Id).Returns(new[] { remote });
 
         var result = await _service.ExportAllPlaylistsAsync(tempDir);
 
@@ -196,9 +196,9 @@ public class M3uPlaylistExportServiceTests : IDisposable
         var firstSong = CreateSong("First song", @"C:\music\first.mp3");
         var secondSong = CreateSong("Second song", @"C:\music\second.mp3");
 
-        _libraryReader.GetAllPlaylistsAsync().Returns(new[] { first, second });
-        _libraryReader.GetSongsInPlaylistOrderedAsync(first.Id).Returns(new[] { firstSong });
-        _libraryReader.GetSongsInPlaylistOrderedAsync(second.Id).Returns(new[] { secondSong });
+        _playlistService.GetAllPlaylistsAsync().Returns(new[] { first, second });
+        _playlistService.GetSongsInPlaylistOrderedAsync(first.Id).Returns(new[] { firstSong });
+        _playlistService.GetSongsInPlaylistOrderedAsync(second.Id).Returns(new[] { secondSong });
 
         var result = await _service.ExportAllPlaylistsAsync(tempDir);
 
@@ -255,8 +255,8 @@ public class M3uPlaylistExportServiceTests : IDisposable
         song.SongArtists.Add(new SongArtist { Song = song, Artist = artist2, Order = 1 });
         song.SyncDenormalizedFields();
 
-        _libraryReader.GetAllPlaylistsAsync().Returns(new[] { playlist });
-        _libraryReader.GetSongsInPlaylistOrderedAsync(playlistId).Returns(new List<Song> { song });
+        _playlistService.GetAllPlaylistsAsync().Returns(new[] { playlist });
+        _playlistService.GetSongsInPlaylistOrderedAsync(playlistId).Returns(new List<Song> { song });
 
         var result = await _service.ExportAllPlaylistsAsync(_tempDirectory);
 
@@ -296,8 +296,8 @@ public class M3uPlaylistExportServiceTests : IDisposable
         var song = CreateSong("Track\nTitle", @"C:\music\song.mp3");
         song.SongArtists.First().Artist.Name = "Artist\rName";
         song.SyncDenormalizedFields();
-        _libraryReader.GetAllPlaylistsAsync().Returns(new[] { playlist });
-        _libraryReader.GetSongsInPlaylistOrderedAsync(playlist.Id).Returns(new List<Song> { song });
+        _playlistService.GetAllPlaylistsAsync().Returns(new[] { playlist });
+        _playlistService.GetSongsInPlaylistOrderedAsync(playlist.Id).Returns(new List<Song> { song });
 
         var result = await _service.ExportAllPlaylistsAsync(_tempDirectory);
 

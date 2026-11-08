@@ -70,7 +70,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         SongTitle = Strings.Status_NoTrackPlaying;
         ArtistName = string.Empty;
         SidebarQueue = new PlaybackQueueCollection(_playbackService, _logger);
-        History = new RecentHistoryViewModel(_libraryReader, _dispatcherService, _logger);
+        History = new RecentHistoryViewModel(_libraryReader, _listening, _dispatcherService, _logger);
         CurrentTimeText = "0:00";
         TotalDurationText = "0:00";
 

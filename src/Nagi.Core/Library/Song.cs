@@ -166,23 +166,6 @@ public class Song
     [MaxLength(100)]
     public string? MusicBrainzReleaseGroupId { get; set; }
 
-    [NotMapped] public double Order { get; set; }
-    [NotMapped] public bool IsArtworkAvailable => !string.IsNullOrEmpty(AlbumArtUriFromTrack);
-
-    [NotMapped]
-    public string TrackDisplay
-    {
-        get
-        {
-            if (DiscNumber.HasValue && DiscNumber.Value > 0)
-            {
-                return TrackNumber.HasValue
-                    ? $"{DiscNumber}-{TrackNumber}"
-                    : $"{DiscNumber}";
-            }
-            return TrackNumber?.ToString() ?? string.Empty;
-        }
-    }
 
     public virtual ICollection<SongArtist> SongArtists { get; set; } = new List<SongArtist>();
     public virtual ICollection<Genre> Genres { get; set; } = new List<Genre>();
@@ -190,7 +173,7 @@ public class Song
     public virtual ICollection<ListenHistory> ListenHistory { get; set; } = new List<ListenHistory>();
 
     /// <summary>
-    ///     The names of all associated artists joined by " & ".
+    ///     The names of all associated artists joined by <see cref="Artist.ArtistSeparator"/>, which is localized.
     ///     This is a denormalized field for efficient display and searching.
     /// </summary>
     [MaxLength(Artist.MaxCreditLength)]

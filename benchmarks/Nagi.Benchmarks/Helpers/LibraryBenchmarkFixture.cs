@@ -57,7 +57,8 @@ internal sealed class LibraryBenchmarkFixture : IDisposable
         services.AddSingleton<ILibraryReader, LibraryReader>();
         services.AddSingleton<LibraryNotifier>();
         services.AddSingleton<LibraryWriteLock>();
-        services.AddSingleton<ArtworkService>();
+        services.AddSingleton<LibraryArtwork>();
+        services.AddSingleton<IArtworkService, ArtworkService>();
         services.AddSingleton<LibraryImporter>();
         services.AddSingleton<LibraryFolderService>();
         services.AddHttpClient();

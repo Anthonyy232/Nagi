@@ -16,7 +16,8 @@ public sealed class ServerLibrarySync : IServerLibrarySync
     private readonly IImageProcessor _imageProcessor;
     private readonly ISettingsService _settingsService;
     private readonly LibraryImporter _importer;
-    private readonly ArtworkService _artwork;
+    private readonly IArtworkService _artwork;
+    private readonly LibraryArtwork _libraryArtwork;
     private readonly PlaylistService _playlists;
     private readonly LibraryNotifier _notifier;
     private readonly LibraryWriteLock _writeLock;
@@ -28,7 +29,8 @@ public sealed class ServerLibrarySync : IServerLibrarySync
         IImageProcessor imageProcessor,
         ISettingsService settingsService,
         LibraryImporter importer,
-        ArtworkService artwork,
+        IArtworkService artwork,
+        LibraryArtwork libraryArtwork,
         PlaylistService playlists,
         LibraryNotifier notifier,
         LibraryWriteLock writeLock,
@@ -40,6 +42,7 @@ public sealed class ServerLibrarySync : IServerLibrarySync
         _settingsService = settingsService;
         _importer = importer;
         _artwork = artwork;
+        _libraryArtwork = libraryArtwork;
         _playlists = playlists;
         _notifier = notifier;
         _writeLock = writeLock;
@@ -64,16 +67,13 @@ public sealed class ServerLibrarySync : IServerLibrarySync
         await _writeLock.WaitAsync(token).ConfigureAwait(false);
         try
         {
-            if (!await IsMusicServerFolderAsync(folderId, token).ConfigureAwait(false)
-                || !await _importer.RemoveRootAsync(folderId, token).ConfigureAwait(false)) return false;
+            return await IsMusicServerFolderAsync(folderId, token).ConfigureAwait(false)
+                   && await _importer.RemoveRootAsync(folderId, token).ConfigureAwait(false);
         }
         finally
         {
             _writeLock.Release();
         }
-
-        _notifier.Raise(LibraryChangeKind.RootRemoved, folderId);
-        return true;
     }
 
     public async Task SyncAsync(Guid folderId, IMusicServerClient client, IProgress<ScanProgress>? progress = null,
@@ -120,7 +120,7 @@ public sealed class ServerLibrarySync : IServerLibrarySync
                 await _writeLock.WaitAsync(operationToken).ConfigureAwait(false);
                 try
                 {
-                    var albumCovers = await _artwork.UpdateAlbumCoversAsync(folderId, import.ReplacedCovers, false, operationToken)
+                    var albumCovers = await _libraryArtwork.UpdateAlbumCoversAsync(folderId, import.ReplacedCovers, false, operationToken)
                         .ConfigureAwait(false);
                     coverUpdates += albumCovers.Albums + albumCovers.Tracks;
                 }
@@ -130,7 +130,7 @@ public sealed class ServerLibrarySync : IServerLibrarySync
                 }
             }
 
-            if (coverUpdates > 0) _notifier.Raise(LibraryChangeKind.FolderRescanned, folderId);
+            if (coverUpdates > 0) _notifier.Raise(LibraryChangeKind.SongsChanged);
             if (importChanged) _ = _artwork.StartMetadataBackgroundFetchAsync();
 
             _logger.LogInformation("Synced server folder {FolderId}: +{Added} ~{Updated} -{Removed}, {Covers} songs got covers, {Playlists} playlists.",
@@ -186,15 +186,8 @@ public sealed class ServerLibrarySync : IServerLibrarySync
             song.FilePath = $"{rootPath}{Path.DirectorySeparatorChar}{Uri.EscapeDataString(song.RemoteId).Replace(".", "%2E")}{extension}";
             // There's no file, so the date the server added the song stands in for its creation date in sorts and smart playlists.
             song.FileCreatedDate = song.AddedUtc;
-            // Cleaned up and defaulted like tags read from files, with the user's split characters applied on top of the
-            // server's own lists of names. This comes before hashing, so changing the split characters updates the
-            // songs on the next sync.
-            song.Title = TextNormalizer.Normalize(song.Title) ?? Song.UnknownTitle;
-            song.Album = TextNormalizer.Normalize(song.Album) ?? Album.UnknownAlbumName;
-            var artists = ArtistNameHelper.SplitNames(song.Artists, artistSplitCharacters);
-            song.Artists = artists.Count > 0 ? artists : [Artist.UnknownArtistName];
-            song.AlbumArtists = ArtistNameHelper.SplitNames(song.AlbumArtists, artistSplitCharacters);
-            song.Genres = ArtistNameHelper.SplitNames(song.Genres, genreSplitCharacters);
+            // Before hashing, so changing the split characters updates the songs on the next sync.
+            song.NormalizeTags(artistSplitCharacters, genreSplitCharacters);
         }
         // A song can come back twice when the server's list changes between two pages.
         var listed = songs.DistinctBy(song => song.FilePath, StringComparer.OrdinalIgnoreCase).ToList();
@@ -220,15 +213,13 @@ public sealed class ServerLibrarySync : IServerLibrarySync
 
         var listedPaths = listed.Select(song => song.FilePath).ToHashSet(StringComparer.OrdinalIgnoreCase);
         var gone = existingPaths.Where(path => !listedPaths.Contains(path)).ToList();
-        if (gone.Count > 0 && (listed.Count == 0 || LibraryImporter.IsLikelyMissedListing(gone.Count, existing.Count, added)))
-        {
-            _logger.LogError(
-                "Sync safety guard tripped for server folder {FolderId}: it listed {ListedCount} songs, so {DeleteCount}/{ExistingCount} would be removed. Keeping them; the server likely has a library offline.",
-                folderId, listed.Count, gone.Count, existing.Count);
-            gone.Clear();
-        }
-
-        var removed = gone.Count > 0 ? await _importer.DeleteSongsAsync(folderId, gone, cancellationToken).ConfigureAwait(false) : 0;
+        var removed = 0;
+        // Unlike a folder, a server that lists nothing keeps even a few songs.
+        if (listed.Count == 0 && gone.Count > 0)
+            _logger.LogError("Server folder {FolderId} listed no songs. Keeping its {ExistingCount} songs; the server likely has a library offline.",
+                folderId, existing.Count);
+        else
+            removed = await _importer.DeleteSongsAsync(folderId, gone, existing.Count, added, cancellationToken).ConfigureAwait(false);
         // Added songs can't leave an artist, album or genre without songs, as with a scan.
         if (toImport.Count > added || removed > 0)
             await _importer.CleanUpOrphansAsync(cancellationToken).ConfigureAwait(false);

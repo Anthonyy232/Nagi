@@ -28,4 +28,10 @@ public interface IArtworkService
     ///     Returns at once if online metadata is turned off or a run is already in progress.
     /// </summary>
     Task StartMetadataBackgroundFetchAsync();
+
+    /// <summary>
+    ///     Cancels a running metadata fetch and keeps a new one from starting until <paramref name="action" /> finishes,
+    ///     so the fetch can't write images or covers for a library that is being cleared.
+    /// </summary>
+    Task RunWithoutMetadataFetchAsync(Func<Task> action);
 }

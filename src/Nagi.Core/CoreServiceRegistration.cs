@@ -51,8 +51,8 @@ public static class CoreServiceRegistration
         services.AddSingleton<LibraryNotifier>();
         services.AddSingleton<ILibraryNotifier>(sp => sp.GetRequiredService<LibraryNotifier>());
         services.AddSingleton<LibraryWriteLock>();
-        services.AddSingleton<ArtworkService>();
-        services.AddSingleton<IArtworkService>(sp => sp.GetRequiredService<ArtworkService>());
+        services.AddSingleton<LibraryArtwork>();
+        services.AddSingleton<IArtworkService, ArtworkService>();
         services.AddSingleton<LibraryImporter>();
         services.AddSingleton<ILibraryFolderService, LibraryFolderService>();
         services.AddSingleton<ILibraryReset, LibraryReset>();

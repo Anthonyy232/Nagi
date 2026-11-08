@@ -100,7 +100,6 @@ public partial class PlaylistViewModel : ClientFilteredListViewModelBase<Playlis
         PlaylistSortOrder.DateCreatedDesc, PlaylistSortOrder.DateModifiedAsc, PlaylistSortOrder.DateModifiedDesc
     ];
 
-    private readonly ILibraryReader _libraryReader;
     private readonly IPlaylistService _playlistService;
     private readonly ISmartPlaylistService _smartPlaylistService;
     private readonly IMusicPlaybackService _musicPlaybackService;
@@ -108,13 +107,12 @@ public partial class PlaylistViewModel : ClientFilteredListViewModelBase<Playlis
     private readonly IUIService _uiService;
     private int _busyCount;
 
-    public PlaylistViewModel(ILibraryReader libraryReader, ILibraryNotifier libraryNotifier, IPlaylistService playlistService,
+    public PlaylistViewModel(ILibraryNotifier libraryNotifier, IPlaylistService playlistService,
         ISmartPlaylistService smartPlaylistService, IMusicPlaybackService musicPlaybackService,
         IMusicNavigationService navigationService, IUIService uiService, ISettingsService settingsService,
         IDispatcherService dispatcherService, ILogger<PlaylistViewModel> logger)
         : base(libraryNotifier, dispatcherService, logger)
     {
-        _libraryReader = libraryReader;
         _playlistService = playlistService;
         _smartPlaylistService = smartPlaylistService;
         _musicPlaybackService = musicPlaybackService;
@@ -140,11 +138,11 @@ public partial class PlaylistViewModel : ClientFilteredListViewModelBase<Playlis
     protected override void OnLoadingChanged() => OnPropertyChanged(nameof(IsAnyOperationInProgress));
 
     // Playlists follow their own change events, not the library's.
-    protected override bool ShouldReloadOnLibraryChange(LibraryChangeKind kind) => false;
+    protected override bool ShouldReloadOnLibraryChange(LibraryChange change) => false;
 
     protected override async Task<IEnumerable<PlaylistViewModelItem>> LoadItemsAsync(CancellationToken token)
     {
-        var playlistsTask = _libraryReader.GetAllPlaylistsAsync();
+        var playlistsTask = _playlistService.GetAllPlaylistsAsync();
         var smartPlaylistsTask = _smartPlaylistService.GetAllSmartPlaylistsAsync();
         var matchCountsTask = _smartPlaylistService.GetAllMatchingSongCountsAsync();
         await Task.WhenAll(playlistsTask, smartPlaylistsTask, matchCountsTask);
@@ -202,7 +200,7 @@ public partial class PlaylistViewModel : ClientFilteredListViewModelBase<Playlis
 
         await RunAsync(async () =>
         {
-            var regularCountTask = _libraryReader.GetPlaylistCountAsync();
+            var regularCountTask = _playlistService.GetPlaylistCountAsync();
             var smartCountTask = _smartPlaylistService.GetSmartPlaylistCountAsync();
             await Task.WhenAll(regularCountTask, smartCountTask);
             var regularCount = regularCountTask.Result;
@@ -210,7 +208,7 @@ public partial class PlaylistViewModel : ClientFilteredListViewModelBase<Playlis
 
             if (totalCount > 0 && Random.Shared.Next(totalCount) < regularCount)
             {
-                if (await _libraryReader.GetRandomPlaylistIdAsync() is { } id)
+                if (await _playlistService.GetRandomPlaylistIdAsync() is { } id)
                 {
                     await _musicPlaybackService.PlayPlaylistAsync(id);
                     return;
