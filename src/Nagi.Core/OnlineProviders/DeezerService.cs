@@ -11,7 +11,7 @@ public class DeezerService : IDeezerService
 {
     private const string BaseUrl = "https://api.deezer.com";
 
-    // Deezer reports errors in a 200 response; this one means the search found nothing.
+    // Deezer reports errors in the body of a 200 response; this one means the search found nothing.
     private const int DataNotFoundErrorCode = 800;
 
     private readonly ProviderClient _client;
@@ -64,19 +64,20 @@ public class DeezerService : IDeezerService
     private Task<ServiceResult<string>> SearchAsync<T>(
         string url, Func<List<T>, string?> selectUrl, string operation, CancellationToken cancellationToken) =>
         _client.GetJsonAsync<DeezerSearchResult<T>, string>(url,
-            result =>
+            result => ServiceResult<string>.FromSuccessOrNotFound(result.Data is { } data ? selectUrl(data) : null),
+            $"Deezer {operation}", cancellationToken,
+            result => result.Error switch
             {
-                if (result.Error is { } error)
-                {
-                    if (error.Code == DataNotFoundErrorCode) return ServiceResult<string>.FromSuccessNotFound();
-                    _logger.LogWarning("Deezer returned error {Code} ({Message}) for {Operation}",
-                        error.Code, error.Message, operation);
-                    return ServiceResult<string>.FromTemporaryError();
-                }
+                null => BodyStatus.Ok,
+                { Code: DataNotFoundErrorCode } => BodyStatus.NotFound,
+                { } error => LogFailure(error, operation)
+            });
 
-                return ServiceResult<string>.FromSuccessOrNotFound(result.Data is { } data ? selectUrl(data) : null);
-            },
-            $"Deezer {operation}", cancellationToken);
+    private BodyStatus LogFailure(DeezerError error, string operation)
+    {
+        _logger.LogWarning("Deezer returned error {Code} ({Message}) for {Operation}", error.Code, error.Message, operation);
+        return BodyStatus.Failed;
+    }
 
     private sealed class DeezerSearchResult<T>
     {
