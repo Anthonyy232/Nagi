@@ -11,6 +11,7 @@ using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
 using Nagi.Core.Scrobbling;
 using Nagi.Core.Settings;
+using Nagi.Presentation.Common;
 using Nagi.Presentation.Lists;
 using Nagi.Presentation.Player;
 using Nagi.Presentation.Resources;

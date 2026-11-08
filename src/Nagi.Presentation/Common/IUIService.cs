@@ -2,11 +2,8 @@
 using System.Threading.Tasks;
 using Nagi.Core.Library;
 using Nagi.Core.Playlists;
-using Nagi.Presentation.Lyrics;
-using Nagi.Presentation.Player;
-using Nagi.Presentation.Playlists;
 
-namespace Nagi.Presentation.Shell;
+namespace Nagi.Presentation.Common;
 
 /// <summary>
 ///     Dialogs, pickers and shell actions. Implementations don't throw: when the platform can't show a dialog or
@@ -16,10 +13,6 @@ public interface IUIService
 {
     Task<PlaybackMixOptions?> ShowPlayForDialogAsync();
     Task<(int Minutes, bool FinishTrack)?> ShowSleepTimerDialogAsync();
-    /// <summary>
-    ///     Shows a confirmation dialog to the user.
-    /// </summary>
-    /// <param name="primaryButtonText">The text for the confirmation button.</param>
     /// <param name="closeButtonText">The text for the cancellation button, or null to use the localized Cancel label.</param>
     /// <param name="defaultToCancel">Makes the cancellation button the default, for destructive actions.</param>
     /// <returns>True if the user confirmed (primary button), false otherwise.</returns>

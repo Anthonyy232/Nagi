@@ -1,4 +1,4 @@
-namespace Nagi.Presentation.Playlists;
+namespace Nagi.Presentation.Common;
 
 /// <summary>
 ///     The name and optional cover image chosen in the new playlist dialog.

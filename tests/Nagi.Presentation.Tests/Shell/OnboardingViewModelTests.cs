@@ -2,6 +2,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Library;
 using Nagi.Core.MusicServers;
+using Nagi.Presentation.Common;
 using Nagi.Presentation.MusicServers;
 using Nagi.Presentation.Shell;
 using NSubstitute;

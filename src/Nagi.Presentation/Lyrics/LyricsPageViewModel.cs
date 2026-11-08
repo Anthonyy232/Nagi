@@ -12,7 +12,6 @@ using Nagi.Core.Playback;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Shell;
 
 namespace Nagi.Presentation.Lyrics;
 

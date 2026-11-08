@@ -7,7 +7,6 @@ using Nagi.Core.Scrobbling;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Shell;
 using CoreStrings = Nagi.Core.Resources.Strings;
 
 namespace Nagi.Presentation.Settings;

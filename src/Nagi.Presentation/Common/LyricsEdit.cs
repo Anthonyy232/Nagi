@@ -1,4 +1,4 @@
-namespace Nagi.Presentation.Lyrics;
+namespace Nagi.Presentation.Common;
 
 public enum LyricsEditAction
 {

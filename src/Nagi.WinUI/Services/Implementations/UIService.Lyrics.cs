@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Nagi.Presentation.Common;
 using Nagi.Presentation.Lyrics;
 using Nagi.Presentation.Resources;
 
