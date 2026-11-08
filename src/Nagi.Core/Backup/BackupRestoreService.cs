@@ -4,6 +4,7 @@ using System.Text.Json;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Platform;
+using Nagi.Core.Playback;
 using Nagi.Core.Settings;
 
 namespace Nagi.Core.Backup;
@@ -15,15 +16,18 @@ public class BackupRestoreService : IBackupRestoreService
 
     private readonly IPathConfiguration _pathConfiguration;
     private readonly ISettingsService _settingsService;
+    private readonly IMusicPlaybackService _playback;
     private readonly ILogger<BackupRestoreService> _logger;
 
     public BackupRestoreService(
         IPathConfiguration pathConfiguration,
         ISettingsService settingsService,
+        IMusicPlaybackService playback,
         ILogger<BackupRestoreService> logger)
     {
         _pathConfiguration = pathConfiguration;
         _settingsService = settingsService;
+        _playback = playback;
         _logger = logger;
     }
 
@@ -53,12 +57,6 @@ public class BackupRestoreService : IBackupRestoreService
                     var target = Path.Combine(stagingPath, DatabaseFileName);
                     await Task.Run(() => BackupDatabase(databasePath, target)).ConfigureAwait(false);
                 }
-
-                // The saved queue refers to the database's songs, so it is restored along with them.
-                var playbackStatePath = _pathConfiguration.PlaybackStateFilePath;
-                if (File.Exists(playbackStatePath))
-                    await CopyFileAsync(playbackStatePath, Path.Combine(stagingPath, Path.GetFileName(playbackStatePath)))
-                        .ConfigureAwait(false);
 
                 foreach (var folder in _pathConfiguration.LibraryCacheFolders.Append(_pathConfiguration.RomanizationPacksPath))
                     if (Directory.Exists(folder))
@@ -153,15 +151,6 @@ public class BackupRestoreService : IBackupRestoreService
                     File.Delete(incomingSettings);
                 }
 
-                try
-                {
-                    SqliteConnection.ClearAllPools();
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Failed to clear SQLite connection pools. Restore may fail if DB is locked.");
-                }
-
                 var journal = new List<RestoreJournalEntry>();
                 var restoredCount = 0;
                 var incomingDatabase = Path.Combine(incomingPath, DatabaseFileName);
@@ -179,6 +168,20 @@ public class BackupRestoreService : IBackupRestoreService
                     check.CommandText = "PRAGMA quick_check;";
                     if (check.ExecuteScalar() is not "ok")
                         throw new InvalidDataException("The backup database failed SQLite's integrity check.");
+                }
+
+                // The app restarts through its normal shutdown after a restore, which ends the current listen by its
+                // row ID and saves the queue. Ending them now keeps the listen in the database it belongs to and leaves
+                // nothing to write over the restored data.
+                await _playback.ClearQueueAsync().ConfigureAwait(false);
+
+                try
+                {
+                    SqliteConnection.ClearAllPools();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to clear SQLite connection pools. Restore may fail if DB is locked.");
                 }
 
                 // On Windows, deny database reads/writes during replacement and rollback,

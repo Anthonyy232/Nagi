@@ -50,7 +50,8 @@ public static class AppServiceRegistration
         services.AddSingleton<IUIService>(sp => sp.GetRequiredService<UIService>());
         services.AddSingleton<IDispatcherService, DispatcherService>();
         services.AddSingleton<IThemeService, ThemeService>();
-        services.AddSingleton<IApplicationLifecycle, ApplicationLifecycle>();
+        services.AddSingleton<ApplicationLifecycle>();
+        services.AddSingleton<IApplicationLifecycle>(sp => sp.GetRequiredService<ApplicationLifecycle>());
         services.AddSingleton<IAppInfoService, AppInfoService>();
         services.AddSingleton<NavigationService>();
         services.AddSingleton<INavigationService>(sp => sp.GetRequiredService<NavigationService>());
