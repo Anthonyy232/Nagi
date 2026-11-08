@@ -121,8 +121,8 @@ public sealed class LaunchCoordinator
             switch (command)
             {
                 case LaunchCommand.MiniPlayer:
-                    // The window behaviour swaps a minimized main window for the mini player.
                     _windowService.ShowMinimized();
+                    _windowService.ShowMiniPlayer();
                     break;
                 case LaunchCommand.ShuffleAll:
                     await _playbackService.PlayScopeAsync(SongScope.Library, startShuffled: true);
