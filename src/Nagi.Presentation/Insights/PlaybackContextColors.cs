@@ -1,7 +1,7 @@
 using Nagi.Core.Playback;
 using Nagi.Presentation.Theme;
 
-namespace Nagi.Presentation.Player;
+namespace Nagi.Presentation.Insights;
 
 /// <summary>
 ///     The chart color for each playback source on the Insights page.
