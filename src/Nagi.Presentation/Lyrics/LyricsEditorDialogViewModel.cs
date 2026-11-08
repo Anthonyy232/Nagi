@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using Nagi.Presentation.Common;
 
 namespace Nagi.Presentation.Lyrics;
@@ -5,7 +6,7 @@ namespace Nagi.Presentation.Lyrics;
 /// <summary>
 ///     The lyrics editor, which saves the edited lyrics or removes the saved ones.
 /// </summary>
-public sealed class LyricsEditorDialogViewModel
+public sealed partial class LyricsEditorDialogViewModel : ObservableObject
 {
     private readonly string _savedLyrics;
 
@@ -16,7 +17,9 @@ public sealed class LyricsEditorDialogViewModel
         CanRemove = canRemove;
     }
 
-    public string Lyrics { get; set; }
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanSave))]
+    public partial string Lyrics { get; set; }
 
     public bool CanRemove { get; }
 

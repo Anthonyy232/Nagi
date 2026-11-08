@@ -102,7 +102,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid x:Name="RootGrid">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="PlayerVisibilityStates">
                 <VisualState x:Name="PlayerVisible">
@@ -374,11 +374,11 @@
                                                 <ProgressRing Width="16" Height="16" Margin="0,8"
                                                               IsHitTestVisible="False" HorizontalAlignment="Center"
                                                               IsActive="{x:Bind ViewModel.SidebarQueue.ShowMoreLoading, Mode=OneWay}"
-                                                              Visibility="{x:Bind ViewModel.SidebarQueue.ShowMoreLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                              Visibility="{x:Bind ViewModel.SidebarQueue.ShowMoreLoading, Mode=OneWay}" />
                                             </ListView.Footer>
                                             <ListView.ItemTemplate>
                                                 <DataTemplate x:DataType="player:QueueEntry">
-                                                    <Grid Background="Transparent" Tag="{x:Bind}" DoubleTapped="QueueEntry_DoubleTapped"
+                                                    <localControls:NowPlayingGrid Background="Transparent" Tag="{x:Bind}" DoubleTapped="QueueEntry_DoubleTapped"
                                                           ToolTipService.ToolTip="{x:Bind Title}">
                                                         <Grid.ContextFlyout>
                                                             <MenuFlyout>
@@ -398,13 +398,12 @@
                                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                                    Visibility="{Binding DataContext.QueueDisplaySettings.ShowPosition, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                                         <StackPanel Grid.Column="1" Margin="0,0,12,0" Spacing="4">
-                                                            <TextBlock x:Name="SongTitle" Text="{x:Bind Title}" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
-                                                            <StackPanel Visibility="{Binding DataContext.QueueDisplaySettings.ShowArtist, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                                                <TextBlock Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
-                                                                           uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
-                                                                           uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind Song}"
-                                                                           uihelpers:MultiArtistHyperlinkHelper.Command="{Binding DataContext.GoToArtistCommand, ElementName=MainPageRoot}" />
-                                                            </StackPanel>
+                                                            <TextBlock localControls:NowPlayingGrid.IsTitle="True" Text="{x:Bind Title}" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
+                                                            <localControls:ArtistLinks Style="{StaticResource SongListArtistLinksStyle}"
+                                                                                       Visibility="{Binding DataContext.QueueDisplaySettings.ShowArtist, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                                                       ArtistName="{x:Bind ArtistName}"
+                                                                                       Song="{x:Bind Song}"
+                                                                                       Command="{Binding DataContext.GoToArtistCommand, ElementName=MainPageRoot}" />
                                                             <TextBlock Text="{x:Bind GenreText}" Style="{ThemeResource CaptionTextBlockStyle}"
                                                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"
                                                                        Visibility="{Binding DataContext.QueueDisplaySettings.ShowGenre, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
@@ -412,12 +411,12 @@
                                                         <TextBlock Grid.Column="2" Text="{x:Bind Duration, Converter={StaticResource TimeSpanToTimeStringConverter}}"
                                                                    Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                                    Visibility="{Binding DataContext.QueueDisplaySettings.ShowDuration, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                                    </Grid>
+                                                    </localControls:NowPlayingGrid>
                                                 </DataTemplate>
                                             </ListView.ItemTemplate>
                                         </ListView>
                                         <StackPanel Margin="20" Spacing="8" VerticalAlignment="Center" IsHitTestVisible="False"
-                                                    Visibility="{x:Bind ViewModel.SidebarQueue.ShowEmptyState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                    Visibility="{x:Bind ViewModel.SidebarQueue.ShowEmptyState, Mode=OneWay}">
                                             <FontIcon Glyph="&#xE8D6;" FontSize="28" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                             <TextBlock Text="{x:Bind resources:Strings.QueuePanel_EmptyTitle}" FontWeight="SemiBold"
                                                        TextAlignment="Center" TextWrapping="Wrap" />
@@ -427,9 +426,9 @@
                                         <ProgressRing Width="32" Height="32" IsHitTestVisible="False"
                                                       HorizontalAlignment="Center" VerticalAlignment="Center"
                                                       IsActive="{x:Bind ViewModel.SidebarQueue.ShowInitialLoading, Mode=OneWay}"
-                                                      Visibility="{x:Bind ViewModel.SidebarQueue.ShowInitialLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                      Visibility="{x:Bind ViewModel.SidebarQueue.ShowInitialLoading, Mode=OneWay}" />
                                         </Grid>
-                                        <Grid Grid.Row="2" RowSpacing="12" Visibility="{x:Bind ViewModel.IsHistoryVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <Grid Grid.Row="2" RowSpacing="12" Visibility="{x:Bind ViewModel.IsHistoryVisible, Mode=OneWay}">
                                             <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
                                             <TextBox Style="{StaticResource SearchTextBoxStyle}" PlaceholderText="{x:Bind resources:Strings.Listening_HistorySearch}" Text="{x:Bind ViewModel.History.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                             <InfoBar Grid.Row="1" IsOpen="{x:Bind ViewModel.History.HasLoadError, Mode=OneWay}" Severity="Error" IsClosable="False" Message="{x:Bind resources:Strings.Listening_HistoryLoadError}">
@@ -451,7 +450,7 @@
                                                 <ListView.Footer>
                                                     <ProgressRing Width="16" Height="16" Margin="0,8" IsHitTestVisible="False" HorizontalAlignment="Center"
                                                                   IsActive="{x:Bind ViewModel.History.ShowMoreLoading, Mode=OneWay}"
-                                                                  Visibility="{x:Bind ViewModel.History.ShowMoreLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                                  Visibility="{x:Bind ViewModel.History.ShowMoreLoading, Mode=OneWay}" />
                                                 </ListView.Footer>
                                                 <ListView.ItemTemplateSelector>
                                                     <uihelpers:HeaderedListTemplateSelector>
@@ -462,7 +461,7 @@
                                                         </uihelpers:HeaderedListTemplateSelector.HeaderTemplate>
                                                         <uihelpers:HeaderedListTemplateSelector.SongTemplate>
                                                             <DataTemplate x:DataType="player:RecentListenEntry">
-                                                                <Grid Background="Transparent" Tag="{x:Bind}" DoubleTapped="HistoryEntry_DoubleTapped"
+                                                                <localControls:NowPlayingGrid Background="Transparent" Tag="{x:Bind}" DoubleTapped="HistoryEntry_DoubleTapped"
                                                                       ToolTipService.ToolTip="{x:Bind Title}">
                                                                     <Grid.ContextFlyout><MenuFlyout>
                                                                         <MenuFlyoutItem Text="{x:Bind resources:Strings.Generic_Play}" Command="{Binding DataContext.PlayHistoryNowCommand, ElementName=MainPageRoot}" CommandParameter="{x:Bind}" />
@@ -470,23 +469,21 @@
                                                                     </MenuFlyout></Grid.ContextFlyout>
                                                                     <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                                                                     <StackPanel Margin="0,0,12,0" Spacing="4">
-                                                                        <TextBlock x:Name="SongTitle" Text="{x:Bind Title}" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
-                                                                        <StackPanel>
-                                                                            <TextBlock Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
-                                                                                       uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
-                                                                                       uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind Song}"
-                                                                                       uihelpers:MultiArtistHyperlinkHelper.Command="{Binding DataContext.GoToArtistCommand, ElementName=MainPageRoot}" />
-                                                                        </StackPanel>
+                                                                        <TextBlock localControls:NowPlayingGrid.IsTitle="True" Text="{x:Bind Title}" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
+                                                                        <localControls:ArtistLinks Style="{StaticResource SongListArtistLinksStyle}"
+                                                                                                   ArtistName="{x:Bind ArtistName}"
+                                                                                                   Song="{x:Bind Song}"
+                                                                                                   Command="{Binding DataContext.GoToArtistCommand, ElementName=MainPageRoot}" />
                                                                     </StackPanel>
                                                                     <TextBlock Grid.Column="1" Text="{x:Bind TimeText}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                                                                </Grid>
+                                                                </localControls:NowPlayingGrid>
                                                             </DataTemplate>
                                                         </uihelpers:HeaderedListTemplateSelector.SongTemplate>
                                                     </uihelpers:HeaderedListTemplateSelector>
                                                 </ListView.ItemTemplateSelector>
                                             </ListView>
-                                            <TextBlock Grid.Row="2" Text="{x:Bind ViewModel.History.EmptyStateText, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind ViewModel.History.ShowEmptyState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                            <ProgressRing Grid.Row="2" Width="24" Height="24" IsActive="{x:Bind ViewModel.History.ShowInitialLoading, Mode=OneWay}" Visibility="{x:Bind ViewModel.History.ShowInitialLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            <TextBlock Grid.Row="2" Text="{x:Bind ViewModel.History.EmptyStateText, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind ViewModel.History.ShowEmptyState, Mode=OneWay}" />
+                                            <ProgressRing Grid.Row="2" Width="24" Height="24" IsActive="{x:Bind ViewModel.History.ShowInitialLoading, Mode=OneWay}" Visibility="{x:Bind ViewModel.History.ShowInitialLoading, Mode=OneWay}" />
                                         </Grid>
                                     </Grid>
                                 </Border>
@@ -556,7 +553,7 @@
                                         VerticalContentAlignment="Stretch"
                                         Command="{x:Bind ViewModel.GoToAlbumCommand, Mode=OneWay}"
                                         Style="{StaticResource DefaultButtonStyle}"
-                                        Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                        Visibility="{x:Bind ViewModel.IsArtworkAvailable, Mode=OneWay}">
                                         <Border
                                             Width="{StaticResource FloatingPlayerArtSize}"
                                             Height="{StaticResource FloatingPlayerArtSize}"
@@ -584,21 +581,16 @@
                                                 <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="16" Glyph="&#xE712;" Foreground="{StaticResource PlayerAccentBrush}" />
                                             </Button>
                                         </Grid>
-                                        <Grid
+                                        <localControls:ArtistLinks
                                             x:Name="ArtistNameHyperlink"
                                             MaxHeight="0"
-                                            Visibility="{x:Bind ViewModel.CurrentPlayingTrack, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}">
-                                            <TextBlock
-                                                VerticalAlignment="Center"
-                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                Style="{ThemeResource BodyTextBlockStyle}"
-                                                TextTrimming="CharacterEllipsis"
-                                                TextWrapping="NoWrap"
-                                                uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
-                                                uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay}"
-                                                uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=MainPageRoot}" />
-                                        </Grid>
-                                        <Button Content="{x:Bind ViewModel.StopScheduleText, Mode=OneWay}" Padding="0,2" Background="Transparent" BorderThickness="0" HorizontalAlignment="Left" FontSize="12" Visibility="{x:Bind ViewModel.IsStopScheduled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                            Visibility="{x:Bind ViewModel.CurrentPlayingTrack, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}"
+                                            VerticalAlignment="Center"
+                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                            ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
+                                            Song="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay}"
+                                            Command="{x:Bind ViewModel.GoToArtistCommand}" />
+                                        <Button Content="{x:Bind ViewModel.StopScheduleText, Mode=OneWay}" Padding="0,2" Background="Transparent" BorderThickness="0" HorizontalAlignment="Left" FontSize="12" Visibility="{x:Bind ViewModel.IsStopScheduled, Mode=OneWay}">
                                             <Button.Flyout><MenuFlyout Opening="TimerOptions_Opening" /></Button.Flyout>
                                         </Button>
                                     </StackPanel>
@@ -659,7 +651,7 @@
                                             AutomationProperties.Name="{x:Bind resources:Strings.Settings_Button_Volume, Mode=OneTime}"
                                             Foreground="{StaticResource PlayerAccentBrush}"
                                             Value="{x:Bind ViewModel.CurrentVolume, Mode=TwoWay}"
-                                            Visibility="{x:Bind ViewModel.IsVolumeControlVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                            Visibility="{x:Bind ViewModel.IsVolumeControlVisible, Mode=OneWay}">
                                             <Slider.Resources>
                                                 <x:Double x:Key="SliderTrackThemeHeight">4</x:Double>
                                             </Slider.Resources>
@@ -721,16 +713,11 @@
             </NavigationView>
         </Grid>
 
-        <localControls:TrayIconUserControl
-            x:Name="AppTrayIconHost"
-            VerticalAlignment="Top" HorizontalAlignment="Left"
-            Width="1" Height="1" Opacity="0" IsTabStop="False" />
-
         <Grid
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             IsHitTestVisible="{x:Bind GlobalOperation.IsInProgress, Mode=OneWay}"
             Opacity="0.85"
-            Visibility="{x:Bind GlobalOperation.IsInProgress, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+            Visibility="{x:Bind GlobalOperation.IsInProgress, Mode=OneWay}">
             <StackPanel
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -755,11 +742,8 @@
                     HorizontalAlignment="Center"
                     Command="{x:Bind GlobalOperation.CancelCommand}"
                     Content="{x:Bind resources:Strings.Generic_Cancel, Mode=OneTime}"
-                    Visibility="{x:Bind GlobalOperation.IsCancellable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
+                    Visibility="{x:Bind GlobalOperation.IsCancellable, Mode=OneWay}" />
             </StackPanel>
         </Grid>
-
-        <localControls:InsightsSeeAllOverlay />
-
     </Grid>
 </UserControl>

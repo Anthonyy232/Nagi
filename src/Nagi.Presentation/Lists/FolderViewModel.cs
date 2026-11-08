@@ -45,7 +45,7 @@ public sealed class FolderViewModelItem
 ///     Manages the library's folders and music servers: adding and removing them, rescanning folders and syncing
 ///     servers.
 /// </summary>
-public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderViewModelItem>
+public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderViewModelItem>, ICollectionViewModel
 {
     private readonly ILibraryReader _libraryReader;
     private readonly ILibraryFolderService _libraryFolders;
@@ -98,7 +98,7 @@ public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderVie
         OnPropertyChanged(nameof(IsAnyOperationInProgress));
         foreach (var command in new IRelayCommand[]
                  {
-                     PlayFolderCommand, PlayRandomFolderCommand, AddFolderCommand, DeleteFolderCommand, RescanFolderCommand,
+                     PlayFolderCommand, PlayRandomCommand, AddFolderCommand, DeleteFolderCommand, RescanFolderCommand,
                      AddServerCommand, SyncServerCommand, SignInToServerCommand
                  })
             command.NotifyCanExecuteChanged();
@@ -107,6 +107,10 @@ public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderVie
     private bool CanStartAction() => !IsAnyOperationInProgress;
 
     public void OpenFolder(FolderViewModelItem folder) => _navigationService.OpenFolder(folder.Id, folder.Name);
+
+    void ICollectionViewModel.Open(object item) => OpenFolder((FolderViewModelItem)item);
+
+    ISortOrderSelection? ICollectionViewModel.Sort => null;
 
     [RelayCommand(CanExecute = nameof(CanStartAction))]
     private async Task PlayFolderAsync(Guid folderId)
@@ -117,7 +121,7 @@ public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderVie
     }
 
     [RelayCommand(CanExecute = nameof(CanStartAction))]
-    private async Task PlayRandomFolderAsync()
+    private async Task PlayRandomAsync()
     {
         await UserAction.RunAsync(async () =>
         {

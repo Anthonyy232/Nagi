@@ -1,9 +1,7 @@
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Core.Library;
 using Nagi.Presentation.Lists;
-using Nagi.Presentation;
 using Windows.ApplicationModel.DataTransfer;
 
 namespace Nagi.WinUI.Pages;
@@ -14,7 +12,7 @@ public sealed partial class PlaylistSongViewPage : SongListPage
     public PlaylistSongViewPage()
     {
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<ViewModelFactory>().Create<PlaylistSongListViewModel>();
+        ViewModel = GetViewModel<PlaylistSongListViewModel>();
         DataContext = ViewModel;
         InitializeSongList(ViewModel, ColumnHeaderHost, SongsListView);
     }

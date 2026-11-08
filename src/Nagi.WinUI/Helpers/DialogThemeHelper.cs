@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Nagi.WinUI.Styles;
 
 namespace Nagi.WinUI.Helpers;
 
@@ -11,7 +12,7 @@ internal static class DialogThemeHelper
     // same brushes, so they look like pages and follow accent changes.
     private static readonly Lazy<IReadOnlyList<object>> AccentOverrideKeys = new(() =>
         Application.Current.Resources.MergedDictionaries
-            .Single(dictionary => dictionary.Source?.AbsolutePath.EndsWith("/Styles/Colors.xaml") == true)
+            .Single(dictionary => dictionary.Source?.AbsolutePath.EndsWith(AppResourceKeys.ColorsDictionaryPath) == true)
             .ThemeDictionaries["Default"] is ResourceDictionary overrides
             ? overrides.Keys.ToList()
             : []);

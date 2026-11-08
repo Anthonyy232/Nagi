@@ -696,23 +696,14 @@ Kas soovite jätkata?</value>
   <data name="TrayIcon_Exit" xml:space="preserve">
     <value>Välju</value>
   </data>
-  <data name="MiniPlayer_BackButton_ToolTip" xml:space="preserve">
+  <data name="Player_BackButton_ToolTip" xml:space="preserve">
     <value>Tagasi mängijasse</value>
   </data>
-  <data name="MiniPlayer_UpNextHeader" xml:space="preserve">
+  <data name="Player_UpNextHeader" xml:space="preserve">
     <value>Järgmisena</value>
   </data>
   <data name="MiniPlayer_RestoreButton_ToolTip" xml:space="preserve">
     <value>Näita Nagit</value>
-  </data>
-  <data name="MiniPlayer_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Eelmine</value>
-  </data>
-  <data name="MiniPlayer_NextButton_ToolTip" xml:space="preserve">
-    <value>Järgmine</value>
-  </data>
-  <data name="MiniPlayer_QueueButton_ToolTip" xml:space="preserve">
-    <value>Järgmisena</value>
   </data>
   <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
     <value>Palun kaaluge sellest teatamist, luues veateate </value>
@@ -794,21 +785,6 @@ Kas soovite jätkata?</value>
   </data>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Salvesta</value>
-  </data>
-  <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Eelmine</value>
-  </data>
-  <data name="TrayPopup_NextButton_ToolTip" xml:space="preserve">
-    <value>Järgmine</value>
-  </data>
-  <data name="TrayPopup_QueueButton_ToolTip" xml:space="preserve">
-    <value>Järgmisena</value>
-  </data>
-  <data name="TrayPopup_BackButton_ToolTip" xml:space="preserve">
-    <value>Tagasi mängijasse</value>
-  </data>
-  <data name="TrayPopup_UpNextHeader" xml:space="preserve">
-    <value>Järgmisena</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Eelmine</value>

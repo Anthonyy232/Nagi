@@ -1,0 +1,243 @@
+<UserControl
+    x:Class="Nagi.WinUI.Controls.CompactPlayerView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:library="using:Nagi.Core.Library"
+    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
+    xmlns:local="using:Nagi.WinUI.Controls"
+    xmlns:resources="using:Nagi.Presentation.Resources">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="QueueItemTemplate" x:DataType="library:Song">
+            <StackPanel>
+                <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}"
+                           TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
+                <local:ArtistLinks FontSize="{StaticResource CaptionTextBlockFontSize}" HorizontalAlignment="Left"
+                                   ArtistName="{x:Bind ArtistName}" Song="{x:Bind}"
+                                   Command="{Binding ViewModel.GoToArtistCommand, ElementName=Root}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="OnImageQueueItemTemplate" x:DataType="library:Song">
+            <StackPanel>
+                <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}"
+                           Foreground="{StaticResource MediaOnImageTextPrimaryBrush}"
+                           TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
+                <local:ArtistLinks FontSize="11" HorizontalAlignment="Left"
+                                   Foreground="{StaticResource MediaOnImageControlSecondaryBrush}"
+                                   ArtistName="{x:Bind ArtistName}" Song="{x:Bind}"
+                                   Command="{Binding ViewModel.GoToArtistCommand, ElementName=Root}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <Style x:Key="OnImageUpNextHeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{StaticResource MediaOnImageTextPrimaryBrush}" />
+            <Setter Property="Margin" Value="44,0" />
+        </Style>
+    </UserControl.Resources>
+
+    <!--  Named for the queue item templates, which reach the view model through it.  -->
+    <Grid x:Name="Root">
+        <Grid.Resources>
+            <Style TargetType="Button" BasedOn="{StaticResource MediaControlButtonStyle}" />
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="ViewStates">
+                <VisualState x:Name="PlayerView" />
+                <VisualState x:Name="QueueView">
+                    <VisualState.Setters>
+                        <Setter Target="BackButton.Visibility" Value="Visible" />
+                        <Setter Target="UpNextHeader.Visibility" Value="Visible" />
+                        <Setter Target="QueueListView.Visibility" Value="Visible" />
+                        <Setter Target="NowPlayingText.Visibility" Value="Collapsed" />
+                        <Setter Target="PlayerPanel.Visibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+
+            <!--  The tray popup's look is the default; the mini player shows the controls over the album art.  -->
+            <VisualStateGroup x:Name="SurfaceStates">
+                <VisualState x:Name="OnTheme" />
+                <VisualState x:Name="OnImage">
+                    <VisualState.Setters>
+                        <Setter Target="NowPlayingText.Margin" Value="44,0" />
+                        <Setter Target="SongTitle.Foreground" Value="{StaticResource MediaOnImageTextPrimaryBrush}" />
+                        <Setter Target="Artists.FontSize" Value="12" />
+                        <Setter Target="Artists.Foreground" Value="{StaticResource MediaOnImageTextSecondaryBrush}" />
+                        <Setter Target="UpNextHeader.Style" Value="{StaticResource OnImageUpNextHeaderStyle}" />
+                        <Setter Target="PlayerPanel.Padding" Value="16,0,16,16" />
+                        <Setter Target="PlayerStack.Spacing" Value="12" />
+                        <Setter Target="MediaSeekerSlider.Margin" Value="4,0" />
+                        <Setter Target="MediaSeekerSlider.Style" Value="{StaticResource MediaOnImageSeekerSliderStyle}" />
+                        <Setter Target="MediaControlsPanel.Spacing" Value="2" />
+                        <Setter Target="BackButton.Style" Value="{StaticResource MediaOnImageControlButtonStyle}" />
+                        <Setter Target="ShuffleButton.Style" Value="{StaticResource MediaOnImageControlButtonStyle}" />
+                        <Setter Target="PreviousButton.Style" Value="{StaticResource MediaOnImageControlButtonStyle}" />
+                        <Setter Target="PlayPauseButton.Style" Value="{StaticResource MediaOnImageControlButtonStyle}" />
+                        <Setter Target="NextButton.Style" Value="{StaticResource MediaOnImageControlButtonStyle}" />
+                        <Setter Target="RepeatButton.Style" Value="{StaticResource MediaOnImageControlButtonStyle}" />
+                        <Setter Target="QueueButton.Style" Value="{StaticResource MediaOnImageControlButtonStyle}" />
+                        <Setter Target="VolumeButton.Style" Value="{StaticResource MediaOnImageControlButtonStyle}" />
+                        <Setter Target="VolumeTrackIcon.Foreground" Value="{StaticResource MediaOnImageControlSecondaryBrush}" />
+                        <Setter Target="VolumeLevelIcon.Foreground" Value="{StaticResource MediaOnImageAccentBrush}" />
+                        <Setter Target="QueueListView.Margin" Value="0" />
+                        <Setter Target="QueueListView.Padding" Value="16,12,16,16" />
+                        <Setter Target="QueueListView.ItemTemplate" Value="{StaticResource OnImageQueueItemTemplate}" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid Grid.Row="0" Margin="16,16,16,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="BackButton"
+                    Grid.Column="0"
+                    Visibility="Collapsed"
+                    Click="BackButton_Click"
+                    ToolTipService.ToolTip="{x:Bind resources:Strings.Player_BackButton_ToolTip}"
+                    AutomationProperties.Name="{x:Bind resources:Strings.Player_BackButton_ToolTip}">
+                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE72B;" />
+            </Button>
+
+            <StackPanel x:Name="NowPlayingText"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="3"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Spacing="2">
+                <TextBlock x:Name="SongTitle"
+                           HorizontalAlignment="Center"
+                           Style="{ThemeResource BodyStrongTextBlockStyle}"
+                           Text="{x:Bind ViewModel.SongTitle, Mode=OneWay}"
+                           TextAlignment="Center"
+                           TextTrimming="CharacterEllipsis"
+                           TextWrapping="NoWrap" />
+                <local:ArtistLinks x:Name="Artists"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
+                                   Song="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay}"
+                                   Command="{x:Bind ViewModel.GoToArtistCommand, Mode=OneWay}" />
+            </StackPanel>
+
+            <TextBlock x:Name="UpNextHeader"
+                       Grid.Column="0"
+                       Grid.ColumnSpan="3"
+                       Margin="12,0,12,4"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Style="{ThemeResource SubtitleTextBlockStyle}"
+                       Text="{x:Bind resources:Strings.Player_UpNextHeader}"
+                       Visibility="Collapsed" />
+
+            <ContentPresenter Grid.Column="2" Content="{x:Bind HeaderTrailingContent, Mode=OneWay}" />
+        </Grid>
+
+        <Grid x:Name="PlayerPanel" Grid.Row="1" Padding="16,24,16,16">
+            <StackPanel x:Name="PlayerStack" VerticalAlignment="Bottom" Spacing="24">
+                <Slider x:Name="MediaSeekerSlider"
+                        Style="{StaticResource MediaSeekerSliderStyle}"
+                        AutomationProperties.Name="{x:Bind resources:Strings.Player_SeekSlider_Name}"
+                        IsThumbToolTipEnabled="True"
+                        Maximum="{x:Bind ViewModel.TotalDuration, Mode=OneWay, Converter={StaticResource SliderMaximumConverter}}"
+                        ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"
+                        Value="{x:Bind ViewModel.CurrentPosition, Mode=TwoWay}" />
+
+                <StackPanel x:Name="MediaControlsPanel" HorizontalAlignment="Center" Orientation="Horizontal" Spacing="8">
+                    <Button x:Name="ShuffleButton"
+                            Command="{x:Bind ViewModel.ToggleShuffleCommand, Mode=OneWay}"
+                            ToolTipService.ToolTip="{x:Bind ViewModel.ShuffleButtonToolTip, Mode=OneWay}"
+                            AutomationProperties.Name="{x:Bind ViewModel.ShuffleButtonToolTip, Mode=OneWay}">
+                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                  Glyph=""
+                                  Opacity="{x:Bind ViewModel.IsShuffleEnabled, Mode=OneWay, Converter={StaticResource ToggleIconOpacityConverter}}" />
+                    </Button>
+                    <Button x:Name="PreviousButton"
+                            Command="{x:Bind ViewModel.PreviousCommand, Mode=OneWay}"
+                            ToolTipService.ToolTip="{x:Bind resources:Strings.Player_PreviousButton_ToolTip}"
+                            AutomationProperties.Name="{x:Bind resources:Strings.Player_PreviousButton_ToolTip}">
+                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE892;" />
+                    </Button>
+                    <Button x:Name="PlayPauseButton"
+                            Command="{x:Bind ViewModel.PlayPauseCommand, Mode=OneWay}"
+                            ToolTipService.ToolTip="{x:Bind ViewModel.PlayPauseButtonToolTip, Mode=OneWay}"
+                            AutomationProperties.Name="{x:Bind ViewModel.PlayPauseButtonToolTip, Mode=OneWay}">
+                        <Grid>
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="24"
+                                      Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.PlayPauseIcon), Mode=OneWay}"
+                                      Visibility="{x:Bind ViewModel.IsOpening, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                            <ProgressRing Width="20" Height="20" IsActive="{x:Bind ViewModel.IsOpening, Mode=OneWay}" />
+                        </Grid>
+                    </Button>
+                    <Button x:Name="NextButton"
+                            Command="{x:Bind ViewModel.NextCommand, Mode=OneWay}"
+                            ToolTipService.ToolTip="{x:Bind resources:Strings.Player_NextButton_ToolTip}"
+                            AutomationProperties.Name="{x:Bind resources:Strings.Player_NextButton_ToolTip}">
+                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE893;" />
+                    </Button>
+                    <Button x:Name="RepeatButton"
+                            Command="{x:Bind ViewModel.CycleRepeatCommand, Mode=OneWay}"
+                            ToolTipService.ToolTip="{x:Bind ViewModel.RepeatButtonToolTip, Mode=OneWay}"
+                            AutomationProperties.Name="{x:Bind ViewModel.RepeatButtonToolTip, Mode=OneWay}">
+                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                  Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.RepeatIcon), Mode=OneWay}" />
+                    </Button>
+                    <Button x:Name="QueueButton"
+                            Click="QueueButton_Click"
+                            ToolTipService.ToolTip="{x:Bind resources:Strings.Player_QueueButton_ToolTip}"
+                            AutomationProperties.Name="{x:Bind resources:Strings.Player_QueueButton_ToolTip}">
+                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE90B;" />
+                    </Button>
+                    <Button x:Name="VolumeButton"
+                            Command="{x:Bind ViewModel.ToggleMuteCommand, Mode=OneWay}"
+                            PointerWheelChanged="VolumeButton_PointerWheelChanged"
+                            ToolTipService.ToolTip="{x:Bind ViewModel.VolumeButtonToolTip, Mode=OneWay}"
+                            AutomationProperties.Name="{x:Bind ViewModel.VolumeButtonToolTip, Mode=OneWay}">
+                        <Grid Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <FontIcon x:Name="VolumeTrackIcon"
+                                      FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                      FontSize="20"
+                                      Foreground="{ThemeResource TextFillColorDisabledBrush}"
+                                      Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.VolumeIcon), Mode=OneWay}" />
+                            <FontIcon x:Name="VolumeLevelIcon"
+                                      FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                      FontSize="20"
+                                      Foreground="{StaticResource AppPrimaryColorBrush}"
+                                      Clip="{x:Bind ViewModel.CurrentVolume, Mode=OneWay, Converter={StaticResource VolumeToClipRectConverter}, ConverterParameter='20'}"
+                                      Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.VolumeIcon), Mode=OneWay}" />
+                        </Grid>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <ListView x:Name="QueueListView"
+                  Grid.Row="1"
+                  Margin="16,0,16,16"
+                  uihelpers:ScrollEdgeFade.IsEnabled="True"
+                  ItemContainerStyle="{StaticResource PaddedListViewItemStyle}"
+                  ItemTemplate="{StaticResource QueueItemTemplate}"
+                  ItemsSource="{x:Bind ViewModel.CurrentQueue, Mode=OneWay}"
+                  SelectionMode="None"
+                  Visibility="Collapsed">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel ItemsUpdatingScrollMode="KeepItemsInView" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+        </ListView>
+    </Grid>
+</UserControl>

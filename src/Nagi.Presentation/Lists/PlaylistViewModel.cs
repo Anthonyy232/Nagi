@@ -64,11 +64,9 @@ public partial class PlaylistViewModelItem : ObservableObject
     [ObservableProperty] public partial string Name { get; set; }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsArtworkAvailable))]
     [NotifyPropertyChangedFor(nameof(IsCustomImage))]
     public partial string? CoverImageUri { get; set; }
 
-    public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverImageUri);
     public bool IsCustomImage => ImageStorageHelper.IsCustomImage(CoverImageUri);
 
     public int SongCount { get; }
@@ -85,7 +83,7 @@ public partial class PlaylistViewModelItem : ObservableObject
     public override string ToString() => Name;
 }
 
-public partial class PlaylistViewModel : ClientFilteredListViewModelBase<PlaylistViewModelItem>
+public partial class PlaylistViewModel : ClientFilteredListViewModelBase<PlaylistViewModelItem>, ICollectionViewModel
 {
     private static readonly PlaylistSortOrder[] SortOrders =
     [
@@ -168,6 +166,10 @@ public partial class PlaylistViewModel : ClientFilteredListViewModelBase<Playlis
             _navigationService.OpenPlaylist(playlist.Id, playlist.Name, playlist.CoverImageUri);
     }
 
+    void ICollectionViewModel.Open(object item) => OpenPlaylist((PlaylistViewModelItem)item);
+
+    ISortOrderSelection? ICollectionViewModel.Sort => Sort;
+
     [RelayCommand]
     private async Task PlayPlaylistAsync(PlaylistViewModelItem? playlist)
     {
@@ -187,7 +189,7 @@ public partial class PlaylistViewModel : ClientFilteredListViewModelBase<Playlis
     ///     Picks a regular or smart playlist with odds in proportion to how many of each there are, and plays it.
     /// </summary>
     [RelayCommand]
-    private async Task PlayRandomPlaylistAsync()
+    private async Task PlayRandomAsync()
     {
         if (IsAnyOperationInProgress) return;
 

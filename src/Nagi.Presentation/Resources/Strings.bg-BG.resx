@@ -696,23 +696,14 @@
   <data name="TrayIcon_Exit" xml:space="preserve">
     <value>Изход</value>
   </data>
-  <data name="MiniPlayer_BackButton_ToolTip" xml:space="preserve">
+  <data name="Player_BackButton_ToolTip" xml:space="preserve">
     <value>Обратно към плейъра</value>
   </data>
-  <data name="MiniPlayer_UpNextHeader" xml:space="preserve">
+  <data name="Player_UpNextHeader" xml:space="preserve">
     <value>Следващи песни</value>
   </data>
   <data name="MiniPlayer_RestoreButton_ToolTip" xml:space="preserve">
     <value>Покажи Nagi</value>
-  </data>
-  <data name="MiniPlayer_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Предишно</value>
-  </data>
-  <data name="MiniPlayer_NextButton_ToolTip" xml:space="preserve">
-    <value>Следващо</value>
-  </data>
-  <data name="MiniPlayer_QueueButton_ToolTip" xml:space="preserve">
-    <value>Следващи песни</value>
   </data>
   <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
     <value>Моля, обмислете да докладвате това, като създадете проблем на </value>
@@ -794,21 +785,6 @@
   </data>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Запази</value>
-  </data>
-  <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Предишно</value>
-  </data>
-  <data name="TrayPopup_NextButton_ToolTip" xml:space="preserve">
-    <value>Следващо</value>
-  </data>
-  <data name="TrayPopup_QueueButton_ToolTip" xml:space="preserve">
-    <value>Следващи песни</value>
-  </data>
-  <data name="TrayPopup_BackButton_ToolTip" xml:space="preserve">
-    <value>Обратно към плейъра</value>
-  </data>
-  <data name="TrayPopup_UpNextHeader" xml:space="preserve">
-    <value>Следващи песни</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Предишно</value>

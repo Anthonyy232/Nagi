@@ -34,12 +34,11 @@ public sealed class AlbumViewModelItem
     public ICollection<AlbumArtist> AlbumArtists { get; }
     public string? CoverArtUri { get; }
 
-    public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverArtUri);
 
     public override string ToString() => $"{Title} — {ArtistName}";
 }
 
-public partial class AlbumViewModel : PagedListViewModelBase<Album>
+public partial class AlbumViewModel : PagedListViewModelBase<Album>, ICollectionViewModel
 {
     private readonly IArtworkService _artwork;
     private readonly IMusicPlaybackService _musicPlaybackService;
@@ -62,10 +61,10 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
             return LoadAsync(CancellationToken.None);
         }, logger);
 
-        Albums.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasAlbums));
+        Items.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasItems));
     }
 
-    public ObservableRangeCollection<AlbumViewModelItem> Albums { get; } = new();
+    public ObservableRangeCollection<AlbumViewModelItem> Items { get; } = new();
 
     private static readonly AlbumSortOrder[] SortOrders =
     [
@@ -75,7 +74,7 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
 
     public SortOrderSelection<AlbumSortOrder> Sort { get; }
 
-    public bool HasAlbums => Albums.Any();
+    public bool HasItems => Items.Any();
 
     protected override string FormatTotalItemsText(PagedResult<Album> result) =>
         ResourceFormatter.Format(Strings.Albums_Count, result.TotalCount);
@@ -85,7 +84,7 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
 
     protected override void ApplyItemsToCollection(PagedResult<Album> result, bool append)
     {
-        Albums.AppendOrReplace(result.Items.Select(a => new AlbumViewModelItem(a)), append);
+        Items.AppendOrReplace(result.Items.Select(a => new AlbumViewModelItem(a)), append);
     }
 
     // Service's own semaphore dedupes concurrent runs of the metadata fetch.
@@ -97,6 +96,10 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
 
     public void OpenAlbum(AlbumViewModelItem album) => _musicNavigationService.OpenAlbum(album.Id);
 
+    void ICollectionViewModel.Open(object item) => OpenAlbum((AlbumViewModelItem)item);
+
+    ISortOrderSelection? ICollectionViewModel.Sort => Sort;
+
     [RelayCommand]
     private async Task PlayAlbumAsync(Guid albumId)
     {
@@ -105,7 +108,7 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
     }
 
     [RelayCommand]
-    private async Task PlayRandomAlbumAsync()
+    private async Task PlayRandomAsync()
     {
         if (IsLoading) return;
         await UserAction.RunAsync(async () =>

@@ -37,7 +37,7 @@
                  IsTabStop="False"
                  HorizontalAlignment="Right"
                  KeyDown="SearchTextBox_KeyDown"
-                 Text="{x:Bind SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 TextChanged="SearchTextBox_TextChanged"
                  Canvas.ZIndex="0">
             <TextBox.OpacityTransition>
                 <ScalarTransition Duration="0:0:0.15" />

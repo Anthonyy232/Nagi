@@ -10,7 +10,6 @@
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
-    x:Name="pageRoot"
     Background="Transparent"
     mc:Ignorable="d">
 
@@ -24,44 +23,17 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0"
-              Margin="{StaticResource PageHeaderMarginIndented}"
-              VerticalAlignment="Center">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <TextBlock Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}" Style="{StaticResource PageTitleTextStyle}" />
-                <TextBlock
-                    Margin="0,0,0,5"
-                    VerticalAlignment="Bottom"
-                    FontSize="13"
-                    Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                    Text="{x:Bind ViewModel.SelectedItemsCountText, Mode=OneWay}"
-                    Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <TextBlock
-                    Margin="0,0,0,5"
-                    VerticalAlignment="Bottom"
-                    FontSize="13"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}"
-                    Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-            </StackPanel>
-
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <uicontrols:SearchToggle SearchTerm="{x:Bind ViewModel.SearchTerm, Mode=TwoWay}" PlaceholderText="{x:Bind resources:Strings.LibraryPage_SearchBox_Placeholder, Mode=OneTime}" SearchToolTip="{x:Bind resources:Strings.LibraryPage_SearchButton_Search_ToolTip, Mode=OneTime}" />
-
-                <uicontrols:SortButton Selection="{x:Bind ViewModel.Sort}" />
-
-                <uicontrols:SongListPlayButtons ViewModel="{x:Bind ViewModel}" />
-
-            </StackPanel>
-        </Grid>
+        <uicontrols:SongListToolbar Grid.Row="0"
+                                    Margin="{StaticResource PageHeaderMarginIndented}"
+                                    VerticalAlignment="Center"
+                                    IsPageTitle="True"
+                                    Title="{x:Bind ViewModel.PageTitle, Mode=OneWay}"
+                                    ViewModel="{x:Bind ViewModel}"
+                                    SearchPlaceholder="{x:Bind resources:Strings.LibraryPage_SearchBox_Placeholder}"
+                                    SearchToolTip="{x:Bind resources:Strings.LibraryPage_SearchButton_Search_ToolTip}" />
 
         <Border Grid.Row="1" Margin="24,0,24,16" Padding="12" CornerRadius="{ThemeResource ControlCornerRadius}" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                Visibility="{x:Bind ViewModel.ShowSuggestion, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.ShowSuggestion, Mode=OneWay}">
             <Grid ColumnSpacing="12"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                 <StackPanel Spacing="4"><TextBlock Text="{x:Bind resources:Strings.Listening_RediscoveryTitle}" Style="{ThemeResource CaptionTextBlockStyle}" />
                     <TextBlock Text="{x:Bind ViewModel.Suggestion.Title, Mode=OneWay}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" />
@@ -74,19 +46,13 @@
         </Border>
         <Grid Grid.Row="2" RowDefinitions="Auto,*">
             <Border x:Name="ColumnHeaderHost" Padding="{StaticResource PageContentPadding}" />
-            <ListView uihelpers:ScrollEdgeFade.IsEnabled="True"
+            <ListView Style="{StaticResource SongListViewStyle}"
                 x:Name="SongsListView"
                 Grid.Row="1"
-                Padding="{StaticResource PageContentPadding}"
-                IsItemClickEnabled="True"
-                ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
-                ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
-                SelectionChanged="SongsListView_SelectionChanged"
-                SelectionMode="Extended"
-                DoubleTapped="SongsListView_DoubleTapped">
+                ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="library:Song">
-                        <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" />
+                        <uicontrols:SongRow Song="{x:Bind}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

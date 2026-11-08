@@ -14,7 +14,7 @@ using Nagi.Presentation.Settings;
 
 namespace Nagi.Presentation.Lists;
 
-public partial class GenreViewModel : ClientFilteredListViewModelBase<GenreSummary>
+public partial class GenreViewModel : ClientFilteredListViewModelBase<GenreSummary>, ICollectionViewModel
 {
     private static readonly GenreSortOrder[] SortOrders =
         [GenreSortOrder.NameAsc, GenreSortOrder.NameDesc, GenreSortOrder.SongCountAsc, GenreSortOrder.SongCountDesc];
@@ -62,6 +62,10 @@ public partial class GenreViewModel : ClientFilteredListViewModelBase<GenreSumma
 
     public void OpenGenre(GenreSummary genre) => _navigationService.OpenGenre(genre.Id, genre.Name);
 
+    void ICollectionViewModel.Open(object item) => OpenGenre((GenreSummary)item);
+
+    ISortOrderSelection? ICollectionViewModel.Sort => Sort;
+
     [RelayCommand]
     private async Task PlayGenreAsync(Guid genreId)
     {
@@ -71,7 +75,7 @@ public partial class GenreViewModel : ClientFilteredListViewModelBase<GenreSumma
     }
 
     [RelayCommand]
-    private async Task PlayRandomGenreAsync()
+    private async Task PlayRandomAsync()
     {
         if (IsLoading) return;
 

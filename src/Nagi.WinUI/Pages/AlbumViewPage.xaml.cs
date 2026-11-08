@@ -1,7 +1,5 @@
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Presentation.Lists;
-using Nagi.Presentation;
 
 namespace Nagi.WinUI.Pages;
 
@@ -11,7 +9,7 @@ public sealed partial class AlbumViewPage : SongListPage
     public AlbumViewPage()
     {
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<ViewModelFactory>().Create<AlbumViewViewModel>();
+        ViewModel = GetViewModel<AlbumViewViewModel>();
         DataContext = ViewModel;
         InitializeSongList(ViewModel, ColumnHeaderHost, SongsListView, GroupedSongsListView);
     }

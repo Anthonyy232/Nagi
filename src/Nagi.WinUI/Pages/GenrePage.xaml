@@ -1,4 +1,5 @@
-<Page
+<pages:CollectionPage
+    xmlns:pages="using:Nagi.WinUI.Pages"
     x:Class="Nagi.WinUI.Pages.GenrePage"
     NavigationCacheMode="Enabled"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -20,50 +21,19 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="{StaticResource CollectionPageHeaderMargin}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+        <uicontrols:CollectionPageHeader Grid.Row="0" Margin="{StaticResource CollectionPageHeaderMargin}"
+                                         ViewModel="{x:Bind ViewModel}"
+                                         Title="{x:Bind resources:Strings.GenrePage_Title}"
+                                         SearchPlaceholder="{x:Bind resources:Strings.GenrePage_SearchBox_Placeholder}"
+                                         SearchToolTip="{x:Bind resources:Strings.GenrePage_SearchButton_Search_ToolTip}" />
 
-            <TextBlock Grid.Column="0" Text="{x:Bind resources:Strings.GenrePage_Title, Mode=OneTime}" Style="{StaticResource PageTitleTextStyle}" />
-
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <uicontrols:SearchToggle SearchTerm="{x:Bind ViewModel.SearchTerm, Mode=TwoWay}" PlaceholderText="{x:Bind resources:Strings.GenrePage_SearchBox_Placeholder, Mode=OneTime}" SearchToolTip="{x:Bind resources:Strings.GenrePage_SearchButton_Search_ToolTip, Mode=OneTime}" />
-
-                <uicontrols:SortButton Selection="{x:Bind ViewModel.Sort}" />
-
-                <Button
-                        ToolTipService.ToolTip="{x:Bind resources:Strings.Generic_PickRandom, Mode=OneTime}"
-                        AutomationProperties.Name="{x:Bind resources:Strings.Generic_PickRandom, Mode=OneTime}"
-                        Style="{StaticResource SongListViewPageIconButton}"
-                        Command="{x:Bind ViewModel.PlayRandomGenreCommand}"
-                        Margin="0,0,1,0"
-                        ContentTemplate="{StaticResource RandomPlayIconTemplate}" />
-
-            </StackPanel>
-        </Grid>
-
-        <ProgressRing
-            Grid.Row="1"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-            Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-        <Grid Grid.Row="1"
-              Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-            <GridView uihelpers:ScrollEdgeFade.IsEnabled="True"
-                IsItemClickEnabled="True"
-                ItemClick="GenresGridView_ItemClick"
+        <Grid Grid.Row="1">
+            <GridView x:Name="CollectionGrid" Style="{StaticResource CollectionGridViewStyle}"
                 ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
-                SelectionMode="None"
-                Visibility="{x:Bind ViewModel.HasItems, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
-                Padding="{StaticResource PageContentPadding}"
-                ItemContainerStyle="{StaticResource AnimatedGridViewItemStyle}">
+                Visibility="{x:Bind ViewModel.HasItems, Mode=OneWay}">
                 <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <ItemsWrapGrid ItemHeight="120" ItemWidth="240" Orientation="Horizontal" />
+                        <ItemsWrapGrid ItemHeight="{StaticResource GenreGridItemHeight}" ItemWidth="{StaticResource GenreGridItemWidth}" Orientation="Horizontal" />
                     </ItemsPanelTemplate>
                 </GridView.ItemsPanel>
                 <GridView.ItemTemplate>
@@ -106,4 +76,4 @@
                                    HasLoadError="{x:Bind ViewModel.HasLoadError, Mode=OneWay}" />
         </Grid>
     </Grid>
-</Page>
+</pages:CollectionPage>

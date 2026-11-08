@@ -8,7 +8,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="using:Nagi.WinUI.Controls"
     xmlns:resources="using:Nagi.Presentation.Resources"
-    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     mc:Ignorable="d">
 
     <!-- Margins instead of ColumnSpacing so hidden columns leave no gap. The plain text columns are
@@ -100,15 +99,13 @@
                    TextTrimming="CharacterEllipsis"
                    TextWrapping="NoWrap" />
 
-        <Grid x:Name="ArtistCell" Grid.Column="3" Margin="12,0,0,0" SizeChanged="ArtistCell_SizeChanged">
-            <Grid x:Name="ArtistLinks" HorizontalAlignment="Left">
-                <TextBlock HorizontalAlignment="Left"
-                           Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
-                           uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind Song.ArtistName, Mode=OneWay}"
-                           uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind Song, Mode=OneWay}"
-                           uihelpers:MultiArtistHyperlinkHelper.Command="{x:Bind ViewModel.GoToArtistCommand, Mode=OneWay}" />
-            </Grid>
-        </Grid>
+        <local:ArtistLinks x:Name="ArtistCell"
+                           Grid.Column="3"
+                           Margin="12,0,0,0"
+                           Style="{StaticResource SongListArtistLinksStyle}"
+                           ArtistName="{x:Bind Song.ArtistName, Mode=OneWay}"
+                           Song="{x:Bind Song, Mode=OneWay}"
+                           Command="{x:Bind ViewModel.GoToArtistCommand, Mode=OneWay}" />
 
         <HyperlinkButton x:Name="AlbumLink"
                          Grid.Column="4"

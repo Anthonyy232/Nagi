@@ -696,23 +696,14 @@ Chcete pokračovať?</value>
   <data name="TrayIcon_Exit" xml:space="preserve">
     <value>Ukončiť</value>
   </data>
-  <data name="MiniPlayer_BackButton_ToolTip" xml:space="preserve">
+  <data name="Player_BackButton_ToolTip" xml:space="preserve">
     <value>Späť na prehrávač</value>
   </data>
-  <data name="MiniPlayer_UpNextHeader" xml:space="preserve">
+  <data name="Player_UpNextHeader" xml:space="preserve">
     <value>Ďalej na rade</value>
   </data>
   <data name="MiniPlayer_RestoreButton_ToolTip" xml:space="preserve">
     <value>Zobraziť Nagi</value>
-  </data>
-  <data name="MiniPlayer_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Predchádzajúce</value>
-  </data>
-  <data name="MiniPlayer_NextButton_ToolTip" xml:space="preserve">
-    <value>Ďalšie</value>
-  </data>
-  <data name="MiniPlayer_QueueButton_ToolTip" xml:space="preserve">
-    <value>Ďalej na rade</value>
   </data>
   <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
     <value>Zvážte nahlásenie tohto problému vytvorením problému na </value>
@@ -794,21 +785,6 @@ Chcete pokračovať?</value>
   </data>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Uložiť</value>
-  </data>
-  <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Predchádzajúce</value>
-  </data>
-  <data name="TrayPopup_NextButton_ToolTip" xml:space="preserve">
-    <value>Ďalšie</value>
-  </data>
-  <data name="TrayPopup_QueueButton_ToolTip" xml:space="preserve">
-    <value>Ďalej na rade</value>
-  </data>
-  <data name="TrayPopup_BackButton_ToolTip" xml:space="preserve">
-    <value>Späť na prehrávač</value>
-  </data>
-  <data name="TrayPopup_UpNextHeader" xml:space="preserve">
-    <value>Ďalej na rade</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Predchádzajúce</value>

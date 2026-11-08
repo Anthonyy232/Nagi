@@ -1,7 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Presentation.Lists;
-using Nagi.Presentation.Settings;
 
 namespace Nagi.WinUI.Controls;
 
@@ -11,8 +10,6 @@ public sealed partial class PaginationControl : UserControl
     {
         InitializeComponent();
     }
-
-    public IReadOnlyList<int> PageSizeOptions => AppSettings.PageSizeOptions;
 
     public IPagedListViewModel ViewModel
     {

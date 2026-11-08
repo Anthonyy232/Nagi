@@ -1,0 +1,40 @@
+<ContentDialog
+    x:Class="Nagi.WinUI.Dialogs.PlaylistNameDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:imageex="using:ImageEx"
+    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
+    xmlns:resources="using:Nagi.Presentation.Resources"
+    Title="{x:Bind ViewModel.Title}"
+    PrimaryButtonText="{x:Bind ViewModel.AcceptText}"
+    CloseButtonText="{x:Bind resources:Strings.Generic_Cancel}"
+    DefaultButton="Primary"
+    IsPrimaryButtonEnabled="{x:Bind ViewModel.CanAccept, Mode=OneWay}"
+    Style="{StaticResource DefaultContentDialogStyle}">
+
+    <StackPanel>
+        <!--  A new playlist can start with a cover image; a rename only changes the name.  -->
+        <Grid Width="80"
+              Height="80"
+              Margin="0,0,0,12"
+              HorizontalAlignment="Center"
+              CornerRadius="{StaticResource ArtworkCornerRadius}"
+              Visibility="{x:Bind ViewModel.IsNewPlaylist}">
+            <FontIcon Glyph="&#xE91B;"
+                      FontSize="48"
+                      Visibility="{x:Bind ViewModel.CoverImagePath, Mode=OneWay, Converter={StaticResource InverseStringToVisibilityConverter}}" />
+            <imageex:ImageEx Stretch="UniformToFill"
+                             IsCacheEnabled="True"
+                             DecodePixelWidth="80"
+                             DecodePixelType="Logical"
+                             Source="{x:Bind uihelpers:BitmapImageFactory.Create(ViewModel.CoverImagePath), Mode=OneWay}" />
+        </Grid>
+        <TextBox PlaceholderText="{x:Bind resources:Strings.PlaylistPage_CreateDialog_Placeholder}"
+                 Text="{x:Bind ViewModel.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <Button Margin="0,12,0,0"
+                HorizontalAlignment="Stretch"
+                Content="{x:Bind resources:Strings.PlaylistPage_CreateDialog_PickImage}"
+                Click="PickImageButton_Click"
+                Visibility="{x:Bind ViewModel.IsNewPlaylist}" />
+    </StackPanel>
+</ContentDialog>

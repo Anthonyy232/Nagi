@@ -26,22 +26,23 @@ namespace Nagi.WinUI;
 public partial class App : Application
 {
     private readonly SingleInstanceManager _singleInstanceManager;
+    private readonly string? _launchFilePath;
+    private readonly LaunchCommand _launchCommand;
     private bool _isReportingCrash;
     private string? _logsDirectory;
     private MainWindow? _window;
 
-    internal App(SingleInstanceManager singleInstanceManager)
+    internal App(SingleInstanceManager singleInstanceManager, string? launchFilePath, LaunchCommand launchCommand)
     {
         _singleInstanceManager = singleInstanceManager;
+        _launchFilePath = launchFilePath;
+        _launchCommand = launchCommand;
         InitializeComponent();
 
         UnhandledException += OnAppUnhandledException;
     }
 
-    /// <summary>
-    ///     For pages the navigation frame creates, which can't take constructor dependencies.
-    /// </summary>
-    public static IServiceProvider? Services { get; private set; }
+    private static IServiceProvider? Services { get; set; }
 
     private bool IsExiting => Services?.GetService<IWindowService>()?.IsExiting == true;
 
@@ -57,6 +58,7 @@ public partial class App : Application
                 .AddJsonFile("appsettings.json", optional: true)
                 .Build();
             Services = new ServiceCollection().AddNagiApp(configuration).BuildServiceProvider();
+            ViewModelPage.Initialize(Services.GetRequiredService<IServiceScopeFactory>());
             Services.GetRequiredService<ILogger<App>>().LogInformation("Application starting up.");
 
             _window = Services.GetRequiredService<MainWindow>();
@@ -83,19 +85,12 @@ public partial class App : Application
         }
     }
 
-    private static (string? FilePath, LaunchCommand Command) ReadActivation(IActivatedEventArgs args)
+    private (string? FilePath, LaunchCommand Command) ReadActivation(IActivatedEventArgs args) => args.Kind switch
     {
-        switch (args.Kind)
-        {
-            case ActivationKind.File:
-                return (args.As<IFileActivatedEventArgs>().Files.FirstOrDefault()?.Path, LaunchCommand.None);
-            case ActivationKind.Launch:
-                var commandLineArgs = Environment.GetCommandLineArgs()[1..];
-                return (Program.TryGetFilePathFromArgs(commandLineArgs), JumpListService.Parse(commandLineArgs));
-            default:
-                return (null, LaunchCommand.None);
-        }
-    }
+        ActivationKind.File => (args.As<IFileActivatedEventArgs>().Files.FirstOrDefault()?.Path, LaunchCommand.None),
+        ActivationKind.Launch => (_launchFilePath, _launchCommand),
+        _ => (null, LaunchCommand.None)
+    };
 
     private async void OnWindowClosed(object sender, WindowEventArgs args)
     {

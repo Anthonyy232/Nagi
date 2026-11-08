@@ -696,23 +696,14 @@ Bạn có muốn tiếp tục không?</value>
   <data name="TrayIcon_Exit" xml:space="preserve">
     <value>Thoát</value>
   </data>
-  <data name="MiniPlayer_BackButton_ToolTip" xml:space="preserve">
+  <data name="Player_BackButton_ToolTip" xml:space="preserve">
     <value>Trở lại Trình phát</value>
   </data>
-  <data name="MiniPlayer_UpNextHeader" xml:space="preserve">
+  <data name="Player_UpNextHeader" xml:space="preserve">
     <value>Tiếp theo</value>
   </data>
   <data name="MiniPlayer_RestoreButton_ToolTip" xml:space="preserve">
     <value>Hiện Nagi</value>
-  </data>
-  <data name="MiniPlayer_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Trước</value>
-  </data>
-  <data name="MiniPlayer_NextButton_ToolTip" xml:space="preserve">
-    <value>Tiếp</value>
-  </data>
-  <data name="MiniPlayer_QueueButton_ToolTip" xml:space="preserve">
-    <value>Tiếp theo</value>
   </data>
   <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
     <value>Vui lòng xem xét báo cáo bằng cách tạo một sự cố trên </value>
@@ -794,21 +785,6 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Lưu</value>
-  </data>
-  <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Trước</value>
-  </data>
-  <data name="TrayPopup_NextButton_ToolTip" xml:space="preserve">
-    <value>Tiếp</value>
-  </data>
-  <data name="TrayPopup_QueueButton_ToolTip" xml:space="preserve">
-    <value>Tiếp theo</value>
-  </data>
-  <data name="TrayPopup_BackButton_ToolTip" xml:space="preserve">
-    <value>Trở lại Trình phát</value>
-  </data>
-  <data name="TrayPopup_UpNextHeader" xml:space="preserve">
-    <value>Tiếp theo</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Trước</value>

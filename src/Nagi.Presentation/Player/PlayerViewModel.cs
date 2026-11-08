@@ -18,7 +18,7 @@ using Nagi.Presentation.Shell;
 
 namespace Nagi.Presentation.Player;
 
-public partial class PlayerViewModel : ObservableObject, INowPlayingSource
+public partial class PlayerViewModel : ObservableObject
 {
     private const double VolumeLowThreshold = 33;
     private const double VolumeMediumThreshold = 66;
@@ -45,6 +45,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     private const double SeekThresholdSeconds = 0.5;
 
     private CancellationTokenSource? _queueDisplayCts;
+    private int _queuePreviewCount;
 
     // A song that opens normally starts within about a quarter of a second, so waiting longer keeps the indicator
     // from flashing on every change of song.
@@ -138,7 +139,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     [ObservableProperty] public partial bool IsUserDraggingSlider { get; set; }
     [ObservableProperty] public partial double TotalDuration { get; set; }
     [ObservableProperty] public partial string TotalDurationText { get; set; }
-    [ObservableProperty] public partial bool IsQueueViewVisible { get; set; }
     [ObservableProperty] public partial bool IsQueuePanelOpen { get; set; }
     [ObservableProperty] public partial QueueDisplaySettings QueueDisplaySettings { get; set; } = new();
 
@@ -149,8 +149,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         SidebarQueue.SetActive(value && !IsHistoryVisible);
         History.SetActive(value && IsHistoryVisible);
     }
-
-    partial void OnIsQueueViewVisibleChanged(bool value) => UpdateCurrentQueueDisplay();
 
     [ObservableProperty] public partial bool IsLyricsPageActive { get; set; }
 
@@ -317,16 +315,26 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
             collection.ReplaceRange(newItems);
     }
 
-    [RelayCommand]
-    private void ShowQueueView()
+    /// <summary>
+    ///     Keeps <see cref="CurrentQueue" /> filled with the upcoming songs until the returned handle is disposed.
+    ///     Each view showing the queue holds its own handle, so one view closing its queue doesn't empty another's.
+    /// </summary>
+    public IDisposable PreviewQueue()
     {
-        IsQueueViewVisible = true;
+        if (_queuePreviewCount++ == 0) UpdateCurrentQueueDisplay();
+        return new QueuePreview(this);
     }
 
-    [RelayCommand]
-    private void ShowPlayerView()
+    private sealed class QueuePreview(PlayerViewModel owner) : IDisposable
     {
-        IsQueueViewVisible = false;
+        private bool _isDisposed;
+
+        public void Dispose()
+        {
+            if (_isDisposed) return;
+            _isDisposed = true;
+            if (--owner._queuePreviewCount == 0) owner.UpdateCurrentQueueDisplay();
+        }
     }
 
     /// <returns>Whether the navigation pane was open last time, or <c>null</c> when its state isn't remembered.</returns>
@@ -484,7 +492,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         _queueDisplayCts?.Cancel();
         _queueDisplayCts?.Dispose();
         _queueDisplayCts = null;
-        if (!IsQueueViewVisible) return;
+        if (_queuePreviewCount == 0) return;
 
         _queueDisplayCts = new CancellationTokenSource();
         var token = _queueDisplayCts.Token;

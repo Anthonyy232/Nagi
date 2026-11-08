@@ -32,4 +32,18 @@ public class AppServiceRegistrationTests
 
         dependencies.Should().OnlyContain(type => isService.IsService(type));
     }
+
+    public static TheoryData<Type> ViewModelPages => new(typeof(ViewModelPage).Assembly.GetTypes()
+        .Where(type => type.IsSubclassOf(typeof(ViewModelPage)) && !type.IsAbstract));
+
+    // The frame creates pages, so a view model nobody registered would only fail once the page is opened.
+    [Theory]
+    [MemberData(nameof(ViewModelPages))]
+    public async Task ViewModelPages_ViewModelIsRegistered(Type pageType)
+    {
+        await using var provider = BuildProvider();
+        var viewModelType = pageType.GetProperty("ViewModel")!.PropertyType;
+
+        provider.GetRequiredService<IServiceProviderIsService>().IsService(viewModelType).Should().BeTrue();
+    }
 }

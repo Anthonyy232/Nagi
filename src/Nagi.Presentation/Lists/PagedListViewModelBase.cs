@@ -52,9 +52,21 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
 
     /// <summary>The items a page holds, or 0 to show every item.</summary>
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasNextPage), nameof(HasPreviousPage))]
+    [NotifyPropertyChangedFor(nameof(HasNextPage), nameof(HasPreviousPage), nameof(SelectedPageSize))]
     [NotifyCanExecuteChangedFor(nameof(NextPageCommand), nameof(PreviousPageCommand))]
     public partial int PageSize { get; set; }
+
+    public IReadOnlyList<SettingOption<int>> PageSizeOptions { get; } =
+        SettingOption<int>.For(AppSettings.PageSizeOptions, SettingsText.GetPageSizeName);
+
+    public SettingOption<int>? SelectedPageSize
+    {
+        get => PageSizeOptions.FirstOrDefault(option => option.Value == PageSize);
+        set
+        {
+            if (value is not null) PageSize = value.Value;
+        }
+    }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanPaginate), nameof(ShowEmptyState))]

@@ -7,34 +7,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
-    xmlns:controls="using:Nagi.WinUI.Controls"
+    xmlns:local="using:Nagi.WinUI.Controls"
     mc:Ignorable="d"
-    Visibility="{x:Bind ViewModel.IsOpen, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+    Visibility="{x:Bind ViewModel.IsOpen, Mode=OneWay}">
 
     <Grid>
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="SeeAllSearchStates">
-                <VisualState x:Name="SeeAllSearchCollapsed">
-                    <VisualState.Setters>
-                        <Setter Target="SeeAllSearchTextBox.Width" Value="0" />
-                        <Setter Target="SeeAllSearchTextBox.Opacity" Value="0" />
-                        <Setter Target="SeeAllSearchTextBox.IsHitTestVisible" Value="False" />
-                        <Setter Target="SeeAllSearchTextBox.IsTabStop" Value="False" />
-                        <Setter Target="SeeAllSearchIcon.Glyph" Value="&#xE721;" />
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="SeeAllSearchExpanded">
-                    <VisualState.Setters>
-                        <Setter Target="SeeAllSearchTextBox.Width" Value="{StaticResource SearchBoxExpandedWidth}" />
-                        <Setter Target="SeeAllSearchTextBox.Opacity" Value="1" />
-                        <Setter Target="SeeAllSearchTextBox.IsHitTestVisible" Value="True" />
-                        <Setter Target="SeeAllSearchTextBox.IsTabStop" Value="True" />
-                        <Setter Target="SeeAllSearchIcon.Glyph" Value="&#xE711;" />
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="18*" />
@@ -76,35 +53,10 @@
                                Margin="0"
                                VerticalAlignment="Center" />
 
-                    <Grid Grid.Column="1" Margin="0,0,8,0">
-                        <TextBox x:Name="SeeAllSearchTextBox"
-                                 PlaceholderText="{x:Bind resources:Strings.InsightsPage_SeeAll_SearchBox_Placeholder, Mode=OneTime}"
-                                 Style="{StaticResource SearchTextBoxStyle}"
-                                 Width="0"
-                                 Opacity="0"
-                                 IsHitTestVisible="False"
-                                 IsTabStop="False"
-                                 HorizontalAlignment="Right"
-                                 KeyDown="OnSearchTextBoxKeyDown"
-                                 Text="{x:Bind ViewModel.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 Canvas.ZIndex="0">
-                            <TextBox.OpacityTransition>
-                                <ScalarTransition Duration="0:0:0.15" />
-                            </TextBox.OpacityTransition>
-                        </TextBox>
-
-                        <Button x:Name="SeeAllSearchToggleButton"
-                                ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_SearchButton_ToolTip, Mode=OneTime}"
-                                AutomationProperties.Name="{x:Bind resources:Strings.InsightsPage_SeeAll_SearchButton_ToolTip, Mode=OneTime}"
-                                Click="OnSearchToggleButtonClick"
-                                Style="{StaticResource SongListViewPageIconButton}"
-                                HorizontalAlignment="Right"
-                                Margin="0,0,1,0"
-                                IsHitTestVisible="True"
-                                Canvas.ZIndex="1">
-                            <FontIcon x:Name="SeeAllSearchIcon" FontSize="16" Glyph="&#xE721;" />
-                        </Button>
-                    </Grid>
+                    <local:SearchToggle Grid.Column="1" Margin="0,0,8,0"
+                                        SearchTerm="{x:Bind ViewModel.SearchTerm, Mode=TwoWay}"
+                                        PlaceholderText="{x:Bind resources:Strings.InsightsPage_SeeAll_SearchBox_Placeholder, Mode=OneTime}"
+                                        SearchToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_SearchButton_ToolTip, Mode=OneTime}" />
 
                     <DropDownButton Grid.Column="2"
                                     Content="{x:Bind ViewModel.Category.SortLabel, Mode=OneWay}"
@@ -136,7 +88,7 @@
 
                 <Grid Grid.Row="1">
                     <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-                                  Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                  Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
                                   HorizontalAlignment="Center" VerticalAlignment="Center"
                                   Width="40" Height="40" />
 
@@ -150,7 +102,7 @@
                               ItemTemplateSelector="{StaticResource InsightsItemTemplateSelector}" />
                 </Grid>
 
-                <controls:PaginationControl Grid.Row="2" Margin="16,8,16,16" HorizontalAlignment="Right"
+                <local:PaginationControl Grid.Row="2" Margin="16,8,16,16" HorizontalAlignment="Right"
                                             ViewModel="{x:Bind ViewModel}" />
             </Grid>
         </Grid>

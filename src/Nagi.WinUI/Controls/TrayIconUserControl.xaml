@@ -6,11 +6,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tb="using:H.NotifyIcon"
     xmlns:resources="using:Nagi.Presentation.Resources"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    VerticalAlignment="Top" HorizontalAlignment="Left"
+    Width="1" Height="1" Opacity="0" IsTabStop="False">
 
     <tb:TaskbarIcon
         x:Name="AppTrayIcon"
-        Visibility="{x:Bind ViewModel.IsTrayIconVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
+        Visibility="{x:Bind ViewModel.IsTrayIconVisible, Mode=OneWay}"
         IconSource="ms-appx:///Assets/AppLogo.ico"
         LeftClickCommand="{x:Bind ViewModel.ShowPopupCommand}"
         NoLeftClickDelay="True"

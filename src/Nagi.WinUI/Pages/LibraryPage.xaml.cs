@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Presentation.Lists;
 using Nagi.Presentation.Navigation;
@@ -10,7 +9,7 @@ public sealed partial class LibraryPage : SongListPage
     public LibraryPage()
     {
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<LibraryViewModel>();
+        ViewModel = GetViewModel<LibraryViewModel>();
         DataContext = ViewModel;
         InitializeSongList(ViewModel, ColumnHeaderHost, SongsListView);
     }

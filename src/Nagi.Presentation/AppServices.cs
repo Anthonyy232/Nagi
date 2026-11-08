@@ -29,7 +29,7 @@ public static class AppServices
         // Start non-EF services while database migration is still running.
         services.GetRequiredService<DiscordPresenceService>().Start();
         services.GetRequiredService<TrayIconViewModel>().Initialize();
-        var appInfoTask = services.GetRequiredService<IAppInfoService>().InitializeAsync();
+        var appInfoTask = services.GetRequiredService<IAppInfoService>().GetAvailableLanguagesAsync();
         var equalizerTask = services.GetRequiredService<IEqualizerService>().InitializeAsync();
 
         // Playback and settings both need EF ready. Scrobbling queries ListenHistory, including columns

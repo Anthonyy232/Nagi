@@ -22,10 +22,9 @@ public partial class ArtistViewModelItem : ObservableObject
     public Guid Id { get; init; }
     public string Name { get; init; } = string.Empty;
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsArtworkAvailable), nameof(IsCustomImage))]
+    [NotifyPropertyChangedFor(nameof(IsCustomImage))]
     public partial string? LocalImageCachePath { get; set; }
 
-    public bool IsArtworkAvailable => !string.IsNullOrEmpty(LocalImageCachePath);
     public bool IsCustomImage => ImageStorageHelper.IsCustomImage(LocalImageCachePath);
 
     public override string ToString() => Name;
@@ -35,7 +34,7 @@ public partial class ArtistViewModelItem : ObservableObject
 ///     Manages the artist list page. Only the current page is held in the VM; image
 ///     metadata is fetched for the whole library out-of-band via the library service.
 /// </summary>
-public partial class ArtistViewModel : PagedListViewModelBase<Artist>
+public partial class ArtistViewModel : PagedListViewModelBase<Artist>, ICollectionViewModel
 {
     private readonly Dictionary<Guid, ArtistViewModelItem> _artistLookup = new();
     private readonly IArtworkService _artwork;
@@ -65,18 +64,18 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
             return LoadAsync(CancellationToken.None);
         }, logger);
 
-        Artists.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasArtists));
+        Items.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasItems));
         _libraryNotifier.ArtistImagesChanged += OnArtistImagesChanged;
     }
 
-    public ObservableRangeCollection<ArtistViewModelItem> Artists { get; } = new();
+    public ObservableRangeCollection<ArtistViewModelItem> Items { get; } = new();
 
     private static readonly ArtistSortOrder[] SortOrders =
         [ArtistSortOrder.NameAsc, ArtistSortOrder.NameDesc, ArtistSortOrder.SongCountAsc, ArtistSortOrder.SongCountDesc];
 
     public SortOrderSelection<ArtistSortOrder> Sort { get; }
 
-    public bool HasArtists => Artists.Any();
+    public bool HasItems => Items.Any();
 
     protected override string FormatTotalItemsText(PagedResult<Artist> result) =>
         ResourceFormatter.Format(Strings.Artists_Count, result.TotalCount);
@@ -100,7 +99,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
             items.Add(vm);
         }
 
-        Artists.AppendOrReplace(items, append);
+        Items.AppendOrReplace(items, append);
     }
 
     // Service's own semaphore dedupes concurrent runs of the metadata fetch.
@@ -112,6 +111,10 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
 
     public void OpenArtist(ArtistViewModelItem artist) => _musicNavigationService.OpenArtist(artist.Id);
 
+    void ICollectionViewModel.Open(object item) => OpenArtist((ArtistViewModelItem)item);
+
+    ISortOrderSelection? ICollectionViewModel.Sort => Sort;
+
     [RelayCommand]
     private async Task PlayArtistAsync(Guid artistId)
     {
@@ -120,7 +123,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
     }
 
     [RelayCommand]
-    private async Task PlayRandomArtistAsync()
+    private async Task PlayRandomAsync()
     {
         if (IsLoading) return;
         await UserAction.RunAsync(async () =>

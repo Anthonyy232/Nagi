@@ -10,6 +10,7 @@
     <!--
         Setting cards shown on both the settings page and onboarding. A page shows one with a ContentControl
         whose content is the card's view model; the page's implicit styles still apply to the card's controls.
+        A card names its control after its header, so the controls here need no accessible name of their own.
     -->
 
     <ResourceDictionary.MergedDictionaries>
@@ -31,7 +32,6 @@
             </controls:SettingsCard.HeaderIcon>
             <ComboBox
                 HorizontalAlignment="Right"
-                AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_WindowMaterial_Header}"
                 ItemsSource="{x:Bind BackdropMaterialOptions}"
                 DisplayMemberPath="DisplayName"
                 SelectedItem="{x:Bind SelectedBackdropMaterial, Mode=TwoWay}" />
@@ -47,7 +47,6 @@
             </controls:SettingsCard.HeaderIcon>
             <ToggleSwitch
                 HorizontalAlignment="Right"
-                AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_DynamicTheming_Header}"
                 IsOn="{x:Bind IsDynamicThemingEnabled, Mode=TwoWay}" />
         </controls:SettingsCard>
     </DataTemplate>
@@ -61,7 +60,6 @@
             </controls:SettingsCard.HeaderIcon>
             <ToggleSwitch
                 HorizontalAlignment="Right"
-                AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_AutoLaunch_Header}"
                 IsEnabled="{x:Bind IsUpdatingAutoLaunch, Mode=OneWay, Converter={StaticResource BooleanToInverseBooleanConverter}}"
                 IsOn="{x:Bind IsAutoLaunchEnabled, Mode=TwoWay}" />
         </controls:SettingsCard>
@@ -76,7 +74,6 @@
             </controls:SettingsCard.HeaderIcon>
             <ToggleSwitch
                 HorizontalAlignment="Right"
-                AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_MinimizeToMiniPlayer_Header}"
                 IsOn="{x:Bind IsMinimizeToMiniPlayerEnabled, Mode=TwoWay}" />
         </controls:SettingsCard>
     </DataTemplate>
@@ -90,7 +87,6 @@
             </controls:SettingsCard.HeaderIcon>
             <ToggleSwitch
                 HorizontalAlignment="Right"
-                AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_HideToTray_Header}"
                 IsOn="{x:Bind IsHideToTrayEnabled, Mode=TwoWay}" />
         </controls:SettingsCard>
     </DataTemplate>
@@ -104,7 +100,6 @@
             </controls:SettingsCard.HeaderIcon>
             <ToggleSwitch
                 HorizontalAlignment="Right"
-                AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_Discord_Header}"
                 IsOn="{x:Bind IsDiscordRichPresenceEnabled, Mode=TwoWay}" />
         </controls:SettingsCard>
     </DataTemplate>

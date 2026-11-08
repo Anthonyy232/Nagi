@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Nagi.Presentation.Lists;
 using Nagi.Presentation.Resources;
+using Nagi.WinUI.Pages;
 
 namespace Nagi.WinUI;
 
@@ -61,7 +61,7 @@ public sealed partial class MainPage
     {
         if (IsShortcutBlocked(FocusManager.GetFocusedElement(XamlRoot) as DependencyObject)) return;
 
-        var activeList = (ContentFrame.Content as FrameworkElement)?.DataContext as SongListViewModelBase;
+        var activeList = (ContentFrame.Content as SongListPage)?.SongList;
         if (ViewModel.GetFavoriteShortcutCommand(activeList) is not { } command) return;
         args.Handled = true;
         await command.ExecuteAsync(null);

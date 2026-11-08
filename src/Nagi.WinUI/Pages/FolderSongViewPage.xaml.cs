@@ -1,11 +1,7 @@
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
 using Nagi.Core.Library;
 using Nagi.Presentation.Lists;
-using Nagi.Presentation;
 using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Pages;
@@ -16,7 +12,7 @@ public sealed partial class FolderSongViewPage : SongListPage
     public FolderSongViewPage()
     {
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<ViewModelFactory>().Create<FolderSongListViewModel>();
+        ViewModel = GetViewModel<FolderSongListViewModel>();
         DataContext = ViewModel;
         InitializeSongList(ViewModel, ColumnHeaderHost, FolderContentsListView);
     }
@@ -39,15 +35,6 @@ public sealed partial class FolderSongViewPage : SongListPage
     {
         if (e.ClickedItem is FolderContentItem { Folder: { } folder })
             await ViewModel.NavigateToSubfolderCommand.ExecuteAsync(folder);
-    }
-
-    private async void FolderContentsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-    {
-        if (e.OriginalSource is not FrameworkElement { DataContext: FolderContentItem contentItem }) return;
-        if (contentItem.Folder is { } folder)
-            await ViewModel.NavigateToSubfolderCommand.ExecuteAsync(folder);
-        else
-            SongsListView_DoubleTapped(sender, e);
     }
 
     private void FolderItemMenuFlyout_Opening(object sender, object e)

@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Nagi.WinUI.Controls;
 
@@ -12,4 +12,8 @@ public interface ICustomTitleBarProvider
     /// </summary>
     TitleBar GetAppTitleBarElement();
 
+    /// <summary>
+    ///     Whether the window shows the system caption buttons (minimize, maximize, close) over this content.
+    /// </summary>
+    bool ShowsCaptionButtons => true;
 }

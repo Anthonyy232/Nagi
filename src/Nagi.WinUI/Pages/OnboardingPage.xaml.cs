@@ -20,7 +20,7 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
     private const int StepStaggerMs = 60;
     private const int StepExitMs = 150;
 
-    private readonly Dictionary<OnboardingStep, FrameworkElement> _steps;
+    private readonly OrderedDictionary<OnboardingStep, FrameworkElement> _steps;
     private OnboardingStep _shownStep;
 
     public OnboardingPage(OnboardingViewModel viewModel, SettingsViewModel settings)
@@ -29,7 +29,7 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
         ViewModel = viewModel;
         Settings = settings;
 
-        _steps = new Dictionary<OnboardingStep, FrameworkElement>
+        _steps = new OrderedDictionary<OnboardingStep, FrameworkElement>
         {
             [OnboardingStep.Welcome] = WelcomeScroller,
             [OnboardingStep.Library] = LibraryStep,
@@ -125,7 +125,7 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
         element.Visibility = Visibility.Visible;
         _shownStep = step;
 
-        StepPips.SelectedPageIndex = Math.Max(0, (int)step - 1);
+        StepPips.SelectedPageIndex = Math.Max(0, GetPipIndex(step));
         StepScroller.ChangeView(null, 0, null, true);
         var delayMs = entranceDelayMs;
         foreach (var part in GetEntranceElements(element))
@@ -152,10 +152,12 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
     private void StepPips_SelectedIndexChanged(PipsPager sender, PipsPagerSelectedIndexChangedEventArgs args)
     {
         // ShowStep moves the pips too, and parks them on the first pip while the welcome step is shown.
-        var step = (OnboardingStep)(sender.SelectedPageIndex + 1);
+        var step = _steps.GetAt(sender.SelectedPageIndex + 1).Key;
         if (step == ViewModel.CurrentStep || ViewModel.CurrentStep == OnboardingStep.Welcome) return;
 
         if (ViewModel.GoToStepCommand.CanExecute(step)) ViewModel.GoToStepCommand.Execute(step);
-        else sender.SelectedPageIndex = (int)ViewModel.CurrentStep - 1;
+        else sender.SelectedPageIndex = GetPipIndex(ViewModel.CurrentStep);
     }
+
+    private int GetPipIndex(OnboardingStep step) => _steps.IndexOf(step) - 1;
 }

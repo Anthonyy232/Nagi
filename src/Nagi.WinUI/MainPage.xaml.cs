@@ -14,7 +14,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Platform;
 using Nagi.Core.Settings;
-using Nagi.Presentation.Lists;
+using Nagi.Presentation.Insights;
 using Nagi.Presentation.Player;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Settings;
@@ -24,6 +24,7 @@ using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Implementations;
+using Nagi.WinUI.Styles;
 
 namespace Nagi.WinUI;
 
@@ -84,11 +85,13 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private bool _isUpdatingNavViewSelection;
 
     private bool _isUnloaded;
+    private readonly TrayIconUserControl _trayIcon;
 
     public MainPage(PlayerViewModel viewModel,
         GlobalOperationViewModel globalOperation, ISettingsService settingsService,
         IDispatcherService dispatcherService,
-        NavigationService navigationService, ILogger<MainPage> logger)
+        NavigationService navigationService, InsightsViewModel insights, TrayIconViewModel trayIcon,
+        ILogger<MainPage> logger)
     {
         ViewModel = viewModel;
         GlobalOperation = globalOperation;
@@ -100,6 +103,10 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         InitializeComponent();
         DataContext = ViewModel;
         PlayerInputHelper.AttachSeekSlider(MediaSeekerSlider, ViewModel);
+        _trayIcon = new TrayIconUserControl(trayIcon);
+        RootGrid.Children.Insert(0, _trayIcon);
+        // Last, so it covers the whole window, player included.
+        RootGrid.Children.Add(new InsightsSeeAllOverlay(insights));
 
         navigationService.Initialize(ContentFrame);
         _hoverTimer.Tick += OnHoverTimerTick;
@@ -125,10 +132,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             return;
         }
 
-        if (selectedItem is NavigationViewItem { Tag: string tag } &&
-            AppDestinations.TryGetMenuPage(tag, out var pageType, out var parameter) &&
-            (ContentFrame.CurrentSourcePageType != pageType || !Equals(_navigationService.CurrentParameter, parameter)))
-            ContentFrame.Navigate(pageType, parameter, transitionInfo);
+        if (selectedItem is NavigationViewItem { Tag: string tag }) _navigationService.NavigateToMenu(tag, transitionInfo);
     }
 
     private void TryGoBack()
@@ -209,7 +213,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
                 return;
             }
 
-            var tag = AppDestinations.GetMenuTag(ContentFrame.CurrentSourcePageType, _navigationService.CurrentParameter);
+            var tag = _navigationService.CurrentMenuTag;
             NavView.SelectedItem = NavView.MenuItems.OfType<NavigationViewItem>()
                 .FirstOrDefault(item => Equals(item.Tag, tag));
         }
@@ -328,7 +332,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         SystemVisualSettings.TransparencyEffectsEnabledChanged -= OnTransparencyEffectsChanged;
 
         // Dispose the tray icon control to prevent "Exception Processing Message 0xc0000005" errors on exit.
-        AppTrayIconHost?.Dispose();
+        _trayIcon.Dispose();
 
         RemoveHandler(PointerPressedEvent, (PointerEventHandler)OnGlobalPointerPressed);
         KeyDown -= OnSelectionKeyDown;
@@ -339,8 +343,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         var isAcrylicEnabled = SystemVisualSettings.TransparencyEffectsEnabled;
         var material = _settingsService.Get(AppSettings.PlayerBackgroundMaterial);
         var brushKey = !isAcrylicEnabled || material == PlayerBackgroundMaterial.Solid
-            ? "PlayerBackgroundBrush"
-            : NativeMethods.IsWindows11OrNewer ? "Win11AcrylicBrush" : "Win10AcrylicBrush";
+            ? AppResourceKeys.PlayerBackgroundBrush
+            : NativeMethods.IsWindows11OrNewer ? AppResourceKeys.Win11AcrylicBrush : AppResourceKeys.Win10AcrylicBrush;
         FloatingPlayerContainer.Background = (Brush)Application.Current.Resources[brushKey];
     }
 
@@ -393,11 +397,10 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private void OnContentFrameNavigated(object sender, NavigationEventArgs e)
     {
         _logger.LogDebug("Navigated to {PageName}.", e.SourcePageType.Name);
-        var isDetailPage = AppDestinations.IsDetailPage(e.SourcePageType);
         var isLyricsPage = e.SourcePageType == typeof(LyricsPage);
         ViewModel.IsLyricsPageActive = isLyricsPage;
 
-        AppTitleBar.IsBackButtonVisible = ContentFrame.CanGoBack && (isDetailPage || isLyricsPage);
+        AppTitleBar.IsBackButtonVisible = ContentFrame.CanGoBack && (_navigationService.IsOnDetailPage || isLyricsPage);
 
         UpdateNavViewSelection();
 
@@ -499,13 +502,9 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
         var cleared = false;
         if (page is SongListPage songListPage &&
-            page.DataContext is SongListViewModelBase { HasSelectedSongs: true } &&
             !(clickedList?.FindAscendant<FrameworkElement>(ancestor => ancestor == page) is not null &&
               (clickedItem || clickedScrollBar)))
-        {
-            cleared = true;
-            songListPage.ClearSelection();
-        }
+            cleared = songListPage.ClearSelection();
 
         if (QueueListView.SelectedItem is not null &&
             !(clickedList == QueueListView && (clickedItem || clickedScrollBar)))

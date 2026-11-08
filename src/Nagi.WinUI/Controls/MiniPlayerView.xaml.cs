@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 using Windows.Foundation;
 using Windows.Graphics;
 using Microsoft.UI.Input;
@@ -14,18 +13,27 @@ namespace Nagi.WinUI.Controls;
 public sealed partial class MiniPlayerView : UserControl
 {
     private readonly Window _parentWindow;
+    // The whole view drags the window, except these, which must still take clicks and wheel input.
+    private readonly IReadOnlyList<FrameworkElement> _interactiveElements;
     private bool _isUnloaded;
 
     public MiniPlayerView(Window parentWindow, PlayerViewModel viewModel)
     {
         InitializeComponent();
         _parentWindow = parentWindow;
-
         ViewModel = viewModel;
-        DataContext = this;
-        PlayerInputHelper.AttachSeekSlider(MediaSeekerSlider, ViewModel);
+        _interactiveElements = [.. Player.InteractiveElements, RestoreButton];
 
-        SubscribeToEvents();
+        HoverDetector.PointerEntered += OnPointerEntered;
+        HoverDetector.PointerExited += OnPointerExited;
+        HoverDetector.PointerCanceled += OnPointerExited;
+
+        foreach (var element in _interactiveElements) element.SizeChanged += OnInteractiveRegionChanged;
+        SizeChanged += OnInteractiveRegionChanged;
+        Player.ViewChanged += () => DispatcherQueue.TryEnqueue(UpdateInteractiveRegions);
+
+        Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
     }
 
     public PlayerViewModel ViewModel { get; }
@@ -37,31 +45,10 @@ public sealed partial class MiniPlayerView : UserControl
 
     public event EventHandler? RestoreButtonClicked;
 
-    private void SubscribeToEvents()
-    {
-        RestoreButton.Click += OnRestoreButtonClick;
-
-        HoverDetector.PointerEntered += OnPointerEntered;
-        HoverDetector.PointerExited += OnPointerExited;
-        HoverDetector.PointerCanceled += OnPointerExited;
-
-        MediaSeekerSlider.SizeChanged += OnInteractiveRegionChanged;
-        MediaControlsPanel.SizeChanged += OnInteractiveRegionChanged;
-        BackButton.SizeChanged += OnInteractiveRegionChanged;
-        RestoreButton.SizeChanged += OnInteractiveRegionChanged;
-        QueueListView.SizeChanged += OnInteractiveRegionChanged;
-        ArtistTextBlock.SizeChanged += OnInteractiveRegionChanged;
-        SizeChanged += OnInteractiveRegionChanged;
-
-        Loaded += OnLoaded;
-        Unloaded += OnUnloaded;
-    }
-
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
         _isUnloaded = false;
         _parentWindow.Activated += OnWindowActivated;
-        ViewModel.PropertyChanged += OnViewModelPropertyChanged;
 
         // Initialize hover controls visual to ensure first hover works immediately.
         CompositionAnimationHelper.SetOpacityImmediate(HoverControlsContainer, 0f);
@@ -73,15 +60,6 @@ public sealed partial class MiniPlayerView : UserControl
     {
         _isUnloaded = true;
         _parentWindow.Activated -= OnWindowActivated;
-        ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
-    }
-
-    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(PlayerViewModel.IsQueueViewVisible))
-        {
-            DispatcherQueue.TryEnqueue(UpdateInteractiveRegions);
-        }
     }
 
     private void OnInteractiveRegionChanged(object sender, SizeChangedEventArgs e)
@@ -90,10 +68,9 @@ public sealed partial class MiniPlayerView : UserControl
     }
 
     /// <summary>
-    ///     Marks the interactive controls (slider, buttons, queue list) as passthrough regions
-    ///     so that the custom title-bar drag does not intercept their pointer / wheel input.
-    ///     WinUI 3's automatic exclusion for controls inside a custom title bar is unreliable
-    ///     for custom-styled buttons and scrollable content, so we register the regions explicitly.
+    ///     Marks the interactive controls as passthrough regions so that the custom title-bar drag does not intercept
+    ///     their pointer / wheel input. WinUI 3's automatic exclusion for controls inside a custom title bar is
+    ///     unreliable for custom-styled buttons and scrollable content, so we register the regions explicitly.
     /// </summary>
     private void UpdateInteractiveRegions()
     {
@@ -104,13 +81,7 @@ public sealed partial class MiniPlayerView : UserControl
         {
             var scale = XamlRoot.RasterizationScale;
             var rects = new List<RectInt32>();
-
-            AddRectIfVisible(rects, MediaSeekerSlider, scale);
-            AddRectIfVisible(rects, MediaControlsPanel, scale);
-            AddRectIfVisible(rects, BackButton, scale);
-            AddRectIfVisible(rects, RestoreButton, scale);
-            AddRectIfVisible(rects, QueueListView, scale);
-            AddRectIfVisible(rects, ArtistTextBlock, scale);
+            foreach (var element in _interactiveElements) AddRectIfVisible(rects, element, scale);
 
             var windowId = _parentWindow.AppWindow.Id;
             var nonClientSource = InputNonClientPointerSource.GetForWindowId(windowId);
@@ -145,7 +116,7 @@ public sealed partial class MiniPlayerView : UserControl
             AnimateHoverControls(visible: false, useTransitions: false);
     }
 
-    private void OnRestoreButtonClick(object sender, RoutedEventArgs e)
+    private void RestoreButton_Click(object sender, RoutedEventArgs e)
     {
         RestoreButtonClicked?.Invoke(this, EventArgs.Empty);
     }
@@ -175,7 +146,4 @@ public sealed partial class MiniPlayerView : UserControl
             CompositionAnimationHelper.SetOpacityImmediate(HoverControlsContainer, targetOpacity);
         }
     }
-
-    private void VolumeButton_PointerWheelChanged(object sender, PointerRoutedEventArgs e) =>
-        PlayerInputHelper.StepVolumeWithWheel(sender, e, ViewModel);
 }

@@ -1,7 +1,6 @@
 ﻿using Windows.Foundation;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Input;
 using Nagi.Presentation.Player;
 using Nagi.Presentation.Theme;
 using Nagi.WinUI.Helpers;
@@ -19,9 +18,9 @@ public sealed partial class TrayPopup : Window
         _themeService = themeService;
         InitializeComponent();
 
+        // Set in code: a window's bindings start only when it activates, and the popup is measured as soon as it loads.
+        Player.ViewModel = ViewModel;
         ApplyTheme();
-        OuterBorder.DataContext = ViewModel;
-        PlayerInputHelper.AttachSeekSlider(MediaSeekerSlider, ViewModel);
 
         ConfigureWindowAppearance();
 
@@ -33,6 +32,8 @@ public sealed partial class TrayPopup : Window
     public PlayerViewModel ViewModel { get; }
 
     public event EventHandler? Deactivated;
+
+    public void ShowPlayerView() => Player.ShowPlayer();
 
     // The popup is kept and reused, so it follows theme changes made while it exists.
     private void ApplyTheme() =>
@@ -102,7 +103,4 @@ public sealed partial class TrayPopup : Window
     }
 
     private void OnClosed(object sender, WindowEventArgs args) => _themeService.ActualThemeChanged -= ApplyTheme;
-
-    private void VolumeButton_PointerWheelChanged(object sender, PointerRoutedEventArgs e) =>
-        PlayerInputHelper.StepVolumeWithWheel(sender, e, ViewModel);
 }

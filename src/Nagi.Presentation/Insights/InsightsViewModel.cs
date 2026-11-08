@@ -38,7 +38,6 @@ public sealed class TopSongItem : InsightsRankedItem
     public string Title { get; init; } = string.Empty;
     public string Artist { get; init; } = string.Empty;
     public string? ArtworkUri { get; init; }
-    public bool IsArtworkAvailable => !string.IsNullOrEmpty(ArtworkUri);
 
     public override string ToString() => $"{Title} — {Artist}";
 }
@@ -48,7 +47,6 @@ public sealed class TopArtistItem : InsightsRankedItem
     public Guid ArtistId { get; init; }
     public string Name { get; init; } = string.Empty;
     public string? ImageUri { get; init; }
-    public bool IsArtworkAvailable => !string.IsNullOrEmpty(ImageUri);
     public IRelayCommand<TopArtistItem>? Command { get; init; }
 
     public override string ToString() => Name;
@@ -60,7 +58,6 @@ public sealed class TopAlbumItem : InsightsRankedItem
     public string Title { get; init; } = string.Empty;
     public string ArtistName { get; init; } = string.Empty;
     public string? ArtworkUri { get; init; }
-    public bool IsArtworkAvailable => !string.IsNullOrEmpty(ArtworkUri);
     public IRelayCommand<TopAlbumItem>? Command { get; init; }
 
     public override string ToString() => $"{Title} — {ArtistName}";

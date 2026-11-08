@@ -47,7 +47,21 @@ public sealed partial class InsightsSeeAllViewModel : SearchableViewModelBase, I
     public partial int TotalPages { get; private set; } = 1;
 
     /// <summary>The items a page holds, or 0 to show every item.</summary>
-    [ObservableProperty] public partial int PageSize { get; set; } = AppSettings.PageSizeOptions[0];
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SelectedPageSize))]
+    public partial int PageSize { get; set; } = AppSettings.PageSizeOptions[0];
+
+    public IReadOnlyList<SettingOption<int>> PageSizeOptions { get; } =
+        SettingOption<int>.For(AppSettings.PageSizeOptions, SettingsText.GetPageSizeName);
+
+    public SettingOption<int>? SelectedPageSize
+    {
+        get => PageSizeOptions.FirstOrDefault(option => option.Value == PageSize);
+        set
+        {
+            if (value is not null) PageSize = value.Value;
+        }
+    }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanPaginate))]

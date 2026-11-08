@@ -95,8 +95,9 @@ public sealed class MusicServerPromptsTests : IDisposable
             string.Format(Strings.MusicServer_Error_SavedSignIn_Format, "Living Room"), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<bool>());
     }
 
+    // The UI service queues dialogs, so the offer goes to it at once instead of being held back here.
     [Fact]
-    public async Task SignInRejectedWhileASongMessageIsOpen_IsOfferedOnceTheMessageCloses()
+    public async Task SignInRejectedWhileASongMessageIsOpen_IsStillOffered()
     {
         var song = AddServerSong();
         var messageOpen = new TaskCompletionSource();
@@ -111,10 +112,9 @@ public sealed class MusicServerPromptsTests : IDisposable
 
         _playback.ServerSongFailed += Raise.Event<Action<Song>>(song);
         _musicServers.SignInRejected += Raise.Event<Action<Guid>>(song.FolderId);
-        offered.Task.IsCompleted.Should().BeFalse("only one dialog can be open at a time");
-        messageOpen.SetResult();
 
         await offered.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        messageOpen.SetResult();
     }
 
     private Song AddServerSong()

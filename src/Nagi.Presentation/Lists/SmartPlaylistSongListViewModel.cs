@@ -92,10 +92,8 @@ public partial class SmartPlaylistSongListViewModel : DetailSongListViewModelBas
     public partial string RuleSummary { get; set; } = string.Empty;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsArtworkAvailable))]
     public partial string? CoverImageUri { get; set; }
 
-    public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverImageUri);
 
     protected override string LoadErrorText => Strings.SmartPlaylist_ErrorLoading;
 

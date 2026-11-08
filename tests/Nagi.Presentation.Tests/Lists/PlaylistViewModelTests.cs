@@ -233,7 +233,7 @@ public class PlaylistViewModelTests
         _smart.GetSmartPlaylistCountAsync().Returns(smart ? 1 : 0);
         using var viewModel = CreateViewModel();
 
-        await viewModel.PlayRandomPlaylistCommand.ExecuteAsync(null);
+        await viewModel.PlayRandomCommand.ExecuteAsync(null);
 
         await _ui.Received(1).ShowMessageDialogAsync(Strings.PlaylistPage_Title, Strings.Playlist_Status_NoPlaylists);
     }
@@ -267,7 +267,7 @@ public class PlaylistViewModelTests
 
         await viewModel.RemovePlaylistCoverCommand.ExecuteAsync(viewModel.Items.Single());
 
-        viewModel.Items.Should().ContainSingle().Which.IsArtworkAvailable.Should().BeFalse();
+        viewModel.Items.Should().ContainSingle().Which.CoverImageUri.Should().BeNull();
         viewModel.IsAnyOperationInProgress.Should().BeFalse();
         await _ui.DidNotReceive().ShowMessageDialogAsync(Arg.Any<string>(), Arg.Any<string>());
     }

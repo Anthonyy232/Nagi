@@ -16,6 +16,8 @@ using Nagi.Presentation.Playlists;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Settings;
 using Nagi.Presentation;
+using Nagi.Presentation.Shell;
+using Microsoft.Extensions.DependencyInjection;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Dialogs;
 using Nagi.WinUI.Helpers;
@@ -25,15 +27,16 @@ namespace Nagi.WinUI.Services.Implementations;
 
 public partial class UIService : IUIService
 {
-    private readonly ViewModelFactory _viewModelFactory;
+    private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<UIService> _logger;
     private readonly MainWindow _window;
+    private readonly SemaphoreSlim _dialogTurn = new(1, 1);
 
-    public UIService(MainWindow window, ViewModelFactory viewModelFactory,
+    public UIService(MainWindow window, IServiceScopeFactory scopeFactory,
         ILogger<UIService> logger)
     {
         _window = window;
-        _viewModelFactory = viewModelFactory;
+        _scopeFactory = scopeFactory;
         _logger = logger;
     }
 
@@ -190,7 +193,8 @@ public partial class UIService : IUIService
     {
         if (!TryGetXamlRoot(out var xamlRoot)) return;
 
-        var viewModel = _viewModelFactory.Create<SongInfoViewModel>();
+        using var scope = _scopeFactory.CreateScope();
+        var viewModel = scope.ServiceProvider.GetRequiredService<SongInfoViewModel>();
         await viewModel.LoadAsync(song);
         await ShowDialogAsync(new SongInfoDialog(viewModel) { XamlRoot = xamlRoot });
     }
@@ -199,7 +203,8 @@ public partial class UIService : IUIService
     {
         if (!TryGetXamlRoot(out var xamlRoot)) return null;
 
-        using var viewModel = _viewModelFactory.Create<SmartPlaylistEditorViewModel>();
+        using var scope = _scopeFactory.CreateScope();
+        var viewModel = scope.ServiceProvider.GetRequiredService<SmartPlaylistEditorViewModel>();
         viewModel.Initialize(editing);
         var dialog = new SmartPlaylistEditorDialog(viewModel) { XamlRoot = xamlRoot };
         var result = await ShowDialogAsync(dialog);
@@ -210,44 +215,8 @@ public partial class UIService : IUIService
     {
         if (!TryGetXamlRoot(out var xamlRoot)) return false;
 
-        var viewModel = new FFmpegSetupViewModel(checkAction);
-        var statusBlock = new TextBlock { TextWrapping = TextWrapping.Wrap };
-        void ShowStatus()
-        {
-            statusBlock.Text = viewModel.StatusText;
-            statusBlock.Style = (Style)Application.Current.Resources[viewModel.Status switch
-            {
-                FFmpegSetupStatus.Checking => "FFmpegStatusCheckingTextStyle",
-                FFmpegSetupStatus.Detected => "FFmpegStatusDetectedTextStyle",
-                _ => "FFmpegStatusMissingTextStyle"
-            }];
-        }
-        viewModel.PropertyChanged += (_, _) => ShowStatus();
-        ShowStatus();
-
-        var contentPanel = new StackPanel { Spacing = 12 };
-        contentPanel.Children.Add(new TextBlock { Text = Strings.FFmpeg_SetupInstructions, TextWrapping = TextWrapping.Wrap });
-        contentPanel.Children.Add(statusBlock);
-
-        var dialog = new ContentDialog
-        {
-            Title = Strings.Settings_Dialog_FFmpegNotFound_Title,
-            Content = contentPanel,
-            PrimaryButtonText = Strings.Generic_Recheck,
-            CloseButtonText = Strings.Generic_Cancel,
-            XamlRoot = xamlRoot,
-            DefaultButton = ContentDialogButton.Primary
-        };
-
-        dialog.PrimaryButtonClick += async (_, args) =>
-        {
-            var deferral = args.GetDeferral();
-            args.Cancel = !await viewModel.RecheckAsync();
-            deferral.Complete();
-        };
-
-        var result = await ShowDialogAsync(dialog);
-        return result == ContentDialogResult.Primary;
+        var dialog = new FFmpegSetupDialog(new FFmpegSetupViewModel(checkAction)) { XamlRoot = xamlRoot };
+        return await ShowDialogAsync(dialog) == ContentDialogResult.Primary;
     }
 
     private bool TryGetXamlRoot(out XamlRoot? xamlRoot)
@@ -257,20 +226,25 @@ public partial class UIService : IUIService
     }
 
     /// <summary>
-    ///     Shows <paramref name="dialog" /> in the app's theme. WinUI throws when another dialog is already open;
-    ///     that is reported as <see cref="ContentDialogResult.None" />, the same as a cancel.
+    ///     Shows <paramref name="dialog" /> in the app's theme once any dialog before it has closed, since WinUI
+    ///     throws when a second one opens. A dialog that can't show is reported as a cancel.
     /// </summary>
     private async Task<ContentDialogResult> ShowDialogAsync(ContentDialog dialog)
     {
-        DialogThemeHelper.ApplyThemeOverrides(dialog, _window.Content as FrameworkElement);
+        await _dialogTurn.WaitAsync();
         try
         {
+            DialogThemeHelper.ApplyThemeOverrides(dialog, _window.Content as FrameworkElement);
             return await dialog.ShowAsync();
         }
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Could not show dialog {Title}", dialog.Title);
             return ContentDialogResult.None;
+        }
+        finally
+        {
+            _dialogTurn.Release();
         }
     }
 }
