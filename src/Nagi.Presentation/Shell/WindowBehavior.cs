@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Platform;
+using Nagi.Core.Playback;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Settings;
 
@@ -8,27 +9,32 @@ namespace Nagi.Presentation.Shell;
 /// <summary>
 ///     What the main window does when it is closed, minimized or shown at launch: hide to the tray, give way to the
 ///     mini player or start minimized, as the settings ask. Onboarding keeps the ordinary behaviour, since nothing
-///     can be playing yet.
+///     can be playing yet. While nothing plays and the main window is out of sight, the app runs in efficiency mode.
 /// </summary>
 public sealed class WindowBehavior
 {
     private readonly IWindowService _windowService;
     private readonly IApplicationLifecycle _applicationLifecycle;
     private readonly ISettingsService _settingsService;
+    private readonly IMusicPlaybackService _playbackService;
     private readonly IDispatcherService _dispatcherService;
     private readonly ILogger<WindowBehavior> _logger;
 
     public WindowBehavior(IWindowService windowService, IApplicationLifecycle applicationLifecycle,
-        ISettingsService settingsService, IDispatcherService dispatcherService, ILogger<WindowBehavior> logger)
+        ISettingsService settingsService, IMusicPlaybackService playbackService, IDispatcherService dispatcherService,
+        ILogger<WindowBehavior> logger)
     {
         _windowService = windowService;
         _applicationLifecycle = applicationLifecycle;
         _settingsService = settingsService;
+        _playbackService = playbackService;
         _dispatcherService = dispatcherService;
         _logger = logger;
 
         _windowService.Closing += OnClosing;
         _windowService.Minimized += OnMinimized;
+        _windowService.UIStateChanged += OnUIStateChanged;
+        _playbackService.PlaybackStateChanged += OnUIStateChanged;
     }
 
     private bool StartMinimized => _settingsService.Get(AppSettings.StartMinimized);
@@ -52,6 +58,19 @@ public sealed class WindowBehavior
         if (activatedExternally || !StartMinimized) _windowService.ShowAndActivate();
         else if (MinimizeToMiniPlayer) _windowService.ShowMiniPlayer();
         else if (!HideToTray) _windowService.ShowMinimized();
+        UpdateEfficiencyMode();
+    }
+
+    private void OnUIStateChanged()
+    {
+        if (_dispatcherService.HasThreadAccess) UpdateEfficiencyMode();
+        else _dispatcherService.TryEnqueue(UpdateEfficiencyMode);
+    }
+
+    private void UpdateEfficiencyMode()
+    {
+        var isOutOfSight = !_windowService.IsVisible || _windowService.IsMiniPlayerActive || _windowService.IsMinimized;
+        _windowService.SetEfficiencyMode(isOutOfSight && !_playbackService.IsPlaying);
     }
 
     private void OnMinimized()

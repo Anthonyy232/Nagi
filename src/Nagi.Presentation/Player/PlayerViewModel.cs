@@ -81,7 +81,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         InitializeListeningEvents();
         _libraryNotifier.Changed += OnQueueLibraryChanged;
         _settingsService.SettingChanged += OnSettingChanged;
-        SubscribeToWindowServiceEvents();
         InitializeStateFromService();
         LoadPlayerButtonSettings();
         QueueDisplaySettings = _settingsService.Get(AppSettings.QueueDisplay);
@@ -238,7 +237,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         CleanupListening();
         _libraryNotifier.Changed -= OnQueueLibraryChanged;
         _settingsService.SettingChanged -= OnSettingChanged;
-        UnsubscribeFromWindowServiceEvents();
+
         QueueDisplaySettings.PropertyChanged -= OnQueueDisplaySettingChanged;
         SidebarQueue.Dispose();
         _queueDisplayCts?.Cancel();
@@ -457,17 +456,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         TotalDurationText = DurationFormatter.Format(TimeSpan.FromSeconds(value));
     }
 
-    private void UpdateEfficiencyMode()
-    {
-        var (isVisible, isMiniPlayerActive, isMinimized, isPlaying) =
-            (_windowService.IsVisible, _windowService.IsMiniPlayerActive,
-             _windowService.IsMinimized, _playbackService.IsPlaying);
-
-        var isInBackgroundState = !isVisible || isMiniPlayerActive || isMinimized;
-        var shouldBeEfficient = !isPlaying && isInBackgroundState;
-
-        _windowService.SetEfficiencyMode(shouldBeEfficient);
-    }
 
     private void UpdateTrackDetails(Song? song)
     {
@@ -605,7 +593,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
             TotalDuration = Math.Max(0, _playbackService.Duration.TotalSeconds);
             CurrentPosition = _playbackService.CurrentPosition.TotalSeconds;
             UpdateCurrentQueueDisplay();
-            UpdateEfficiencyMode();
         });
     }
 
@@ -615,7 +602,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         {
             IsPlaying = _playbackService.IsPlaying;
             UpdateOpening();
-            UpdateEfficiencyMode();
         });
     }
 
@@ -720,20 +706,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         RunOnUIThread(() => TotalDuration = Math.Max(0, _playbackService.Duration.TotalSeconds));
     }
 
-    private void SubscribeToWindowServiceEvents()
-    {
-        _windowService.UIStateChanged += OnWindowService_UIStateChanged;
-    }
-
-    private void UnsubscribeFromWindowServiceEvents()
-    {
-        _windowService.UIStateChanged -= OnWindowService_UIStateChanged;
-    }
-
-    private void OnWindowService_UIStateChanged()
-    {
-        RunOnUIThread(UpdateEfficiencyMode);
-    }
 
     private void OnSettingChanged(Setting setting)
     {
