@@ -4,6 +4,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Data.Sqlite;
 using Nagi.Core.Backup;
+using Nagi.Core.Library;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Settings;
@@ -17,6 +18,7 @@ public class BackupRestoreServiceTests : IDisposable
     private readonly IPathConfiguration _pathConfig;
     private readonly ISettingsService _settings = Substitute.For<ISettingsService>();
     private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
+    private readonly ILibraryReset _libraryReset = Substitute.For<ILibraryReset>();
     private readonly BackupRestoreService _service;
 
     private readonly List<string> _tempDirs = [];
@@ -27,8 +29,9 @@ public class BackupRestoreServiceTests : IDisposable
         _pathConfig.DatabasePath.Returns(_ => Path.Combine(_pathConfig.AppDataRoot, "nagi.db"));
         _pathConfig.LibraryCacheFolders.Returns(_ => [Path.Combine(_pathConfig.AppDataRoot, "AlbumArt")]);
         _pathConfig.RomanizationPacksPath.Returns(_ => Path.Combine(_pathConfig.AppDataRoot, "RomanizationPacks"));
+        _libraryReset.RunWhileQuietAsync(Arg.Any<string>(), Arg.Any<Func<Task>>()).Returns(call => call.Arg<Func<Task>>()());
         var logger = Substitute.For<ILogger<BackupRestoreService>>();
-        _service = new BackupRestoreService(_pathConfig, _settings, _playback, logger);
+        _service = new BackupRestoreService(_pathConfig, _settings, _playback, _libraryReset, logger);
     }
 
     public void Dispose()
@@ -246,6 +249,32 @@ public class BackupRestoreServiceTests : IDisposable
         using var query = database.CreateCommand();
         query.CommandText = "SELECT Title FROM Songs;";
         query.ExecuteScalar().Should().Be("Restored track");
+    }
+
+    [Fact]
+    public async Task RestoreFromBackupAsync_ClearsTheQueueAndSwapsTheLibraryOnlyWhileTheLibraryIsQuiet()
+    {
+        var zipPath = CreateDatabaseBackup("Backup track");
+        var destDir = CreateTempDir();
+        _pathConfig.AppDataRoot.Returns(destDir);
+        using (OpenTestDatabase(Path.Combine(destDir, "nagi.db"), "Live library")) { }
+        var quiet = false;
+        bool? clearedWhileQuiet = null;
+        string? titleWhenQuietEnded = null;
+        _playback.When(p => p.ClearQueueAsync()).Do(_ => clearedWhileQuiet = quiet);
+        _libraryReset.RunWhileQuietAsync(Arg.Any<string>(), Arg.Any<Func<Task>>()).Returns(async call =>
+        {
+            quiet = true;
+            await call.Arg<Func<Task>>()();
+            quiet = false;
+            titleWhenQuietEnded = ReadTitle(Path.Combine(destDir, "nagi.db"));
+        });
+
+        var result = await _service.RestoreFromBackupAsync(zipPath);
+
+        result.Success.Should().BeTrue(result.ErrorMessage);
+        clearedWhileQuiet.Should().BeTrue();
+        titleWhenQuietEnded.Should().Be("Backup track");
     }
 
     [Fact]
@@ -482,6 +511,20 @@ public class BackupRestoreServiceTests : IDisposable
         using var archive = ZipFile.Open(archivePath, ZipArchiveMode.Update);
         archive.CreateEntryFromFile(databasePath, "nagi.db");
         return archivePath;
+    }
+
+    private static string? ReadTitle(string databasePath)
+    {
+        using var database = new SqliteConnection(new SqliteConnectionStringBuilder
+        {
+            DataSource = databasePath,
+            Mode = SqliteOpenMode.ReadOnly,
+            Pooling = false
+        }.ToString());
+        database.Open();
+        using var query = database.CreateCommand();
+        query.CommandText = "SELECT Title FROM Songs;";
+        return query.ExecuteScalar() as string;
     }
 
     private static SqliteConnection OpenTestDatabase(string path, string title)

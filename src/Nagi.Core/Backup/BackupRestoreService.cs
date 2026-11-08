@@ -3,6 +3,7 @@ using System.IO.Compression;
 using System.Text.Json;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Library;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Settings;
@@ -17,17 +18,20 @@ public class BackupRestoreService : IBackupRestoreService
     private readonly IPathConfiguration _pathConfiguration;
     private readonly ISettingsService _settingsService;
     private readonly IMusicPlaybackService _playback;
+    private readonly ILibraryReset _libraryReset;
     private readonly ILogger<BackupRestoreService> _logger;
 
     public BackupRestoreService(
         IPathConfiguration pathConfiguration,
         ISettingsService settingsService,
         IMusicPlaybackService playback,
+        ILibraryReset libraryReset,
         ILogger<BackupRestoreService> logger)
     {
         _pathConfiguration = pathConfiguration;
         _settingsService = settingsService;
         _playback = playback;
+        _libraryReset = libraryReset;
         _logger = logger;
     }
 
@@ -49,18 +53,22 @@ public class BackupRestoreService : IBackupRestoreService
 
             try
             {
-                var databasePath = _pathConfiguration.DatabasePath;
-                if (File.Exists(databasePath))
+                // A scan could otherwise delete a cover between listing the folder and copying the file.
+                await _libraryReset.RunWhileQuietAsync("backup", async () =>
                 {
-                    // SQLite takes a consistent snapshot, including committed WAL data.
-                    // A checkpoint followed by a file copy can lose writes or race a writer.
-                    var target = Path.Combine(stagingPath, DatabaseFileName);
-                    await Task.Run(() => BackupDatabase(databasePath, target)).ConfigureAwait(false);
-                }
+                    var databasePath = _pathConfiguration.DatabasePath;
+                    if (File.Exists(databasePath))
+                    {
+                        // SQLite takes a consistent snapshot, including committed WAL data.
+                        // A checkpoint followed by a file copy can lose writes or race a writer.
+                        var target = Path.Combine(stagingPath, DatabaseFileName);
+                        await Task.Run(() => BackupDatabase(databasePath, target)).ConfigureAwait(false);
+                    }
 
-                foreach (var folder in _pathConfiguration.LibraryCacheFolders.Append(_pathConfiguration.RomanizationPacksPath))
-                    if (Directory.Exists(folder))
-                        await CopyDirectoryAsync(folder, Path.Combine(stagingPath, Path.GetFileName(folder))).ConfigureAwait(false);
+                    foreach (var folder in _pathConfiguration.LibraryCacheFolders.Append(_pathConfiguration.RomanizationPacksPath))
+                        if (Directory.Exists(folder))
+                            await CopyDirectoryAsync(folder, Path.Combine(stagingPath, Path.GetFileName(folder))).ConfigureAwait(false);
+                }).ConfigureAwait(false);
 
                 await File.WriteAllTextAsync(Path.Combine(stagingPath, SettingsFileName),
                     await _settingsService.ExportAsync().ConfigureAwait(false)).ConfigureAwait(false);
@@ -170,88 +178,96 @@ public class BackupRestoreService : IBackupRestoreService
                         throw new InvalidDataException("The backup database failed SQLite's integrity check.");
                 }
 
-                // The app restarts through its normal shutdown after a restore, which ends the current listen by its
-                // row ID and saves the queue. Ending them now keeps the listen in the database it belongs to and leaves
-                // nothing to write over the restored data.
-                await _playback.ClearQueueAsync().ConfigureAwait(false);
-
-                try
+                // A scan holds database connections that would block the swap, and would write the old library into
+                // the restored one after it.
+                RestoreResult? failure = null;
+                await _libraryReset.RunWhileQuietAsync("restoring a backup", async () =>
                 {
-                    SqliteConnection.ClearAllPools();
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Failed to clear SQLite connection pools. Restore may fail if DB is locked.");
-                }
+                    // The app restarts through its normal shutdown after a restore, which ends the current listen by its
+                    // row ID and saves the queue. Ending them now keeps the listen in the database it belongs to and leaves
+                    // nothing to write over the restored data.
+                    await _playback.ClearQueueAsync().ConfigureAwait(false);
 
-                // On Windows, deny database reads/writes during replacement and rollback,
-                // while allowing our own renames. An active SQLite connection makes this
-                // fail before any live files are changed.
-                using var incomingDatabaseLock = File.Exists(incomingDatabase)
-                    ? new FileStream(incomingDatabase, FileMode.Open, FileAccess.Read, FileShare.Delete)
-                    : null;
-                using var existingDatabaseLock = incomingDatabaseLock is not null && File.Exists(existingDatabase)
-                    ? new FileStream(existingDatabase, FileMode.Open, FileAccess.Read, FileShare.Delete)
-                    : null;
-
-                try
-                {
-                    // A restored snapshot must not inherit journals from the replaced database.
-                    // Keep them in the rollback transaction so any later failure restores the
-                    // original database and its complete recovery state together.
-                    if (incomingDatabaseLock is not null)
+                    try
                     {
-                        foreach (var suffix in new[] { "-wal", "-shm", "-journal" })
-                        {
-                            var journalName = DatabaseFileName + suffix;
-                            var existingJournal = Path.Combine(destPath, journalName);
-                            if (!EntryExists(existingJournal)) continue;
-
-                            var savedJournal = Path.Combine(rollbackPath, journalName);
-                            MoveEntry(existingJournal, savedJournal);
-                            journal.Add(new RestoreJournalEntry(existingJournal, savedJournal));
-                        }
+                        SqliteConnection.ClearAllPools();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Failed to clear SQLite connection pools. Restore may fail if DB is locked.");
                     }
 
-                    foreach (var incomingItem in Directory
-                        .EnumerateFileSystemEntries(incomingPath, "*", SearchOption.TopDirectoryOnly)
-                        .OrderBy(item => Path.GetFileName(item), StringComparer.OrdinalIgnoreCase))
-                    {
-                        var itemName = Path.GetFileName(incomingItem);
-                        var destinationItem = Path.Combine(destPath, itemName);
-                        string? originalItem = null;
+                    // On Windows, deny database reads/writes during replacement and rollback,
+                    // while allowing our own renames. An active SQLite connection makes this
+                    // fail before any live files are changed.
+                    using var incomingDatabaseLock = File.Exists(incomingDatabase)
+                        ? new FileStream(incomingDatabase, FileMode.Open, FileAccess.Read, FileShare.Delete)
+                        : null;
+                    using var existingDatabaseLock = incomingDatabaseLock is not null && File.Exists(existingDatabase)
+                        ? new FileStream(existingDatabase, FileMode.Open, FileAccess.Read, FileShare.Delete)
+                        : null;
 
-                        if (EntryExists(destinationItem))
+                    try
+                    {
+                        // A restored snapshot must not inherit journals from the replaced database.
+                        // Keep them in the rollback transaction so any later failure restores the
+                        // original database and its complete recovery state together.
+                        if (incomingDatabaseLock is not null)
                         {
-                            originalItem = Path.Combine(rollbackPath, itemName);
-                            MoveEntry(destinationItem, originalItem);
+                            foreach (var suffix in new[] { "-wal", "-shm", "-journal" })
+                            {
+                                var journalName = DatabaseFileName + suffix;
+                                var existingJournal = Path.Combine(destPath, journalName);
+                                if (!EntryExists(existingJournal)) continue;
+
+                                var savedJournal = Path.Combine(rollbackPath, journalName);
+                                MoveEntry(existingJournal, savedJournal);
+                                journal.Add(new RestoreJournalEntry(existingJournal, savedJournal));
+                            }
                         }
 
-                        // Record the original before installing the replacement so this item
-                        // participates in rollback even if the second move fails.
-                        journal.Add(new RestoreJournalEntry(destinationItem, originalItem));
-                        MoveEntry(incomingItem, destinationItem);
-                        restoredCount++;
-                    }
-                }
-                catch (Exception restoreException)
-                {
-                    var rollbackErrors = RollbackRestore(journal);
-                    if (rollbackErrors.Count > 0)
-                    {
-                        preserveTransaction = true;
-                        var rollbackMessage = string.Format(Resources.Strings.Backup_IncompleteRestore, transactionPath);
-                        _logger.LogCritical(
-                            restoreException,
-                            "{Message} Rollback errors: {RollbackErrors}",
-                            rollbackMessage,
-                            string.Join(" | ", rollbackErrors.Select(error => error.Message)));
-                        return new RestoreResult(false, rollbackMessage);
-                    }
+                        foreach (var incomingItem in Directory
+                            .EnumerateFileSystemEntries(incomingPath, "*", SearchOption.TopDirectoryOnly)
+                            .OrderBy(item => Path.GetFileName(item), StringComparer.OrdinalIgnoreCase))
+                        {
+                            var itemName = Path.GetFileName(incomingItem);
+                            var destinationItem = Path.Combine(destPath, itemName);
+                            string? originalItem = null;
 
-                    _logger.LogError(restoreException, "Restore failed; all replaced items were rolled back.");
-                    return new RestoreResult(false);
-                }
+                            if (EntryExists(destinationItem))
+                            {
+                                originalItem = Path.Combine(rollbackPath, itemName);
+                                MoveEntry(destinationItem, originalItem);
+                            }
+
+                            // Record the original before installing the replacement so this item
+                            // participates in rollback even if the second move fails.
+                            journal.Add(new RestoreJournalEntry(destinationItem, originalItem));
+                            MoveEntry(incomingItem, destinationItem);
+                            restoredCount++;
+                        }
+                    }
+                    catch (Exception restoreException)
+                    {
+                        var rollbackErrors = RollbackRestore(journal);
+                        if (rollbackErrors.Count > 0)
+                        {
+                            preserveTransaction = true;
+                            var rollbackMessage = string.Format(Resources.Strings.Backup_IncompleteRestore, transactionPath);
+                            _logger.LogCritical(
+                                restoreException,
+                                "{Message} Rollback errors: {RollbackErrors}",
+                                rollbackMessage,
+                                string.Join(" | ", rollbackErrors.Select(error => error.Message)));
+                            failure = new RestoreResult(false, rollbackMessage);
+                            return;
+                        }
+
+                        _logger.LogError(restoreException, "Restore failed; all replaced items were rolled back.");
+                        failure = new RestoreResult(false);
+                    }
+                }).ConfigureAwait(false);
+                if (failure is not null) return failure;
 
                 if (settingsSnapshot is not null)
                 {

@@ -29,7 +29,8 @@ public sealed class ArtworkService : IArtworkService
     private readonly LibraryWriteLock _writeLock;
     private readonly ILogger<ArtworkService> _logger;
     private readonly SemaphoreSlim _metadataFetchSemaphore = new(1, 1);
-    private volatile CancellationTokenSource? _metadataFetchCts;
+    private CancellationTokenSource? _metadataFetchCts;
+    private int _metadataFetchHolds;
 
     public ArtworkService(
         IDbContextFactory<MusicDbContext> contextFactory,
@@ -104,9 +105,11 @@ public sealed class ArtworkService : IArtworkService
         }
 
         using var runCts = CancellationTokenSource.CreateLinkedTokenSource(ShutdownToken);
-        _metadataFetchCts = runCts;
+        Interlocked.Exchange(ref _metadataFetchCts, runCts);
         try
         {
+            // A hold that began before the token source was published couldn't cancel it.
+            if (Volatile.Read(ref _metadataFetchHolds) > 0) return;
             var token = runCts.Token;
             await Task.Run(() => Task.WhenAll(FetchMissingArtistMetadataAsync(token), FetchMissingAlbumCoversAsync(token)),
                 token).ConfigureAwait(false);
@@ -121,30 +124,38 @@ public sealed class ArtworkService : IArtworkService
         }
         finally
         {
-            _metadataFetchCts = null;
+            Volatile.Write(ref _metadataFetchCts, null);
             _metadataFetchSemaphore.Release();
         }
     }
 
     public async Task RunWithoutMetadataFetchAsync(Func<Task> action)
     {
+        Interlocked.Increment(ref _metadataFetchHolds);
         try
         {
-            _metadataFetchCts?.Cancel();
-        }
-        catch (ObjectDisposedException)
-        {
-            // The run finished and disposed its token source after it was read.
-        }
+            try
+            {
+                Volatile.Read(ref _metadataFetchCts)?.Cancel();
+            }
+            catch (ObjectDisposedException)
+            {
+                // The run finished and disposed its token source after it was read.
+            }
 
-        await _metadataFetchSemaphore.WaitAsync(ShutdownToken).ConfigureAwait(false);
-        try
-        {
-            await action().ConfigureAwait(false);
+            await _metadataFetchSemaphore.WaitAsync(ShutdownToken).ConfigureAwait(false);
+            try
+            {
+                await action().ConfigureAwait(false);
+            }
+            finally
+            {
+                _metadataFetchSemaphore.Release();
+            }
         }
         finally
         {
-            _metadataFetchSemaphore.Release();
+            Interlocked.Decrement(ref _metadataFetchHolds);
         }
     }
 

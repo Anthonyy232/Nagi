@@ -289,6 +289,44 @@ public partial class LibraryTests : IDisposable
             .GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>());
     }
 
+    [Fact]
+    public async Task RunWhileQuiet_TakesTheWriteLockOnlyOnceTheMetadataFetchHasStopped()
+    {
+        // The fetch takes the write lock to store a cover, so taking the write lock first could deadlock with it.
+        _settingsService.Set(CoreSettings.FetchOnlineMetadata, true);
+        _settingsService.EnableOnly(CoreSettings.MetadataProviders, ServiceProviderIds.LastFm);
+        var artist = new Artist { Name = "Pending artist" };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Artists.Add(artist);
+            await context.SaveChangesAsync();
+        }
+        var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var provider = new TaskCompletionSource<ServiceResult<ArtistInfo>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>()).Returns(_ =>
+        {
+            started.TrySetResult();
+            return provider.Task;
+        });
+        var fetch = _library.Artwork.StartMetadataBackgroundFetchAsync();
+        await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        var ranQuiet = false;
+
+        var quiet = _library.Reset.RunWhileQuietAsync("test", () =>
+        {
+            ranQuiet = true;
+            return Task.CompletedTask;
+        });
+
+        var writeLock = _library.WriteLock.WaitAsync(CancellationToken.None);
+        writeLock.IsCompletedSuccessfully.Should().BeTrue("the quiet step waits for the fetch before the write lock");
+        _library.WriteLock.Release();
+        ranQuiet.Should().BeFalse();
+        provider.SetResult(ServiceResult<ArtistInfo>.FromSuccessNotFound());
+        await Task.WhenAll(fetch, quiet).WaitAsync(TimeSpan.FromSeconds(5));
+        ranQuiet.Should().BeTrue();
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
