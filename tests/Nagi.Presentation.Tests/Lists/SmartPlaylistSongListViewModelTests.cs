@@ -37,7 +37,7 @@ public class SmartPlaylistSongListViewModelTests
         {
             Name = "Current",
             CoverImageUri = "https://example.com/current.jpg",
-            SortOrder = SmartPlaylistSortOrder.DurationDesc
+            SortOrder = SongSortOrder.DurationDesc
         };
         _playlists.GetSmartPlaylistByIdAsync(current.Id).Returns(current);
         using var viewModel = CreateViewModel();
@@ -67,7 +67,7 @@ public class SmartPlaylistSongListViewModelTests
 
         if (dispose) viewModel.Dispose();
         else viewModel.ResetState();
-        pending.SetResult(new SmartPlaylist { Id = id, Name = "Outdated", SortOrder = SmartPlaylistSortOrder.Random });
+        pending.SetResult(new SmartPlaylist { Id = id, Name = "Outdated", SortOrder = SongSortOrder.Random });
         await loading;
 
         viewModel.PageTitle.Should().Be("Initial");
@@ -109,7 +109,7 @@ public class SmartPlaylistSongListViewModelTests
     [Fact]
     public async Task RandomOrder_ShowsAndPlaysTheSameShuffle()
     {
-        var playlist = new SmartPlaylist { Name = "Random", SortOrder = SmartPlaylistSortOrder.Random };
+        var playlist = new SmartPlaylist { Name = "Random", SortOrder = SongSortOrder.Random };
         _playlists.GetSmartPlaylistByIdAsync(playlist.Id).Returns(playlist);
         var songs = new[] { new Song(), new Song(), new Song() };
         var ids = songs.Select(song => song.Id).Reverse().ToList();

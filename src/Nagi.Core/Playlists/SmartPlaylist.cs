@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Nagi.Core.Library;
 
 namespace Nagi.Core.Playlists;
 
@@ -23,7 +24,7 @@ public class SmartPlaylist
 
     public bool MatchAllRules { get; set; } = true;
 
-    public SmartPlaylistSortOrder SortOrder { get; set; } = SmartPlaylistSortOrder.TitleAsc;
+    public SongSortOrder SortOrder { get; set; } = SongSortOrder.TitleAsc;
 
     public virtual ICollection<SmartPlaylistRule> Rules { get; set; } = new List<SmartPlaylistRule>();
 

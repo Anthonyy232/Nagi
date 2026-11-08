@@ -24,7 +24,7 @@ public interface ISmartPlaylistService
     Task<Guid?> GetRandomSmartPlaylistIdAsync();
     Task<int> GetSmartPlaylistCountAsync();
 
-    Task<bool> SetSortOrderAsync(Guid smartPlaylistId, SmartPlaylistSortOrder sortOrder);
+    Task<bool> SetSortOrderAsync(Guid smartPlaylistId, SongSortOrder sortOrder);
 
     Task<PagedResult<Song>> GetMatchingSongsPagedAsync(Guid smartPlaylistId, int pageNumber, int pageSize, string? searchTerm = null, SongSortOrder? sortOrder = null, CancellationToken token = default);
 

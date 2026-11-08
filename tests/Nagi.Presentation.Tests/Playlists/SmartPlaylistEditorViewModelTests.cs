@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Time.Testing;
+using Nagi.Core.Library;
 using Nagi.Core.Playlists;
 using Nagi.Presentation.Playlists;
 using Nagi.Presentation.Resources;
@@ -34,7 +35,7 @@ public class SmartPlaylistEditorViewModelTests : IDisposable
         {
             Name = "Long tracks",
             MatchAllRules = false,
-            SortOrder = SmartPlaylistSortOrder.DurationDesc,
+            SortOrder = SongSortOrder.DurationDesc,
             CoverImageUri = @"C:\covers\long.png",
             Rules =
             {
@@ -47,7 +48,7 @@ public class SmartPlaylistEditorViewModelTests : IDisposable
 
         _viewModel.Name.Should().Be("Long tracks");
         _viewModel.MatchLogicIndex.Should().Be(1);
-        _viewModel.SelectedSortOption.SortOrder.Should().Be(SmartPlaylistSortOrder.DurationDesc);
+        _viewModel.SelectedSortOption.SortOrder.Should().Be(SongSortOrder.DurationDesc);
         _viewModel.HasCoverImage.Should().BeTrue();
         _viewModel.Rules.Select(r => r.SelectedField.Field).Should().Equal(SmartPlaylistField.Title, SmartPlaylistField.Genre);
         _viewModel.HasNoRules.Should().BeFalse();
