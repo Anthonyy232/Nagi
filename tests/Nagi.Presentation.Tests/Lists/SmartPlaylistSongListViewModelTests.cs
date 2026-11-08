@@ -23,7 +23,7 @@ public class SmartPlaylistSongListViewModelTests
         _playlists.GetSmartPlaylistByIdAsync(Arg.Any<Guid>())
             .Returns(call => new SmartPlaylist { Id = call.Arg<Guid>(), Name = "Playlist" });
         _playlists.GetMatchingSongsPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
-                Arg.Any<string?>(), Arg.Any<SongSortOrder?>(), Arg.Any<CancellationToken>())
+                Arg.Any<string?>(), Arg.Any<SongSortOrder?>(), Arg.Any<int?>(), Arg.Any<CancellationToken>())
             .Returns(new PagedResult<Song>());
     }
 
@@ -51,7 +51,7 @@ public class SmartPlaylistSongListViewModelTests
         viewModel.CoverImageUri.Should().StartWith(current.CoverImageUri);
         viewModel.Sort.Current.Should().Be(SongSortOrder.DurationDesc);
         await _playlists.DidNotReceive().GetMatchingSongsPagedAsync(oldId, Arg.Any<int>(), Arg.Any<int>(),
-            Arg.Any<string?>(), Arg.Any<SongSortOrder?>(), Arg.Any<CancellationToken>());
+            Arg.Any<string?>(), Arg.Any<SongSortOrder?>(), Arg.Any<int?>(), Arg.Any<CancellationToken>());
     }
 
     [Theory]
@@ -83,11 +83,11 @@ public class SmartPlaylistSongListViewModelTests
         var started = new TaskCompletionSource();
         var pending = new TaskCompletionSource<PagedResult<Song>>();
         _playlists.GetMatchingSongsPagedAsync(oldId, Arg.Any<int>(), Arg.Any<int>(),
-                Arg.Any<string?>(), Arg.Any<SongSortOrder?>(), Arg.Any<CancellationToken>())
+                Arg.Any<string?>(), Arg.Any<SongSortOrder?>(), Arg.Any<int?>(), Arg.Any<CancellationToken>())
             .Returns(_ => { started.SetResult(); return pending.Task; });
         var currentSong = new Song { Title = "Current song" };
         _playlists.GetMatchingSongsPagedAsync(newId, Arg.Any<int>(), Arg.Any<int>(),
-                Arg.Any<string?>(), Arg.Any<SongSortOrder?>(), Arg.Any<CancellationToken>())
+                Arg.Any<string?>(), Arg.Any<SongSortOrder?>(), Arg.Any<int?>(), Arg.Any<CancellationToken>())
             .Returns(new PagedResult<Song> { Items = [currentSong], TotalCount = 1 });
         using var viewModel = CreateViewModel();
         var applied = new TaskCompletionSource();
@@ -107,26 +107,28 @@ public class SmartPlaylistSongListViewModelTests
     }
 
     [Fact]
-    public async Task RandomOrder_ShowsAndPlaysTheSameShuffle()
+    public async Task RandomOrder_ShowsAndPlaysOneShuffleUntilSortedAgain()
     {
         var playlist = new SmartPlaylist { Name = "Random", SortOrder = SongSortOrder.Random };
         _playlists.GetSmartPlaylistByIdAsync(playlist.Id).Returns(playlist);
-        var songs = new[] { new Song(), new Song(), new Song() };
-        var ids = songs.Select(song => song.Id).Reverse().ToList();
-        _playlists.GetMatchingSongIdsAsync(playlist.Id, null, SongSortOrder.Random, Arg.Any<CancellationToken>())
-            .Returns(_ => ids.ToList());
-        _library.Reader.GetSongsByIdsAsync(Arg.Any<IEnumerable<Guid>>())
-            .Returns(call => (IReadOnlyDictionary<Guid, Song>)songs
-                .Where(song => call.Arg<IEnumerable<Guid>>().Contains(song.Id)).ToDictionary(song => song.Id));
+        var seeds = new List<int?>();
+        _playlists.GetMatchingSongsPagedAsync(playlist.Id, Arg.Any<int>(), Arg.Any<int>(), Arg.Any<string?>(), SongSortOrder.Random,
+                Arg.Do<int?>(seeds.Add), Arg.Any<CancellationToken>())
+            .Returns(new PagedResult<Song> { Items = [new Song()], TotalCount = 1 });
+        _playlists.GetMatchingSongIdsAsync(playlist.Id, Arg.Any<string?>(), SongSortOrder.Random, Arg.Do<int?>(seeds.Add),
+                Arg.Any<CancellationToken>())
+            .Returns(_ => [Guid.NewGuid()]);
         using var viewModel = CreateViewModel();
 
         await viewModel.OpenAsync(new SmartPlaylistSongViewNavigationParameter { Title = "Random", SmartPlaylistId = playlist.Id });
         await viewModel.PlayAllSongsCommand.ExecuteAsync(null);
+        seeds.Should().HaveCount(2).And.OnlyContain(seed => seed == seeds[0]);
 
-        viewModel.Songs.Select(song => song.Id).Should().Equal(ids);
-        await _playback.Received(1).PlayAsync(Arg.Is<IEnumerable<Guid>>(played => played.SequenceEqual(ids)), 0, null,
-            Arg.Any<PlaybackContext>());
-        await _playlists.Received(1).GetMatchingSongIdsAsync(playlist.Id, null, SongSortOrder.Random, Arg.Any<CancellationToken>());
+        await viewModel.Sort.ChangeCommand.ExecuteAsync(SongSortOrder.TitleAsc);
+        await viewModel.Sort.ChangeCommand.ExecuteAsync(SongSortOrder.Random);
+        await viewModel.PlayAllSongsCommand.ExecuteAsync(null);
+
+        seeds[^1].Should().NotBe(seeds[0]);
     }
 
     private SmartPlaylistSongListViewModel CreateViewModel() =>

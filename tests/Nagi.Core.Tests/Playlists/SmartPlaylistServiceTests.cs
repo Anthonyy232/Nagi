@@ -362,6 +362,21 @@ public class SmartPlaylistServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task RandomOrder_WithASeed_PagesAndIdsAgree()
+    {
+        var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Shuffled", SortOrder = SongSortOrder.Random });
+
+        var ids = await _service.GetMatchingSongIdsAsync(playlist.Id, shuffleSeed: 42);
+        var paged = new List<Guid>();
+        for (var page = 1; page <= 3; page++)
+            paged.AddRange((await _service.GetMatchingSongsPagedAsync(playlist.Id, page, 1, shuffleSeed: 42)).Items.Select(song => song.Id));
+
+        ids.Should().HaveCount(3);
+        paged.Should().Equal(ids);
+        (await _service.GetMatchingSongIdsAsync(playlist.Id, shuffleSeed: 42)).Should().Equal(ids);
+    }
+
+    [Fact]
     public async Task GetMatchingSongsPagedAsync_InvalidPaging_SanitizesToValidValues()
     {
         var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Invalid Page Test" });

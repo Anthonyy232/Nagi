@@ -36,6 +36,9 @@ public partial class SmartPlaylistSongListViewModel : DetailSongListViewModelBas
     private readonly ISmartPlaylistService _smartPlaylistService;
     private Guid? _currentSmartPlaylistId;
 
+    // Keeps a random order still across pages and play all, until the list is opened or sorted again.
+    private int _shuffleSeed = Random.Shared.Next();
+
     public SmartPlaylistSongListViewModel(
         ILibraryReader libraryReader,
         IListeningService listening,
@@ -101,6 +104,7 @@ public partial class SmartPlaylistSongListViewModel : DetailSongListViewModelBas
         CancellationToken token)
     {
         Sort.Current = SongSortOrder.TitleAsc;
+        _shuffleSeed = Random.Shared.Next();
         RuleSummary = string.Empty;
         PageTitle = parameter.Title;
         _currentSmartPlaylistId = parameter.SmartPlaylistId;
@@ -141,18 +145,21 @@ public partial class SmartPlaylistSongListViewModel : DetailSongListViewModelBas
         SongSortOrder sortOrder, CancellationToken cancellationToken = default)
     {
         if (!_currentSmartPlaylistId.HasValue) return Task.FromResult(new PagedResult<Song>());
-
-        if (sortOrder == SongSortOrder.Random)
-            return LoadRandomPageAsync(pageNumber, pageSize, cancellationToken);
-
         return _smartPlaylistService.GetMatchingSongsPagedAsync(
-            _currentSmartPlaylistId.Value, pageNumber, pageSize, ActiveSearchTerm, sortOrder, cancellationToken);
+            _currentSmartPlaylistId.Value, pageNumber, pageSize, ActiveSearchTerm, sortOrder, _shuffleSeed, cancellationToken);
     }
 
     protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
     {
         if (!_currentSmartPlaylistId.HasValue) return Task.FromResult(new List<Guid>());
-        return _smartPlaylistService.GetMatchingSongIdsAsync(_currentSmartPlaylistId.Value, ActiveSearchTerm, sortOrder, token);
+        return _smartPlaylistService.GetMatchingSongIdsAsync(_currentSmartPlaylistId.Value, ActiveSearchTerm, sortOrder,
+            _shuffleSeed, token);
+    }
+
+    protected override Task OnSortOrderChangedAsync()
+    {
+        _shuffleSeed = Random.Shared.Next();
+        return base.OnSortOrderChangedAsync();
     }
 
     protected override PlaybackContext GetPlaybackContext() =>
@@ -165,28 +172,6 @@ public partial class SmartPlaylistSongListViewModel : DetailSongListViewModelBas
             : Task.CompletedTask;
     }
 
-    // A random order only holds still as one list of IDs, so every page is cut from the list that playing all uses.
-    private async Task<PagedResult<Song>> LoadRandomPageAsync(int pageNumber, int pageSize, CancellationToken token)
-    {
-        var ids = await GetFullSongIdsAsync().WaitAsync(token).ConfigureAwait(false);
-
-        var pageIds = ids.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-        var songsById = await _libraryReader.GetSongsByIdsAsync(pageIds).ConfigureAwait(false);
-        token.ThrowIfCancellationRequested();
-
-        var items = pageIds
-            .Select(id => songsById.TryGetValue(id, out var song) ? song : null)
-            .OfType<Song>()
-            .ToList();
-
-        return new PagedResult<Song>
-        {
-            Items = items,
-            TotalCount = ids.Count,
-            PageNumber = pageNumber,
-            PageSize = pageSize
-        };
-    }
 
     private string? ActiveSearchTerm => IsSearchActive ? SearchTerm : null;
 

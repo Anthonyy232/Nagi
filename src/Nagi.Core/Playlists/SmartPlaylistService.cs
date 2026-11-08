@@ -156,7 +156,7 @@ public class SmartPlaylistService : ISmartPlaylistService
         return true;
     }
 
-    public async Task<PagedResult<Song>> GetMatchingSongsPagedAsync(Guid smartPlaylistId, int pageNumber, int pageSize, string? searchTerm = null, SongSortOrder? sortOrder = null, CancellationToken token = default)
+    public async Task<PagedResult<Song>> GetMatchingSongsPagedAsync(Guid smartPlaylistId, int pageNumber, int pageSize, string? searchTerm = null, SongSortOrder? sortOrder = null, int? shuffleSeed = null, CancellationToken token = default)
     {
         Paging.Sanitize(ref pageNumber, ref pageSize);
 
@@ -171,6 +171,22 @@ public class SmartPlaylistService : ISmartPlaylistService
             {
                 Items = new List<Song>(),
                 TotalCount = 0,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+        }
+
+        if ((sortOrder ?? smartPlaylist.SortOrder) == SongSortOrder.Random)
+        {
+            var shuffledIds = await GetShuffledIdsAsync(context, smartPlaylist, searchTerm, shuffleSeed, token).ConfigureAwait(false);
+            var pageIds = shuffledIds.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            var songsById = await SongQuery.ExcludeHeavyFields(context, context.Songs.AsNoTracking().Where(s => pageIds.Contains(s.Id)))
+                .ToDictionaryAsync(s => s.Id, token).ConfigureAwait(false);
+
+            return new PagedResult<Song>
+            {
+                Items = pageIds.Where(songsById.ContainsKey).Select(id => songsById[id]).ToList(),
+                TotalCount = shuffledIds.Count,
                 PageNumber = pageNumber,
                 PageSize = pageSize
             };
@@ -193,6 +209,19 @@ public class SmartPlaylistService : ISmartPlaylistService
         };
     }
 
+    // SQLite's random() can't be seeded, so the matching ids are put in a fixed order and shuffled here.
+    private static async Task<List<Guid>> GetShuffledIdsAsync(MusicDbContext context, SmartPlaylist smartPlaylist,
+        string? searchTerm, int? shuffleSeed, CancellationToken token)
+    {
+        var ids = await SmartPlaylistQueryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm)
+            .Select(s => s.Id)
+            .ToListAsync(token).ConfigureAwait(false);
+        ids.Sort();
+        var shuffled = ids.ToArray();
+        (shuffleSeed is { } seed ? new Random(seed) : Random.Shared).Shuffle(shuffled);
+        return shuffled.ToList();
+    }
+
     public async Task<int> GetMatchingSongCountAsync(SmartPlaylist smartPlaylist, CancellationToken token = default)
     {
         var stored = new SmartPlaylist
@@ -204,7 +233,7 @@ public class SmartPlaylistService : ISmartPlaylistService
         return await SmartPlaylistQueryBuilder.BuildCountQuery(context, stored).CountAsync(token).ConfigureAwait(false);
     }
 
-    public async Task<List<Guid>> GetMatchingSongIdsAsync(Guid smartPlaylistId, string? searchTerm = null, SongSortOrder? sortOrder = null, CancellationToken token = default)
+    public async Task<List<Guid>> GetMatchingSongIdsAsync(Guid smartPlaylistId, string? searchTerm = null, SongSortOrder? sortOrder = null, int? shuffleSeed = null, CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
         var smartPlaylist = await context.SmartPlaylists.AsNoTracking()
@@ -213,6 +242,9 @@ public class SmartPlaylistService : ISmartPlaylistService
 
         if (smartPlaylist is null)
             return new List<Guid>();
+
+        if ((sortOrder ?? smartPlaylist.SortOrder) == SongSortOrder.Random)
+            return await GetShuffledIdsAsync(context, smartPlaylist, searchTerm, shuffleSeed, token).ConfigureAwait(false);
 
         return await SmartPlaylistQueryBuilder.BuildQuery(context, smartPlaylist, IgnoreArticles, searchTerm, sortOrder)
             .Select(s => s.Id)
