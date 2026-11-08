@@ -23,7 +23,7 @@ namespace Nagi.Presentation.Lists;
 /// </summary>
 public partial class SmartPlaylistSongListViewModel : DetailSongListViewModelBase<SmartPlaylistSongViewNavigationParameter>
 {
-    private static readonly SongSortOrder[] SortOrders =
+    public static IReadOnlyList<SongSortOrder> SortOrders { get; } =
     [
         SongSortOrder.TitleAsc, SongSortOrder.TitleDesc, SongSortOrder.YearAsc, SongSortOrder.YearDesc,
         SongSortOrder.ArtistAsc, SongSortOrder.ArtistDesc, SongSortOrder.AlbumAsc, SongSortOrder.AlbumDesc,

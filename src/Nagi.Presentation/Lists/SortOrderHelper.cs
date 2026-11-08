@@ -8,34 +8,34 @@ namespace Nagi.Presentation.Lists;
 
 public static class SortOrderHelper
 {
-    public static string TitleAscLabel => ResourceFormatter.Format(Strings.Format_AlphaAsc, CoreStrings.Label_Title);
-    public static string TitleDescLabel => ResourceFormatter.Format(Strings.Format_AlphaDesc, CoreStrings.Label_Title);
-    public static string DateCreatedNewestLabel => ResourceFormatter.Format(Strings.Format_TemporalNewest, Strings.Label_DateCreated);
-    public static string DateCreatedOldestLabel => ResourceFormatter.Format(Strings.Format_TemporalOldest, Strings.Label_DateCreated);
-    public static string ModifiedNewestLabel => ResourceFormatter.Format(Strings.Format_TemporalNewest, Strings.Label_DateModified);
-    public static string ModifiedOldestLabel => ResourceFormatter.Format(Strings.Format_TemporalOldest, Strings.Label_DateModified);
-    public static string ArtistAscLabel => ResourceFormatter.Format(Strings.Format_AlphaAsc, CoreStrings.Label_Artist);
-    public static string ArtistDescLabel => ResourceFormatter.Format(Strings.Format_AlphaDesc, CoreStrings.Label_Artist);
-    public static string AlbumAscLabel => ResourceFormatter.Format(Strings.Format_AlphaAsc, CoreStrings.Label_Album);
-    public static string AlbumDescLabel => ResourceFormatter.Format(Strings.Format_AlphaDesc, CoreStrings.Label_Album);
-    public static string YearNewestLabel => ResourceFormatter.Format(Strings.Format_TemporalNewest, Strings.Label_Year);
-    public static string YearOldestLabel => ResourceFormatter.Format(Strings.Format_TemporalOldest, Strings.Label_Year);
-    public static string MostSongsLabel => ResourceFormatter.Format(Strings.Format_Most, Strings.Label_Songs);
-    public static string LeastSongsLabel => ResourceFormatter.Format(Strings.Format_Least, Strings.Label_Songs);
-    public static string TrackNumberAscLabel => ResourceFormatter.Format(Strings.Format_DirectionalAsc, Strings.Label_TrackNumber);
-    public static string TrackNumberDescLabel => ResourceFormatter.Format(Strings.Format_DirectionalDesc, Strings.Label_TrackNumber);
-    public static string PlayCountAscLabel => ResourceFormatter.Format(Strings.Format_Least, Strings.Label_PlayCount);
-    public static string PlayCountDescLabel => ResourceFormatter.Format(Strings.Format_Most, Strings.Label_PlayCount);
-    public static string DateAddedAscLabel => ResourceFormatter.Format(Strings.Format_TemporalOldest, Strings.Label_DateAdded);
-    public static string DateAddedDescLabel => ResourceFormatter.Format(Strings.Format_TemporalNewest, Strings.Label_DateAdded);
-    public static string LastPlayedAscLabel => ResourceFormatter.Format(Strings.Format_TemporalOldest, Strings.Label_LastPlayed);
-    public static string LastPlayedDescLabel => ResourceFormatter.Format(Strings.Format_TemporalNewest, Strings.Label_LastPlayed);
-    public static string DurationAscLabel => Strings.Format_ShortestFirst;
-    public static string DurationDescLabel => Strings.Format_LongestFirst;
-    public static string BpmAscLabel => ResourceFormatter.Format(Strings.Format_SlowestFirst, Strings.Label_Bpm);
-    public static string BpmDescLabel => ResourceFormatter.Format(Strings.Format_FastestFirst, Strings.Label_Bpm);
-    public static string PlaylistOrderLabel => Strings.Label_ManualOrder;
-    public static string RandomLabel => Strings.Label_Random;
+    private static string TitleAscLabel => ResourceFormatter.Format(Strings.Format_AlphaAsc, CoreStrings.Label_Title);
+    private static string TitleDescLabel => ResourceFormatter.Format(Strings.Format_AlphaDesc, CoreStrings.Label_Title);
+    private static string DateCreatedNewestLabel => ResourceFormatter.Format(Strings.Format_TemporalNewest, Strings.Label_DateCreated);
+    private static string DateCreatedOldestLabel => ResourceFormatter.Format(Strings.Format_TemporalOldest, Strings.Label_DateCreated);
+    private static string ModifiedNewestLabel => ResourceFormatter.Format(Strings.Format_TemporalNewest, Strings.Label_DateModified);
+    private static string ModifiedOldestLabel => ResourceFormatter.Format(Strings.Format_TemporalOldest, Strings.Label_DateModified);
+    private static string ArtistAscLabel => ResourceFormatter.Format(Strings.Format_AlphaAsc, CoreStrings.Label_Artist);
+    private static string ArtistDescLabel => ResourceFormatter.Format(Strings.Format_AlphaDesc, CoreStrings.Label_Artist);
+    private static string AlbumAscLabel => ResourceFormatter.Format(Strings.Format_AlphaAsc, CoreStrings.Label_Album);
+    private static string AlbumDescLabel => ResourceFormatter.Format(Strings.Format_AlphaDesc, CoreStrings.Label_Album);
+    private static string YearNewestLabel => ResourceFormatter.Format(Strings.Format_TemporalNewest, Strings.Label_Year);
+    private static string YearOldestLabel => ResourceFormatter.Format(Strings.Format_TemporalOldest, Strings.Label_Year);
+    private static string MostSongsLabel => ResourceFormatter.Format(Strings.Format_Most, Strings.Label_Songs);
+    private static string LeastSongsLabel => ResourceFormatter.Format(Strings.Format_Least, Strings.Label_Songs);
+    private static string TrackNumberAscLabel => ResourceFormatter.Format(Strings.Format_DirectionalAsc, Strings.Label_TrackNumber);
+    private static string TrackNumberDescLabel => ResourceFormatter.Format(Strings.Format_DirectionalDesc, Strings.Label_TrackNumber);
+    private static string PlayCountAscLabel => ResourceFormatter.Format(Strings.Format_Least, Strings.Label_PlayCount);
+    private static string PlayCountDescLabel => ResourceFormatter.Format(Strings.Format_Most, Strings.Label_PlayCount);
+    private static string DateAddedAscLabel => ResourceFormatter.Format(Strings.Format_TemporalOldest, Strings.Label_DateAdded);
+    private static string DateAddedDescLabel => ResourceFormatter.Format(Strings.Format_TemporalNewest, Strings.Label_DateAdded);
+    private static string LastPlayedAscLabel => ResourceFormatter.Format(Strings.Format_TemporalOldest, Strings.Label_LastPlayed);
+    private static string LastPlayedDescLabel => ResourceFormatter.Format(Strings.Format_TemporalNewest, Strings.Label_LastPlayed);
+    private static string DurationAscLabel => Strings.Format_ShortestFirst;
+    private static string DurationDescLabel => Strings.Format_LongestFirst;
+    private static string BpmAscLabel => ResourceFormatter.Format(Strings.Format_SlowestFirst, Strings.Label_Bpm);
+    private static string BpmDescLabel => ResourceFormatter.Format(Strings.Format_FastestFirst, Strings.Label_Bpm);
+    private static string PlaylistOrderLabel => Strings.Label_ManualOrder;
+    private static string RandomLabel => Strings.Label_Random;
 
     /// <summary>The order as a sort menu lists it.</summary>
     public static string GetLabel(Enum sortOrder) => sortOrder switch
