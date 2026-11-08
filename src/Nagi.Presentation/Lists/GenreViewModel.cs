@@ -68,7 +68,7 @@ public partial class GenreViewModel : ClientFilteredListViewModelBase<GenreSumma
     {
         if (IsLoading || genreId == Guid.Empty) return;
 
-        await UserAction.RunAsync(() => _musicPlaybackService.PlayGenreAsync(genreId), _logger, _uiService);
+        await UserAction.RunAsync(() => _musicPlaybackService.PlayScopeAsync(new SongScope.Genre(genreId)), _logger, _uiService);
     }
 
     [RelayCommand]
@@ -78,7 +78,7 @@ public partial class GenreViewModel : ClientFilteredListViewModelBase<GenreSumma
 
         await UserAction.RunAsync(async () =>
         {
-            if (await _libraryReader.GetRandomGenreIdAsync() is { } id) await _musicPlaybackService.PlayGenreAsync(id);
+            if (await _libraryReader.GetRandomGenreIdAsync() is { } id) await _musicPlaybackService.PlayScopeAsync(new SongScope.Genre(id));
         }, _logger, _uiService);
     }
 }

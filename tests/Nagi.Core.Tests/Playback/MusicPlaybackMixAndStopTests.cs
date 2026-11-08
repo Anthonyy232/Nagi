@@ -6,6 +6,7 @@ using Nagi.Core.MusicServers;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
+using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
@@ -71,6 +72,28 @@ public partial class MusicPlaybackServiceTests
         await _audioPlayer.DidNotReceive().LoadAsync(Arg.Any<Song>());
     }
 
+    [Fact]
+    public async Task TimedMix_PlaysThroughOnceAndKeepsTheSavedRepeatMode()
+    {
+        var candidates = _testSongs.Select((song, index) => new MixCandidate(song.Id, $"Artist {index}",
+            TimeSpan.FromMinutes(2).Ticks, 0, null)).ToArray();
+        _library.Listening.GetMixCandidatesAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>()).Returns(candidates);
+        await _service.InitializeAsync();
+        await _service.SetRepeatModeAsync(RepeatMode.RepeatOne);
+
+        (await _service.PlayMixAsync(_testSongs.Select(s => s.Id), ShuffleMode.Unheard, TimeSpan.FromMinutes(4))).Should().BeTrue();
+        var order = _service.PlayOrder.ToList();
+        _audioPlayer.PlaybackEnded += Raise.Event<Action>();
+        await _service.FlushPendingFinalizationAsync();
+        _service.CurrentTrack!.Id.Should().Be(order[1]);
+        _audioPlayer.PlaybackEnded += Raise.Event<Action>();
+        await _service.FlushPendingFinalizationAsync();
+
+        _service.CurrentTrack.Should().BeNull();
+        _service.CurrentRepeatMode.Should().Be(RepeatMode.RepeatOne);
+        _settingsService.Get(CoreSettings.RepeatMode).Should().Be(RepeatMode.RepeatOne);
+    }
+
     [Theory]
     [InlineData(true, true)]
     [InlineData(true, false)]
@@ -78,7 +101,7 @@ public partial class MusicPlaybackServiceTests
     public async Task ExpiredTimer_FinishesOnlyAnActivelyPlayingTrack(bool finishTrack, bool playing)
     {
         var clock = new FakeTimeProvider();
-        await using var service = new MusicPlaybackService(_settingsService, _playbackStateStore, _audioPlayer, _mediaControls, new ImmediateDispatcher(), _library.Reader, Substitute.For<ISmartPlaylistService>(), _library.Listening,
+        await using var service = new MusicPlaybackService(_settingsService, _playbackStateStore, _audioPlayer, _mediaControls, _library.Reader, Substitute.For<ISmartPlaylistService>(), _library.Listening,
             _metadataService, Substitute.For<IFileSystemService>(), Substitute.For<IMusicServerService>(), NullLogger<MusicPlaybackService>.Instance, clock);
         await service.InitializeAsync();
         await service.PlayAsync(Ids(_testSongs));

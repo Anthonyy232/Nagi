@@ -145,7 +145,7 @@ public class SmartPlaylistService : ISmartPlaylistService
         return await context.SmartPlaylists.CountAsync().ConfigureAwait(false);
     }
 
-    public async Task<bool> SetSortOrderAsync(Guid smartPlaylistId, SmartPlaylistSortOrder sortOrder)
+    public async Task<bool> SetSortOrderAsync(Guid smartPlaylistId, SongSortOrder sortOrder)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var smartPlaylist = await context.SmartPlaylists.FindAsync(smartPlaylistId).ConfigureAwait(false);

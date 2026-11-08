@@ -247,6 +247,9 @@
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>No playlists to export.</value>
   </data>
+  <data name="Error_PlaylistsExportFailed" xml:space="preserve">
+    <value>The playlists couldn't be exported to that folder.</value>
+  </data>
 
   <data name="EqPreset_None" xml:space="preserve">
     <value>None</value>

@@ -110,7 +110,7 @@ public class GenreViewModelTests
     {
         var library = new LibraryFakes();
         var playback = Substitute.For<IMusicPlaybackService>();
-        playback.PlayGenreAsync(Arg.Any<Guid>()).Returns(Task.FromException(new IOException("Database locked")));
+        playback.PlayScopeAsync(Arg.Any<SongScope>()).Returns(Task.FromException(new IOException("Database locked")));
         var ui = Substitute.For<IUIService>();
         using var viewModel = CreateViewModel(library, playback, ui);
 

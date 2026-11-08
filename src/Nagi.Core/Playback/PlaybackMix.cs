@@ -9,11 +9,13 @@ public enum ShuffleMode
 }
 
 /// <summary>
-///     The ranges <see cref="IMusicPlaybackService.PlayMixAsync" /> accepts.
+///     The ranges <see cref="IMusicPlaybackService.PlayMixAsync" /> and <see cref="IMusicPlaybackService.ScheduleStop" />
+///     accept.
 /// </summary>
-public static class PlaybackMixLimits
+public static class PlaybackLimits
 {
-    public const int MaxMinutes = 24 * 60;
+    /// <summary>The longest a timed mix or a sleep timer can run.</summary>
+    public const int MaxScheduledMinutes = 24 * 60;
     public const int MaxAvoidRecentDays = 365;
     public const int DefaultAvoidRecentDays = 1;
 }

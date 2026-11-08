@@ -34,7 +34,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private Song? _currentSong;
 
     private volatile bool _isDisposed;
-    private volatile bool _isExplicitStop; // Prevents false PlaybackEnded events on user/error stop
+    private volatile bool _isExplicitStop; // Prevents false PlaybackEnded events on a stop, error or media replacement
     private double _replayGainOffset;
 
     private float _basePreamp = EqualizerSettings.DefaultPreampDb;
@@ -68,7 +68,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         _disposeTask = new Lazy<Task>(DisposeCoreAsync);
     }
 
-    public async Task EnsureInitializedAsync()
+    private async Task EnsureInitializedAsync()
     {
         if (_isInitialized || _isDisposed) return;
         await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
@@ -243,6 +243,8 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             {
                 if (_isDisposed) return;
 
+                // Replacing the media stops the old one, which LibVLC reports like a natural end.
+                _isExplicitStop = true;
                 DisposeCurrentMedia("replacement load");
 
                 var extension = song.FileExtension;

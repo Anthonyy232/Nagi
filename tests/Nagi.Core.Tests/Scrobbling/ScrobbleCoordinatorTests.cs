@@ -118,10 +118,10 @@ public sealed class ScrobbleCoordinatorTests : IDisposable
         Create(submitter).Start();
 
         for (var i = 0; i < 3; i++)
-            _playback.ScrobbleEligibilityReached += Raise.Event<Action<Song, long, DateTime>>(new Song(), 1L, DateTime.UtcNow);
+            _playback.ScrobbleEligibilityReached += Raise.Event<Action>();
         _time.Advance(ScrobbleCoordinator.CoalesceDelay);
         await submitter.WaitForRunsAsync(1);
-        _playback.ScrobbleEligibilityReached += Raise.Event<Action<Song, long, DateTime>>(new Song(), 2L, DateTime.UtcNow);
+        _playback.ScrobbleEligibilityReached += Raise.Event<Action>();
         _time.Advance(ScrobbleCoordinator.CoalesceDelay);
         await submitter.WaitForRunsAsync(2);
 
@@ -138,7 +138,7 @@ public sealed class ScrobbleCoordinatorTests : IDisposable
 
         _settingsService.Set(CoreSettings.LastFmScrobbling, true);
         await _settingsService.SaveListenBrainzUserTokenAsync("token");
-        _playback.ScrobbleEligibilityReached += Raise.Event<Action<Song, long, DateTime>>(new Song(), 1L, DateTime.UtcNow);
+        _playback.ScrobbleEligibilityReached += Raise.Event<Action>();
         _time.Advance(TimeSpan.FromHours(1));
 
         submitter.Runs.Should().Be(0);

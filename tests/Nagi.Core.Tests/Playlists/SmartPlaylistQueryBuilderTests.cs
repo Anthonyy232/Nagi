@@ -341,25 +341,25 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
     }
 
     [Theory]
-    [InlineData(SmartPlaylistSortOrder.TitleAsc, "Another Brick in the Wall", "Come Together", "Fly Me to the Moon", "Let It Be", "Something")]
-    [InlineData(SmartPlaylistSortOrder.TitleDesc, "Something", "Let It Be", "Fly Me to the Moon", "Come Together", "Another Brick in the Wall")]
-    [InlineData(SmartPlaylistSortOrder.PlayCountDesc, "Another Brick in the Wall", "Come Together",
+    [InlineData(SongSortOrder.TitleAsc, "Another Brick in the Wall", "Come Together", "Fly Me to the Moon", "Let It Be", "Something")]
+    [InlineData(SongSortOrder.TitleDesc, "Something", "Let It Be", "Fly Me to the Moon", "Come Together", "Another Brick in the Wall")]
+    [InlineData(SongSortOrder.PlayCountDesc, "Another Brick in the Wall", "Come Together",
         "Something", "Fly Me to the Moon", "Let It Be")]
-    [InlineData(SmartPlaylistSortOrder.ArtistAsc, "Another Brick in the Wall", "Let It Be", "Come Together", "Something", "Fly Me to the Moon")]
-    [InlineData(SmartPlaylistSortOrder.DateAddedDesc, "Let It Be", "Come Together",
+    [InlineData(SongSortOrder.ArtistAsc, "Another Brick in the Wall", "Let It Be", "Come Together", "Something", "Fly Me to the Moon")]
+    [InlineData(SongSortOrder.DateAddedDesc, "Let It Be", "Come Together",
         "Something", "Another Brick in the Wall", "Fly Me to the Moon")]
-    [InlineData(SmartPlaylistSortOrder.PlayCountAsc, "Let It Be", "Fly Me to the Moon",
+    [InlineData(SongSortOrder.PlayCountAsc, "Let It Be", "Fly Me to the Moon",
         "Something", "Come Together", "Another Brick in the Wall")]
-    [InlineData(SmartPlaylistSortOrder.DurationAsc, "Fly Me to the Moon", "Something",
+    [InlineData(SongSortOrder.DurationAsc, "Fly Me to the Moon", "Something",
         "Let It Be", "Come Together", "Another Brick in the Wall")]
-    [InlineData(SmartPlaylistSortOrder.YearAsc, "Fly Me to the Moon", "Come Together", "Something", "Let It Be", "Another Brick in the Wall")]
-    [InlineData(SmartPlaylistSortOrder.DurationDesc, "Another Brick in the Wall", "Come Together",
+    [InlineData(SongSortOrder.YearAsc, "Fly Me to the Moon", "Come Together", "Something", "Let It Be", "Another Brick in the Wall")]
+    [InlineData(SongSortOrder.DurationDesc, "Another Brick in the Wall", "Come Together",
         "Let It Be", "Something", "Fly Me to the Moon")]
-    [InlineData(SmartPlaylistSortOrder.AlbumDesc, "Another Brick in the Wall", "Something", "Come Together", "Let It Be", "Fly Me to the Moon")]
-    [InlineData(SmartPlaylistSortOrder.YearDesc, "Another Brick in the Wall", "Let It Be", "Something", "Come Together", "Fly Me to the Moon")]
-    [InlineData(SmartPlaylistSortOrder.TrackNumberAsc, "Fly Me to the Moon", "Let It Be", "Come Together", "Something", "Another Brick in the Wall")]
+    [InlineData(SongSortOrder.AlbumDesc, "Another Brick in the Wall", "Something", "Come Together", "Let It Be", "Fly Me to the Moon")]
+    [InlineData(SongSortOrder.YearDesc, "Another Brick in the Wall", "Let It Be", "Something", "Come Together", "Fly Me to the Moon")]
+    [InlineData(SongSortOrder.TrackNumberAsc, "Fly Me to the Moon", "Let It Be", "Come Together", "Something", "Another Brick in the Wall")]
     public void BuildQuery_SortOrder_ReturnsExpectedSequence(
-        SmartPlaylistSortOrder sortOrder, params string[] expectedTitles)
+        SongSortOrder sortOrder, params string[] expectedTitles)
     {
         using var context = _dbHelper.ContextFactory.CreateDbContext();
 
@@ -523,7 +523,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
     [Fact]
     public void BuildQuery_SortByRandom_PreservesMatchingSongs()
     {
-        var playlist = new SmartPlaylist { SortOrder = SmartPlaylistSortOrder.Random };
+        var playlist = new SmartPlaylist { SortOrder = SongSortOrder.Random };
 
         using var context = _dbHelper.ContextFactory.CreateDbContext();
         var results = SmartPlaylistQueryBuilder.BuildQuery(context, playlist, false).ToList();
@@ -610,7 +610,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
     [Fact]
     public void BuildQuery_SortByAlbumAsc_GroupsByAlbumThenTrackNumber()
     {
-        var playlist = new SmartPlaylist { SortOrder = SmartPlaylistSortOrder.AlbumAsc };
+        var playlist = new SmartPlaylist { SortOrder = SongSortOrder.AlbumAsc };
 
         using var context = _dbHelper.ContextFactory.CreateDbContext();
         var results = SmartPlaylistQueryBuilder.BuildQuery(context, playlist, false).ToList();
@@ -629,7 +629,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
     [Fact]
     public void BuildQuery_SortByLastPlayedDesc_HandlesNullDates()
     {
-        var playlist = new SmartPlaylist { SortOrder = SmartPlaylistSortOrder.LastPlayedDesc };
+        var playlist = new SmartPlaylist { SortOrder = SongSortOrder.LastPlayedDesc };
 
         using var context = _dbHelper.ContextFactory.CreateDbContext();
         var results = SmartPlaylistQueryBuilder.BuildQuery(context, playlist, false).ToList();
@@ -685,7 +685,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
             seedContext.SaveChanges();
         }
 
-        var playlist = new SmartPlaylist { SortOrder = SmartPlaylistSortOrder.TitleDesc };
+        var playlist = new SmartPlaylist { SortOrder = SongSortOrder.TitleDesc };
         playlist.Rules.Add(new SmartPlaylistRule
         {
             Field = SmartPlaylistField.Album,
@@ -703,7 +703,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
     public void BuildQuery_SortByLastPlayedAsc_PutsNullLastPlayedFirst()
     {
         // Null LastPlayedDate sorts before non-null in SQLite ascending order
-        var playlist = new SmartPlaylist { SortOrder = SmartPlaylistSortOrder.LastPlayedAsc };
+        var playlist = new SmartPlaylist { SortOrder = SongSortOrder.LastPlayedAsc };
 
         using var context = _dbHelper.ContextFactory.CreateDbContext();
         var results = SmartPlaylistQueryBuilder.BuildQuery(context, playlist, false).ToList();

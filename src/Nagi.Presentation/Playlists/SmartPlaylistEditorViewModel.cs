@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Metadata;
 using Nagi.Core.Platform;
+using Nagi.Core.Library;
 using Nagi.Core.Playlists;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Lists;
@@ -24,7 +25,7 @@ public enum SmartPlaylistSaveResult
     Failed
 }
 
-public record SortOrderOption(SmartPlaylistSortOrder SortOrder, string DisplayName);
+public record SortOrderOption(SongSortOrder SortOrder, string DisplayName);
 
 /// <summary>
 ///     State and behaviour of the smart playlist editor: name, cover, match logic, sort order,
@@ -59,29 +60,29 @@ public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposabl
 
     public static IReadOnlyList<SortOrderOption> SortOptions { get; } =
     [
-        new(SmartPlaylistSortOrder.TitleAsc, SortOrderHelper.TitleAscLabel),
-        new(SmartPlaylistSortOrder.TitleDesc, SortOrderHelper.TitleDescLabel),
-        new(SmartPlaylistSortOrder.ArtistAsc, SortOrderHelper.ArtistAscLabel),
-        new(SmartPlaylistSortOrder.ArtistDesc, SortOrderHelper.ArtistDescLabel),
-        new(SmartPlaylistSortOrder.AlbumAsc, SortOrderHelper.AlbumAscLabel),
-        new(SmartPlaylistSortOrder.AlbumDesc, SortOrderHelper.AlbumDescLabel),
-        new(SmartPlaylistSortOrder.YearAsc, SortOrderHelper.YearOldestLabel),
-        new(SmartPlaylistSortOrder.YearDesc, SortOrderHelper.YearNewestLabel),
-        new(SmartPlaylistSortOrder.PlayCountAsc, SortOrderHelper.PlayCountAscLabel),
-        new(SmartPlaylistSortOrder.PlayCountDesc, SortOrderHelper.PlayCountDescLabel),
-        new(SmartPlaylistSortOrder.LastPlayedAsc, SortOrderHelper.LastPlayedAscLabel),
-        new(SmartPlaylistSortOrder.LastPlayedDesc, SortOrderHelper.LastPlayedDescLabel),
-        new(SmartPlaylistSortOrder.DateAddedAsc, SortOrderHelper.DateAddedAscLabel),
-        new(SmartPlaylistSortOrder.DateAddedDesc, SortOrderHelper.DateAddedDescLabel),
-        new(SmartPlaylistSortOrder.TrackNumberAsc, SortOrderHelper.TrackNumberAscLabel),
-        new(SmartPlaylistSortOrder.TrackNumberDesc, SortOrderHelper.TrackNumberDescLabel),
-        new(SmartPlaylistSortOrder.DurationAsc, SortOrderHelper.DurationAscLabel),
-        new(SmartPlaylistSortOrder.DurationDesc, SortOrderHelper.DurationDescLabel),
-        new(SmartPlaylistSortOrder.BpmAsc, SortOrderHelper.BpmAscLabel),
-        new(SmartPlaylistSortOrder.BpmDesc, SortOrderHelper.BpmDescLabel),
-        new(SmartPlaylistSortOrder.FileCreatedDateAsc, SortOrderHelper.DateCreatedOldestLabel),
-        new(SmartPlaylistSortOrder.FileCreatedDateDesc, SortOrderHelper.DateCreatedNewestLabel),
-        new(SmartPlaylistSortOrder.Random, SortOrderHelper.RandomLabel)
+        new(SongSortOrder.TitleAsc, SortOrderHelper.TitleAscLabel),
+        new(SongSortOrder.TitleDesc, SortOrderHelper.TitleDescLabel),
+        new(SongSortOrder.ArtistAsc, SortOrderHelper.ArtistAscLabel),
+        new(SongSortOrder.ArtistDesc, SortOrderHelper.ArtistDescLabel),
+        new(SongSortOrder.AlbumAsc, SortOrderHelper.AlbumAscLabel),
+        new(SongSortOrder.AlbumDesc, SortOrderHelper.AlbumDescLabel),
+        new(SongSortOrder.YearAsc, SortOrderHelper.YearOldestLabel),
+        new(SongSortOrder.YearDesc, SortOrderHelper.YearNewestLabel),
+        new(SongSortOrder.PlayCountAsc, SortOrderHelper.PlayCountAscLabel),
+        new(SongSortOrder.PlayCountDesc, SortOrderHelper.PlayCountDescLabel),
+        new(SongSortOrder.LastPlayedAsc, SortOrderHelper.LastPlayedAscLabel),
+        new(SongSortOrder.LastPlayedDesc, SortOrderHelper.LastPlayedDescLabel),
+        new(SongSortOrder.DateAddedAsc, SortOrderHelper.DateAddedAscLabel),
+        new(SongSortOrder.DateAddedDesc, SortOrderHelper.DateAddedDescLabel),
+        new(SongSortOrder.TrackNumberAsc, SortOrderHelper.TrackNumberAscLabel),
+        new(SongSortOrder.TrackNumberDesc, SortOrderHelper.TrackNumberDescLabel),
+        new(SongSortOrder.DurationAsc, SortOrderHelper.DurationAscLabel),
+        new(SongSortOrder.DurationDesc, SortOrderHelper.DurationDescLabel),
+        new(SongSortOrder.BpmAsc, SortOrderHelper.BpmAscLabel),
+        new(SongSortOrder.BpmDesc, SortOrderHelper.BpmDescLabel),
+        new(SongSortOrder.FileCreatedDateAsc, SortOrderHelper.DateCreatedOldestLabel),
+        new(SongSortOrder.FileCreatedDateDesc, SortOrderHelper.DateCreatedNewestLabel),
+        new(SongSortOrder.Random, SortOrderHelper.RandomLabel)
     ];
 
     public ObservableCollection<RuleViewModel> Rules { get; } = new();

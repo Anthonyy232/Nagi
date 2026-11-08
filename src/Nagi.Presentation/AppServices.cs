@@ -24,20 +24,6 @@ public static class AppServices
     {
         logger.LogDebug("Starting core services initialization.");
 
-        // Pre-warm the audio player on a background thread.
-        // This runs concurrently with database/window init so LibVLC is ready when user presses play.
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await services.GetRequiredService<IAudioPlayer>().EnsureInitializedAsync().ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                logger.LogWarning(ex, "Audio player warm-up failed. Will initialize on first playback.");
-            }
-        });
-
         var dbTask = InitializeDatabaseAsync(services);
 
         // Start non-EF services while database migration is still running.

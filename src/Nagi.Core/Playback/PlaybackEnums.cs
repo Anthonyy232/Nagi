@@ -12,9 +12,7 @@ public enum PlaybackEndReason
     /// <summary>
     ///     The track was paused and never resumed before being cleared from the queue or the app closing.
     /// </summary>
-    PausedAndAbandoned = 2,
-
-    Error = 3
+    PausedAndAbandoned = 2
 }
 
 public enum PlaybackContextType

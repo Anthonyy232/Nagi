@@ -1,4 +1,5 @@
 using Nagi.Core.Library;
+using Nagi.Core.Listening;
 
 namespace Nagi.Core.Playback;
 
@@ -22,10 +23,10 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     TimeSpan? StopTimeRemaining { get; }
 
     event Action? StopScheduleChanged;
-    Task<bool> PlayMixAsync(IEnumerable<Guid> songIds, ShuffleMode mode, TimeSpan? duration = null, PlaybackContext? context = null, int avoidRecentDays = PlaybackMixLimits.DefaultAvoidRecentDays);
+    Task<bool> PlayMixAsync(IEnumerable<Guid> songIds, ShuffleMode mode, TimeSpan? duration = null, PlaybackContext? context = null, int avoidRecentDays = PlaybackLimits.DefaultAvoidRecentDays);
 
     /// <param name="delay">
-    ///     For <see cref="PlaybackStopMode.Timer" />, up to <see cref="PlaybackMixLimits.MaxMinutes" />.
+    ///     For <see cref="PlaybackStopMode.Timer" />, up to <see cref="PlaybackLimits.MaxScheduledMinutes" />.
     /// </param>
     /// <param name="finishCurrentTrack">Whether a timer that runs out mid-song lets the song finish first.</param>
     void ScheduleStop(PlaybackStopMode mode, TimeSpan? delay = null, bool finishCurrentTrack = true);
@@ -97,15 +98,13 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     event Action? DurationChanged;
 
     /// <summary>
-    ///     Occurs once per listening session when the current track has been played
-    ///     long enough to be eligible for scrobbling (track &gt; 30 s AND played ≥ 50% or ≥ 4 min).
-    ///     Subscribers receive the song, the listen history session ID and the UTC time the listen started.
+    ///     Occurs once per listen, after its ListenHistory entry is marked eligible for scrobbling because the track
+    ///     has played long enough (<see cref="ListenRules.IsEligible" />).
     /// </summary>
-    event Action<Song, long, DateTime>? ScrobbleEligibilityReached;
+    event Action? ScrobbleEligibilityReached;
 
     /// <summary>
-    ///     Occurs when a song from a music server couldn't be streamed and playback stopped. May be raised on a
-    ///     background thread.
+    ///     Occurs when a song from a music server couldn't be streamed and playback stopped.
     /// </summary>
     event Action<Song>? ServerSongFailed;
 
@@ -148,20 +147,15 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
 
     Task SeekAsync(TimeSpan position);
 
-    Task PlayAlbumAsync(Guid albumId);
-
-    Task PlayArtistAsync(Guid artistId);
-
-    Task PlayFolderAsync(Guid folderId);
-
-    Task PlayPlaylistAsync(Guid playlistId);
+    /// <summary>
+    ///     Plays the songs in a scope, replacing the queue: an album in track order, a playlist in its own order and
+    ///     anything else by title. The scope is also the listens' context.
+    /// </summary>
+    /// <param name="startShuffled">As for <see cref="PlayAsync(IEnumerable{Guid}, int, bool?, PlaybackContext?)" />.</param>
+    Task PlayScopeAsync(SongScope scope, bool? startShuffled = null);
 
     /// <returns>False when the smart playlist matches no songs, so nothing plays.</returns>
     Task<bool> PlaySmartPlaylistAsync(Guid smartPlaylistId);
-
-    Task PlayGenreAsync(Guid genreId);
-
-    Task ShuffleLibraryAsync();
 
     /// <summary>
     ///     Replaces the queue with a single audio file and plays it. A file in the library plays as that library song.

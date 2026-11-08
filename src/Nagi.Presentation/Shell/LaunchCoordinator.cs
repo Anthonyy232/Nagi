@@ -125,7 +125,7 @@ public sealed class LaunchCoordinator
                     _windowService.ShowMinimized();
                     break;
                 case LaunchCommand.ShuffleAll:
-                    await _playbackService.ShuffleLibraryAsync();
+                    await _playbackService.PlayScopeAsync(SongScope.Library, startShuffled: true);
                     break;
             }
         }

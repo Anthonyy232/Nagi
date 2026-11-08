@@ -5,13 +5,13 @@ using Nagi.Core.Settings;
 namespace Nagi.Core.Playback;
 
 /// <summary>
-///     Reactions to audio player and settings events, scrobble eligibility, and ReplayGain.
+///     Reactions to audio player, media control and settings events, and ReplayGain.
 /// </summary>
 public partial class MusicPlaybackService
 {
     private void OnAudioPlayerPlaybackEnded()
     {
-        if (_isTransitioningTrack) return;
+        if (IsRequestPending) return;
         var request = _requestCts.Token;
         var finishing = EndListenSession(PlaybackEndReason.Finished, Duration);
         RunInBackground(async () =>
@@ -41,41 +41,6 @@ public partial class MusicPlaybackService
     {
         PositionChanged?.Invoke();
         MaybeMarkEligibleForScrobbling();
-    }
-
-    private void MaybeMarkEligibleForScrobbling()
-    {
-        if (_isTransitioningTrack || _isEligibilityMarked || !CurrentListenHistoryId.HasValue) return;
-
-        var duration = Duration;
-        var progress = _audioPlayer.CurrentPosition;
-
-        // Apply the scrobble threshold even when no external scrobbling account is configured.
-        var isLongEnough = duration.TotalSeconds > 30;
-        var hasPlayedEnough = progress.TotalSeconds >= duration.TotalSeconds / 2
-                           || progress.TotalMinutes >= 4;
-
-        if (!isLongEnough || !hasPlayedEnough) return;
-
-        _isEligibilityMarked = true;
-        var sessionId = CurrentListenHistoryId.Value;
-        var song = CurrentTrack!;
-        var listenStartedUtc = _currentListenStartedUtc ?? _timeProvider.GetUtcNow().UtcDateTime - progress;
-        RunInBackground(
-            async () =>
-            {
-                var marked = false;
-                try
-                {
-                    marked = await _listening.MarkListenAsEligibleForScrobblingAsync(sessionId);
-                    if (marked && !_isDisposed) ScrobbleEligibilityReached?.Invoke(song, sessionId, listenStartedUtc);
-                }
-                finally
-                {
-                    if (!marked && CurrentListenHistoryId == sessionId) _isEligibilityMarked = false;
-                }
-            },
-            "Mark listen eligible for scrobbling");
     }
 
     private void OnAudioPlayerDurationChanged()

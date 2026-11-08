@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Nagi.Core.Data;
 using Nagi.Core.Library;
+using Nagi.Core.Playlists;
 using Nagi.Core.Tests.Utils;
 using Xunit;
 
@@ -254,5 +255,45 @@ public class DatabaseMigrationTests
 
         (await context.Database.SqlQueryRaw<string>("SELECT Biography AS Value FROM Artists WHERE Name = 'German'").SingleAsync())
             .Should().Be("Eine Band.\n\nFrom Wikipedia, under the CC BY-SA license.");
+    }
+
+    [Fact]
+    public async Task RemapSmartPlaylistSortOrder_KeepsEachPlaylistsSort()
+    {
+        await using var context = new MusicDbContext(
+            new DbContextOptionsBuilder<MusicDbContext>().UseSqlite("Data Source=:memory:").Options);
+        await context.Database.OpenConnectionAsync();
+        await context.GetService<IMigrator>().MigrateAsync("20261107031219_StripLyricsLanguagePrefix");
+        // The numbers the old smart playlist sort stored for these sorts.
+        var saved = new Dictionary<string, int>
+        {
+            ["Title"] = 0,
+            ["Artist"] = 2,
+            ["Album desc"] = 5,
+            ["Year"] = 6,
+            ["Date added desc"] = 13,
+            ["Track number"] = 14,
+            ["Duration"] = 16,
+            ["Random"] = 22
+        };
+        context.SmartPlaylists.AddRange(saved.Select(entry =>
+            new SmartPlaylist { Name = entry.Key, SortOrder = (SongSortOrder)entry.Value }));
+        await context.SaveChangesAsync();
+        context.ChangeTracker.Clear();
+
+        await context.Database.MigrateAsync();
+
+        (await context.SmartPlaylists.ToDictionaryAsync(p => p.Name, p => p.SortOrder)).Should().Equal(
+            new Dictionary<string, SongSortOrder>
+            {
+                ["Title"] = SongSortOrder.TitleAsc,
+                ["Artist"] = SongSortOrder.ArtistAsc,
+                ["Album desc"] = SongSortOrder.AlbumDesc,
+                ["Year"] = SongSortOrder.YearAsc,
+                ["Date added desc"] = SongSortOrder.DateAddedDesc,
+                ["Track number"] = SongSortOrder.TrackNumberAsc,
+                ["Duration"] = SongSortOrder.DurationAsc,
+                ["Random"] = SongSortOrder.Random
+            });
     }
 }

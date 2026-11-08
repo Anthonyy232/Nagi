@@ -53,11 +53,6 @@ public interface IAudioPlayer : IDisposable
     /// <summary>The current output ID, or an empty string for system default routing.</summary>
     string AudioOutputDeviceId { get; }
 
-    /// <summary>
-    ///     Starts the player ahead of its first use, so that use doesn't wait for it. Concurrent calls are serialized.
-    /// </summary>
-    Task EnsureInitializedAsync();
-
     /// <summary>Enumerates named outputs; system default is represented separately by an empty ID.</summary>
     Task<IReadOnlyList<AudioOutputDeviceInfo>> GetAudioOutputDevicesAsync();
 
@@ -68,8 +63,9 @@ public interface IAudioPlayer : IDisposable
     Task<bool> SetAudioOutputDeviceAsync(string deviceId);
 
     /// <summary>
-    ///     Asynchronously loads a song for playback. The returned task completes when the media is successfully opened or has
-    ///     failed to load.
+    ///     Replaces the current media with a song, ready for <see cref="PlayAsync" />. The task completes once the media
+    ///     is set; it opens on play, reported through <see cref="IsOpening" /> and <see cref="MediaOpened" />, and a
+    ///     song that can't be opened raises <see cref="ErrorOccurred" /> rather than failing the task.
     /// </summary>
     /// <param name="streamUri">
     ///     Where to stream a song on a music server from, or null to play <see cref="Song.FilePath" />. The URL carries the
@@ -100,6 +96,10 @@ public interface IAudioPlayer : IDisposable
 
     Task ApplyEqualizerSettingsAsync(EqualizerSettings settings);
 
+    /// <remarks>
+    ///     The equalizer presets and the default preamp assume LibVLC's 10 bands; a player with other bands needs its
+    ///     own presets.
+    /// </remarks>
     Task<IReadOnlyList<(uint Index, float Frequency)>> GetEqualizerBandsAsync();
 
     /// <summary>

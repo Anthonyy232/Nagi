@@ -168,7 +168,7 @@ public class SmartPlaylistServiceTests : IDisposable
         (await _service.DeleteSmartPlaylistAsync(id)).Should().BeFalse();
         (await _service.RenameSmartPlaylistAsync(id, "New Name")).Should().BeFalse();
         (await _service.UpdateSmartPlaylistCoverAsync(id, @"C:\cover.jpg")).Should().BeFalse();
-        (await _service.SetSortOrderAsync(id, SmartPlaylistSortOrder.PlayCountDesc)).Should().BeFalse();
+        (await _service.SetSortOrderAsync(id, SongSortOrder.PlayCountDesc)).Should().BeFalse();
         (await _service.UpdateSmartPlaylistAsync(new SmartPlaylist { Id = id, Name = "Missing" })).Should().BeNull();
         (await CountAsync(id)).Should().Be(0);
         (await _service.GetMatchingSongIdsAsync(id)).Should().BeEmpty();
@@ -187,7 +187,7 @@ public class SmartPlaylistServiceTests : IDisposable
         _service.PlaylistsChanged += (_, _) => changed = true;
         _service.PlaylistUpdated += (_, args) => update = args;
 
-        (await _service.SetSortOrderAsync(playlist.Id, SmartPlaylistSortOrder.PlayCountDesc)).Should().BeTrue();
+        (await _service.SetSortOrderAsync(playlist.Id, SongSortOrder.PlayCountDesc)).Should().BeTrue();
 
         changed.Should().BeTrue();
         update!.DateModified.Should().Be((await _service.GetSmartPlaylistByIdAsync(playlist.Id))!.DateModified);
@@ -456,7 +456,7 @@ public class SmartPlaylistServiceTests : IDisposable
         {
             Name = "Configured playlist",
             MatchAllRules = false,
-            SortOrder = SmartPlaylistSortOrder.PlayCountDesc,
+            SortOrder = SongSortOrder.PlayCountDesc,
             Rules =
             [
                 new SmartPlaylistRule { Field = SmartPlaylistField.Genre, Operator = SmartPlaylistOperator.Is, Value = " Rock " },
@@ -471,7 +471,7 @@ public class SmartPlaylistServiceTests : IDisposable
             using var context = _dbHelper.ContextFactory.CreateDbContext();
             var stored = context.SmartPlaylists.Include(p => p.Rules).Single();
             stored.MatchAllRules.Should().BeFalse();
-            stored.SortOrder.Should().Be(SmartPlaylistSortOrder.PlayCountDesc);
+            stored.SortOrder.Should().Be(SongSortOrder.PlayCountDesc);
             stored.Rules.Should().HaveCount(2);
         };
 
@@ -542,7 +542,7 @@ public class SmartPlaylistServiceTests : IDisposable
         draft.Name = "Updated Name";
         draft.Description = "Updated Description";
         draft.MatchAllRules = false;
-        draft.SortOrder = SmartPlaylistSortOrder.Random;
+        draft.SortOrder = SongSortOrder.Random;
         draft.Rules = [new SmartPlaylistRule { Field = SmartPlaylistField.Genre, Operator = SmartPlaylistOperator.Is, Value = "Pop" }];
         PlaylistUpdatedEventArgs? update = null;
         _service.PlaylistUpdated += (_, args) => update = args;
@@ -556,7 +556,7 @@ public class SmartPlaylistServiceTests : IDisposable
         fetched!.Name.Should().Be("Updated Name");
         fetched.Description.Should().Be("Updated Description");
         fetched.MatchAllRules.Should().BeFalse();
-        fetched.SortOrder.Should().Be(SmartPlaylistSortOrder.Random);
+        fetched.SortOrder.Should().Be(SongSortOrder.Random);
         update.Should().NotBeNull();
         update!.DateModified.Should().Be(fetched.DateModified);
         using var context = _dbHelper.ContextFactory.CreateDbContext();

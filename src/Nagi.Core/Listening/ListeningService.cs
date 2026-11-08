@@ -79,16 +79,11 @@ public sealed class ListeningService : IListeningService
             return;
         }
 
-        var wasSkipped = historyEntry.EndReason == PlaybackEndReason.Skipped;
+        var wasSkip = ListenRules.CountsAsSkip(historyEntry);
         historyEntry.Song.TotalListenTimeTicks += finalDuration.Ticks - historyEntry.ListenDurationTicks;
         historyEntry.ListenDurationTicks = finalDuration.Ticks;
         historyEntry.EndReason = endReason;
-
-        if (!historyEntry.IsEligibleForScrobbling)
-        {
-            var isSkipped = endReason == PlaybackEndReason.Skipped;
-            historyEntry.Song.SkipCount += (isSkipped ? 1 : 0) - (wasSkipped ? 1 : 0);
-        }
+        historyEntry.Song.SkipCount += SkipCountChange(wasSkip, historyEntry);
 
         await dbContext.SaveChangesAsync().ConfigureAwait(false);
         await transaction.CommitAsync().ConfigureAwait(false);
@@ -107,17 +102,20 @@ public sealed class ListeningService : IListeningService
 
         if (!historyEntry.IsEligibleForScrobbling)
         {
+            var wasSkip = ListenRules.CountsAsSkip(historyEntry);
             historyEntry.IsEligibleForScrobbling = true;
             historyEntry.Song.PlayCount++;
             historyEntry.Song.LastPlayedDate = DateTime.UtcNow;
-            if (historyEntry.EndReason == PlaybackEndReason.Skipped)
-                historyEntry.Song.SkipCount--;
+            historyEntry.Song.SkipCount += SkipCountChange(wasSkip, historyEntry);
             await dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
         await transaction.CommitAsync().ConfigureAwait(false);
         return true;
     }
+
+    private static int SkipCountChange(bool wasSkip, ListenHistory listen) =>
+        (ListenRules.CountsAsSkip(listen) ? 1 : 0) - (wasSkip ? 1 : 0);
 
     public async Task ClearListenHistoryAsync()
     {
