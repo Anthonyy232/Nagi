@@ -41,7 +41,7 @@ public static class SongListColumnsHelper
     /// </summary>
     public static string GetText(SongListColumns column, Song song, bool showDiscNumber) => column switch
     {
-        SongListColumns.TrackNumber => showDiscNumber ? song.TrackDisplay : song.TrackNumber?.ToString(),
+        SongListColumns.TrackNumber => showDiscNumber ? TrackWithDisc(song) : song.TrackNumber?.ToString(),
         SongListColumns.Year => song.Album?.Year?.ToString(),
         SongListColumns.Bpm => song.Bpm?.ToString("0"),
         SongListColumns.Bitrate => song.Bitrate?.ToString("N0"),
@@ -52,6 +52,10 @@ public static class SongListColumnsHelper
         SongListColumns.Duration => DurationFormatter.Format(song.Duration),
         _ => throw new ArgumentOutOfRangeException(nameof(column), column, null)
     } ?? string.Empty;
+
+    private static string? TrackWithDisc(Song song) => song.DiscNumber is > 0
+        ? song.TrackNumber.HasValue ? $"{song.DiscNumber}-{song.TrackNumber}" : $"{song.DiscNumber}"
+        : song.TrackNumber?.ToString();
 
     private static string? FormatDate(DateTime? utc) => utc?.ToLocalTime().ToString("d");
 }

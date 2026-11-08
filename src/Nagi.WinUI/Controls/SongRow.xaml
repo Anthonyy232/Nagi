@@ -76,7 +76,7 @@
                 ToolTipService.ToolTip="{x:Bind resources:Strings.Generic_Play}"
                 AutomationProperties.Name="{x:Bind resources:Strings.Generic_Play}">
             <Border Width="42" Height="42" CornerRadius="{StaticResource ArtworkCornerRadius}"
-                    Visibility="{x:Bind Song.IsArtworkAvailable, Mode=OneWay, FallbackValue=Collapsed}">
+                    Visibility="{x:Bind Song.AlbumArtUriFromTrack, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}, FallbackValue=Collapsed}">
                 <controls:ImageEx Width="42" Height="42"
                                   IsCacheEnabled="True"
                                   Stretch="UniformToFill"

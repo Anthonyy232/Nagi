@@ -57,13 +57,7 @@ public partial class LibraryReader
         CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
-        if (scope is SongScope.Playlist playlist && sortOrder == SongSortOrder.PlaylistOrder)
-            return await PlaylistEntries(context, playlist, searchTerm)
-                .OrderBy(ps => ps.Order).ThenBy(ps => ps.SongId)
-                .Select(ps => ps.SongId)
-                .ToListAsync(token).ConfigureAwait(false);
-
-        return await SortSongs(SongsIn(context, scope, searchTerm), sortOrder).Select(s => s.Id)
+        return await SortSongs(SongsIn(context, scope, searchTerm), scope, sortOrder).Select(s => s.Id)
             .ToListAsync(token).ConfigureAwait(false);
     }
 
@@ -131,26 +125,9 @@ public partial class LibraryReader
 
         List<Song> items = [];
         if (take > 0 && totalCount > 0)
-        {
-            if (scope is SongScope.Playlist playlist && sortOrder == SongSortOrder.PlaylistOrder)
-            {
-                var rows = await PlaylistEntries(context, playlist, searchTerm)
-                    .Join(SongQuery.ExcludeHeavyFields(context, context.Songs.AsNoTracking()),
-                        entry => entry.SongId, song => song.Id,
-                        (entry, song) => new { Song = song, entry.Order })
-                    .OrderBy(row => row.Order).ThenBy(row => row.Song.Id)
-                    .Skip(skip).Take(take)
-                    .AsSplitQuery()
-                    .ToListAsync(token).ConfigureAwait(false);
-                foreach (var row in rows) row.Song.Order = row.Order;
-                items = rows.Select(row => row.Song).ToList();
-            }
-            else
-            {
-                items = await SortSongs(SongQuery.ExcludeHeavyFields(context, songs), sortOrder)
-                    .Skip(skip).Take(take).AsSplitQuery().ToListAsync(token).ConfigureAwait(false);
-            }
-        }
+            // Sorted before the projection to list rows, which leaves out the playlist entries the playlist order needs.
+            items = await SongQuery.ExcludeHeavyFields(context, SortSongs(songs, scope, sortOrder))
+                .Skip(skip).Take(take).AsSplitQuery().ToListAsync(token).ConfigureAwait(false);
 
         return new PagedResult<Song> { Items = items, TotalCount = totalCount, PageNumber = pageNumber, PageSize = take };
     }
@@ -173,15 +150,6 @@ public partial class LibraryReader
             _ => throw new ArgumentOutOfRangeException(nameof(scope), scope, null)
         };
         return SongQuery.Matching(context, songs, searchTerm);
-    }
-
-    private static IQueryable<PlaylistSong> PlaylistEntries(MusicDbContext context, SongScope.Playlist playlist,
-        string? searchTerm)
-    {
-        var entries = context.PlaylistSongs.AsNoTracking().Where(ps => ps.PlaylistId == playlist.PlaylistId);
-        if (string.IsNullOrWhiteSpace(searchTerm)) return entries;
-        var matching = SongQuery.Matching(context, context.Songs, searchTerm).Select(s => s.Id);
-        return entries.Where(ps => matching.Contains(ps.SongId));
     }
 
     private static IQueryable<Song> InDirectory(IQueryable<Song> songs, Guid rootFolderId, string directoryPath,
@@ -210,8 +178,8 @@ public partial class LibraryReader
 
     private bool IgnoreArticles => _settingsService.Get(CoreSettings.IgnoreLeadingArticlesOnSort);
 
-    private IOrderedQueryable<Song> SortSongs(IQueryable<Song> query, SongSortOrder sortOrder) =>
-        SongQuery.Sort(query, sortOrder, IgnoreArticles);
+    private IOrderedQueryable<Song> SortSongs(IQueryable<Song> query, SongScope scope, SongSortOrder sortOrder) =>
+        SongQuery.Sort(query, sortOrder, IgnoreArticles, (scope as SongScope.Playlist)?.PlaylistId);
 
     private IOrderedQueryable<Artist> SortArtists(MusicDbContext context, IQueryable<Artist> query, ArtistSortOrder sortOrder)
     {

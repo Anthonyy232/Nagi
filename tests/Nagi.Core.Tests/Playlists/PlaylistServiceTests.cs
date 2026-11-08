@@ -87,7 +87,7 @@ public class PlaylistServiceTests : IDisposable
         _playlistService.PlaylistUpdated += (_, args) => update = args;
 
         var success = move
-            ? await _playlistService.MovePlaylistSongAsync(playlist.Id, songs[0].Id, 3)
+            ? await _playlistService.MoveSongAsync(playlist.Id, songs[0].Id, songs[1].Id, null)
             : await _playlistService.UpdatePlaylistOrderAsync(playlist.Id, [songs[1].Id, songs[0].Id]);
 
         success.Should().BeTrue();
@@ -109,7 +109,7 @@ public class PlaylistServiceTests : IDisposable
         (await _playlistService.RenamePlaylistAsync(playlist.Id, "Mine")).Should().BeFalse();
         (await _playlistService.AddSongsToPlaylistAsync(playlist.Id, [Guid.NewGuid()])).Should().BeFalse();
         (await _playlistService.RemoveSongsFromPlaylistAsync(playlist.Id, [songs[0].Id])).Should().BeFalse();
-        (await _playlistService.MovePlaylistSongAsync(playlist.Id, songs[0].Id, 3)).Should().BeFalse();
+        (await _playlistService.MoveSongAsync(playlist.Id, songs[0].Id, songs[1].Id, null)).Should().BeFalse();
         (await _playlistService.DeletePlaylistAsync(playlist.Id)).Should().BeFalse();
         await _playlistService.CreatePlaylistAsync(playlist.Name);
 
@@ -134,11 +134,25 @@ public class PlaylistServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task MovePlaylistSongAsync_PersistsFractionalOrderAndModificationDate()
+    public async Task MoveSongAsync_WithNoRoomBetweenTheNeighbours_NumbersThePlaylistAgain()
+    {
+        var (playlist, songs) = await _dbHelper.SeedPlaylistAsync(1, 2, 2 + 1e-12, 4);
+
+        (await _playlistService.MoveSongAsync(playlist.Id, songs[0].Id, songs[1].Id, songs[2].Id)).Should().BeTrue();
+        (await _playlistService.MoveSongAsync(playlist.Id, songs[3].Id, songs[1].Id, songs[0].Id)).Should().BeTrue();
+
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var entries = await context.PlaylistSongs.OrderBy(x => x.Order).ToListAsync();
+        entries.Select(x => x.SongId).Should().Equal(songs[1].Id, songs[3].Id, songs[0].Id, songs[2].Id);
+        entries.Select(x => x.Order).Should().Equal(1, 1.5, 2, 3);
+    }
+
+    [Fact]
+    public async Task MoveSongAsync_PersistsAFractionalOrderBetweenItsNeighboursAndTheModificationDate()
     {
         var (playlist, songs) = await _dbHelper.SeedPlaylistAsync(1, 2, 3);
 
-        var result = await _playlistService.MovePlaylistSongAsync(playlist.Id, songs[2].Id, 1.5);
+        var result = await _playlistService.MoveSongAsync(playlist.Id, songs[2].Id, songs[0].Id, songs[1].Id);
 
         result.Should().BeTrue();
         await using var context = _dbHelper.ContextFactory.CreateDbContext();

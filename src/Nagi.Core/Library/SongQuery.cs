@@ -41,7 +41,12 @@ internal static class SongQuery
             );
     }
 
-    public static IOrderedQueryable<Song> Sort(IQueryable<Song> query, SongSortOrder sortOrder, bool ignoreArticles)
+    /// <param name="playlistId">
+    ///     The playlist whose order <see cref="SongSortOrder.PlaylistOrder" /> follows; without one, that order sorts by
+    ///     title.
+    /// </param>
+    public static IOrderedQueryable<Song> Sort(IQueryable<Song> query, SongSortOrder sortOrder, bool ignoreArticles,
+        Guid? playlistId = null)
     {
         Expression<Func<Song, string>> title = ignoreArticles ? s => s.SortTitle : s => s.Title;
         Expression<Func<Song, string>> artist = ignoreArticles ? s => s.PrimaryArtistSortName : s => s.PrimaryArtistName;
@@ -71,6 +76,9 @@ internal static class SongQuery
             SongSortOrder.BpmAsc => ByMetric(s => s.Bpm ?? 0),
             SongSortOrder.BpmDesc => ByMetricDescending(s => s.Bpm ?? 0),
             SongSortOrder.Random => query.OrderBy(_ => EF.Functions.Random()),
+            SongSortOrder.PlaylistOrder when playlistId is { } id => query
+                .OrderBy(s => s.PlaylistSongs.Where(ps => ps.PlaylistId == id).Select(ps => ps.Order).FirstOrDefault())
+                .ThenBy(s => s.Id),
             _ => query.OrderBy(title).ThenBy(artist).ThenBy(s => s.Id)
         };
 

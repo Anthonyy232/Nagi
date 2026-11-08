@@ -44,5 +44,9 @@ public interface IPlaylistService
     Task<bool> AddSongsToPlaylistAsync(Guid playlistId, IEnumerable<Guid> songIds);
     Task<bool> RemoveSongsFromPlaylistAsync(Guid playlistId, IEnumerable<Guid> songIds);
     Task<bool> UpdatePlaylistOrderAsync(Guid playlistId, IEnumerable<Guid> orderedSongIds);
-    Task<bool> MovePlaylistSongAsync(Guid playlistId, Guid songId, double newOrder);
+
+    /// <summary>
+    ///     Moves the song between two of the playlist's songs; a null neighbour means the start or the end.
+    /// </summary>
+    Task<bool> MoveSongAsync(Guid playlistId, Guid songId, Guid? previousSongId, Guid? nextSongId);
 }

@@ -827,14 +827,12 @@ public class LibraryReaderTests : IDisposable
         page.TotalCount.Should().Be(4);
         var row = page.Items.Should().ContainSingle().Subject;
         row.Id.Should().Be(songs[2].Id);
-        row.Order.Should().Be(2);
         row.Grouping.Should().Be("Group");
         row.Lyrics.Should().BeNull();
 
         var search = await _libraryReader.GetSongsAsync(new SongScope.Playlist(playlist.Id), "Song", SongSortOrder.PlaylistOrder, 2, 1);
         search.TotalCount.Should().Be(3);
         search.Items.Should().ContainSingle().Which.Id.Should().Be(songs[2].Id);
-        search.Items.Single().Order.Should().Be(2);
         var ids = await _libraryReader.GetSongIdsAsync(new SongScope.Playlist(playlist.Id), "Song", SongSortOrder.PlaylistOrder);
         ids.Should().Equal(expectedIds);
     }
