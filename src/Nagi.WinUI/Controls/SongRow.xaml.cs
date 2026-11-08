@@ -11,6 +11,7 @@ using Nagi.Presentation.Lists;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Styles;
 
 namespace Nagi.WinUI.Controls;
 
@@ -95,7 +96,7 @@ public sealed partial class SongRow : UserControl, INowPlayingRow
         else SetBinding(ColumnsProperty, new Binding { Source = viewModel, Path = new PropertyPath(nameof(SongListViewModelBase.VisibleColumns)) });
     }
 
-    private static Style SecondaryTextStyle => (Style)Application.Current.Resources["SongListViewPageSecondaryTextBlockStyle"];
+    private static Style SecondaryTextStyle => (Style)Application.Current.Resources[AppResourceKeys.SongListViewPageSecondaryTextBlockStyle];
 
     // Fixed widths, not Auto, so the cells line up from row to row and with the header.
     private static (double Width, TextAlignment Alignment) GetCellLayout(SongListColumns column) => column switch

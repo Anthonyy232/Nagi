@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Nagi.Presentation.Lists;
+using Nagi.WinUI.Styles;
 
 namespace Nagi.WinUI.Controls;
 
@@ -20,7 +21,7 @@ public sealed class SortButton : Button
 
     public SortButton()
     {
-        Style = (Style)Application.Current.Resources["SongListViewPageIconButton"];
+        Style = (Style)Application.Current.Resources[AppResourceKeys.SongListViewPageIconButton];
         Content = new FontIcon { FontSize = 16, Glyph = "" };
         Flyout = _menu;
         _menu.Opening += (_, _) => FillMenu();

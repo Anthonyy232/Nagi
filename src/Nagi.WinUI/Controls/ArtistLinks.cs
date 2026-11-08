@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Data;
 using Nagi.Core.Library;
 using Nagi.Presentation.Navigation;
 using ArtistNames = Nagi.Presentation.Lists.ArtistLinks;
+using Nagi.WinUI.Styles;
 
 namespace Nagi.WinUI.Controls;
 
@@ -83,7 +84,7 @@ public sealed partial class ArtistLinks : UserControl
             var isLast = i == names.Count - 1;
             var link = new HyperlinkButton
             {
-                Style = (Style)Application.Current.Resources["SongListHyperlinkButtonStyle"],
+                Style = (Style)Application.Current.Resources[AppResourceKeys.SongListHyperlinkButtonStyle],
                 Content = CreateTrimmedText(names[i]),
                 Command = Command,
                 CommandParameter = new ArtistNavigationRequest { Song = Song, ArtistName = showsStoredSongName ? null : names[i] }

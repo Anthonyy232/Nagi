@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Nagi.Presentation.Theme;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Styles;
 
 namespace Nagi.WinUI.Services.Implementations;
 
@@ -34,11 +35,11 @@ public sealed class ThemeService : IThemeService
 
     public void SetColors(ThemePalette palette)
     {
-        SetBrushColor("AppPrimaryColorBrush", palette.Primary);
-        SetBrushColor("MediaOnImageAccentBrush", palette.MediaOnImageAccent);
-        SetBrushColor("PlayerTintColorBrush", palette.PlayerTint);
-        SetBrushColor("PlayerBackgroundBrush", palette.PlayerBackground);
-        SetBrushColor("PlayerAccentBrush", palette.PlayerAccent);
+        SetBrushColor(AppResourceKeys.AppPrimaryColorBrush, palette.Primary);
+        SetBrushColor(AppResourceKeys.MediaOnImageAccentBrush, palette.MediaOnImageAccent);
+        SetBrushColor(AppResourceKeys.PlayerTintColorBrush, palette.PlayerTint);
+        SetBrushColor(AppResourceKeys.PlayerBackgroundBrush, palette.PlayerBackground);
+        SetBrushColor(AppResourceKeys.PlayerAccentBrush, palette.PlayerAccent);
     }
 
     // Each new root takes the current theme, and the theme shown can change with it.

@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Nagi.WinUI.Styles;
 
 namespace Nagi.WinUI.Controls;
 
@@ -14,7 +15,7 @@ public interface INowPlayingRow
 
     static void HighlightTitle(TextBlock title, bool isCurrent)
     {
-        if (isCurrent) title.Foreground = (Brush)Application.Current.Resources["AppPrimaryColorBrush"];
+        if (isCurrent) title.Foreground = (Brush)Application.Current.Resources[AppResourceKeys.AppPrimaryColorBrush];
         else title.ClearValue(TextBlock.ForegroundProperty);
     }
 }

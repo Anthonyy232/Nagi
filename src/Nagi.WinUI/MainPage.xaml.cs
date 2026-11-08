@@ -24,6 +24,7 @@ using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Implementations;
+using Nagi.WinUI.Styles;
 
 namespace Nagi.WinUI;
 
@@ -342,8 +343,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         var isAcrylicEnabled = SystemVisualSettings.TransparencyEffectsEnabled;
         var material = _settingsService.Get(AppSettings.PlayerBackgroundMaterial);
         var brushKey = !isAcrylicEnabled || material == PlayerBackgroundMaterial.Solid
-            ? "PlayerBackgroundBrush"
-            : NativeMethods.IsWindows11OrNewer ? "Win11AcrylicBrush" : "Win10AcrylicBrush";
+            ? AppResourceKeys.PlayerBackgroundBrush
+            : NativeMethods.IsWindows11OrNewer ? AppResourceKeys.Win11AcrylicBrush : AppResourceKeys.Win10AcrylicBrush;
         FloatingPlayerContainer.Background = (Brush)Application.Current.Resources[brushKey];
     }
 

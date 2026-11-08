@@ -14,6 +14,7 @@ using Windows.UI;
 using WinRT.Interop;
 using Nagi.WinUI.Helpers;
 using static Nagi.WinUI.Helpers.NativeMethods;
+using Nagi.WinUI.Styles;
 
 namespace Nagi.WinUI.Services.Implementations;
 
@@ -82,7 +83,7 @@ public sealed class TaskbarService : IDisposable
     }
 
     // The accent brush is a top-level app resource, so it is always there.
-    private static SolidColorBrush AccentBrush => (SolidColorBrush)Application.Current.Resources["AppPrimaryColorBrush"];
+    private static SolidColorBrush AccentBrush => (SolidColorBrush)Application.Current.Resources[AppResourceKeys.AppPrimaryColorBrush];
 
     /// <summary>
     ///     Adds the buttons once the main window is first activated.
