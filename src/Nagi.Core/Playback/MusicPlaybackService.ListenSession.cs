@@ -15,10 +15,14 @@ public partial class MusicPlaybackService
     {
         if (_transientTracks.ContainsKey(song.Id)) return null;
         var sessionId = await _listening.StartListenSessionAsync(song.Id, context);
-        if (request.IsCancellationRequested && sessionId is { } abandoned)
-            await _listening.FinalizeListenSessionAsync(abandoned, TimeSpan.Zero, PlaybackEndReason.PausedAndAbandoned);
+        if (request.IsCancellationRequested) await AbandonListenAsync(sessionId);
         return sessionId;
     }
+
+    // Ends a listen that was started but never became current.
+    private Task AbandonListenAsync(long? sessionId) => sessionId is { } id
+        ? _listening.FinalizeListenSessionAsync(id, TimeSpan.Zero, PlaybackEndReason.PausedAndAbandoned)
+        : Task.CompletedTask;
 
     private void BeginListen(long? sessionId)
     {

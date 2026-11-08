@@ -1656,6 +1656,27 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task NextAsync_WhenTheNextSongIsRemovedWhileItOpens_KeepsPlayingAndAbandonsItsListen()
+    {
+        _library.Listening.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(101L);
+        await _service.PlayAsync(Ids(_testSongs));
+        var listen = new TaskCompletionSource<long?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _library.Listening.StartListenSessionAsync(_testSongs[1].Id, Arg.Any<PlaybackContext>()).Returns(listen.Task);
+        var next = _service.NextAsync();
+
+        await _service.RemoveFromQueueAsync(_testSongs[1].Id);
+        listen.SetResult(202L);
+        await next;
+        await _service.FlushPendingFinalizationAsync();
+
+        _service.CurrentTrack.Should().BeSameAs(_testSongs[0]);
+        _service.CurrentListenHistoryId.Should().Be(101L);
+        await _audioPlayer.DidNotReceive().StopAsync();
+        await _library.Listening.Received(1).FinalizeListenSessionAsync(202L, TimeSpan.Zero, PlaybackEndReason.PausedAndAbandoned);
+        await _library.Listening.DidNotReceive().FinalizeListenSessionAsync(101L, Arg.Any<TimeSpan>(), Arg.Any<PlaybackEndReason>());
+    }
+
+    [Fact]
     public async Task PlayPauseAsync_WhileTheNextSongIsOpening_PausesTheCurrentOneInsteadOfStopping()
     {
         await _service.PlayAsync(Ids(_testSongs));

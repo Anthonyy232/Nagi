@@ -402,12 +402,6 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         QueueReplacement? replacement = null)
     {
         var queue = replacement?.Queue ?? _queue;
-        if (!queue.Contains(songId))
-        {
-            await StopInternalAsync(request);
-            return;
-        }
-
         // Songs deleted from disk can still be queued; give up after a run of them rather than walk the whole queue.
         const int maxSkipAttempts = 20;
         Guid? candidate = songId;
@@ -420,12 +414,6 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             tried = id;
             song = _transientTracks.GetValueOrDefault(id) ?? await _libraryReader.GetSongByIdAsync(id);
             if (request.IsCancellationRequested) return;
-            if (!queue.Contains(id))
-            {
-                await StopInternalAsync(request);
-                return;
-            }
-
             if (song != null) break;
 
             _logger.LogWarning("Song metadata not found for ID {SongId}. Skipping to next track. (Skip {SkipCount}/{MaxSkip})",
@@ -453,6 +441,12 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
         var listenId = await StartListenAsync(song, replacement?.Context ?? _currentContext, request);
         if (request.IsCancellationRequested) return;
+        // Removing a song that isn't playing is no request, so the song can have left the queue meanwhile.
+        if (!queue.Contains(song.Id))
+        {
+            await AbandonListenAsync(listenId);
+            return;
+        }
 
         // One step, so listeners never see the new track with the old listen or queue position.
         queue.SetCurrent(song.Id);
@@ -470,9 +464,11 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         if (!request.IsCancellationRequested) await _audioPlayer.PlayAsync();
     }
 
-    // Stops at a song that can't play, so Play and Next carry on from it.
+    // Stops at a song that can't play, so Play and Next carry on from it. One that has left the queue meanwhile
+    // leaves playback as it was, like a song that can play.
     private async Task StopAtAsync(Guid songId, QueueReplacement? replacement, CancellationToken request)
     {
+        if (!(replacement?.Queue ?? _queue).Contains(songId)) return;
         if (replacement is not null) ReplaceQueue(replacement);
         _queue.SetCurrent(songId);
         await StopInternalAsync(request);
