@@ -46,6 +46,16 @@ public class Artist
     public string? ImageUri => ArtworkUri.Versioned(LocalImageCachePath, ImageModifiedUtc);
 
     /// <summary>
+    ///     Points the artist at a new image, or none. Images are replaced in place under the same path, so the time
+    ///     is what tells <see cref="ImageUri" /> apart from the image shown before.
+    /// </summary>
+    public void SetImage(string? path)
+    {
+        LocalImageCachePath = path;
+        ImageModifiedUtc = DateTime.UtcNow;
+    }
+
+    /// <summary>
     ///     The date and time when the artist's metadata was last successfully checked.
     ///     Null means the metadata still needs checking or a previous lookup failed.
     /// </summary>

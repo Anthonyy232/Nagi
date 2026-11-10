@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace Nagi.Core.MusicServers;
 
 internal static class MusicServerHttp
@@ -31,6 +33,13 @@ internal static class MusicServerHttp
 
         return uri.GetLeftPart(UriPartial.Path).TrimEnd('/');
     }
+
+    /// <summary>
+    ///     Whether the status comes from a proxy in front of a server that is down or restarting, so the request is
+    ///     worth asking again later.
+    /// </summary>
+    public static bool IsServerDown(HttpStatusCode status) =>
+        status is HttpStatusCode.BadGateway or HttpStatusCode.ServiceUnavailable or HttpStatusCode.GatewayTimeout;
 
     /// <exception cref="MusicServerException">The server couldn't be reached.</exception>
     public static async Task<HttpResponseMessage> SendAsync(HttpClient httpClient, HttpRequestMessage request,

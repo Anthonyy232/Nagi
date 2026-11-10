@@ -79,7 +79,7 @@ public partial class PlayerViewModel
 
     private void OnFavoriteLibraryChanged(object? sender, LibraryChange change)
     {
-        if (change.Kind != LibraryChangeKind.FavoritesChanged) return;
+        if (!change.AffectsFavorites) return;
         RunOnUIThread(() => _ = RefreshFavoriteAsync());
     }
 

@@ -143,6 +143,7 @@ public sealed class ScrobbleCoordinator : IDisposable
 
     private sealed class Destination(IListenSubmitter submitter)
     {
+        // A destination's runs take turns, so two of them can't send the same listen.
         public readonly SemaphoreSlim RunLock = new(1, 1);
         public int RunQueued;
         private int _announceRequested;

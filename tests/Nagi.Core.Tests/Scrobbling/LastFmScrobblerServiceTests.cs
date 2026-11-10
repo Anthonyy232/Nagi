@@ -131,6 +131,18 @@ public class LastFmScrobblerServiceTests : IDisposable
         _capturedRequestParams.Should().NotBeNull();
         _capturedRequestParams.Should().BeEquivalentTo(expectedParams);
     }
+    // Settings restored from a backup made on another computer come without the sign-in.
+    [Fact]
+    public async Task ApiCall_WithoutASignIn_IsOffRatherThanAFailure()
+    {
+        await _scrobblerService.UpdateNowPlayingAsync(CreateTestSong());
+        await ScrobbleAsync(CreateTestSong(), DateTime.UtcNow);
+
+        _httpMessageHandler.Requests.Should().BeEmpty();
+        _logger.ReceivedCalls().Where(call => call.GetMethodInfo().Name == nameof(ILogger.Log))
+            .Select(call => (LogLevel)call.GetArguments()[0]!).Should().OnlyContain(level => level < LogLevel.Warning);
+    }
+
     [Theory]
     [InlineData(null, ApiSecret, SessionKey)]
     [InlineData(ApiKey, null, SessionKey)]
@@ -174,31 +186,6 @@ public class LastFmScrobblerServiceTests : IDisposable
         _httpMessageHandler.SendAsyncFunc = (_, _) => throw new HttpRequestException("Network error");
 
         await FluentActions.Awaiting(() => _scrobblerService.UpdateNowPlayingAsync(CreateTestSong())).Should().NotThrowAsync();
-    }
-
-    [Fact]
-    public async Task SubmitPendingAsync_RunsAtTheSameTime_SendsEachListenOnce()
-    {
-        SetupValidCredentials();
-        var firstRequest = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        _httpMessageHandler.SendAsyncFunc = async (_, _) =>
-        {
-            firstRequest.TrySetResult();
-            await release.Task;
-            return new HttpResponseMessage(HttpStatusCode.OK)
-            { Content = new StringContent(SuccessfulResponse, Encoding.UTF8, "application/xml") };
-        };
-        await SeedPendingListensAsync((1, DateTime.UtcNow.AddMinutes(-10)), (2, DateTime.UtcNow.AddMinutes(-5)));
-
-        // The queue run started by a listen reaching the threshold, while the retry loop runs the queue too.
-        var realTime = _scrobblerService.SubmitPendingAsync(CancellationToken.None);
-        await firstRequest.Task.WaitAsync(TimeSpan.FromSeconds(5));
-        var retry = _scrobblerService.SubmitPendingAsync(CancellationToken.None);
-        release.SetResult();
-        await Task.WhenAll(realTime, retry).WaitAsync(TimeSpan.FromSeconds(5));
-
-        _httpMessageHandler.Requests.Should().HaveCount(2);
     }
 
     [Fact]

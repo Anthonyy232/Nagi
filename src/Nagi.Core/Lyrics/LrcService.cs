@@ -15,12 +15,11 @@ public class LrcService : ILrcService, IDisposable
     private readonly IFileSystemService _fileSystemService;
     private readonly ILogger<LrcService> _logger;
     private readonly Dictionary<string, ILyricsProvider> _providers;
-    private readonly ISettingsService _settingsService;
     private readonly IPathConfiguration _pathConfig;
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly IMusicServerService _musicServers;
 
-    private readonly OnlineLookupCancellation _onlineLookups = new();
+    private readonly OnlineLookupGate _onlineLookups;
 
     // Server songs the server had no lyrics for this session. Only an online lookup marks a song as checked, so one
     // played while online lyrics are off is still looked up online once they are turned on.
@@ -37,12 +36,11 @@ public class LrcService : ILrcService, IDisposable
     {
         _fileSystemService = fileSystemService;
         _providers = providers.ToDictionary(provider => provider.Id);
-        _settingsService = settingsService;
         _pathConfig = pathConfig;
         _contextFactory = contextFactory;
         _musicServers = musicServers;
         _logger = logger;
-        _settingsService.SettingChanged += OnSettingChanged;
+        _onlineLookups = new OnlineLookupGate(settingsService, CoreSettings.FetchOnlineLyrics, CoreSettings.LyricsProviders);
     }
 
     public async Task<SongLyrics?> GetLyricsAsync(Song song, CancellationToken cancellationToken = default)
@@ -91,18 +89,17 @@ public class LrcService : ILrcService, IDisposable
         }
 
         // Look online only if never checked before, unless the local file is missing or unsafe to reuse.
-        var turnedOff = _onlineLookups.Token;
-        if ((!forceOnlineRefresh && song.LyricsLastCheckedUtc != null)
-            || !_settingsService.Get(CoreSettings.FetchOnlineLyrics))
-            return null;
+        if (!forceOnlineRefresh && song.LyricsLastCheckedUtc != null) return null;
+        return await _onlineLookups.RunAsync(
+            (enabledProviders, token) => FindOnlineAsync(song, forceOnlineRefresh, enabledProviders, token),
+            cancellationToken).ConfigureAwait(false);
+    }
 
-        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, turnedOff);
-        var token = linkedCts.Token;
+    private async Task<SongLyrics?> FindOnlineAsync(Song song, bool forceOnlineRefresh,
+        IReadOnlyList<ServiceProviderSetting> enabledProviders, CancellationToken token)
+    {
+        if (token.IsCancellationRequested) return null;
 
-        if (token.IsCancellationRequested)
-            return null;
-
-        var enabledProviders = _settingsService.Get(CoreSettings.LyricsProviders).Where(p => p.IsEnabled);
         var lookups = enabledProviders
             .Where(provider => _providers.ContainsKey(provider.Id))
             .Select(provider => _providers[provider.Id].GetLyricsAsync(song, token))
@@ -254,16 +251,5 @@ public class LrcService : ILrcService, IDisposable
             _fileSystemService.DeleteFile(previousPath!);
     }
 
-    private void OnSettingChanged(Setting setting)
-    {
-        if (setting != CoreSettings.FetchOnlineLyrics || _settingsService.Get(CoreSettings.FetchOnlineLyrics)) return;
-        _logger.LogInformation("Fetch online lyrics disabled. Cancelling ongoing fetches.");
-        _onlineLookups.CancelRunning();
-    }
-
-    public void Dispose()
-    {
-        _settingsService.SettingChanged -= OnSettingChanged;
-        _onlineLookups.CancelRunning();
-    }
+    public void Dispose() => _onlineLookups.Dispose();
 }

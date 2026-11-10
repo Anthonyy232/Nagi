@@ -28,22 +28,21 @@ public sealed class ScrobblingAccounts : IScrobblingAccounts
 
     public event Action<ScrobblingAccount>? CredentialsChanged;
 
-    public bool IsLastFmSignInPending => !string.IsNullOrEmpty(_settingsService.Get(CoreSettings.LastFmAuthToken));
-
     public Task<(string? Username, string? SessionKey)?> GetLastFmCredentialsAsync() =>
         Task.FromResult(_credentials.RetrieveCredential(LastFmCredentialResource));
 
     public Task<string?> GetListenBrainzUserTokenAsync() =>
         Task.FromResult(_credentials.RetrieveCredential(ListenBrainzTokenResource)?.Password);
 
-    public async Task<Uri?> BeginLastFmSignInAsync()
+    public async Task<LastFmSignInStart> BeginLastFmSignInAsync()
     {
         var version = Interlocked.Increment(ref _lastFmSignInVersion);
         var authentication = await _lastFmAuth.GetAuthenticationTokenAsync().ConfigureAwait(false);
-        if (authentication is not { } started || version != Volatile.Read(ref _lastFmSignInVersion)) return null;
+        if (version != Volatile.Read(ref _lastFmSignInVersion)) return new LastFmSignInStart(null, WasCancelled: true);
+        if (authentication is not { } started) return new LastFmSignInStart(null);
 
         _settingsService.Set(CoreSettings.LastFmAuthToken, started.Token);
-        return new Uri(started.AuthUrl);
+        return new LastFmSignInStart(new Uri(started.AuthUrl));
     }
 
     public async Task<LastFmSignInResult> FinishLastFmSignInAsync()

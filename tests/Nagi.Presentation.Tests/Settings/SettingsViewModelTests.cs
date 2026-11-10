@@ -220,7 +220,6 @@ public class SettingsViewModelTests : IDisposable
             _lastFm.GetSessionAsync("temporary").Returns(Task.FromException<(string Username, string SessionKey)?>(new IOException("Offline")));
         else
             _lastFm.GetAuthenticationTokenAsync().Returns(Task.FromException<(string Token, string AuthUrl)?>(new IOException("Offline")));
-        _viewModel.Scrobbling.IsConnectingToLastFm = true;
 
         await (finalizing ? _viewModel.Scrobbling.LastFmFinalizeAuthCommand : _viewModel.Scrobbling.LastFmInitialAuthCommand).ExecuteAsync(null);
 
@@ -285,7 +284,6 @@ public class SettingsViewModelTests : IDisposable
         await _viewModel.Scrobbling.LastFmFinalizeAuthCommand.ExecuteAsync(null);
 
         _viewModel.Scrobbling.IsLastFmConnected.Should().BeTrue();
-        _viewModel.Scrobbling.LastFmUsername.Should().Be("user");
         _viewModel.Scrobbling.IsLastFmScrobblingEnabled.Should().BeTrue();
         _viewModel.Scrobbling.IsLastFmNowPlayingEnabled.Should().BeTrue();
         _settings.Get(CoreSettings.LastFmAuthToken).Should().BeNull();
@@ -320,7 +318,6 @@ public class SettingsViewModelTests : IDisposable
         await _accounts.DisconnectListenBrainzAsync();
 
         _viewModel.Scrobbling.IsLastFmConnected.Should().BeFalse();
-        _viewModel.Scrobbling.LastFmUsername.Should().BeNull();
         _viewModel.Scrobbling.ListenBrainzIsConnected.Should().BeFalse();
         _viewModel.Scrobbling.ListenBrainzUserToken.Should().BeEmpty();
     }
@@ -337,6 +334,21 @@ public class SettingsViewModelTests : IDisposable
         _viewModel.Scrobbling.ListenBrainzIsConnected.Should().BeFalse();
         _viewModel.Scrobbling.ListenBrainzConnectionStatus.Should().Contain(Strings.Generic_SignInNotSaved);
         _settings.Get(CoreSettings.ListenBrainzEnabledSinceUtc).Should().BeNull();
+    }
+
+    [Fact]
+    public async Task ListenBrainz_ATokenThatFailsTheTest_LeavesTheSavedAccountConnected()
+    {
+        // The saved token keeps sending listens, so the account has to stay disconnectable.
+        _credentials.RetrieveCredential("Nagi/ListenBrainz").Returns(("token", "saved"));
+        await _viewModel.LoadSettingsAsync();
+        _listenBrainz.ValidateTokenAsync("mistyped", string.Empty).Returns(new ValidateTokenResult(false, null, "Invalid token"));
+        _viewModel.Scrobbling.ListenBrainzUserToken = "mistyped";
+
+        await _viewModel.Scrobbling.TestListenBrainzConnectionCommand.ExecuteAsync(null);
+
+        _viewModel.Scrobbling.ListenBrainzIsConnected.Should().BeTrue();
+        _viewModel.Scrobbling.ListenBrainzConnectionStatus.Should().Contain("Invalid token");
     }
 
     [Theory]

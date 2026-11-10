@@ -15,7 +15,6 @@ public class DeezerService : IDeezerService
     private const int DataNotFoundErrorCode = 800;
 
     private readonly ProviderClient _client;
-    private readonly ILogger<DeezerService> _logger;
 
     public DeezerService(
         IHttpClientFactory httpClientFactory,
@@ -23,7 +22,6 @@ public class DeezerService : IDeezerService
         ILogger<DeezerService> logger)
     {
         _client = new ProviderClient(ProviderCatalog.Deezer.Policy, httpClientFactory.CreateClient(), pipelines, logger);
-        _logger = logger;
     }
 
     public Task<ServiceResult<string>> GetArtistImageUrlAsync(string artistName, CancellationToken cancellationToken = default)
@@ -70,14 +68,8 @@ public class DeezerService : IDeezerService
             {
                 null => BodyStatus.Ok,
                 { Code: DataNotFoundErrorCode } => BodyStatus.NotFound,
-                { } error => LogFailure(error, operation)
+                _ => BodyStatus.Failed
             });
-
-    private BodyStatus LogFailure(DeezerError error, string operation)
-    {
-        _logger.LogWarning("Deezer returned error {Code} ({Message}) for {Operation}", error.Code, error.Message, operation);
-        return BodyStatus.Failed;
-    }
 
     private sealed class DeezerSearchResult<T>
     {
@@ -92,9 +84,6 @@ public class DeezerService : IDeezerService
     {
         [JsonPropertyName("code")]
         public int Code { get; set; }
-
-        [JsonPropertyName("message")]
-        public string? Message { get; set; }
     }
 
     private sealed class DeezerArtist

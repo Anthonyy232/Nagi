@@ -1,3 +1,5 @@
+using Nagi.Core.Settings;
+
 namespace Nagi.Core.Scrobbling;
 
 public enum LastFmSignInResult
@@ -14,6 +16,12 @@ public enum LastFmSignInResult
     NotSaved
 }
 
+/// <param name="ApprovalPage">Where the user approves the sign-in, or null if it didn't start.</param>
+/// <param name="WasCancelled">
+///     Whether the sign-in was cancelled or started again meanwhile, rather than Last.fm being out of reach.
+/// </param>
+public readonly record struct LastFmSignInStart(Uri? ApprovalPage, bool WasCancelled = false);
+
 /// <summary>
 ///     Connects and disconnects the scrobbling accounts, Last.fm and ListenBrainz, keeping their settings in step with
 ///     their sign-in. Their credentials live in the operating system's credential store.
@@ -25,24 +33,16 @@ public interface IScrobblingAccounts
     /// </summary>
     event Action<ScrobblingAccount>? CredentialsChanged;
 
-    /// <summary>
-    ///     Whether a Last.fm sign-in waits for the user to approve it in the browser, across restarts too.
-    /// </summary>
-    bool IsLastFmSignInPending { get; }
-
     /// <returns>The username and session key, or null if not signed in.</returns>
     Task<(string? Username, string? SessionKey)?> GetLastFmCredentialsAsync();
 
     Task<string?> GetListenBrainzUserTokenAsync();
 
     /// <summary>
-    ///     Starts a Last.fm sign-in, which waits until it is finished or cancelled.
+    ///     Starts a Last.fm sign-in, which waits in <see cref="CoreSettings.LastFmAuthToken" />, across restarts too,
+    ///     until it is finished or cancelled.
     /// </summary>
-    /// <returns>
-    ///     The page where the user approves the sign-in, or null if Last.fm couldn't be reached or the sign-in was
-    ///     cancelled meanwhile.
-    /// </returns>
-    Task<Uri?> BeginLastFmSignInAsync();
+    Task<LastFmSignInStart> BeginLastFmSignInAsync();
 
     /// <summary>
     ///     Exchanges the approved sign-in for a session, then saves it and turns scrobbling and "now playing" on. The

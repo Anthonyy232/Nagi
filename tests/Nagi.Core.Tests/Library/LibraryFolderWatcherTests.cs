@@ -44,7 +44,7 @@ public sealed class LibraryFolderWatcherTests : IDisposable
 
         _time.Advance(LibraryFolderWatcher.QuietPeriod - TimeSpan.FromTicks(1));
         await _folderService.DidNotReceiveWithAnyArgs().RefreshFolderInBackgroundAsync(default);
-        _time.Advance(LibraryFolderWatcher.QuietPeriod);
+        await AdvanceUntilRefreshedAsync();
         await _folderService.Received(1).RefreshFolderInBackgroundAsync(folder.Id, Arg.Any<CancellationToken>());
     }
 

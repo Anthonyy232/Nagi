@@ -22,7 +22,6 @@ public class LastFmScrobblerService : IListenSubmitter
     private readonly ILogger<LastFmScrobblerService> _logger;
     private readonly ISettingsService _settingsService;
     private readonly IScrobblingAccounts _accounts;
-    private readonly SemaphoreSlim _submitLock = new(1, 1);
 
     public LastFmScrobblerService(
         IHttpClientFactory httpClientFactory,
@@ -74,42 +73,34 @@ public class LastFmScrobblerService : IListenSubmitter
     public async Task SubmitPendingAsync(CancellationToken cancellationToken)
     {
         if (!_settingsService.Get(CoreSettings.LastFmScrobbling)) return;
-        await _submitLock.WaitAsync(cancellationToken).ConfigureAwait(false);
-        try
-        {
-            await using var ctx = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
-            var pending = await ctx.ListenHistory
-                .AsTracking()
-                .Where(lh => lh.IsEligibleForScrobbling && !lh.IsScrobbled)
-                .Include(lh => lh.Song).ThenInclude(s => s.Album)
-                .OrderBy(lh => lh.ListenTimestampUtc)
-                .ToListAsync(cancellationToken).ConfigureAwait(false);
-            // Fetching the keys can take a while offline, so it waits until there is something to send.
-            if (pending.Count == 0 || await GetSessionKeyAsync().ConfigureAwait(false) is not { } sessionKey) return;
+        await using var ctx = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+        var pending = await ctx.ListenHistory
+            .AsTracking()
+            .Where(lh => lh.IsEligibleForScrobbling && !lh.IsScrobbled)
+            .Include(lh => lh.Song).ThenInclude(s => s.Album)
+            .OrderBy(lh => lh.ListenTimestampUtc)
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+        // Fetching the keys can take a while offline, so it waits until there is something to send.
+        if (pending.Count == 0 || await GetSessionKeyAsync().ConfigureAwait(false) is not { } sessionKey) return;
 
-            foreach (var entry in pending)
+        foreach (var entry in pending)
+        {
+            if (cancellationToken.IsCancellationRequested) break;
+
+            var outcome = await ScrobbleAsync(entry.Song, entry.ListenTimestampUtc, sessionKey, cancellationToken)
+                .ConfigureAwait(false);
+            if (outcome == SubmissionOutcome.TransientFailure)
             {
-                if (cancellationToken.IsCancellationRequested) break;
-
-                var outcome = await ScrobbleAsync(entry.Song, entry.ListenTimestampUtc, sessionKey, cancellationToken)
-                    .ConfigureAwait(false);
-                if (outcome == SubmissionOutcome.TransientFailure)
-                {
-                    _logger.LogDebug("Last.fm transient failure for '{Title}'. Stopping to preserve order.", entry.Song.Title);
-                    break;
-                }
-
-                if (outcome == SubmissionOutcome.PermanentFailure)
-                    _logger.LogWarning("Last.fm permanently rejected '{Title}'; dropping from queue.", entry.Song.Title);
-
-                entry.IsScrobbled = true;
-                // Saved even if shutdown cancels the rest, so a listen Last.fm already has isn't sent again.
-                await ctx.SaveChangesAsync(CancellationToken.None).ConfigureAwait(false);
+                _logger.LogDebug("Last.fm transient failure for '{Title}'. Stopping to preserve order.", entry.Song.Title);
+                break;
             }
-        }
-        finally
-        {
-            _submitLock.Release();
+
+            if (outcome == SubmissionOutcome.PermanentFailure)
+                _logger.LogWarning("Last.fm permanently rejected '{Title}'; dropping from queue.", entry.Song.Title);
+
+            entry.IsScrobbled = true;
+            // Saved even if shutdown cancels the rest, so a listen Last.fm already has isn't sent again.
+            await ctx.SaveChangesAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 
@@ -193,12 +184,6 @@ public class LastFmScrobblerService : IListenSubmitter
     private async Task<string?> GetSessionKeyAsync()
     {
         var sessionKey = (await _accounts.GetLastFmCredentialsAsync().ConfigureAwait(false))?.SessionKey;
-        if (string.IsNullOrEmpty(sessionKey))
-        {
-            _logger.LogError("Cannot perform Last.fm action; the session key is unavailable.");
-            return null;
-        }
-
-        return sessionKey;
+        return string.IsNullOrEmpty(sessionKey) ? null : sessionKey;
     }
 }

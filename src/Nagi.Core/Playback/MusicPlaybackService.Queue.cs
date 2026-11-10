@@ -101,9 +101,6 @@ public partial class MusicPlaybackService
     private async Task<Song> CreateTransientSongAsync(string filePath)
     {
         var metadata = await _metadataService.ExtractMetadataAsync(filePath);
-        // As the library imports them, also for a file whose tags couldn't be read.
-        metadata.NormalizeTags(_settingsService.Get(CoreSettings.ArtistSplitCharacters),
-            _settingsService.Get(CoreSettings.GenreSplitCharacters));
         var artists = metadata.Artists;
         var albumArtists = metadata.AlbumArtists;
 

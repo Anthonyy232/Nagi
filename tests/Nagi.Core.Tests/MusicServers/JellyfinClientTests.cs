@@ -185,6 +185,7 @@ public class JellyfinClientTests : IDisposable
     [InlineData(HttpStatusCode.Unauthorized, MusicServerError.SignInFailed)]
     [InlineData(HttpStatusCode.NotFound, MusicServerError.NotFound)]
     [InlineData(HttpStatusCode.InternalServerError, MusicServerError.ServerError)]
+    [InlineData(HttpStatusCode.ServiceUnavailable, MusicServerError.Unreachable)]
     public async Task ReportPlayedAsync_SaysWhyTheServerRefused(HttpStatusCode status, MusicServerError expected)
     {
         _handler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(status));

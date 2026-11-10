@@ -40,19 +40,27 @@ public sealed class LibraryReset : ILibraryReset
 
     public async Task ClearAllLibraryDataAsync()
     {
-        _writeLock.CancelActiveScan("library data reset");
-        _musicServers.CancelSyncs();
-        await _writeLock.WaitAsync(_writeLock.ShutdownToken).ConfigureAwait(false);
-        try
-        {
-            await _artwork.RunWithoutMetadataFetchAsync(ClearAsync).ConfigureAwait(false);
-        }
-        finally
-        {
-            _writeLock.Release();
-        }
-
+        await RunWhileQuietAsync("library data reset", ClearAsync).ConfigureAwait(false);
         _notifier.Raise(LibraryChangeKind.LibraryCleared);
+    }
+
+    public Task RunWhileQuietAsync(string reason, Func<Task> action)
+    {
+        _writeLock.CancelActiveScan(reason);
+        _musicServers.CancelSyncs();
+        // The online fetch takes the write lock during its turn, so the write lock is taken inside that turn here too.
+        return _artwork.RunWithoutMetadataFetchAsync(async () =>
+        {
+            await _writeLock.WaitAsync(_writeLock.ShutdownToken).ConfigureAwait(false);
+            try
+            {
+                await action().ConfigureAwait(false);
+            }
+            finally
+            {
+                _writeLock.Release();
+            }
+        });
     }
 
     private async Task ClearAsync()

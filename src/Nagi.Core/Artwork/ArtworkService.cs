@@ -29,7 +29,8 @@ public sealed class ArtworkService : IArtworkService
     private readonly LibraryWriteLock _writeLock;
     private readonly ILogger<ArtworkService> _logger;
     private readonly SemaphoreSlim _metadataFetchSemaphore = new(1, 1);
-    private volatile CancellationTokenSource? _metadataFetchCts;
+    private CancellationTokenSource? _metadataFetchCts;
+    private int _metadataFetchHolds;
 
     public ArtworkService(
         IDbContextFactory<MusicDbContext> contextFactory,
@@ -104,9 +105,11 @@ public sealed class ArtworkService : IArtworkService
         }
 
         using var runCts = CancellationTokenSource.CreateLinkedTokenSource(ShutdownToken);
-        _metadataFetchCts = runCts;
+        Interlocked.Exchange(ref _metadataFetchCts, runCts);
         try
         {
+            // A hold that began before the token source was published couldn't cancel it.
+            if (Volatile.Read(ref _metadataFetchHolds) > 0) return;
             var token = runCts.Token;
             await Task.Run(() => Task.WhenAll(FetchMissingArtistMetadataAsync(token), FetchMissingAlbumCoversAsync(token)),
                 token).ConfigureAwait(false);
@@ -121,30 +124,38 @@ public sealed class ArtworkService : IArtworkService
         }
         finally
         {
-            _metadataFetchCts = null;
+            Volatile.Write(ref _metadataFetchCts, null);
             _metadataFetchSemaphore.Release();
         }
     }
 
     public async Task RunWithoutMetadataFetchAsync(Func<Task> action)
     {
+        Interlocked.Increment(ref _metadataFetchHolds);
         try
         {
-            _metadataFetchCts?.Cancel();
-        }
-        catch (ObjectDisposedException)
-        {
-            // The run finished and disposed its token source after it was read.
-        }
+            try
+            {
+                Volatile.Read(ref _metadataFetchCts)?.Cancel();
+            }
+            catch (ObjectDisposedException)
+            {
+                // The run finished and disposed its token source after it was read.
+            }
 
-        await _metadataFetchSemaphore.WaitAsync(ShutdownToken).ConfigureAwait(false);
-        try
-        {
-            await action().ConfigureAwait(false);
+            await _metadataFetchSemaphore.WaitAsync(ShutdownToken).ConfigureAwait(false);
+            try
+            {
+                await action().ConfigureAwait(false);
+            }
+            finally
+            {
+                _metadataFetchSemaphore.Release();
+            }
         }
         finally
         {
-            _metadataFetchSemaphore.Release();
+            Interlocked.Decrement(ref _metadataFetchHolds);
         }
     }
 
@@ -164,8 +175,7 @@ public sealed class ArtworkService : IArtworkService
                 artistId.ToString(), CachedImageKind.Custom, processedBytes).ConfigureAwait(false);
             if (newPath is null) return false;
 
-            artist.LocalImageCachePath = newPath;
-            artist.ImageModifiedUtc = DateTime.UtcNow;
+            artist.SetImage(newPath);
             await context.SaveChangesAsync().ConfigureAwait(false);
 
             _notifier.RaiseArtistImagesChanged([new ArtistImageChange(artist)]);
@@ -189,9 +199,8 @@ public sealed class ArtworkService : IArtworkService
             var cachePath = _pathConfig.ArtistImageCachePath;
 
             ImageStorageHelper.DeleteImage(_fileSystem, cachePath, artistId.ToString(), CachedImageKind.Custom);
-            artist.LocalImageCachePath = ImageStorageHelper.FindImage(_fileSystem, cachePath, artistId.ToString(), CachedImageKind.Folder)
-                                         ?? ImageStorageHelper.FindImage(_fileSystem, cachePath, artistId.ToString(), CachedImageKind.Fetched);
-            artist.ImageModifiedUtc = DateTime.UtcNow;
+            artist.SetImage(ImageStorageHelper.FindImage(_fileSystem, cachePath, artistId.ToString(), CachedImageKind.Folder)
+                            ?? ImageStorageHelper.FindImage(_fileSystem, cachePath, artistId.ToString(), CachedImageKind.Fetched));
 
             await context.SaveChangesAsync().ConfigureAwait(false);
             _notifier.RaiseArtistImagesChanged([new ArtistImageChange(artist)]);
@@ -295,7 +304,8 @@ public sealed class ArtworkService : IArtworkService
         // As in Navidrome, a folder image (artist.*, album/artist.*) comes before the online sources, and replaces a
         // fetched image but never a custom image or an earlier folder image.
         var updated = !ImageStorageHelper.IsUserOrFolderImage(artist.LocalImageCachePath)
-                      && await _libraryArtwork.UseFolderImageAsync(artist, songDirectories, cancellationToken).ConfigureAwait(false);
+                      && await _libraryArtwork.UseFolderImageAsync(artist, songDirectories, new MediaFileFinder(_fileSystem, _logger),
+                          cancellationToken).ConfigureAwait(false);
         if (updated) _logger.LogInformation("Using local folder image for artist '{ArtistName}'.", artist.Name);
 
         var found = await _artistMetadataService.FindAsync(artist.Name, artist.MusicBrainzId, cancellationToken)
@@ -332,8 +342,7 @@ public sealed class ArtworkService : IArtworkService
                 await DownloadAndCacheArtistImageAsync(artist, new Uri(found.ImageUrl), cancellationToken).ConfigureAwait(false);
             if (!string.IsNullOrEmpty(downloadedPath))
             {
-                artist.LocalImageCachePath = downloadedPath;
-                artist.ImageModifiedUtc = DateTime.UtcNow;
+                artist.SetImage(downloadedPath);
                 updated = true;
             }
             else

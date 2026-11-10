@@ -6,12 +6,13 @@ using Nagi.Core.Platform;
 namespace Nagi.Core.Library;
 
 /// <summary>
-///     Finds the files beside a song on disk: folder cover art and sidecar lyrics. It lists each directory once, so a
+///     Finds the files beside a song on disk: folder cover art, sidecar lyrics and artist images. It lists each directory once, so a
 ///     pass over many songs is cheap; it is not thread-safe, so each pass makes its own.
 /// </summary>
 internal sealed class MediaFileFinder(IFileSystemService fileSystem, ILogger logger)
 {
     private readonly Dictionary<string, string?> _coverArtByDirectory = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, string?> _artistImageByDirectory = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<(string Directory, string Pattern), Dictionary<string, string>> _filesByName = new();
 
     /// <summary>
@@ -70,6 +71,26 @@ internal sealed class MediaFileFinder(IFileSystemService fileSystem, ILogger log
 
         var name = Path.GetFileNameWithoutExtension(songFilePath);
         return FilesByName(directory, "*.lrc").GetValueOrDefault(name) ?? FilesByName(directory, "*.txt").GetValueOrDefault(name);
+    }
+
+    /// <summary>The image named "artist" in the directory, if it has one.</summary>
+    public string? FindArtistImage(string directory)
+    {
+        if (_artistImageByDirectory.TryGetValue(directory, out var image)) return image;
+
+        try
+        {
+            image = fileSystem.GetFiles(directory, "*.*").FirstOrDefault(path =>
+                FileExtensions.ImageFileExtensions.Contains(Path.GetExtension(path)) &&
+                Path.GetFileNameWithoutExtension(path).Equals(FileExtensions.ArtistImageFileName, StringComparison.OrdinalIgnoreCase));
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Failed to enumerate artist images in directory '{Directory}'.", directory);
+        }
+
+        _artistImageByDirectory.Add(directory, image);
+        return image;
     }
 
     private Dictionary<string, string> FilesByName(string directory, string pattern)

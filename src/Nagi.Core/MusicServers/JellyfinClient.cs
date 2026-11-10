@@ -227,6 +227,7 @@ internal sealed class JellyfinClient : IMusicServerClient
         {
             HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden => MusicServerError.SignInFailed,
             HttpStatusCode.NotFound => MusicServerError.NotFound,
+            var status when MusicServerHttp.IsServerDown(status) => MusicServerError.Unreachable,
             _ => MusicServerError.ServerError
         };
         throw new MusicServerException(error, $"{baseUrl} answered {(int)response.StatusCode}.");

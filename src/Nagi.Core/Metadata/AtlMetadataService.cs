@@ -42,6 +42,8 @@ public partial class AtlMetadataService : IMetadataService
         bool includeMediaAssets = true)
     {
         var metadata = new SongFileMetadata { FilePath = filePath };
+        var splitCharacters = _settingsService.Get(CoreSettings.ArtistSplitCharacters);
+        var genreSplitCharacters = _settingsService.Get(CoreSettings.GenreSplitCharacters);
 
         try
         {
@@ -58,38 +60,37 @@ public partial class AtlMetadataService : IMetadataService
                 track.AudioFormat.Name?.Equals("Unknown", StringComparison.OrdinalIgnoreCase) == true)
             {
                 metadata.Failure = ExtractionFailure.UnsupportedFormat;
-                return metadata;
             }
-
-            var splitCharacters = _settingsService.Get(CoreSettings.ArtistSplitCharacters);
-            var genreSplitCharacters = _settingsService.Get(CoreSettings.GenreSplitCharacters);
-            PopulateMetadataFromTrack(metadata, track, splitCharacters, genreSplitCharacters);
-
-            if (includeMediaAssets)
+            else
             {
-                try
-                {
-                    metadata.LrcFilePath = await GetLrcPathAsync(filePath, fileInfo.LastWriteTimeUtc,
-                            metadata.Artists[0], metadata.Album,
-                            metadata.Title, track)
-                        .WaitAsync(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
-                }
-                catch (TimeoutException)
-                {
-                    _logger.LogWarning("LRC extraction timed out for file: {FilePath}", filePath);
-                }
+                PopulateMetadataFromTrack(metadata, track, splitCharacters, genreSplitCharacters);
 
-                if (string.IsNullOrWhiteSpace(metadata.LrcFilePath))
-                    metadata.LrcFilePath = new MediaFileFinder(_fileSystem, _logger).FindSidecarLyrics(filePath);
-                try
+                if (includeMediaAssets)
                 {
-                    (metadata.CoverArtUri, metadata.LightSwatchId, metadata.DarkSwatchId) =
-                        await ProcessAlbumArtAsync(filePath, track, baseFolderPath)
-                            .WaitAsync(TimeSpan.FromSeconds(15)).ConfigureAwait(false);
-                }
-                catch (TimeoutException)
-                {
-                    _logger.LogWarning("Album art extraction timed out for file: {FilePath}", filePath);
+                    try
+                    {
+                        metadata.LrcFilePath = await GetLrcPathAsync(filePath, fileInfo.LastWriteTimeUtc,
+                                metadata.Artists[0], metadata.Album,
+                                metadata.Title, track)
+                            .WaitAsync(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
+                    }
+                    catch (TimeoutException)
+                    {
+                        _logger.LogWarning("LRC extraction timed out for file: {FilePath}", filePath);
+                    }
+
+                    if (string.IsNullOrWhiteSpace(metadata.LrcFilePath))
+                        metadata.LrcFilePath = new MediaFileFinder(_fileSystem, _logger).FindSidecarLyrics(filePath);
+                    try
+                    {
+                        (metadata.CoverArtUri, metadata.LightSwatchId, metadata.DarkSwatchId) =
+                            await ProcessAlbumArtAsync(filePath, track, baseFolderPath)
+                                .WaitAsync(TimeSpan.FromSeconds(15)).ConfigureAwait(false);
+                    }
+                    catch (TimeoutException)
+                    {
+                        _logger.LogWarning("Album art extraction timed out for file: {FilePath}", filePath);
+                    }
                 }
             }
         }
@@ -115,6 +116,8 @@ public partial class AtlMetadataService : IMetadataService
             metadata.Failure = ExtractionFailure.Unexpected;
         }
 
+        // A file that couldn't be read gets the names the library stores for missing tags, as a read one did above.
+        if (metadata.Failure is not null) metadata.NormalizeTags(splitCharacters, genreSplitCharacters);
         return metadata;
     }
 

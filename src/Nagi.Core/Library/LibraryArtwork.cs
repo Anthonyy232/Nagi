@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Artwork;
 using Nagi.Core.Data;
-using Nagi.Core.Metadata;
 using Nagi.Core.Platform;
 
 namespace Nagi.Core.Library;
@@ -86,8 +85,8 @@ public sealed class LibraryArtwork
         var songDirsByArtistId = await LoadSongDirectoriesByArtistAsync(context,
             artistsNeedingImages.Select(a => a.Id).ToList(), cancellationToken).ConfigureAwait(false);
 
-        // Artists often share directories, which are then listed once.
-        var directoryCache = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
+        // Artists often share directories, which the finder then lists once.
+        var finder = new MediaFileFinder(_fileSystem, _logger);
 
         var changes = new List<ArtistImageChange>();
         foreach (var artist in artistsNeedingImages)
@@ -95,7 +94,7 @@ public sealed class LibraryArtwork
             cancellationToken.ThrowIfCancellationRequested();
 
             var dirs = songDirsByArtistId.GetValueOrDefault(artist.Id, []);
-            if (await UseFolderImageAsync(artist, dirs, cancellationToken, directoryCache).ConfigureAwait(false))
+            if (await UseFolderImageAsync(artist, dirs, finder, cancellationToken).ConfigureAwait(false))
                 changes.Add(new ArtistImageChange(artist));
         }
 
@@ -115,9 +114,9 @@ public sealed class LibraryArtwork
     /// </summary>
     /// <returns>Whether the artist's image was found and saved as its folder image.</returns>
     internal async Task<bool> UseFolderImageAsync(Artist artist, IReadOnlyList<string?> songDirectories,
-        CancellationToken cancellationToken, Dictionary<string, string?>? directoryCache = null)
+        MediaFileFinder finder, CancellationToken cancellationToken)
     {
-        var imageBytes = await FindArtistImageInDirectoriesAsync(songDirectories, artist.Name, cancellationToken, directoryCache)
+        var imageBytes = await FindArtistImageInDirectoriesAsync(songDirectories, artist.Name, finder, cancellationToken)
             .ConfigureAwait(false);
         if (imageBytes is null) return false;
 
@@ -128,8 +127,7 @@ public sealed class LibraryArtwork
                 _pathConfig.ArtistImageCachePath, artist.Id.ToString(), CachedImageKind.Folder, processed).ConfigureAwait(false);
             if (string.IsNullOrEmpty(localPath)) return false;
 
-            artist.LocalImageCachePath = localPath;
-            artist.ImageModifiedUtc = DateTime.UtcNow;
+            artist.SetImage(localPath);
             return true;
         }
         catch (Exception ex)
@@ -164,7 +162,7 @@ public sealed class LibraryArtwork
     ///     F:/Music/Daft Punk/Discovery/). Drive roots are left out of the first pass.
     /// </summary>
     private async Task<byte[]?> FindArtistImageInDirectoriesAsync(IReadOnlyList<string?> songDirectories, string artistName,
-        CancellationToken ct, Dictionary<string, string?>? directoryCache = null)
+        MediaFileFinder finder, CancellationToken ct)
     {
         var directories = songDirectories.OfType<string>().Where(dir => dir.Length > 0)
             .Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
@@ -175,13 +173,7 @@ public sealed class LibraryArtwork
         {
             ct.ThrowIfCancellationRequested();
 
-            if (directoryCache == null || !directoryCache.TryGetValue(dir, out var imagePath))
-            {
-                imagePath = FindArtistImageInDirectory(dir);
-                if (directoryCache != null) directoryCache[dir] = imagePath;
-            }
-
-            if (imagePath == null) continue;
+            if (finder.FindArtistImage(dir) is not { } imagePath) continue;
 
             try
             {
@@ -199,22 +191,6 @@ public sealed class LibraryArtwork
         }
 
         return null;
-    }
-
-    private string? FindArtistImageInDirectory(string directory)
-    {
-        try
-        {
-            return _fileSystem.GetFiles(directory, "*.*").FirstOrDefault(filePath =>
-                FileExtensions.ImageFileExtensions.Contains(Path.GetExtension(filePath)) &&
-                Path.GetFileNameWithoutExtension(filePath)
-                    .Equals(FileExtensions.ArtistImageFileName, StringComparison.OrdinalIgnoreCase));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to enumerate artist images in directory '{Directory}'.", directory);
-            return null;
-        }
     }
 
     internal void DeleteArtistImages(IEnumerable<Guid> artistIds)

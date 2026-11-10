@@ -2,17 +2,19 @@ using Nagi.Core.OnlineProviders.Pipelines;
 
 namespace Nagi.Core.OnlineProviders;
 
+/// <summary>
+///     The lookups that choose their providers by what they can do. Artist images and biographies aren't listed: the
+///     artist lookup names its providers.
+/// </summary>
 [Flags]
 public enum ProviderCapabilities
 {
     None = 0,
-    ArtistImage = 1,
-    ArtistBiography = 2,
-    AlbumCover = 4,
-    Lyrics = 8,
+    AlbumCover = 1,
+    Lyrics = 2,
 
     /// <summary>Finds the MusicBrainz IDs that other providers look artists and albums up by.</summary>
-    IdResolver = 16
+    IdResolver = 4
 }
 
 /// <summary>An online source the user can turn on and rank in settings.</summary>
@@ -35,7 +37,7 @@ public static class ProviderCatalog
 
     // Wikimedia has no fixed limit for reads but asks clients to keep requests serial and modest.
     public static readonly OnlineProvider Wikipedia = Provider(ServiceProviderIds.Wikipedia, "Wikipedia",
-        ProviderCapabilities.ArtistBiography,
+        ProviderCapabilities.None,
         new ChannelPolicy { PermitsPerWindow = 5, MaxConcurrent = 2 });
 
     // The Cover Art Archive is served from the Internet Archive with no published limit.
@@ -45,13 +47,13 @@ public static class ProviderCatalog
 
     // Fanart.tv is effectively unlimited for normal use; 429s are rare and their Retry-After is honored.
     public static readonly OnlineProvider FanartTv = Provider(ServiceProviderIds.FanartTv, "Fanart.tv",
-        ProviderCapabilities.ArtistImage,
+        ProviderCapabilities.None,
         new ChannelPolicy { PermitsPerWindow = 10, MaxConcurrent = 8 });
 
     // TheAudioDB's free tier allows 30 requests a minute. Past that the key is locked out for a full minute, so
     // short retry delays only waste calls: wait the full minute, once.
     public static readonly OnlineProvider TheAudioDb = Provider(ServiceProviderIds.TheAudioDb, "TheAudioDB",
-        ProviderCapabilities.ArtistImage | ProviderCapabilities.ArtistBiography,
+        ProviderCapabilities.None,
         new ChannelPolicy
         {
             PermitsPerWindow = 1,
@@ -64,7 +66,7 @@ public static class ProviderCatalog
 
     // Deezer allows 50 requests per 5 seconds per IP; past that it answers 200 with a quota error.
     public static readonly OnlineProvider Deezer = Provider(ServiceProviderIds.Deezer, "Deezer",
-        ProviderCapabilities.ArtistImage | ProviderCapabilities.AlbumCover,
+        ProviderCapabilities.AlbumCover,
         new ChannelPolicy { PermitsPerWindow = 8, MaxConcurrent = 4 });
 
     // The iTunes Search API allows about 20 requests a minute per IP. Past that it answers 403 for a while, which
@@ -76,7 +78,7 @@ public static class ProviderCatalog
     // Metadata, sign-in and scrobbling share this policy, so an auth failure in one pauses the others. Last.fm's
     // limits are undisclosed; 5 requests a second per IP is the long-standing convention.
     public static readonly OnlineProvider LastFm = Provider(ServiceProviderIds.LastFm, "Last.fm",
-        ProviderCapabilities.ArtistImage | ProviderCapabilities.ArtistBiography | ProviderCapabilities.AlbumCover,
+        ProviderCapabilities.AlbumCover,
         new ChannelPolicy { PermitsPerWindow = 5, MaxConcurrent = 4, BaseRetryDelay = TimeSpan.FromSeconds(5) });
 
     // LRCLIB documents no rate limit.
