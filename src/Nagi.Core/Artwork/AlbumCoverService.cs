@@ -30,7 +30,8 @@ public class AlbumCoverService : IAlbumCoverService, IDisposable
         _deezer = deezer;
         _lastFm = lastFm;
         _logger = logger;
-        _gate = new OnlineLookupGate(settingsService, ProviderCapabilities.AlbumCover);
+        _gate = new OnlineLookupGate(settingsService, CoreSettings.FetchOnlineMetadata, CoreSettings.MetadataProviders,
+            ProviderCapabilities.AlbumCover);
     }
 
     public Task<ServiceResult<string>?> FindCoverUrlAsync(AlbumCoverQuery album,

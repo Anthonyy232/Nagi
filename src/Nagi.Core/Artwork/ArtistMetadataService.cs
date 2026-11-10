@@ -34,7 +34,7 @@ public class ArtistMetadataService : IArtistMetadataService, IDisposable
         _wikipediaService = wikipediaService;
         _logger = logger;
         // Any enabled source, so an artist none of them can describe is marked as looked up rather than retried.
-        _gate = new OnlineLookupGate(settingsService, capabilities: null);
+        _gate = new OnlineLookupGate(settingsService, CoreSettings.FetchOnlineMetadata, CoreSettings.MetadataProviders);
     }
 
     public Task<ArtistMetadataResult?> FindAsync(string artistName, string? musicBrainzId,
