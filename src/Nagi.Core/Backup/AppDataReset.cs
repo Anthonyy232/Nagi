@@ -37,16 +37,17 @@ public sealed class AppDataReset : IAppDataReset
 
     public async Task ResetAsync()
     {
+        // The settings and playback services raise their events on the calling thread, so every step stays on it.
         _logger.LogInformation("Resetting all application data.");
         try
         {
             // The session is saved again at shutdown, so it has to be empty by then.
-            await _playback.ClearQueueAsync().ConfigureAwait(false);
-            await _accounts.DisconnectLastFmAsync().ConfigureAwait(false);
-            await _accounts.DisconnectListenBrainzAsync().ConfigureAwait(false);
+            await _playback.ClearQueueAsync();
+            await _accounts.DisconnectLastFmAsync();
+            await _accounts.DisconnectListenBrainzAsync();
             _settings.ResetToDefaults();
-            await _autoLaunch.SetEnabledAsync(false).ConfigureAwait(false);
-            await _libraryReset.ClearAllLibraryDataAsync().ConfigureAwait(false);
+            await _autoLaunch.SetEnabledAsync(false);
+            await _libraryReset.ClearAllLibraryDataAsync();
         }
         catch (Exception ex)
         {
@@ -54,6 +55,7 @@ public sealed class AppDataReset : IAppDataReset
             DeleteFilesDirectly();
         }
 
+        // The shutdown save leaves the file alone when playback never started, as in a reset after a crash at startup.
         TryDelete(_paths.PlaybackStateFilePath);
         TryDelete(_paths.RomanizationPacksPath);
     }
