@@ -8,6 +8,7 @@
     xmlns:lyrics="using:Nagi.Core.Lyrics"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:helpers="using:Nagi.WinUI.Helpers"
+    xmlns:uicontrols="using:Nagi.WinUI.Controls"
     mc:Ignorable="d"
     Background="Transparent"
     Loaded="OnPageLoaded">
@@ -169,33 +170,12 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <StackPanel
+        <uicontrols:EmptyState
             Grid.Row="2"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Spacing="16"
-            Visibility="{x:Bind ViewModel.ShowNoLyricsMessage, Mode=OneWay}">
-            <StackPanel.ChildrenTransitions>
-                <TransitionCollection>
-                    <EntranceThemeTransition FromVerticalOffset="20" />
-                </TransitionCollection>
-            </StackPanel.ChildrenTransitions>
-            <FontIcon
-                Glyph="&#xED1E;"
-                FontSize="48"
-                Margin="0,0,0,12"
-                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                HorizontalAlignment="Center" />
-            <TextBlock
-                Style="{StaticResource TitleTextBlockStyle}"
-                Text="{x:Bind resources:Strings.LyricsPage_NoLyrics_Title, Mode=OneTime}"
-                HorizontalAlignment="Center" />
-            <TextBlock
-                Style="{StaticResource SubtitleTextBlockStyle}"
-                Text="{x:Bind resources:Strings.LyricsPage_NoLyrics_Subtitle, Mode=OneTime}"
-                HorizontalAlignment="Center"
-                Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
-        </StackPanel>
+            Glyph="&#xED1E;"
+            Title="{x:Bind resources:Strings.LyricsPage_NoLyrics_Title, Mode=OneTime}"
+            Subtitle="{x:Bind resources:Strings.LyricsPage_NoLyrics_Subtitle, Mode=OneTime}"
+            IsShown="{x:Bind ViewModel.ShowNoLyricsMessage, Mode=OneWay}" />
 
         <ProgressRing
             Grid.Row="2"
