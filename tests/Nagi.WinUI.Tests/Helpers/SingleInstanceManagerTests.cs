@@ -3,7 +3,7 @@ using Nagi.Presentation.Shell;
 using Nagi.WinUI.Helpers;
 using Xunit;
 
-namespace Nagi.WinUI.Tests;
+namespace Nagi.WinUI.Tests.Helpers;
 
 public class SingleInstanceManagerTests
 {
