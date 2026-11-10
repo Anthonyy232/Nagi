@@ -45,9 +45,6 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
     [NotifyPropertyChangedFor(nameof(IsLastFmInitialAuthEnabled))]
     public partial bool IsConnectingToLastFm { get; set; }
 
-    [ObservableProperty]
-    public partial string? LastFmUsername { get; set; }
-
     public bool IsLastFmScrobblingEnabled
     {
         get => Get(CoreSettings.LastFmScrobbling);
@@ -120,7 +117,6 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
             {
                 var credentials = await _accounts.GetLastFmCredentialsAsync();
                 if (_isDisposed) return;
-                LastFmUsername = credentials?.Username;
                 IsLastFmConnected = !string.IsNullOrEmpty(credentials?.SessionKey);
             }
             else

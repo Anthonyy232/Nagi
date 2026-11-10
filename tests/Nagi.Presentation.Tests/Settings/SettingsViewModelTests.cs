@@ -285,7 +285,6 @@ public class SettingsViewModelTests : IDisposable
         await _viewModel.Scrobbling.LastFmFinalizeAuthCommand.ExecuteAsync(null);
 
         _viewModel.Scrobbling.IsLastFmConnected.Should().BeTrue();
-        _viewModel.Scrobbling.LastFmUsername.Should().Be("user");
         _viewModel.Scrobbling.IsLastFmScrobblingEnabled.Should().BeTrue();
         _viewModel.Scrobbling.IsLastFmNowPlayingEnabled.Should().BeTrue();
         _settings.Get(CoreSettings.LastFmAuthToken).Should().BeNull();
@@ -320,7 +319,6 @@ public class SettingsViewModelTests : IDisposable
         await _accounts.DisconnectListenBrainzAsync();
 
         _viewModel.Scrobbling.IsLastFmConnected.Should().BeFalse();
-        _viewModel.Scrobbling.LastFmUsername.Should().BeNull();
         _viewModel.Scrobbling.ListenBrainzIsConnected.Should().BeFalse();
         _viewModel.Scrobbling.ListenBrainzUserToken.Should().BeEmpty();
     }
