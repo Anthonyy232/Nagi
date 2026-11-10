@@ -304,7 +304,8 @@ public sealed class ArtworkService : IArtworkService
         // As in Navidrome, a folder image (artist.*, album/artist.*) comes before the online sources, and replaces a
         // fetched image but never a custom image or an earlier folder image.
         var updated = !ImageStorageHelper.IsUserOrFolderImage(artist.LocalImageCachePath)
-                      && await _libraryArtwork.UseFolderImageAsync(artist, songDirectories, cancellationToken).ConfigureAwait(false);
+                      && await _libraryArtwork.UseFolderImageAsync(artist, songDirectories, new MediaFileFinder(_fileSystem, _logger),
+                          cancellationToken).ConfigureAwait(false);
         if (updated) _logger.LogInformation("Using local folder image for artist '{ArtistName}'.", artist.Name);
 
         var found = await _artistMetadataService.FindAsync(artist.Name, artist.MusicBrainzId, cancellationToken)
