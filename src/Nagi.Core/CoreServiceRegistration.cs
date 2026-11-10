@@ -22,9 +22,6 @@ using Nagi.Core.Settings;
 
 namespace Nagi.Core;
 
-/// <summary>
-///     Registers Nagi's platform-independent services.
-/// </summary>
 public static class CoreServiceRegistration
 {
     /// <summary>
