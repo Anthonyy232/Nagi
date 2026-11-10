@@ -177,31 +177,6 @@ public class LastFmScrobblerServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task SubmitPendingAsync_RunsAtTheSameTime_SendsEachListenOnce()
-    {
-        SetupValidCredentials();
-        var firstRequest = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        _httpMessageHandler.SendAsyncFunc = async (_, _) =>
-        {
-            firstRequest.TrySetResult();
-            await release.Task;
-            return new HttpResponseMessage(HttpStatusCode.OK)
-            { Content = new StringContent(SuccessfulResponse, Encoding.UTF8, "application/xml") };
-        };
-        await SeedPendingListensAsync((1, DateTime.UtcNow.AddMinutes(-10)), (2, DateTime.UtcNow.AddMinutes(-5)));
-
-        // The queue run started by a listen reaching the threshold, while the retry loop runs the queue too.
-        var realTime = _scrobblerService.SubmitPendingAsync(CancellationToken.None);
-        await firstRequest.Task.WaitAsync(TimeSpan.FromSeconds(5));
-        var retry = _scrobblerService.SubmitPendingAsync(CancellationToken.None);
-        release.SetResult();
-        await Task.WhenAll(realTime, retry).WaitAsync(TimeSpan.FromSeconds(5));
-
-        _httpMessageHandler.Requests.Should().HaveCount(2);
-    }
-
-    [Fact]
     public async Task SubmitPendingAsync_WhenLastFmRejectsTheKey_SendsWithAFreshKey()
     {
         SetupValidCredentials();

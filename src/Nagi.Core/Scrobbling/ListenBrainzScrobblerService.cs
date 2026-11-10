@@ -37,7 +37,6 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
     private readonly ISettingsService _settingsService;
     private readonly IScrobblingAccounts _accounts;
     private readonly IAppInfoService _appInfoService;
-    private readonly SemaphoreSlim _submitLock = new(1, 1);
 
     public ListenBrainzScrobblerService(
         IHttpClientFactory httpClientFactory,
@@ -86,29 +85,21 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
         if (!_settingsService.Get(CoreSettings.ListenBrainzScrobbling) ||
             _settingsService.Get(CoreSettings.ListenBrainzEnabledSinceUtc) is not { } enabledSince) return;
 
-        await _submitLock.WaitAsync(cancellationToken).ConfigureAwait(false);
-        try
-        {
-            if (string.IsNullOrEmpty(await _accounts.GetListenBrainzUserTokenAsync().ConfigureAwait(false))) return;
-            await using var ctx = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+        if (string.IsNullOrEmpty(await _accounts.GetListenBrainzUserTokenAsync().ConfigureAwait(false))) return;
+        await using var ctx = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
 
-            var pending = await ctx.ListenHistory
-                .AsTracking()
-                .Where(lh => lh.IsEligibleForScrobbling
-                             && !lh.IsSubmittedToListenBrainz
-                             && lh.ListenTimestampUtc >= enabledSince)
-                .Include(lh => lh.Song).ThenInclude(s => s.Album)
-                .OrderBy(lh => lh.ListenTimestampUtc)
-                .ToListAsync(cancellationToken).ConfigureAwait(false);
+        var pending = await ctx.ListenHistory
+            .AsTracking()
+            .Where(lh => lh.IsEligibleForScrobbling
+                         && !lh.IsSubmittedToListenBrainz
+                         && lh.ListenTimestampUtc >= enabledSince)
+            .Include(lh => lh.Song).ThenInclude(s => s.Album)
+            .OrderBy(lh => lh.ListenTimestampUtc)
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
 
-            foreach (var chunk in pending.Chunk(100))
-            {
-                if (!await ProcessBatchAsync(ctx, chunk, cancellationToken).ConfigureAwait(false)) break;
-            }
-        }
-        finally
+        foreach (var chunk in pending.Chunk(100))
         {
-            _submitLock.Release();
+            if (!await ProcessBatchAsync(ctx, chunk, cancellationToken).ConfigureAwait(false)) break;
         }
     }
 

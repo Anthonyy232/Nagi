@@ -34,7 +34,7 @@ public interface IListenSubmitter
     /// <summary>
     ///     Sends the listens that reached the scrobble threshold and haven't been sent, oldest first, marking each as it
     ///     goes. A listen the destination rejects for good is dropped; after any other failure the rest wait for the
-    ///     next run, in order. Runs one at a time, so a listen is never sent twice.
+    ///     next run, in order. The caller runs it one at a time, so a listen is never sent twice.
     /// </summary>
     Task SubmitPendingAsync(CancellationToken cancellationToken);
 }
