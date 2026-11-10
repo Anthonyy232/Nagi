@@ -40,6 +40,20 @@ public class ScrobblingAccountsTests
     }
 
     [Fact]
+    public async Task BeginLastFmSignIn_TellsACancelledSignInFromAnUnreachableLastFm()
+    {
+        var reply = new TaskCompletionSource<(string Token, string AuthUrl)?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _lastFmAuth.GetAuthenticationTokenAsync().Returns(reply.Task, Task.FromResult<(string Token, string AuthUrl)?>(null));
+        var cancelled = _accounts.BeginLastFmSignInAsync();
+        _accounts.CancelLastFmSignIn();
+        reply.SetResult(("late", "https://last.fm/auth"));
+
+        (await cancelled).Should().Be(new LastFmSignInStart(null, WasCancelled: true));
+        (await _accounts.BeginLastFmSignInAsync()).Should().Be(new LastFmSignInStart(null));
+        _settings.Get(CoreSettings.LastFmAuthToken).Should().BeNull();
+    }
+
+    [Fact]
     public async Task ListenBrainz_CountsListensFromTheFirstConnectionUntilDisconnected()
     {
         (await _accounts.ConnectListenBrainzAsync("token")).Should().BeTrue();
