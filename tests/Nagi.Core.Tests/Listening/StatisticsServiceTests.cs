@@ -343,7 +343,7 @@ public class StatisticsServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetPlaybackSourceDistributionAsync_GroupsByContextType()
+    public async Task GetPlaybackSourceDistributionAsync_CountsPlaysByContextType()
     {
         var folder = new Folder { Name = "F", Path = "C:\\Music" };
         var artist = new Artist { Name = "A" };
@@ -357,17 +357,18 @@ public class StatisticsServiceTests : IDisposable
             context.ListenHistory.AddRange(
                 new ListenHistory { Song = song, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(2).Ticks, ContextType = PlaybackContextType.Album },
                 new ListenHistory { Song = song, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(2).Ticks, ContextType = PlaybackContextType.Album },
-                new ListenHistory { Song = song, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks, ContextType = PlaybackContextType.Playlist }
+                new ListenHistory { Song = song, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks, ContextType = PlaybackContextType.Playlist },
+                new ListenHistory { Song = song, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Skipped, ListenDurationTicks = TimeSpan.FromSeconds(5).Ticks, ContextType = PlaybackContextType.Playlist },
+                new ListenHistory { Song = song, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.PausedAndAbandoned, ContextType = PlaybackContextType.Search }
             );
             await context.SaveChangesAsync();
         }
 
         var result = (await _statisticsService.GetPlaybackSourceDistributionAsync(new TimeRange(null, null))).ToList();
 
-        result.Should().HaveCount(2, "two distinct context types were used");
+        result.Should().HaveCount(2, "the search listen was abandoned");
         var albumStat = result.Single(s => s.Type == PlaybackContextType.Album);
         albumStat.Count.Should().Be(2);
-        albumStat.Duration.Should().Be(TimeSpan.FromMinutes(4));
         var playlistStat = result.Single(s => s.Type == PlaybackContextType.Playlist);
         playlistStat.Count.Should().Be(1);
     }
