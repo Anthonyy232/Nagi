@@ -446,14 +446,11 @@ Fitxers que no s'han pogut importar: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>No hi ha regles definides • Totes les cançons coincideixen</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Coincideix {0} de {1, plural, one {# regla} other {# regles}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Coincideix totes de {0, plural, one {# regla} other {# regles}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>totes</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>qualsevol</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Coincideix qualsevol de {0, plural, one {# regla} other {# regles}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# element} other {# elements}}</value>
@@ -2069,8 +2066,8 @@ Vols continuar?</value>
   <data name="Format_Least" xml:space="preserve">
     <value>Menys {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Ordenar per: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Ordenar per: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Fitxer</value>

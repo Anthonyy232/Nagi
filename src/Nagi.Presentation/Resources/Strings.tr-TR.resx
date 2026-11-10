@@ -446,14 +446,11 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Kural tanımlanmamış • Tüm şarkılar eşleşiyor</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>{1, plural, one {# kural} other {# kurallar}} arasından {0} eşleştir</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>{0, plural, one {# kural} other {# kurallar}} arasından tümü eşleştir</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>tümü</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>herhangi biri</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>{0, plural, one {# kural} other {# kurallar}} arasından herhangi biri eşleştir</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} öğe</value>
@@ -2069,8 +2066,8 @@ Devam etmek ister misiniz?</value>
   <data name="Format_Least" xml:space="preserve">
     <value>En az {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Sırala: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Sırala: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Dosya</value>

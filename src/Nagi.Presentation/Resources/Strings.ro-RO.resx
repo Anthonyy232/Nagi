@@ -446,14 +446,11 @@ Fișiere care nu au putut fi importate: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Nicio regulă definită • Toate piesele se potrivesc</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Potrivește {0} din {1, plural, one {# regulă} other {# reguli}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Potrivește toate din {0, plural, one {# regulă} other {# reguli}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>toate</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>oricare</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Potrivește oricare din {0, plural, one {# regulă} other {# reguli}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# element} other {# elemente}}</value>
@@ -2069,8 +2066,8 @@ Vrei să continui?</value>
   <data name="Format_Least" xml:space="preserve">
     <value>Cele mai puține {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Sortare după: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Sortare după: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Fișier</value>

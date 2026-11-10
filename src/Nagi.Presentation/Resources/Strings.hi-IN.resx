@@ -446,14 +446,11 @@
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>कोई नियम परिभाषित नहीं • सभी गाने मेल खाते हैं</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>मिलान {1} में से {0} नियम</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>मिलान {0} में से सभी नियम</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>सभी</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>कोई भी</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>मिलान {0} में से कोई भी नियम</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} आइटम</value>
@@ -2069,8 +2066,8 @@
   <data name="Format_Least" xml:space="preserve">
     <value>सबसे कम {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>क्रमबद्ध करें: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>क्रमबद्ध करें: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>फ़ाइल</value>

@@ -446,14 +446,11 @@
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>ไม่ได้กำหนดกฎ • ทุกเพลงตรงกัน</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>ตรงตาม {0} จาก {1} กฎ</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>ตรงตาม ทั้งหมด จาก {0} กฎ</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>ทั้งหมด</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>ใดๆ</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>ตรงตาม ใดๆ จาก {0} กฎ</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} รายการ</value>
@@ -2069,8 +2066,8 @@
   <data name="Format_Least" xml:space="preserve">
     <value>{0} น้อยที่สุด</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>จัดเรียงตาม: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>จัดเรียงตาม: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>ไฟล์</value>

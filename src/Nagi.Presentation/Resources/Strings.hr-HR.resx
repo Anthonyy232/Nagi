@@ -446,14 +446,11 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Nema definiranih pravila • Sve pjesme odgovaraju</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Podudaranje {0} od {1, plural, one {# pravilo} other {# pravila}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Podudaranje svi od {0, plural, one {# pravilo} other {# pravila}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>svi</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>bilo koji</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Podudaranje bilo koji od {0, plural, one {# pravilo} other {# pravila}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# stavka} few {# stavke} other {# stavki}}</value>
@@ -2069,8 +2066,8 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   <data name="Format_Least" xml:space="preserve">
     <value>Najmanje {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Sortiraj po: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Sortiraj po: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Datoteka</value>

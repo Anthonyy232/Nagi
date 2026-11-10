@@ -446,14 +446,11 @@
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>정의된 규칙 없음 • 모든 곡 일치</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>{1} 규칙 중 {0} 일치</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>{0} 규칙 중 모두 일치</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>모두</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>어느 하나</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>{0} 규칙 중 어느 하나 일치</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0}개 항목</value>
@@ -2069,8 +2066,8 @@
   <data name="Format_Least" xml:space="preserve">
     <value>가장 적은 {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>정렬 기준: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>정렬 기준: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>파일</value>

@@ -446,14 +446,11 @@ Nem importálható fájlok: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Nincsenek definiált szabályok • Az összes dal egyezik</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>{1} szabály közül {0} teljesül</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>{0} szabály közül mind teljesül</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>mind</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>bármelyik</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>{0} szabály közül bármelyik teljesül</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} elem</value>
@@ -2069,8 +2066,8 @@ Szeretné folytatni?</value>
   <data name="Format_Least" xml:space="preserve">
     <value>Legkevesebb {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Rendezés: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Rendezés: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Fájl</value>

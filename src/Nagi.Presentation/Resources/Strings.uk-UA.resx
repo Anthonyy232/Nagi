@@ -446,14 +446,11 @@
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Правил не визначено • Усі пісні відповідають</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Відповідає {0} з {1, plural, one {# правило} other {# правил}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Відповідає усім з {0, plural, one {# правило} other {# правил}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>усім</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>будь-якому</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Відповідає будь-якому з {0, plural, one {# правило} other {# правил}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# елемент} few {# елементи} many {# елементів} other {# елемента}}</value>
@@ -2069,8 +2066,8 @@
   <data name="Format_Least" xml:space="preserve">
     <value>Найменше {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Сортувати за: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Сортувати за: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Файл</value>

@@ -446,14 +446,11 @@
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>هیچ قانونی تعریف نشده است • همه آهنگ‌ها مطابقت دارند</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>مطابقت {0} از {1, plural, one {# قانون} other {# قوانین}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>مطابقت همه از {0, plural, one {# قانون} other {# قوانین}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>همه</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>هر کدام</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>مطابقت هر کدام از {0, plural, one {# قانون} other {# قوانین}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} مورد</value>
@@ -2069,8 +2066,8 @@
   <data name="Format_Least" xml:space="preserve">
     <value>کم‌ترین {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>مرتب‌سازی بر اساس: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>مرتب‌سازی بر اساس: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>فایل</value>

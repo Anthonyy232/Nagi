@@ -446,14 +446,11 @@ Comhaid nárbh fhéidir a iompórtáil: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Níl aon rialacha sainithe • Meaitseálann gach amhrán</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Meaitseáil {0} de {1, plural, one {# riail} other {# rialacha}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Meaitseáil go léir de {0, plural, one {# riail} other {# rialacha}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>go léir</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>ar bith</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Meaitseáil ar bith de {0, plural, one {# riail} other {# rialacha}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} mír</value>
@@ -2069,8 +2066,8 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="Format_Least" xml:space="preserve">
     <value>An líon is lú {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Sórtáil De Réir: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Sórtáil De Réir: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Comhad</value>

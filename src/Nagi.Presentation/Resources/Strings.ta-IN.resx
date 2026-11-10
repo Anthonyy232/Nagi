@@ -446,14 +446,11 @@
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>விதிகள் எதுவும் வரையறுக்கப்படவில்லை • அனைத்து பாடல்களும் பொருந்துகின்றன</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>{1, plural, one {# விதி} other {# விதிகள்}} இல் {0} பொருந்தும்</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>{0, plural, one {# விதி} other {# விதிகள்}} இல் அனைத்து பொருந்தும்</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>அனைத்து</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>ஏதாவது</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>{0, plural, one {# விதி} other {# விதிகள்}} இல் ஏதாவது பொருந்தும்</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# பொருள்} other {# பொருட்கள்}}</value>
@@ -2069,8 +2066,8 @@
   <data name="Format_Least" xml:space="preserve">
     <value>மிகக் குறைந்த {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>வரிசைப்படுத்து: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>வரிசைப்படுத்து: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>கோப்பு</value>

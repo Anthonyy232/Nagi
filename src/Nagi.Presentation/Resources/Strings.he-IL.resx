@@ -446,14 +446,11 @@
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>לא הוגדרו כללים • כל השירים תואמים</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>התאם {0} מתוך {1, plural, one {# כלל} other {# כללים}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>התאם כל מתוך {0, plural, one {# כלל} other {# כללים}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>כל</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>כלשהו</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>התאם כלשהו מתוך {0, plural, one {# כלל} other {# כללים}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# פריט} other {# פריטים}}</value>
@@ -2069,8 +2066,8 @@
   <data name="Format_Least" xml:space="preserve">
     <value>הכי מעט {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>מיין לפי: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>מיין לפי: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>קובץ</value>

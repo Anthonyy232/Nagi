@@ -446,14 +446,11 @@
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>ਕੋਈ ਨਿਯਮ ਪਰਿਭਾਸ਼ਿਤ ਨਹੀਂ • ਸਾਰੇ ਗੀਤ ਮੇਲ ਖਾਂਦੇ ਹਨ</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>{1} ਨਿਯਮ ਵਿੱਚੋਂ {0} ਮੇਲ ਖਾਂਦਾ ਹੈ</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>{0} ਨਿਯਮ ਵਿੱਚੋਂ ਸਾਰੇ ਮੇਲ ਖਾਂਦਾ ਹੈ</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>ਸਾਰੇ</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>ਕੋਈ ਵੀ</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>{0} ਨਿਯਮ ਵਿੱਚੋਂ ਕੋਈ ਵੀ ਮੇਲ ਖਾਂਦਾ ਹੈ</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# ਆਈਟਮ} other {# ਆਈਟਮਾਂ}}</value>
@@ -2069,8 +2066,8 @@
   <data name="Format_Least" xml:space="preserve">
     <value>ਸਭ ਤੋਂ ਘੱਟ {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>ਕ੍ਰਮਬੱਧ ਕਰੋ: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>ਕ੍ਰਮਬੱਧ ਕਰੋ: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>ਫਾਈਲ</value>

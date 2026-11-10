@@ -446,14 +446,11 @@ Các tệp không thể nhập: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Không có quy tắc nào được định nghĩa • Tất cả bài hát khớp</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Khớp {0} trong {1} quy tắc</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Khớp tất cả trong {0} quy tắc</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>tất cả</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>bất kỳ</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Khớp bất kỳ trong {0} quy tắc</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} mục</value>
@@ -2069,8 +2066,8 @@ Bạn có muốn tiếp tục không?</value>
   <data name="Format_Least" xml:space="preserve">
     <value>{0} ít nhất</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Sắp xếp theo: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Sắp xếp theo: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Tệp</value>

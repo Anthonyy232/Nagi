@@ -446,14 +446,11 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Hakuna sheria zilizofafanuliwa • Nyimbo zote zinalingana</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Linganisha {0} ya {1} sheria</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Linganisha zote ya {0} sheria</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>zote</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>yoyote</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Linganisha yoyote ya {0} sheria</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {kitu #} other {vitu #}}</value>
@@ -2069,8 +2066,8 @@ Je, unataka kuendelea?</value>
   <data name="Format_Least" xml:space="preserve">
     <value>{0} Chache Zaidi</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Panga Kwa: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Panga Kwa: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Faili</value>

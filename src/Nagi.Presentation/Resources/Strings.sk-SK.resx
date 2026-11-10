@@ -446,14 +446,11 @@ Súbory, ktoré sa nepodarilo importovať: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Žiadne definované pravidlá • Všetky skladby zodpovedajú</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Zodpovedá {0} z {1, plural, one {# pravidlo} other {# pravidlá}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Zodpovedá všetky z {0, plural, one {# pravidlo} other {# pravidlá}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>všetky</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>ľubovoľné</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Zodpovedá ľubovoľné z {0, plural, one {# pravidlo} other {# pravidlá}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# položka} few {# položky} many {# položky} other {# položiek}}</value>
@@ -2069,8 +2066,8 @@ Chcete pokračovať?</value>
   <data name="Format_Least" xml:space="preserve">
     <value>Najmenej {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Zoradiť podľa: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Zoradiť podľa: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Súbor</value>

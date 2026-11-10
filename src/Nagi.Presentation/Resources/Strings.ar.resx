@@ -446,14 +446,11 @@
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>لا توجد قواعد محددة • جميع الأغاني مطابقة</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>مطابقة {0} من {1, plural, one {# قاعدة} other {# قواعد}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>مطابقة الكل من {0, plural, one {# قاعدة} other {# قواعد}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>الكل</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>أي</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>مطابقة أي من {0, plural, one {# قاعدة} other {# قواعد}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} عنصر</value>
@@ -2069,8 +2066,8 @@
   <data name="Format_Least" xml:space="preserve">
     <value>أقل {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>فرز حسب: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>فرز حسب: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>ملف</value>

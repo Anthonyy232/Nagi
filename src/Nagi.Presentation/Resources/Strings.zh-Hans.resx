@@ -446,14 +446,11 @@
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>未定义规则 • 所有歌曲均匹配</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>匹配 {1} 条规则中的{0}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>匹配 {0} 条规则中的所有</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>所有</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>任意</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>匹配 {0} 条规则中的任意</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} 个项目</value>
@@ -2069,8 +2066,8 @@
   <data name="Format_Least" xml:space="preserve">
     <value>最少 {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>排序方式：</value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>排序方式：{0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>文件</value>

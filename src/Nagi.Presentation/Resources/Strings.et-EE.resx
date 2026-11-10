@@ -446,14 +446,11 @@ Failid, mida ei õnnestunud importida: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Reegleid pole määratud • Kõik laulud sobivad</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Sobita: {0} ({1, plural, one {# reegel} other {# reeglit}})</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Sobita: kõik ({0, plural, one {# reegel} other {# reeglit}})</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>kõik</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>mis tahes</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Sobita: mis tahes ({0, plural, one {# reegel} other {# reeglit}})</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# objekt} other {# objekti}}</value>
@@ -2069,8 +2066,8 @@ Kas soovite jätkata?</value>
   <data name="Format_Least" xml:space="preserve">
     <value>Kõige vähem {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Sorteeri: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Sorteeri: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Fail</value>

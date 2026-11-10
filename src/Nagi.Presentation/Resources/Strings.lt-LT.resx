@@ -446,14 +446,11 @@ Failai, kurių nepavyko importuoti: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Nėra apibrėžtų taisyklių • Visi kūriniai atitinka</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Atitinka {0} iš {1, plural, one {# taisyklė} other {# taisyklės}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Atitinka visus iš {0, plural, one {# taisyklė} other {# taisyklės}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>visus</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>bet kuriuos</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Atitinka bet kuriuos iš {0, plural, one {# taisyklė} other {# taisyklės}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# elementas} few {# elementai} many {# elemento} other {# elementų}}</value>
@@ -2069,8 +2066,8 @@ Ar norite tęsti?</value>
   <data name="Format_Least" xml:space="preserve">
     <value>Mažiausiai {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Rūšiuoti pagal: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Rūšiuoti pagal: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Failas</value>

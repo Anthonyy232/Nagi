@@ -446,14 +446,11 @@ File che non è stato possibile importare: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Nessuna regola definita • Tutti i brani corrispondono</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Corrisponde a {0} di {1, plural, one {# regola} other {# regole}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Corrisponde a tutte di {0, plural, one {# regola} other {# regole}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>tutte</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>qualsiasi</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Corrisponde a qualsiasi di {0, plural, one {# regola} other {# regole}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# elemento} other {# elementi}}</value>
@@ -2069,8 +2066,8 @@ Vuoi continuare?</value>
   <data name="Format_Least" xml:space="preserve">
     <value>Meno {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Ordina per: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Ordina per: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>File</value>

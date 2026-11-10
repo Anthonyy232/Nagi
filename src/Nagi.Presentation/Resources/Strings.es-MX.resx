@@ -446,14 +446,11 @@ Archivos que no se pudieron importar: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>No hay reglas definidas • Todas las canciones coinciden</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Coincide {0} de {1, plural, one {# regla} other {# reglas}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Coincide todas de {0, plural, one {# regla} other {# reglas}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>todas</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>cualquiera</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Coincide cualquiera de {0, plural, one {# regla} other {# reglas}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# elemento} other {# elementos}}</value>
@@ -2069,8 +2066,8 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="Format_Least" xml:space="preserve">
     <value>Menos {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Ordenar por: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Ordenar por: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Archivo</value>

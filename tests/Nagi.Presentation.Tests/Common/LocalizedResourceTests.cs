@@ -44,6 +44,13 @@ public class LocalizedResourceTests
     }
 
     [Fact]
+    public void Formatter_PrintsADoubledApostropheOnceInAnIcuPattern()
+    {
+        ResourceFormatter.Format("n''importe quelle parmi {0, plural, one {# règle} other {# règles}}", 2)
+            .Should().Be("n'importe quelle parmi 2 règles");
+    }
+
+    [Fact]
     public void Translations_KeepTheSourcePlaceholdersAndLineBreaks()
     {
         var problems = new List<string>();

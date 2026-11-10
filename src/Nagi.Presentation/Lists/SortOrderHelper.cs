@@ -96,5 +96,5 @@ public static class SortOrderHelper
 
     /// <summary>The order as a list's sort button names it.</summary>
     public static string GetDisplayName(Enum sortOrder) =>
-        sortOrder is SongSortOrder.PlaylistOrder ? PlaylistOrderLabel : Strings.SortByPrefix + GetLabel(sortOrder);
+        sortOrder is SongSortOrder.PlaylistOrder ? PlaylistOrderLabel : ResourceFormatter.Format(Strings.SortBy_Format, GetLabel(sortOrder));
 }

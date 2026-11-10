@@ -446,14 +446,11 @@
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Нису дефинисана правила • Све песме се подударају</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Подудара се са {0} од {1, plural, one {# правило} other {# правила}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Подудара се са свим од {0, plural, one {# правило} other {# правила}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>свим</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>било којим</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Подудара се са било којим од {0, plural, one {# правило} other {# правила}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# ставка} few {# ставке} other {# ставки}}</value>
@@ -2069,8 +2066,8 @@
   <data name="Format_Least" xml:space="preserve">
     <value>Најмање {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Сортирај по: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Сортирај по: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Датотека</value>
