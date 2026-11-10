@@ -37,13 +37,6 @@ public interface ILibraryFolderService
     Task<bool> RefreshFolderInBackgroundAsync(Guid folderId, CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Rescans every folder on disk. A folder that can't be reached is left as it is.
-    /// </summary>
-    /// <returns>True if the library changed.</returns>
-    Task<bool> RefreshAllFoldersAsync(IProgress<ScanProgress>? progress = null,
-        CancellationToken cancellationToken = default);
-
-    /// <summary>
     ///     Reads every file in every folder on disk again, such as after the artist split characters changed.
     /// </summary>
     /// <exception cref="Exception">A folder couldn't be scanned.</exception>

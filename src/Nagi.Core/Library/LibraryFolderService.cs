@@ -141,7 +141,11 @@ public sealed class LibraryFolderService : ILibraryFolderService
     public Task<bool> RefreshFolderInBackgroundAsync(Guid folderId, CancellationToken cancellationToken = default) =>
         ScanAsync(ScanKind.Background, folderId, null, cancellationToken);
 
-    public Task<bool> RefreshAllFoldersAsync(IProgress<ScanProgress>? progress = null,
+    /// <summary>
+    ///     Rescans every folder on disk. A folder that can't be reached is left as it is.
+    /// </summary>
+    /// <returns>True if the library changed.</returns>
+    internal Task<bool> RefreshAllFoldersAsync(IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default) =>
         ScanAsync(ScanKind.All, null, progress, cancellationToken);
 
