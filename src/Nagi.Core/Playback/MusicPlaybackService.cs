@@ -95,7 +95,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     public bool IsMuted => _audioPlayer.IsMuted;
     public IReadOnlyList<Guid> PlayOrder => _queue.PlayOrder;
     public IReadOnlyList<Guid> UpcomingQueue => _queue.Upcoming(Wraps);
-    public Guid? NextTrackId => CurrentTrack is null ? _queue.CurrentId : _queue.GetAdjacent(forward: true, Wraps);
+    public Guid? NextTrackId => AdjacentId(forward: true);
     public bool IsShuffleEnabled => _queue.IsShuffled;
     public RepeatMode CurrentRepeatMode { get; private set; } = RepeatMode.Off;
     public double PlaybackRate { get; private set; } = 1.0;
@@ -280,10 +280,11 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     }
 
     // While stopped, the song at the current position plays again rather than the one beside it.
+    private Guid? AdjacentId(bool forward) => CurrentTrack is null ? _queue.CurrentId : _queue.GetAdjacent(forward, Wraps);
+
     private async Task PlayAdjacentAsync(bool forward, CancellationToken request)
     {
-        var songId = CurrentTrack is null ? _queue.CurrentId : _queue.GetAdjacent(forward, Wraps);
-        if (songId is { } id) await PlayQueueItemInternalAsync(id, request);
+        if (AdjacentId(forward) is { } id) await PlayQueueItemInternalAsync(id, request);
         else if (CurrentTrack != null) await StopInternalAsync(request);
     }
 
@@ -512,12 +513,10 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         _settingsService.SettingChanged -= OnSettingChanged;
     }
 
-    public bool CanGoNext => _queue.Count > 0 &&
-                             (CurrentRepeatMode != RepeatMode.Off || _queue.CurrentPosition < _queue.Count - 1);
+    public bool CanGoNext => NextTrackId is not null;
 
     // A playing track can always go back, to its start or to the track before it.
-    public bool CanGoPrevious => _queue.Count > 0 &&
-                                 (CurrentRepeatMode != RepeatMode.Off || CurrentTrack != null || _queue.CurrentPosition > 0);
+    public bool CanGoPrevious => CurrentTrack is not null || AdjacentId(forward: false) is not null;
 
     // Either repeat mode makes skipping go round the queue.
     private bool Wraps => CurrentRepeatMode != RepeatMode.Off;

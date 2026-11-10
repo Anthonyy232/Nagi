@@ -169,6 +169,23 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _service.CurrentTrack.Should().BeSameAs(_testSongs[0]);
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task CanGoNextAndPrevious_WhileStoppedAtAnEndOfTheQueue_AllowThePressThatReplaysTheSong(bool forward)
+    {
+        var song = forward ? _testSongs[^1] : _testSongs[0];
+        await _service.PlayAsync(Ids(_testSongs), _testSongs.IndexOf(song));
+        _service.CanGoNext.Should().Be(!forward);
+
+        await _service.StopAsync();
+
+        (forward ? _service.CanGoNext : _service.CanGoPrevious).Should().BeTrue();
+        _mediaControls.Received().SetNavigationEnabled(true, true);
+        await (forward ? _service.NextAsync() : _service.PreviousAsync());
+        _service.CurrentTrack.Should().BeSameAs(song);
+    }
+
     [Fact]
     public async Task PlayNextAsync_WithSeveralSongs_PlaysThemNextInTheOrderGiven()
     {
