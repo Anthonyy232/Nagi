@@ -5,12 +5,13 @@ using Nagi.Core.Library;
 using Nagi.Core.MusicServers;
 using Nagi.Core.Playlists;
 using Nagi.Core.Settings;
+using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
 
-namespace Nagi.Core.Tests.Library;
+namespace Nagi.Core.Tests.MusicServers;
 
-public partial class LibraryTests
+public class ServerLibrarySyncTests : LibraryTestBase
 {
     [Fact]
     public async Task SyncServerFolder_AddsTheServersSongsUnderItsRoot()

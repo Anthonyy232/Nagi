@@ -33,7 +33,6 @@ public class ArtworkServiceTests : IDisposable
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IImageProcessor _imageProcessor;
     private readonly TestLibrary _library;
-    private readonly LibraryReader _libraryReader;
     private readonly IMetadataService _metadataService;
     private readonly IPathConfiguration _pathConfig;
     private readonly SettingsService _settingsService;
@@ -70,8 +69,6 @@ public class ArtworkServiceTests : IDisposable
         _settingsService.EnableOnly(CoreSettings.MetadataProviders);
 
         _pipelines = TestProviderPipeline.Build(ProviderCatalog.ImageDownload.ProviderId);
-
-        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, _settingsService);
 
         _library = new TestLibrary(
             _dbHelper.ContextFactory,

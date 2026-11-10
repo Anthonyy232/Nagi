@@ -265,6 +265,7 @@ public class MusicServerServiceTests : IDisposable
         (await synced.WaitAsync(TimeSpan.FromSeconds(5))).Should().BeTrue();
 
         _time.Advance(TimeSpan.FromMinutes(29));
+        // Nothing signals a sync that didn't start, so one that wrongly did gets a moment to show.
         (await synced.WaitAsync(TimeSpan.FromMilliseconds(100))).Should().BeFalse();
         _time.Advance(TimeSpan.FromMinutes(1));
         (await synced.WaitAsync(TimeSpan.FromSeconds(5))).Should().BeTrue();

@@ -8,7 +8,7 @@ using Nagi.WinUI.Services;
 using NSubstitute;
 using Xunit;
 
-namespace Nagi.WinUI.Tests;
+namespace Nagi.WinUI.Tests.Services;
 
 public class AppServiceRegistrationTests
 {
