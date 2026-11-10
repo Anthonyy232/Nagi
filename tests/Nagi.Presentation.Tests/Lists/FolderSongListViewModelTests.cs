@@ -52,7 +52,7 @@ public class FolderSongListViewModelTests
     {
         var library = new LibraryFakes();
         var root = ConfigureRoot(library);
-        var folder = new Folder { Name = "Album", Path = @"C:MusicAlbum" };
+        var folder = new Folder { Name = "Album", Path = @"C:\Music\Album" };
         var playback = Substitute.For<IMusicPlaybackService>();
         using var viewModel = CreateViewModel(library, playback);
         await viewModel.OpenAsync(new FolderSongViewNavigationParameter { Title = root.Name, FolderId = root.Id });

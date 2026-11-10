@@ -15,7 +15,6 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
     {
         ViewModel = viewModel;
         InitializeComponent();
-
     }
 
     public SmartPlaylistEditorViewModel ViewModel { get; }
