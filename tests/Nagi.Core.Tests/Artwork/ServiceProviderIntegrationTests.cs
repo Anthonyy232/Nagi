@@ -30,7 +30,6 @@ public class ServiceProviderIntegrationTests : IDisposable
     private readonly TestHttpMessageHandler _httpHandler = new();
 
     private readonly TestLibrary _library;
-    private readonly LibraryReader _libraryReader;
 
     public ServiceProviderIntegrationTests()
     {
@@ -46,8 +45,6 @@ public class ServiceProviderIntegrationTests : IDisposable
         httpClientFactory.CreateClient(Arg.Any<string>()).Returns(_ => new HttpClient(_httpHandler, disposeHandler: false));
 
         _pipelines = TestProviderPipeline.Build(ProviderCatalog.ImageDownload.ProviderId);
-
-        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, Substitute.For<IFileSystemService>(), _settingsService);
 
         _library = new TestLibrary(
             _dbHelper.ContextFactory,
@@ -83,7 +80,7 @@ public class ServiceProviderIntegrationTests : IDisposable
     }
 
     [Fact]
-    public async Task LibraryService_WhenNoProvidersEnabled_DoesNotSetMetadataLastChecked()
+    public async Task ArtistMetadata_WhenNoProvidersEnabled_DoesNotSetMetadataLastChecked()
     {
         var artist = new Artist { Id = Guid.NewGuid(), Name = "Test Artist" };
         using (var context = _dbHelper.ContextFactory.CreateDbContext())
@@ -102,7 +99,7 @@ public class ServiceProviderIntegrationTests : IDisposable
     }
 
     [Fact]
-    public async Task LibraryService_OnlyCallsMbidDependentProvidersIfMbidIsAvailable()
+    public async Task ArtistMetadata_OnlyCallsMbidDependentProvidersIfMbidIsAvailable()
     {
         var artist = new Artist { Id = Guid.NewGuid(), Name = "Artist Without MBID", MusicBrainzId = null };
         using (var context = _dbHelper.ContextFactory.CreateDbContext())
@@ -124,7 +121,7 @@ public class ServiceProviderIntegrationTests : IDisposable
     }
 
     [Fact]
-    public async Task LibraryService_UsesDeezerImageOverLastFmWhenNoMbidIsKnown()
+    public async Task ArtistMetadata_UsesDeezerImageOverLastFmWhenNoMbidIsKnown()
     {
         var artist = new Artist { Id = Guid.NewGuid(), Name = "Artist Without MBID" };
         using (var context = _dbHelper.ContextFactory.CreateDbContext())
