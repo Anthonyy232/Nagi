@@ -65,8 +65,8 @@ public static class CoreSettings
     public static readonly Setting<string?> ListenBrainzServerUrl = Setting.Value<string?>("ListenBrainzServerUrl", null);
 
     /// <summary>
-    ///     When ListenBrainz submission was first enabled, in UTC. The offline queue ignores listens from before it.
-    ///     Null until then.
+    ///     When the ListenBrainz account was connected, in UTC. The offline queue ignores listens from before it.
+    ///     Null while no account is connected.
     /// </summary>
     public static readonly Setting<DateTime?> ListenBrainzEnabledSinceUtc = new("ListenBrainzEnabledSinceUtcTicks",
         () => null,

@@ -17,7 +17,7 @@ namespace Nagi.Core.Scrobbling;
 
 /// <summary>
 ///     Sends listens and "now playing" to ListenBrainz, for a user token with scrobbling or "now playing" turned on,
-///     and checks tokens. Only listens since scrobbling was turned on are sent.
+///     and checks tokens. Only listens since the account was connected are sent.
 /// </summary>
 public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IListenSubmitter
 {
