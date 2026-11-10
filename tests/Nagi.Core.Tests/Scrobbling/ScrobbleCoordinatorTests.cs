@@ -130,6 +130,25 @@ public sealed class ScrobbleCoordinatorTests : IDisposable
     }
 
     [Fact]
+    public async Task RunsForOneDestination_TakeTurns()
+    {
+        var firstRun = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var submitter = new FakeSubmitter { Hold = firstRun.Task };
+        Create(submitter).Start();
+        _time.Advance(ScrobbleCoordinator.CoalesceDelay);
+        await submitter.WaitForRunsAsync(1);
+
+        _playback.ScrobbleEligibilityReached += Raise.Event<Action>();
+        // From a pool thread the second run continues inside Advance, so it has got as far as it can before the first
+        // run ends by the time Advance returns.
+        await Task.Run(() => _time.Advance(ScrobbleCoordinator.CoalesceDelay));
+        submitter.Runs.Should().Be(1);
+
+        firstRun.SetResult();
+        await submitter.WaitForRunsAsync(2);
+    }
+
+    [Fact]
     public async Task Dispose_StopsReactingToChanges()
     {
         var submitter = new FakeSubmitter { Settings = [CoreSettings.LastFmScrobbling], Account = ScrobblingAccount.ListenBrainz };
@@ -196,6 +215,7 @@ public sealed class ScrobbleCoordinatorTests : IDisposable
         private int _announcements;
 
         public bool Block { get; init; }
+        public Task? Hold { get; init; }
         public Exception? Failure { get; init; }
         public CancellationToken LastToken { get; private set; }
         public int Runs => Volatile.Read(ref _runCount);
@@ -217,6 +237,7 @@ public sealed class ScrobbleCoordinatorTests : IDisposable
             Interlocked.Increment(ref _runCount);
             _runs.Release();
             if (Failure is not null) return Task.FromException(Failure);
+            if (Hold is not null) return Hold;
             return Block ? Task.Delay(Timeout.Infinite, cancellationToken) : Task.CompletedTask;
         }
 
