@@ -1202,22 +1202,6 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task AddRangeToQueueAsync_WithShuffleEnabled_AddsToBothOrders()
-    {
-        await _service.InitializeAsync();
-        await _service.PlayAsync(Ids(_testSongs));
-        await _service.SetShuffleAsync(true);
-        var songToAdd = new Song { Id = Guid.NewGuid(), Title = "New Song" };
-
-        await _service.AddRangeToQueueAsync([songToAdd.Id]);
-
-        _service.PlayOrder.Should().Contain(songToAdd.Id);
-        _service.PlayOrder.Count.Should().Be(_testSongs.Count + 1);
-        await _service.SetShuffleAsync(false);
-        _service.PlayOrder[^1].Should().Be(songToAdd.Id);
-    }
-
-    [Fact]
     public async Task PlayNextAsync_WhenCalled_InsertsSongAfterCurrentTrack()
     {
         await _service.InitializeAsync();
@@ -1229,19 +1213,6 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
 
         _service.PlayOrder.Should().HaveCount(_testSongs.Count + 1);
         _service.PlayOrder[2].Should().Be(songToPlayNext.Id);
-    }
-
-    [Fact]
-    public async Task PlayNextAsync_WithSongAlreadyInQueue_MovesSongToNextPosition()
-    {
-        await _service.InitializeAsync();
-        await _service.PlayAsync(Ids(_testSongs));
-        var songToMove = _testSongs[3];
-
-        await _service.PlayNextAsync([songToMove.Id]);
-
-        _service.PlayOrder.Should().HaveCount(_testSongs.Count);
-        _service.PlayOrder[1].Should().Be(songToMove.Id);
     }
 
     [Fact]

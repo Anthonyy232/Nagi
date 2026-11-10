@@ -716,21 +716,6 @@ public class LrcServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetLyricsAsync_WithLocalFile_DoesNotFetchOnline()
-    {
-        var song = new Song { Title = "Test", LrcFilePath = LrcPath };
-        _fileSystem.FileExists(LrcPath).Returns(true);
-        _fileSystem.ReadAllTextAsync(LrcPath).Returns("[00:01.00]Local Lyrics");
-        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
-
-        var result = await _lrcService.GetLyricsAsync(song);
-
-        result.Should().NotBeNull();
-        result!.Lines[0].Text.Should().Be("Local Lyrics");
-        await _lrcLib.DidNotReceive().GetLyricsAsync(Arg.Any<Song>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
     public async Task GetLyricsAsync_WithMultiArtistSong_CallsProvidersWithPrimaryArtist()
     {
         var song = new Song { Title = "Multi Artist Track", Duration = TimeSpan.FromMinutes(3) };

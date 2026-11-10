@@ -326,16 +326,6 @@ public class SmartPlaylistServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetMatchingSongsPagedAsync_WithSearchTerm_FiltersResults()
-    {
-        var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Search Test" });
-
-        var songs = (await _service.GetMatchingSongsPagedAsync(playlist!.Id, 1, 50, "One")).Items;
-
-        songs.Should().ContainSingle().Which.Title.Should().Be("Song One");
-    }
-
-    [Fact]
     public async Task GetMatchingSongsPagedAsync_SearchMatchesGenresLikeTheLibrary()
     {
         var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Genre Search" });
@@ -376,15 +366,18 @@ public class SmartPlaylistServiceTests : IDisposable
         (await _service.GetMatchingSongIdsAsync(playlist.Id, shuffleSeed: 42)).Should().Equal(ids);
     }
 
-    [Fact]
-    public async Task GetMatchingSongsPagedAsync_InvalidPaging_SanitizesToValidValues()
+    [Theory]
+    [InlineData(0, -5, 1, 1)]
+    [InlineData(1, 10000, 1, 500)]
+    public async Task GetMatchingSongsPagedAsync_InvalidPaging_SanitizesToValidValues(int page, int pageSize,
+        int expectedPage, int expectedPageSize)
     {
         var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Invalid Page Test" });
 
-        var result = await _service.GetMatchingSongsPagedAsync(playlist!.Id, 0, -5);
+        var result = await _service.GetMatchingSongsPagedAsync(playlist!.Id, page, pageSize);
 
-        result.PageNumber.Should().Be(1);
-        result.PageSize.Should().Be(1);
+        result.PageNumber.Should().Be(expectedPage);
+        result.PageSize.Should().Be(expectedPageSize);
     }
 
     [Fact]
@@ -668,16 +661,6 @@ public class SmartPlaylistServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetMatchingSongsPagedAsync_VeryLargePageSize_IsCapped()
-    {
-        var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Large Page Test" });
-
-        var result = await _service.GetMatchingSongsPagedAsync(playlist!.Id, 1, 10000);
-
-        result.PageSize.Should().Be(500);
-    }
-
-    [Fact]
     public async Task GetMatchingSongsPagedAsync_PageBeyondData_ReturnsEmptyItems()
     {
         var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Beyond Page Test" });
@@ -708,7 +691,7 @@ public class SmartPlaylistServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetMatchingSongsPagedAsync_WithSearchTerm_CountsOnlyMatches()
+    public async Task GetMatchingSongsPagedAsync_WithSearchTerm_ListsAndCountsOnlyMatches()
     {
         var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist
         {
@@ -719,10 +702,11 @@ public class SmartPlaylistServiceTests : IDisposable
             ]
         });
 
-        var countWithSearch = (await _service.GetMatchingSongsPagedAsync(playlist.Id, 1, 1, "One")).TotalCount;
+        var searched = await _service.GetMatchingSongsPagedAsync(playlist.Id, 1, 50, "One");
         var countWithoutSearch = await CountAsync(playlist.Id);
 
-        countWithSearch.Should().Be(1);
+        searched.Items.Should().ContainSingle().Which.Title.Should().Be("Song One");
+        searched.TotalCount.Should().Be(1);
         countWithoutSearch.Should().Be(2);
     }
 
