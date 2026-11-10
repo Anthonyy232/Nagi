@@ -570,7 +570,6 @@
                                         <Grid HorizontalAlignment="Left" ColumnSpacing="4">
                                             <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                                             <TextBlock
-                                                x:Name="SongTitle"
                                                 VerticalAlignment="Center"
                                                 Style="{ThemeResource BodyStrongTextBlockStyle}"
                                                 Text="{x:Bind ViewModel.SongTitle, Mode=OneWay}"

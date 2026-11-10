@@ -66,8 +66,8 @@
                 <ComboBox MinWidth="80"
                           AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylist_MatchLabel, Mode=OneTime}"
                           SelectedIndex="{x:Bind ViewModel.MatchLogicIndex, Mode=TwoWay}">
-                    <ComboBoxItem Content="{x:Bind resources:Strings.SmartPlaylist_MatchLogic_All_Content, Mode=OneTime}" Tag="All" />
-                    <ComboBoxItem Content="{x:Bind resources:Strings.SmartPlaylist_MatchLogic_Any_Content, Mode=OneTime}" Tag="Any" />
+                    <ComboBoxItem Content="{x:Bind resources:Strings.SmartPlaylist_MatchLogic_All_Content, Mode=OneTime}" />
+                    <ComboBoxItem Content="{x:Bind resources:Strings.SmartPlaylist_MatchLogic_Any_Content, Mode=OneTime}" />
                 </ComboBox>
                 <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_MatchSuffixLabel, Mode=OneTime}" VerticalAlignment="Center"/>
             </StackPanel>
@@ -178,8 +178,7 @@
                 HorizontalAlignment="Stretch">
             <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Left">
                 <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
-                <TextBlock x:Name="MatchCountText"
-                           Text="{x:Bind ViewModel.MatchCountText, Mode=OneWay}"
+                <TextBlock Text="{x:Bind ViewModel.MatchCountText, Mode=OneWay}"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                            VerticalAlignment="Center"
                            Style="{ThemeResource CaptionTextBlockStyle}"/>

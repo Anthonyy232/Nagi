@@ -711,15 +711,7 @@
                                                     IsHitTestVisible="False"
                                                     Opacity="{x:Bind IsEnabled, Converter={StaticResource BooleanToOpacityConverter}, Mode=OneWay}"
                                                     Style="{StaticResource MediaControlButtonStyle}">
-                                                    <Grid>
-                                                        <FontIcon
-                                                            FontSize="14"
-                                                            Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(Icon)}"
-                                                            Visibility="{x:Bind IsNotSeparator}" />
-                                                        <Rectangle Width="1" Height="20"
-                                                                   Fill="{ThemeResource TextFillColorSecondaryBrush}"
-                                                                   Visibility="{x:Bind IsSeparator}" />
-                                                    </Grid>
+                                                    <FontIcon FontSize="14" Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(Icon)}" />
                                                 </Button>
 
                                                 <ToggleSwitch

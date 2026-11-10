@@ -79,7 +79,7 @@ public partial class SmartPlaylistSongListViewModel : DetailSongListViewModelBas
                 {
                     Title = edited.Name,
                     SmartPlaylistId = smartPlaylistId,
-                    CoverImageUri = edited.CoverImageUri
+                    CoverImageUri = edited.CoverUri
                 });
         }
         catch (Exception ex)

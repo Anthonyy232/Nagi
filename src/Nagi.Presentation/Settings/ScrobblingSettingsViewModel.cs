@@ -186,8 +186,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
             Strings.Settings_LastFm_Disconnect_Title,
             Strings.Settings_LastFm_Disconnect_Message,
-            Strings.Generic_Disconnect,
-            null);
+            Strings.Generic_Disconnect);
 
         if (!confirmed) return;
 
@@ -246,8 +245,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
             Strings.SettingsPage_ListenBrainz_Disconnect_Title,
             Strings.SettingsPage_ListenBrainz_Disconnect_Content,
-            Strings.Generic_Disconnect,
-            null);
+            Strings.Generic_Disconnect);
 
         if (!confirmed || _isDisposed) return;
         ++_listenBrainzConnectionVersion;

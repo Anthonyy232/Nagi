@@ -129,8 +129,7 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
             Strings.Settings_Dialog_Rescan_Title,
             Strings.Settings_Dialog_Rescan_Content,
-            Strings.Settings_Dialog_Rescan_PrimaryButton,
-            null);
+            Strings.Settings_Dialog_Rescan_PrimaryButton);
 
         if (!confirmed || _isDisposed) return;
 
