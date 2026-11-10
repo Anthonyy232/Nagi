@@ -356,8 +356,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
             var confirmed = await _uiService.ShowConfirmationDialogAsync(
                 Strings.Settings_Dialog_VolumeNorm_Title,
                 Strings.Settings_Dialog_VolumeNorm_Content,
-                Strings.Settings_Dialog_VolumeNorm_PrimaryButton,
-                Strings.Generic_Cancel);
+                Strings.Settings_Dialog_VolumeNorm_PrimaryButton);
             if (!IsCurrent()) return;
             if (!confirmed)
             {

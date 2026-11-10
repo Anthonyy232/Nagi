@@ -345,7 +345,6 @@ public partial class PlaylistViewModel : ClientFilteredListViewModelBase<Playlis
             Strings.PlaylistPage_DeleteDialog_Title,
             ResourceFormatter.Format(Strings.PlaylistPage_DeleteDialog_Content_Format, playlist.Name),
             Strings.PlaylistPage_DeleteDialog_DeleteButton,
-            Strings.Generic_Cancel,
             defaultToCancel: true);
         var (playlistId, isSmart) = (playlist.Id, playlist.IsSmart);
         if (!confirmed || _isDisposed || IsAnyOperationInProgress) return;

@@ -140,8 +140,7 @@ public partial class DataManagementSettingsViewModel : ObservableObject
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
             Strings.Settings_Restore_Confirm_Title,
             Strings.Settings_Restore_Confirm_Message,
-            Strings.Settings_Restore_Confirm_Button,
-            Strings.Generic_Cancel);
+            Strings.Settings_Restore_Confirm_Button);
 
         if (!confirmed) return;
 
