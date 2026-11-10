@@ -177,4 +177,45 @@ public class InterceptorTests : IDisposable
         }
     }
 
+
+    [Fact]
+    public async Task UpdatingASongLoadedWithoutItsArtists_PreservesArtistName()
+    {
+        Guid songId;
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            var folder = new Folder { Path = "C:\\Music", Name = "Music" };
+            context.Folders.Add(folder);
+
+            var artist = new Artist { Name = "Preserved Artist" };
+            var song = new Song
+            {
+                Title = "Original Title",
+                Folder = folder,
+                FilePath = "C:\\Music\\preserve.mp3",
+                DirectoryPath = "C:\\Music"
+            };
+            song.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+            context.Artists.Add(artist);
+            context.Songs.Add(song);
+            await context.SaveChangesAsync();
+            songId = song.Id;
+
+            song.ArtistName.Should().Be("Preserved Artist");
+        }
+
+        await using (var updateContext = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            (await updateContext.Songs.FindAsync(songId))!.LrcFilePath = @"C:\cache\lrc\preserve.lrc";
+            await updateContext.SaveChangesAsync();
+        }
+
+        await using (var assertContext = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            var song = await assertContext.Songs.FirstAsync(s => s.Id == songId);
+            song.LrcFilePath.Should().Be(@"C:\cache\lrc\preserve.lrc");
+            song.ArtistName.Should().Be("Preserved Artist");
+            song.PrimaryArtistName.Should().Be("Preserved Artist");
+        }
+    }
 }
