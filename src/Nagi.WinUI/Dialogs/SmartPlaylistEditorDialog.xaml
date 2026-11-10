@@ -126,14 +126,14 @@
                                                       ItemsSource="{x:Bind playlists:RuleViewModel.AvailableFields}"
                                                       AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylist_RuleField_Name, Mode=OneTime}"
                                                       SelectedItem="{x:Bind SelectedField, Mode=TwoWay}"
-                                                      DisplayMemberPath="Label"
+                                                      DisplayMemberPath="DisplayName"
                                                       HorizontalAlignment="Stretch" />
 
                                             <ComboBox Grid.Column="1"
                                                       ItemsSource="{x:Bind AvailableOperators, Mode=OneWay}"
                                                       AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylist_RuleOperator_Name, Mode=OneTime}"
                                                       SelectedItem="{x:Bind SelectedOperator, Mode=TwoWay}"
-                                                      DisplayMemberPath="Label"
+                                                      DisplayMemberPath="DisplayName"
                                                       HorizontalAlignment="Stretch" />
 
                                             <StackPanel Grid.Column="2" Spacing="8"
