@@ -117,6 +117,7 @@ public sealed class DiscordPipeClientTests : IDisposable
         actual.Data.Should().Equal(expected.Data);
     }
 
+    // ReadFrame never blocks, and the pipe doesn't signal when the bytes written to it can be read.
     private static async Task<bool> PollUntilAsync(Func<bool> condition)
     {
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(2));
