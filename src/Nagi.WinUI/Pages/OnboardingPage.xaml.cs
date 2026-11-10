@@ -73,7 +73,7 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
 
         // The outgoing step fades out while the next one lays out and starts to enter. Swapping them at once
         // leaves the screen empty for the few frames the new step takes to lay out, which reads as a blink.
-        var direction = ViewModel.CurrentStep > _shownStep ? 1f : -1f;
+        var direction = _steps.IndexOf(ViewModel.CurrentStep) > _steps.IndexOf(_shownStep) ? 1f : -1f;
         var outgoing = _steps[_shownStep];
         outgoing.IsHitTestVisible = false;
         ShowStep(ViewModel.CurrentStep, new Vector3(direction * StepSlideOffset, 0f, 0f), StepExitMs / 2);
