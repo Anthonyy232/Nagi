@@ -242,11 +242,11 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     }
 
     internal Task StopAsync() =>
-        RunPlaybackRequest(request => StopInternalAsync(request));
+        RunPlaybackRequest(StopInternalAsync);
 
-    private async Task StopInternalAsync(CancellationToken request, bool clearStopSchedule = true)
+    private async Task StopInternalAsync(CancellationToken request)
     {
-        if (clearStopSchedule) ScheduleStop(PlaybackStopMode.Off);
+        ScheduleStop(PlaybackStopMode.Off);
         _ = EndListenSession(PlaybackEndReason.PausedAndAbandoned);
 
         await _audioPlayer.StopAsync();

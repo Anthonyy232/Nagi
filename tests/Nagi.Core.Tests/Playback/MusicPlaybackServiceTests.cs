@@ -1235,7 +1235,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task RemoveFromQueueAsync_WhenRemovingCurrentTrack_CapturesPositionBeforePlayerStops()
+    public async Task RemoveFromQueueAsync_WhenRemovingCurrentTrack_GoesStraightToTheNextOne()
     {
         await _service.InitializeAsync();
         _library.Listening.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(2101L);
@@ -1243,16 +1243,20 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
 
         var position = TimeSpan.FromSeconds(91);
         _audioPlayer.CurrentPosition.Returns(_ => position);
-        _audioPlayer.StopAsync().Returns(_ =>
+        _audioPlayer.LoadAsync(_testSongs[2]).Returns(_ =>
         {
             position = TimeSpan.Zero;
             return Task.CompletedTask;
         });
         _library.Listening.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(2102L);
+        var tracks = new List<Song?>();
+        _service.TrackChanged += () => tracks.Add(_service.CurrentTrack);
 
         await _service.RemoveFromQueueAsync(_testSongs[1].Id);
         await _service.FlushPendingFinalizationAsync();
 
+        tracks.Should().Equal(_testSongs[2]);
+        await _audioPlayer.DidNotReceive().StopAsync();
         await _library.Listening.Received(1).FinalizeListenSessionAsync(
             2101L,
             TimeSpan.FromSeconds(91),
@@ -1737,11 +1741,12 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ClearQueueAsync_WhenStopFinishesAfterNewPlayback_PreservesNewSelection(bool removeCurrent)
+    public async Task ClearingOrRemovingTheCurrentSong_WhenItFinishesAfterNewPlayback_PreservesNewSelection(bool removeCurrent)
     {
         await _service.PlayAsync(Ids(_testSongs));
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         _audioPlayer.StopAsync().Returns(release.Task);
+        _library.Reader.GetSongByIdAsync(_testSongs[1].Id).Returns(async _ => { await release.Task; return (Song?)_testSongs[1]; });
         var oldRequest = removeCurrent
             ? _service.RemoveFromQueueAsync(_testSongs[0].Id)
             : _service.ClearQueueAsync();

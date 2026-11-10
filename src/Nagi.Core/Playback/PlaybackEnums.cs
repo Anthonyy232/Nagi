@@ -5,7 +5,7 @@ public enum PlaybackEndReason
     Finished = 0,
 
     /// <summary>
-    ///     Another track was chosen before this one ended.
+    ///     Another track was chosen, or this one was removed from the queue, before it ended.
     /// </summary>
     Skipped = 1,
 
