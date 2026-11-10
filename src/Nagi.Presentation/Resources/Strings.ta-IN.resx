@@ -1422,7 +1422,7 @@
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>முடிந்தது</value>
   </data>
-  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
+  <data name="Generic_Disconnect" xml:space="preserve">
     <value>துண்டி</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -1478,9 +1478,6 @@
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
     <value>இது உங்கள் சேமித்த டோக்கனை அகற்றும். நீங்கள் எந்த நேரத்திலும் மீண்டும் இணைக்கலாம்.</value>
-  </data>
-  <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>துண்டி</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>

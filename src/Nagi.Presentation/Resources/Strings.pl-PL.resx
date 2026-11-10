@@ -1422,7 +1422,7 @@ Czy chcesz kontynuować?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Zakończ</value>
   </data>
-  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
+  <data name="Generic_Disconnect" xml:space="preserve">
     <value>Odłącz</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -1478,9 +1478,6 @@ Czy chcesz kontynuować?</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
     <value>Spowoduje to usunięcie zapisanego tokenu. Możesz ponownie połączyć się w dowolnym momencie.</value>
-  </data>
-  <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>Odłącz</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>

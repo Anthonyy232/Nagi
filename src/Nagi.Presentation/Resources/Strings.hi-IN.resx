@@ -1422,7 +1422,7 @@
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>पूर्ण</value>
   </data>
-  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
+  <data name="Generic_Disconnect" xml:space="preserve">
     <value>डिस्कनेक्ट करें</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -1478,9 +1478,6 @@
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
     <value>यह आपके सहेजे गए टोकन को हटा देगा। आप किसी भी समय फिर से कनेक्ट कर सकते हैं।</value>
-  </data>
-  <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>डिस्कनेक्ट करें</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>

@@ -1422,7 +1422,7 @@ Gusto mo bang magpatuloy?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Kumpleto</value>
   </data>
-  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
+  <data name="Generic_Disconnect" xml:space="preserve">
     <value>Idiskonekta</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -1478,9 +1478,6 @@ Gusto mo bang magpatuloy?</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
     <value>Aalisin nito ang iyong naka-save na token. Maaari kang kumonekta muli anumang oras.</value>
-  </data>
-  <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>Idiskonekta</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>

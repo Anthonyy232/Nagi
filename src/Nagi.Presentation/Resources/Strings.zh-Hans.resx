@@ -1422,7 +1422,7 @@
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>完成</value>
   </data>
-  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
+  <data name="Generic_Disconnect" xml:space="preserve">
     <value>断开连接</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -1478,9 +1478,6 @@
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
     <value>这将删除您已保存的令牌。您可以随时重新连接。</value>
-  </data>
-  <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>断开连接</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>

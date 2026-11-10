@@ -1422,7 +1422,7 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Completar</value>
   </data>
-  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
+  <data name="Generic_Disconnect" xml:space="preserve">
     <value>Desconectar</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -1478,9 +1478,6 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
     <value>Esto eliminará tu token guardado. Puedes volver a conectarte en cualquier momento.</value>
-  </data>
-  <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>Desconectar</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>

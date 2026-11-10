@@ -1422,7 +1422,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Comhlánaigh</value>
   </data>
-  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
+  <data name="Generic_Disconnect" xml:space="preserve">
     <value>Dínasc</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -1478,9 +1478,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
     <value>Bainfidh sé seo do chomhartha sábháilte. Is féidir leat athcheangal ag am ar bith.</value>
-  </data>
-  <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>Dínasc</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>

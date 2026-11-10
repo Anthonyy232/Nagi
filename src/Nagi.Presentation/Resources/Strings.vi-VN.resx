@@ -1422,7 +1422,7 @@ Bạn có muốn tiếp tục không?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Hoàn tất</value>
   </data>
-  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
+  <data name="Generic_Disconnect" xml:space="preserve">
     <value>Ngắt kết nối</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -1478,9 +1478,6 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
     <value>Thao tác này sẽ xóa mã đã lưu của bạn. Bạn có thể kết nối lại bất cứ lúc nào.</value>
-  </data>
-  <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>Ngắt kết nối</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>

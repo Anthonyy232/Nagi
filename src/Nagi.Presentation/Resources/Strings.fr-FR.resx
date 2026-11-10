@@ -1422,7 +1422,7 @@ Voulez-vous continuer ?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Terminer</value>
   </data>
-  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
+  <data name="Generic_Disconnect" xml:space="preserve">
     <value>Déconnecter</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -1478,9 +1478,6 @@ Voulez-vous continuer ?</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
     <value>Ceci supprimera votre jeton enregistré. Vous pourrez vous reconnecter à tout moment.</value>
-  </data>
-  <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>Se déconnecter</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>

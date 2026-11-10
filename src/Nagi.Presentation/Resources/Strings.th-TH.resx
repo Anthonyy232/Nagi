@@ -1422,7 +1422,7 @@
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>เสร็จสิ้น</value>
   </data>
-  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
+  <data name="Generic_Disconnect" xml:space="preserve">
     <value>ยกเลิกการเชื่อมต่อ</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -1478,9 +1478,6 @@
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
     <value>การดำเนินการนี้จะลบโทเค็นที่บันทึกไว้ของคุณ คุณสามารถเชื่อมต่อใหม่ได้ตลอดเวลา</value>
-  </data>
-  <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>ยกเลิกการเชื่อมต่อ</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>

@@ -1030,7 +1030,7 @@
 
                     <Button
                         Command="{x:Bind ViewModel.Scrobbling.DisconnectListenBrainzCommand}"
-                        Content="{x:Bind resources:Strings.SettingsPage_ListenBrainz_Disconnect_Button, Mode=OneTime}"
+                        Content="{x:Bind resources:Strings.Generic_Disconnect, Mode=OneTime}"
                         Visibility="{x:Bind ViewModel.Scrobbling.ListenBrainzIsConnected, Mode=OneWay}" />
 
                     <controls:SettingsExpander.Items>

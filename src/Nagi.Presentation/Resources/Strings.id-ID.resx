@@ -1422,7 +1422,7 @@ Apakah Anda ingin melanjutkan?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Selesai</value>
   </data>
-  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
+  <data name="Generic_Disconnect" xml:space="preserve">
     <value>Putuskan Sambungan</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -1478,9 +1478,6 @@ Apakah Anda ingin melanjutkan?</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
     <value>Ini akan menghapus token yang tersimpan. Anda dapat menyambung kembali kapan saja.</value>
-  </data>
-  <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>Putuskan Sambungan</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>

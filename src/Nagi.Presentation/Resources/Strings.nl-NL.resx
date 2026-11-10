@@ -1422,7 +1422,7 @@ Wil je doorgaan?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Voltooien</value>
   </data>
-  <data name="SettingsPage_LastFm_Disconnect_Button" xml:space="preserve">
+  <data name="Generic_Disconnect" xml:space="preserve">
     <value>Verbreken</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -1478,9 +1478,6 @@ Wil je doorgaan?</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
     <value>Hiermee wordt je opgeslagen token verwijderd. Je kunt op elk moment opnieuw verbinding maken.</value>
-  </data>
-  <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>Verbinding verbreken</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>
