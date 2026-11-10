@@ -11,7 +11,10 @@ public interface IMetadataService
     ///     embedded art is found.
     /// </param>
     /// <param name="includeMediaAssets">Whether to process cover art and synchronized lyrics.</param>
-    /// <returns>A <see cref="SongFileMetadata" /> object containing the extracted data and file properties.</returns>
+    /// <returns>
+    ///     The file's tags, cleaned up the way the library stores them even when the file couldn't be read, which
+    ///     <see cref="SongFileMetadata.Failure" /> tells.
+    /// </returns>
     Task<SongFileMetadata> ExtractMetadataAsync(string filePath, string? baseFolderPath = null,
         bool includeMediaAssets = true);
 

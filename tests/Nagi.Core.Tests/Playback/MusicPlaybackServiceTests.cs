@@ -75,6 +75,13 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
 
     private static IEnumerable<Guid> Ids(IEnumerable<Song> songs) => songs.Select(song => song.Id);
 
+    // The metadata service hands tags back cleaned up, which the queue relies on.
+    private static SongFileMetadata Extracted(SongFileMetadata metadata)
+    {
+        metadata.NormalizeTags(string.Empty, string.Empty);
+        return metadata;
+    }
+
     private static List<Song> CreateTestSongs(int count)
     {
         return Enumerable.Range(1, count)
@@ -227,37 +234,15 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task OpenedFile_GetsItsTagsCleanedUpLikeALibrarySong()
-    {
-        const string path = "C:\\temp\\opened.mp3";
-        _metadataService.ExtractMetadataAsync(path).Returns(new SongFileMetadata
-        {
-            Title = " Opened ",
-            Artists = [" Artist "],
-            Album = " Album ",
-            Genres = [" Jazz ", "jazz"]
-        });
-        await _service.InitializeAsync();
-
-        await _service.PlayTransientFileAsync(path);
-
-        var song = _service.CurrentTrack!;
-        song.Title.Should().Be("Opened");
-        song.Album!.Title.Should().Be("Album");
-        song.Album.PrimaryArtistName.Should().Be("Artist");
-        song.Genres.Select(g => g.Name).Should().Equal("Jazz");
-    }
-
-    [Fact]
     public async Task QueueMetadata_IncludesTransientGenresAndDurationWithoutDoubleCounting()
     {
         const string path = "C:\\temp\\queue.mp3";
-        _metadataService.ExtractMetadataAsync(path).Returns(new SongFileMetadata
+        _metadataService.ExtractMetadataAsync(path).Returns(Extracted(new SongFileMetadata
         {
             Title = "External",
             Genres = ["Rock", "rock", ""],
             Duration = TimeSpan.FromSeconds(90)
-        });
+        }));
 
         await _service.InitializeAsync();
         await _service.AddTransientFilesToQueueAsync([path]);
@@ -314,7 +299,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
             Lyrics = "Embedded lyrics",
             LrcFilePath = "C:\\temp\\transient.lrc"
         };
-        _metadataService.ExtractMetadataAsync(filePath).Returns(metadata);
+        _metadataService.ExtractMetadataAsync(filePath).Returns(Extracted(metadata));
         await _service.InitializeAsync();
         await _service.PlayAsync(Ids(_testSongs));
         _audioPlayer.ClearReceivedCalls();
@@ -336,8 +321,8 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     {
         var firstPath = "C:\\temp\\first.mp3";
         var secondPath = "C:\\temp\\second.flac";
-        _metadataService.ExtractMetadataAsync(firstPath).Returns(new SongFileMetadata { Title = "First" });
-        _metadataService.ExtractMetadataAsync(secondPath).Returns(new SongFileMetadata { Title = "Second" });
+        _metadataService.ExtractMetadataAsync(firstPath).Returns(Extracted(new SongFileMetadata { Title = "First" }));
+        _metadataService.ExtractMetadataAsync(secondPath).Returns(Extracted(new SongFileMetadata { Title = "Second" }));
         await _service.InitializeAsync();
         await _service.PlayAsync(Ids(_testSongs));
         _audioPlayer.ClearReceivedCalls();
@@ -365,7 +350,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     public async Task AddTransientFilesToQueueAsync_WhenStoppedWithAQueue_PlaysTheDroppedFile()
     {
         const string path = "C:\\temp\\dropped.mp3";
-        _metadataService.ExtractMetadataAsync(path).Returns(new SongFileMetadata { Title = "Dropped" });
+        _metadataService.ExtractMetadataAsync(path).Returns(Extracted(new SongFileMetadata { Title = "Dropped" }));
         await _service.InitializeAsync();
         await _service.PlayAsync(Ids(_testSongs));
         await _service.StopAsync();
@@ -383,7 +368,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _fileSystem.EnumerateFiles(folder, "*", SearchOption.AllDirectories)
             .Returns(["C:\\drop\\b.mp3", "C:\\drop\\cover.jpg", "C:\\drop\\a\\c.flac"]);
         _metadataService.ExtractMetadataAsync(Arg.Any<string>())
-            .Returns(call => new SongFileMetadata { Title = Path.GetFileName(call.ArgAt<string>(0)) });
+            .Returns(call => Extracted(new SongFileMetadata { Title = Path.GetFileName(call.ArgAt<string>(0)) }));
         await _service.InitializeAsync();
 
         await _service.AddTransientFilesToQueueAsync([folder]);
@@ -977,7 +962,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
 
         var filePath = "C:\\temp\\transient.mp3";
         var metadata = new SongFileMetadata { Title = "Transient Song", Artists = new List<string> { "Temp Artist" } };
-        _metadataService.ExtractMetadataAsync(filePath).Returns(metadata);
+        _metadataService.ExtractMetadataAsync(filePath).Returns(Extracted(metadata));
 
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(20));
         _audioPlayer.ClearReceivedCalls();
@@ -1006,7 +991,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
             Title = "Transient Song",
             Artists = new List<string> { "Temp Artist" }
         };
-        _metadataService.ExtractMetadataAsync(filePath).Returns(metadata);
+        _metadataService.ExtractMetadataAsync(filePath).Returns(Extracted(metadata));
 
         var mappedSong = new Song
         {
@@ -1342,7 +1327,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     public async Task ClearQueueAsync_WithExternalFile_DiscardsMetadataBeforeAddingItAgain()
     {
         const string path = "C:\\temp\\queue.mp3";
-        _metadataService.ExtractMetadataAsync(path).Returns(new SongFileMetadata { Title = "Before edit" });
+        _metadataService.ExtractMetadataAsync(path).Returns(Extracted(new SongFileMetadata { Title = "Before edit" }));
         _library.Reader.GetSongsByIdsAsync(Arg.Any<IEnumerable<Guid>>())
             .Returns(new Dictionary<Guid, Song>());
         await _service.InitializeAsync();
@@ -1351,7 +1336,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
 
         await _service.ClearQueueAsync();
         (await _service.GetQueueSongsAsync([previousId])).Should().BeEmpty();
-        _metadataService.ExtractMetadataAsync(path).Returns(new SongFileMetadata { Title = "After edit" });
+        _metadataService.ExtractMetadataAsync(path).Returns(Extracted(new SongFileMetadata { Title = "After edit" }));
         await _service.AddTransientFilesToQueueAsync([path]);
 
         _service.PlayOrder.Should().ContainSingle();
@@ -1564,7 +1549,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     public async Task ClearQueueAsync_WithStandaloneExternalFile_StopsPlayback()
     {
         const string path = "C:\\temp\\standalone.mp3";
-        _metadataService.ExtractMetadataAsync(path).Returns(new SongFileMetadata { Title = "External" });
+        _metadataService.ExtractMetadataAsync(path).Returns(Extracted(new SongFileMetadata { Title = "External" }));
         await _service.PlayTransientFileAsync(path);
 
         await _service.ClearQueueAsync();
@@ -1754,7 +1739,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _testSongs[0].ReplayGainTrackGain = -6;
         await _service.PlayAsync(_testSongs[0].Id);
         const string path = "C:\\temp\\external.mp3";
-        _metadataService.ExtractMetadataAsync(path).Returns(new SongFileMetadata { Title = "External" });
+        _metadataService.ExtractMetadataAsync(path).Returns(Extracted(new SongFileMetadata { Title = "External" }));
 
         await _service.PlayTransientFileAsync(path);
 
@@ -1842,7 +1827,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         var adding = _service.AddTransientFilesToQueueAsync([path]);
 
         await _service.ClearQueueAsync();
-        release.SetResult(new SongFileMetadata { Title = "Late" });
+        release.SetResult(Extracted(new SongFileMetadata { Title = "Late" }));
         await adding;
 
         _service.PlayOrder.Should().BeEmpty();
@@ -1855,11 +1840,11 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     {
         const string path = "C:\\temp\\same.mp3";
         var release = new TaskCompletionSource<SongFileMetadata>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _metadataService.ExtractMetadataAsync(path).Returns(release.Task, Task.FromResult(new SongFileMetadata { Title = "First" }));
+        _metadataService.ExtractMetadataAsync(path).Returns(release.Task, Task.FromResult(Extracted(new SongFileMetadata { Title = "First" })));
         var first = _service.AddTransientFilesToQueueAsync([path]);
         await _service.AddTransientFilesToQueueAsync([path]);
 
-        release.SetResult(new SongFileMetadata { Title = "Late" });
+        release.SetResult(Extracted(new SongFileMetadata { Title = "Late" }));
         await first;
 
         _service.PlayOrder.Should().ContainSingle();
@@ -1911,7 +1896,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     public async Task NextAsync_AfterPlayingAFileOnItsOwn_StopsPlayback()
     {
         const string filePath = "C:\\temp\\transient.mp3";
-        _metadataService.ExtractMetadataAsync(filePath).Returns(new SongFileMetadata { Title = "Transient" });
+        _metadataService.ExtractMetadataAsync(filePath).Returns(Extracted(new SongFileMetadata { Title = "Transient" }));
         await _service.InitializeAsync();
 
         await _service.PlayTransientFileAsync(filePath);
