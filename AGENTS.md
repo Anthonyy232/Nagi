@@ -10,18 +10,19 @@ The solution is layered so that everything except the Windows shell is platform-
 
 | Project | Owns | May reference |
 | --- | --- | --- |
-| `Nagi.Core` | Library, database (EF Core + SQLite), playback queue, playlists, metadata, lyrics, scrobbling, file system access | Nothing UI |
+| `Nagi.Core` | Library, database (EF Core + SQLite), playback queue, playlists, metadata, lyrics, scrobbling, music servers, file system access | Nothing UI |
 | `Nagi.Presentation` | View models, app services (settings, navigation), the abstractions a UI head implements, localized UI strings | `Nagi.Core` |
 | `Nagi.Audio.LibVlc` | The LibVLC audio player behind `IAudioPlayer` | `Nagi.Core` |
 | `Nagi.WinUI` | XAML pages, windows, tray, taskbar, system media controls, Win32 interop, DI composition, MSIX | Everything above |
 
+- **Code is grouped by feature, not by kind.** Each project's folders are features (`Playback`, `Library`, `Lists`, `Settings`), namespaces follow the folders, and the test projects mirror them.
 - **Put logic in the lowest layer that can own it.** If another head would need it too, it belongs in Core or Presentation, not in a WinUI page or service. WinUI code should be about Windows: XAML, windowing, interop.
 - **No Windows types in Core or Presentation.** Small, guarded OS specifics are fine in shared code (`OperatingSystem.IsWindows()`).
 - **View models don't choose platform assets.** They expose neutral values such as `AppIcon`, and each UI head maps them to its own icons (WinUI: `AppIconGlyphs`).
-- **Services are interfaces registered in DI**, one registration entry point per layer (`AddNagiCore`, `AddNagiPresentation`, and the WinUI `AddNagi*` methods). Code that a test or another platform needs to replace goes behind an interface; other code doesn't need one.
+- **Services are interfaces registered in DI**, one registration entry point per layer (`AddNagiCore`, `AddNagiPresentation`, `AddNagiApp` for WinUI). Code that a test or another platform needs to replace goes behind an interface; other code doesn't need one.
 - **MVVM with the CommunityToolkit** (`[ObservableProperty]`, `[RelayCommand]`). Pages hold view-only code; workflows and decisions live in view models.
 - **View models own their errors.** Commands and methods that views call log and handle their own failures, so pages bind or call them without try/catch. `IUIService` never throws: a dialog or picker the platform can't show returns what a cancel would.
-- **Pages share behaviour through base classes and helpers** (`SearchablePage`, `SongListPage`, `CollapsibleSearch`, the menu flyout helpers). Similar pages should look and behave the same; when you change one, check its siblings.
+- **Pages share behaviour through base classes and helpers** (`ViewModelPage`, `SongListPage`, `CollectionPage`, `SongListToolbar`, `SearchToggle`, `EmptyState`). Similar pages should look and behave the same; when you change one, check its siblings.
 - **Prefer what the platform gives you.** Built-in control behaviour (for example list selection and Ctrl+A), toolkit features and existing helpers come before custom code.
 
 ## How we write code
