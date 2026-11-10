@@ -623,16 +623,20 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task PlayAsync_WithEmptyList_StopsAndClearsQueue()
+    public async Task PlayingNothing_LeavesPlaybackAndTheQueueAsTheyWere()
     {
         await _service.InitializeAsync();
         await _service.PlayAsync(Ids(_testSongs));
+        var emptyPlaylist = new SongScope.Playlist(Guid.NewGuid());
+        _library.Reader.GetSongIdsAsync(emptyPlaylist, null, SongSortOrder.PlaylistOrder).Returns(new List<Guid>());
 
         await _service.PlayAsync(Array.Empty<Guid>());
+        await _service.PlayAsync(Guid.Empty);
+        (await _service.PlayScopeAsync(emptyPlaylist)).Should().BeFalse();
 
-        await _audioPlayer.Received(1).StopAsync();
-        _service.PlayOrder.Should().BeEmpty();
-        _service.CurrentTrack.Should().BeNull();
+        await _audioPlayer.DidNotReceive().StopAsync();
+        _service.PlayOrder.Should().Equal(Ids(_testSongs));
+        _service.CurrentTrack.Should().BeSameAs(_testSongs[0]);
     }
 
     [Fact]

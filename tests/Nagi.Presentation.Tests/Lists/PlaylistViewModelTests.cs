@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Artwork;
+using Nagi.Core.Library;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
 using Nagi.Presentation.Common;
@@ -19,6 +20,7 @@ public class PlaylistViewModelTests
     private readonly LibraryFakes _library = new LibraryFakes();
     private readonly ISmartPlaylistService _smart = Substitute.For<ISmartPlaylistService>();
     private readonly IUIService _ui = Substitute.For<IUIService>();
+    private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
 
     public PlaylistViewModelTests()
     {
@@ -174,7 +176,7 @@ public class PlaylistViewModelTests
         await _library.Playlists.Received(saved ? 1 : 0).GetAllPlaylistsAsync(Arg.Any<CancellationToken>());
     }
 
-    private PlaylistViewModel CreateViewModel() => new(_library.Notifier, _library.Playlists, _smart, Substitute.For<IMusicPlaybackService>(),
+    private PlaylistViewModel CreateViewModel() => new(_library.Notifier, _library.Playlists, _smart, _playback,
         Substitute.For<IMusicNavigationService>(), _ui, TestSettings.Create(), new ImmediateDispatcher(),
         NullLogger<PlaylistViewModel>.Instance);
 
@@ -222,6 +224,25 @@ public class PlaylistViewModelTests
 
         viewModel.IsAnyOperationInProgress.Should().BeFalse();
         viewModel.Items.Should().ContainSingle().Which.Name.Should().Be("Existing");
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task PlayPlaylist_WithNoSongs_TellsTheUser(bool smart)
+    {
+        var id = Guid.NewGuid();
+        if (smart) _smart.GetAllSmartPlaylistsAsync().Returns(new[] { new SmartPlaylist { Id = id, Name = "Morning" } });
+        else _library.Playlists.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new Playlist { Id = id, Name = "Morning" } });
+        _playback.PlayScopeAsync(new SongScope.Playlist(id)).Returns(false);
+        _playback.PlaySmartPlaylistAsync(id).Returns(false);
+        using var viewModel = CreateViewModel();
+        await viewModel.LoadAsync(CancellationToken.None);
+
+        await viewModel.PlayPlaylistCommand.ExecuteAsync(viewModel.Items.Single());
+
+        await _ui.Received(1).ShowMessageDialogAsync(Strings.PlaylistPage_Title,
+            smart ? Strings.Playlist_Status_SmartEmpty : Strings.PlaylistSongViewPage_EmptyState_Title);
     }
 
     [Theory]

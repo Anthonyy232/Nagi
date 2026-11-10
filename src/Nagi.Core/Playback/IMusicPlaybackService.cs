@@ -122,7 +122,7 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     Task PlayAsync(Guid songId);
 
     /// <summary>
-    ///     Plays songs, replacing the queue.
+    ///     Plays songs, replacing the queue. With no songs, nothing changes.
     /// </summary>
     /// <param name="startShuffled">
     ///     True to shuffle, letting the shuffle choose the first song; false to play in order; null to keep the shuffle
@@ -154,7 +154,8 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     ///     anything else by title. The scope is also the listens' context.
     /// </summary>
     /// <param name="startShuffled">As for <see cref="PlayAsync(IEnumerable{Guid}, int, bool?, PlaybackContext?)" />.</param>
-    Task PlayScopeAsync(SongScope scope, bool? startShuffled = null);
+    /// <returns>False when the scope has no songs, so nothing plays.</returns>
+    Task<bool> PlayScopeAsync(SongScope scope, bool? startShuffled = null);
 
     /// <returns>False when the smart playlist matches no songs, so nothing plays.</returns>
     Task<bool> PlaySmartPlaylistAsync(Guid smartPlaylistId);

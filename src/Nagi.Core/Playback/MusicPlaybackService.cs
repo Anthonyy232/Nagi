@@ -174,30 +174,19 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         PositionChanged?.Invoke();
     }
 
-    public Task PlayAsync(Guid songId) => songId == Guid.Empty
-        ? Task.CompletedTask
-        : PlayAsync([songId]);
+    public Task PlayAsync(Guid songId) => PlayAsync([songId]);
 
     public Task PlayAsync(IEnumerable<Guid> songIds, int startIndex = 0, bool? startShuffled = null, PlaybackContext? context = null) =>
         RunPlaybackRequest(request => PlayInternalAsync(songIds, startIndex, startShuffled, context, request));
 
     private async Task PlayInternalAsync(IEnumerable<Guid> songIds, int startIndex, bool? startShuffled, PlaybackContext? context, CancellationToken request, IReadOnlyList<Guid>? shuffleOrder = null, ShuffleMode mode = ShuffleMode.Random)
     {
-        CancelQueueEdits();
         var requestedIds = songIds?.ToList() ?? [];
         var requestedStartId = startIndex >= 0 && startIndex < requestedIds.Count ? requestedIds[startIndex] : Guid.Empty;
         var idList = requestedIds.Where(id => id != Guid.Empty).Distinct().ToList();
+        if (idList.Count == 0) return;
         startIndex = requestedStartId == Guid.Empty ? 0 : idList.IndexOf(requestedStartId);
-        if (!idList.Any())
-        {
-            _logger.LogWarning("PlayAsync called with an empty song list. Stopping playback.");
-            await StopInternalAsync(request);
-            if (request.IsCancellationRequested) return;
-            ClearQueuesInternal();
-            QueueChanged?.Invoke();
-            UpdateMediaControlsNavigation();
-            return;
-        }
+        CancelQueueEdits();
 
         _logger.LogDebug(
             "Playing a new queue of {SongCount} songs. Start index: {StartIndex}, Shuffled: {IsShuffled}",
@@ -324,13 +313,19 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         if (!request.IsCancellationRequested) UpdateMediaControlsTimeline(position);
     }
 
-    public Task PlayScopeAsync(SongScope scope, bool? startShuffled = null) => RunPlaybackRequest(async request =>
+    public async Task<bool> PlayScopeAsync(SongScope scope, bool? startShuffled = null)
     {
-        var (sort, context) = PlaybackOf(scope);
-        var songIds = await _libraryReader.GetSongIdsAsync(scope, null, sort);
-        if (!request.IsCancellationRequested)
-            await PlayInternalAsync(songIds, 0, startShuffled, context, request);
-    });
+        var isEmpty = false;
+        await RunPlaybackRequest(async request =>
+        {
+            var (sort, context) = PlaybackOf(scope);
+            var songIds = await _libraryReader.GetSongIdsAsync(scope, null, sort);
+            isEmpty = songIds.Count == 0;
+            if (!request.IsCancellationRequested)
+                await PlayInternalAsync(songIds, 0, startShuffled, context, request);
+        });
+        return !isEmpty;
+    }
 
     private static (SongSortOrder Sort, PlaybackContext Context) PlaybackOf(SongScope scope) => scope switch
     {
@@ -351,7 +346,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         {
             var songIds = await _smartPlaylists.GetMatchingSongIdsAsync(smartPlaylistId, token: request);
             isEmpty = songIds.Count == 0;
-            if (!isEmpty && !request.IsCancellationRequested)
+            if (!request.IsCancellationRequested)
                 await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.SmartPlaylist, smartPlaylistId), request);
         });
         return !isEmpty;
