@@ -210,7 +210,10 @@ public partial class MusicPlaybackService
     {
         CancelQueueEdits();
         _logger.LogDebug("Clearing playback queue.");
+        // Awaited, unlike other ends: a restore that clears the queue needs the database closed when this returns.
+        var ending = EndListenSession(PlaybackEndReason.PausedAndAbandoned);
         await StopInternalAsync(request);
+        await ending;
         if (request.IsCancellationRequested) return;
 
         ClearQueuesInternal();
