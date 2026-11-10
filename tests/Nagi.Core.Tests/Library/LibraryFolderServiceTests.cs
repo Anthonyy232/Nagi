@@ -127,19 +127,23 @@ public class LibraryFolderServiceTests : IDisposable
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories).Returns(files);
 
         var releaseSlowExtraction = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var onlySlowFileLeft = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var filesRead = 0;
         _metadataService.ExtractMetadataAsync(Arg.Any<string>(), folder.Path)
             .Returns(async call =>
             {
                 var path = call.ArgAt<string>(0);
                 if (path == slowFile)
                     await releaseSlowExtraction.Task;
+                else if (Interlocked.Increment(ref filesRead) == files.Count - 1)
+                    onlySlowFileLeft.SetResult();
                 return new SongFileMetadata { FilePath = path, Title = Path.GetFileNameWithoutExtension(path) };
             });
 
         var scanTask = _library.Folders.RescanFolderForMusicAsync(folder.Id);
         try
         {
-            await WaitForSongCountAsync(51);
+            await onlySlowFileLeft.Task.WaitAsync(TimeSpan.FromSeconds(5));
             var sessionId = await _library.Listening.StartListenSessionAsync(
                 existingSong.Id,
                 new PlaybackContext(PlaybackContextType.Library, null));
@@ -153,20 +157,6 @@ public class LibraryFolderServiceTests : IDisposable
         }
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         (await assertContext.Songs.CountAsync()).Should().Be(102);
-    }
-
-    private async Task WaitForSongCountAsync(int expected)
-    {
-        var deadline = DateTime.UtcNow.AddSeconds(5);
-        while (DateTime.UtcNow < deadline)
-        {
-            await using var context = _dbHelper.ContextFactory.CreateDbContext();
-            if (await context.Songs.CountAsync() >= expected)
-                return;
-            await Task.Delay(20);
-        }
-
-        throw new TimeoutException($"Expected at least {expected} songs.");
     }
 
     [Fact]
