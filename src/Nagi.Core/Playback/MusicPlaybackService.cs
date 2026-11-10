@@ -542,6 +542,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         return _request;
 
         // A superseded request ends quietly, however its work noticed: a check of the token or a cancelled await.
+        // It completes with its work, not a turn of the UI context later, so IsRequestPending ends when the work does.
         async Task RunAsync()
         {
             try
