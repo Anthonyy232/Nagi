@@ -179,6 +179,8 @@ internal sealed class OpenSubsonicClient : IMusicServerClient
             throw new MusicServerException(MusicServerError.SignInFailed, $"{_baseUrl} answered {(int)response.StatusCode}.");
         if (response.StatusCode == HttpStatusCode.NotFound)
             throw new MusicServerException(MusicServerError.UnsupportedServer, $"{_baseUrl} has no Subsonic API.");
+        if (MusicServerHttp.IsServerDown(response.StatusCode))
+            throw new MusicServerException(MusicServerError.Unreachable, $"{_baseUrl} answered {(int)response.StatusCode}.");
         if (!response.IsSuccessStatusCode)
             throw new MusicServerException(MusicServerError.ServerError, $"{_baseUrl} answered {(int)response.StatusCode}.");
 

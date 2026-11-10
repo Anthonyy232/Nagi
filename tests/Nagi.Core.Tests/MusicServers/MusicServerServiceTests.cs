@@ -280,6 +280,17 @@ public class MusicServerServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task GetLyricsAsync_ServerDownBehindItsProxy_IsNotTakenForASongWithoutLyrics()
+    {
+        var (_, song) = await SeedServerAsync();
+        _handler.RespondSequence((HttpStatusCode.ServiceUnavailable, string.Empty));
+
+        var lyrics = () => _service.GetLyricsAsync(song);
+
+        (await lyrics.Should().ThrowAsync<MusicServerException>()).Which.Error.Should().Be(MusicServerError.Unreachable);
+    }
+
+    [Fact]
     public async Task FavoriteChangedInNagi_IsSentToTheServer()
     {
         var (server, _) = await SeedServerAsync(lovedPending: true);
