@@ -15,7 +15,6 @@ namespace Nagi.Presentation.Player;
 
 public partial class PlayerViewModel
 {
-    private readonly IUIService _uiService;
     private ITimer? _countdownTimer;
     public RecentHistoryViewModel History { get; }
 
@@ -71,11 +70,7 @@ public partial class PlayerViewModel
         _playbackService.TrackChanged -= OnHistoryTrackChanged;
     }
 
-    partial void OnIsHistoryVisibleChanged(bool value)
-    {
-        SidebarQueue.SetActive(IsQueuePanelOpen && !value);
-        History.SetActive(IsQueuePanelOpen && value);
-    }
+    partial void OnIsHistoryVisibleChanged(bool value) => UpdateActivePane();
 
     private void OnHistoryTrackChanged() => RunOnUIThread(() =>
     {

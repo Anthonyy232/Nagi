@@ -31,6 +31,7 @@ public partial class PlayerViewModel : ObservableObject
     private readonly IWindowService _windowService;
     private readonly ILibraryReader _libraryReader;
     private readonly IListeningService _listening;
+    private readonly IUIService _uiService;
     private readonly ILibraryNotifier _libraryNotifier;
     private readonly TimeProvider _timeProvider;
 
@@ -144,10 +145,12 @@ public partial class PlayerViewModel : ObservableObject
 
     public PlaybackQueueCollection SidebarQueue { get; }
 
-    partial void OnIsQueuePanelOpenChanged(bool value)
+    partial void OnIsQueuePanelOpenChanged(bool value) => UpdateActivePane();
+
+    private void UpdateActivePane()
     {
-        SidebarQueue.SetActive(value && !IsHistoryVisible);
-        History.SetActive(value && IsHistoryVisible);
+        SidebarQueue.SetActive(IsQueuePanelOpen && !IsHistoryVisible);
+        History.SetActive(IsQueuePanelOpen && IsHistoryVisible);
     }
 
     [ObservableProperty] public partial bool IsVolumeControlVisible { get; set; }
