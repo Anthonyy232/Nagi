@@ -10,6 +10,7 @@ namespace Nagi.Presentation.Lists;
 
 public partial class LibraryViewModel
 {
+    private bool _hasInitialized;
     private bool _suggestionDismissed;
 
     [ObservableProperty]
@@ -39,10 +40,12 @@ public partial class LibraryViewModel
     public async Task OpenAsync(bool favorites)
     {
         await SetLibraryViewAsync(favorites);
-        if (!HasInitialized) await InitializeAsync();
+        if (_hasInitialized) return;
+        await LoadAsync(CancellationToken.None);
+        _hasInitialized = !HasLoadError;
     }
 
-    public async Task SetLibraryViewAsync(bool favorites)
+    private async Task SetLibraryViewAsync(bool favorites)
     {
         if (ShowFavoritesOnly == favorites) return;
         CancelLoad();
@@ -52,7 +55,7 @@ public partial class LibraryViewModel
         DeselectAll();
         ClearFullSongIds();
         CurrentPage = 1;
-        if (HasInitialized) await LoadAsync(CancellationToken.None);
+        if (_hasInitialized) await LoadAsync(CancellationToken.None);
     }
 
     protected override void OnSearchTermChangedInternal(string value)
