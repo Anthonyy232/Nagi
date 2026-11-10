@@ -128,8 +128,7 @@ public sealed class LibraryArtwork
                 _pathConfig.ArtistImageCachePath, artist.Id.ToString(), CachedImageKind.Folder, processed).ConfigureAwait(false);
             if (string.IsNullOrEmpty(localPath)) return false;
 
-            artist.LocalImageCachePath = localPath;
-            artist.ImageModifiedUtc = DateTime.UtcNow;
+            artist.SetImage(localPath);
             return true;
         }
         catch (Exception ex)
