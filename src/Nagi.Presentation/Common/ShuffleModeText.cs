@@ -1,7 +1,7 @@
 using Nagi.Core.Playback;
 using Nagi.Presentation.Resources;
 
-namespace Nagi.Presentation.Player;
+namespace Nagi.Presentation.Common;
 
 public static class ShuffleModeText
 {

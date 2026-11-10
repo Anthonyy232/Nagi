@@ -9,7 +9,6 @@ using Nagi.Core.Library;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Presentation.Common;
-using Nagi.Presentation.Lists;
 using Nagi.Presentation.Resources;
 
 namespace Nagi.Presentation.Player;
@@ -121,14 +120,14 @@ public partial class PlayerViewModel
     });
 
     /// <summary>
-    ///     What the favorite shortcut does: favorite the songs selected in <paramref name="activeList" /> when it can,
-    ///     otherwise the playing track when nothing is selected there.
+    ///     What the favorite shortcut does: <paramref name="toggleSelectedFavorite" /> for the active list's selection
+    ///     when it can run, otherwise favoriting the playing track when that list has nothing selected.
     /// </summary>
     /// <returns>The command to run, or null when the shortcut does nothing.</returns>
-    public IAsyncRelayCommand? GetFavoriteShortcutCommand(SongListViewModelBase? activeList)
+    public IAsyncRelayCommand? GetFavoriteShortcutCommand(IAsyncRelayCommand? toggleSelectedFavorite, bool hasSelectedSongs)
     {
-        if (activeList?.ToggleSelectedFavoriteCommand.CanExecute(null) == true) return activeList.ToggleSelectedFavoriteCommand;
-        if (activeList?.HasSelectedSongs != true && ToggleFavoriteCommand.CanExecute(null)) return ToggleFavoriteCommand;
+        if (toggleSelectedFavorite?.CanExecute(null) == true) return toggleSelectedFavorite;
+        if (!hasSelectedSongs && ToggleFavoriteCommand.CanExecute(null)) return ToggleFavoriteCommand;
         return null;
     }
 

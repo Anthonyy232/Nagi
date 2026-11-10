@@ -62,7 +62,8 @@ public sealed partial class MainPage
         if (IsShortcutBlocked(FocusManager.GetFocusedElement(XamlRoot) as DependencyObject)) return;
 
         var activeList = (ContentFrame.Content as SongListPage)?.SongList;
-        if (ViewModel.GetFavoriteShortcutCommand(activeList) is not { } command) return;
+        if (ViewModel.GetFavoriteShortcutCommand(activeList?.ToggleSelectedFavoriteCommand, activeList?.HasSelectedSongs == true)
+            is not { } command) return;
         args.Handled = true;
         await command.ExecuteAsync(null);
     }
