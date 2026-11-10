@@ -12,7 +12,6 @@
                 <VisualState x:Name="PageTitle">
                     <VisualState.Setters>
                         <Setter Target="TitleText.Style" Value="{StaticResource PageTitleTextStyle}" />
-                        <Setter Target="TitleText.Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
                         <Setter Target="SelectedCountText.VerticalAlignment" Value="Bottom" />
                         <Setter Target="SelectedCountText.Margin" Value="0,0,0,5" />
                         <Setter Target="TotalCountText.VerticalAlignment" Value="Bottom" />
