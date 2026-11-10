@@ -142,12 +142,16 @@ public sealed class LibraryFolderWatcher : IDisposable
         }
     }
 
-    private void OnFileSystemEvent(WatchedFolder folder, string path, bool includeFolders)
+    private static void OnFileSystemEvent(WatchedFolder folder, string path, bool includeFolders)
+    {
+        if (CanChangeLibrary(path, includeFolders)) folder.ScheduleRefresh(QuietPeriod);
+    }
+
+    internal static bool CanChangeLibrary(string path, bool includeFolders)
     {
         var extension = Path.GetExtension(path);
         // Folder events have no extension; a moved or deleted folder can take songs with it.
-        if (FileExtensions.MusicFileExtensions.Contains(extension) || (includeFolders && extension.Length == 0))
-            folder.ScheduleRefresh(QuietPeriod);
+        return FileExtensions.MusicFileExtensions.Contains(extension) || (includeFolders && extension.Length == 0);
     }
 
     private async Task RefreshAsync(Guid folderId)

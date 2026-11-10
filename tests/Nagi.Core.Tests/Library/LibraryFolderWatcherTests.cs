@@ -48,17 +48,17 @@ public sealed class LibraryFolderWatcherTests : IDisposable
         await _folderService.Received(1).RefreshFolderInBackgroundAsync(folder.Id, Arg.Any<CancellationToken>());
     }
 
-    [Fact]
-    public async Task ChangingNonAudioFiles_DoesNotScheduleARefresh()
+    [Theory]
+    [InlineData(@"C:\Music\song.mp3", false, true)]
+    [InlineData(@"C:\Music\SONG.FLAC", true, true)]
+    [InlineData(@"C:\Music\notes.txt", true, false)]
+    [InlineData(@"C:\Music\cover.jpg", true, false)]
+    [InlineData(@"C:\Music\Album", true, true)]
+    // A folder's Changed event only says something inside it changed, which raises its own event.
+    [InlineData(@"C:\Music\Album", false, false)]
+    public void OnlyAudioFilesAndMovedFolders_CanChangeTheLibrary(string path, bool includeFolders, bool expected)
     {
-        StartWatching(_root);
-
-        await File.WriteAllTextAsync(Path.Combine(_root, "notes.txt"), "text");
-        await File.WriteAllTextAsync(Path.Combine(_root, "cover.jpg"), "image");
-        // Nothing signals that an event was ignored, so the test gives the events time to arrive.
-        await Task.Delay(TimeSpan.FromSeconds(1));
-
-        _time.Scheduled.IsCompleted.Should().BeFalse();
+        LibraryFolderWatcher.CanChangeLibrary(path, includeFolders).Should().Be(expected);
     }
 
     [Fact]
