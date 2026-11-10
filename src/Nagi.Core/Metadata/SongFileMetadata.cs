@@ -55,13 +55,22 @@ public class SongFileMetadata
     internal void NormalizeTags(string artistSplitCharacters, string genreSplitCharacters)
     {
         Title = TextNormalizer.Normalize(Title) ?? Song.UnknownTitle;
-        Artists = ArtistNameHelper.SplitNames(Artists, artistSplitCharacters);
+        Artists = SplitNames(Artists, artistSplitCharacters);
         if (Artists.Count == 0) Artists = [Artist.UnknownArtistName];
-        AlbumArtists = ArtistNameHelper.NormalizeAlbumArtists(
-            ArtistNameHelper.SplitNames(AlbumArtists, artistSplitCharacters), Artists);
+        AlbumArtists = SplitNames(AlbumArtists, artistSplitCharacters);
+        if (AlbumArtists.Count == 0) AlbumArtists = [.. Artists];
         Album = TextNormalizer.Normalize(Album) ?? Library.Album.UnknownAlbumName;
-        Genres = ArtistNameHelper.SplitNames(Genres, genreSplitCharacters);
+        Genres = SplitNames(Genres, genreSplitCharacters);
     }
+
+    // Without split characters the names are only cleaned up.
+    private static List<string> SplitNames(IEnumerable<string> names, string splitCharacters) =>
+        // Split with no separators would split on whitespace.
+        names.SelectMany(name => splitCharacters.Length > 0 ? name.Split([.. splitCharacters]) : [name])
+            .Select(TextNormalizer.Normalize)
+            .OfType<string>()
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
 }
 
 public enum ExtractionFailure

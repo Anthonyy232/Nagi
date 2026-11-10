@@ -147,7 +147,7 @@ public partial class LibraryReader : ILibraryReader
     public async Task<Artist?> GetArtistByNameAsync(string name)
     {
         if (string.IsNullOrWhiteSpace(name)) return null;
-        var normalizedName = ArtistNameHelper.Normalize(name);
+        var normalizedName = TextNormalizer.Normalize(name);
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.Artists.AsNoTracking().FirstOrDefaultAsync(a => a.Name == normalizedName).ConfigureAwait(false);
     }
