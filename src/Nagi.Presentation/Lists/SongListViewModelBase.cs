@@ -337,18 +337,10 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         UpdateSelectionStatus();
     }
 
-    protected virtual PlaybackContext GetPlaybackContext() => Scope switch
-    {
-        SongScope.Album album => new(PlaybackContextType.Album, album.AlbumId),
-        SongScope.Artist artist => new(PlaybackContextType.Artist, artist.ArtistId),
-        SongScope.Genre genre => new(PlaybackContextType.Genre, genre.GenreId),
-        SongScope.Playlist playlist => new(PlaybackContextType.Playlist, playlist.PlaylistId),
-        SongScope.Folder folder => new(PlaybackContextType.Folder, folder.RootFolderId),
-        SongScope.Directory directory => new(PlaybackContextType.Folder, directory.RootFolderId),
-        SongScope.DirectoryTree tree => new(PlaybackContextType.Folder, tree.RootFolderId),
-        SongScope.LibraryScope or SongScope.FavoritesScope when IsSearchActive => new(PlaybackContextType.Search, null),
-        _ => new(PlaybackContextType.Library, null)
-    };
+    protected virtual PlaybackContext GetPlaybackContext() =>
+        Scope is SongScope.LibraryScope or SongScope.FavoritesScope && IsSearchActive
+            ? new(PlaybackContextType.Search, null)
+            : PlaybackContext.Of(Scope ?? SongScope.Library);
 
     /// <summary>
     ///     Runs a user action, logging a failure and telling the user instead of letting it reach the view.

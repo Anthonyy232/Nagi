@@ -1,16 +1,18 @@
-﻿namespace Nagi.Core.Playback;
+﻿using Nagi.Core.Library;
+
+namespace Nagi.Core.Playback;
 
 public enum PlaybackEndReason
 {
     Finished = 0,
 
     /// <summary>
-    ///     The user manually skipped to another track or explicitly stopped playback.
+    ///     Another track was chosen, or this one was removed from the queue, before it ended.
     /// </summary>
     Skipped = 1,
 
     /// <summary>
-    ///     The track was paused and never resumed before being cleared from the queue or the app closing.
+    ///     Playback stopped or the app closed before the track ended.
     /// </summary>
     PausedAndAbandoned = 2
 }
@@ -50,7 +52,20 @@ public enum PlaybackStopMode
     Timer
 }
 
-public record PlaybackContext(PlaybackContextType Type, Guid? ContextId);
+public record PlaybackContext(PlaybackContextType Type, Guid? ContextId)
+{
+    public static PlaybackContext Of(SongScope scope) => scope switch
+    {
+        SongScope.Album album => new(PlaybackContextType.Album, album.AlbumId),
+        SongScope.Artist artist => new(PlaybackContextType.Artist, artist.ArtistId),
+        SongScope.Genre genre => new(PlaybackContextType.Genre, genre.GenreId),
+        SongScope.Playlist playlist => new(PlaybackContextType.Playlist, playlist.PlaylistId),
+        SongScope.Folder folder => new(PlaybackContextType.Folder, folder.RootFolderId),
+        SongScope.Directory directory => new(PlaybackContextType.Folder, directory.RootFolderId),
+        SongScope.DirectoryTree tree => new(PlaybackContextType.Folder, tree.RootFolderId),
+        _ => new(PlaybackContextType.Library, null)
+    };
+}
 
 /// <summary>
 ///     The playback state shown by the operating system's media controls.

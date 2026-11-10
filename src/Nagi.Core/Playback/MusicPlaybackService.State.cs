@@ -44,7 +44,7 @@ public partial class MusicPlaybackService
 
         var restoredIds = savedIds.Where(librarySongs.ContainsKey).ToList();
         if (restoredIds.Count == 0) return false;
-        CurrentShuffleMode = Enum.IsDefined(state.ShuffleMode) ? state.ShuffleMode : ShuffleMode.Random;
+        SetShuffleMode(Enum.IsDefined(state.ShuffleMode) ? state.ShuffleMode : ShuffleMode.Random, IsShuffleEnabled);
 
         var restoredShuffle = (state.ShuffledQueueTrackIds ?? []).Where(librarySongs.ContainsKey).ToList();
         // Equal lengths alone do not rule out duplicate or unrelated tracks.
@@ -65,7 +65,16 @@ public partial class MusicPlaybackService
         // With nothing loaded, Play starts the song from the queue, which stops cleanly while it can't stream.
         if (song.IsFromServer && streamUri is null) return true;
         CurrentTrack = song;
-        await _audioPlayer.LoadAsync(song, streamUri);
+        try
+        {
+            await _audioPlayer.LoadAsync(song, streamUri);
+        }
+        catch (Exception ex)
+        {
+            // Like a song that can't stream: the queue is kept, and Play tries the song again.
+            _logger.LogError(ex, "Could not load the last song, so the session is restored stopped.");
+            CurrentTrack = null;
+        }
         return true;
     }
 }

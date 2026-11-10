@@ -27,6 +27,7 @@ public interface IStatisticsService
     /// </summary>
     Task<ListeningPatternStats> GetListeningPatternsAsync(TimeRange range, CancellationToken ct = default);
 
+    /// <summary>How many plays (<see cref="ListenRules.CountsAsPlay" />) came from each kind of source.</summary>
     Task<IEnumerable<ContextStats>> GetPlaybackSourceDistributionAsync(TimeRange range, CancellationToken ct = default);
 }
 
@@ -43,6 +44,6 @@ public record SongStats(Song Song, int TotalPlays, TimeSpan TotalDuration, int G
 public record ArtistStats(Artist Artist, int TotalPlays, TimeSpan TotalDuration, int GlobalRank);
 public record AlbumStats(Album Album, int TotalPlays, TimeSpan TotalDuration, int GlobalRank);
 public record GenreStats(Genre Genre, int TotalPlays, TimeSpan TotalDuration, int GlobalRank);
-public record ContextStats(PlaybackContextType Type, int Count, TimeSpan Duration);
+public record ContextStats(PlaybackContextType Type, int Count);
 public record ListeningPatternStats(DayOfWeek MostActiveDay, int PeakHour);
 public record StatisticsPage<T>(IReadOnlyList<T> Items, int TotalCount);

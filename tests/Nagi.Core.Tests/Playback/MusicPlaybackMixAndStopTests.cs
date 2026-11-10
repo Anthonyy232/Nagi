@@ -27,7 +27,7 @@ public partial class MusicPlaybackServiceTests
         await _service.NextAsync();
         lookup.SetResult(_testSongs.Select(s => new MixCandidate(s.Id, "Artist", 1, 0, null)).ToArray());
 
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => mixing);
+        (await mixing).Should().BeTrue();
         _service.PlayOrder.Should().Equal(_testSongs.Select(s => s.Id));
         _service.CurrentTrack.Should().BeSameAs(_testSongs[1]);
     }
@@ -47,6 +47,21 @@ public partial class MusicPlaybackServiceTests
         _service.CurrentTrack.Should().BeSameAs(_testSongs[0]);
         await _audioPlayer.DidNotReceive().StopAsync();
         await _audioPlayer.DidNotReceive().LoadAsync(Arg.Any<Song>());
+    }
+
+    [Fact]
+    public async Task ClearQueueAsync_AfterAMix_ResetsTheShuffleModeAndSaysSo()
+    {
+        _library.Listening.GetMixCandidatesAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(_testSongs.Select(s => new MixCandidate(s.Id, "Artist", 1, 0, null)).ToArray());
+        await _service.InitializeAsync();
+        (await _service.PlayMixAsync(_testSongs.Select(s => s.Id), ShuffleMode.Unheard)).Should().BeTrue();
+        var tracker = new EventTracker(_service);
+
+        await _service.ClearQueueAsync();
+
+        _service.CurrentShuffleMode.Should().Be(ShuffleMode.Random);
+        tracker.ShuffleModeChangedCount.Should().Be(1);
     }
 
     [Fact]

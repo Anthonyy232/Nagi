@@ -1,8 +1,22 @@
+using Nagi.Core.Settings;
+
 namespace Nagi.Core.Playback;
 
 public partial class MusicPlaybackService
 {
     public ShuffleMode CurrentShuffleMode { get; private set; }
+
+    /// <summary>
+    ///     Sets the shuffle mode once the queue's own shuffle has been set, saving the shuffle setting and raising
+    ///     <see cref="ShuffleModeChanged" /> when either changed.
+    /// </summary>
+    private void SetShuffleMode(ShuffleMode mode, bool wasShuffled)
+    {
+        if (mode == CurrentShuffleMode && wasShuffled == IsShuffleEnabled) return;
+        CurrentShuffleMode = mode;
+        if (wasShuffled != IsShuffleEnabled) _settingsService.Set(CoreSettings.IsShuffleEnabled, IsShuffleEnabled);
+        ShuffleModeChanged?.Invoke();
+    }
 
     public async Task<bool> PlayMixAsync(IEnumerable<Guid> songIds, ShuffleMode mode, TimeSpan? duration = null,
         PlaybackContext? context = null, int avoidRecentDays = PlaybackLimits.DefaultAvoidRecentDays)
@@ -12,7 +26,7 @@ public partial class MusicPlaybackService
             throw new ArgumentOutOfRangeException(nameof(duration));
         if (avoidRecentDays is < 0 or > PlaybackLimits.MaxAvoidRecentDays) throw new ArgumentOutOfRangeException(nameof(avoidRecentDays));
 
-        var played = false;
+        var isEmpty = false;
         await RunPlaybackRequest(async request =>
         {
             var ids = songIds.Distinct().ToArray();
@@ -25,13 +39,11 @@ public partial class MusicPlaybackService
                 candidates.AddRange(transient);
                 return PlaybackMixBuilder.Build(candidates, mode, now, duration, avoidRecentDays);
             });
-            request.ThrowIfCancellationRequested();
-            if (order.Count == 0) return;
+            isEmpty = order.Count == 0;
+            if (isEmpty || request.IsCancellationRequested) return;
             await PlayInternalAsync(order, 0, true, context ?? _currentContext, request, order, mode);
-            request.ThrowIfCancellationRequested();
-            if (duration.HasValue) ScheduleStop(PlaybackStopMode.EndOfQueue);
-            played = true;
+            if (duration.HasValue && !request.IsCancellationRequested) ScheduleStop(PlaybackStopMode.EndOfQueue);
         });
-        return played;
+        return !isEmpty;
     }
 }

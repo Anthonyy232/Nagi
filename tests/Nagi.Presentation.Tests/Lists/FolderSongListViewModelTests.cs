@@ -48,25 +48,18 @@ public class FolderSongListViewModelTests
     }
 
     [Fact]
-    public async Task PlaySubfolder_LookupCompletesAfterDisposal_DoesNotStartPlayback()
+    public async Task PlaySubfolder_PlaysEverythingUnderIt()
     {
         var library = new LibraryFakes();
         var root = ConfigureRoot(library);
-        var folder = new Folder { Name = "Album", Path = @"C:\Music\Album" };
-        var pending = new TaskCompletionSource<List<Guid>>(TaskCreationOptions.RunContinuationsAsynchronously);
-        library.Reader.GetSongIdsAsync(new SongScope.DirectoryTree(root.Id, folder.Path), null, Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
-            .Returns(pending.Task);
+        var folder = new Folder { Name = "Album", Path = @"C:MusicAlbum" };
         var playback = Substitute.For<IMusicPlaybackService>();
         using var viewModel = CreateViewModel(library, playback);
         await viewModel.OpenAsync(new FolderSongViewNavigationParameter { Title = root.Name, FolderId = root.Id });
-        var playing = viewModel.PlaySubfolderCommand.ExecuteAsync(folder);
 
-        viewModel.Dispose();
-        pending.SetResult([Guid.NewGuid()]);
-        await playing.WaitAsync(TimeSpan.FromSeconds(5));
+        await viewModel.PlaySubfolderCommand.ExecuteAsync(folder);
 
-        await playback.DidNotReceive().PlayAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<int>(),
-            Arg.Any<bool?>(), Arg.Any<PlaybackContext?>());
+        await playback.Received(1).PlayScopeAsync(new SongScope.DirectoryTree(root.Id, folder.Path));
     }
 
     [Fact]

@@ -71,14 +71,6 @@ public sealed class ListeningService : IListeningService
 
         if (historyEntry is null) return;
 
-        // Guard against double-finalization races. Once a session is marked Finished,
-        // it must not be downgraded to Skipped or PausedAndAbandoned by a late fire-and-forget.
-        if (historyEntry.EndReason == PlaybackEndReason.Finished)
-        {
-            _logger.LogDebug("FinalizeListenSessionAsync: Session {Id} is already finalized as Finished. Skipping.", listenHistoryId);
-            return;
-        }
-
         var wasSkip = ListenRules.CountsAsSkip(historyEntry);
         historyEntry.Song.TotalListenTimeTicks += finalDuration.Ticks - historyEntry.ListenDurationTicks;
         historyEntry.ListenDurationTicks = finalDuration.Ticks;

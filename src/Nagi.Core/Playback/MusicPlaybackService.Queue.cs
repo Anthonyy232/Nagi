@@ -60,10 +60,8 @@ public partial class MusicPlaybackService
         CommitQueueChanges();
 
         if (CurrentTrack == null && !request.IsCancellationRequested)
-        {
-            _currentContext = new PlaybackContext(PlaybackContextType.Transient, null);
-            await PlayQueueItemAsync(songs[0].Id);
-        }
+            await RunPlaybackRequest(newRequest => PlayQueueItemInternalAsync(songs[0].Id, newRequest,
+                context: new PlaybackContext(PlaybackContextType.Transient, null)));
     }
 
     /// <summary>
@@ -193,16 +191,11 @@ public partial class MusicPlaybackService
         }
 
         var nextSongId = _queue.FindFromCurrent(id => id != songId, Wraps);
-        return RunPlaybackRequest(async request =>
-        {
-            _ = EndListenSession(PlaybackEndReason.Skipped);
-            // Playback carries on with the next song, so a sleep timer or "stop at queue end" still applies.
-            await StopInternalAsync(request, clearStopSchedule: !nextSongId.HasValue);
-            if (request.IsCancellationRequested) return;
-            RemoveQueuedTracks(songId);
-            if (nextSongId is { } next && _queue.Contains(next))
-                await PlayQueueItemInternalAsync(next, request);
-        });
+        RemoveQueuedTracks(songId);
+        if (nextSongId is { } next) return RunPlaybackRequest(request => PlayQueueItemInternalAsync(next, request));
+
+        _ = EndListenSession(PlaybackEndReason.Skipped);
+        return RunPlaybackRequest(StopInternalAsync);
     }
 
     private void RemoveQueuedTracks(Guid songId)
@@ -231,6 +224,6 @@ public partial class MusicPlaybackService
         _queue.Clear();
         _transientTracks.Clear();
         CurrentTrack = null;
-        CurrentShuffleMode = ShuffleMode.Random;
+        SetShuffleMode(ShuffleMode.Random, IsShuffleEnabled);
     }
 }

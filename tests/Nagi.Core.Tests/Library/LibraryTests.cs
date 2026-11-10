@@ -1055,7 +1055,6 @@ public partial class LibraryTests : IDisposable
         var finalDuration = TimeSpan.FromSeconds(150);
 
         await _library.Listening.FinalizeListenSessionAsync(listenHistory.Id, finalDuration, PlaybackEndReason.Finished);
-        await _library.Listening.FinalizeListenSessionAsync(listenHistory.Id, TimeSpan.FromSeconds(5), PlaybackEndReason.Skipped);
 
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         var updatedHistory = await assertContext.ListenHistory.FindAsync(listenHistory.Id);

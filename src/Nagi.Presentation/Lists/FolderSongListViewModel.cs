@@ -188,19 +188,10 @@ public partial class FolderSongListViewModel : DetailSongListViewModelBase<Folde
 
 
     [RelayCommand]
-    private Task PlaySubfolderAsync(Folder? folder)
-    {
-        if (_isDisposed || folder == null || _rootFolderId is not { } rootFolderId) return Task.CompletedTask;
-        var generation = CaptureSongContext();
-        return RunActionAsync(async () =>
-        {
-            var songIds = await _libraryReader.GetSongIdsAsync(
-                new SongScope.DirectoryTree(rootFolderId, folder.Path), null, SongSortOrder.TitleAsc, CancellationToken.None);
-
-            if (IsSongContextCurrent(generation) && songIds.Count > 0)
-                await _playbackService.PlayAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Folder, folder.Id));
-        });
-    }
+    private Task PlaySubfolderAsync(Folder? folder) =>
+        _isDisposed || folder == null || _rootFolderId is not { } rootFolderId
+            ? Task.CompletedTask
+            : RunActionAsync(() => _playbackService.PlayScopeAsync(new SongScope.DirectoryTree(rootFolderId, folder.Path)));
 
     public override int SelectedItemsCount => base.SelectedItemsCount + _selectedFolders.Count;
 

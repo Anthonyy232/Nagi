@@ -185,21 +185,11 @@ public class StatisticsService : IStatisticsService
     public async Task<IEnumerable<ContextStats>> GetPlaybackSourceDistributionAsync(TimeRange range, CancellationToken ct = default)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
+        var plays = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range).Where(ListenRules.CountsAsPlay);
 
-        var stats = await query.GroupBy(lh => lh.ContextType)
-            .Select(g => new
-            {
-                Type = g.Key,
-                Count = g.Count(),
-                DurationTicks = g.Sum(lh => lh.ListenDurationTicks)
-            }).ToListAsync(ct).ConfigureAwait(false);
-
-        return stats.Select(s => new ContextStats(
-            s.Type,
-            s.Count,
-            TimeSpan.FromTicks(s.DurationTicks)
-        ));
+        return await plays.GroupBy(listen => listen.ContextType)
+            .Select(group => new ContextStats(group.Key, group.Count()))
+            .ToListAsync(ct).ConfigureAwait(false);
     }
 
     private sealed class ScoredListen
