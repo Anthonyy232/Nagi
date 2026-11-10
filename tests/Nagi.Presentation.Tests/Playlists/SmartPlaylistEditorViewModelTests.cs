@@ -49,7 +49,6 @@ public class SmartPlaylistEditorViewModelTests : IDisposable
         _viewModel.Name.Should().Be("Long tracks");
         _viewModel.MatchLogicIndex.Should().Be(1);
         _viewModel.SelectedSortOption.Order.Should().Be(SongSortOrder.DurationDesc);
-        _viewModel.HasCoverImage.Should().BeTrue();
         _viewModel.Rules.Select(r => r.SelectedField.Field).Should().Equal(SmartPlaylistField.Title, SmartPlaylistField.Genre);
         _viewModel.HasNoRules.Should().BeFalse();
     }

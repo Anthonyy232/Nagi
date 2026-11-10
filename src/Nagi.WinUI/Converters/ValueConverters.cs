@@ -92,13 +92,9 @@ public class BooleanToVisibilityConverter : IValueConverter
 /// </summary>
 public class StringToVisibilityConverter : IValueConverter
 {
-    public bool Invert { get; set; }
-
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        var isVisible = !string.IsNullOrWhiteSpace(value as string);
-        if (Invert) isVisible = !isVisible;
-        return isVisible ? Visibility.Visible : Visibility.Collapsed;
+        return string.IsNullOrWhiteSpace(value as string) ? Visibility.Collapsed : Visibility.Visible;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)

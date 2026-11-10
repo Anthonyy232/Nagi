@@ -82,10 +82,8 @@ public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposabl
     [ObservableProperty] public partial SortOption SelectedSortOption { get; set; }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasCoverImage), nameof(CoverPreviewUri))]
+    [NotifyPropertyChangedFor(nameof(CoverPreviewUri))]
     public partial string? CoverImageUri { get; set; }
-
-    public bool HasCoverImage => !string.IsNullOrWhiteSpace(CoverImageUri);
 
     /// <summary>The chosen cover for display, which shows the saved cover as it is now.</summary>
     public string? CoverPreviewUri =>

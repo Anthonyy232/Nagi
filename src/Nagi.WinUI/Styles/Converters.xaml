@@ -18,7 +18,6 @@ to avoid duplicate declarations across pages and controls.
     <converters:BooleanToOpacityConverter x:Key="ToggleIconOpacityConverter" FalseValue="0.6" />
     <converters:GenreToGradientConverter x:Key="GenreToGradientConverter" />
     <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
-    <converters:StringToVisibilityConverter x:Key="InverseStringToVisibilityConverter" Invert="True" />
     <converters:VolumeToClipRectConverter x:Key="VolumeToClipRectConverter" />
     <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
 
