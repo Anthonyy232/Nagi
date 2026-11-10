@@ -1775,6 +1775,25 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         await _audioPlayer.DidNotReceive().LoadAsync(_testSongs[2]);
     }
 
+    [Fact]
+    public async Task PlaybackEnded_DuringARequestThatPlaysNothing_MovesOnOnceTheRequestCompletes()
+    {
+        _library.Listening.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(101L);
+        await _service.PlayAsync(Ids(_testSongs));
+        var matches = new TaskCompletionSource<List<Guid>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var playlist = Guid.NewGuid();
+        _smartPlaylists.GetMatchingSongIdsAsync(playlist, token: Arg.Any<CancellationToken>()).Returns(matches.Task);
+        var playing = _service.PlaySmartPlaylistAsync(playlist);
+
+        _audioPlayer.PlaybackEnded += Raise.Event<Action>();
+        matches.SetResult([]);
+        (await playing).Should().BeFalse();
+        await _service.FlushPendingFinalizationAsync();
+
+        _service.CurrentTrack.Should().BeSameAs(_testSongs[1]);
+        await _library.Listening.Received(1).FinalizeListenSessionAsync(101L, Arg.Any<TimeSpan>(), PlaybackEndReason.Finished);
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
