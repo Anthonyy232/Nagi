@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Lyrics;
-using Nagi.Presentation.Resources;
 using Nagi.WinUI.Dialogs;
 
 namespace Nagi.WinUI.Services.Implementations;
@@ -14,11 +13,7 @@ public partial class UIService
         if (!TryGetXamlRoot(out var xamlRoot)) return null;
 
         var viewModel = new LyricsEditorDialogViewModel(lyrics, canRemove);
-        var dialog = new LyricsEditorDialog(viewModel)
-        {
-            SecondaryButtonText = viewModel.CanRemove ? Strings.LyricsPage_EditLyrics_Remove : string.Empty,
-            XamlRoot = xamlRoot
-        };
+        var dialog = new LyricsEditorDialog(viewModel) { XamlRoot = xamlRoot };
         return await ShowDialogAsync(dialog) switch
         {
             ContentDialogResult.Primary => viewModel.Save(),

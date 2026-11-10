@@ -24,7 +24,7 @@
         <Button Margin="0,12,0,0"
                 HorizontalAlignment="Stretch"
                 Content="{x:Bind resources:Strings.PlaylistPage_CreateDialog_PickImage}"
-                Click="PickImageButton_Click"
+                Command="{x:Bind ViewModel.PickCoverImageCommand}"
                 Visibility="{x:Bind ViewModel.IsNewPlaylist}" />
     </StackPanel>
 </ContentDialog>

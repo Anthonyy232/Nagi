@@ -1,8 +1,10 @@
 using FluentAssertions;
 using Nagi.Core.Playback;
+using Nagi.Presentation.Common;
 using Nagi.Presentation.Lyrics;
 using Nagi.Presentation.Player;
 using Nagi.Presentation.Playlists;
+using NSubstitute;
 using Xunit;
 
 namespace Nagi.Presentation.Tests.Player;
@@ -39,7 +41,7 @@ public class DialogInputRuleTests
     [InlineData(" Mix ", false)]
     [InlineData("   ", false)]
     public void Rename_RequiresANewNonBlankName(string newName, bool expected) =>
-        new PlaylistNameDialogViewModel("Mix") { Name = newName }.CanAccept.Should().Be(expected);
+        new PlaylistNameDialogViewModel(Substitute.For<IUIService>(), "Mix") { Name = newName }.CanAccept.Should().Be(expected);
 
     [Theory]
     [InlineData("line one\r\nline two", false)]

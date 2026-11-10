@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Nagi.Presentation.Common;
+using Nagi.Presentation.Resources;
 
 namespace Nagi.Presentation.Lyrics;
 
@@ -14,14 +15,15 @@ public sealed partial class LyricsEditorDialogViewModel : ObservableObject
     {
         _savedLyrics = savedLyrics;
         Lyrics = savedLyrics;
-        CanRemove = canRemove;
+        RemoveButtonText = canRemove ? Strings.LyricsPage_EditLyrics_Remove : string.Empty;
     }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanSave))]
     public partial string Lyrics { get; set; }
 
-    public bool CanRemove { get; }
+    /// <summary>Empty when there are no saved lyrics to remove, which hides the button.</summary>
+    public string RemoveButtonText { get; }
 
     // Line endings don't count as a change, since a text box may convert them.
     public bool CanSave => !string.IsNullOrWhiteSpace(Lyrics) &&

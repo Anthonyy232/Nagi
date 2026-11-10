@@ -1,4 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Nagi.Core.Metadata;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
 
@@ -8,7 +10,7 @@ namespace Nagi.Presentation.Playlists;
 ///     The new playlist and rename playlist dialogs.
 /// </summary>
 /// <param name="currentName">The name of the playlist being renamed; <c>null</c> for a new playlist.</param>
-public sealed partial class PlaylistNameDialogViewModel(string? currentName = null) : ObservableObject
+public sealed partial class PlaylistNameDialogViewModel(IUIService uiService, string? currentName = null) : ObservableObject
 {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanAccept))]
@@ -28,4 +30,11 @@ public sealed partial class PlaylistNameDialogViewModel(string? currentName = nu
         : Strings.PlaylistPage_RenameDialog_RenameButton;
 
     public bool CanAccept => !string.IsNullOrWhiteSpace(Name) && (currentName is null || Name.Trim() != currentName);
+
+    [RelayCommand]
+    private async Task PickCoverImageAsync()
+    {
+        var file = await uiService.PickSingleFileAsync(FileExtensions.ImageFileExtensions);
+        if (!string.IsNullOrWhiteSpace(file)) CoverImagePath = file;
+    }
 }
