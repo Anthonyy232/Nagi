@@ -233,11 +233,8 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
         ListenBrainzSubmitPayload payload, CancellationToken cancellationToken)
     {
         var token = await _accounts.GetListenBrainzUserTokenAsync().ConfigureAwait(false);
-        if (string.IsNullOrEmpty(token))
-        {
-            _logger.LogWarning("Cannot submit to ListenBrainz; user token is not configured.");
-            return SubmissionOutcome.TransientFailure;
-        }
+        // Not signed in, which leaves this destination turned off whatever its settings say.
+        if (string.IsNullOrEmpty(token)) return SubmissionOutcome.TransientFailure;
 
         var baseUrl = ResolveBaseUrl();
         var url = $"{baseUrl}{SubmitListensPath}";

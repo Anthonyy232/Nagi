@@ -127,6 +127,19 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
         body.Payload[0].TrackMetadata.ReleaseName.Should().Be("Test Album");
     }
 
+    // Settings restored from a backup made on another computer come without the sign-in.
+    [Fact]
+    public async Task UpdateNowPlayingAsync_WithoutAToken_IsOffRatherThanAFailure()
+    {
+        SetToken(null);
+
+        await CreateService().UpdateNowPlayingAsync(CreateTestSong());
+
+        _httpMessageHandler.Requests.Should().BeEmpty();
+        _logger.ReceivedCalls().Where(call => call.GetMethodInfo().Name == nameof(ILogger.Log))
+            .Select(call => (LogLevel)call.GetArguments()[0]!).Should().OnlyContain(level => level < LogLevel.Warning);
+    }
+
     [Fact]
     public async Task UpdateNowPlayingAsync_UsesPlayingNowListenTypeAndOmitsListenedAt()
     {

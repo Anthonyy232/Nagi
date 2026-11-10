@@ -184,12 +184,6 @@ public class LastFmScrobblerService : IListenSubmitter
     private async Task<string?> GetSessionKeyAsync()
     {
         var sessionKey = (await _accounts.GetLastFmCredentialsAsync().ConfigureAwait(false))?.SessionKey;
-        if (string.IsNullOrEmpty(sessionKey))
-        {
-            _logger.LogError("Cannot perform Last.fm action; the session key is unavailable.");
-            return null;
-        }
-
-        return sessionKey;
+        return string.IsNullOrEmpty(sessionKey) ? null : sessionKey;
     }
 }

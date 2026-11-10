@@ -131,6 +131,18 @@ public class LastFmScrobblerServiceTests : IDisposable
         _capturedRequestParams.Should().NotBeNull();
         _capturedRequestParams.Should().BeEquivalentTo(expectedParams);
     }
+    // Settings restored from a backup made on another computer come without the sign-in.
+    [Fact]
+    public async Task ApiCall_WithoutASignIn_IsOffRatherThanAFailure()
+    {
+        await _scrobblerService.UpdateNowPlayingAsync(CreateTestSong());
+        await ScrobbleAsync(CreateTestSong(), DateTime.UtcNow);
+
+        _httpMessageHandler.Requests.Should().BeEmpty();
+        _logger.ReceivedCalls().Where(call => call.GetMethodInfo().Name == nameof(ILogger.Log))
+            .Select(call => (LogLevel)call.GetArguments()[0]!).Should().OnlyContain(level => level < LogLevel.Warning);
+    }
+
     [Theory]
     [InlineData(null, ApiSecret, SessionKey)]
     [InlineData(ApiKey, null, SessionKey)]
