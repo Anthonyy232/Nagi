@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Listening;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
+using Nagi.Core.Settings;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
@@ -96,6 +97,7 @@ public partial class InsightsViewModel : ObservableObject
         IMusicNavigationService navigationService,
         IListeningService listening,
         IUIService uiService,
+        ISettingsService settingsService,
         ILogger<InsightsViewModel> logger)
     {
         _statisticsService = statisticsService;
@@ -153,7 +155,7 @@ public partial class InsightsViewModel : ObservableObject
                     Command = GoToGenreCommand
                 }), logger);
         Categories = [Songs, Artists, Albums, Genres];
-        SeeAll = new InsightsSeeAllViewModel(BuildTimeRange, dispatcherService, logger);
+        SeeAll = new InsightsSeeAllViewModel(BuildTimeRange, settingsService, dispatcherService, logger);
     }
 
     public static IReadOnlyList<InsightsTimeRange> TimeRanges { get; } =

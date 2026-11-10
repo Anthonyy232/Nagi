@@ -220,7 +220,7 @@ public class PagedListViewModelTests
                 reloaded.TrySetResult();
         };
 
-        viewModel.PageSize = 25;
+        viewModel.PageSize.Selected = viewModel.PageSize.Options.Single(option => option.Value == 25);
         await reloaded.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
         viewModel.TotalPages.Should().Be(4);
