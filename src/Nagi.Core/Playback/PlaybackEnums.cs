@@ -1,4 +1,6 @@
-﻿namespace Nagi.Core.Playback;
+﻿using Nagi.Core.Library;
+
+namespace Nagi.Core.Playback;
 
 public enum PlaybackEndReason
 {
@@ -50,7 +52,20 @@ public enum PlaybackStopMode
     Timer
 }
 
-public record PlaybackContext(PlaybackContextType Type, Guid? ContextId);
+public record PlaybackContext(PlaybackContextType Type, Guid? ContextId)
+{
+    public static PlaybackContext Of(SongScope scope) => scope switch
+    {
+        SongScope.Album album => new(PlaybackContextType.Album, album.AlbumId),
+        SongScope.Artist artist => new(PlaybackContextType.Artist, artist.ArtistId),
+        SongScope.Genre genre => new(PlaybackContextType.Genre, genre.GenreId),
+        SongScope.Playlist playlist => new(PlaybackContextType.Playlist, playlist.PlaylistId),
+        SongScope.Folder folder => new(PlaybackContextType.Folder, folder.RootFolderId),
+        SongScope.Directory directory => new(PlaybackContextType.Folder, directory.RootFolderId),
+        SongScope.DirectoryTree tree => new(PlaybackContextType.Folder, tree.RootFolderId),
+        _ => new(PlaybackContextType.Library, null)
+    };
+}
 
 /// <summary>
 ///     The playback state shown by the operating system's media controls.

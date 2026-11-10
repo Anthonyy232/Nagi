@@ -319,25 +319,19 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         var isEmpty = false;
         await RunPlaybackRequest(async request =>
         {
-            var (sort, context) = PlaybackOf(scope);
-            var songIds = await _libraryReader.GetSongIdsAsync(scope, null, sort);
+            var songIds = await _libraryReader.GetSongIdsAsync(scope, null, PlayOrderOf(scope));
             isEmpty = songIds.Count == 0;
             if (!request.IsCancellationRequested)
-                await PlayInternalAsync(songIds, 0, startShuffled, context, request);
+                await PlayInternalAsync(songIds, 0, startShuffled, PlaybackContext.Of(scope), request);
         });
         return !isEmpty;
     }
 
-    private static (SongSortOrder Sort, PlaybackContext Context) PlaybackOf(SongScope scope) => scope switch
+    private static SongSortOrder PlayOrderOf(SongScope scope) => scope switch
     {
-        SongScope.Album album => (SongSortOrder.TrackNumberAsc, new(PlaybackContextType.Album, album.AlbumId)),
-        SongScope.Artist artist => (SongSortOrder.TitleAsc, new(PlaybackContextType.Artist, artist.ArtistId)),
-        SongScope.Genre genre => (SongSortOrder.TitleAsc, new(PlaybackContextType.Genre, genre.GenreId)),
-        SongScope.Playlist playlist => (SongSortOrder.PlaylistOrder, new(PlaybackContextType.Playlist, playlist.PlaylistId)),
-        SongScope.Folder folder => (SongSortOrder.TitleAsc, new(PlaybackContextType.Folder, folder.RootFolderId)),
-        SongScope.Directory directory => (SongSortOrder.TitleAsc, new(PlaybackContextType.Folder, directory.RootFolderId)),
-        SongScope.DirectoryTree tree => (SongSortOrder.TitleAsc, new(PlaybackContextType.Folder, tree.RootFolderId)),
-        _ => (SongSortOrder.TitleAsc, new(PlaybackContextType.Library, null))
+        SongScope.Album => SongSortOrder.TrackNumberAsc,
+        SongScope.Playlist => SongSortOrder.PlaylistOrder,
+        _ => SongSortOrder.TitleAsc
     };
 
     public async Task<bool> PlaySmartPlaylistAsync(Guid smartPlaylistId)
