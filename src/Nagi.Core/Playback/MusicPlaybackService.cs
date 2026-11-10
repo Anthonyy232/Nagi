@@ -392,9 +392,10 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     /// <summary>
     ///     Plays a song of the queue, or of <paramref name="replacement" />, which then replaces the queue. Nothing
     ///     changes until the song is ready to load, so a request superseded before then leaves playback as it was.
+    ///     <paramref name="context" /> becomes the context of a queue that isn't replaced.
     /// </summary>
     private async Task PlayQueueItemInternalAsync(Guid songId, CancellationToken request,
-        QueueReplacement? replacement = null)
+        QueueReplacement? replacement = null, PlaybackContext? context = null)
     {
         var queue = replacement?.Queue ?? _queue;
         // Songs deleted from disk can still be queued; give up after a run of them rather than walk the whole queue.
@@ -434,7 +435,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             return;
         }
 
-        var listenId = await StartListenAsync(song, replacement?.Context ?? _currentContext, request);
+        var listenId = await StartListenAsync(song, replacement?.Context ?? context ?? _currentContext, request);
         if (request.IsCancellationRequested) return;
         // Removing a song that isn't playing is no request, so the song can have left the queue meanwhile.
         if (!queue.Contains(song.Id))
@@ -446,6 +447,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         // One step, so listeners never see the new track with the old listen or queue position.
         queue.SetCurrent(song.Id);
         if (replacement is not null) ReplaceQueue(replacement);
+        else if (context is not null) _currentContext = context;
         _ = EndListenSession(PlaybackEndReason.Skipped);
         BeginListen(listenId);
         CurrentTrack = song;

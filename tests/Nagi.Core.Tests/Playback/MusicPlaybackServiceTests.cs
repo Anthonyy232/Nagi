@@ -376,6 +376,26 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task AddTransientFilesToQueueAsync_WhenItsPlaybackIsSuperseded_KeepsTheQueueContext()
+    {
+        const string path = "C:\\temp\\dropped.mp3";
+        _metadataService.ExtractMetadataAsync(path).Returns(new SongFileMetadata { Title = "Dropped" });
+        var album = new PlaybackContext(PlaybackContextType.Album, Guid.NewGuid());
+        await _service.PlayAsync(Ids(_testSongs), context: album);
+        await _service.StopAsync();
+        var opening = new TaskCompletionSource<Uri?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _musicServers.GetStreamUriAsync(Arg.Is<Song>(song => song.FilePath == path)).Returns(opening.Task);
+        var adding = _service.AddTransientFilesToQueueAsync([path]);
+
+        await _service.PlayQueueItemAsync(_testSongs[1].Id);
+        opening.SetResult(null);
+        await adding;
+
+        _service.CurrentTrack.Should().BeSameAs(_testSongs[1]);
+        await _library.Listening.Received(1).StartListenSessionAsync(_testSongs[1].Id, album);
+    }
+
+    [Fact]
     public async Task AddTransientFilesToQueueAsync_WithFolder_AddsItsAudioFilesInPathOrder()
     {
         const string folder = "C:\\drop";

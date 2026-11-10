@@ -60,10 +60,8 @@ public partial class MusicPlaybackService
         CommitQueueChanges();
 
         if (CurrentTrack == null && !request.IsCancellationRequested)
-        {
-            _currentContext = new PlaybackContext(PlaybackContextType.Transient, null);
-            await PlayQueueItemAsync(songs[0].Id);
-        }
+            await RunPlaybackRequest(newRequest => PlayQueueItemInternalAsync(songs[0].Id, newRequest,
+                context: new PlaybackContext(PlaybackContextType.Transient, null)));
     }
 
     /// <summary>
