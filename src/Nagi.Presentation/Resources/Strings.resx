@@ -679,6 +679,9 @@ Do you want to continue?</value>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Enable &amp; Scan</value>
   </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>Volume normalization starts with a scan of your library, which can't run while another library operation is in progress. Try again once it has finished.</value>
+  </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Preparing volume normalization scan…</value>
   </data>

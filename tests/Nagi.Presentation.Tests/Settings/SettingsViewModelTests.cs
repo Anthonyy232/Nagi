@@ -447,6 +447,21 @@ public class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
+    public async Task Normalization_StaysOffAndSaysWhyWhenAnotherLibraryOperationBlocksItsScan()
+    {
+        _ffmpeg.IsFFmpegInstalledAsync().Returns(true);
+        _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(true);
+        using var otherOperation = _operation.TryBegin("Rescanning");
+
+        _viewModel.Audio.IsVolumeNormalizationEnabled = true;
+
+        _viewModel.Audio.IsVolumeNormalizationEnabled.Should().BeFalse();
+        _settings.Get(CoreSettings.VolumeNormalization).Should().BeFalse();
+        await _replayGain.DidNotReceive().ScanLibraryAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>());
+        await _ui.Received(1).ShowMessageDialogAsync(Arg.Any<string>(), Strings.Settings_Dialog_VolumeNorm_Busy);
+    }
+
+    [Fact]
     public async Task Normalization_DisableSupersedesPendingEnableCheck()
     {
         var ffmpeg = new TaskCompletionSource<bool>();
