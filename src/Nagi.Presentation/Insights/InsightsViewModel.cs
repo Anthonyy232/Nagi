@@ -294,21 +294,16 @@ public partial class InsightsViewModel : ObservableObject
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
             Strings.InsightsPage_Reset_Confirm_Title,
             Strings.InsightsPage_Reset_Confirm_Message,
-            Strings.InsightsPage_Reset_Confirm_Button,
-            null);
+            Strings.InsightsPage_Reset_Confirm_Button);
 
         if (!confirmed) return;
 
-        try
+        await UserAction.RunAsync(async () =>
         {
             await _listening.ClearListenHistoryAsync();
             _logger.LogInformation("Listen history reset by user.");
             await LoadInsightsAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to reset listen history.");
-        }
+        }, _logger, _uiService);
     }
 
     internal async Task OnMetricChangedAsync(InsightsCategoryViewModel category)

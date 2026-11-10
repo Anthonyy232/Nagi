@@ -241,6 +241,23 @@ public class InsightsViewModelTests
         viewModel.SeeAll.PageSize.Selected!.Value.Should().Be(250);
     }
 
+    [Fact]
+    public async Task ResetListenHistory_WhenClearingFails_TellsTheUser()
+    {
+        var statistics = Substitute.For<IStatisticsService>();
+        var listening = Substitute.For<IListeningService>();
+        var ui = Substitute.For<IUIService>();
+        ui.ShowConfirmationDialogAsync(default!, default!, default, default, default).ReturnsForAnyArgs(true);
+        listening.ClearListenHistoryAsync().Returns(Task.FromException(new IOException("Database locked")));
+        var viewModel = new InsightsViewModel(statistics, new ImmediateDispatcher(), Substitute.For<IMusicNavigationService>(),
+            listening, ui, TestSettings.Create(), NullLogger<InsightsViewModel>.Instance);
+
+        await viewModel.ResetListenHistoryCommand.ExecuteAsync(null);
+
+        await ui.Received(1).ShowMessageDialogAsync(Arg.Any<string>(), Arg.Any<string>());
+        await statistics.DidNotReceiveWithAnyArgs().GetTotalListenTimeAsync(default!, default);
+    }
+
     private static void StubRankings(IStatisticsService statistics, int playedSongs)
     {
         statistics.GetTopSongsAsync(Arg.Any<TimeRange>(), Arg.Any<SortMetric>(), Arg.Any<int>(),
