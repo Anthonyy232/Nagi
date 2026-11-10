@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
@@ -171,7 +170,7 @@ public partial class App : Application
         }
         catch (Exception dialogEx)
         {
-            Debug.WriteLine($"Failed to show the crash report dialog or reset the app: {dialogEx}");
+            Log.Error(dialogEx, "Failed to show the crash report dialog or reset the app");
         }
         finally
         {
