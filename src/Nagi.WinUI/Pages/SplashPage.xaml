@@ -9,7 +9,6 @@
     Background="Transparent">
 
     <Page.Resources>
-        <!-- Logo entrance: scale up + fade in -->
         <Storyboard x:Name="LogoEntrance">
             <DoubleAnimationUsingKeyFrames
                 Storyboard.TargetName="LogoContainer"
@@ -43,7 +42,6 @@
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
 
-        <!-- App name: slide up + fade in, delayed -->
         <Storyboard x:Name="TitleEntrance">
             <DoubleAnimationUsingKeyFrames
                 Storyboard.TargetName="TitlePanel"
@@ -68,7 +66,6 @@
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
 
-        <!-- Spinner + status: fade in last -->
         <Storyboard x:Name="StatusEntrance">
             <DoubleAnimationUsingKeyFrames
                 Storyboard.TargetName="StatusPanel"

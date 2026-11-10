@@ -18,7 +18,6 @@ namespace Nagi.WinUI.Controls;
 /// </summary>
 public sealed class MiniPlayerWindow : Window
 {
-    // Constants for window appearance and behavior (in DIPs - device-independent pixels).
     private const int InitialWindowSizeDips = 350;
     private const int MinWindowSizeDips = 200;
     private const int MaxWindowSizeDips = 640;
