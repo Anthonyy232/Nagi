@@ -20,4 +20,6 @@ internal static class AppResourceKeys
 
     /// <summary>The path of the dictionary whose default theme resources are the accent overrides.</summary>
     public const string ColorsDictionaryPath = "/Styles/Colors.xaml";
+
+    public const string MediaOnImageSeekerSliderColorsUri = "ms-appx:///Styles/MediaOnImageSeekerSliderColors.xaml";
 }

@@ -25,18 +25,6 @@
         <Border x:Name="DragHandle" Background="Transparent" />
 
         <Grid x:Name="HoverControlsContainer" Opacity="0">
-            <Grid.Resources>
-                <StaticResource x:Key="SliderThumbBackground" ResourceKey="MediaOnImageAccentBrush" />
-                <StaticResource x:Key="SliderThumbBackgroundPointerOver" ResourceKey="MediaOnImageAccentBrush" />
-                <StaticResource x:Key="SliderThumbBackgroundPressed" ResourceKey="MediaOnImageAccentBrush" />
-                <StaticResource x:Key="SliderTrackValueFill" ResourceKey="MediaOnImageAccentBrush" />
-                <StaticResource x:Key="SliderTrackValueFillPointerOver" ResourceKey="MediaOnImageAccentBrush" />
-                <StaticResource x:Key="SliderTrackValueFillPressed" ResourceKey="MediaOnImageAccentBrush" />
-                <StaticResource x:Key="SliderTrackFill" ResourceKey="MediaOnImageControlTrackBrush" />
-                <StaticResource x:Key="SliderTrackFillPointerOver" ResourceKey="MediaOnImageControlTrackBrush" />
-                <StaticResource x:Key="SliderTrackFillPressed" ResourceKey="MediaOnImageControlTrackBrush" />
-            </Grid.Resources>
-
             <!--  Overlay for control readability  -->
             <Border Background="{StaticResource MediaOnImageControlsScrimBrush}" IsHitTestVisible="False" />
 
