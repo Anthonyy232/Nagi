@@ -243,6 +243,26 @@ public partial class LibraryTests
     }
 
     [Fact]
+    public async Task SyncServerFolder_StoresADownloadedCoverUnderTheWriteLock()
+    {
+        var folder = await AddServerAsync();
+        var client = ServerWith(ServerSong("s1", "One", coverArtId: "al-1"));
+        client.GetCoverArtAsync("al-1", Arg.Any<CancellationToken>()).Returns(new byte[] { 1, 2, 3 });
+        bool? lockHeldDuringSave = null;
+        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>()).Returns(_ =>
+        {
+            var probe = _library.WriteLock.WaitAsync(CancellationToken.None);
+            lockHeldDuringSave = !probe.IsCompleted;
+            probe.ContinueWith(_ => _library.WriteLock.Release(), TaskScheduler.Default);
+            return (@"C:\cache\albumart\cover.jpg", "light", "dark");
+        });
+
+        await _library.Servers.SyncAsync(folder.Id, client);
+
+        lockHeldDuringSave.Should().BeTrue();
+    }
+
+    [Fact]
     public async Task SyncServerFolder_AnnouncesTheSongsAndThenTheirCovers()
     {
         var folder = await AddServerAsync();

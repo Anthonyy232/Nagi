@@ -309,16 +309,25 @@ public sealed class ServerLibrarySync : IServerLibrarySync
         var image = await client.GetCoverArtAsync(coverArtId, cancellationToken).ConfigureAwait(false);
         if (image is null) return 0;
 
-        var (uri, lightSwatchId, darkSwatchId) = await _imageProcessor.SaveCoverArtAndExtractColorsAsync(image).ConfigureAwait(false);
-        if (uri is null) return 0;
+        // Covers are shared by content, so a scan deleting an unused cover could delete the one stored here.
+        await _writeLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var (uri, lightSwatchId, darkSwatchId) = await _imageProcessor.SaveCoverArtAndExtractColorsAsync(image).ConfigureAwait(false);
+            if (uri is null) return 0;
 
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
-        return await context.Songs.Where(s => s.FolderId == folderId && filePaths.Contains(s.FilePath))
-            .ExecuteUpdateAsync(setters => setters
-                .SetProperty(s => s.AlbumArtUriFromTrack, uri)
-                .SetProperty(s => s.LightSwatchId, lightSwatchId)
-                .SetProperty(s => s.DarkSwatchId, darkSwatchId)
-                .SetProperty(s => s.RemoteCoverArtId, coverArtId), cancellationToken).ConfigureAwait(false);
+            await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+            return await context.Songs.Where(s => s.FolderId == folderId && filePaths.Contains(s.FilePath))
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(s => s.AlbumArtUriFromTrack, uri)
+                    .SetProperty(s => s.LightSwatchId, lightSwatchId)
+                    .SetProperty(s => s.DarkSwatchId, darkSwatchId)
+                    .SetProperty(s => s.RemoteCoverArtId, coverArtId), cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _writeLock.Release();
+        }
     }
 
     private async Task<bool> IsMusicServerFolderAsync(Guid folderId, CancellationToken cancellationToken)
