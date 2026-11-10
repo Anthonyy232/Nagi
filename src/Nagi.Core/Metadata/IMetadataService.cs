@@ -3,9 +3,8 @@
 public interface IMetadataService
 {
     /// <param name="baseFolderPath">
-    ///     Optional. The root folder path for the library scan. When provided, the service will search
-    ///     for cover art files in the directory hierarchy up to (and including) this folder if no
-    ///     embedded art is found.
+    ///     The root folder of the library scan. When given, a cover art file in the song's folder or a parent
+    ///     folder, up to and including this one, is used before embedded art.
     /// </param>
     /// <param name="includeMediaAssets">Whether to process cover art and synchronized lyrics.</param>
     /// <returns>
