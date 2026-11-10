@@ -91,15 +91,17 @@ public class LastFmMetadataServiceTests : IDisposable
     }
 
     [Theory]
-    [InlineData(HttpStatusCode.BadRequest)]
-    [InlineData(HttpStatusCode.OK)]
-    public async Task GetArtistInfoAsync_WhenApiKeyIsInvalid_RefreshesKeyAndRetriesSuccessfully(HttpStatusCode statusCode)
+    [InlineData(HttpStatusCode.BadRequest, 10)]
+    [InlineData(HttpStatusCode.OK, 10)]
+    [InlineData(HttpStatusCode.OK, 26)]
+    public async Task GetArtistInfoAsync_WhenApiKeyIsInvalidOrSuspended_RefreshesKeyAndRetriesSuccessfully(HttpStatusCode statusCode,
+        int errorCode)
     {
         SetupApiKey();
         _apiKeyService.RefreshApiKeyAsync("lastfm", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<string?>(RefreshedApiKey));
 
-        var errorResponse = CreateErrorResponse(10, "Invalid API Key");
+        var errorResponse = CreateErrorResponse(errorCode, "Invalid API Key");
         var successResponse = CreateValidArtistResponse("Bio", "http://url.jpg", "http://url.jpg");
 
         var responseQueue = new Queue<HttpResponseMessage>(new[]

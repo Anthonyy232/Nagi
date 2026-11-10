@@ -18,9 +18,6 @@ internal readonly record struct LastFmReply(HttpResponseMessage Response, string
 /// </summary>
 internal sealed class LastFmSignedClient
 {
-    // Last.fm's error codes for an invalid API key, an invalid signature and a suspended API key.
-    private static readonly HashSet<int> KeyErrorCodes = [10, 13, 26];
-
     private readonly HttpClient _httpClient;
     private readonly ProviderPipelineProvider _pipelines;
     private readonly IApiKeyService _apiKeys;
@@ -61,7 +58,7 @@ internal sealed class LastFmSignedClient
                 async (response, ct) =>
                 {
                     var body = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
-                    return retry && ErrorCode(body) is { } code && KeyErrorCodes.Contains(code)
+                    return retry && ErrorCode(body) is { } code && LastFmApiHelper.IsKeyError(code)
                         ? (fallback, true)
                         : (read(new LastFmReply(response, body, current.ApiKey)), false);
                 },

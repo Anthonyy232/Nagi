@@ -8,7 +8,6 @@ namespace Nagi.Core.OnlineProviders;
 public class LastFmMetadataService : ILastFmMetadataService
 {
     private const int NotFoundErrorCode = 6;
-    private const int InvalidApiKeyErrorCode = 10;
 
     // Last.fm's placeholder star image, returned for artists without images.
     private const string PlaceholderImageHash = "2a96cbd8b46e442fc41c2b86b821562f";
@@ -78,7 +77,7 @@ public class LastFmMetadataService : ILastFmMetadataService
             {
                 null => BodyStatus.Ok,
                 NotFoundErrorCode => BodyStatus.NotFound,
-                InvalidApiKeyErrorCode => BodyStatus.KeyRejected,
+                { } code when LastFmApiHelper.IsKeyError(code) => BodyStatus.KeyRejected,
                 _ => BodyStatus.Failed
             });
 
