@@ -39,7 +39,7 @@ public partial class AlbumViewViewModel : DetailSongListViewModelBase<AlbumViewN
         : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger, SortOrders, AppSettings.AlbumViewSortOrder)
     {
         PageTitle = Strings.AlbumView_DefaultAlbumTitle;
-        ArtistName = Strings.AlbumView_DefaultArtistName;
+        ArtistName = Strings.Generic_DefaultArtistName;
         AlbumDetailsText = string.Empty;
     }
 

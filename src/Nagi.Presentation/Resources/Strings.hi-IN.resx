@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>एल्बम</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>कलाकार</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>कलाकार नहीं मिला</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>कलाकार लोड करने में त्रुटि</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>कलाकार</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -803,9 +800,6 @@
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>सीक करें</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>आगे क्या</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>क्यू ख़ाली करें</value>

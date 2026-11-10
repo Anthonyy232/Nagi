@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>อัลบั้ม</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>ศิลปิน</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>ไม่พบศิลปิน</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>ข้อผิดพลาดในการโหลดศิลปิน</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>ศิลปิน</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -803,9 +800,6 @@
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>ตำแหน่งการเล่น</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>กำลังจะเล่น</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>ล้างคิว</value>

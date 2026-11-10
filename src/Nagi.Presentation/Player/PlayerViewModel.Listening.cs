@@ -28,10 +28,10 @@ public partial class PlayerViewModel
     [NotifyPropertyChangedFor(nameof(ListeningPaneTitle), nameof(ListeningPaneToggleText), nameof(ListeningPaneToggleIcon))]
     public partial bool IsHistoryVisible { get; set; }
 
-    public string ListeningPaneTitle => IsHistoryVisible ? Strings.Listening_RecentlyPlayed : Strings.QueueFlyout_Title;
+    public string ListeningPaneTitle => IsHistoryVisible ? Strings.Listening_RecentlyPlayed : Strings.Player_UpNextHeader;
 
     /// <summary>Names the pane the toggle switches to.</summary>
-    public string ListeningPaneToggleText => IsHistoryVisible ? Strings.QueueFlyout_Title : Strings.Listening_RecentlyPlayed;
+    public string ListeningPaneToggleText => IsHistoryVisible ? Strings.Player_UpNextHeader : Strings.Listening_RecentlyPlayed;
 
     public AppIcon ListeningPaneToggleIcon => IsHistoryVisible ? AppIcon.Queue : AppIcon.History;
 

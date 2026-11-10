@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>앨범</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>아티스트</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>아티스트를 찾을 수 없음</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>아티스트 로드 오류</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>아티스트</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -803,9 +800,6 @@
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>재생 위치</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>다음 재생</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>대기열 비우기</value>

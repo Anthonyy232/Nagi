@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>Album</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>Artista</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Artista non trovato</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>Errore durante il caricamento dell'artista</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>Artista</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -803,9 +800,6 @@ Vuoi continuare?</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Posizione di riproduzione</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>Prossimi brani</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>Svuota coda</value>

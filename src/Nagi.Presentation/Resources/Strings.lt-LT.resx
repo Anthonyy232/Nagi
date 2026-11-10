@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>Albumas</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>Atlikėjas</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Atlikėjas nerastas</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>Klaida įkeliant atlikėją</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>Atlikėjas</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -803,9 +800,6 @@ Ar norite tęsti?</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Atkūrimo padėtis</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>Kitas eilėje</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>Išvalyti eilę</value>

@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>ஆல்பம்</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>கலைஞர்</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>கலைஞர் காணப்படவில்லை</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>கலைஞரை ஏற்றுவதில் பிழை</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>கலைஞர்</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -803,9 +800,6 @@
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>இயக்க நிலையை நகர்த்து</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>அடுத்து வருபவை</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>வரிசையைக் காலி செய்</value>

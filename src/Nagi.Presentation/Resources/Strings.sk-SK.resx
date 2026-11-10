@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>Album</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>Interpret</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Interpret nenájdený</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>Chyba pri načítaní interpreta</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>Interpret</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -803,9 +800,6 @@ Chcete pokračovať?</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Pozícia prehrávania</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>Ďalej na rade</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>Vymazať rad</value>

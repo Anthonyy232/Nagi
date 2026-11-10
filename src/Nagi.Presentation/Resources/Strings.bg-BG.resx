@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>Албум</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>Изпълнител</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Изпълнителят не е намерен</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>Грешка при зареждане на изпълнител</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>Изпълнител</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -803,9 +800,6 @@
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Позиция на възпроизвеждане</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>Следващи песни</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>Изчистване на опашката</value>

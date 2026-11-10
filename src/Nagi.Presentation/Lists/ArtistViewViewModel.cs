@@ -59,7 +59,7 @@ public partial class ArtistViewViewModel : DetailSongListViewModelBase<ArtistVie
         : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger, SortOrders, AppSettings.ArtistViewSortOrder)
     {
         _artwork = artwork;
-        PageTitle = Strings.ArtistView_DefaultArtistName;
+        PageTitle = Strings.Generic_DefaultArtistName;
         ArtistBio = Strings.Status_Loading;
         Albums.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasAlbums));
         _libraryNotifier.ArtistImagesChanged += OnArtistImagesChanged;

@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>Άλμπουμ</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>Καλλιτέχνης</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Ο καλλιτέχνης δεν βρέθηκε</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>Σφάλμα φόρτωσης καλλιτέχνη</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>Καλλιτέχνης</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -803,9 +800,6 @@
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Θέση αναπαραγωγής</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>Επόμενο</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>Εκκαθάριση ουράς</value>
