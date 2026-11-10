@@ -162,7 +162,7 @@
                             ToolTipService.ToolTip="{x:Bind ViewModel.ShuffleButtonToolTip, Mode=OneWay}"
                             AutomationProperties.Name="{x:Bind ViewModel.ShuffleButtonToolTip, Mode=OneWay}">
                         <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                  Glyph=""
+                                  Glyph="&#xE8B1;"
                                   Opacity="{x:Bind ViewModel.IsShuffleEnabled, Mode=OneWay, Converter={StaticResource ToggleIconOpacityConverter}}" />
                     </Button>
                     <Button x:Name="PreviousButton"

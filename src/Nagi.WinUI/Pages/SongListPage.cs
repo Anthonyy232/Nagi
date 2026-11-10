@@ -8,8 +8,8 @@ using Nagi.Presentation.Lists;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Player;
 using Nagi.WinUI.Controls;
+using Nagi.WinUI.Converters;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Styles;
 
 namespace Nagi.WinUI.Pages;
 
@@ -95,7 +95,7 @@ public abstract class SongListPage : ViewModelPage
         {
             Source = viewModel,
             Path = new PropertyPath(nameof(SongListViewModelBase.ShowsColumnHeader)),
-            Converter = (IValueConverter)Application.Current.Resources[AppResourceKeys.BooleanToVisibilityConverter]
+            Converter = new BooleanToVisibilityConverter()
         });
         return header;
     }
