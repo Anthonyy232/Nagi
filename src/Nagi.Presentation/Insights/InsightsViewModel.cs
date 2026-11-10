@@ -213,9 +213,6 @@ public partial class InsightsViewModel : ObservableObject
     [ObservableProperty]
     public partial ObservableRangeCollection<SourceSegment> SourceSegments { get; set; } = new();
 
-    /// <summary>
-    ///     Loads all insights data for the selected time range.
-    /// </summary>
     public async Task LoadInsightsAsync()
     {
         var newCts = new CancellationTokenSource();

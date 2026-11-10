@@ -14,9 +14,6 @@ using Nagi.Presentation.Theme;
 
 namespace Nagi.Presentation;
 
-/// <summary>
-///     Registers the view models and the app services every UI head shares.
-/// </summary>
 public static class PresentationServiceRegistration
 {
     /// <summary>

@@ -13,11 +13,6 @@ using SixLabors.ImageSharp.Processing;
 
 namespace Nagi.Core.Artwork;
 
-/// <summary>
-///     An image processor implementation using ImageSharp for resizing and color extraction.
-///     Uses content-based hashing to deduplicate identical images across multiple songs,
-///     and resizes large images to reduce disk usage.
-/// </summary>
 public class ImageSharpProcessor : IImageProcessor
 {
     /// <summary>

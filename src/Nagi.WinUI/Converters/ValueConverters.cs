@@ -88,7 +88,7 @@ public class BooleanToVisibilityConverter : IValueConverter
 }
 
 /// <summary>
-///     Converts a string to Visibility. Visible if the string is not null or whitespace.
+///     Visible if the string is not null or whitespace.
 /// </summary>
 public class StringToVisibilityConverter : IValueConverter
 {
@@ -104,7 +104,7 @@ public class StringToVisibilityConverter : IValueConverter
 }
 
 /// <summary>
-///     Converts a collection count (int) to Visibility. Visible if count > 0.
+///     Visible if the count is above zero.
 /// </summary>
 public class CollectionCountToVisibilityConverter : IValueConverter
 {

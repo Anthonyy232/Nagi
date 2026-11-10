@@ -2,10 +2,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Nagi.Core.Library;
 
-/// <summary>
-///     Join entity for the many-to-many relationship between Songs and Artists.
-///     Includes an Order property to preserve the sequence of artists (e.g., "Artist A & Artist B").
-/// </summary>
 public class SongArtist
 {
     public Guid SongId { get; set; }
