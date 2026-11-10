@@ -27,10 +27,16 @@ internal sealed class TransientTrackCache
         return false;
     }
 
-    public void Register(Song song)
+    /// <returns>
+    ///     The song already kept for the file, as another add may have read the same file meanwhile, or
+    ///     <paramref name="song" />, which is kept from now on.
+    /// </returns>
+    public Song GetOrAdd(Song song)
     {
+        if (TryGetByPath(song.FilePath, out var existing)) return existing;
         _tracks[song.Id] = song;
         _idsByPath[song.FilePath] = song.Id;
+        return song;
     }
 
     public void RetainOnly(IReadOnlySet<Guid> retainedIds)

@@ -167,8 +167,8 @@ public class PlaybackQueueTests
         var cache = new TransientTrackCache();
         var kept = new Song { FilePath = @"C:\Music\Kept.mp3" };
         var dropped = new Song { FilePath = @"C:\Music\Dropped.mp3" };
-        cache.Register(kept);
-        cache.Register(dropped);
+        cache.GetOrAdd(kept);
+        cache.GetOrAdd(dropped);
 
         cache.RetainOnly(new HashSet<Guid> { kept.Id });
 

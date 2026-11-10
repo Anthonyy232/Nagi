@@ -20,9 +20,9 @@ public partial class MusicPlaybackService
     public Task PlayTransientFileAsync(string filePath) => RunPlaybackRequest(async request =>
     {
         _logger.LogDebug("Playing file: {FilePath}", filePath);
-        var songs = await ResolveFilesAsync([filePath], request);
-        if (songs is not null)
-            await PlayInternalAsync(songs.Select(song => song.Id), 0, null,
+        var files = await ResolveFilesAsync([filePath], request);
+        if (files is not null)
+            await PlayInternalAsync(KeepTransientSongs(files).Select(song => song.Id), 0, null,
                 new PlaybackContext(PlaybackContextType.Transient, null), request);
     });
 
@@ -54,8 +54,9 @@ public partial class MusicPlaybackService
             : ExpandToAudioFiles(requested);
         if (paths.Count == 0) return;
 
-        var songs = await ResolveFilesAsync(paths, queueEdit);
-        if (songs is null) return;
+        var files = await ResolveFilesAsync(paths, queueEdit);
+        if (files is null) return;
+        var songs = KeepTransientSongs(files);
         _queue.Add(songs.Select(song => song.Id));
         CommitQueueChanges();
 
@@ -64,19 +65,23 @@ public partial class MusicPlaybackService
                 context: new PlaybackContext(PlaybackContextType.Transient, null)));
     }
 
+    // Called in the step that queues the songs: any queue change in between drops songs that aren't queued.
+    private List<Song> KeepTransientSongs(List<(Song Song, bool IsInLibrary)> files) =>
+        files.Select(file => file.IsInLibrary ? file.Song : _transientTracks.GetOrAdd(file.Song)).ToList();
+
     /// <summary>
     ///     A file in the library plays as its library song, so its listens are recorded; any other file gets a song
     ///     built from its tags, kept only while it is queued.
     /// </summary>
     /// <returns>The songs, or null when cancelled along the way.</returns>
-    private async Task<List<Song>?> ResolveFilesAsync(IReadOnlyList<string> paths, CancellationToken cancellationToken)
+    private async Task<List<(Song Song, bool IsInLibrary)>?> ResolveFilesAsync(IReadOnlyList<string> paths, CancellationToken cancellationToken)
     {
-        var songs = new List<Song>(paths.Count);
+        var songs = new List<(Song, bool)>(paths.Count);
         foreach (var path in paths)
         {
             if (_transientTracks.TryGetByPath(path, out var knownTransient))
             {
-                songs.Add(knownTransient);
+                songs.Add((knownTransient, false));
                 continue;
             }
 
@@ -84,16 +89,13 @@ public partial class MusicPlaybackService
             if (cancellationToken.IsCancellationRequested) return null;
             if (librarySong != null)
             {
-                songs.Add(librarySong);
+                songs.Add((librarySong, true));
                 continue;
             }
 
             var transientSong = await CreateTransientSongAsync(path);
             if (cancellationToken.IsCancellationRequested) return null;
-            // Another add may have resolved the same path while metadata was loading.
-            if (_transientTracks.TryGetByPath(path, out var existing)) transientSong = existing;
-            else _transientTracks.Register(transientSong);
-            songs.Add(transientSong);
+            songs.Add((transientSong, false));
         }
         return songs;
     }

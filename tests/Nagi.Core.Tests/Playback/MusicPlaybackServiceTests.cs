@@ -1965,6 +1965,26 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task AddTransientFilesToQueueAsync_WhenTheQueueChangesWhileFilesAreRead_KeepsTheFilesAlreadyRead()
+    {
+        const string firstPath = "C:\\temp\\first.mp3";
+        const string secondPath = "C:\\temp\\second.mp3";
+        var release = new TaskCompletionSource<SongFileMetadata>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _metadataService.ExtractMetadataAsync(firstPath).Returns(Extracted(new SongFileMetadata { Title = "First" }));
+        _metadataService.ExtractMetadataAsync(secondPath).Returns(release.Task);
+        await _service.PlayAsync(Ids(_testSongs.Take(2)));
+        var adding = _service.AddTransientFilesToQueueAsync([firstPath, secondPath]);
+
+        await _service.AddRangeToQueueAsync([_testSongs[2].Id]);
+        release.SetResult(Extracted(new SongFileMetadata { Title = "Second" }));
+        await adding;
+
+        var addedIds = _service.PlayOrder.TakeLast(2).ToList();
+        var songs = await _service.GetQueueSongsAsync(addedIds);
+        addedIds.Select(id => songs.GetValueOrDefault(id)?.Title).Should().Equal("First", "Second");
+    }
+
+    [Fact]
     public async Task AddTransientFilesToQueueAsync_WithConcurrentSamePath_AddsOneTrack()
     {
         const string path = "C:\\temp\\same.mp3";
