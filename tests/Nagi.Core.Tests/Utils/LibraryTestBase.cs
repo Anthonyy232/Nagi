@@ -12,7 +12,7 @@ using NSubstitute;
 namespace Nagi.Core.Tests.Utils;
 
 /// <summary>
-///     The library services over an in-memory test database, with substitutes for everything outside the library.
+///     The library services over a test database, with substitutes for everything outside the library.
 /// </summary>
 public abstract class LibraryTestBase : IDisposable
 {
@@ -38,7 +38,7 @@ public abstract class LibraryTestBase : IDisposable
     protected readonly IImageProcessor _imageProcessor;
     private readonly ProviderPipelineProvider _pipelines;
 
-    protected LibraryTestBase()
+    protected LibraryTestBase(bool useFileDatabase = false)
     {
         _fileSystem = Substitute.For<IFileSystemService>();
         _fileSystem.NormalizePath(Arg.Any<string>()).Returns(call => PathCanonicalizer.Normalize(call.Arg<string>()));
@@ -54,7 +54,7 @@ public abstract class LibraryTestBase : IDisposable
         _imageProcessor = Substitute.For<IImageProcessor>();
         _httpMessageHandler = new TestHttpMessageHandler();
 
-        _dbHelper = new DbContextFactoryTestHelper();
+        _dbHelper = new DbContextFactoryTestHelper(useFileDatabase);
 
         var httpClient = new HttpClient(_httpMessageHandler);
         _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);

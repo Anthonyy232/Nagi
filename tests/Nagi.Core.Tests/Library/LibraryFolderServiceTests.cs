@@ -481,61 +481,6 @@ public class LibraryFolderServiceTests : LibraryTestBase
         updatedSong!.LrcFilePath.Should().Be(lyricsPath);
     }
 
-    [Fact]
-    public async Task RescanFolderForMusicAsync_SupersedingScansWaitForActiveWorkAndApplyOnlyLatest()
-    {
-        using var database = new DbContextFactoryTestHelper(useFileDatabase: true);
-        using var library = CreateLibrary(database);
-        var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\Concurrent", Name = "Concurrent" };
-        await using (var context = database.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(folder);
-            await context.SaveChangesAsync();
-        }
-
-        _fileSystem.DirectoryExists(folder.Path).Returns(true);
-        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, Arg.Any<string>(), Arg.Any<SearchOption>())
-            .Returns(new[] { ("C:\\Music\\Concurrent\\song1.mp3", DateTime.UtcNow) });
-
-        var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var metadata = new TaskCompletionSource<SongFileMetadata>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _metadataService.ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>()).Returns(_ =>
-        {
-            started.TrySetResult();
-            return metadata.Task;
-        });
-
-        var first = library.Folders.RescanFolderForMusicAsync(folder.Id);
-        await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
-        var second = library.Folders.RescanFolderForMusicAsync(folder.Id);
-        var third = library.Folders.RescanFolderForMusicAsync(folder.Id);
-        try
-        {
-            third.IsCompleted.Should().BeFalse();
-        }
-        finally
-        {
-            metadata.TrySetResult(new SongFileMetadata
-            {
-                FilePath = "C:\\Music\\Concurrent\\song1.mp3",
-                Title = "Concurrent Song",
-                Artists = new List<string> { "Artist" }
-            });
-        }
-
-        (await Task.WhenAll(first, second, third).WaitAsync(TimeSpan.FromSeconds(5)))
-            .Should().Equal(false, false, true);
-        await _metadataService.Received(2).ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>());
-
-        await using (var assertContext = database.ContextFactory.CreateDbContext())
-        {
-            var songs = await assertContext.Songs.Where(s => s.FolderId == folder.Id).ToListAsync();
-
-            songs.Should().HaveCount(1);
-            songs[0].Title.Should().Be("Concurrent Song");
-        }
-    }
-
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -946,5 +891,268 @@ public class LibraryFolderServiceTests : LibraryTestBase
         _fileSystem.Received(1).DeleteFile(orphanedCover);
         _fileSystem.Received(1).DeleteFile(staleAlbumCover);
         _fileSystem.DidNotReceive().DeleteFile(sharedCover);
+    }
+
+    [Fact]
+    public async Task RescanFolderForMusicAsync_WithChangedArtists_UpdatesRelationshipsAndCleansUpOrphans()
+    {
+        var folderId = Guid.NewGuid();
+        var folder = new Folder { Id = folderId, Path = "C:\\Music\\Scan", Name = "Scan" };
+
+        var mainArtist = new Artist { Name = "Main Artist" };
+        var legacyArtist = new Artist { Name = "Legacy Artist" };
+
+        var album = new Album { Title = "Test Album" };
+        album.AlbumArtists.Add(new AlbumArtist { Artist = mainArtist, Order = 0 });
+
+        var song = new Song
+        {
+            Title = "Test Song",
+            FilePath = "C:\\Music\\Scan\\song.mp3",
+            DirectoryPath = "C:\\Music\\Scan",
+            FolderId = folderId,
+            Album = album,
+            FileModifiedDate = DateTime.UtcNow.AddDays(-1)
+        };
+        song.SongArtists.Add(new SongArtist { Artist = mainArtist, Order = 0 });
+        song.SongArtists.Add(new SongArtist { Artist = legacyArtist, Order = 1 });
+
+        album.SyncDenormalizedFields();
+        song.SyncDenormalizedFields();
+
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Artists.AddRange(mainArtist, legacyArtist);
+            context.Albums.Add(album);
+            context.Songs.Add(song);
+            await context.SaveChangesAsync();
+        }
+
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(new[] { ("C:\\Music\\Scan\\song.mp3", DateTime.UtcNow) });
+
+        var collaboratorName = "Collaborator";
+        _metadataService.ExtractMetadataAsync("C:\\Music\\Scan\\song.mp3", Arg.Any<string?>())
+            .Returns(new SongFileMetadata
+            {
+                FilePath = "C:\\Music\\Scan\\song.mp3",
+                Title = "Test Song",
+                Album = "Test Album",
+                Artists = new List<string> { "Main Artist", collaboratorName },
+                AlbumArtists = new List<string> { "Main Artist", collaboratorName },
+                FileModifiedDate = DateTime.UtcNow
+            });
+
+        var result = await _library.Folders.RescanFolderForMusicAsync(folderId);
+
+        result.Should().BeTrue();
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            var dbAlbum = await context.Albums
+                .Include(a => a.AlbumArtists)
+                .ThenInclude(aa => aa.Artist)
+                .FirstOrDefaultAsync(a => a.Title == "Test Album");
+
+            dbAlbum.Should().NotBeNull();
+            dbAlbum!.Id.Should().Be(album.Id);
+            dbAlbum.AlbumArtists.Should().HaveCount(2);
+            dbAlbum.AlbumArtists.OrderBy(aa => aa.Order).Select(aa => aa.Artist.Name)
+                .Should().ContainInOrder("Main Artist", "Collaborator");
+            dbAlbum.ArtistName.Should().Be("Main Artist & Collaborator");
+
+            var dbSong = await context.Songs
+                .Include(s => s.SongArtists)
+                .ThenInclude(sa => sa.Artist)
+                .FirstOrDefaultAsync(s => s.FilePath == "C:\\Music\\Scan\\song.mp3");
+
+            dbSong.Should().NotBeNull();
+            dbSong.SongArtists.Should().HaveCount(2);
+            dbSong.SongArtists.OrderBy(sa => sa.Order).Select(sa => sa.Artist.Name)
+                .Should().ContainInOrder("Main Artist", "Collaborator");
+            dbSong.ArtistName.Should().Be("Main Artist & Collaborator");
+
+            var legacyArtistFromDb = await context.Artists.FirstOrDefaultAsync(a => a.Name == "Legacy Artist");
+            legacyArtistFromDb.Should().BeNull("Legacy Artist should be deleted because it is no longer referenced");
+
+            var collaboratorFromDb = await context.Artists.FirstOrDefaultAsync(a => a.Name == "Collaborator");
+            collaboratorFromDb.Should().NotBeNull();
+        }
+    }
+
+    [Fact]
+    public async Task ForceRescanMetadataAsync_PreservesMediaAssetsWhileUpdatingGenres()
+    {
+        var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\Genres", Name = "Genres" };
+        var artist = new Artist { Name = "Artist" };
+        var existingGenre = new Genre { Name = "Electronic" };
+        var oldGenre = new Genre { Name = "Electronic\\Techno" };
+        var filePath = "C:\\Music\\Genres\\song.mp3";
+        var modified = DateTime.UtcNow.AddDays(-1);
+        var song = new Song
+        {
+            Title = "Song",
+            FilePath = filePath,
+            DirectoryPath = folder.Path,
+            FolderId = folder.Id,
+            FileModifiedDate = modified,
+            AlbumArtUriFromTrack = "cached-cover.jpg",
+            LightSwatchId = "light",
+            DarkSwatchId = "dark",
+            LrcFilePath = "cached-lyrics.lrc"
+        };
+        song.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+        song.Genres.Add(existingGenre);
+        song.Genres.Add(oldGenre);
+        song.SyncDenormalizedFields();
+
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Songs.Add(song);
+            await context.SaveChangesAsync();
+        }
+
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.FileExists("cached-cover.jpg").Returns(true);
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(new[] { (filePath, modified) });
+        _metadataService.ExtractMetadataAsync(filePath, folder.Path, false)
+            .Returns(new SongFileMetadata
+            {
+                FilePath = filePath,
+                FileModifiedDate = modified,
+                Title = "Song",
+                Artists = ["Artist"],
+                AlbumArtists = ["Artist"],
+                Genres = ["Electronic", "Techno"]
+            });
+
+        var result = await _library.Folders.ForceRescanMetadataAsync().WaitAsync(TimeSpan.FromSeconds(5));
+
+        result.Should().BeTrue();
+        await _metadataService.Received(1).ExtractMetadataAsync(filePath, folder.Path, false);
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        var updated = await assertContext.Songs.Include(s => s.Genres).SingleAsync();
+        updated.Genres.Select(g => g.Name).Should().BeEquivalentTo("Electronic", "Techno");
+        updated.AlbumArtUriFromTrack.Should().Be("cached-cover.jpg");
+        updated.LightSwatchId.Should().Be("light");
+        updated.DarkSwatchId.Should().Be("dark");
+        updated.LrcFilePath.Should().Be("cached-lyrics.lrc");
+    }
+
+    [Fact]
+    public async Task ForceRescanMetadataAsync_ReadsArtForFilesThatChanged()
+    {
+        var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\Changed", Name = "Changed" };
+        var filePath = "C:\\Music\\Changed\\song.mp3";
+        var modified = DateTime.UtcNow.AddDays(-1);
+        var song = new Song
+        {
+            Title = "Song",
+            FilePath = filePath,
+            DirectoryPath = folder.Path,
+            FolderId = folder.Id,
+            FileModifiedDate = modified,
+            AlbumArtUriFromTrack = "old-cover.jpg"
+        };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Songs.Add(song);
+            await context.SaveChangesAsync();
+        }
+
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(new[] { (filePath, modified.AddHours(1)) });
+        _metadataService.ExtractMetadataAsync(filePath, folder.Path, true)
+            .Returns(new SongFileMetadata
+            {
+                FilePath = filePath,
+                FileModifiedDate = modified.AddHours(1),
+                Title = "Song",
+                Artists = ["Artist"],
+                CoverArtUri = "new-cover.jpg"
+            });
+
+        (await _library.Folders.ForceRescanMetadataAsync().WaitAsync(TimeSpan.FromSeconds(5))).Should().BeTrue();
+
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        (await assertContext.Songs.SingleAsync()).AlbumArtUriFromTrack.Should().Be("new-cover.jpg");
+    }
+
+    [Fact]
+    public async Task ForceRescanMetadataAsync_WhenFolderIsUnavailable_ReportsFailure()
+    {
+        var folder = new Folder { Id = Guid.NewGuid(), Path = "Z:\\Offline", Name = "Offline" };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            await context.SaveChangesAsync();
+        }
+        _fileSystem.DirectoryExists(folder.Path).Returns(false);
+
+        var act = () => _library.Folders.ForceRescanMetadataAsync();
+
+        await act.Should().ThrowAsync<DirectoryNotFoundException>();
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        (await assertContext.Folders.CountAsync()).Should().Be(1);
+    }
+
+    [Fact]
+    public async Task RescanFolderForMusicAsync_WithUntrimmedArtistNames_DoesNotThrow()
+    {
+        var folderId = Guid.NewGuid();
+        var folder = new Folder { Id = folderId, Path = "C:\\Music\\TrimTest", Name = "TrimTest" };
+
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            await context.SaveChangesAsync();
+        }
+
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(new[] { ("C:\\Music\\TrimTest\\song1.mp3", DateTime.UtcNow), ("C:\\Music\\TrimTest\\song2.mp3", DateTime.UtcNow) });
+
+        _metadataService.ExtractMetadataAsync("C:\\Music\\TrimTest\\song1.mp3", Arg.Any<string?>())
+            .Returns(new SongFileMetadata
+            {
+                FilePath = "C:\\Music\\TrimTest\\song1.mp3",
+                Title = "Song 1",
+                Artists = new List<string> { " Artist One " },
+                AlbumArtists = new List<string> { " Artist One " }
+            });
+
+        _metadataService.ExtractMetadataAsync("C:\\Music\\TrimTest\\song2.mp3", Arg.Any<string?>())
+            .Returns(new SongFileMetadata
+            {
+                FilePath = "C:\\Music\\TrimTest\\song2.mp3",
+                Title = "Song 2",
+                Artists = new List<string> { "Artist One" },
+                AlbumArtists = new List<string> { "Artist One" }
+            });
+
+        var result = await _library.Folders.RescanFolderForMusicAsync(folderId);
+
+        result.Should().BeTrue();
+
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            var artists = await context.Artists.ToListAsync();
+            artists.Should().HaveCount(1);
+            artists[0].Name.Should().Be("Artist One");
+
+            var songs = await context.Songs
+                .Include(s => s.SongArtists)
+                .ThenInclude(sa => sa.Artist)
+                .ToListAsync();
+
+            songs.Should().HaveCount(2);
+            songs[0].SongArtists.First().Artist.Name.Should().Be("Artist One");
+            songs[1].SongArtists.First().Artist.Name.Should().Be("Artist One");
+        }
     }
 }
