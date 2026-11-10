@@ -10,8 +10,6 @@ to avoid duplicate declarations across pages and controls.
 
     <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
-    <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
-    <converters:StringToDecodedImageSourceConverter x:Key="StringToDecodedImageSourceConverter" />
     <converters:CollectionCountToVisibilityConverter x:Key="CollectionCountToVisibilityConverter" />
     <converters:BooleanToInverseBooleanConverter x:Key="BooleanToInverseBooleanConverter" />
     <converters:IncrementalLoadingConverter x:Key="IncrementalLoadingConverter" />

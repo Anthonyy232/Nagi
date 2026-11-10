@@ -560,7 +560,7 @@
                                             CornerRadius="{StaticResource ArtworkCornerRadius}">
                                             <imageEx:ImageEx Width="{StaticResource FloatingPlayerArtSize}" Height="{StaticResource FloatingPlayerArtSize}"
                                                 IsCacheEnabled="True"
-                                                Source="{x:Bind ViewModel.AlbumArtUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
+                                                Source="{x:Bind uihelpers:BitmapImageFactory.Create(ViewModel.AlbumArtUri), Mode=OneWay}"
                                                 DecodePixelWidth="{StaticResource FloatingPlayerArtSize}"
                                                 DecodePixelType="Logical"
                                                 Stretch="UniformToFill" />
