@@ -10,7 +10,7 @@ namespace Nagi.Core.Lyrics.Romanization;
 public sealed class RomanizationPackManager : IRomanizationPackManager
 {
     /// <summary>The release that holds the signed catalog and every pack it lists.</summary>
-    public const string ReleaseFolderUrl = AppLinks.Repository + "/releases/download/romanization-packs";
+    internal const string ReleaseFolderUrl = AppLinks.Repository + "/releases/download/romanization-packs";
 
     internal const string CatalogUrl = ReleaseFolderUrl + "/catalog.json";
 
