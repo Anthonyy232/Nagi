@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>ਐਲਬਮ</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>ਕਲਾਕਾਰ</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>ਕਲਾਕਾਰ ਨਹੀਂ ਮਿਲਿਆ</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>ਕਲਾਕਾਰ ਨੂੰ ਲੋਡ ਕਰਨ ਵਿੱਚ ਗਲਤੀ</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>ਕਲਾਕਾਰ</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -449,14 +446,11 @@
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>ਕੋਈ ਨਿਯਮ ਪਰਿਭਾਸ਼ਿਤ ਨਹੀਂ • ਸਾਰੇ ਗੀਤ ਮੇਲ ਖਾਂਦੇ ਹਨ</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>{1} ਨਿਯਮ ਵਿੱਚੋਂ {0} ਮੇਲ ਖਾਂਦਾ ਹੈ</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>{0} ਨਿਯਮ ਵਿੱਚੋਂ ਸਾਰੇ ਮੇਲ ਖਾਂਦਾ ਹੈ</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>ਸਾਰੇ</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>ਕੋਈ ਵੀ</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>{0} ਨਿਯਮ ਵਿੱਚੋਂ ਕੋਈ ਵੀ ਮੇਲ ਖਾਂਦਾ ਹੈ</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# ਆਈਟਮ} other {# ਆਈਟਮਾਂ}}</value>
@@ -803,9 +797,6 @@
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>ਸੀਕ ਕਰੋ</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>ਅਗਲੇ ਗੀਤ</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>ਕਤਾਰ ਖਾਲੀ ਕਰੋ</value>
@@ -2075,8 +2066,8 @@
   <data name="Format_Least" xml:space="preserve">
     <value>ਸਭ ਤੋਂ ਘੱਟ {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>ਕ੍ਰਮਬੱਧ ਕਰੋ: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>ਕ੍ਰਮਬੱਧ ਕਰੋ: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>ਫਾਈਲ</value>

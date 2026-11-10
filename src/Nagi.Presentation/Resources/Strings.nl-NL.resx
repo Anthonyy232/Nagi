@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>Album</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>Artiest</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Artiest niet gevonden</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>Fout bij laden artiest</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>Artiest</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -449,14 +446,11 @@ Bestanden die niet konden worden geïmporteerd: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Geen regels gedefinieerd • Alle nummers komen overeen</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Voldoet aan {0} van {1, plural, one {# regel} other {# regels}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Voldoet aan alle van {0, plural, one {# regel} other {# regels}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>alle</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>minstens één</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Voldoet aan minstens één van {0, plural, one {# regel} other {# regels}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# item} other {# items}}</value>
@@ -803,9 +797,6 @@ Wil je doorgaan?</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Afspeelpositie</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>Volgende nummers</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>Wachtrij wissen</value>
@@ -2075,8 +2066,8 @@ Wil je doorgaan?</value>
   <data name="Format_Least" xml:space="preserve">
     <value>Minste {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Sorteren op: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Sorteren op: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Bestand</value>

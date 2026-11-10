@@ -92,13 +92,9 @@ public class BooleanToVisibilityConverter : IValueConverter
 /// </summary>
 public class StringToVisibilityConverter : IValueConverter
 {
-    public bool Invert { get; set; }
-
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        var isVisible = !string.IsNullOrWhiteSpace(value as string);
-        if (Invert) isVisible = !isVisible;
-        return isVisible ? Visibility.Visible : Visibility.Collapsed;
+        return string.IsNullOrWhiteSpace(value as string) ? Visibility.Collapsed : Visibility.Visible;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -170,48 +166,6 @@ public class BooleanToOpacityConverter : IValueConverter
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
         throw new NotSupportedException();
-    }
-}
-
-/// <summary>
-///     Safely converts a URI string to a BitmapImage. Returns null for empty or invalid strings.
-/// </summary>
-public class StringToImageSourceConverter : IValueConverter
-{
-    public object? Convert(object? value, Type targetType, object? parameter, string language)
-    {
-        return Helpers.BitmapImageFactory.Create(value as string);
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-/// <summary>
-///     Converts a URI string to a BitmapImage with an explicit logical decode width supplied
-///     via ConverterParameter. Use this for surfaces (e.g. brushes) that can't set
-///     DecodePixelWidth directly on the bitmap, when the source resolution is much larger
-///     than the rendered area and you want to control memory + sharpness.
-/// </summary>
-public class StringToDecodedImageSourceConverter : IValueConverter
-{
-    public object? Convert(object? value, Type targetType, object? parameter, string language)
-    {
-        var decodePixelWidth = parameter switch
-        {
-            int i => i,
-            double d => (int)d,
-            string s when int.TryParse(s, out var n) => n,
-            _ => 0,
-        };
-        return Helpers.BitmapImageFactory.CreateDecoded(value as string, decodePixelWidth);
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
     }
 }
 

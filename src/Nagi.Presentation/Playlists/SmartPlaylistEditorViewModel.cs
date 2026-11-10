@@ -24,8 +24,6 @@ public enum SmartPlaylistSaveResult
     Failed
 }
 
-public record SortOrderOption(SongSortOrder SortOrder, string DisplayName);
-
 /// <summary>
 ///     State and behaviour of the smart playlist editor: name, cover, match logic, sort order,
 ///     rules, a live count of matching songs, and saving.
@@ -57,32 +55,8 @@ public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposabl
         Rules.CollectionChanged += OnRulesCollectionChanged;
     }
 
-    public static IReadOnlyList<SortOrderOption> SortOptions { get; } =
-    [
-        new(SongSortOrder.TitleAsc, SortOrderHelper.TitleAscLabel),
-        new(SongSortOrder.TitleDesc, SortOrderHelper.TitleDescLabel),
-        new(SongSortOrder.ArtistAsc, SortOrderHelper.ArtistAscLabel),
-        new(SongSortOrder.ArtistDesc, SortOrderHelper.ArtistDescLabel),
-        new(SongSortOrder.AlbumAsc, SortOrderHelper.AlbumAscLabel),
-        new(SongSortOrder.AlbumDesc, SortOrderHelper.AlbumDescLabel),
-        new(SongSortOrder.YearAsc, SortOrderHelper.YearOldestLabel),
-        new(SongSortOrder.YearDesc, SortOrderHelper.YearNewestLabel),
-        new(SongSortOrder.PlayCountAsc, SortOrderHelper.PlayCountAscLabel),
-        new(SongSortOrder.PlayCountDesc, SortOrderHelper.PlayCountDescLabel),
-        new(SongSortOrder.LastPlayedAsc, SortOrderHelper.LastPlayedAscLabel),
-        new(SongSortOrder.LastPlayedDesc, SortOrderHelper.LastPlayedDescLabel),
-        new(SongSortOrder.DateAddedAsc, SortOrderHelper.DateAddedAscLabel),
-        new(SongSortOrder.DateAddedDesc, SortOrderHelper.DateAddedDescLabel),
-        new(SongSortOrder.TrackNumberAsc, SortOrderHelper.TrackNumberAscLabel),
-        new(SongSortOrder.TrackNumberDesc, SortOrderHelper.TrackNumberDescLabel),
-        new(SongSortOrder.DurationAsc, SortOrderHelper.DurationAscLabel),
-        new(SongSortOrder.DurationDesc, SortOrderHelper.DurationDescLabel),
-        new(SongSortOrder.BpmAsc, SortOrderHelper.BpmAscLabel),
-        new(SongSortOrder.BpmDesc, SortOrderHelper.BpmDescLabel),
-        new(SongSortOrder.FileCreatedDateAsc, SortOrderHelper.DateCreatedOldestLabel),
-        new(SongSortOrder.FileCreatedDateDesc, SortOrderHelper.DateCreatedNewestLabel),
-        new(SongSortOrder.Random, SortOrderHelper.RandomLabel)
-    ];
+    public static IReadOnlyList<SortOption> SortOptions { get; } =
+        SmartPlaylistSongListViewModel.SortOrders.Select(order => new SortOption(order, SortOrderHelper.GetLabel(order))).ToList();
 
     public ObservableCollection<RuleViewModel> Rules { get; } = new();
 
@@ -105,13 +79,11 @@ public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposabl
         set => MatchAllRules = value != 1;
     }
 
-    [ObservableProperty] public partial SortOrderOption SelectedSortOption { get; set; }
+    [ObservableProperty] public partial SortOption SelectedSortOption { get; set; }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasCoverImage), nameof(CoverPreviewUri))]
+    [NotifyPropertyChangedFor(nameof(CoverPreviewUri))]
     public partial string? CoverImageUri { get; set; }
-
-    public bool HasCoverImage => !string.IsNullOrWhiteSpace(CoverImageUri);
 
     /// <summary>The chosen cover for display, which shows the saved cover as it is now.</summary>
     public string? CoverPreviewUri =>
@@ -136,7 +108,7 @@ public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposabl
             Title = ResourceFormatter.Format(Strings.SmartPlaylist_Title_EditFormat, editing.Name);
             Name = editing.Name;
             MatchAllRules = editing.MatchAllRules;
-            SelectedSortOption = SortOptions.FirstOrDefault(o => o.SortOrder == editing.SortOrder) ?? SortOptions[0];
+            SelectedSortOption = SortOptions.FirstOrDefault(o => o.Order.Equals(editing.SortOrder)) ?? SortOptions[0];
             CoverImageUri = string.IsNullOrWhiteSpace(editing.CoverImageUri) ? null : editing.CoverImageUri;
             foreach (var rule in editing.Rules.OrderBy(r => r.Order))
                 Rules.Add(new RuleViewModel(rule));
@@ -216,7 +188,7 @@ public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposabl
         {
             Name = Name,
             MatchAllRules = MatchAllRules,
-            SortOrder = SelectedSortOption.SortOrder,
+            SortOrder = (SongSortOrder)SelectedSortOption.Order,
             CoverImageUri = CoverImageUri,
             Description = _editingPlaylist?.Description,
             Rules = Rules.Select(rule => rule.ToSmartPlaylistRule()).ToList()

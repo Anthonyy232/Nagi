@@ -23,7 +23,7 @@ namespace Nagi.Presentation.Lists;
 /// </summary>
 public partial class SmartPlaylistSongListViewModel : DetailSongListViewModelBase<SmartPlaylistSongViewNavigationParameter>
 {
-    private static readonly SongSortOrder[] SortOrders =
+    public static IReadOnlyList<SongSortOrder> SortOrders { get; } =
     [
         SongSortOrder.TitleAsc, SongSortOrder.TitleDesc, SongSortOrder.YearAsc, SongSortOrder.YearDesc,
         SongSortOrder.ArtistAsc, SongSortOrder.ArtistDesc, SongSortOrder.AlbumAsc, SongSortOrder.AlbumDesc,
@@ -94,7 +94,6 @@ public partial class SmartPlaylistSongListViewModel : DetailSongListViewModelBas
     [ObservableProperty]
     public partial string? CoverImageUri { get; set; }
 
-
     protected override string LoadErrorText => Strings.SmartPlaylist_ErrorLoading;
 
     // A smart playlist that no longer exists shows as an empty list under the name it was opened with.
@@ -129,11 +128,9 @@ public partial class SmartPlaylistSongListViewModel : DetailSongListViewModelBas
         if (ruleCount == 0)
             return Strings.SmartPlaylist_RuleSummary_NoRules;
 
-        var matchType = smartPlaylist.MatchAllRules
-            ? Strings.SmartPlaylist_MatchAll
-            : Strings.SmartPlaylist_MatchAny;
-
-        return ResourceFormatter.Format(Strings.SmartPlaylist_RuleSummary_Format, matchType, ruleCount);
+        return ResourceFormatter.Format(smartPlaylist.MatchAllRules
+            ? Strings.SmartPlaylist_RuleSummary_All_Format
+            : Strings.SmartPlaylist_RuleSummary_Any_Format, ruleCount);
     }
 
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
@@ -166,7 +163,6 @@ public partial class SmartPlaylistSongListViewModel : DetailSongListViewModelBas
             ? _smartPlaylistService.SetSortOrderAsync(_currentSmartPlaylistId.Value, sortOrder)
             : Task.CompletedTask;
     }
-
 
     private string? ActiveSearchTerm => IsSearchActive ? SearchTerm : null;
 

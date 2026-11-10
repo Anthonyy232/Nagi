@@ -23,16 +23,16 @@ public partial class ArtistViewModelItem : ObservableObject
     public string Name { get; init; } = string.Empty;
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsCustomImage))]
-    public partial string? LocalImageCachePath { get; set; }
+    public partial string? ImageUri { get; set; }
 
-    public bool IsCustomImage => ImageStorageHelper.IsCustomImage(LocalImageCachePath);
+    public bool IsCustomImage => ImageStorageHelper.IsCustomImage(ImageUri);
 
     public override string ToString() => Name;
 }
 
 /// <summary>
 ///     Manages the artist list page. Only the current page is held in the VM; image
-///     metadata is fetched for the whole library out-of-band via the library service.
+///     metadata for the whole library is fetched in the background by <see cref="IArtworkService" />.
 /// </summary>
 public partial class ArtistViewModel : PagedListViewModelBase<Artist>, ICollectionViewModel
 {
@@ -93,7 +93,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>, ICollecti
             {
                 Id = artist.Id,
                 Name = artist.Name,
-                LocalImageCachePath = artist.ImageUri
+                ImageUri = artist.ImageUri
             };
             _artistLookup[artist.Id] = vm;
             items.Add(vm);
@@ -140,7 +140,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>, ICollecti
             foreach (var change in changes)
             {
                 if (_artistLookup.TryGetValue(change.ArtistId, out var artistVm))
-                    artistVm.LocalImageCachePath = change.ImageUri;
+                    artistVm.ImageUri = change.ImageUri;
             }
         });
     }

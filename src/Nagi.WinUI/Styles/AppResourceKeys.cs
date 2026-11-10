@@ -17,8 +17,9 @@ internal static class AppResourceKeys
     public const string SongListHyperlinkButtonStyle = nameof(SongListHyperlinkButtonStyle);
     public const string SongListViewPageSecondaryTextBlockStyle = nameof(SongListViewPageSecondaryTextBlockStyle);
     public const string SongListViewPageIconButton = nameof(SongListViewPageIconButton);
-    public const string BooleanToVisibilityConverter = nameof(BooleanToVisibilityConverter);
 
     /// <summary>The path of the dictionary whose default theme resources are the accent overrides.</summary>
     public const string ColorsDictionaryPath = "/Styles/Colors.xaml";
+
+    public const string MediaOnImageSeekerSliderColorsUri = "ms-appx:///Styles/MediaOnImageSeekerSliderColors.xaml";
 }

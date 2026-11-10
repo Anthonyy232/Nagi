@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>Albumi</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>Artisti</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Artistia ei löydy</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>Artistin latausvirhe</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>Artisti</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -449,14 +446,11 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Ei sääntöjä määritetty • Kaikki kappaleet vastaavat</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Vastaavuus: {0} ({1, plural, one {# sääntö} other {# sääntöä}})</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Vastaavuus: kaikki ({0, plural, one {# sääntö} other {# sääntöä}})</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>kaikki</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>mikä tahansa</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Vastaavuus: mikä tahansa ({0, plural, one {# sääntö} other {# sääntöä}})</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# kohde} other {# kohdetta}}</value>
@@ -803,9 +797,6 @@ Haluatko jatkaa?</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Toistokohta</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>Seuraavat</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>Tyhjennä jono</value>
@@ -2075,8 +2066,8 @@ Haluatko jatkaa?</value>
   <data name="Format_Least" xml:space="preserve">
     <value>Vähiten {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Järjestä: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Järjestä: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Tiedosto</value>

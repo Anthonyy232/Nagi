@@ -8,7 +8,6 @@ using Nagi.Core.Platform;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Settings;
 
 namespace Nagi.Presentation.Lists;
 
@@ -50,23 +49,7 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     [NotifyCanExecuteChangedFor(nameof(NextPageCommand))]
     public partial int TotalPages { get; set; } = 1;
 
-    /// <summary>The items a page holds, or 0 to show every item.</summary>
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasNextPage), nameof(HasPreviousPage), nameof(SelectedPageSize))]
-    [NotifyCanExecuteChangedFor(nameof(NextPageCommand), nameof(PreviousPageCommand))]
-    public partial int PageSize { get; set; }
-
-    public IReadOnlyList<SettingOption<int>> PageSizeOptions { get; } =
-        SettingOption<int>.For(AppSettings.PageSizeOptions, SettingsText.GetPageSizeName);
-
-    public SettingOption<int>? SelectedPageSize
-    {
-        get => PageSizeOptions.FirstOrDefault(option => option.Value == PageSize);
-        set
-        {
-            if (value is not null) PageSize = value.Value;
-        }
-    }
+    public PageSizeSelection PageSize { get; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanPaginate), nameof(ShowEmptyState))]
@@ -75,16 +58,15 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     /// <summary>Whether a load has finished and found nothing, so the list doesn't look empty while it loads.</summary>
     public bool ShowEmptyState => _hasLoaded && !IsLoading && !HasLoadError && TotalItemCount == 0;
 
-    /// <summary>Paging only means something once there are more items than the smallest page holds.</summary>
-    public bool CanPaginate => TotalItemCount > AppSettings.PageSizeOptions[0];
+    public bool CanPaginate => PageSizeSelection.IsUsefulFor(TotalItemCount);
 
     public bool HasNextPage => IsPaged && CurrentPage < TotalPages;
     public bool HasPreviousPage => IsPaged && CurrentPage > 1;
 
     /// <summary>Whether the list shows one page at a time. Otherwise it loads every page, one after another.</summary>
-    protected virtual bool IsPaged => PageSize != 0;
+    protected virtual bool IsPaged => PageSize.Size != 0;
 
-    private int FetchSize => IsPaged ? PageSize : Paging.MaxPageSize;
+    private int FetchSize => IsPaged ? PageSize.Size : Paging.MaxPageSize;
 
     protected PagedListViewModelBase(
         ILibraryReader libraryReader,
@@ -97,7 +79,8 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
         _libraryReader = libraryReader;
         _libraryNotifier = libraryNotifier;
         _settingsService = settingsService;
-        PageSize = _settingsService.Get(AppSettings.SongsPerPage);
+        PageSize = new PageSizeSelection(settingsService, dispatcherService);
+        PageSize.Changed += ReloadFromFirstPage;
         _libraryNotifier.Changed += OnLibraryChanged;
         _settingsService.SettingChanged += OnSettingChanged;
     }
@@ -151,21 +134,22 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
 
     partial void OnIsLoadingChanged(bool value) => OnLoadingStateChanged(value);
 
-    partial void OnPageSizeChanged(int value) => _settingsService.Set(AppSettings.SongsPerPage, value);
-
-    // Whichever list changed the page size, every list picks it up from the setting. The reader sorts songs, albums
-    // and artists by the leading-articles setting, so every list reloads for that too.
+    // The reader sorts songs, albums and artists by the leading-articles setting, so every list reloads for it.
     private void OnSettingChanged(Setting setting)
     {
-        if (setting != AppSettings.SongsPerPage && setting != CoreSettings.IgnoreLeadingArticlesOnSort) return;
-        _dispatcherService.TryEnqueue(() =>
-        {
-            if (_isDisposed) return;
-            PageSize = _settingsService.Get(AppSettings.SongsPerPage);
-            CancelLoad();
-            CurrentPage = 1;
-            _ = LoadAsync(CancellationToken.None);
-        });
+        if (setting == CoreSettings.IgnoreLeadingArticlesOnSort) _dispatcherService.TryEnqueue(ReloadFromFirstPage);
+    }
+
+    private void ReloadFromFirstPage()
+    {
+        if (_isDisposed) return;
+        OnPropertyChanged(nameof(HasNextPage));
+        OnPropertyChanged(nameof(HasPreviousPage));
+        NextPageCommand.NotifyCanExecuteChanged();
+        PreviousPageCommand.NotifyCanExecuteChanged();
+        CancelLoad();
+        CurrentPage = 1;
+        _ = LoadAsync(CancellationToken.None);
     }
 
     private void OnLibraryChanged(object? sender, LibraryChange change)
@@ -212,7 +196,6 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     ///     Loads the current page. A load requested while one runs is queued and runs once it finishes, with whatever
     ///     sort, page size, search or library state the caller has just applied.
     /// </summary>
-    [RelayCommand]
     public Task LoadAsync(CancellationToken cancellationToken) => RunLoadAsync(stepsPage: false, cancellationToken);
 
     private async Task RunLoadAsync(bool stepsPage, CancellationToken cancellationToken)
@@ -367,6 +350,8 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
 
         _libraryNotifier.Changed -= OnLibraryChanged;
         _settingsService.SettingChanged -= OnSettingChanged;
+        PageSize.Changed -= ReloadFromFirstPage;
+        PageSize.Dispose();
         CancelLoad();
         _libraryChangeDebouncer.Dispose();
     }

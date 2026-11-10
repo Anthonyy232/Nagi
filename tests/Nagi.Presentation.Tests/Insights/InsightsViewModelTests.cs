@@ -3,9 +3,11 @@ using System.Globalization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Library;
 using Nagi.Core.Listening;
+using Nagi.Core.Settings;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Insights;
 using Nagi.Presentation.Navigation;
+using Nagi.Presentation.Settings;
 using Nagi.Presentation.Tests.Utils;
 using NSubstitute;
 using Xunit;
@@ -43,7 +45,7 @@ public class InsightsViewModelTests
                 Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
                 .Returns(new StatisticsPage<GenreStats>(genres, 1));
             var viewModel = CreateViewModel(statistics);
-            viewModel.Artists.SetMetricCommand.Execute("PlayCount");
+            await viewModel.Artists.Sort.ChangeCommand.ExecuteAsync(SortMetric.PlayCount);
 
             await viewModel.LoadInsightsAsync();
 
@@ -209,14 +211,51 @@ public class InsightsViewModelTests
         await viewModel.Albums.OpenSeeAllCommand.ExecuteAsync(null);
         statistics.ClearReceivedCalls();
 
-        viewModel.Albums.SetMetricCommand.Execute("Duration");
+        await viewModel.Albums.Sort.ChangeCommand.ExecuteAsync(SortMetric.Duration);
 
-        viewModel.Albums.IsByDuration.Should().BeTrue();
         await statistics.Received(1).GetTopAlbumsAsync(Arg.Any<TimeRange>(), SortMetric.Duration, 0, 25,
             Arg.Any<string?>(), Arg.Any<CancellationToken>());
         await statistics.Received(1).GetTopAlbumsAsync(Arg.Any<TimeRange>(), SortMetric.Duration, 0, 10,
             Arg.Any<string?>(), Arg.Any<CancellationToken>());
         viewModel.SeeAll.Category.Should().BeSameAs(viewModel.Albums);
+    }
+
+    [Fact]
+    public async Task SeeAll_LoadsTheSavedPageSizeAndFollowsItWhenAnotherListChangesIt()
+    {
+        var statistics = Substitute.For<IStatisticsService>();
+        StubRankings(statistics, playedSongs: 0);
+        var settings = TestSettings.Create();
+        settings.Set(AppSettings.SongsPerPage, 100);
+        var viewModel = CreateViewModel(statistics, settings);
+
+        await viewModel.Albums.OpenSeeAllCommand.ExecuteAsync(null);
+        viewModel.SeeAll.PageSize.Selected!.Value.Should().Be(100);
+        settings.Set(AppSettings.SongsPerPage, 250);
+
+        Received.InOrder(() =>
+        {
+            statistics.GetTopAlbumsAsync(Arg.Any<TimeRange>(), Arg.Any<SortMetric>(), 0, 100, Arg.Any<string?>(), Arg.Any<CancellationToken>());
+            statistics.GetTopAlbumsAsync(Arg.Any<TimeRange>(), Arg.Any<SortMetric>(), 0, 250, Arg.Any<string?>(), Arg.Any<CancellationToken>());
+        });
+        viewModel.SeeAll.PageSize.Selected!.Value.Should().Be(250);
+    }
+
+    [Fact]
+    public async Task ResetListenHistory_WhenClearingFails_TellsTheUser()
+    {
+        var statistics = Substitute.For<IStatisticsService>();
+        var listening = Substitute.For<IListeningService>();
+        var ui = Substitute.For<IUIService>();
+        ui.ShowConfirmationDialogAsync(default!, default!, default, default, default).ReturnsForAnyArgs(true);
+        listening.ClearListenHistoryAsync().Returns(Task.FromException(new IOException("Database locked")));
+        var viewModel = new InsightsViewModel(statistics, new ImmediateDispatcher(), Substitute.For<IMusicNavigationService>(),
+            listening, ui, TestSettings.Create(), NullLogger<InsightsViewModel>.Instance);
+
+        await viewModel.ResetListenHistoryCommand.ExecuteAsync(null);
+
+        await ui.Received(1).ShowMessageDialogAsync(Arg.Any<string>(), Arg.Any<string>());
+        await statistics.DidNotReceiveWithAnyArgs().GetTotalListenTimeAsync(default!, default);
     }
 
     private static void StubRankings(IStatisticsService statistics, int playedSongs)
@@ -235,8 +274,16 @@ public class InsightsViewModelTests
             .Returns(new StatisticsPage<GenreStats>([], 0));
     }
 
-    private static InsightsViewModel CreateViewModel(IStatisticsService statistics) =>
-        new(statistics, new ImmediateDispatcher(), Substitute.For<IMusicNavigationService>(),
-            Substitute.For<IListeningService>(), Substitute.For<IUIService>(),
+    private static InsightsViewModel CreateViewModel(IStatisticsService statistics, ISettingsService? settings = null)
+    {
+        if (settings is null)
+        {
+            settings = TestSettings.Create();
+            settings.Set(AppSettings.SongsPerPage, 25);
+        }
+
+        return new InsightsViewModel(statistics, new ImmediateDispatcher(), Substitute.For<IMusicNavigationService>(),
+            Substitute.For<IListeningService>(), Substitute.For<IUIService>(), settings,
             NullLogger<InsightsViewModel>.Instance);
+    }
 }

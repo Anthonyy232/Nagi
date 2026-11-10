@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>Álbum</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>Artista</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Artista Não Encontrado</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>Erro ao Carregar Artista</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>Artista</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -449,14 +446,11 @@ Arquivos que não puderam ser importados: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Nenhuma regra definida • Todas as músicas correspondem</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Corresponder {0} de {1, plural, one {# regra} other {# regras}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Corresponder todas de {0, plural, one {# regra} other {# regras}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>todas</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>qualquer</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Corresponder qualquer de {0, plural, one {# regra} other {# regras}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# item} other {# itens}}</value>
@@ -803,9 +797,6 @@ Deseja continuar?</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Posição da reprodução</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>A Seguir</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>Limpar fila</value>
@@ -2075,8 +2066,8 @@ Deseja continuar?</value>
   <data name="Format_Least" xml:space="preserve">
     <value>Menos {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Ordenar por: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Ordenar por: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Arquivo</value>

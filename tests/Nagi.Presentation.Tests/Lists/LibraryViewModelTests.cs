@@ -38,14 +38,13 @@ public class LibraryViewModelTests
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), settings,
             Substitute.For<IUIService>(), NullLogger<LibraryViewModel>.Instance);
 
-        await viewModel.SetLibraryViewAsync(true);
-        await viewModel.InitializeAsync();
+        await viewModel.OpenAsync(true);
         viewModel.Songs.Should().ContainSingle().Which.Should().Be(favorite);
         await viewModel.PlayAllSongsCommand.ExecuteAsync(null);
         await playback.Received().PlayAsync(Arg.Is<IEnumerable<Guid>>(ids => ids.SequenceEqual(new[] { favorite.Id })),
             0, null, Arg.Any<PlaybackContext>());
 
-        await viewModel.SetLibraryViewAsync(false);
+        await viewModel.OpenAsync(false);
         viewModel.Songs.Should().Equal(favorite, other);
         await viewModel.PlayAllSongsCommand.ExecuteAsync(null);
         await playback.Received().PlayAsync(Arg.Is<IEnumerable<Guid>>(ids => ids.SequenceEqual(new[] { favorite.Id, other.Id })),
@@ -96,7 +95,7 @@ public class LibraryViewModelTests
     }
 
     [Fact]
-    public async Task Initialize_AfterQueryFailure_CanRetry()
+    public async Task Open_AfterQueryFailure_LoadsAgainOnTheNextVisit()
     {
         var library = new LibraryFakes();
         var settings = TestSettings.Create();
@@ -116,12 +115,11 @@ public class LibraryViewModelTests
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), settings,
             Substitute.For<IUIService>(), NullLogger<LibraryViewModel>.Instance);
 
-        await viewModel.InitializeAsync();
-        viewModel.HasInitialized.Should().BeFalse();
+        await viewModel.OpenAsync(false);
+        viewModel.Songs.Should().BeEmpty();
 
-        await viewModel.InitializeAsync();
+        await viewModel.OpenAsync(false);
 
-        viewModel.HasInitialized.Should().BeTrue();
         viewModel.Songs.Should().ContainSingle().Which.Title.Should().Be("Recovered");
     }
 

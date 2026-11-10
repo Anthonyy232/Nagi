@@ -1,6 +1,6 @@
 <UserControl
     x:Class="Nagi.WinUI.MainPage"
-    x:Name="MainPageRoot"
+    x:Name="Root"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -65,7 +65,7 @@
                         <Border
                             Background="{ThemeResource ControlFillColorSecondaryBrush}"
                             CornerRadius="{ThemeResource ControlCornerRadius}"
-                            Visibility="{Binding DataContext.IsLyricsPageActive, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            Visibility="{Binding IsLyricsPageShown, ElementName=Root, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <FontIcon
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
@@ -88,7 +88,7 @@
                     <Grid Width="40" Height="40" Margin="-8">
                         <Border Background="{ThemeResource ControlFillColorSecondaryBrush}"
                                 CornerRadius="{ThemeResource ControlCornerRadius}"
-                                Visibility="{Binding DataContext.IsQueuePanelOpen, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                Visibility="{Binding ViewModel.IsQueuePanelOpen, ElementName=Root, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(DynamicIcon), Mode=OneWay}" />
                     </Grid>
                 </Button>
@@ -382,11 +382,11 @@
                                                           ToolTipService.ToolTip="{x:Bind Title}">
                                                         <Grid.ContextFlyout>
                                                             <MenuFlyout>
-                                                                <MenuFlyoutItem Text="{x:Bind resources:Strings.Generic_Play}" Command="{Binding DataContext.PlayQueueEntryCommand, ElementName=MainPageRoot}" CommandParameter="{x:Bind}" />
-                                                                <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_MoveUp}" Command="{Binding DataContext.MoveQueueEntryUpCommand, ElementName=MainPageRoot}" CommandParameter="{x:Bind}" />
-                                                                <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_MoveDown}" Command="{Binding DataContext.MoveQueueEntryDownCommand, ElementName=MainPageRoot}" CommandParameter="{x:Bind}" />
+                                                                <MenuFlyoutItem Text="{x:Bind resources:Strings.Generic_Play}" Command="{Binding ViewModel.PlayQueueEntryCommand, ElementName=Root}" CommandParameter="{x:Bind}" />
+                                                                <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_MoveUp}" Command="{Binding ViewModel.MoveQueueEntryUpCommand, ElementName=Root}" CommandParameter="{x:Bind}" />
+                                                                <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_MoveDown}" Command="{Binding ViewModel.MoveQueueEntryDownCommand, ElementName=Root}" CommandParameter="{x:Bind}" />
                                                                 <MenuFlyoutSeparator />
-                                                                <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_Remove}" Command="{Binding DataContext.RemoveQueueEntryCommand, ElementName=MainPageRoot}" CommandParameter="{x:Bind}" />
+                                                                <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_Remove}" Command="{Binding ViewModel.RemoveQueueEntryCommand, ElementName=Root}" CommandParameter="{x:Bind}" />
                                                             </MenuFlyout>
                                                         </Grid.ContextFlyout>
                                                         <Grid.ColumnDefinitions>
@@ -396,21 +396,21 @@
                                                         </Grid.ColumnDefinitions>
                                                         <TextBlock Text="{x:Bind Position, Mode=OneWay}" Margin="0,0,12,0" Style="{ThemeResource CaptionTextBlockStyle}"
                                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                                   Visibility="{Binding DataContext.QueueDisplaySettings.ShowPosition, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                                   Visibility="{Binding ViewModel.QueueDisplaySettings.ShowPosition, ElementName=Root, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                                         <StackPanel Grid.Column="1" Margin="0,0,12,0" Spacing="4">
                                                             <TextBlock localControls:NowPlayingGrid.IsTitle="True" Text="{x:Bind Title}" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
                                                             <localControls:ArtistLinks Style="{StaticResource SongListArtistLinksStyle}"
-                                                                                       Visibility="{Binding DataContext.QueueDisplaySettings.ShowArtist, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                                                       Visibility="{Binding ViewModel.QueueDisplaySettings.ShowArtist, ElementName=Root, Converter={StaticResource BooleanToVisibilityConverter}}"
                                                                                        ArtistName="{x:Bind ArtistName}"
                                                                                        Song="{x:Bind Song}"
-                                                                                       Command="{Binding DataContext.GoToArtistCommand, ElementName=MainPageRoot}" />
+                                                                                       Command="{Binding ViewModel.GoToArtistCommand, ElementName=Root}" />
                                                             <TextBlock Text="{x:Bind GenreText}" Style="{ThemeResource CaptionTextBlockStyle}"
                                                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"
-                                                                       Visibility="{Binding DataContext.QueueDisplaySettings.ShowGenre, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                                       Visibility="{Binding ViewModel.QueueDisplaySettings.ShowGenre, ElementName=Root, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                                         </StackPanel>
                                                         <TextBlock Grid.Column="2" Text="{x:Bind Duration, Converter={StaticResource TimeSpanToTimeStringConverter}}"
                                                                    Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                                   Visibility="{Binding DataContext.QueueDisplaySettings.ShowDuration, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                                   Visibility="{Binding ViewModel.QueueDisplaySettings.ShowDuration, ElementName=Root, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                                     </localControls:NowPlayingGrid>
                                                 </DataTemplate>
                                             </ListView.ItemTemplate>
@@ -464,8 +464,8 @@
                                                                 <localControls:NowPlayingGrid Background="Transparent" Tag="{x:Bind}" DoubleTapped="HistoryEntry_DoubleTapped"
                                                                       ToolTipService.ToolTip="{x:Bind Title}">
                                                                     <Grid.ContextFlyout><MenuFlyout>
-                                                                        <MenuFlyoutItem Text="{x:Bind resources:Strings.Generic_Play}" Command="{Binding DataContext.PlayHistoryNowCommand, ElementName=MainPageRoot}" CommandParameter="{x:Bind}" />
-                                                                        <MenuFlyoutItem Text="{x:Bind resources:Strings.SongList_Context_PlayNext}" Command="{Binding DataContext.PlayHistoryNextCommand, ElementName=MainPageRoot}" CommandParameter="{x:Bind}" />
+                                                                        <MenuFlyoutItem Text="{x:Bind resources:Strings.Generic_Play}" Command="{Binding ViewModel.PlayHistoryNowCommand, ElementName=Root}" CommandParameter="{x:Bind}" />
+                                                                        <MenuFlyoutItem Text="{x:Bind resources:Strings.SongList_Context_PlayNext}" Command="{Binding ViewModel.PlayHistoryNextCommand, ElementName=Root}" CommandParameter="{x:Bind}" />
                                                                     </MenuFlyout></Grid.ContextFlyout>
                                                                     <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                                                                     <StackPanel Margin="0,0,12,0" Spacing="4">
@@ -473,7 +473,7 @@
                                                                         <localControls:ArtistLinks Style="{StaticResource SongListArtistLinksStyle}"
                                                                                                    ArtistName="{x:Bind ArtistName}"
                                                                                                    Song="{x:Bind Song}"
-                                                                                                   Command="{Binding DataContext.GoToArtistCommand, ElementName=MainPageRoot}" />
+                                                                                                   Command="{Binding ViewModel.GoToArtistCommand, ElementName=Root}" />
                                                                     </StackPanel>
                                                                     <TextBlock Grid.Column="1" Text="{x:Bind TimeText}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                                                 </localControls:NowPlayingGrid>
@@ -560,7 +560,7 @@
                                             CornerRadius="{StaticResource ArtworkCornerRadius}">
                                             <imageEx:ImageEx Width="{StaticResource FloatingPlayerArtSize}" Height="{StaticResource FloatingPlayerArtSize}"
                                                 IsCacheEnabled="True"
-                                                Source="{x:Bind ViewModel.AlbumArtUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
+                                                Source="{x:Bind uihelpers:BitmapImageFactory.Create(ViewModel.AlbumArtUri), Mode=OneWay}"
                                                 DecodePixelWidth="{StaticResource FloatingPlayerArtSize}"
                                                 DecodePixelType="Logical"
                                                 Stretch="UniformToFill" />

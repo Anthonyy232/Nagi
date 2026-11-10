@@ -10,7 +10,7 @@
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:lists="using:Nagi.Presentation.Lists"
-    x:Name="FolderPageRoot"
+    x:Name="Root"
     Background="Transparent"
     mc:Ignorable="d">
 
@@ -71,24 +71,24 @@
                             <MenuFlyout>
                                 <MenuFlyoutItem
                                     Text="{x:Bind resources:Strings.Generic_Play, Mode=OneTime}"
-                                    Command="{Binding DataContext.PlayFolderCommand, ElementName=FolderPageRoot}"
+                                    Command="{Binding ViewModel.PlayFolderCommand, ElementName=Root}"
                                     CommandParameter="{x:Bind Id}" />
                                 <MenuFlyoutItem
                                     Text="{x:Bind resources:Strings.FolderPage_Menu_Rescan, Mode=OneTime}"
-                                    Command="{Binding DataContext.RescanFolderCommand, ElementName=FolderPageRoot}"
+                                    Command="{Binding ViewModel.RescanFolderCommand, ElementName=Root}"
                                     CommandParameter="{x:Bind Id}"
                                     Visibility="{x:Bind IsServer, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                                 <MenuFlyoutItem
                                     Text="{x:Bind resources:Strings.FolderPage_Menu_Sync, Mode=OneTime}"
-                                    Command="{Binding DataContext.SyncServerCommand, ElementName=FolderPageRoot}"
+                                    Command="{Binding ViewModel.SyncServerCommand, ElementName=Root}"
                                     CommandParameter="{x:Bind Id}"
                                     Visibility="{x:Bind IsServer}" />
                                 <MenuFlyoutItem
                                     Text="{x:Bind resources:Strings.FolderPage_Menu_SignIn, Mode=OneTime}"
-                                    Command="{Binding DataContext.SignInToServerCommand, ElementName=FolderPageRoot}"
+                                    Command="{Binding ViewModel.SignInToServerCommand, ElementName=Root}"
                                     CommandParameter="{x:Bind Id}"
                                     Visibility="{x:Bind IsServer}" />
-                                <MenuFlyoutItem Text="{x:Bind resources:Strings.FolderPage_Menu_Delete, Mode=OneTime}" Command="{Binding DataContext.DeleteFolderCommand, ElementName=FolderPageRoot}" CommandParameter="{x:Bind Id}" />
+                                <MenuFlyoutItem Text="{x:Bind resources:Strings.FolderPage_Menu_Delete, Mode=OneTime}" Command="{Binding ViewModel.DeleteFolderCommand, ElementName=Root}" CommandParameter="{x:Bind Id}" />
                             </MenuFlyout>
                         </Grid.ContextFlyout>
                         <Grid.RowDefinitions>

@@ -11,7 +11,6 @@ public sealed partial class InsightsPage : ViewModelPage
     {
         InitializeComponent();
         ViewModel = GetViewModel<InsightsViewModel>();
-        DataContext = ViewModel;
     }
 
     public InsightsViewModel ViewModel { get; }

@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
 using Nagi.Core.Platform;
@@ -81,7 +80,6 @@ public abstract partial class ClientFilteredListViewModelBase<TItem> : Searchabl
     }
 
     /// <summary>Loads every item. A newer load supersedes one still running, whose result is then dropped.</summary>
-    [RelayCommand]
     public async Task LoadAsync(CancellationToken cancellationToken)
     {
         if (_isDisposed) return;

@@ -99,15 +99,21 @@ public class AppSettingsTests
                 new NavigationItemSetting { Tag = "albums", DisplayName = "Old", IsEnabled = false },
                 new NavigationItemSetting { Tag = "ALBUMS", IsEnabled = true },
                 new NavigationItemSetting { Tag = "Removed" },
-                new NavigationItemSetting { Tag = "Library", DisplayName = "Old", IsEnabled = true }
+                new NavigationItemSetting { Tag = "Library", DisplayName = "Old", IsEnabled = true },
+                new NavigationItemSetting { Tag = "Folders" },
+                new NavigationItemSetting { Tag = "Playlists" },
+                new NavigationItemSetting { Tag = "Artists" },
+                new NavigationItemSetting { Tag = "Genres" },
+                new NavigationItemSetting { Tag = "Favorites" }
             })
         };
         var settings = TestSettings.Create(values);
 
         var items = settings.Get(AppSettings.NavigationItems);
 
+        // Insights is missing from the saved list, so it goes in at its default position, before Favorites.
         items.Select(item => item.Tag).Should().Equal("Albums", "Library", "Folders", "Playlists", "Artists", "Genres", "Insights", "Favorites");
-        items.Single(item => item.Tag == "Favorites").IsEnabled.Should().BeFalse();
+        items.Single(item => item.Tag == "Insights").IsEnabled.Should().BeFalse();
         items[0].IsEnabled.Should().BeFalse();
         items.Should().OnlyContain(item => item.DisplayName != "Old" && item.Icon != AppIcon.None);
     }
@@ -115,15 +121,16 @@ public class AppSettingsTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public void PlayerButtons_PreserveSavedLayoutAndMigrateMissingDivider(bool hasDivider)
+    public void PlayerButtons_PreserveSavedLayoutAndAddMissingDividerAtItsDefaultPosition(bool hasDivider)
     {
         var saved = new List<PlayerButtonSetting>
         {
             new() { Id = "shuffle", IsEnabled = false, DisplayName = "Old" },
             new() { Id = "Shuffle", IsEnabled = true, DisplayName = "Old" },
-            new() { Id = "Next", IsEnabled = true, DisplayName = "Old" },
             new() { Id = "Removed", DisplayName = "Old" }
         };
+        saved.AddRange(new[] { "Previous", "PlayPause", "Next", "Repeat", "Lyrics", "Queue", "Volume" }
+            .Select(id => new PlayerButtonSetting { Id = id, IsEnabled = true, DisplayName = "Old" }));
         if (hasDivider) saved.Insert(0, new PlayerButtonSetting { Id = "Separator", IsEnabled = false, DisplayName = "Old" });
         var settings = TestSettings.Create(new Dictionary<string, object>
         { ["PlayerButtonSettings"] = JsonSerializer.Serialize(saved) });
@@ -131,7 +138,8 @@ public class AppSettingsTests
         var buttons = settings.Get(AppSettings.PlayerButtons);
 
         buttons.Select(button => button.Id).Should().Equal(hasDivider
-            ? ["Separator", "Shuffle", "Next"] : ["Shuffle", "Next", "Separator"]);
+            ? ["Separator", "Shuffle", "Previous", "PlayPause", "Next", "Repeat", "Lyrics", "Queue", "Volume"]
+            : ["Shuffle", "Previous", "PlayPause", "Next", "Repeat", "Separator", "Lyrics", "Queue", "Volume"]);
         buttons.Single(button => button.Id == "Shuffle").IsEnabled.Should().BeFalse();
         buttons.Single(button => button.Id == "Separator").IsEnabled.Should().Be(!hasDivider);
         buttons.Should().OnlyContain(button => button.DisplayName != "Old");

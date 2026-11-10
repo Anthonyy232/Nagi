@@ -13,9 +13,9 @@
         <TextBlock Text="{x:Bind resources:Strings.PaginationControl_ItemsPerPage, Mode=OneTime}" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12"/>
 
         <controls:PageSizeComboBox Style="{StaticResource DefaultComboBoxStyle}"
-                  ItemsSource="{x:Bind ViewModel.PageSizeOptions, Mode=OneWay}"
+                  ItemsSource="{x:Bind ViewModel.PageSize.Options, Mode=OneWay}"
                   DisplayMemberPath="DisplayName"
-                  SelectedItem="{x:Bind ViewModel.SelectedPageSize, Mode=TwoWay}"
+                  SelectedItem="{x:Bind ViewModel.PageSize.Selected, Mode=TwoWay}"
                   MinWidth="80" Margin="0,0,16,0" FontSize="12" />
 
         <Button Command="{x:Bind ViewModel.PreviousPageCommand, Mode=OneWay}"

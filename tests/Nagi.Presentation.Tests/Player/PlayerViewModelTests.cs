@@ -30,7 +30,9 @@ public partial class PlayerViewModelTests : IDisposable
         _dispatcher.HasThreadAccess.Returns(true);
         _dispatcher.EnqueueAsync(Arg.Any<Func<Task>>()).Returns(call => call.Arg<Func<Task>>()());
         _playback.PlayOrder.Returns(Array.Empty<Guid>());
-        _settings.Set(AppSettings.PlayerButtons, [new PlayerButtonSetting { Id = "Volume", DisplayName = "Volume", IsEnabled = true }]);
+        // Volume first, so it is one of the main transport buttons.
+        _settings.Set(AppSettings.PlayerButtons, new[] { "Volume", "Shuffle", "Previous", "PlayPause", "Next", "Repeat", "Separator", "Lyrics", "Queue" }
+            .Select(id => new PlayerButtonSetting { Id = id, DisplayName = id, IsEnabled = true }).ToList());
         _viewModel = new PlayerViewModel(_playback, Substitute.For<IMusicNavigationService>(),
             _dispatcher, _settings, Substitute.For<IWindowService>(),
             _library.Reader, _library.Listening, _library.Notifier, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>(), _time);
@@ -75,7 +77,7 @@ public partial class PlayerViewModelTests : IDisposable
     [Fact]
     public void ServiceVolumeChanges_UpdateBothIconsAndMuteTooltip()
     {
-        var volumeButton = _viewModel.MainTransportButtons.Single();
+        var volumeButton = _viewModel.MainTransportButtons.Single(button => button.Id == PlayerButtonIds.Volume);
         _playback.Volume.Returns(.9);
         _playback.VolumeStateChanged += Raise.Event<Action>();
         _viewModel.VolumeIcon.Should().Be(AppIcon.VolumeHigh);

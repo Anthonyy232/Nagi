@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>アルバム</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>アーティスト</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>アーティストが見つかりません</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>アーティストの読み込みエラー</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>アーティスト</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -449,14 +446,11 @@
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>ルールが定義されていません • すべての曲が一致</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>{1}ルールのうち{0}に一致</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>{0}ルールのうちすべてに一致</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>すべて</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>いずれか</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>{0}ルールのうちいずれかに一致</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0}アイテム</value>
@@ -803,9 +797,6 @@
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>再生位置</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>次に再生</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>キューを消去</value>
@@ -2075,8 +2066,8 @@
   <data name="Format_Least" xml:space="preserve">
     <value>{0}が最も少ない</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>並べ替え: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>並べ替え: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>ファイル</value>

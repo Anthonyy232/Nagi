@@ -5,9 +5,9 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Listening;
 using Nagi.Core.Platform;
+using Nagi.Core.Settings;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Lists;
-using Nagi.Presentation.Settings;
 
 namespace Nagi.Presentation.Insights;
 
@@ -19,10 +19,13 @@ public sealed partial class InsightsSeeAllViewModel : SearchableViewModelBase, I
     private readonly Func<TimeRange> _timeRange;
     private CancellationTokenSource? _loadCts;
 
-    internal InsightsSeeAllViewModel(Func<TimeRange> timeRange, IDispatcherService dispatcherService, ILogger logger)
+    internal InsightsSeeAllViewModel(Func<TimeRange> timeRange, ISettingsService settingsService,
+        IDispatcherService dispatcherService, ILogger logger)
         : base(dispatcherService, logger)
     {
         _timeRange = timeRange;
+        PageSize = new PageSizeSelection(settingsService, dispatcherService);
+        PageSize.Changed += () => _ = ReloadAsync();
     }
 
     /// <summary>The category shown, or <c>null</c> while the overlay is closed.</summary>
@@ -46,32 +49,15 @@ public sealed partial class InsightsSeeAllViewModel : SearchableViewModelBase, I
     [NotifyCanExecuteChangedFor(nameof(NextPageCommand))]
     public partial int TotalPages { get; private set; } = 1;
 
-    /// <summary>The items a page holds, or 0 to show every item.</summary>
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(SelectedPageSize))]
-    public partial int PageSize { get; set; } = AppSettings.PageSizeOptions[0];
-
-    public IReadOnlyList<SettingOption<int>> PageSizeOptions { get; } =
-        SettingOption<int>.For(AppSettings.PageSizeOptions, SettingsText.GetPageSizeName);
-
-    public SettingOption<int>? SelectedPageSize
-    {
-        get => PageSizeOptions.FirstOrDefault(option => option.Value == PageSize);
-        set
-        {
-            if (value is not null) PageSize = value.Value;
-        }
-    }
+    public PageSizeSelection PageSize { get; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanPaginate))]
     public partial int TotalItemCount { get; private set; }
 
-    public bool CanPaginate => TotalItemCount > AppSettings.PageSizeOptions[0];
+    public bool CanPaginate => PageSizeSelection.IsUsefulFor(TotalItemCount);
     public bool HasNextPage => CurrentPage < TotalPages;
     public bool HasPreviousPage => CurrentPage > 1;
-
-    partial void OnPageSizeChanged(int value) => _ = ReloadAsync();
 
     internal Task OpenAsync(InsightsCategoryViewModel category) => ShowPageAsync(category, 1, 1);
 
@@ -122,7 +108,7 @@ public sealed partial class InsightsSeeAllViewModel : SearchableViewModelBase, I
                 return Task.CompletedTask;
             });
 
-            var limit = PageSize == 0 ? int.MaxValue : PageSize;
+            var limit = PageSize.Size == 0 ? int.MaxValue : PageSize.Size;
             var result = await category.LoadAsync(_timeRange(), (page - 1) * limit, limit, SearchTerm, ct);
             await _dispatcherService.EnqueueAsync(() =>
             {

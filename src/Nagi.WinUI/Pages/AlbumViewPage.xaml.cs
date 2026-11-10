@@ -5,12 +5,10 @@ namespace Nagi.WinUI.Pages;
 
 public sealed partial class AlbumViewPage : SongListPage
 {
-
     public AlbumViewPage()
     {
         InitializeComponent();
         ViewModel = GetViewModel<AlbumViewViewModel>();
-        DataContext = ViewModel;
         InitializeSongList(ViewModel, ColumnHeaderHost, SongsListView, GroupedSongsListView);
     }
 
@@ -18,5 +16,4 @@ public sealed partial class AlbumViewPage : SongListPage
 
     // Multi-disc albums show the songs in a list grouped under disc headers.
     protected override ListView ActiveSongList => ViewModel.IsGroupedByDisc ? GroupedSongsListView : SongsListView;
-
 }

@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>অ্যালবাম</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>শিল্পী</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>শিল্পী পাওয়া যায়নি</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>শিল্পী লোড করতে ত্রুটি</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>শিল্পী</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -449,14 +446,11 @@
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>কোনো নিয়ম সংজ্ঞায়িত করা হয়নি • সব গান মিলেছে</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>{1}টি নিয়ম এর মধ্যে {0}টি মিলছে</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>{0}টি নিয়ম এর মধ্যে সবটি মিলছে</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>সব</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>কোনো</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>{0}টি নিয়ম এর মধ্যে কোনোটি মিলছে</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0}টি আইটেম</value>
@@ -803,9 +797,6 @@
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>সিক করুন</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>এরপর যা আছে</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>কিউ খালি করুন</value>
@@ -2075,8 +2066,8 @@
   <data name="Format_Least" xml:space="preserve">
     <value>সর্বনিম্ন {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>সাজান: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>সাজান: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>ফাইল</value>

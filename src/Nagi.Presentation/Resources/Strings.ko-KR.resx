@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>앨범</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>아티스트</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>아티스트를 찾을 수 없음</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>아티스트 로드 오류</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>아티스트</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -449,14 +446,11 @@
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>정의된 규칙 없음 • 모든 곡 일치</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>{1} 규칙 중 {0} 일치</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>{0} 규칙 중 모두 일치</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>모두</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>어느 하나</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>{0} 규칙 중 어느 하나 일치</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0}개 항목</value>
@@ -803,9 +797,6 @@
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>재생 위치</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>다음 재생</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>대기열 비우기</value>
@@ -2075,8 +2066,8 @@
   <data name="Format_Least" xml:space="preserve">
     <value>가장 적은 {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>정렬 기준: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>정렬 기준: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>파일</value>

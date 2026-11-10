@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Nagi.Presentation.Player;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Styles;
 
 namespace Nagi.WinUI.Controls;
 
@@ -21,6 +22,7 @@ public sealed partial class CompactPlayerView : UserControl
         nameof(HeaderTrailingContent), typeof(object), typeof(CompactPlayerView), new PropertyMetadata(null));
 
     private IDisposable? _queuePreview;
+    private bool _isOnImage;
 
     public CompactPlayerView()
     {
@@ -35,8 +37,22 @@ public sealed partial class CompactPlayerView : UserControl
         set => SetValue(ViewModelProperty, value);
     }
 
-    /// <summary>Light controls for showing the player over album art, as the mini player does.</summary>
-    public bool IsOnImage { get; set; }
+    /// <summary>
+    ///     Light controls for showing the player over album art, as the mini player does. Set it in XAML: it has
+    ///     no effect once the control has loaded.
+    /// </summary>
+    public bool IsOnImage
+    {
+        get => _isOnImage;
+        set
+        {
+            _isOnImage = value;
+            // The slider reads its colors when it applies its template, so they have to be in place before that.
+            if (value)
+                MediaSeekerSlider.Resources.MergedDictionaries.Add(
+                    new ResourceDictionary { Source = new Uri(AppResourceKeys.MediaOnImageSeekerSliderColorsUri) });
+        }
+    }
 
     /// <summary>Shown at the end of the header row, such as the mini player's restore button.</summary>
     public object? HeaderTrailingContent

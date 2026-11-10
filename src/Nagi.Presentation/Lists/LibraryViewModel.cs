@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
@@ -17,7 +16,6 @@ namespace Nagi.Presentation.Lists;
 
 public partial class LibraryViewModel : SongListViewModelBase
 {
-
     public LibraryViewModel(
         ILibraryReader libraryReader,
         IListeningService listening,
@@ -35,13 +33,4 @@ public partial class LibraryViewModel : SongListViewModelBase
     }
 
     protected override SongScope Scope => ShowFavoritesOnly ? SongScope.Favorites : SongScope.Library;
-
-    public bool HasInitialized { get; private set; }
-
-    public async Task InitializeAsync()
-    {
-        _logger.LogDebug("Initializing LibraryViewModel");
-        await LoadAsync(CancellationToken.None);
-        HasInitialized = !HasLoadError;
-    }
 }

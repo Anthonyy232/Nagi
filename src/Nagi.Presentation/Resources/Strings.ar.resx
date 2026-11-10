@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>ألبوم</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>فنان</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>الفنان غير موجود</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>خطأ في تحميل الفنان</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>فنان</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -449,14 +446,11 @@
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>لا توجد قواعد محددة • جميع الأغاني مطابقة</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>مطابقة {0} من {1, plural, one {# قاعدة} other {# قواعد}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>مطابقة الكل من {0, plural, one {# قاعدة} other {# قواعد}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>الكل</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>أي</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>مطابقة أي من {0, plural, one {# قاعدة} other {# قواعد}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} عنصر</value>
@@ -803,9 +797,6 @@
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>موضع التشغيل</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>التالي</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>مسح قائمة الانتظار</value>
@@ -2075,8 +2066,8 @@
   <data name="Format_Least" xml:space="preserve">
     <value>أقل {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>فرز حسب: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>فرز حسب: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>ملف</value>

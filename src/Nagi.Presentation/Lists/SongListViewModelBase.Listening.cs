@@ -2,7 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using Nagi.Core.Playback;
-using Nagi.Presentation.Player;
+using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
 
 namespace Nagi.Presentation.Lists;

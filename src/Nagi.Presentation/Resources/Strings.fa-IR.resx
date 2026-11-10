@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>آلبوم</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>هنرمند</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>هنرمند یافت نشد</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>خطا در بارگذاری هنرمند</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>هنرمند</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -449,14 +446,11 @@
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>هیچ قانونی تعریف نشده است • همه آهنگ‌ها مطابقت دارند</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>مطابقت {0} از {1, plural, one {# قانون} other {# قوانین}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>مطابقت همه از {0, plural, one {# قانون} other {# قوانین}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>همه</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>هر کدام</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>مطابقت هر کدام از {0, plural, one {# قانون} other {# قوانین}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} مورد</value>
@@ -803,9 +797,6 @@
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>موقعیت پخش</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>بعدی</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>پاک‌کردن صف</value>
@@ -2075,8 +2066,8 @@
   <data name="Format_Least" xml:space="preserve">
     <value>کم‌ترین {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>مرتب‌سازی بر اساس: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>مرتب‌سازی بر اساس: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>فایل</value>

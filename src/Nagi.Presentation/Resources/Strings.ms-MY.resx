@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>Album</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>Artis</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Artis Tidak Ditemui</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>Ralat Memuatkan Artis</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>Artis</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -449,14 +446,11 @@ Fail yang tidak dapat diimport: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Tiada peraturan ditakrifkan • Semua lagu sepadan</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Padankan {0} daripada {1} peraturan</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Padankan semua daripada {0} peraturan</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>semua</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>mana-mana</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Padankan mana-mana daripada {0} peraturan</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0} item</value>
@@ -803,9 +797,6 @@ Adakah anda ingin meneruskan?</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Kedudukan main</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>Seterusnya</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>Kosongkan Giliran</value>
@@ -2075,8 +2066,8 @@ Adakah anda ingin meneruskan?</value>
   <data name="Format_Least" xml:space="preserve">
     <value>{0} Paling Sedikit</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Susun Mengikut: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Susun Mengikut: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Fail</value>

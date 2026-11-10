@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>Album</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>Artist</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Artist ikke funnet</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>Feil ved lasting av artist</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>Artist</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -449,14 +446,11 @@ Filer som ikke kunne importeres: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Ingen regler definert • Alle sanger samsvarer</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Match {0} av {1, plural, one {# regel} other {# regler}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Match alle av {0, plural, one {# regel} other {# regler}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>alle</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>noen</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Match noen av {0, plural, one {# regel} other {# regler}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# element} other {# elementer}}</value>
@@ -803,9 +797,6 @@ Vil du fortsette?</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Avspillingsposisjon</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>Neste i kø</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>Tøm kø</value>
@@ -2075,8 +2066,8 @@ Vil du fortsette?</value>
   <data name="Format_Least" xml:space="preserve">
     <value>Færrest {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Sorter etter: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Sorter etter: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Fil</value>

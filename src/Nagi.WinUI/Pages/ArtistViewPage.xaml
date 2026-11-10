@@ -10,7 +10,7 @@
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
-    x:Name="pageRoot"
+    x:Name="Root"
     Background="Transparent"
     mc:Ignorable="d">
 
@@ -46,9 +46,9 @@
                     <MenuFlyout>
                         <MenuFlyoutItem
                             Text="{x:Bind resources:Strings.Generic_Play, Mode=OneTime}"
-                            Command="{Binding ViewModel.PlayAlbumCommand, ElementName=pageRoot}"
+                            Command="{Binding ViewModel.PlayAlbumCommand, ElementName=Root}"
                             CommandParameter="{x:Bind Id}"
-                            IsEnabled="{Binding ViewModel.IsLoading, ElementName=pageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
+                            IsEnabled="{Binding ViewModel.IsLoading, ElementName=Root, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
                     </MenuFlyout>
                 </Grid.ContextFlyout>
                 <Grid.RowDefinitions>

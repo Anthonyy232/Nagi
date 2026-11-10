@@ -8,7 +8,6 @@ public sealed partial class ArtistPage : CollectionPage
     {
         InitializeComponent();
         ViewModel = GetViewModel<ArtistViewModel>();
-        DataContext = ViewModel;
         InitializeCollection(ViewModel, CollectionGrid);
     }
 

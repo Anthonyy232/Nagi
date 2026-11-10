@@ -3,11 +3,12 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Presentation.Navigation;
+using Nagi.WinUI.Pages;
 
 namespace Nagi.WinUI.Services.Implementations;
 
 /// <summary>
-///     Opens menu and detail pages in the frame that <see cref="MainPage" /> hands over through <see cref="Initialize" />.
+///     Opens pages in the frame that <see cref="MainPage" /> hands over through <see cref="Initialize" />.
 /// </summary>
 public class NavigationService : INavigationService
 {
@@ -21,11 +22,17 @@ public class NavigationService : INavigationService
     }
 
     /// <summary>
+    ///     Raised after each navigation, once this service's state describes the new page.
+    /// </summary>
+    public event Action<Type>? Navigated;
+
+    /// <summary>
     ///     The menu item the current page belongs to, or null when no menu item leads there.
     /// </summary>
     public string? CurrentMenuTag => AppDestinations.GetMenuTag(_frame?.CurrentSourcePageType, _currentParameter);
 
-    public bool IsOnDetailPage => _frame?.CurrentSourcePageType is { } page && AppDestinations.IsDetailPage(page);
+    public bool ShowsBackButton =>
+        _frame is { CanGoBack: true, CurrentSourcePageType: { } page } && AppDestinations.ShowsBackButton(page);
 
     public void Initialize(Frame frame)
     {
@@ -62,5 +69,24 @@ public class NavigationService : INavigationService
         _frame.Navigate(pageType, parameter);
     }
 
-    private void OnFrameNavigated(object sender, NavigationEventArgs e) => _currentParameter = e.Parameter;
+    /// <summary>
+    ///     Opens the lyrics page, or leaves it when it is already open.
+    /// </summary>
+    public void ToggleLyrics()
+    {
+        if (_frame?.CurrentSourcePageType == typeof(LyricsPage)) GoBack();
+        else _frame?.Navigate(typeof(LyricsPage));
+    }
+
+    public void GoBack()
+    {
+        if (_frame is { CanGoBack: true }) _frame.GoBack();
+    }
+
+    private void OnFrameNavigated(object sender, NavigationEventArgs e)
+    {
+        _currentParameter = e.Parameter;
+        _logger.LogDebug("Navigated to {PageName}.", e.SourcePageType.Name);
+        Navigated?.Invoke(e.SourcePageType);
+    }
 }

@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>Album</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>Wykonawca</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Nie znaleziono wykonawcy</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>Błąd ładowania wykonawcy</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>Wykonawca</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -449,14 +446,11 @@ Pliki, których nie udało się zaimportować: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Brak zdefiniowanych reguł • Wszystkie utwory pasują</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Dopasuj {0} z {1, plural, one {# reguły} other {# reguł}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Dopasuj wszystkie z {0, plural, one {# reguły} other {# reguł}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>wszystkie</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>dowolne</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Dopasuj dowolne z {0, plural, one {# reguły} other {# reguł}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {1 element} few {{0} elementy} many {{0} elementów} other {{0} elementów}}</value>
@@ -803,9 +797,6 @@ Czy chcesz kontynuować?</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Pozycja odtwarzania</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>Następne w kolejce</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>Wyczyść kolejkę</value>
@@ -2075,8 +2066,8 @@ Czy chcesz kontynuować?</value>
   <data name="Format_Least" xml:space="preserve">
     <value>Najmniej: {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Sortuj według: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Sortuj według: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Plik</value>

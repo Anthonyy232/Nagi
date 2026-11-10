@@ -8,12 +8,10 @@ namespace Nagi.WinUI.Pages;
 
 public sealed partial class FolderSongViewPage : SongListPage
 {
-
     public FolderSongViewPage()
     {
         InitializeComponent();
         ViewModel = GetViewModel<FolderSongListViewModel>();
-        DataContext = ViewModel;
         InitializeSongList(ViewModel, ColumnHeaderHost, FolderContentsListView);
     }
 
@@ -23,7 +21,6 @@ public sealed partial class FolderSongViewPage : SongListPage
 
     // Rows are subfolders or songs.
     protected override Song? GetSong(object? item) => (item as FolderContentItem)?.Song;
-
 
     private void OnBreadcrumbItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
     {

@@ -6,10 +6,13 @@ using Nagi.WinUI.Pages;
 namespace Nagi.WinUI.Services.Implementations;
 
 /// <summary>
-///     The pages behind the navigation menu's tags, and the detail pages opened from them.
+///     The pages behind the navigation menu's tags, and the pages opened from them.
 /// </summary>
 internal static class AppDestinations
 {
+    /// <summary>The tag of the navigation view's own settings item, which the user's menu layout leaves out.</summary>
+    public const string SettingsTag = "Settings";
+
     private static readonly Dictionary<string, (Type Page, object? Parameter)> MenuPages = new()
     {
         [NavigationTags.Library] = (typeof(LibraryPage), null),
@@ -19,7 +22,8 @@ internal static class AppDestinations
         [NavigationTags.Artists] = (typeof(ArtistPage), null),
         [NavigationTags.Albums] = (typeof(AlbumPage), null),
         [NavigationTags.Genres] = (typeof(GenrePage), null),
-        [NavigationTags.Insights] = (typeof(InsightsPage), null)
+        [NavigationTags.Insights] = (typeof(InsightsPage), null),
+        [SettingsTag] = (typeof(SettingsPage), null)
     };
 
     // Each detail page highlights the menu item it was opened from.
@@ -48,7 +52,9 @@ internal static class AppDestinations
         MenuPages.FirstOrDefault(entry => entry.Value.Page == page && Equals(entry.Value.Parameter, parameter)).Key
         ?? DetailPages.FirstOrDefault(entry => entry.Page == page).MenuTag;
 
-    public static bool IsDetailPage(Type page) => DetailPages.Any(entry => entry.Page == page);
+    /// <summary>Whether <paramref name="page" /> is opened over a menu page, so the back button returns there.</summary>
+    public static bool ShowsBackButton(Type page) =>
+        page == typeof(LyricsPage) || DetailPages.Any(entry => entry.Page == page);
 
     public static Type GetDetailPage(INavigationParameter parameter) =>
         DetailPages.FirstOrDefault(entry => entry.Parameter == parameter.GetType()).Page

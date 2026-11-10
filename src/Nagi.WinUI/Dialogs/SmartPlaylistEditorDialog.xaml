@@ -5,7 +5,7 @@
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:ImageEx"
+    xmlns:uicontrols="using:Nagi.WinUI.Controls"
     xmlns:playlists="using:Nagi.Presentation.Playlists"
     xmlns:resources="using:Nagi.Presentation.Resources"
     mc:Ignorable="d"
@@ -31,21 +31,10 @@
 
         <Grid Grid.Row="0" ColumnDefinitions="Auto, 24, *, 24, Auto" Margin="0,0,0,24">
             <StackPanel Grid.Column="0" Spacing="8" VerticalAlignment="Top">
-                <Grid Width="100" Height="100"
-                      Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                      CornerRadius="{StaticResource ArtworkCornerRadius}">
-                    <FontIcon Glyph="&#xE91B;" FontSize="40"
-                              Visibility="{x:Bind ViewModel.HasCoverImage, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
-                              HorizontalAlignment="Center" VerticalAlignment="Center"
-                              Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                    <controls:ImageEx Width="100" Height="100" x:Name="CoverImagePreview"
-                                      Stretch="UniformToFill"
-                                      IsCacheEnabled="True"
-                                      DecodePixelWidth="100"
-                                      DecodePixelType="Logical"
-                                      CornerRadius="{StaticResource ArtworkCornerRadius}"
-                                      Visibility="{x:Bind ViewModel.HasCoverImage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                </Grid>
+                <uicontrols:ArtworkImage Size="100"
+                                         PlaceholderGlyph="&#xE91B;"
+                                         PlaceholderGlyphSize="40"
+                                         Source="{x:Bind ViewModel.CoverPreviewUri, Mode=OneWay}" />
                 <Button
                         Content="{x:Bind resources:Strings.SmartPlaylist_PickCoverButton_Content, Mode=OneTime}"
                         ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylist_PickCoverButton_ToolTip, Mode=OneTime}"
@@ -66,7 +55,7 @@
                 <ComboBox HorizontalAlignment="Stretch"
                           AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylist_SortOrderLabel, Mode=OneTime}"
                           ItemsSource="{x:Bind playlists:SmartPlaylistEditorViewModel.SortOptions}"
-                          DisplayMemberPath="DisplayName"
+                          DisplayMemberPath="Label"
                           SelectedItem="{x:Bind ViewModel.SelectedSortOption, Mode=TwoWay}" />
             </StackPanel>
         </Grid>

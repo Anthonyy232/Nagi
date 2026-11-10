@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>Album</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>Interpret</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Interpret nenalezen</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>Chyba při načítání interpreta</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>Interpret</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -449,14 +446,11 @@ Soubory, které se nepodařilo importovat: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Nejsou definována žádná pravidla • Všechny skladby odpovídají</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Odpovídá {0} z {1, plural, one {# pravidla} other {# pravidel}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Odpovídá všem z {0, plural, one {# pravidla} other {# pravidel}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>všem</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>kterémukoli</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Odpovídá kterémukoli z {0, plural, one {# pravidla} other {# pravidel}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one{# položka} few{# položky} many{# položky} other{# položek}}</value>
@@ -803,9 +797,6 @@ Chcete pokračovat?</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Pozice přehrávání</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>Další v pořadí</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>Vyprázdnit frontu</value>
@@ -2075,8 +2066,8 @@ Chcete pokračovat?</value>
   <data name="Format_Least" xml:space="preserve">
     <value>Nejméně: {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Seřadit podle: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Seřadit podle: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Soubor</value>

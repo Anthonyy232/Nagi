@@ -8,7 +8,6 @@ public sealed partial class FolderPage : CollectionPage
     {
         InitializeComponent();
         ViewModel = GetViewModel<FolderViewModel>();
-        DataContext = ViewModel;
         InitializeCollection(ViewModel, CollectionGrid);
     }
 

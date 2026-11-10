@@ -356,8 +356,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
             var confirmed = await _uiService.ShowConfirmationDialogAsync(
                 Strings.Settings_Dialog_VolumeNorm_Title,
                 Strings.Settings_Dialog_VolumeNorm_Content,
-                Strings.Settings_Dialog_VolumeNorm_PrimaryButton,
-                Strings.Generic_Cancel);
+                Strings.Settings_Dialog_VolumeNorm_PrimaryButton);
             if (!IsCurrent()) return;
             if (!confirmed)
             {
@@ -365,8 +364,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
                 return;
             }
 
-            if (Set(CoreSettings.VolumeNormalization, true, nameof(IsVolumeNormalizationEnabled)) && IsCurrent())
-                await ScanLibraryForReplayGainAsync();
+            await EnableWithLibraryScanAsync();
         }
         catch (Exception ex)
         {
@@ -377,15 +375,23 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         }
     }
 
-    private async Task ScanLibraryForReplayGainAsync()
+    private async Task EnableWithLibraryScanAsync()
     {
-        if (_isDisposed) return;
-
         using var scanCts = new CancellationTokenSource();
         string? error = null;
-        using (var operation = _globalOperation.TryBegin(Strings.Settings_Status_VolumeNorm_Preparing, scanCts.Cancel))
+        var operation = _globalOperation.TryBegin(Strings.Settings_Status_VolumeNorm_Preparing, scanCts.Cancel);
+        if (operation is null)
         {
-            if (operation is null) return;
+            // The scan can't run beside another library operation, and turning normalization on without it would
+            // leave the songs already in the library without gain.
+            OnPropertyChanged(nameof(IsVolumeNormalizationEnabled));
+            await _uiService.ShowMessageDialogAsync(Strings.Settings_Dialog_VolumeNorm_Title, Strings.Settings_Dialog_VolumeNorm_Busy);
+            return;
+        }
+
+        using (operation)
+        {
+            if (!Set(CoreSettings.VolumeNormalization, true, nameof(IsVolumeNormalizationEnabled))) return;
             _replayGainScanCts = scanCts;
             var cancellationToken = scanCts.Token;
             try

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Listening;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
+using Nagi.Core.Settings;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
@@ -96,6 +97,7 @@ public partial class InsightsViewModel : ObservableObject
         IMusicNavigationService navigationService,
         IListeningService listening,
         IUIService uiService,
+        ISettingsService settingsService,
         ILogger<InsightsViewModel> logger)
     {
         _statisticsService = statisticsService;
@@ -115,7 +117,7 @@ public partial class InsightsViewModel : ObservableObject
                     Artist = song.Song.ArtistName,
                     ArtworkUri = song.Song.AlbumArtUriFromTrack,
                     StatText = FormatStat(metric, song.TotalPlays, song.TotalDuration)
-                }));
+                }), logger);
         Artists = new InsightsCategoryViewModel(this, Strings.InsightsPage_TopArtists, SortMetric.Duration,
             async (range, metric, offset, limit, searchTerm, ct) => ToItems(
                 await _statisticsService.GetTopArtistsAsync(range, metric, offset, limit, searchTerm, ct),
@@ -127,7 +129,7 @@ public partial class InsightsViewModel : ObservableObject
                     ImageUri = artist.Artist.ImageUri,
                     StatText = FormatStat(metric, artist.TotalPlays, artist.TotalDuration),
                     Command = GoToArtistCommand
-                }));
+                }), logger);
         Albums = new InsightsCategoryViewModel(this, Strings.InsightsPage_TopAlbums, SortMetric.PlayCount,
             async (range, metric, offset, limit, searchTerm, ct) => ToItems(
                 await _statisticsService.GetTopAlbumsAsync(range, metric, offset, limit, searchTerm, ct),
@@ -140,7 +142,7 @@ public partial class InsightsViewModel : ObservableObject
                     ArtworkUri = album.Album.CoverArtUri,
                     StatText = FormatStat(metric, album.TotalPlays, album.TotalDuration),
                     Command = GoToAlbumCommand
-                }));
+                }), logger);
         Genres = new InsightsCategoryViewModel(this, Strings.InsightsPage_TopGenres, SortMetric.PlayCount,
             async (range, metric, offset, limit, searchTerm, ct) => ToItems(
                 await _statisticsService.GetTopGenresAsync(range, metric, offset, limit, searchTerm, ct),
@@ -151,9 +153,9 @@ public partial class InsightsViewModel : ObservableObject
                     Name = genre.Genre.Name,
                     StatText = FormatStat(metric, genre.TotalPlays, genre.TotalDuration),
                     Command = GoToGenreCommand
-                }));
+                }), logger);
         Categories = [Songs, Artists, Albums, Genres];
-        SeeAll = new InsightsSeeAllViewModel(BuildTimeRange, dispatcherService, logger);
+        SeeAll = new InsightsSeeAllViewModel(BuildTimeRange, settingsService, dispatcherService, logger);
     }
 
     public static IReadOnlyList<InsightsTimeRange> TimeRanges { get; } =
@@ -292,21 +294,16 @@ public partial class InsightsViewModel : ObservableObject
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
             Strings.InsightsPage_Reset_Confirm_Title,
             Strings.InsightsPage_Reset_Confirm_Message,
-            Strings.InsightsPage_Reset_Confirm_Button,
-            null);
+            Strings.InsightsPage_Reset_Confirm_Button);
 
         if (!confirmed) return;
 
-        try
+        await UserAction.RunAsync(async () =>
         {
             await _listening.ClearListenHistoryAsync();
             _logger.LogInformation("Listen history reset by user.");
             await LoadInsightsAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to reset listen history.");
-        }
+        }, _logger, _uiService);
     }
 
     internal async Task OnMetricChangedAsync(InsightsCategoryViewModel category)

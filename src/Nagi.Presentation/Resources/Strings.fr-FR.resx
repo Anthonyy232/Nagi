@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>Album</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>Artiste</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Artiste introuvable</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>Erreur de chargement de l'artiste</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>Artiste</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -449,14 +446,11 @@ Fichiers qui n'ont pas pu être importés : {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Aucune règle définie • Tous les morceaux correspondent</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Correspond à {0} parmi {1, plural, one {# règle} other {# règles}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Correspond à toutes parmi {0, plural, one {# règle} other {# règles}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>toutes</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>n'importe quelle</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Correspond à n''importe quelle parmi {0, plural, one {# règle} other {# règles}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# élément} other {# éléments}}</value>
@@ -803,9 +797,6 @@ Voulez-vous continuer ?</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Position de lecture</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>À suivre</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>Vider la file d'attente</value>
@@ -2075,8 +2066,8 @@ Voulez-vous continuer ?</value>
   <data name="Format_Least" xml:space="preserve">
     <value>Moins de {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Trier par : </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Trier par : {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Fichier</value>

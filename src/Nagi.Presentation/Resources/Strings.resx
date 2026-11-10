@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>Album</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>Artist</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Artist Not Found</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>Error Loading Artist</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>Artist</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -456,14 +453,11 @@ Files that could not be imported: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>No rules defined • All songs match</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Match {0} of {1, plural, one {# rule} other {# rules}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Match all of {0, plural, one {# rule} other {# rules}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>all</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>any</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Match any of {0, plural, one {# rule} other {# rules}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# item} other {# items}}</value>
@@ -685,6 +679,9 @@ Do you want to continue?</value>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Enable &amp; Scan</value>
   </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>Volume normalization starts with a scan of your library, which can't run while another library operation is in progress. Try again once it has finished.</value>
+  </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Preparing volume normalization scan…</value>
   </data>
@@ -810,9 +807,6 @@ Do you want to continue?</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Seek</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>Up Next</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>Clear Queue</value>
@@ -2231,8 +2225,8 @@ Do you want to continue?</value>
   <data name="Format_Least" xml:space="preserve">
     <value>Fewest {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Sort By: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Sort By: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>File</value>

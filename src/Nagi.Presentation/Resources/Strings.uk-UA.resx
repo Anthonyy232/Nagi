@@ -244,16 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>Альбом</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>Виконавець</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Виконавця не знайдено</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>Помилка завантаження виконавця</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>Виконавець</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -449,14 +446,11 @@
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Правил не визначено • Усі пісні відповідають</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Відповідає {0} з {1, plural, one {# правило} other {# правил}}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Відповідає усім з {0, plural, one {# правило} other {# правил}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>усім</value>
-  </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>будь-якому</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Відповідає будь-якому з {0, plural, one {# правило} other {# правил}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# елемент} few {# елементи} many {# елементів} other {# елемента}}</value>
@@ -803,9 +797,6 @@
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Позиція відтворення</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>Далі грає</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>Очистити чергу</value>
@@ -2075,8 +2066,8 @@
   <data name="Format_Least" xml:space="preserve">
     <value>Найменше {0}</value>
   </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Сортувати за: </value>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Сортувати за: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Файл</value>

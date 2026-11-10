@@ -465,6 +465,5 @@ public sealed class TaskbarService : IDisposable
             }
             _taskbarList = null;
         }
-
     }
 }

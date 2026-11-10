@@ -34,7 +34,6 @@ public sealed class AlbumViewModelItem
     public ICollection<AlbumArtist> AlbumArtists { get; }
     public string? CoverArtUri { get; }
 
-
     public override string ToString() => $"{Title} — {ArtistName}";
 }
 

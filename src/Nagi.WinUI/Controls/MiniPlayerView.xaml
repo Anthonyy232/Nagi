@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:media="using:CommunityToolkit.WinUI.Media"
     xmlns:local="using:Nagi.WinUI.Controls"
+    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:resources="using:Nagi.Presentation.Resources">
 
     <!--  The root grid handles pointer enter/exit events to show or hide the controls.  -->
@@ -14,7 +15,7 @@
             <Border.Background>
                 <media:ImageBlendBrush
                     Mode="Multiply"
-                    Source="{x:Bind ViewModel.AlbumArtUri, Mode=OneWay, Converter={StaticResource StringToDecodedImageSourceConverter}, ConverterParameter=400}"
+                    Source="{x:Bind uihelpers:BitmapImageFactory.CreateDecoded(ViewModel.AlbumArtUri, 400), Mode=OneWay}"
                     Stretch="UniformToFill" />
             </Border.Background>
         </Border>
@@ -25,18 +26,6 @@
         <Border x:Name="DragHandle" Background="Transparent" />
 
         <Grid x:Name="HoverControlsContainer" Opacity="0">
-            <Grid.Resources>
-                <StaticResource x:Key="SliderThumbBackground" ResourceKey="MediaOnImageAccentBrush" />
-                <StaticResource x:Key="SliderThumbBackgroundPointerOver" ResourceKey="MediaOnImageAccentBrush" />
-                <StaticResource x:Key="SliderThumbBackgroundPressed" ResourceKey="MediaOnImageAccentBrush" />
-                <StaticResource x:Key="SliderTrackValueFill" ResourceKey="MediaOnImageAccentBrush" />
-                <StaticResource x:Key="SliderTrackValueFillPointerOver" ResourceKey="MediaOnImageAccentBrush" />
-                <StaticResource x:Key="SliderTrackValueFillPressed" ResourceKey="MediaOnImageAccentBrush" />
-                <StaticResource x:Key="SliderTrackFill" ResourceKey="MediaOnImageControlTrackBrush" />
-                <StaticResource x:Key="SliderTrackFillPointerOver" ResourceKey="MediaOnImageControlTrackBrush" />
-                <StaticResource x:Key="SliderTrackFillPressed" ResourceKey="MediaOnImageControlTrackBrush" />
-            </Grid.Resources>
-
             <!--  Overlay for control readability  -->
             <Border Background="{StaticResource MediaOnImageControlsScrimBrush}" IsHitTestVisible="False" />
 

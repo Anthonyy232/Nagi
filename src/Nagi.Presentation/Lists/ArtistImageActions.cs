@@ -13,7 +13,7 @@ internal static class ArtistImageActions
 {
     /// <summary>Lets the user pick an image file and stores it as the artist's custom image.</summary>
     public static Task ChangeAsync(Guid artistId, IUIService uiService, IArtworkService artwork, ILogger logger,
-        Func<bool>? isClosed = null) =>
+        Func<bool> isClosed) =>
         UserAction.RunAsync(async () =>
         {
             var localPath = await uiService.PickSingleFileAsync(FileExtensions.ImageFileExtensions);
@@ -23,6 +23,6 @@ internal static class ArtistImageActions
         }, logger, uiService, isClosed);
 
     public static Task RemoveAsync(Guid artistId, IUIService uiService, IArtworkService artwork, ILogger logger,
-        Func<bool>? isClosed = null) =>
+        Func<bool> isClosed) =>
         UserAction.RunAsync(() => artwork.RemoveArtistImageAsync(artistId), logger, uiService, isClosed);
 }

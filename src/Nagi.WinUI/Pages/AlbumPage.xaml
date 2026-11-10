@@ -10,7 +10,7 @@
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
     xmlns:resources="using:Nagi.Presentation.Resources"
-    x:Name="AlbumPageRoot"
+    x:Name="Root"
     Background="Transparent"
     mc:Ignorable="d">
 
@@ -49,9 +49,9 @@
                                 <MenuFlyout>
                                     <MenuFlyoutItem
                                         Text="{x:Bind resources:Strings.Generic_Play, Mode=OneTime}"
-                                        Command="{Binding ViewModel.PlayAlbumCommand, ElementName=AlbumPageRoot}"
+                                        Command="{Binding ViewModel.PlayAlbumCommand, ElementName=Root}"
                                         CommandParameter="{x:Bind Id}"
-                                        IsEnabled="{Binding ViewModel.IsLoading, ElementName=AlbumPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
+                                        IsEnabled="{Binding ViewModel.IsLoading, ElementName=Root, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
                                 </MenuFlyout>
                             </Grid.ContextFlyout>
                             <Grid.RowDefinitions>
@@ -80,7 +80,7 @@
                                 FontSize="{StaticResource CaptionTextBlockFontSize}"
                                 ArtistName="{x:Bind ArtistName, Mode=OneTime}"
                                 AlbumArtists="{x:Bind AlbumArtists, Mode=OneTime}"
-                                Command="{Binding ViewModel.GoToArtistCommand, ElementName=AlbumPageRoot}" />
+                                Command="{Binding ViewModel.GoToArtistCommand, ElementName=Root}" />
                         </Grid>
                     </DataTemplate>
                 </GridView.ItemTemplate>

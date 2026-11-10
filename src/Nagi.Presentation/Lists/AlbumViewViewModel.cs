@@ -39,7 +39,7 @@ public partial class AlbumViewViewModel : DetailSongListViewModelBase<AlbumViewN
         : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger, SortOrders, AppSettings.AlbumViewSortOrder)
     {
         PageTitle = Strings.AlbumView_DefaultAlbumTitle;
-        ArtistName = Strings.AlbumView_DefaultArtistName;
+        ArtistName = Strings.Generic_DefaultArtistName;
         AlbumDetailsText = string.Empty;
     }
 
@@ -55,7 +55,6 @@ public partial class AlbumViewViewModel : DetailSongListViewModelBase<AlbumViewN
 
     [ObservableProperty]
     public partial string? CoverArtUri { get; set; }
-
 
     [ObservableProperty] public partial string AlbumDetailsText { get; set; }
 
@@ -187,8 +186,6 @@ public partial class AlbumViewViewModel : DetailSongListViewModelBase<AlbumViewN
         (ChosenColumns & ~(SongListColumns.Artist | SongListColumns.Album | SongListColumns.Year)) | SongListColumns.TrackNumber;
 
     public override bool ShowsGoToAlbum => false;
-
-
 
     private void CancelDurationFetch()
     {
