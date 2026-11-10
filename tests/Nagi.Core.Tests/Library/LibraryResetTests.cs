@@ -26,11 +26,14 @@ public class LibraryResetTests : LibraryTestBase
             await context.SaveChangesAsync();
         }
         var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var provider = new TaskCompletionSource<ServiceResult<ArtistInfo>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        // The lookup blocks its caller instead of returning a pending task: a cancelled fetch stops waiting for a
+        // pending lookup, so it could end, and let the quiet step run, at any moment.
+        var lookup = new ManualResetEventSlim();
         _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>()).Returns(_ =>
         {
             started.TrySetResult();
-            return provider.Task;
+            lookup.Wait(TimeSpan.FromSeconds(5));
+            return ServiceResult<ArtistInfo>.FromSuccessNotFound();
         });
         var fetch = _library.Artwork.StartMetadataBackgroundFetchAsync();
         await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
@@ -46,7 +49,7 @@ public class LibraryResetTests : LibraryTestBase
         writeLock.IsCompletedSuccessfully.Should().BeTrue("the quiet step waits for the fetch before the write lock");
         _library.WriteLock.Release();
         ranQuiet.Should().BeFalse();
-        provider.SetResult(ServiceResult<ArtistInfo>.FromSuccessNotFound());
+        lookup.Set();
         await Task.WhenAll(fetch, quiet).WaitAsync(TimeSpan.FromSeconds(5));
         ranQuiet.Should().BeTrue();
     }
