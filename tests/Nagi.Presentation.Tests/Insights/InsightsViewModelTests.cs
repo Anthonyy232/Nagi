@@ -43,7 +43,7 @@ public class InsightsViewModelTests
                 Arg.Any<int>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
                 .Returns(new StatisticsPage<GenreStats>(genres, 1));
             var viewModel = CreateViewModel(statistics);
-            viewModel.Artists.SetMetricCommand.Execute("PlayCount");
+            await viewModel.Artists.Sort.ChangeCommand.ExecuteAsync(SortMetric.PlayCount);
 
             await viewModel.LoadInsightsAsync();
 
@@ -209,9 +209,8 @@ public class InsightsViewModelTests
         await viewModel.Albums.OpenSeeAllCommand.ExecuteAsync(null);
         statistics.ClearReceivedCalls();
 
-        viewModel.Albums.SetMetricCommand.Execute("Duration");
+        await viewModel.Albums.Sort.ChangeCommand.ExecuteAsync(SortMetric.Duration);
 
-        viewModel.Albums.IsByDuration.Should().BeTrue();
         await statistics.Received(1).GetTopAlbumsAsync(Arg.Any<TimeRange>(), SortMetric.Duration, 0, 25,
             Arg.Any<string?>(), Arg.Any<CancellationToken>());
         await statistics.Received(1).GetTopAlbumsAsync(Arg.Any<TimeRange>(), SortMetric.Duration, 0, 10,

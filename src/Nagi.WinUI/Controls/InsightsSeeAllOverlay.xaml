@@ -58,23 +58,8 @@
                                         PlaceholderText="{x:Bind resources:Strings.InsightsPage_SeeAll_SearchBox_Placeholder, Mode=OneTime}"
                                         SearchToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_SearchButton_ToolTip, Mode=OneTime}" />
 
-                    <DropDownButton Grid.Column="2"
-                                    Content="{x:Bind ViewModel.Category.SortLabel, Mode=OneWay}"
-                                    FontSize="11" Height="28" Padding="8,0"
-                                    VerticalAlignment="Center" Margin="0,0,8,0">
-                        <DropDownButton.Flyout>
-                            <MenuFlyout>
-                                <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_PlayCount, Mode=OneTime}" GroupName="SeeAllSort"
-                                                     IsChecked="{x:Bind ViewModel.Category.IsByPlayCount, Mode=OneWay}"
-                                                     Command="{x:Bind ViewModel.Category.SetMetricCommand, Mode=OneWay}"
-                                                     CommandParameter="PlayCount" />
-                                <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_Duration, Mode=OneTime}" GroupName="SeeAllSort"
-                                                     IsChecked="{x:Bind ViewModel.Category.IsByDuration, Mode=OneWay}"
-                                                     Command="{x:Bind ViewModel.Category.SetMetricCommand, Mode=OneWay}"
-                                                     CommandParameter="Duration" />
-                            </MenuFlyout>
-                        </DropDownButton.Flyout>
-                    </DropDownButton>
+                    <local:SortButton Grid.Column="2" Margin="0,0,8,0" VerticalAlignment="Center"
+                                      Selection="{x:Bind ViewModel.Category.Sort, Mode=OneWay}" />
 
                     <Button Grid.Column="3"
                             Command="{x:Bind ViewModel.CloseCommand}"

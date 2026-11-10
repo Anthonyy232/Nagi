@@ -115,7 +115,7 @@ public partial class InsightsViewModel : ObservableObject
                     Artist = song.Song.ArtistName,
                     ArtworkUri = song.Song.AlbumArtUriFromTrack,
                     StatText = FormatStat(metric, song.TotalPlays, song.TotalDuration)
-                }));
+                }), logger);
         Artists = new InsightsCategoryViewModel(this, Strings.InsightsPage_TopArtists, SortMetric.Duration,
             async (range, metric, offset, limit, searchTerm, ct) => ToItems(
                 await _statisticsService.GetTopArtistsAsync(range, metric, offset, limit, searchTerm, ct),
@@ -127,7 +127,7 @@ public partial class InsightsViewModel : ObservableObject
                     ImageUri = artist.Artist.ImageUri,
                     StatText = FormatStat(metric, artist.TotalPlays, artist.TotalDuration),
                     Command = GoToArtistCommand
-                }));
+                }), logger);
         Albums = new InsightsCategoryViewModel(this, Strings.InsightsPage_TopAlbums, SortMetric.PlayCount,
             async (range, metric, offset, limit, searchTerm, ct) => ToItems(
                 await _statisticsService.GetTopAlbumsAsync(range, metric, offset, limit, searchTerm, ct),
@@ -140,7 +140,7 @@ public partial class InsightsViewModel : ObservableObject
                     ArtworkUri = album.Album.CoverArtUri,
                     StatText = FormatStat(metric, album.TotalPlays, album.TotalDuration),
                     Command = GoToAlbumCommand
-                }));
+                }), logger);
         Genres = new InsightsCategoryViewModel(this, Strings.InsightsPage_TopGenres, SortMetric.PlayCount,
             async (range, metric, offset, limit, searchTerm, ct) => ToItems(
                 await _statisticsService.GetTopGenresAsync(range, metric, offset, limit, searchTerm, ct),
@@ -151,7 +151,7 @@ public partial class InsightsViewModel : ObservableObject
                     Name = genre.Genre.Name,
                     StatText = FormatStat(metric, genre.TotalPlays, genre.TotalDuration),
                     Command = GoToGenreCommand
-                }));
+                }), logger);
         Categories = [Songs, Artists, Albums, Genres];
         SeeAll = new InsightsSeeAllViewModel(BuildTimeRange, dispatcherService, logger);
     }

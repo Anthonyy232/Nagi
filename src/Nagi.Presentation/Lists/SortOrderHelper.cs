@@ -1,4 +1,5 @@
 using Nagi.Core.Library;
+using Nagi.Core.Listening;
 using Nagi.Core.Playlists;
 using CoreStrings = Nagi.Core.Resources.Strings;
 using Nagi.Presentation.Common;
@@ -90,6 +91,9 @@ public static class SortOrderHelper
         AlbumSortOrder.SongCountDesc => MostSongsLabel,
         AlbumSortOrder.SongCountAsc => LeastSongsLabel,
         AlbumSortOrder => ArtistAscLabel,
+
+        SortMetric.PlayCount => Strings.InsightsPage_SortBy_PlayCount,
+        SortMetric.Duration => Strings.InsightsPage_SortBy_Duration,
 
         _ => TitleAscLabel
     };

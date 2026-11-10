@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:insights="using:Nagi.Presentation.Insights"
+    xmlns:uicontrols="using:Nagi.WinUI.Controls"
     Background="Transparent"
     mc:Ignorable="d">
 
@@ -30,22 +31,8 @@
                                Style="{StaticResource InsightsCardHeaderStyle}"
                                Margin="0"
                                VerticalAlignment="Center" />
-                    <DropDownButton Grid.Column="1"
-                                    Content="{x:Bind SortLabel, Mode=OneWay}"
-                                    FontSize="11" Height="28" Padding="8,0"
-                                    VerticalAlignment="Center" Margin="0,0,8,0">
-                        <DropDownButton.Flyout>
-                            <MenuFlyout>
-                                <!-- RadioMenuFlyoutItem groups by name across menus, so each card needs its own group. -->
-                                <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_PlayCount}" GroupName="{x:Bind Title}"
-                                                     IsChecked="{x:Bind IsByPlayCount, Mode=OneWay}"
-                                                     Command="{x:Bind SetMetricCommand}" CommandParameter="PlayCount" />
-                                <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_Duration}" GroupName="{x:Bind Title}"
-                                                     IsChecked="{x:Bind IsByDuration, Mode=OneWay}"
-                                                     Command="{x:Bind SetMetricCommand}" CommandParameter="Duration" />
-                            </MenuFlyout>
-                        </DropDownButton.Flyout>
-                    </DropDownButton>
+                    <uicontrols:SortButton Grid.Column="1" Margin="0,0,8,0" VerticalAlignment="Center"
+                                           Selection="{x:Bind Sort}" />
                     <Button Grid.Column="2"
                             Command="{x:Bind OpenSeeAllCommand}"
                             Style="{StaticResource SubtleButtonStyle}"
