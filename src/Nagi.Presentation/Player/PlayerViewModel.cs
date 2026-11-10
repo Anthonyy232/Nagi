@@ -687,11 +687,15 @@ public partial class PlayerViewModel : ObservableObject
 
     private void OnQueueLibraryChanged(object? sender, LibraryChange change)
     {
-        if (change.Kind == LibraryChangeKind.RootAdded) return;
+        if (!change.AffectsSongs && !change.AffectsListenHistory) return;
         RunOnUIThread(() =>
         {
-            UpdateCurrentQueueDisplay();
-            SidebarQueue.Refresh(reloadMetadata: true);
+            if (change.AffectsSongs)
+            {
+                UpdateCurrentQueueDisplay();
+                SidebarQueue.Refresh(reloadMetadata: true);
+            }
+
             if (IsQueuePanelOpen && IsHistoryVisible) _ = History.SearchAsync();
         });
     }

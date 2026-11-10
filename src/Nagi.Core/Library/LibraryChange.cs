@@ -44,6 +44,9 @@ public sealed record LibraryChange(LibraryChangeKind Kind, Guid? FolderId = null
     public bool AffectsFolders => AffectsRoots || AddsOrRemovesSongs;
 
     public bool AffectsFavorites => Kind is LibraryChangeKind.FavoritesChanged;
+
+    /// <summary>Listens may have been removed, on their own or with their songs.</summary>
+    public bool AffectsListenHistory => AddsOrRemovesSongs || Kind is LibraryChangeKind.ListenHistoryCleared;
 }
 
 /// <param name="ImagePath">The artist's new cached image, or null when it has none.</param>

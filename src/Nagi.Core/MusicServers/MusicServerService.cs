@@ -400,7 +400,7 @@ public sealed class MusicServerService : IMusicServerService, IListenSubmitter, 
     // A favorite changed in Nagi is flagged pending until its server has been told.
     private async void OnLibraryChanged(object? sender, LibraryChange change)
     {
-        if (change.Kind != LibraryChangeKind.FavoritesChanged) return;
+        if (!change.AffectsFavorites) return;
         try
         {
             await PushPendingFavoritesAsync(null, _shutdownCts.Token).ConfigureAwait(false);

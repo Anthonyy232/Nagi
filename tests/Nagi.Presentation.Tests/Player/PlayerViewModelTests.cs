@@ -117,6 +117,23 @@ public partial class PlayerViewModelTests : IDisposable
         _viewModel.CurrentQueue.Should().ContainSingle().Which.Should().BeSameAs(next);
     }
 
+    [Fact]
+    public async Task ShownQueue_IsReloadedWhenSongsChangeButNotWhenAFavoriteDoes()
+    {
+        var first = new Song { Title = "First" };
+        _playback.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(new Dictionary<Guid, Song> { [first.Id] = first });
+        _playback.UpcomingQueue.Returns(new[] { first.Id });
+        using var preview = _viewModel.PreviewQueue();
+        _playback.ClearReceivedCalls();
+
+        _library.Notifier.Changed += Raise.Event<EventHandler<LibraryChange>>(_library.Notifier, new LibraryChange(LibraryChangeKind.FavoritesChanged));
+        await _playback.DidNotReceive().GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>());
+
+        _library.Notifier.Changed += Raise.Event<EventHandler<LibraryChange>>(_library.Notifier, new LibraryChange(LibraryChangeKind.SongsChanged));
+        await _playback.Received().GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>());
+    }
+
     // The mini player and the tray popup each show the queue on their own.
     [Fact]
     public void QueuePreview_ClosedInOneView_KeepsFollowingTheQueueForAnother()

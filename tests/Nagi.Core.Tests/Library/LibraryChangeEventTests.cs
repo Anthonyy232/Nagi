@@ -58,23 +58,25 @@ public class LibraryChangeEventTests : IDisposable
     }
 
     // What each kind touches decides who reloads: the folder watcher (roots), playlists (songs added or removed), song,
-    // album, artist and genre lists (songs), the folders page (folders) and song lists again (favorites).
+    // album, artist and genre lists (songs), the folders page (folders), song lists again (favorites) and the
+    // player's history (listen history).
     [Theory]
-    [InlineData(LibraryChangeKind.RootAdded, true, false, false, true, false)]
-    [InlineData(LibraryChangeKind.RootRemoved, true, true, true, true, false)]
-    [InlineData(LibraryChangeKind.FolderRescanned, false, true, true, true, false)]
-    [InlineData(LibraryChangeKind.LibraryRescanned, false, true, true, true, false)]
-    [InlineData(LibraryChangeKind.LibraryCleared, true, true, true, true, false)]
-    [InlineData(LibraryChangeKind.SongsChanged, false, false, true, false, false)]
-    [InlineData(LibraryChangeKind.FavoritesChanged, false, false, false, false, true)]
-    [InlineData(LibraryChangeKind.ListenHistoryCleared, false, false, false, false, false)]
+    [InlineData(LibraryChangeKind.RootAdded, true, false, false, true, false, false)]
+    [InlineData(LibraryChangeKind.RootRemoved, true, true, true, true, false, true)]
+    [InlineData(LibraryChangeKind.FolderRescanned, false, true, true, true, false, true)]
+    [InlineData(LibraryChangeKind.LibraryRescanned, false, true, true, true, false, true)]
+    [InlineData(LibraryChangeKind.LibraryCleared, true, true, true, true, false, true)]
+    [InlineData(LibraryChangeKind.SongsChanged, false, false, true, false, false, false)]
+    [InlineData(LibraryChangeKind.FavoritesChanged, false, false, false, false, true, false)]
+    [InlineData(LibraryChangeKind.ListenHistoryCleared, false, false, false, false, false, true)]
     public void EachKind_SaysWhatItTouched(LibraryChangeKind kind, bool roots, bool addsOrRemoves, bool songs, bool folders,
-        bool favorites)
+        bool favorites, bool listenHistory)
     {
         var change = new LibraryChange(kind);
 
-        new[] { change.AffectsRoots, change.AddsOrRemovesSongs, change.AffectsSongs, change.AffectsFolders, change.AffectsFavorites }
-            .Should().Equal(roots, addsOrRemoves, songs, folders, favorites);
+        new[] { change.AffectsRoots, change.AddsOrRemovesSongs, change.AffectsSongs, change.AffectsFolders, change.AffectsFavorites,
+                change.AffectsListenHistory }
+            .Should().Equal(roots, addsOrRemoves, songs, folders, favorites, listenHistory);
     }
 
     [Fact]
