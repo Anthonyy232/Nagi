@@ -230,7 +230,6 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
             if (_isDisposed || version != _listenBrainzConnectionVersion) return;
             if (result.IsValid && !await _accounts.ConnectListenBrainzAsync(token))
             {
-                ListenBrainzIsConnected = false;
                 ListenBrainzConnectionStatus = ResourceFormatter.Format(
                     Strings.SettingsPage_ListenBrainz_ConnectionFailed,
                     Strings.Generic_SignInNotSaved);
@@ -243,7 +242,6 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
             }
             else
             {
-                ListenBrainzIsConnected = false;
                 ListenBrainzConnectionStatus = ResourceFormatter.Format(
                     Strings.SettingsPage_ListenBrainz_ConnectionFailed,
                     result.Error);
@@ -253,7 +251,6 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
         {
             _logger.LogError(ex, "ListenBrainz token validation failed");
             if (_isDisposed || version != _listenBrainzConnectionVersion) return;
-            ListenBrainzIsConnected = false;
             ListenBrainzConnectionStatus = ResourceFormatter.Format(
                 Strings.SettingsPage_ListenBrainz_ConnectionFailed,
                 CoreStrings.ListenBrainz_Unreachable);

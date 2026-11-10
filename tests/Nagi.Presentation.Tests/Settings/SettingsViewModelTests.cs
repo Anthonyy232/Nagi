@@ -339,6 +339,21 @@ public class SettingsViewModelTests : IDisposable
         _settings.Get(CoreSettings.ListenBrainzEnabledSinceUtc).Should().BeNull();
     }
 
+    [Fact]
+    public async Task ListenBrainz_ATokenThatFailsTheTest_LeavesTheSavedAccountConnected()
+    {
+        // The saved token keeps sending listens, so the account has to stay disconnectable.
+        _credentials.RetrieveCredential("Nagi/ListenBrainz").Returns(("token", "saved"));
+        await _viewModel.LoadSettingsAsync();
+        _listenBrainz.ValidateTokenAsync("mistyped", string.Empty).Returns(new ValidateTokenResult(false, null, "Invalid token"));
+        _viewModel.Scrobbling.ListenBrainzUserToken = "mistyped";
+
+        await _viewModel.Scrobbling.TestListenBrainzConnectionCommand.ExecuteAsync(null);
+
+        _viewModel.Scrobbling.ListenBrainzIsConnected.Should().BeTrue();
+        _viewModel.Scrobbling.ListenBrainzConnectionStatus.Should().Contain("Invalid token");
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
