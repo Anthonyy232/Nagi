@@ -10,7 +10,7 @@
     xmlns:lists="using:Nagi.Presentation.Lists"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
-    x:Name="ArtistPageRoot"
+    x:Name="Root"
     Background="Transparent"
     mc:Ignorable="d">
 
@@ -49,17 +49,17 @@
                                 <MenuFlyout>
                                     <MenuFlyoutItem
                                         Text="{x:Bind resources:Strings.Generic_Play, Mode=OneTime}"
-                                        Command="{Binding ViewModel.PlayArtistCommand, ElementName=ArtistPageRoot}"
+                                        Command="{Binding ViewModel.PlayArtistCommand, ElementName=Root}"
                                         CommandParameter="{x:Bind Id}"
-                                        IsEnabled="{Binding ViewModel.IsLoading, ElementName=ArtistPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
+                                        IsEnabled="{Binding ViewModel.IsLoading, ElementName=Root, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
                                     <MenuFlyoutSeparator />
                                     <MenuFlyoutItem
                                         Text="{x:Bind resources:Strings.Generic_ChangeImage, Mode=OneTime}"
-                                        Command="{Binding DataContext.ChangeArtistImageCommand, ElementName=ArtistPageRoot}"
+                                        Command="{Binding ViewModel.ChangeArtistImageCommand, ElementName=Root}"
                                         CommandParameter="{x:Bind Id}" />
                                     <MenuFlyoutItem
                                         Text="{x:Bind resources:Strings.Generic_RemoveImage, Mode=OneTime}"
-                                        Command="{Binding DataContext.RemoveArtistImageCommand, ElementName=ArtistPageRoot}"
+                                        Command="{Binding ViewModel.RemoveArtistImageCommand, ElementName=Root}"
                                         CommandParameter="{x:Bind Id}"
                                         Visibility="{x:Bind IsCustomImage, Mode=OneWay}" />
                                 </MenuFlyout>

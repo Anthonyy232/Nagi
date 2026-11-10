@@ -8,7 +8,6 @@ public sealed partial class GenreViewPage : SongListPage
     {
         InitializeComponent();
         ViewModel = GetViewModel<GenreViewViewModel>();
-        DataContext = ViewModel;
         InitializeSongList(ViewModel, ColumnHeaderHost, SongsListView);
     }
 

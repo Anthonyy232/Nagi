@@ -8,7 +8,6 @@ public sealed partial class PlaylistPage : CollectionPage
     {
         InitializeComponent();
         ViewModel = GetViewModel<PlaylistViewModel>();
-        DataContext = ViewModel;
         InitializeCollection(ViewModel, CollectionGrid);
     }
 

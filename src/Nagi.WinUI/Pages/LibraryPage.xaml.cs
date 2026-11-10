@@ -10,7 +10,6 @@ public sealed partial class LibraryPage : SongListPage
     {
         InitializeComponent();
         ViewModel = GetViewModel<LibraryViewModel>();
-        DataContext = ViewModel;
         InitializeSongList(ViewModel, ColumnHeaderHost, SongsListView);
     }
 

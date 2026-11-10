@@ -10,7 +10,7 @@
     xmlns:lists="using:Nagi.Presentation.Lists"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
-    x:Name="PlaylistPageRoot"
+    x:Name="Root"
     Background="Transparent"
     mc:Ignorable="d">
 
@@ -84,22 +84,22 @@
                         <Grid.ContextFlyout>
                             <MenuFlyout>
                                 <MenuFlyoutItem
-                                    Command="{Binding DataContext.PlayPlaylistCommand, ElementName=PlaylistPageRoot}"
+                                    Command="{Binding ViewModel.PlayPlaylistCommand, ElementName=Root}"
                                     CommandParameter="{x:Bind}"
                                     Text="{x:Bind resources:Strings.Generic_Play, Mode=OneTime}"
-                                    IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=PlaylistPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
-                                <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_Context_Rename, Mode=OneTime}" Command="{Binding DataContext.RenamePlaylistCommand, ElementName=PlaylistPageRoot}" CommandParameter="{x:Bind}"
+                                    IsEnabled="{Binding ViewModel.IsAnyOperationInProgress, ElementName=Root, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
+                                <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_Context_Rename, Mode=OneTime}" Command="{Binding ViewModel.RenamePlaylistCommand, ElementName=Root}" CommandParameter="{x:Bind}"
                                     Visibility="{x:Bind IsFromServer, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                                 <MenuFlyoutSeparator Visibility="{x:Bind IsFromServer, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                                <MenuFlyoutItem Text="{x:Bind resources:Strings.Generic_ChangeImage, Mode=OneTime}" Command="{Binding DataContext.ChangePlaylistCoverCommand, ElementName=PlaylistPageRoot}" CommandParameter="{x:Bind}"
+                                <MenuFlyoutItem Text="{x:Bind resources:Strings.Generic_ChangeImage, Mode=OneTime}" Command="{Binding ViewModel.ChangePlaylistCoverCommand, ElementName=Root}" CommandParameter="{x:Bind}"
                                     Visibility="{x:Bind IsFromServer, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                                 <MenuFlyoutItem
-                                    Command="{Binding DataContext.RemovePlaylistCoverCommand, ElementName=PlaylistPageRoot}"
+                                    Command="{Binding ViewModel.RemovePlaylistCoverCommand, ElementName=Root}"
                                     CommandParameter="{x:Bind}"
                                     Text="{x:Bind resources:Strings.Generic_RemoveImage, Mode=OneTime}"
                                     Visibility="{x:Bind IsCustomImage, Mode=OneWay}" />
                                 <MenuFlyoutSeparator Visibility="{x:Bind IsFromServer, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                                <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_Context_Delete, Mode=OneTime}" Command="{Binding DataContext.DeletePlaylistCommand, ElementName=PlaylistPageRoot}" CommandParameter="{x:Bind}"
+                                <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_Context_Delete, Mode=OneTime}" Command="{Binding ViewModel.DeletePlaylistCommand, ElementName=Root}" CommandParameter="{x:Bind}"
                                     Visibility="{x:Bind IsFromServer, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                             </MenuFlyout>
                         </Grid.ContextFlyout>

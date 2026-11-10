@@ -100,7 +100,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         _logger = logger;
 
         InitializeComponent();
-        DataContext = ViewModel;
         PlayerInputHelper.AttachSeekSlider(MediaSeekerSlider, ViewModel);
         _trayIcon = new TrayIconUserControl(trayIcon);
         RootGrid.Children.Insert(0, _trayIcon);

@@ -12,7 +12,6 @@ public sealed partial class FolderSongViewPage : SongListPage
     {
         InitializeComponent();
         ViewModel = GetViewModel<FolderSongListViewModel>();
-        DataContext = ViewModel;
         InitializeSongList(ViewModel, ColumnHeaderHost, FolderContentsListView);
     }
 

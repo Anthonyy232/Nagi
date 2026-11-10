@@ -11,7 +11,6 @@ public sealed partial class SettingsPage : ViewModelPage
     {
         InitializeComponent();
         ViewModel = GetViewModel<SettingsViewModel>();
-        DataContext = ViewModel;
     }
 
     public SettingsViewModel ViewModel { get; }

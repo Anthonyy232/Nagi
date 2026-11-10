@@ -9,7 +9,6 @@ public sealed partial class AlbumViewPage : SongListPage
     {
         InitializeComponent();
         ViewModel = GetViewModel<AlbumViewViewModel>();
-        DataContext = ViewModel;
         InitializeSongList(ViewModel, ColumnHeaderHost, SongsListView, GroupedSongsListView);
     }
 

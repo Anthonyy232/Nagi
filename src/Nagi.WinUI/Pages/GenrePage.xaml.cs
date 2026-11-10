@@ -8,7 +8,6 @@ public sealed partial class GenrePage : CollectionPage
     {
         InitializeComponent();
         ViewModel = GetViewModel<GenreViewModel>();
-        DataContext = ViewModel;
         InitializeCollection(ViewModel, CollectionGrid);
     }
 

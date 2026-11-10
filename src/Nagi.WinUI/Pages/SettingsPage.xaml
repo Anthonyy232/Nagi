@@ -1,7 +1,7 @@
 <pages:ViewModelPage
     xmlns:pages="using:Nagi.WinUI.Pages"
     x:Class="Nagi.WinUI.Pages.SettingsPage"
-    x:Name="SettingsPageRoot"
+    x:Name="Root"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
@@ -149,21 +149,21 @@
                             Visibility="{x:Bind IsBusy, Mode=OneWay}" />
                         <Button
                             MinWidth="86"
-                            Command="{Binding DataContext.Romanization.InstallRomanizationPackCommand, ElementName=SettingsPageRoot}"
+                            Command="{Binding ViewModel.Romanization.InstallRomanizationPackCommand, ElementName=Root}"
                             CommandParameter="{x:Bind}"
                             Content="{x:Bind resources:Strings.SettingsPage_RomanizationPacks_Install, Mode=OneTime}"
                             IsEnabled="{x:Bind CanInstall, Mode=OneWay}"
                             Visibility="{x:Bind IsInstalled, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                         <Button
                             MinWidth="86"
-                            Command="{Binding DataContext.Romanization.InstallRomanizationPackCommand, ElementName=SettingsPageRoot}"
+                            Command="{Binding ViewModel.Romanization.InstallRomanizationPackCommand, ElementName=Root}"
                             CommandParameter="{x:Bind}"
                             Content="{x:Bind resources:Strings.SettingsPage_RomanizationPacks_Update, Mode=OneTime}"
                             IsEnabled="{x:Bind CanInstall, Mode=OneWay}"
                             Visibility="{x:Bind IsUpdateAvailable, Mode=OneWay}" />
                         <Button
                             MinWidth="86"
-                            Command="{Binding DataContext.Romanization.RemoveRomanizationPackCommand, ElementName=SettingsPageRoot}"
+                            Command="{Binding ViewModel.Romanization.RemoveRomanizationPackCommand, ElementName=Root}"
                             CommandParameter="{x:Bind}"
                             Content="{x:Bind resources:Strings.SettingsPage_RomanizationPacks_Remove, Mode=OneTime}"
                             IsEnabled="{x:Bind CanRemove, Mode=OneWay}"

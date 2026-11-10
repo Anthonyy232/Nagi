@@ -9,7 +9,7 @@
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
-    x:Name="pageRoot"
+    x:Name="Root"
     Background="Transparent"
     mc:Ignorable="d">
 
@@ -22,7 +22,7 @@
                             <MenuFlyout Opening="FolderItemMenuFlyout_Opening">
                                 <MenuFlyoutItem
                                     Text="{x:Bind resources:Strings.Generic_Play, Mode=OneTime}"
-                                    Command="{Binding DataContext.PlaySubfolderCommand, ElementName=pageRoot}"
+                                    Command="{Binding ViewModel.PlaySubfolderCommand, ElementName=Root}"
                                     CommandParameter="{x:Bind Folder}" />
                                 <MenuFlyoutSubItem Text="{x:Bind resources:Strings.SongList_Context_AddToPlaylist, Mode=OneTime}" />
                             </MenuFlyout>

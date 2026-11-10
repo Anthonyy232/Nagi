@@ -20,7 +20,6 @@ public sealed partial class ArtistViewPage : SongListPage
     {
         InitializeComponent();
         ViewModel = GetViewModel<ArtistViewViewModel>();
-        DataContext = ViewModel;
         InitializeSongList(ViewModel, ColumnHeaderHost, SongsListView);
         SongsListView.Loaded += OnSongsListViewLoaded;
     }

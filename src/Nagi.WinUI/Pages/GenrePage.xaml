@@ -10,7 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:library="using:Nagi.Core.Library"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
-    x:Name="GenrePageRoot"
+    x:Name="Root"
     Background="Transparent"
     mc:Ignorable="d">
 
@@ -46,7 +46,7 @@
                                 <MenuFlyout>
                                     <MenuFlyoutItem
                                         Text="{x:Bind resources:Strings.Generic_Play, Mode=OneTime}"
-                                        Command="{Binding ViewModel.PlayGenreCommand, ElementName=GenrePageRoot}"
+                                        Command="{Binding ViewModel.PlayGenreCommand, ElementName=Root}"
                                         CommandParameter="{x:Bind Id}">
                                         <MenuFlyoutItem.Icon>
                                             <FontIcon Glyph="" />

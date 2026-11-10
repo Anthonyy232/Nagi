@@ -8,7 +8,6 @@ public sealed partial class SmartPlaylistSongViewPage : SongListPage
     {
         InitializeComponent();
         ViewModel = GetViewModel<SmartPlaylistSongListViewModel>();
-        DataContext = ViewModel;
         InitializeSongList(ViewModel, ColumnHeaderHost, SongsListView);
     }
 
