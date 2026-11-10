@@ -279,8 +279,11 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         await PlayAdjacentAsync(forward: false, request);
     }
 
-    // While stopped, the song at the current position plays again rather than the one beside it.
-    private Guid? AdjacentId(bool forward) => CurrentTrack is null ? _queue.CurrentId : _queue.GetAdjacent(forward, Wraps);
+    // True while stopped, and while a song removed from the queue is still playing until the next one is ready. The
+    // queue's position is then the song to play, rather than the one beside it.
+    private bool IsOffQueuePosition => CurrentTrack?.Id != _queue.CurrentId;
+
+    private Guid? AdjacentId(bool forward) => IsOffQueuePosition ? _queue.CurrentId : _queue.GetAdjacent(forward, Wraps);
 
     private async Task PlayAdjacentAsync(bool forward, CancellationToken request)
     {
@@ -298,8 +301,8 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
         // Stopping at the end of the queue plays it through once, whatever the repeat mode.
         var repeat = StopMode == PlaybackStopMode.EndOfQueue ? RepeatMode.Off : CurrentRepeatMode;
-        var nextId = repeat == RepeatMode.RepeatOne
-            ? CurrentTrack?.Id
+        var nextId = IsOffQueuePosition || repeat == RepeatMode.RepeatOne
+            ? _queue.CurrentId
             : _queue.GetAdjacent(forward: true, wrap: repeat == RepeatMode.RepeatAll);
         if (nextId is { } id) await PlayQueueItemInternalAsync(id, request);
         else await StopInternalAsync(request);

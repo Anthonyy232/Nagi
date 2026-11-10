@@ -11,31 +11,23 @@ public partial class MusicPlaybackService
 {
     private void OnAudioPlayerPlaybackEnded()
     {
-        if (!IsRequestPending)
-        {
-            MoveOnAfterTrackEnd();
-            return;
-        }
-
-        // A pending request usually plays another track, which makes this the end of the one it replaces. A request
-        // that plays nothing, such as an empty mix, leaves the ended track current with nothing to move the queue on.
         var ended = CurrentTrack;
+        var request = _requestCts.Token;
+        var finishing = IsRequestPending ? Task.CompletedTask : EndListenSession(PlaybackEndReason.Finished, Duration);
         RunInBackground(async () =>
         {
-            while (IsRequestPending) await Task.WhenAny(_request);
-            if (ended is not null && ReferenceEquals(CurrentTrack, ended) && !IsPlaying && !IsOpening)
-                await MoveOnAfterTrackEnd();
-        }, "Moving on after a track that ended during a request");
-    }
-
-    private Task MoveOnAfterTrackEnd()
-    {
-        var request = _requestCts.Token;
-        var finishing = EndListenSession(PlaybackEndReason.Finished, Duration);
-        return RunInBackground(async () =>
-        {
             await finishing;
-            if (!request.IsCancellationRequested) await RunPlaybackRequest(AdvanceAfterTrackEndAsync);
+            if (IsRequestPending || request.IsCancellationRequested)
+            {
+                // A request usually plays another track, which makes this the end of the one it replaces. A request
+                // that plays nothing, such as an empty mix, leaves the ended track current with nothing to move the
+                // queue on.
+                while (IsRequestPending) await Task.WhenAny(_request);
+                if (ended is null || !ReferenceEquals(CurrentTrack, ended) || IsPlaying || IsOpening) return;
+                await EndListenSession(PlaybackEndReason.Finished, Duration);
+            }
+
+            await RunPlaybackRequest(AdvanceAfterTrackEndAsync);
         }, "Moving on after the track ended");
     }
 
