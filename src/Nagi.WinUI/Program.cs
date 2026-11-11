@@ -1,6 +1,3 @@
-using System.IO;
-using System.Linq;
-using System.Threading;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Settings;

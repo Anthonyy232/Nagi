@@ -1,4 +1,3 @@
-using System.Linq;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Core.Library;
 using Nagi.Presentation.Lists;

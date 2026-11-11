@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Numerics;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Dispatching;

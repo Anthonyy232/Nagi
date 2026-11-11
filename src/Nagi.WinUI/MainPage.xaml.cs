@@ -1,6 +1,5 @@
 using Windows.System;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.ApplicationModel.DataTransfer;
 using CommunityToolkit.WinUI;

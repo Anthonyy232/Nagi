@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Nagi.Presentation.Common;
 using Windows.Storage;
 using Windows.System;

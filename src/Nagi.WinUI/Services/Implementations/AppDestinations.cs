@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using Nagi.Presentation.Navigation;
 using Nagi.WinUI.Pages;
 

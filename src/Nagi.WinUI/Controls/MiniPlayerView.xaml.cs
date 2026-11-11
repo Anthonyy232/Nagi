@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Windows.Foundation;
+﻿using Windows.Foundation;
 using Windows.Graphics;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;

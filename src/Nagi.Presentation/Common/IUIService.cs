@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Nagi.Core.Library;
+﻿using Nagi.Core.Library;
 using Nagi.Core.Playlists;
 
 namespace Nagi.Presentation.Common;

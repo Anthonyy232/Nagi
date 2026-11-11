@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Nagi.Core.Library;
 using Nagi.Core.Platform;
 using Nagi.Presentation.Resources;

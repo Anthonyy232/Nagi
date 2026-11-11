@@ -1,7 +1,5 @@
-using System.IO;
 using System.IO.Pipes;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Nagi.Presentation.Shell;
 using Serilog;
 

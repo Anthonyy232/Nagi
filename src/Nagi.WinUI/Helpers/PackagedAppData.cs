@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Nagi.Core.Platform;
+﻿using Nagi.Core.Platform;
 using Windows.Storage;
 
 namespace Nagi.WinUI.Helpers;

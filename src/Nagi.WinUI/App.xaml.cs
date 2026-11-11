@@ -1,5 +1,3 @@
-using System.Linq;
-using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

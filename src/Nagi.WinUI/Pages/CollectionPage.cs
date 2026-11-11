@@ -1,4 +1,3 @@
-using System.Threading;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Presentation.Lists;

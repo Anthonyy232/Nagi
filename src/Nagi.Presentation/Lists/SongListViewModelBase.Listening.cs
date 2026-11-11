@@ -1,5 +1,3 @@
-using System.Linq;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using Nagi.Core.Playback;
 using Nagi.Presentation.Common;

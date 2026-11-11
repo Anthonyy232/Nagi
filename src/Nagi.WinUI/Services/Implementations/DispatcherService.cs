@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Dispatching;
 using Nagi.Core.Platform;

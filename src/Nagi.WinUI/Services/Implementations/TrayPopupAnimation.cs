@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Threading.Tasks;
 using Windows.Graphics;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Media;

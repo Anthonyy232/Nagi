@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Nagi.Core.Platform;
 using Nagi.Presentation.Common;

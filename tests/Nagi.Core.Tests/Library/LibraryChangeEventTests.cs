@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-using System.Net.Http;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Artwork;

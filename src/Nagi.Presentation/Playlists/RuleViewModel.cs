@@ -1,4 +1,3 @@
-using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Nagi.Core.Playlists;
 using Nagi.Presentation.Resources;

@@ -1,9 +1,6 @@
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
