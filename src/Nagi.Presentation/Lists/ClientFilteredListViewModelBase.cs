@@ -25,17 +25,11 @@ public abstract partial class ClientFilteredListViewModelBase<TItem> : Searchabl
     {
         _libraryNotifier = libraryNotifier;
         _libraryNotifier.Changed += OnLibraryChanged;
-        Items.CollectionChanged += (_, _) =>
-        {
-            OnPropertyChanged(nameof(HasItems));
-            OnPropertyChanged(nameof(ShowEmptyState));
-        };
+        Items.CollectionChanged += (_, _) => OnPropertyChanged(nameof(ShowEmptyState));
     }
 
     /// <summary>The items the search and sort let through.</summary>
     public ObservableRangeCollection<TItem> Items { get; } = new();
-
-    public bool HasItems => Items.Count > 0;
 
     /// <summary>Whether a load has finished and nothing passes the search, so the list doesn't look empty while it loads.</summary>
     public bool ShowEmptyState => _hasLoaded && !IsLoading && !HasLoadError && Items.Count == 0;

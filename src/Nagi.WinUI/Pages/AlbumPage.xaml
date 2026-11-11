@@ -30,8 +30,7 @@
 
         <Grid Grid.Row="1">
             <GridView x:Name="CollectionGrid" Style="{StaticResource CollectionGridViewStyle}"
-                ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
-                Visibility="{x:Bind ViewModel.HasItems, Mode=OneWay}">
+                ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}">
                 <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsWrapGrid ItemWidth="{StaticResource CollectionGridItemWidth}" Orientation="Horizontal" />

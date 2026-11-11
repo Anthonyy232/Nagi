@@ -59,8 +59,6 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>, ICollecti
             CurrentPage = 1;
             return LoadAsync(CancellationToken.None);
         }, logger);
-
-        Items.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasItems));
         _libraryNotifier.ArtistImagesChanged += OnArtistImagesChanged;
     }
 
@@ -70,8 +68,6 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>, ICollecti
         [ArtistSortOrder.NameAsc, ArtistSortOrder.NameDesc, ArtistSortOrder.SongCountAsc, ArtistSortOrder.SongCountDesc];
 
     public SortOrderSelection<ArtistSortOrder> Sort { get; }
-
-    public bool HasItems => Items.Any();
 
     protected override string FormatTotalItemsText(PagedResult<Artist> result) =>
         ResourceFormatter.Format(Strings.Artists_Count, result.TotalCount);

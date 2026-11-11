@@ -55,8 +55,6 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>, ICollection
             CurrentPage = 1;
             return LoadAsync(CancellationToken.None);
         }, logger);
-
-        Items.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasItems));
     }
 
     public ObservableRangeCollection<AlbumViewModelItem> Items { get; } = new();
@@ -68,8 +66,6 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>, ICollection
     ];
 
     public SortOrderSelection<AlbumSortOrder> Sort { get; }
-
-    public bool HasItems => Items.Any();
 
     protected override string FormatTotalItemsText(PagedResult<Album> result) =>
         ResourceFormatter.Format(Strings.Albums_Count, result.TotalCount);
