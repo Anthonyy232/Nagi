@@ -60,6 +60,7 @@ public class LrcLibServiceTests : IAsyncDisposable
         var result = await _service.GetLyricsAsync(Track(track, "Artist", "Album", TimeSpan.FromMinutes(3)));
 
         result.Data.Should().BeNull();
+        _httpHandler.Requests.Should().BeEmpty();
     }
 
     [Theory]

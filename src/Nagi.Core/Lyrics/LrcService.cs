@@ -143,14 +143,13 @@ public class LrcService : ILrcService, IDisposable
         {
             // All providers completed successfully but returned no lyrics. Remove the invalid local
             // reference now; successful lyric results already replace it in CacheLyricsAsync.
-            if (forceOnlineRefresh && !string.IsNullOrWhiteSpace(song.LrcFilePath))
-            {
-                song.LrcFilePath = null;
-                await UpdateSongAsync(song.Id, s => s.LrcFilePath = null).ConfigureAwait(false);
-            }
-
-            await UpdateSongAsync(song.Id, s => s.LyricsLastCheckedUtc = DateTime.UtcNow).ConfigureAwait(false);
+            if (forceOnlineRefresh) song.LrcFilePath = null;
             song.LyricsLastCheckedUtc = DateTime.UtcNow;
+            await UpdateSongAsync(song.Id, s =>
+            {
+                s.LrcFilePath = song.LrcFilePath;
+                s.LyricsLastCheckedUtc = song.LyricsLastCheckedUtc;
+            }).ConfigureAwait(false);
         }
 
         return null;

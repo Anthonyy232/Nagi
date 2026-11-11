@@ -121,6 +121,7 @@ public class NetEaseLyricsServiceTests : IAsyncDisposable
         var result = await _service.GetLyricsAsync(Track(track, "Artist"));
 
         result.Data.Should().BeNull();
+        _httpHandler.Requests.Should().BeEmpty();
     }
 
     [Fact]
@@ -174,13 +175,13 @@ public class NetEaseLyricsServiceTests : IAsyncDisposable
         _httpHandler.SendAsyncFunc = (_, _) =>
             Task.FromResult(new HttpResponseMessage(HttpStatusCode.Forbidden));
 
-        (await _service.GetLyricsAsync(Track("Track1", "Artist"))).IsConclusive.Should().BeFalse();
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent("{\"result\": {\"songs\": [{\"id\": 123}]}}")
-        });
-        var result2 = await _service.GetLyricsAsync(Track("Track2", "Artist"));
-        result2.Data.Should().BeNull();
+        (await _service.GetLyricsAsync(Track("Track", "Artist"))).IsConclusive.Should().BeFalse();
+
+        _httpHandler.SendAsyncFunc = null;
+        _httpHandler.RespondSequence(
+            (HttpStatusCode.OK, """{"result":{"songs":[{"id":123,"name":"Track"}]}}"""),
+            (HttpStatusCode.OK, """{"lrc":{"lyric":"[00:01.00]Found"}}"""));
+        (await _service.GetLyricsAsync(Track("Track", "Artist"))).Data.Should().Be("[00:01.00]Found");
     }
 
     [Fact]

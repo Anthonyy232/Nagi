@@ -201,6 +201,22 @@ public sealed class RomanizationPackTests : IDisposable
         packs.Should().BeEmpty();
     }
 
+    // The app reports three version parts and a catalog may give four.
+    [Theory]
+    [InlineData("2.7.0.0", true)]
+    [InlineData("2.8.0", false)]
+    public async Task GetAvailablePacksAsync_OffersOnlyPacksThisAppVersionCanUse(string minAppVersion, bool offered)
+    {
+        var packBytes = CreateDevanagariPack();
+        var entry = CreateEntry("hindi", "devanagari-v1", packBytes);
+        entry.MinAppVersion = minAppVersion;
+        var manager = CreateManager(CreateCatalogJson(entry), packBytes);
+
+        var packs = await manager.GetAvailablePacksAsync();
+
+        packs.Should().HaveCount(offered ? 1 : 0);
+    }
+
     [Theory]
     [InlineData("../sentinel.txt")]
     [InlineData("..\\sentinel.txt")]
@@ -341,6 +357,9 @@ public sealed class RomanizationPackTests : IDisposable
             var actualHash = Convert.ToHexString(SHA256.HashData(archive));
             actualHash.Should().Be(entry.Sha256);
         }
+
+        envelope.Catalog.Packs[0].Sha256 = new string('0', 64);
+        new EcdsaRomanizationCatalogVerifier().Verify(envelope).Should().BeFalse("the signature covers the pack hashes");
     }
 
     [Fact]

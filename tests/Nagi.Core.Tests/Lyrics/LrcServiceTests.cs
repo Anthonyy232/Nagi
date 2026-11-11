@@ -173,6 +173,8 @@ public class LrcServiceTests : IDisposable
 
         song.LyricsLastCheckedUtc.Should().BeNull();
         (await StoredAsync(song)).LyricsLastCheckedUtc.Should().BeNull();
+        await _lrcService.GetLyricsAsync(song);
+        await _musicServers.Received(2).GetLyricsAsync(song, Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -390,6 +392,24 @@ public class LrcServiceTests : IDisposable
         _fileSystem.DidNotReceive().DeleteFile(externalPath);
         (await StoredAsync(song)).LrcFilePath.Should().Be(externalPath);
         song.LrcFilePath.Should().Be(externalPath);
+    }
+
+    [Fact]
+    public async Task SaveLyricsAsync_TheEditIsReadBackRatherThanReplacedByAnOnlineLookup()
+    {
+        const string content = "[00:01.00]My edit";
+        var song = new Song { Title = "Song", FilePath = @"C:\Music\Song.flac" };
+        _pathConfig.LrcCachePath.Returns(@"C:\cache\lrc");
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
+        _lrcLib.GetLyricsAsync(Arg.Any<Song>(), Arg.Any<CancellationToken>()).Returns(Found("[00:01.00]From online"));
+
+        await _lrcService.SaveLyricsAsync(song, content);
+        _fileSystem.FileExists(song.LrcFilePath!).Returns(true);
+        _fileSystem.ReadAllTextAsync(song.LrcFilePath!).Returns(content);
+        var result = await _lrcService.GetLyricsAsync(song);
+
+        result!.Lines.Should().ContainSingle().Which.Text.Should().Be("My edit");
+        await _lrcLib.DidNotReceive().GetLyricsAsync(Arg.Any<Song>(), Arg.Any<CancellationToken>());
     }
 
     [Theory]
@@ -684,8 +704,8 @@ public class LrcServiceTests : IDisposable
         result.Lines.Should().HaveCount(2);
         result.Lines.Select(line => line.Text).Should().Equal("Same Line", "Same Line");
         result.Lines.Select(line => line.StartTime).Should().Equal(
-            TimeSpan.FromMilliseconds(1250),
-            TimeSpan.FromMilliseconds(2250));
+            TimeSpan.FromMilliseconds(750),
+            TimeSpan.FromMilliseconds(1750));
     }
 
     [Fact]
