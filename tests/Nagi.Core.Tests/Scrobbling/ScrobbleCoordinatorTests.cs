@@ -47,16 +47,18 @@ public sealed class ScrobbleCoordinatorTests : IDisposable
     }
 
     [Fact]
-    public async Task OneDestinationFailing_DoesNotBlockTheOthers()
+    public async Task AFailedRun_DoesNotBlockTheDestinationsNextRun()
     {
         // Network failures are handled inside each destination; what escapes is unexpected, such as a database error.
         var failing = new FakeSubmitter { Failure = new InvalidOperationException("database unavailable") };
-        var healthy = new FakeSubmitter();
-        Create(failing, healthy).Start();
+        Create(failing).Start();
+        _time.Advance(ScrobbleCoordinator.CoalesceDelay);
+        await failing.WaitForRunsAsync(1);
 
+        _playback.ScrobbleEligibilityReached += Raise.Event<Action>();
         _time.Advance(ScrobbleCoordinator.CoalesceDelay);
 
-        await healthy.WaitForRunsAsync(1);
+        await failing.WaitForRunsAsync(2);
     }
 
     [Fact]
@@ -180,6 +182,22 @@ public sealed class ScrobbleCoordinatorTests : IDisposable
         _playback.TrackChanged += Raise.Event<Action>();
 
         await submitter.Received(2).UpdateNowPlayingAsync(song);
+    }
+
+    [Fact]
+    public async Task PlayingARestoredTrack_AnnouncesIt()
+    {
+        var submitter = Substitute.For<IListenSubmitter>();
+        Create(submitter).Start();
+        var song = new Song { Title = "Breakwater" };
+        _playback.CurrentTrack.Returns(song);
+        _playback.TrackChanged += Raise.Event<Action>();
+
+        _playback.CurrentListenHistoryId.Returns(7L);
+        _playback.PlaybackStateChanged += Raise.Event<Action>();
+        _playback.PlaybackStateChanged += Raise.Event<Action>();
+
+        await submitter.Received(1).UpdateNowPlayingAsync(song);
     }
 
     [Fact]

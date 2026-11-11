@@ -210,6 +210,26 @@ public class LastFmScrobblerServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task SubmitPendingAsync_WhenLastFmRejectsTheFreshKeyToo_GivesUpAfterOneRetry()
+    {
+        const string rejection = "<lfm status='failed'><error code='26'>Suspended API key</error></lfm>";
+        SetupValidCredentials();
+        _apiKeyService.RefreshApiKeyAsync("lastfm").Returns("rotated-key");
+        _apiKeyService.RefreshApiKeyAsync("lastfm-secret").Returns("rotated-secret");
+        _httpMessageHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent(rejection, Encoding.UTF8, "application/xml")
+        });
+        await SeedPendingListensAsync((1, DateTime.UtcNow.AddMinutes(-5)));
+
+        await _scrobblerService.SubmitPendingAsync(CancellationToken.None);
+
+        _httpMessageHandler.Requests.Should().HaveCount(2);
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        (await context.ListenHistory.FindAsync(1L))!.IsScrobbled.Should().BeFalse();
+    }
+
+    [Fact]
     public async Task SubmitPendingAsync_WithNothingPending_DoesNotFetchTheApiKeys()
     {
         SetupValidCredentials();
@@ -280,7 +300,6 @@ public class LastFmScrobblerServiceTests : IDisposable
     [InlineData("<lfm status='ok'><scrobbles accepted='0' ignored='1'><scrobble><ignoredMessage code='3'>Timestamp too old</ignoredMessage></scrobble></scrobbles></lfm>")]
     public async Task SubmitPendingAsync_AcknowledgedOrPermanentlyRejectedListensDoNotBlockQueue(string firstResponse)
     {
-        _settingsService.Set(CoreSettings.LastFmScrobbling, true);
         SetupValidCredentials();
         _httpMessageHandler.RespondSequence(
             (HttpStatusCode.OK, firstResponse),
@@ -288,8 +307,7 @@ public class LastFmScrobblerServiceTests : IDisposable
 
         await SeedPendingListensAsync((1, DateTime.UtcNow.AddMinutes(-10)), (2, DateTime.UtcNow.AddMinutes(-5)));
 
-        var sut = CreateService();
-        await sut.SubmitPendingAsync(CancellationToken.None);
+        await _scrobblerService.SubmitPendingAsync(CancellationToken.None);
 
         await using var verify = _dbHelper.ContextFactory.CreateDbContext();
         (await verify.ListenHistory.FindAsync(1L))!.IsScrobbled.Should().BeTrue();
@@ -317,7 +335,6 @@ public class LastFmScrobblerServiceTests : IDisposable
     [InlineData(HttpStatusCode.OK, "")]
     public async Task SubmitPendingAsync_RecoverableFailurePreservesRemainingListensForRetry(HttpStatusCode status, string body)
     {
-        _settingsService.Set(CoreSettings.LastFmScrobbling, true);
         SetupValidCredentials();
 
         _httpMessageHandler.RespondSequence(
@@ -326,18 +343,16 @@ public class LastFmScrobblerServiceTests : IDisposable
 
         await SeedPendingListensAsync((100, DateTime.UtcNow.AddMinutes(-30)), (101, DateTime.UtcNow.AddMinutes(-20)), (102, DateTime.UtcNow.AddMinutes(-10)));
 
-        var sut = CreateService();
-        await sut.SubmitPendingAsync(CancellationToken.None);
+        await _scrobblerService.SubmitPendingAsync(CancellationToken.None);
 
         await using var verify = _dbHelper.ContextFactory.CreateDbContext();
         (await verify.ListenHistory.FindAsync(100L))!.IsScrobbled.Should().BeTrue();
         (await verify.ListenHistory.FindAsync(101L))!.IsScrobbled.Should().BeFalse();
         (await verify.ListenHistory.FindAsync(102L))!.IsScrobbled.Should().BeFalse();
-        if (status is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
-            _httpMessageHandler.Requests.Should().HaveCount(2);
+        _httpMessageHandler.Requests.Should().HaveCount(2);
 
         SetupHttpResponse(HttpStatusCode.OK);
-        await sut.SubmitPendingAsync(CancellationToken.None);
+        await _scrobblerService.SubmitPendingAsync(CancellationToken.None);
         (await verify.ListenHistory.AllAsync(listen => listen.IsScrobbled)).Should().BeTrue();
     }
 

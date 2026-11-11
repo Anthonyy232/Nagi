@@ -13,7 +13,7 @@ namespace Nagi.Core.Tests.Playback;
 public class ReplayGainServiceTests
 {
     [Fact]
-    public async Task CancellationDuringAnalysis_PropagatesAndStopsFurtherSongs()
+    public async Task CancellationDuringAnalysis_PropagatesStopsFurtherSongsAndLetsALaterScanRun()
     {
         using var database = new DbContextFactoryTestHelper();
         await using (var context = database.ContextFactory.CreateDbContext())
@@ -39,8 +39,15 @@ public class ReplayGainServiceTests
 
         await analyze.Should().ThrowAsync<OperationCanceledException>();
         await analyzer.Received(1).AnalyzeAsync(Arg.Any<string>(), Arg.Any<CancellationToken>());
-        await using var saved = database.ContextFactory.CreateDbContext();
-        (await saved.Songs.CountAsync(song => song.ReplayGainTrackGain != null)).Should().Be(0);
+        await using (var saved = database.ContextFactory.CreateDbContext())
+            (await saved.Songs.CountAsync(song => song.ReplayGainTrackGain != null)).Should().Be(0);
+
+        // A cancelled pass that still counted as running would turn every later scan away.
+        analyzer.AnalyzeAsync(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns((-18.0, 0.5));
+        await service.ScanLibraryAsync();
+
+        await using var rescanned = database.ContextFactory.CreateDbContext();
+        (await rescanned.Songs.CountAsync(song => song.ReplayGainTrackGain != null)).Should().Be(2);
     }
 
     [Fact]

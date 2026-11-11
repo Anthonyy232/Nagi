@@ -59,15 +59,17 @@ public partial class MusicPlaybackService
         RunInBackground(
             async () =>
             {
-                var marked = false;
                 try
                 {
-                    marked = await _listening.MarkListenAsEligibleForScrobblingAsync(sessionId);
-                    if (marked && !_isDisposed) ScrobbleEligibilityReached?.Invoke();
+                    if (await _listening.MarkListenAsEligibleForScrobblingAsync(sessionId) && !_isDisposed)
+                        ScrobbleEligibilityReached?.Invoke();
                 }
-                finally
+                catch
                 {
-                    if (!marked && CurrentListenHistoryId == sessionId) _isEligibilityMarked = false;
+                    // A failed write is tried again on the next position update. A listen whose history was cleared
+                    // is not, since it can never be marked.
+                    if (CurrentListenHistoryId == sessionId) _isEligibilityMarked = false;
+                    throw;
                 }
             },
             "Mark listen eligible for scrobbling");

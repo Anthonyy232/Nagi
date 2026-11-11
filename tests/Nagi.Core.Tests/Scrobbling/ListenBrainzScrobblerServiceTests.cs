@@ -170,17 +170,19 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
         (await verify.ListenHistory.SingleAsync()).IsSubmittedToListenBrainz.Should().BeTrue();
     }
 
-    [Fact]
-    public async Task SubmitPendingAsync_RespectsCustomServerUrl()
+    // The token goes in a header, so plain http is only followed to a server on this computer.
+    [Theory]
+    [InlineData("https://lb.example.com", "https://lb.example.com/1/submit-listens")]
+    [InlineData("http://localhost:8100/", "http://localhost:8100/1/submit-listens")]
+    [InlineData("http://lb.example.com", "https://api.listenbrainz.org/1/submit-listens")]
+    public async Task SubmitPendingAsync_UsesACustomServerUnlessItWouldSendTheTokenInCleartext(string serverUrl, string expected)
     {
-        _settingsService.Set(CoreSettings.ListenBrainzServerUrl, "https://lb.example.com");
+        _settingsService.Set(CoreSettings.ListenBrainzServerUrl, serverUrl);
         SetupHttpResponse(HttpStatusCode.OK, "{\"status\":\"ok\"}");
 
         await SubmitAsync(CreateTestSong(), DateTime.UtcNow);
 
-        _httpMessageHandler.Requests.Should().HaveCount(1);
-        _httpMessageHandler.Requests[0].RequestUri!.ToString()
-            .Should().Be("https://lb.example.com/1/submit-listens");
+        _httpMessageHandler.Requests.Should().ContainSingle().Which.RequestUri!.ToString().Should().Be(expected);
     }
 
     [Fact]
@@ -233,9 +235,6 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     [Fact]
     public async Task SubmitPendingAsync_BatchesPendingListensIntoOneRequest()
     {
-        SetToken("tok");
-        _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
-        _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc));
         SetupHttpResponse(HttpStatusCode.OK, "{\"status\":\"ok\"}");
 
         await SeedPendingListensAsync((1, DateTime.UtcNow.AddMinutes(-10)), (2, DateTime.UtcNow.AddMinutes(-5)));
@@ -257,8 +256,6 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     [Fact]
     public async Task SubmitPendingAsync_SkipsListensBeforeEnabledSince()
     {
-        SetToken("tok");
-        _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
         var cutoff = DateTime.UtcNow;
         _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, cutoff);
 
@@ -289,10 +286,6 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     [InlineData(HttpStatusCode.Unauthorized)]
     public async Task SubmitPendingAsync_RecoverableBatchFailurePreservesListensForRetry(HttpStatusCode status)
     {
-        SetToken("tok");
-        _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
-        _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc));
-
         SetupHttpResponse(status, "{}");
 
         await SeedPendingListensAsync((100, DateTime.UtcNow.AddMinutes(-30)), (101, DateTime.UtcNow.AddMinutes(-20)), (102, DateTime.UtcNow.AddMinutes(-10)));
@@ -304,8 +297,7 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
         (await verify.ListenHistory.FindAsync(100L))!.IsSubmittedToListenBrainz.Should().BeFalse();
         (await verify.ListenHistory.FindAsync(101L))!.IsSubmittedToListenBrainz.Should().BeFalse();
         (await verify.ListenHistory.FindAsync(102L))!.IsSubmittedToListenBrainz.Should().BeFalse();
-        if (status is HttpStatusCode.Unauthorized)
-            _httpMessageHandler.Requests.Should().ContainSingle();
+        _httpMessageHandler.Requests.Should().ContainSingle();
 
         SetupHttpResponse(HttpStatusCode.OK, "{}");
         await sut.SubmitPendingAsync(CancellationToken.None);
@@ -315,8 +307,6 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     [Fact]
     public async Task SubmitPendingAsync_RejectedBatch_IsolatesBadListenAndKeepsUnacknowledgedListens()
     {
-        _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
-        _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc));
         _httpMessageHandler.RespondSequence(
             (HttpStatusCode.BadRequest, "{}"),
             (HttpStatusCode.BadRequest, "{}"),

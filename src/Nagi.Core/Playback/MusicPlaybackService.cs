@@ -249,15 +249,15 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         ScheduleStop(PlaybackStopMode.Off);
         _ = EndListenSession(PlaybackEndReason.PausedAndAbandoned);
 
-        await _audioPlayer.StopAsync();
-        if (request.IsCancellationRequested) return;
-
-        // The queue keeps its position, so Play, Next and Previous carry on from the stopped song.
+        // The queue keeps its position, so Play, Next and Previous carry on from the stopped song. Cleared before the
+        // player unloads it, so a request that supersedes this one never finds a current track with nothing loaded.
         CurrentTrack = null;
         TrackChanged?.Invoke();
         PositionChanged?.Invoke();
         _mediaControls.Clear();
         UpdateMediaControlsNavigation();
+
+        await _audioPlayer.StopAsync();
     }
 
     public Task NextAsync() =>
@@ -607,7 +607,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             TaskScheduler.Default);
     }
 
-    private Task AwaitPendingOperationsAsync()
+    internal Task AwaitPendingOperationsAsync()
     {
         Task[] pending;
         lock (_pendingOperationsLock)
@@ -620,6 +620,4 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
         return Task.WhenAll(pending);
     }
-
-    internal Task FlushPendingFinalizationAsync() => AwaitPendingOperationsAsync();
 }

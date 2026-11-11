@@ -35,7 +35,7 @@ public partial class MusicPlaybackServiceTests
         _service.ServerSongFailed += failed.Add;
         await _service.PlayAsync(_testSongs[0].Id);
         _audioPlayer.ErrorOccurred += Raise.Event<Action>();
-        await _service.FlushPendingFinalizationAsync();
+        await _service.AwaitPendingOperationsAsync();
 
         var song = _testSongs[1];
         song.RemoteId = "s1";

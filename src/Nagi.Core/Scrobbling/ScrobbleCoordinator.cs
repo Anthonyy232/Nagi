@@ -54,7 +54,8 @@ public sealed class ScrobbleCoordinator : IDisposable
     {
         if (_isStarted) return;
         _isStarted = true;
-        _playback.TrackChanged += OnTrackChanged;
+        _playback.TrackChanged += AnnounceCurrentListen;
+        _playback.PlaybackStateChanged += AnnounceCurrentListen;
         _playback.ScrobbleEligibilityReached += OnScrobbleEligibilityReached;
         _settingsService.SettingChanged += OnSettingChanged;
         _accounts.CredentialsChanged += OnCredentialsChanged;
@@ -66,7 +67,8 @@ public sealed class ScrobbleCoordinator : IDisposable
     public void Dispose()
     {
         if (_shutdownCts.IsCancellationRequested) return;
-        _playback.TrackChanged -= OnTrackChanged;
+        _playback.TrackChanged -= AnnounceCurrentListen;
+        _playback.PlaybackStateChanged -= AnnounceCurrentListen;
         _playback.ScrobbleEligibilityReached -= OnScrobbleEligibilityReached;
         _settingsService.SettingChanged -= OnSettingChanged;
         _accounts.CredentialsChanged -= OnCredentialsChanged;
@@ -75,9 +77,10 @@ public sealed class ScrobbleCoordinator : IDisposable
         _shutdownCts.Dispose();
     }
 
-    private void OnTrackChanged()
+    private void AnnounceCurrentListen()
     {
         // A track restored at startup isn't being listened to yet, so only a track with a listen counts as playing now.
+        // Its listen starts when it is first played, which changes the playback state and not the track.
         if (CurrentListen() is not { } song || _playback.CurrentListenHistoryId == _nowPlayingListenId) return;
         _nowPlayingListenId = _playback.CurrentListenHistoryId;
         _ = Task.WhenAll(_destinations.Select(destination => destination.Submitter.UpdateNowPlayingAsync(song)));

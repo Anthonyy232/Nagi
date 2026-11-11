@@ -1,11 +1,6 @@
 using FluentAssertions;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Time.Testing;
 using Nagi.Core.Library;
-using Nagi.Core.MusicServers;
-using Nagi.Core.Platform;
 using Nagi.Core.Playback;
-using Nagi.Core.Playlists;
 using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
@@ -15,7 +10,6 @@ namespace Nagi.Core.Tests.Playback;
 
 public partial class MusicPlaybackServiceTests
 {
-
     [Fact]
     public async Task SupersededMix_DoesNotReplaceTheQueueOrReportAnEmptySelection()
     {
@@ -81,7 +75,7 @@ public partial class MusicPlaybackServiceTests
         _audioPlayer.ClearReceivedCalls();
 
         _audioPlayer.PlaybackEnded += Raise.Event<Action>();
-        await _service.FlushPendingFinalizationAsync();
+        await _service.AwaitPendingOperationsAsync();
 
         _service.CurrentTrack.Should().BeNull();
         await _audioPlayer.DidNotReceive().LoadAsync(Arg.Any<Song>());
@@ -99,10 +93,10 @@ public partial class MusicPlaybackServiceTests
         (await _service.PlayMixAsync(_testSongs.Select(s => s.Id), ShuffleMode.Unheard, TimeSpan.FromMinutes(4))).Should().BeTrue();
         var order = _service.PlayOrder.ToList();
         _audioPlayer.PlaybackEnded += Raise.Event<Action>();
-        await _service.FlushPendingFinalizationAsync();
+        await _service.AwaitPendingOperationsAsync();
         _service.CurrentTrack!.Id.Should().Be(order[1]);
         _audioPlayer.PlaybackEnded += Raise.Event<Action>();
-        await _service.FlushPendingFinalizationAsync();
+        await _service.AwaitPendingOperationsAsync();
 
         _service.CurrentTrack.Should().BeNull();
         _service.CurrentRepeatMode.Should().Be(RepeatMode.RepeatOne);
@@ -115,30 +109,44 @@ public partial class MusicPlaybackServiceTests
     [InlineData(false, true)]
     public async Task ExpiredTimer_FinishesOnlyAnActivelyPlayingTrack(bool finishTrack, bool playing)
     {
-        var clock = new FakeTimeProvider();
-        await using var service = new MusicPlaybackService(_settingsService, _playbackStateStore, _audioPlayer, _mediaControls, _library.Reader, Substitute.For<ISmartPlaylistService>(), _library.Listening,
-            _metadataService, Substitute.For<IFileSystemService>(), Substitute.For<IMusicServerService>(), NullLogger<MusicPlaybackService>.Instance, clock);
-        await service.InitializeAsync();
-        await service.PlayAsync(Ids(_testSongs));
+        await _service.InitializeAsync();
+        await _service.PlayAsync(Ids(_testSongs));
         _audioPlayer.MediaOpened += Raise.Event<Action>();
         _audioPlayer.IsPlaying.Returns(playing);
-        service.ScheduleStop(PlaybackStopMode.Timer, TimeSpan.FromMinutes(1), finishTrack);
-        clock.Advance(TimeSpan.FromSeconds(59));
-        service.StopMode.Should().Be(PlaybackStopMode.Timer);
-        service.StopTimeRemaining.Should().Be(TimeSpan.FromSeconds(1));
+        _service.ScheduleStop(PlaybackStopMode.Timer, TimeSpan.FromMinutes(1), finishTrack);
+        _clock.Advance(TimeSpan.FromSeconds(59));
+        _service.StopMode.Should().Be(PlaybackStopMode.Timer);
+        _service.StopTimeRemaining.Should().Be(TimeSpan.FromSeconds(1));
 
-        clock.Advance(TimeSpan.FromSeconds(1));
-        await service.FlushPendingFinalizationAsync();
+        _clock.Advance(TimeSpan.FromSeconds(1));
+        await _service.AwaitPendingOperationsAsync();
 
         if (finishTrack && playing)
         {
-            service.StopMode.Should().Be(PlaybackStopMode.AfterTrack);
-            await service.SetRepeatModeAsync(RepeatMode.RepeatOne);
+            _service.StopMode.Should().Be(PlaybackStopMode.AfterTrack);
+            await _service.SetRepeatModeAsync(RepeatMode.RepeatOne);
             _audioPlayer.PlaybackEnded += Raise.Event<Action>();
-            await service.FlushPendingFinalizationAsync();
+            await _service.AwaitPendingOperationsAsync();
         }
-        service.CurrentTrack.Should().BeNull();
-        service.StopMode.Should().Be(PlaybackStopMode.Off);
+        _service.CurrentTrack.Should().BeNull();
+        _service.StopMode.Should().Be(PlaybackStopMode.Off);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task CancelledOrReplacedTimer_DoesNotStopPlaybackWhenItsTimeComes(bool replaced)
+    {
+        await _service.InitializeAsync();
+        await _service.PlayAsync(Ids(_testSongs));
+        _service.ScheduleStop(PlaybackStopMode.Timer, TimeSpan.FromMinutes(1), finishCurrentTrack: false);
+
+        if (replaced) _service.ScheduleStop(PlaybackStopMode.Timer, TimeSpan.FromMinutes(10), finishCurrentTrack: false);
+        else _service.ScheduleStop(PlaybackStopMode.Off);
+        _clock.Advance(TimeSpan.FromMinutes(1));
+        await _service.AwaitPendingOperationsAsync();
+
+        _service.CurrentTrack.Should().BeSameAs(_testSongs[0]);
+        _service.StopTimeRemaining.Should().Be(replaced ? TimeSpan.FromMinutes(9) : null);
+    }
 }
