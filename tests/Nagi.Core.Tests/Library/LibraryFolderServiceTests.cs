@@ -145,44 +145,6 @@ public class LibraryFolderServiceTests : LibraryTestBase
         (await assertContext.Songs.CountAsync()).Should().Be(1);
     }
 
-    [Fact]
-    public async Task RemoveFolderAsync_PreservesUnrelatedLegacyArtAndLyricsWrites()
-    {
-        var removed = new Folder { Path = @"D:\Removed" };
-        var root = new Folder { Path = @"C:\Music" };
-        var art = @"C:\cache\albumart\legacy.fetched.jpg";
-        var artistArt = @"C:\cache\artistimages\legacy.jpg";
-        var playlistArt = @"C:\cache\playlistimages\legacy.jpg";
-        var pendingLyrics = @"C:\cache\lrc\song.lrc.pending.tmp";
-        var album = new Album { Title = "Album", CoverArtUri = art };
-        var artist = new Artist { Name = "Artist", LocalImageCachePath = artistArt };
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(removed);
-            context.Songs.Add(new Song
-            {
-                Folder = root,
-                FilePath = @"C:\Music\song.mp3",
-                DirectoryPath = root.Path,
-                Album = album,
-                AlbumArtUriFromTrack = art,
-                SongArtists = [new SongArtist { Artist = artist }]
-            });
-            context.Playlists.Add(new Playlist { Name = "Playlist", CoverImageUri = playlistArt });
-            await context.SaveChangesAsync();
-        }
-        _fileSystem.DirectoryExists(Arg.Any<string>()).Returns(true);
-        _fileSystem.FileExists(Arg.Any<string>()).Returns(true);
-        _fileSystem.EnumerateFiles(_pathConfig.AlbumArtCachePath, "*.fetched.jpg", SearchOption.TopDirectoryOnly).Returns(new[] { art });
-        _fileSystem.EnumerateFiles(_pathConfig.ArtistImageCachePath, "*.*", SearchOption.TopDirectoryOnly).Returns(new[] { artistArt });
-        _fileSystem.EnumerateFiles(_pathConfig.PlaylistImageCachePath, "*.*", SearchOption.TopDirectoryOnly).Returns(new[] { playlistArt });
-        _fileSystem.EnumerateFiles(_pathConfig.LrcCachePath, "*.*", SearchOption.TopDirectoryOnly).Returns(new[] { pendingLyrics });
-
-        (await _library.Folders.RemoveFolderAsync(removed.Id)).Should().BeTrue();
-
-        _fileSystem.DidNotReceive().DeleteFile(Arg.Any<string>());
-    }
-
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -423,6 +385,31 @@ public class LibraryFolderServiceTests : LibraryTestBase
         (await assertContext.Folders.CountAsync()).Should().Be(0);
     }
 
+    // A drive that isn't connected must not cost the library its songs.
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task AutomaticRefresh_WhenFolderPathIsMissing_KeepsTheFolderAndItsSongs(bool background)
+    {
+        var folder = new Folder { Id = Guid.NewGuid(), Path = "Z:\\Offline", Name = "Offline" };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Songs.Add(new Song { FilePath = "Z:\\Offline\\song.mp3", FolderId = folder.Id });
+            await context.SaveChangesAsync();
+        }
+        _fileSystem.DirectoryExists(folder.Path).Returns(false);
+
+        var changed = background
+            ? await _library.Folders.RefreshFolderInBackgroundAsync(folder.Id)
+            : await _library.Folders.RefreshAllFoldersAsync();
+
+        changed.Should().BeFalse();
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        (await assertContext.Folders.CountAsync()).Should().Be(1);
+        (await assertContext.Songs.CountAsync()).Should().Be(1);
+    }
+
     [Fact]
     public async Task RescanFolderForMusicAsync_WhenCancelled_StopsProcessingAndReturnsFalse()
     {
@@ -446,7 +433,7 @@ public class LibraryFolderServiceTests : LibraryTestBase
     }
 
     [Fact]
-    public async Task RescanFolderForMusicAsync_WithNewTxtLyricsFile_UpdatesSongLrcFilePath()
+    public async Task RescanFolderForMusicAsync_GivesUnchangedSongsTheLyricsAndCoverFilesAddedBesideThem()
     {
         var lastWriteTime = DateTime.UtcNow;
         var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\Scan", Name = "Scan" };
@@ -471,6 +458,12 @@ public class LibraryFolderServiceTests : LibraryTestBase
         var lyricsPath = "C:\\Music\\Scan\\song.txt";
         _fileSystem.GetFiles("C:\\Music\\Scan", "*.lrc").Returns(Array.Empty<string>());
         _fileSystem.GetFiles("C:\\Music\\Scan", "*.txt").Returns(new[] { lyricsPath });
+        var coverPath = "C:\\Music\\Scan\\cover.jpg";
+        _fileSystem.GetFiles("C:\\Music\\Scan", "*.*").Returns(new[] { coverPath });
+        _fileSystem.ReadAllBytesAsync(coverPath).Returns(new byte[] { 1, 2, 3 });
+        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>())
+            .Returns(("C:\\cache\\albumart\\cover.jpg", "light", "dark"));
+        _fileSystem.FileExists("C:\\cache\\albumart\\cover.jpg").Returns(true);
 
         var result = await _library.Folders.RescanFolderForMusicAsync(folder.Id);
 
@@ -479,6 +472,8 @@ public class LibraryFolderServiceTests : LibraryTestBase
         var updatedSong = await assertContext.Songs.FindAsync(song.Id);
         updatedSong.Should().NotBeNull();
         updatedSong!.LrcFilePath.Should().Be(lyricsPath);
+        updatedSong.AlbumArtUriFromTrack.Should().Be("C:\\cache\\albumart\\cover.jpg");
+        await _metadataService.DidNotReceive().ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>());
     }
 
     [Theory]

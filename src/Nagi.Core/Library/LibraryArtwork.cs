@@ -54,11 +54,12 @@ public sealed class LibraryArtwork
         var artistIds = cachedImages.Where(a => !_fileSystem.FileExists(a.Path)).Select(a => a.Id).ToList();
         if (artistIds.Count == 0) return 0;
 
-        await context.Artists.Where(a => artistIds.Contains(a.Id))
-            .ExecuteUpdateAsync(setters => setters
-                .SetProperty(a => a.LocalImageCachePath, (string?)null)
-                .SetProperty(a => a.MetadataLastCheckedUtc, (DateTime?)null), cancellationToken)
-            .ConfigureAwait(false);
+        foreach (var chunk in artistIds.Chunk(MusicDbContext.MaxParametersPerQuery))
+            await context.Artists.Where(a => chunk.Contains(a.Id))
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(a => a.LocalImageCachePath, (string?)null)
+                    .SetProperty(a => a.MetadataLastCheckedUtc, (DateTime?)null), cancellationToken)
+                .ConfigureAwait(false);
         _logger.LogInformation("Cleared the missing cached image of {Count} artists.", artistIds.Count);
         _notifier.RaiseArtistImagesChanged(artistIds.Select(id => new ArtistImageChange(id, null, null)).ToList());
         return artistIds.Count;
@@ -143,17 +144,23 @@ public sealed class LibraryArtwork
     internal static async Task<Dictionary<Guid, IReadOnlyList<string?>>> LoadSongDirectoriesByArtistAsync(
         MusicDbContext context, List<Guid> artistIds, CancellationToken ct)
     {
-        var rows = await context.Songs
-            .AsNoTracking()
-            .OnDisk()
-            .SelectMany(s => s.SongArtists.Where(sa => artistIds.Contains(sa.ArtistId)),
-                (s, sa) => new { sa.ArtistId, s.DirectoryPath })
-            .Distinct()
-            .ToListAsync(ct)
-            .ConfigureAwait(false);
+        var directories = new Dictionary<Guid, IReadOnlyList<string?>>();
+        foreach (var chunk in artistIds.Distinct().Chunk(MusicDbContext.MaxParametersPerQuery))
+        {
+            var rows = await context.Songs
+                .AsNoTracking()
+                .OnDisk()
+                .SelectMany(s => s.SongArtists.Where(sa => chunk.Contains(sa.ArtistId)),
+                    (s, sa) => new { sa.ArtistId, s.DirectoryPath })
+                .Distinct()
+                .ToListAsync(ct)
+                .ConfigureAwait(false);
 
-        return rows.GroupBy(r => r.ArtistId)
-            .ToDictionary(g => g.Key, g => (IReadOnlyList<string?>)g.Select(r => r.DirectoryPath).ToList());
+            foreach (var group in rows.GroupBy(r => r.ArtistId))
+                directories[group.Key] = group.Select(r => r.DirectoryPath).ToList();
+        }
+
+        return directories;
     }
 
     /// <summary>

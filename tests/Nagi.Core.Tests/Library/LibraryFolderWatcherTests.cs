@@ -75,6 +75,19 @@ public sealed class LibraryFolderWatcherTests : IDisposable
     }
 
     [Fact]
+    public async Task FolderThatCantBeWatched_DoesNotStopTheOthersBeingWatched()
+    {
+        _folders.Add(new Folder { Name = "Offline", Path = Path.Combine(_root, "not-connected") });
+        var folder = StartWatching(_root);
+
+        await File.WriteAllTextAsync(Path.Combine(_root, "song.mp3"), "audio");
+        await _time.Scheduled.WaitAsync(EventTimeout);
+        await AdvanceUntilRefreshedAsync();
+
+        await _folderService.Received(1).RefreshFolderInBackgroundAsync(folder.Id, Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
     public async Task AddedLibraryFolder_IsWatchedToo()
     {
         StartWatching(_root);

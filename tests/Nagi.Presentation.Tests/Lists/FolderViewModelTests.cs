@@ -57,7 +57,7 @@ public class FolderViewModelTests
 
         await viewModel.AddFolderCommand.ExecuteAsync(null);
 
-        await library.Folders.DidNotReceiveWithAnyArgs().AddFolderAsync(default!, default);
+        await library.Folders.DidNotReceiveWithAnyArgs().AddFolderAsync(default!);
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public class FolderViewModelTests
         await viewModel.AddFolderCommand.ExecuteAsync(null);
 
         await ui.Received(1).ShowMessageDialogAsync(Arg.Any<string>(), Strings.Folders_AddFolder_Exists);
-        await library.Folders.DidNotReceiveWithAnyArgs().AddFolderAsync(default!, default);
+        await library.Folders.DidNotReceiveWithAnyArgs().AddFolderAsync(default!);
     }
 
     [Fact]

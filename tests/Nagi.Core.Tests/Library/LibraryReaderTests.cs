@@ -210,6 +210,57 @@ public class LibraryReaderTests : IDisposable
     }
 
     [Fact]
+    public async Task DirectoryPage_OfASubdirectory_ListsItsOwnFoldersAndSongs()
+    {
+        var root = new Folder { Name = "Music", Path = @"C:\Music" };
+        var rock = new Folder { Name = "Rock", Path = @"C:\Music\Rock", ParentFolder = root };
+        var live = new Folder { Name = "Live", Path = @"C:\Music\Rock\Live", ParentFolder = rock };
+        var jazz = new Folder { Name = "Jazz", Path = @"C:\Music\Jazz", ParentFolder = root };
+        Song[] songs =
+        [
+            new() { Folder = root, Title = "In Rock", FilePath = @"C:\Music\Rock\a.mp3", DirectoryPath = @"C:\Music\Rock" },
+            new() { Folder = root, Title = "In Live", FilePath = @"C:\Music\Rock\Live\b.mp3", DirectoryPath = @"C:\Music\Rock\Live" },
+            new() { Folder = root, Title = "At the root", FilePath = @"C:\Music\c.mp3", DirectoryPath = @"C:\Music" }
+        ];
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.AddRange(live, jazz);
+            context.Songs.AddRange(songs);
+            await context.SaveChangesAsync();
+        }
+
+        // As a path arrives from the folder view, which need not match how the folder is stored.
+        var page = await _libraryReader.GetDirectoryPageAsync(new SongScope.Directory(root.Id, @"c:\music\Rock\"), null,
+            SongSortOrder.TitleAsc, 1, 10);
+
+        page.Folders.Select(folder => folder.Name).Should().Equal("Live");
+        page.Items.Select(song => song.Title).Should().Equal("In Rock");
+    }
+
+    // An underscore is a wildcard in LIKE and the exclamation mark is the escape character, so both are escaped.
+    [Theory]
+    [InlineData("_", "under_score")]
+    [InlineData("!", "Bang!")]
+    public async Task Search_FindsTheCharactersLikeTreatsSpeciallyAsTyped(string searchTerm, string expected)
+    {
+        var folder = new Folder { Name = "Music", Path = @"C:\Music" };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Songs.AddRange(new[] { "under_score", "Bang!", "Plain" }.Select(title => new Song
+            {
+                Folder = folder,
+                Title = title,
+                FilePath = $@"C:\Music\{title}.mp3"
+            }));
+            await context.SaveChangesAsync();
+        }
+
+        var page = await _libraryReader.GetSongsAsync(SongScope.Library, searchTerm, SongSortOrder.TitleAsc, 1, 10);
+
+        page.Items.Select(song => song.Title).Should().Equal(expected);
+    }
+
+    [Fact]
     public async Task DirectoryQueries_PreserveDriveRootAndIncludeDescendantsOnlyWhenRequested()
     {
         var root = new Folder { Name = "Drive", Path = @"C:\" };

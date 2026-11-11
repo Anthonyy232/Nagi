@@ -141,6 +141,35 @@ public class LibraryChangeEventTests : IDisposable
     }
 
     [Fact]
+    public async Task RescanFolderForMusicAsync_CancelledPartWay_StillAnnouncesTheFolder()
+    {
+        var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\Cancelled", Name = "Cancelled" };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            await context.SaveChangesAsync();
+        }
+
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, Arg.Any<string>(), Arg.Any<SearchOption>())
+            .Returns(new[] { ("C:\\Music\\Cancelled\\new.mp3", DateTime.UtcNow) });
+        using var cts = new CancellationTokenSource();
+        _metadataService.ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>()).Returns(_ =>
+        {
+            cts.Cancel();
+            return Task.FromResult(new SongFileMetadata { FilePath = "C:\\Music\\Cancelled\\new.mp3", Title = "New Song" });
+        });
+        var changes = new List<LibraryChange>();
+        _library.Notifier.Changed += (_, e) => changes.Add(e);
+
+        var changed = await _library.Folders.RescanFolderForMusicAsync(folder.Id, cancellationToken: cts.Token);
+
+        // What the scan wrote before it was cancelled stays in the library, so lists must hear about it.
+        changed.Should().BeFalse();
+        changes.Should().Equal(new LibraryChange(LibraryChangeKind.FolderRescanned, folder.Id));
+    }
+
+    [Fact]
     public async Task RefreshAllFoldersAsync_WithChanges_AnnouncesTheLibraryRescanned()
     {
         var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\ScanChanges", Name = "ScanChanges" };

@@ -73,7 +73,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
         Forced
     }
 
-    public async Task<Folder?> AddFolderAsync(string path, string? name = null)
+    public async Task<Folder?> AddFolderAsync(string path)
     {
         if (string.IsNullOrWhiteSpace(path)) return null;
 
@@ -96,7 +96,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
         var folder = new Folder
         {
             Path = normalizedPath,
-            Name = name ?? (folderName.Length == 0 ? normalizedPath : folderName)
+            Name = folderName.Length == 0 ? normalizedPath : folderName
         };
         try
         {
@@ -145,9 +145,8 @@ public sealed class LibraryFolderService : ILibraryFolderService
     ///     Rescans every folder on disk. A folder that can't be reached is left as it is.
     /// </summary>
     /// <returns>True if the library changed.</returns>
-    internal Task<bool> RefreshAllFoldersAsync(IProgress<ScanProgress>? progress = null,
-        CancellationToken cancellationToken = default) =>
-        ScanAsync(ScanKind.All, null, progress, cancellationToken);
+    internal Task<bool> RefreshAllFoldersAsync() =>
+        ScanAsync(ScanKind.All, null, null, CancellationToken.None);
 
     public Task<bool> ForceRescanMetadataAsync(IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default) =>
@@ -188,9 +187,15 @@ public sealed class LibraryFolderService : ILibraryFolderService
                     foreach (var (index, folder) in folders.Index())
                     {
                         token.ThrowIfCancellationRequested();
-                        changed |= await ScanFolderAsync(kind, folder.Id, FolderProgress(progress, index, folders.Count, folder.Name), token)
-                            .ConfigureAwait(false);
+                        var folderProgress = progress is null ? null : new FolderProgress(progress, index, folders.Count, folder.Name);
+                        changed |= await ScanFolderAsync(kind, folder.Id, folderProgress, token).ConfigureAwait(false);
                     }
+                }
+                catch (OperationCanceledException)
+                {
+                    // The folder being scanned keeps what it had already written.
+                    changed = true;
+                    throw;
                 }
                 finally
                 {
@@ -226,18 +231,19 @@ public sealed class LibraryFolderService : ILibraryFolderService
         }
     }
 
-    private static IProgress<ScanProgress>? FolderProgress(IProgress<ScanProgress>? progress, int folderIndex, int folderCount,
-        string folderName)
+    // Reports on the scanning thread. Progress<T> would post each report to the thread pool, where a later one can
+    // overtake an earlier one.
+    private sealed class FolderProgress(IProgress<ScanProgress> progress, int folderIndex, int folderCount, string folderName)
+        : IProgress<ScanProgress>
     {
-        if (progress is null) return null;
-        return new Progress<ScanProgress>(p => progress.Report(new ScanProgress
+        public void Report(ScanProgress p) => progress.Report(new ScanProgress
         {
             StatusText = folderCount > 1
                 ? string.Format(Resources.Strings.Format_ScanFolderProgress, folderIndex + 1, folderCount, folderName, p.StatusText)
                 : p.StatusText,
             Percentage = (folderIndex + p.Percentage / 100.0) / folderCount * 100.0,
             IsIndeterminate = p.IsIndeterminate
-        }));
+        });
     }
 
     private async Task<bool> ScanFolderAsync(ScanKind kind, Guid folderId, IProgress<ScanProgress>? progress,
@@ -247,6 +253,12 @@ public sealed class LibraryFolderService : ILibraryFolderService
         try
         {
             return await Task.Run(() => ScanFolderCoreAsync(kind, folderId, progress, token), token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (kind is ScanKind.Manual or ScanKind.Background)
+        {
+            // A cancelled scan keeps what it had already written.
+            _notifier.Raise(LibraryChangeKind.FolderRescanned, folderId);
+            throw;
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -646,10 +658,9 @@ public sealed class LibraryFolderService : ILibraryFolderService
     ///     representations (e.g., mapped drive vs UNC), keeping playlist entries and listening history.
     /// </summary>
     /// <returns>The number of duplicate rows removed.</returns>
-    internal async Task<int> DeduplicateLibraryAsync(CancellationToken cancellationToken = default)
+    internal async Task<int> DeduplicateLibraryAsync()
     {
-        using var operationCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _writeLock.ShutdownToken);
-        cancellationToken = operationCts.Token;
+        var cancellationToken = _writeLock.ShutdownToken;
         await _writeLock.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {

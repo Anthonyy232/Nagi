@@ -12,7 +12,7 @@ public interface ILibraryFolderService
     /// </summary>
     /// <returns>The existing folder when the path is already in the library.</returns>
     /// <exception cref="FolderOverlapsException">The path is inside, or contains, a folder already in the library.</exception>
-    Task<Folder?> AddFolderAsync(string path, string? name = null);
+    Task<Folder?> AddFolderAsync(string path);
 
     /// <summary>
     ///     Removes a folder on disk and its songs. A music server is removed with <see cref="IMusicServerService.RemoveAsync" />,

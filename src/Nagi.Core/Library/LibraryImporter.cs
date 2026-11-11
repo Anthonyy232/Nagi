@@ -88,9 +88,15 @@ public sealed class LibraryImporter
         }
 
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
-        var (deleted, files) = await DeleteSongRowsAsync(
-            context.Songs.Where(s => s.FolderId == folderId && filePaths.Contains(s.FilePath)), cancellationToken).ConfigureAwait(false);
-        await DeleteSongFilesAsync(files, cancellationToken).ConfigureAwait(false);
+        var deleted = 0;
+        foreach (var paths in filePaths.Chunk(MusicDbContext.MaxParametersPerQuery))
+        {
+            var (count, files) = await DeleteSongRowsAsync(
+                context.Songs.Where(s => s.FolderId == folderId && paths.Contains(s.FilePath)), cancellationToken).ConfigureAwait(false);
+            await DeleteSongFilesAsync(files, cancellationToken).ConfigureAwait(false);
+            deleted += count;
+        }
+
         return deleted;
     }
 
@@ -162,8 +168,9 @@ public sealed class LibraryImporter
             var ids = leaves.Where(f => !occupiedPaths.Contains(PathCanonicalizer.NormalizeDirectoryPath(f.Path)))
                 .Select(f => f.Id).ToArray();
             if (ids.Length == 0) break;
-            await context.Folders.Where(f => ids.Contains(f.Id))
-                .ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
+            foreach (var chunk in ids.Chunk(MusicDbContext.MaxParametersPerQuery))
+                await context.Folders.Where(f => chunk.Contains(f.Id))
+                    .ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
         }
 
         await context.Albums.Where(a => !a.Songs.Any()).ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
@@ -174,8 +181,9 @@ public sealed class LibraryImporter
             .Select(a => a.Id).ToListAsync(cancellationToken).ConfigureAwait(false);
         if (orphanedArtistIds.Count == 0) return;
 
-        await context.Artists.Where(a => orphanedArtistIds.Contains(a.Id))
-            .ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
+        foreach (var chunk in orphanedArtistIds.Chunk(MusicDbContext.MaxParametersPerQuery))
+            await context.Artists.Where(a => chunk.Contains(a.Id))
+                .ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
         _artwork.DeleteArtistImages(orphanedArtistIds);
     }
 
