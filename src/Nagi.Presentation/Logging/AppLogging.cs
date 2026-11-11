@@ -21,6 +21,8 @@ public static class AppLogging
             .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
             .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Migrations", LogEventLevel.Error)
             .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", LogEventLevel.Error)
+            // Its request lines include the URL path, where TheAudioDB takes its API key. Providers log their own requests.
+            .MinimumLevel.Override("System.Net.Http.HttpClient", LogEventLevel.Warning)
             .Enrich.FromLogContext()
             .Enrich.WithThreadId()
             .WriteTo.Debug()

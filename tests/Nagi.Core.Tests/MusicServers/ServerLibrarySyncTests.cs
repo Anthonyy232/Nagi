@@ -324,6 +324,43 @@ public class ServerLibrarySyncTests : LibraryTestBase
     }
 
     [Fact]
+    public async Task SyncServerFolder_SongListedOnTwoPages_IsAddedOnce()
+    {
+        var folder = await AddServerAsync();
+        var client = ServerWith();
+        client.GetSongsAsync(Arg.Any<CancellationToken>()).Returns(_ => Pages(
+            [ServerSong("s1", "One"), ServerSong("s2", "Two")],
+            [ServerSong("s2", "Two"), ServerSong("s3", "Three")]));
+
+        await _library.Servers.SyncAsync(folder.Id, client);
+
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        (await context.Songs.Select(s => s.RemoteId).ToListAsync()).Should().BeEquivalentTo("s1", "s2", "s3");
+    }
+
+    [Fact]
+    public async Task SyncServerFolder_WhenTheServerGoesAwayDuringCovers_StopsAskingForThemAndKeepsTheSongs()
+    {
+        var folder = await AddServerAsync();
+        var songs = Enumerable.Range(0, 20).Select(i => ServerSong($"s{i}", $"Song {i}", coverArtId: $"al-{i}")).ToArray();
+        var client = ServerWith(songs);
+        var asked = 0;
+        client.GetCoverArtAsync(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(async call =>
+        {
+            if (Interlocked.Increment(ref asked) == 1) throw new MusicServerException(MusicServerError.Unreachable, "Offline");
+            await Task.Delay(Timeout.Infinite, call.Arg<CancellationToken>());
+            return (byte[]?)null;
+        });
+
+        await _library.Servers.SyncAsync(folder.Id, client).WaitAsync(TimeSpan.FromSeconds(5));
+
+        // Covers download a few at a time, so only the ones already started when the first failed were asked for.
+        asked.Should().BeLessThan(songs.Length);
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        (await context.Songs.CountAsync()).Should().Be(songs.Length);
+    }
+
+    [Fact]
     public async Task SyncServerFolder_AddsThePlaylistsWithTheSongsTheLibraryHas()
     {
         var folder = await AddServerAsync();
@@ -467,10 +504,10 @@ public class ServerLibrarySyncTests : LibraryTestBase
         return client;
     }
 
-    private static async IAsyncEnumerable<IReadOnlyList<ServerSongMetadata>> Pages(IReadOnlyList<ServerSongMetadata> songs)
+    private static async IAsyncEnumerable<IReadOnlyList<ServerSongMetadata>> Pages(params IReadOnlyList<ServerSongMetadata>[] pages)
     {
         await Task.Yield();
-        yield return songs;
+        foreach (var page in pages) yield return page;
     }
 
     private static ServerSongMetadata ServerSong(string id, string title, string album = "Saltwater Hymns",

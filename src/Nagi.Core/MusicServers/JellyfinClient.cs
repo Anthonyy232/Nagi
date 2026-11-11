@@ -56,7 +56,11 @@ internal sealed class JellyfinClient : IMusicServerClient
 
         var client = new JellyfinClient(httpClient, baseUrl, result.User.Id, result.AccessToken, identity);
         if ((await client.GetMusicLibraryIdsAsync(CancellationToken.None).ConfigureAwait(false)).Count == 0)
+        {
+            // The sign-in isn't kept, so it mustn't stay on the server's list of devices.
+            await client.SignOutAsync(CancellationToken.None).ConfigureAwait(false);
             throw new MusicServerException(MusicServerError.NoMusicLibrary, $"{server.UserName} can't see a music library on {baseUrl}.");
+        }
 
         // The access token stands in for the password, which isn't kept.
         return new ServerSignIn(ServerName(info.ServerName, baseUrl), server.UserName, result.User.Id, result.AccessToken);
@@ -69,12 +73,12 @@ internal sealed class JellyfinClient : IMusicServerClient
         {
             for (var start = 0; ; start += PageSize)
             {
-                var page = await SendAsync<ItemsResult>(HttpMethod.Get,
+                var page = await SendAsync<ItemsResult>(
                     $"/Items?userId={_userId}&parentId={libraryId}&includeItemTypes=Audio&recursive=true" +
                     $"&fields={SongFields}&enableUserData=true&enableImageTypes=Primary&imageTypeLimit=1" +
                     $"&sortBy=SortName&startIndex={start.ToString(CultureInfo.InvariantCulture)}" +
                     $"&limit={PageSize.ToString(CultureInfo.InvariantCulture)}&enableTotalRecordCount=false",
-                    null, cancellationToken).ConfigureAwait(false);
+                    cancellationToken).ConfigureAwait(false);
 
                 yield return page.Items.Select(ToMetadata).ToList();
                 if (page.Items.Count < PageSize) break;
@@ -84,15 +88,15 @@ internal sealed class JellyfinClient : IMusicServerClient
 
     public async Task<IReadOnlyList<ServerPlaylist>> GetPlaylistsAsync(CancellationToken cancellationToken)
     {
-        var listed = await SendAsync<ItemsResult>(HttpMethod.Get,
+        var listed = await SendAsync<ItemsResult>(
             $"/Items?userId={_userId}&includeItemTypes=Playlist&mediaTypes=Audio&recursive=true&fields=DateCreated&enableUserData=false",
-            null, cancellationToken).ConfigureAwait(false);
+            cancellationToken).ConfigureAwait(false);
         var playlists = new List<ServerPlaylist>();
         foreach (var playlist in listed.Items)
         {
             using var response = await SendCoreAsync(HttpMethod.Get,
                 $"/Playlists/{Uri.EscapeDataString(playlist.Id)}/Items?userId={_userId}&enableImages=false&enableUserData=false",
-                null, cancellationToken).ConfigureAwait(false);
+                cancellationToken).ConfigureAwait(false);
             // Deleted since it was listed.
             if (response.StatusCode == HttpStatusCode.NotFound) continue;
             var songs = await ReadAsync<ItemsResult>(response, _baseUrl, cancellationToken).ConfigureAwait(false);
@@ -107,7 +111,7 @@ internal sealed class JellyfinClient : IMusicServerClient
     {
         using var response = await SendCoreAsync(HttpMethod.Get,
             $"/Items/{Uri.EscapeDataString(coverArtId)}/Images/Primary?maxWidth={CoverSize.ToString(CultureInfo.InvariantCulture)}&quality=90",
-            null, cancellationToken).ConfigureAwait(false);
+            cancellationToken).ConfigureAwait(false);
         if (response.StatusCode == HttpStatusCode.NotFound) return null;
         EnsureSuccess(response);
         return await response.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
@@ -119,13 +123,13 @@ internal sealed class JellyfinClient : IMusicServerClient
     public async Task CheckSongAsync(string songId, CancellationToken cancellationToken)
     {
         using var response = await SendCoreAsync(HttpMethod.Get, $"/Items/{Uri.EscapeDataString(songId)}?userId={_userId}",
-            null, cancellationToken).ConfigureAwait(false);
+            cancellationToken).ConfigureAwait(false);
         EnsureSuccess(response);
     }
 
     public async Task<string?> GetLyricsAsync(string songId, CancellationToken cancellationToken)
     {
-        using var response = await SendCoreAsync(HttpMethod.Get, $"/Audio/{Uri.EscapeDataString(songId)}/Lyrics", null,
+        using var response = await SendCoreAsync(HttpMethod.Get, $"/Audio/{Uri.EscapeDataString(songId)}/Lyrics",
             cancellationToken).ConfigureAwait(false);
         // Jellyfin answers 404 for a song without lyrics.
         if (response.StatusCode == HttpStatusCode.NotFound) return null;
@@ -142,7 +146,7 @@ internal sealed class JellyfinClient : IMusicServerClient
         var datePlayed = playedUtc.ToString("O", CultureInfo.InvariantCulture);
         using var response = await SendCoreAsync(HttpMethod.Post,
             $"/UserPlayedItems/{Uri.EscapeDataString(songId)}?userId={_userId}&datePlayed={Uri.EscapeDataString(datePlayed)}",
-            null, cancellationToken).ConfigureAwait(false);
+            cancellationToken).ConfigureAwait(false);
         EnsureSuccess(response);
     }
 
@@ -152,7 +156,7 @@ internal sealed class JellyfinClient : IMusicServerClient
         foreach (var songId in songIds)
         {
             using var response = await SendCoreAsync(method,
-                $"/UserFavoriteItems/{Uri.EscapeDataString(songId)}?userId={_userId}", null, cancellationToken)
+                $"/UserFavoriteItems/{Uri.EscapeDataString(songId)}?userId={_userId}", cancellationToken)
                 .ConfigureAwait(false);
             // A song deleted from the server can't be a favorite there, and failing would hold back the others.
             if (response.StatusCode != HttpStatusCode.NotFound) EnsureSuccess(response);
@@ -162,23 +166,22 @@ internal sealed class JellyfinClient : IMusicServerClient
     // Also takes Nagi off the server's list of devices.
     public async Task SignOutAsync(CancellationToken cancellationToken)
     {
-        using var response = await SendCoreAsync(HttpMethod.Post, "/Sessions/Logout", null, cancellationToken)
+        using var response = await SendCoreAsync(HttpMethod.Post, "/Sessions/Logout", cancellationToken)
             .ConfigureAwait(false);
         EnsureSuccess(response);
     }
 
     private async Task<List<string>> GetMusicLibraryIdsAsync(CancellationToken cancellationToken)
     {
-        var views = await SendAsync<ItemsResult>(HttpMethod.Get, $"/UserViews?userId={_userId}", null, cancellationToken)
+        var views = await SendAsync<ItemsResult>($"/UserViews?userId={_userId}", cancellationToken)
             .ConfigureAwait(false);
         return views.Items.Where(view => string.Equals(view.CollectionType, "music", StringComparison.OrdinalIgnoreCase))
             .Select(view => view.Id).ToList();
     }
 
-    private async Task<T> SendAsync<T>(HttpMethod method, string pathAndQuery, HttpContent? content,
-        CancellationToken cancellationToken)
+    private async Task<T> SendAsync<T>(string pathAndQuery, CancellationToken cancellationToken)
     {
-        using var response = await SendCoreAsync(method, pathAndQuery, content, cancellationToken).ConfigureAwait(false);
+        using var response = await SendCoreAsync(HttpMethod.Get, pathAndQuery, cancellationToken).ConfigureAwait(false);
         return await ReadApiAsync<T>(response, _baseUrl, cancellationToken).ConfigureAwait(false);
     }
 
@@ -210,10 +213,10 @@ internal sealed class JellyfinClient : IMusicServerClient
         }
     }
 
-    private async Task<HttpResponseMessage> SendCoreAsync(HttpMethod method, string pathAndQuery, HttpContent? content,
+    private async Task<HttpResponseMessage> SendCoreAsync(HttpMethod method, string pathAndQuery,
         CancellationToken cancellationToken)
     {
-        using var request = new HttpRequestMessage(method, _baseUrl + pathAndQuery) { Content = content };
+        using var request = new HttpRequestMessage(method, _baseUrl + pathAndQuery);
         request.Headers.Authorization = new AuthenticationHeaderValue("MediaBrowser", _authorizationParameters);
         return await MusicServerHttp.SendAsync(_httpClient, request, _baseUrl, cancellationToken).ConfigureAwait(false);
     }

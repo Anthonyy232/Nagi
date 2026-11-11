@@ -350,21 +350,31 @@ public sealed class MusicServerService : IMusicServerService, IListenSubmitter, 
         var signIn = await ConnectAsync(server, secret).ConfigureAwait(false);
         server.UserName = signIn.UserName;
         server.UserId = signIn.UserId;
-        if (usesApiKey) await EnsureNotAddedAsync(server).ConfigureAwait(false);
-        var name = await GetUniqueNameAsync(signIn.ServerName, server).ConfigureAwait(false);
-
-        var resource = CredentialResource(server.FolderId);
-        if (!_credentials.SaveCredential(resource, server.UserName, signIn.Secret))
-            throw new MusicServerException(MusicServerError.SignInNotSaved, $"The sign-in for {server.BaseUrl} couldn't be saved.");
         try
         {
-            var folder = await _library.AddAsync(server, name).ConfigureAwait(false);
-            _logger.LogInformation("Added {Kind} server {BaseUrl} as folder {FolderId}.", kind, server.BaseUrl, folder.Id);
-            return folder;
+            if (usesApiKey) await EnsureNotAddedAsync(server).ConfigureAwait(false);
+            var name = await GetUniqueNameAsync(signIn.ServerName, server).ConfigureAwait(false);
+
+            var resource = CredentialResource(server.FolderId);
+            if (!_credentials.SaveCredential(resource, server.UserName, signIn.Secret))
+                throw new MusicServerException(MusicServerError.SignInNotSaved, $"The sign-in for {server.BaseUrl} couldn't be saved.");
+            try
+            {
+                var folder = await _library.AddAsync(server, name).ConfigureAwait(false);
+                _logger.LogInformation("Added {Kind} server {BaseUrl} as folder {FolderId}.", kind, server.BaseUrl, folder.Id);
+                return folder;
+            }
+            catch
+            {
+                _credentials.RemoveCredential(resource);
+                throw;
+            }
         }
         catch
         {
-            _credentials.RemoveCredential(resource);
+            // The sign-in isn't kept, so it mustn't stay on the server's list of devices.
+            var client = _connectors[kind].CreateClient(_httpClientFactory.CreateClient(HttpClientName), server, signIn.Secret);
+            _ = SignOutAsync(server.FolderId, client);
             throw;
         }
     }
@@ -424,7 +434,7 @@ public sealed class MusicServerService : IMusicServerService, IListenSubmitter, 
         // The server keeps the session until it expires or is ended on the server.
         catch (Exception ex) when (ex is MusicServerException or OperationCanceledException)
         {
-            _logger.LogWarning(ex, "Couldn't sign out of removed server folder {FolderId}.", folderId);
+            _logger.LogWarning(ex, "Couldn't sign out of server folder {FolderId}.", folderId);
         }
     }
 

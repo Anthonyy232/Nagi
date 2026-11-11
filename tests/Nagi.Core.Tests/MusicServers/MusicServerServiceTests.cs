@@ -89,6 +89,25 @@ public class MusicServerServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task AddAsync_JellyfinSignInThatCantBeSaved_SignsOutAgain()
+    {
+        var server = JellyfinServer("token-1");
+        var signedOut = new TaskCompletionSource<string?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _handler.SendAsyncFunc = (request, token) =>
+        {
+            if (request.RequestUri!.AbsolutePath != "/Sessions/Logout") return server(request, token);
+            signedOut.TrySetResult(request.Headers.Authorization?.Parameter);
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.NoContent));
+        };
+        _credentials.SaveCredential(default!, default!, default!).ReturnsForAnyArgs(false);
+
+        var add = () => _service.AddAsync(MusicServerKind.Jellyfin, "https://jellyfin.example.com", "alex", "secret");
+
+        await add.Should().ThrowAsync<MusicServerException>();
+        (await signedOut.Task.WaitAsync(TimeSpan.FromSeconds(5))).Should().Contain("Token=\"token-1\"");
+    }
+
+    [Fact]
     public async Task AddAsync_AnotherServerOfTheSameKind_IsNamedAfterItsHost()
     {
         await SeedServerAsync();
@@ -166,6 +185,19 @@ public class MusicServerServiceTests : IDisposable
         (await _service.RemoveAsync(server.FolderId)).Should().BeFalse();
 
         _handler.Requests.Should().BeEmpty();
+    }
+
+    // As after restoring a backup on another computer, which brings the server without its sign-in.
+    [Fact]
+    public async Task RemoveAsync_ServerWhoseSignInIsGone_IsStillRemoved()
+    {
+        var (server, _) = await SeedServerAsync();
+        _credentials.RetrieveCredential(Arg.Any<string>()).Returns((ValueTuple<string?, string?>?)null);
+        _serverLibrary.RemoveAsync(server.FolderId).Returns(true);
+
+        (await _service.RemoveAsync(server.FolderId)).Should().BeTrue();
+
+        await _serverLibrary.Received(1).RemoveAsync(server.FolderId);
     }
 
     [Fact]

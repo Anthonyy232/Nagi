@@ -58,13 +58,14 @@ public class JellyfinClientTests : IDisposable
     }
 
     [Fact]
-    public async Task SignInAsync_AccountWithoutAMusicLibrary_Fails()
+    public async Task SignInAsync_AccountWithoutAMusicLibrary_FailsAndSignsOutAgain()
     {
         RouteServer("12.0.0", hasMusicLibrary: false);
 
         var signIn = () => JellyfinClient.SignInAsync(_httpClient, new MusicServer { BaseUrl = BaseUrl, UserName = "alex" }, "secret", Identity);
 
         (await signIn.Should().ThrowAsync<MusicServerException>()).Which.Error.Should().Be(MusicServerError.NoMusicLibrary);
+        _handler.Requests.Last().RequestUri!.AbsolutePath.Should().Be("/Sessions/Logout");
     }
 
     [Fact]
@@ -240,6 +241,7 @@ public class JellyfinClientTests : IDisposable
             "/System/Info/Public" => Json(new { ServerName = "Living Room", Version = version, Id = "server-1" }),
             "/Users/AuthenticateByName" => Json(new { AccessToken = "token-1", User = new { Id = "user-1", Name = "alex" } }),
             "/UserViews" => Json(new { Items = new[] { new { Id = "lib", CollectionType = hasMusicLibrary ? "music" : "movies" } } }),
+            "/Sessions/Logout" => new HttpResponseMessage(HttpStatusCode.NoContent),
             _ => new HttpResponseMessage(HttpStatusCode.NotFound)
         });
     }
