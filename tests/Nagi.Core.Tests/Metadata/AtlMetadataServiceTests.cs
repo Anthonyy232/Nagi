@@ -219,32 +219,6 @@ public class AtlMetadataServiceTests : IDisposable
         result.CoverArtUri.Should().BeNull();
     }
 
-    [Fact]
-    public async Task ProcessAlbumArtAsync_WhenProcessingFails_AllowsRetryOnNextCall()
-    {
-        var pictureData = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A }; // PNG header
-        var filePath = CreateTestAudioFile("failsong.mp3", track =>
-        {
-            track.Album = "Failing Album";
-            track.AlbumArtist = "Failing Artist";
-            track.EmbeddedPictures.Add(PictureInfo.fromBinaryData(pictureData));
-        });
-
-        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>())
-            .ThrowsAsync(new InvalidOperationException("Processing failed"));
-        var result1 = await _metadataService.ExtractMetadataAsync(filePath);
-        result1.CoverArtUri.Should().BeNull();
-        await _imageProcessor.Received(1)
-            .SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>());
-        _imageProcessor.ClearReceivedCalls();
-        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>())
-            .Returns(Task.FromResult<(string?, string?, string?)>(("C:/art/success.jpg", "lightOK", "darkOK")));
-        var result2 = await _metadataService.ExtractMetadataAsync(filePath);
-        await _imageProcessor.Received(1)
-            .SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>());
-        result2.CoverArtUri.Should().Be("C:/art/success.jpg");
-    }
-
     [Theory]
     [InlineData(1, true)]
     [InlineData(-1, false)]

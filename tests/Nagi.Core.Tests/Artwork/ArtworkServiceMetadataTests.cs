@@ -137,6 +137,33 @@ public class ArtworkServiceMetadataTests : LibraryTestBase
         await _fileSystem.DidNotReceive().WriteAllBytesAsync(retried.LocalImageCachePath!, Arg.Any<byte[]>());
     }
 
+    [Fact]
+    public async Task ArtistMetadata_WithACustomImage_TakesTheBiographyAndLeavesTheImageAlone()
+    {
+        _settingsService.Set(CoreSettings.FetchOnlineMetadata, true);
+        var artist = new Artist { Id = Guid.NewGuid(), Name = "Custom image artist" };
+        var customImage = Path.Combine(_pathConfig.ArtistImageCachePath, $"{artist.Id}.custom.jpg");
+        artist.LocalImageCachePath = customImage;
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Artists.Add(artist);
+            await context.SaveChangesAsync();
+        }
+        _settingsService.EnableOnly(CoreSettings.MetadataProviders, ServiceProviderIds.LastFm);
+        _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
+            .Returns(ServiceResult<ArtistInfo>.FromSuccess(new ArtistInfo
+            {
+                Biography = "Biography",
+                ImageUrl = "https://example.com/artist.jpg"
+            }));
+
+        var result = await _library.Artwork.GetArtistDetailsAsync(artist.Id);
+
+        result!.Biography.Should().Be("Biography");
+        result.LocalImageCachePath.Should().Be(customImage);
+        _httpMessageHandler.Requests.Should().BeEmpty();
+    }
+
     [Theory]
     [InlineData("dispose")]
     [InlineData("disable")]
@@ -245,13 +272,8 @@ public class ArtworkServiceMetadataTests : LibraryTestBase
             Content = new ByteArrayContent(new byte[] { 1, 2, 3 })
         });
 
-        var eventFired = false;
-        _library.Notifier.ArtistImagesChanged += (_, changes) =>
-        {
-            eventFired = true;
-            changes.Single().ArtistId.Should().Be(artist.Id);
-            changes.Single().ImagePath.Should().Be(expectedImagePath);
-        };
+        var announced = new List<ArtistImageChange>();
+        _library.Notifier.ArtistImagesChanged += (_, changes) => announced.AddRange(changes);
 
         var result = await _library.Artwork.GetArtistDetailsAsync(artist.Id);
 
@@ -259,7 +281,9 @@ public class ArtworkServiceMetadataTests : LibraryTestBase
         result!.Biography.Should().Be("A cool bio.");
         result.LocalImageCachePath.Should().Be(expectedImagePath);
         result.MetadataLastCheckedUtc.Should().NotBeNull();
-        eventFired.Should().BeTrue();
+        var change = announced.Should().ContainSingle().Subject;
+        change.ArtistId.Should().Be(artist.Id);
+        change.ImagePath.Should().Be(expectedImagePath);
 
         _fileSystem.Received(1).MoveFile(Arg.Is<string>(path => path.EndsWith(".tmp")), expectedImagePath, true);
     }

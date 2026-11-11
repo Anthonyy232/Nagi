@@ -81,23 +81,6 @@ public class ApiKeyServiceTests : IDisposable
         _httpMessageHandler.Requests.Should().HaveCount(2);
     }
 
-    [Fact]
-    public async Task GetApiKeyAsync_AfterTransientFailure_RetriesOnNextCall()
-    {
-        const string expectedApiKey = "recovered-key";
-        SetupValidConfiguration();
-        _httpMessageHandler.RespondSequence(
-            (HttpStatusCode.InternalServerError, "{}"),
-            (HttpStatusCode.OK, JsonSerializer.Serialize(new { Value = expectedApiKey })));
-
-        var failedResult = await _apiKeyService.GetApiKeyAsync(ApiKeyNames.LastFm);
-        var recoveredResult = await _apiKeyService.GetApiKeyAsync(ApiKeyNames.LastFm);
-
-        failedResult.Should().BeNull();
-        recoveredResult.Should().Be(expectedApiKey);
-        _httpMessageHandler.Requests.Should().HaveCount(2);
-    }
-
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -114,13 +97,14 @@ public class ApiKeyServiceTests : IDisposable
     }
 
     [Theory]
+    [InlineData(HttpStatusCode.InternalServerError)]
     [InlineData(HttpStatusCode.Unauthorized)]
     [InlineData(HttpStatusCode.Forbidden)]
-    public async Task GetApiKeyAsync_AfterTheServerRejectedNagi_RecoversOnTheNextCall(HttpStatusCode rejection)
+    public async Task GetApiKeyAsync_AfterAFailedFetch_AsksAgainOnTheNextCall(HttpStatusCode failure)
     {
         SetupValidConfiguration();
         _httpMessageHandler.RespondSequence(
-            (rejection, "{}"),
+            (failure, "{}"),
             (HttpStatusCode.OK, JsonSerializer.Serialize(new { Value = "recovered-key" })));
 
         (await _apiKeyService.GetApiKeyAsync(ApiKeyNames.LastFm)).Should().BeNull();

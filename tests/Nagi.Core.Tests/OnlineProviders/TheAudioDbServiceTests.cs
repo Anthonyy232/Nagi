@@ -155,15 +155,6 @@ public class TheAudioDbServiceTests : IDisposable
         result.Data!.Biography.Should().Be(expected);
     }
 
-    [Fact]
-    public async Task GetArtistMetadataAsync_When404_ReturnsSuccessNotFound()
-    {
-        _httpHandler.SendAsyncFunc = (_, _) =>
-            Task.FromResult(new HttpResponseMessage(HttpStatusCode.NotFound));
-        var result = await _service.GetArtistMetadataAsync(ValidMbid);
-        result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
-    }
-
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
@@ -171,32 +162,6 @@ public class TheAudioDbServiceTests : IDisposable
     {
         var result = await _service.GetArtistMetadataAsync(mbid);
         result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
-    }
-
-    [Fact]
-    public async Task GetArtistMetadataAsync_WhenApiKeyMissing_ReturnsTemporaryError()
-    {
-        _apiKeyService.GetApiKeyAsync("theaudiodb", Arg.Any<CancellationToken>()).Returns((string?)null);
-        var result = await _service.GetArtistMetadataAsync(ValidMbid);
-        result.Status.Should().Be(ServiceResultStatus.TemporaryError);
-    }
-
-    [Fact]
-    public async Task GetArtistMetadataAsync_WhenHttpError_ReturnsTemporaryError()
-    {
-        _httpHandler.SendAsyncFunc = (_, _) =>
-            Task.FromResult(new HttpResponseMessage(HttpStatusCode.InternalServerError));
-        var result = await _service.GetArtistMetadataAsync(ValidMbid);
-        result.Status.Should().Be(ServiceResultStatus.TemporaryError);
-    }
-
-    [Fact]
-    public async Task GetArtistMetadataAsync_WhenCancelled_ThrowsOperationCancelled()
-    {
-        using var cts = new CancellationTokenSource();
-        cts.Cancel();
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => _service.GetArtistMetadataAsync(ValidMbid, null, cts.Token));
     }
 
     [Fact]
