@@ -23,7 +23,6 @@ public class MultiArtistTests : IDisposable
     private readonly IFileSystemService _fileSystem;
     private readonly IMetadataService _metadataService;
     private readonly TestLibrary _library;
-    private readonly LibraryReader _libraryReader;
     private readonly ProviderPipelineProvider _pipelines;
 
     public MultiArtistTests()
@@ -40,8 +39,6 @@ public class MultiArtistTests : IDisposable
         pathConfig.LrcCachePath.Returns("C:\\cache\\lrc");
 
         _pipelines = TestProviderPipeline.Build(ProviderCatalog.ImageDownload.ProviderId);
-
-        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, settingsService);
 
         _library = new TestLibrary(
             _dbHelper.ContextFactory,

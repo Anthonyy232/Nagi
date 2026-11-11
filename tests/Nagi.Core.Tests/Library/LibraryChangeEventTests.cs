@@ -18,7 +18,6 @@ public class LibraryChangeEventTests : IDisposable
     private readonly DbContextFactoryTestHelper _dbHelper;
     private readonly IFileSystemService _fileSystem;
     private readonly TestLibrary _library;
-    private readonly LibraryReader _libraryReader;
     private readonly IMetadataService _metadataService;
     private readonly ProviderPipelineProvider _pipelines;
 
@@ -31,8 +30,6 @@ public class LibraryChangeEventTests : IDisposable
         _dbHelper = new DbContextFactoryTestHelper();
 
         _pipelines = TestProviderPipeline.Build(ProviderCatalog.ImageDownload.ProviderId);
-
-        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, TestSettings.Create());
 
         _library = new TestLibrary(
             _dbHelper.ContextFactory,

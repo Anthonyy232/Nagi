@@ -94,12 +94,13 @@ internal sealed class SplitViewContentMotion
         }
     }
 
-    public static SplitViewContentMotion? Attach(SplitView splitView)
+    public static void Attach(SplitView splitView)
     {
         splitView.ApplyTemplate();
         if (VisualTreeHelper.GetChildrenCount(splitView) == 0 ||
             VisualTreeHelper.GetChild(splitView, 0) is not FrameworkElement templateRoot ||
-            templateRoot.FindName("ContentRoot") is not FrameworkElement contentRoot) return null;
-        return new SplitViewContentMotion(splitView, templateRoot, contentRoot);
+            templateRoot.FindName("ContentRoot") is not FrameworkElement contentRoot) return;
+        // The split view's events keep this alive for as long as the split view lives.
+        _ = new SplitViewContentMotion(splitView, templateRoot, contentRoot);
     }
 }

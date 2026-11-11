@@ -72,8 +72,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private readonly ILogger<MainPage> _logger;
     private readonly ISettingsService _settingsService;
 
-    private SplitViewContentMotion? _queueContentMotion;
-    private SplitViewContentMotion? _navigationContentMotion;
 
     private bool _isPointerOverPlayer;
     private readonly DispatcherTimer _hoverTimer = new();
@@ -247,11 +245,11 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     {
         // The page is unloaded only when the window closes or swaps it out, which ends it, so it loads once.
         Loaded -= OnMainPageLoaded;
-        _queueContentMotion = SplitViewContentMotion.Attach(QueueSplitView);
+        SplitViewContentMotion.Attach(QueueSplitView);
         NavView.ApplyTemplate();
         if (VisualTreeHelper.GetChildrenCount(NavView) > 0 &&
             (VisualTreeHelper.GetChild(NavView, 0) as FrameworkElement)?.FindName("RootSplitView") is SplitView navigationSplitView)
-            _navigationContentMotion = SplitViewContentMotion.Attach(navigationSplitView);
+            SplitViewContentMotion.Attach(navigationSplitView);
         _queuePlayingBinder = new NowPlayingIndicatorBinder(QueueListView, ViewModel, item => (item as QueueEntry)?.Id);
         _historyPlayingBinder = new NowPlayingIndicatorBinder(HistoryListView, ViewModel,
             item => (item as RecentListenEntry)?.Listen.SongId);
@@ -343,11 +341,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
     {
         HandleNavigation(args.IsSettingsInvoked, args.InvokedItemContainer, args.RecommendedNavigationTransitionInfo);
-    }
-
-    private void NavView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
-    {
-        _navigationService.GoBack();
     }
 
     private void OnNavigated(Type page)

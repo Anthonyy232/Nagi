@@ -271,7 +271,6 @@
                 CompactModeThresholdWidth="720"
                 ExpandedModeThresholdWidth="720"
                 OpenPaneLength="256"
-                BackRequested="NavView_BackRequested"
                 Background="Transparent">
 
                 <Grid x:Name="ContentRegion" SizeChanged="ContentRegion_SizeChanged">
