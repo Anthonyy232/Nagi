@@ -1,5 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Controls;
 
@@ -61,7 +63,8 @@ public sealed partial class ArtworkImage : UserControl
         set => SetValue(PlaceholderGlyphSizeProperty, value);
     }
 
-    private int ToPixels(double size) => (int)Math.Round(size);
+    private ImageSource? Decode(string? source, double size) =>
+        BitmapImageFactory.CreateDecoded(source, (int)Math.Round(size));
 
     private Visibility ImageVisibility(string? source) =>
         string.IsNullOrEmpty(source) ? Visibility.Collapsed : Visibility.Visible;

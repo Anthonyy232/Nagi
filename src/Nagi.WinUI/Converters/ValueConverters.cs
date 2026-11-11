@@ -155,42 +155,16 @@ public class GenreToGradientConverter : IValueConverter
 
 public class BooleanToOpacityConverter : IValueConverter
 {
-    public double TrueValue { get; set; } = 1.0;
     public double FalseValue { get; set; } = 0.4;
 
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        return value is true ? TrueValue : FalseValue;
+        return value is true ? 1.0 : FalseValue;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
         throw new NotSupportedException();
-    }
-}
-
-/// <summary>
-///     Converts a float or double to a formatted string with a fixed number of decimal places.
-///     Default is 1 decimal place (e.g., "3.5" or "-12.0").
-/// </summary>
-public class FloatToDecimalStringConverter : IValueConverter
-{
-    public int DecimalPlaces { get; set; } = 1;
-
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        var format = $"F{DecimalPlaces}";
-        return value switch
-        {
-            float f => f.ToString(format),
-            double d => d.ToString(format),
-            _ => value?.ToString() ?? string.Empty
-        };
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
     }
 }
 

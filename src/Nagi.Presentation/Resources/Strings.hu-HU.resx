@@ -1512,9 +1512,6 @@ Szeretné folytatni?</value>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Fedezze fel újra helyi zenei gyűjteményét a Nagival, egy zenelejátszóval, amely a sebességre, az egyszerűségre és az adatvédelemre összpontosít.</value>
   </data>
-  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>Verzió </value>
-  </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Licencek megtekintése</value>
   </data>
@@ -1739,12 +1736,6 @@ Szeretné folytatni?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>pl. ;/\\</value>
-  </data>
-  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value> ms</value>
-  </data>
-  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Elmúlt 1 nap</value>

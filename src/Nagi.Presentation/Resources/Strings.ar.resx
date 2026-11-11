@@ -1512,9 +1512,6 @@
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>أعد اكتشاف مجموعتك الموسيقية المحلية مع Nagi، مشغل موسيقى يركز على السرعة والبساطة والخصوصية.</value>
   </data>
-  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>الإصدار </value>
-  </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>عرض التراخيص</value>
   </data>
@@ -1739,12 +1736,6 @@
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>مثال: ;/\\</value>
-  </data>
-  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value> ملي ثانية</value>
-  </data>
-  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value> ديسيبل</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>آخر يوم</value>

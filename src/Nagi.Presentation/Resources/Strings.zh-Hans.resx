@@ -1512,9 +1512,6 @@
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>使用 Nagi 重新发现您的本地音乐收藏，这是一款注重速度、简洁和隐私的音乐播放器。</value>
   </data>
-  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>版本 </value>
-  </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>查看许可证</value>
   </data>
@@ -1739,12 +1736,6 @@
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>例如：;/\\</value>
-  </data>
-  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value> 毫秒</value>
-  </data>
-  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value> 分贝</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>过去 1 天</value>

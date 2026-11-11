@@ -1512,9 +1512,6 @@ Vill du fortsätta?</value>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Återupptäck din lokala musiksamling med Nagi, en musikspelare fokuserad på snabbhet, enkelhet och integritet.</value>
   </data>
-  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>Version </value>
-  </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Visa licenser</value>
   </data>
@@ -1739,12 +1736,6 @@ Vill du fortsätta?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>t.ex. ;/\</value>
-  </data>
-  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value> ms</value>
-  </data>
-  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Senaste 1 dygnet</value>

@@ -8,7 +8,6 @@
     xmlns:localControls="using:Nagi.WinUI.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resources="using:Nagi.Presentation.Resources"
-    xmlns:imageEx="using:ImageEx"
     xmlns:player="using:Nagi.Presentation.Player"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     mc:Ignorable="d"
@@ -273,7 +272,6 @@
                 ExpandedModeThresholdWidth="720"
                 OpenPaneLength="256"
                 BackRequested="NavView_BackRequested"
-                SelectionChanged="NavView_SelectionChanged"
                 Background="Transparent">
 
                 <Grid x:Name="ContentRegion" SizeChanged="ContentRegion_SizeChanged">
@@ -554,17 +552,7 @@
                                         Command="{x:Bind ViewModel.GoToAlbumCommand, Mode=OneWay}"
                                         Style="{StaticResource DefaultButtonStyle}"
                                         Visibility="{x:Bind ViewModel.IsArtworkAvailable, Mode=OneWay}">
-                                        <Border
-                                            Width="{StaticResource FloatingPlayerArtSize}"
-                                            Height="{StaticResource FloatingPlayerArtSize}"
-                                            CornerRadius="{StaticResource ArtworkCornerRadius}">
-                                            <imageEx:ImageEx Width="{StaticResource FloatingPlayerArtSize}" Height="{StaticResource FloatingPlayerArtSize}"
-                                                IsCacheEnabled="True"
-                                                Source="{x:Bind uihelpers:BitmapImageFactory.Create(ViewModel.AlbumArtUri), Mode=OneWay}"
-                                                DecodePixelWidth="{StaticResource FloatingPlayerArtSize}"
-                                                DecodePixelType="Logical"
-                                                Stretch="UniformToFill" />
-                                        </Border>
+                                        <localControls:ArtworkImage Size="{StaticResource FloatingPlayerArtSize}" Source="{x:Bind ViewModel.AlbumArtUri, Mode=OneWay}" />
                                     </Button>
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                         <Grid HorizontalAlignment="Left" ColumnSpacing="4">

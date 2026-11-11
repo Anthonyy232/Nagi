@@ -1512,9 +1512,6 @@ Vrei să continui?</value>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Redescoperă colecția ta de muzică locală cu Nagi, un player de muzică axat pe viteză, simplitate și confidențialitate.</value>
   </data>
-  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>Versiune </value>
-  </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Vezi Licențele</value>
   </data>
@@ -1739,12 +1736,6 @@ Vrei să continui?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>ex. ;/\</value>
-  </data>
-  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value> ms</value>
-  </data>
-  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Ultima 1 zi</value>

@@ -1512,9 +1512,6 @@ Voulez-vous continuer ?</value>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Redécouvrez votre collection de musique locale avec Nagi, un lecteur de musique axé sur la vitesse, la simplicité et la confidentialité.</value>
   </data>
-  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>Version </value>
-  </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Afficher les licences</value>
   </data>
@@ -1739,12 +1736,6 @@ Voulez-vous continuer ?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>ex. ;/\\</value>
-  </data>
-  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value> ms</value>
-  </data>
-  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>1 dernier jour</value>

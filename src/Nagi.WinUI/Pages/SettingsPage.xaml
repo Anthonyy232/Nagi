@@ -29,7 +29,6 @@
             <Setter Property="MinWidth" Value="300" />
         </Style>
         <localConverters:ArgbColorToColorConverter x:Key="ArgbColorToColorConverter" />
-        <localConverters:FloatToDecimalStringConverter x:Key="FloatToDecimalStringConverter" />
         <localConverters:DoubleToPercentageConverter x:Key="DoubleToPercentageConverter" />
 
         <DataTemplate x:Key="ToggleItemTemplate" x:DataType="settings:IToggleItem">
@@ -484,10 +483,8 @@
                                 <TextBlock
                                     VerticalAlignment="Center"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Style="{ThemeResource CaptionTextBlockStyle}">
-                                    <Run Text="{x:Bind ViewModel.Audio.FadeInDurationMs, Mode=OneWay}" />
-                                    <Run Text="{x:Bind resources:Strings.SettingsPage_Unit_Milliseconds, Mode=OneTime}" />
-                                </TextBlock>
+                                    Style="{ThemeResource CaptionTextBlockStyle}"
+                                    Text="{x:Bind Milliseconds(ViewModel.Audio.FadeInDurationMs), Mode=OneWay}" />
                             </StackPanel>
                         </controls:SettingsCard>
                         <controls:SettingsCard Header="{x:Bind resources:Strings.SettingsPage_FadeOutDuration_Header, Mode=OneTime}"
@@ -505,10 +502,8 @@
                                 <TextBlock
                                     VerticalAlignment="Center"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Style="{ThemeResource CaptionTextBlockStyle}">
-                                    <Run Text="{x:Bind ViewModel.Audio.FadeOutDurationMs, Mode=OneWay}" />
-                                    <Run Text="{x:Bind resources:Strings.SettingsPage_Unit_Milliseconds, Mode=OneTime}" />
-                                </TextBlock>
+                                    Style="{ThemeResource CaptionTextBlockStyle}"
+                                    Text="{x:Bind Milliseconds(ViewModel.Audio.FadeOutDurationMs), Mode=OneWay}" />
                             </StackPanel>
                         </controls:SettingsCard>
                     </controls:SettingsExpander.Items>
@@ -540,10 +535,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Style="{ThemeResource CaptionTextBlockStyle}">
-                                <Run Text="{x:Bind ViewModel.Audio.EqualizerPreamp, Mode=OneWay, Converter={StaticResource FloatToDecimalStringConverter}}" />
-                                <Run Text="{x:Bind resources:Strings.SettingsPage_Unit_Decibels, Mode=OneTime}" />
-                            </TextBlock>
+                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                Text="{x:Bind Decibels(ViewModel.Audio.EqualizerPreamp), Mode=OneWay}" />
                         </StackPanel>
 
                         <ItemsRepeater ItemsSource="{x:Bind ViewModel.Audio.EqualizerBands}" HorizontalAlignment="Center">
@@ -1103,10 +1096,8 @@
                     </controls:SettingsExpander.HeaderIcon>
                     <TextBlock
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        IsTextSelectionEnabled="True">
-                        <Run Text="{x:Bind resources:Strings.SettingsPage_About_VersionPrefix, Mode=OneTime}" />
-                        <Run Text="{x:Bind ViewModel.ApplicationVersion, Mode=OneWay}" />
-                    </TextBlock>
+                        IsTextSelectionEnabled="True"
+                        Text="{x:Bind Version(ViewModel.ApplicationVersion)}" />
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard ContentAlignment="Left">
                             <StackPanel Orientation="Horizontal" Spacing="8">

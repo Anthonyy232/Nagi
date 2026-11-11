@@ -1512,9 +1512,6 @@ Haluatko jatkaa?</value>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Löydä paikallinen musiikkikokoelmasi uudelleen Nagin avulla. Nagi on musiikkisoitin, joka keskittyy nopeuteen, yksinkertaisuuteen ja yksityisyyteen.</value>
   </data>
-  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>Versio </value>
-  </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Näytä lisenssit</value>
   </data>
@@ -1739,12 +1736,6 @@ Haluatko jatkaa?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>esim. ;/\</value>
-  </data>
-  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value> ms</value>
-  </data>
-  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Viimeisin 1 päivä</value>

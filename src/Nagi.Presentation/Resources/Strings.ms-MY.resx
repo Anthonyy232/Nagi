@@ -1512,9 +1512,6 @@ Adakah anda ingin meneruskan?</value>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Temukan semula koleksi muzik tempatan anda dengan Nagi, pemain muzik yang memberi tumpuan kepada kelajuan, kesederhanaan, dan privasi.</value>
   </data>
-  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>Versi </value>
-  </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Lihat Lesen</value>
   </data>
@@ -1739,12 +1736,6 @@ Adakah anda ingin meneruskan?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>e.g. ;/\</value>
-  </data>
-  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value> ms</value>
-  </data>
-  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>1 Hari Terakhir</value>

@@ -1512,9 +1512,6 @@
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>ค้นพบชุดเพลงในเครื่องของคุณอีกครั้งด้วย Nagi เครื่องเล่นเพลงที่เน้นความเร็ว ความเรียบง่าย และความเป็นส่วนตัว</value>
   </data>
-  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>เวอร์ชัน </value>
-  </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>ดูใบอนุญาต</value>
   </data>
@@ -1739,12 +1736,6 @@
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>e.g. ;/\\</value>
-  </data>
-  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value> ms</value>
-  </data>
-  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>1 วันที่ผ่านมา</value>

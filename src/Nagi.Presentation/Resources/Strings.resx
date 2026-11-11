@@ -1513,8 +1513,8 @@ Do you want to continue?</value>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy.</value>
   </data>
-  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>Version </value>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Version {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>View Licenses</value>
@@ -1741,11 +1741,11 @@ Do you want to continue?</value>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>e.g. ;/\\</value>
   </data>
-  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value> ms</value>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
   </data>
-  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value> dB</value>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Last 1 Day</value>

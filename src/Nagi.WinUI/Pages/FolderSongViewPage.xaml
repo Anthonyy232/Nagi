@@ -66,35 +66,29 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Padding="{StaticResource ViewPageHeaderPadding}">
-            <Grid Margin="{StaticResource SectionHeaderMargin}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid Grid.Column="0" Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}">
-                    <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                          CornerRadius="{StaticResource ArtworkCornerRadius}">
-                        <FontIcon
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="64"
-                            Glyph="&#xE8B7;"
-                            Visibility="{x:Bind ViewModel.IsServer, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                        <FontIcon
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="64"
-                            Glyph="&#xE8CE;"
-                            Visibility="{x:Bind ViewModel.IsServer, Mode=OneWay}" />
+            <uicontrols:DetailPageHeader Margin="{StaticResource SectionHeaderMargin}"
+                                         Caption="{x:Bind ViewModel.HeaderLabel, Mode=OneWay}"
+                                         Title="{x:Bind ViewModel.PageTitle, Mode=OneWay}">
+                <uicontrols:DetailPageHeader.Artwork>
+                    <Grid Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}">
+                        <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                              CornerRadius="{StaticResource ArtworkCornerRadius}">
+                            <FontIcon
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="64"
+                                Glyph="&#xE8B7;"
+                                Visibility="{x:Bind ViewModel.IsServer, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                            <FontIcon
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="64"
+                                Glyph="&#xE8CE;"
+                                Visibility="{x:Bind ViewModel.IsServer, Mode=OneWay}" />
+                        </Grid>
                     </Grid>
-                </Grid>
-
-                <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Bottom" Spacing="8">
-                    <TextBlock Text="{x:Bind ViewModel.HeaderLabel, Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" />
-                    <TextBlock Style="{ThemeResource HeaderTextBlockStyle}"
-                               Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}" />
-                </StackPanel>
-            </Grid>
+                </uicontrols:DetailPageHeader.Artwork>
+            </uicontrols:DetailPageHeader>
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     Padding="16,8" CornerRadius="{ThemeResource OverlayCornerRadius}"
                     Visibility="{x:Bind ViewModel.IsAtRootLevel, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}"

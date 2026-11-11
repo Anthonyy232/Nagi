@@ -5,22 +5,6 @@ namespace Nagi.WinUI.Helpers;
 
 public static class BitmapImageFactory
 {
-    /// <returns>Null if <paramref name="uriString" /> is not an absolute URI.</returns>
-    public static ImageSource? Create(string? uriString)
-    {
-        if (!Uri.TryCreate(uriString, UriKind.Absolute, out var uri))
-            return null;
-
-        try
-        {
-            return new BitmapImage(uri);
-        }
-        catch
-        {
-            return null;
-        }
-    }
-
     /// <summary>
     ///     Creates a BitmapImage with an explicit logical decode width. The decode hint must
     ///     be set BEFORE the URI source so the framework decodes at the requested resolution

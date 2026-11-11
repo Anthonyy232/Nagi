@@ -1512,9 +1512,6 @@
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Nagi மூலம் உங்கள் உள்ளூர் இசைத் தொகுப்பை மீண்டும் கண்டறியுங்கள், இது வேகம், எளிமை மற்றும் தனியுரிமை ஆகியவற்றில் கவனம் செலுத்தும் ஒரு இசை பிளேயர்.</value>
   </data>
-  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>பதிப்பு </value>
-  </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>உரிமங்களைப் பார்</value>
   </data>
@@ -1739,12 +1736,6 @@
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>எ.கா. ;/\\</value>
-  </data>
-  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value> மி.வி</value>
-  </data>
-  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value> டெசிபல்</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>கடந்த 1 நாள்</value>

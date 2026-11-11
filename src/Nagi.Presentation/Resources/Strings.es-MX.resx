@@ -1512,9 +1512,6 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Redescubre tu colección de música local con Nagi, un reproductor de música enfocado en la velocidad, simplicidad y privacidad.</value>
   </data>
-  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>Versión </value>
-  </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Ver licencias</value>
   </data>
@@ -1739,12 +1736,6 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>ej. ;/\\</value>
-  </data>
-  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value> ms</value>
-  </data>
-  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Último 1 día</value>

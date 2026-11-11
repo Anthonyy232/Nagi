@@ -47,8 +47,7 @@
                         <MenuFlyoutItem
                             Text="{x:Bind resources:Strings.Generic_Play, Mode=OneTime}"
                             Command="{Binding ViewModel.PlayAlbumCommand, ElementName=Root}"
-                            CommandParameter="{x:Bind Id}"
-                            IsEnabled="{Binding ViewModel.IsLoading, ElementName=Root, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
+                            CommandParameter="{x:Bind Id}" />
                     </MenuFlyout>
                 </Grid.ContextFlyout>
                 <Grid.RowDefinitions>

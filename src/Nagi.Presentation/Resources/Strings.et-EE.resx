@@ -1512,9 +1512,6 @@ Kas soovite jätkata?</value>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Avasta oma kohalik muusikakogu uuesti Nagiga – muusikapleieriga, mis keskendub kiirusele, lihtsusele ja privaatsusele.</value>
   </data>
-  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>Versioon </value>
-  </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Vaata litsentse</value>
   </data>
@@ -1739,12 +1736,6 @@ Kas soovite jätkata?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>nt. ;/\\</value>
-  </data>
-  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value> ms</value>
-  </data>
-  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Viimane 1 päev</value>

@@ -1512,9 +1512,6 @@ Chcete pokračovať?</value>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Objavte svoju lokálnu hudobnú kolekciu s Nagi, hudobným prehrávačom zameraným na rýchlosť, jednoduchosť a súkromie.</value>
   </data>
-  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>Verzia </value>
-  </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Zobraziť licencie</value>
   </data>
@@ -1739,12 +1736,6 @@ Chcete pokračovať?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>napr. ;/\\</value>
-  </data>
-  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value> ms</value>
-  </data>
-  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Posledný 1 deň</value>

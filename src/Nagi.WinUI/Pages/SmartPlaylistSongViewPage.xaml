@@ -7,7 +7,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:library="using:Nagi.Core.Library"
-    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
     mc:Ignorable="d"
     Background="Transparent">
@@ -22,22 +21,15 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Padding="{StaticResource ViewPageHeaderPadding}">
-            <Grid Margin="{StaticResource SectionHeaderMargin}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <uicontrols:ArtworkImage Grid.Column="0" Size="{StaticResource HeaderImageSize}"
-                                             Source="{x:Bind ViewModel.CoverImageUri, Mode=OneWay}"
-                                             PlaceholderGlyph="&#xE71C;" PlaceholderGlyphSize="64" />
-
-                <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Bottom" Spacing="8">
-                    <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="{x:Bind resources:Strings.SmartPlaylistSongViewPage_Header_Caption, Mode=OneTime}" />
-                    <TextBlock Style="{ThemeResource HeaderTextBlockStyle}"
-                               Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}" />
-                </StackPanel>
-            </Grid>
+            <uicontrols:DetailPageHeader Margin="{StaticResource SectionHeaderMargin}"
+                                         Caption="{x:Bind resources:Strings.SmartPlaylistSongViewPage_Header_Caption, Mode=OneTime}"
+                                         Title="{x:Bind ViewModel.PageTitle, Mode=OneWay}">
+                <uicontrols:DetailPageHeader.Artwork>
+                    <uicontrols:ArtworkImage Size="{StaticResource HeaderImageSize}"
+                                                 Source="{x:Bind ViewModel.CoverImageUri, Mode=OneWay}"
+                                                 PlaceholderGlyph="&#xE71C;" PlaceholderGlyphSize="64" />
+                </uicontrols:DetailPageHeader.Artwork>
+            </uicontrols:DetailPageHeader>
 
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     Padding="16,8" CornerRadius="{ThemeResource OverlayCornerRadius}" Margin="{StaticResource SectionHeaderMargin}">

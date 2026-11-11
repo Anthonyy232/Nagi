@@ -1512,9 +1512,6 @@ Gusto mo bang magpatuloy?</value>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Tuklasin muli ang iyong lokal na koleksyon ng musika gamit ang Nagi, isang music player na nakatuon sa bilis, pagiging simple, at privacy.</value>
   </data>
-  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>Bersyon </value>
-  </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Tingnan ang Mga Lisensya</value>
   </data>
@@ -1739,12 +1736,6 @@ Gusto mo bang magpatuloy?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>hal. ;/\</value>
-  </data>
-  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value> ms</value>
-  </data>
-  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Huling 1 Araw</value>

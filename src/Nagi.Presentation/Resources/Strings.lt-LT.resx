@@ -1512,9 +1512,6 @@ Ar norite tęsti?</value>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Iš naujo atraskite savo vietinę muzikos kolekciją su Nagi – muzikos grotuvu, orientuotu į greitį, paprastumą ir privatumą.</value>
   </data>
-  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>Versija </value>
-  </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Peržiūrėti licencijas</value>
   </data>
@@ -1739,12 +1736,6 @@ Ar norite tęsti?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>pvz., ;/\\</value>
-  </data>
-  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value> ms</value>
-  </data>
-  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Pastaroji 1 diena</value>

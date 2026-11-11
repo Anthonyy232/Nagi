@@ -79,9 +79,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private readonly DispatcherTimer _hoverTimer = new();
     private bool _pendingPointerOverPlayer;
 
-    // A flag to prevent re-entrant navigation while the selection is being updated programmatically.
-    private bool _isUpdatingNavViewSelection;
-
     private bool _isUnloaded;
     private readonly TrayIconUserControl _trayIcon;
 
@@ -193,19 +190,10 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void UpdateNavViewSelection()
     {
-        var wasUpdating = _isUpdatingNavViewSelection;
-        _isUpdatingNavViewSelection = true;
-        try
-        {
-            var tag = _navigationService.CurrentMenuTag;
-            NavView.SelectedItem = tag == AppDestinations.SettingsTag
-                ? NavView.SettingsItem
-                : NavView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault(item => Equals(item.Tag, tag));
-        }
-        finally
-        {
-            _isUpdatingNavViewSelection = wasUpdating;
-        }
+        var tag = _navigationService.CurrentMenuTag;
+        NavView.SelectedItem = tag == AppDestinations.SettingsTag
+            ? NavView.SettingsItem
+            : NavView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault(item => Equals(item.Tag, tag));
     }
 
     private bool ShouldExpandPlayer =>
@@ -241,27 +229,18 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void PopulateNavigation()
     {
-        var navItems = ViewModel.GetVisibleNavigationItems();
-        var wasUpdating = _isUpdatingNavViewSelection;
-        _isUpdatingNavViewSelection = true;
-        try
+        NavView.MenuItems.Clear();
+        foreach (var item in ViewModel.GetVisibleNavigationItems())
         {
-            NavView.MenuItems.Clear();
-            foreach (var item in navItems)
+            NavView.MenuItems.Add(new NavigationViewItem
             {
-                NavView.MenuItems.Add(new NavigationViewItem
-                {
-                    Content = item.DisplayName,
-                    Tag = item.Tag,
-                    Icon = new FontIcon { Glyph = AppIconGlyphs.ToGlyph(item.Icon) }
-                });
-            }
-            UpdateNavViewSelection();
+                Content = item.DisplayName,
+                Tag = item.Tag,
+                Icon = new FontIcon { Glyph = AppIconGlyphs.ToGlyph(item.Icon) }
+            });
         }
-        finally
-        {
-            _isUpdatingNavViewSelection = wasUpdating;
-        }
+
+        UpdateNavViewSelection();
     }
 
     private void OnMainPageLoaded(object sender, RoutedEventArgs e)
@@ -294,9 +273,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         if (ViewModel.GetRememberedPaneOpen() is { } isPaneOpen) NavView.IsPaneOpen = isPaneOpen;
 
         if (ContentFrame.CurrentSourcePageType is null)
-            NavView.SelectedItem = NavView.MenuItems.FirstOrDefault() ?? NavView.SettingsItem;
-
-        UpdateNavViewSelection();
+            HandleNavigation(NavView.MenuItems.Count == 0, NavView.MenuItems.FirstOrDefault(), new EntranceNavigationTransitionInfo());
 
         UpdatePlayerVisualState(false);
     }
@@ -366,12 +343,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
     {
         HandleNavigation(args.IsSettingsInvoked, args.InvokedItemContainer, args.RecommendedNavigationTransitionInfo);
-    }
-
-    private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
-    {
-        if (_isUpdatingNavViewSelection) return;
-        HandleNavigation(args.IsSettingsSelected, args.SelectedItem, args.RecommendedNavigationTransitionInfo);
     }
 
     private void NavView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)

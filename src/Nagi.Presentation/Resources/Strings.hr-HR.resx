@@ -1512,9 +1512,6 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Ponovno otkrijte svoju lokalnu glazbenu kolekciju uz Nagi, glazbeni reproduktor fokusiran na brzinu, jednostavnost i privatnost.</value>
   </data>
-  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>Verzija </value>
-  </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Prikaži licence</value>
   </data>
@@ -1739,12 +1736,6 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>npr. ;/\\</value>
-  </data>
-  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value> ms</value>
-  </data>
-  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Zadnji 1 dan</value>

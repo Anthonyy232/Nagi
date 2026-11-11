@@ -23,19 +23,15 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Padding="{StaticResource ViewPageHeaderPadding}">
-            <Grid Margin="{StaticResource SectionHeaderMargin}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <uicontrols:ArtworkImage Grid.Column="0" Size="{StaticResource HeaderImageSize}"
-                                             Source="{x:Bind ViewModel.CoverArtUri, Mode=OneWay}"
-                                             PlaceholderGlyph="&#xE93C;" PlaceholderGlyphSize="64" />
-
-                <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Bottom" Spacing="8">
-                    <TextBlock Text="{x:Bind resources:Strings.AlbumViewPage_Header_Label, Mode=OneTime}" Style="{ThemeResource CaptionTextBlockStyle}" />
-                    <TextBlock Style="{ThemeResource HeaderTextBlockStyle}"
-                               Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}" />
+            <uicontrols:DetailPageHeader Margin="{StaticResource SectionHeaderMargin}"
+                                         Caption="{x:Bind resources:Strings.AlbumViewPage_Header_Label, Mode=OneTime}"
+                                         Title="{x:Bind ViewModel.PageTitle, Mode=OneWay}">
+                <uicontrols:DetailPageHeader.Artwork>
+                    <uicontrols:ArtworkImage Size="{StaticResource HeaderImageSize}"
+                                                 Source="{x:Bind ViewModel.CoverArtUri, Mode=OneWay}"
+                                                 PlaceholderGlyph="&#xE93C;" PlaceholderGlyphSize="64" />
+                </uicontrols:DetailPageHeader.Artwork>
+                <uicontrols:DetailPageHeader.Details>
                     <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                         <uicontrols:ArtistLinks Style="{StaticResource SongListArtistLinksStyle}"
                                                 ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
@@ -45,8 +41,8 @@
                                    Visibility="{x:Bind ViewModel.AlbumDetailsText, Converter={StaticResource StringToVisibilityConverter}, Mode=OneWay}" />
                         <TextBlock Opacity="0.8" Text="{x:Bind ViewModel.AlbumDetailsText, Mode=OneWay}" />
                     </StackPanel>
-                </StackPanel>
-            </Grid>
+                </uicontrols:DetailPageHeader.Details>
+            </uicontrols:DetailPageHeader>
 
             <uicontrols:SongListToolbar Margin="{StaticResource SectionHeaderMargin}" ViewModel="{x:Bind ViewModel}"
                                         SearchPlaceholder="{x:Bind resources:Strings.AlbumViewPage_SearchBox_Placeholder}"

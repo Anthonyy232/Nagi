@@ -1512,9 +1512,6 @@ Devam etmek ister misiniz?</value>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Hız, basitlik ve gizliliğe odaklanan bir müzik çalar olan Nagi ile yerel müzik koleksiyonunuzu yeniden keşfedin.</value>
   </data>
-  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>Sürüm </value>
-  </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Lisansları Görüntüle</value>
   </data>
@@ -1739,12 +1736,6 @@ Devam etmek ister misiniz?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>örn. ;/\\</value>
-  </data>
-  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value> ms</value>
-  </data>
-  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Son 1 Gün</value>

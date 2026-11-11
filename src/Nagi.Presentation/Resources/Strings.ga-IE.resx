@@ -1512,9 +1512,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Athfhionn do bhailiúchán ceoil áitiúil le Nagi, seinnteoir ceoil a dhíríonn ar luas, simplíocht, agus príobháideachas.</value>
   </data>
-  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>Leagan </value>
-  </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Féach ar Cheadúnais</value>
   </data>
@@ -1739,12 +1736,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>m.sh. ;/\\</value>
-  </data>
-  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value> ms</value>
-  </data>
-  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>An 1 Lá Is Déanaí</value>
