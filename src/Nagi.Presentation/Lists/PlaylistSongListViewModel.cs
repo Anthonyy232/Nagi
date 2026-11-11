@@ -65,9 +65,9 @@ public partial class PlaylistSongListViewModel : DetailSongListViewModelBase<Pla
         return base.OnSortOrderChangedAsync();
     }
 
-    protected override void OnLoadingStateChanged(bool isLoading)
+    protected override void OnLoadingChanged()
     {
-        base.OnLoadingStateChanged(isLoading);
+        base.OnLoadingChanged();
         OnPropertyChanged(nameof(IsReorderingEnabled));
     }
 

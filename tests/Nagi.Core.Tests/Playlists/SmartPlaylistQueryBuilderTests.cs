@@ -520,6 +520,22 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         results.Should().HaveCount(3);
     }
 
+    // Stored rules can come from another version of Nagi or a backup edited by hand.
+    [Theory]
+    [InlineData((SmartPlaylistField)999, SmartPlaylistOperator.Is, "Rock")]
+    [InlineData(SmartPlaylistField.LastPlayed, SmartPlaylistOperator.IsInTheLast, "2000000000")]
+    [InlineData(SmartPlaylistField.LastPlayed, SmartPlaylistOperator.IsInTheLast, "-1")]
+    public void BuildQuery_StoredRuleWithAnUnknownFieldOrImpossibleDays_IsIgnored(
+        SmartPlaylistField field, SmartPlaylistOperator ruleOperator, string value)
+    {
+        var playlist = CreatePlaylist(new SmartPlaylistRule { Field = field, Operator = ruleOperator, Value = value });
+
+        using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var results = SmartPlaylistQueryBuilder.BuildQuery(context, playlist, false).ToList();
+
+        results.Should().HaveCount(5);
+    }
+
     [Fact]
     public void BuildQuery_SortByRandom_PreservesMatchingSongs()
     {

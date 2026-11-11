@@ -71,18 +71,12 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Naslov</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Popis pjesama</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Mapa</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>Nepoznato {0}</value>
-  </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>Novi {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} nije pronađeno.</value>
@@ -224,9 +218,6 @@
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Nije se moguće povezati s ListenBrainz-om. Provjerite vezu i URL poslužitelja.</value>
-  </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi nije mogao pronaći svoju mapu s podacima biblioteke.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Obnova nije uspjela i vaši prethodni podaci nisu se mogli potpuno obnoviti. Datoteke za oporavak spremljene su u &apos;{0}&apos;.</value>

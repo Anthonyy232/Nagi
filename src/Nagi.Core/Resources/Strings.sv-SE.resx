@@ -71,18 +71,12 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Titel</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Spellista</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Mapp</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>Okänd {0}</value>
-  </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>Ny {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} hittades inte.</value>
@@ -224,9 +218,6 @@
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Kunde inte ansluta till ListenBrainz. Kontrollera din anslutning och server-URL.</value>
-  </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi kunde inte hitta sin datamapp för biblioteket.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Återställningen misslyckades och dina tidigare data kunde inte återställas helt. Återställningsfiler sparades i &apos;{0}&apos;.</value>

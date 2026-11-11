@@ -72,9 +72,7 @@ public record PlaybackContext(PlaybackContextType Type, Guid? ContextId)
 /// </summary>
 public enum SystemMediaPlaybackStatus
 {
-    Closed,
     Changing,
-    Stopped,
     Playing,
     Paused
 }

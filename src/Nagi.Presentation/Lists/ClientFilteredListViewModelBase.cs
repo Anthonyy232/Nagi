@@ -90,7 +90,8 @@ public abstract partial class ClientFilteredListViewModelBase<TItem> : Searchabl
 
         try
         {
-            var items = await LoadItemsAsync(token);
+            // SQLite's async APIs still perform native I/O, so the query is kept off the UI thread.
+            var items = await Task.Run(() => LoadItemsAsync(token), token);
             token.ThrowIfCancellationRequested();
             if (_isDisposed || version != _loadVersion) return;
             AllItems = items.ToList();

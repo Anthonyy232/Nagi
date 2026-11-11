@@ -90,12 +90,12 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     /// <summary>The header text after a failed load.</summary>
     protected virtual string LoadErrorText => Strings.Generic_Error;
 
-    protected virtual Task OnPageLoadedAsync(PagedResult<TItem> result, CancellationToken token) => Task.CompletedTask;
+    protected virtual void OnPageLoaded() { }
 
     /// <summary>Runs beside the page query of every load except a step to the next or previous page.</summary>
     protected virtual Task OnAuxiliaryLoadAsync(CancellationToken token) => Task.CompletedTask;
 
-    protected virtual void OnLoadingStateChanged(bool isLoading) { }
+    protected virtual void OnLoadingChanged() { }
 
     protected virtual bool ShouldReloadOnLibraryChange(LibraryChange change) => change.AffectsSongs;
 
@@ -109,11 +109,11 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     ///     Async continuations must read continuation values from <paramref name="result"/>,
     ///     not the VM properties — the dispatch hop may not have run yet.
     /// </summary>
-    protected void ProcessPagedResult(PagedResult<TItem> result, CancellationToken token, bool append = false)
+    protected void ProcessPagedResult(PagedResult<TItem> result, CancellationToken token)
     {
         if (token.IsCancellationRequested || _isDisposed) return;
 
-        _dispatcherService.TryEnqueue(() => ApplyPagedResult(result, token, append));
+        _dispatcherService.TryEnqueue(() => ApplyPagedResult(result, token, append: false));
     }
 
     private void ApplyPagedResult(PagedResult<TItem> result, CancellationToken token, bool append)
@@ -130,7 +130,7 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
         ApplyItemsToCollection(result, append);
     }
 
-    partial void OnIsLoadingChanged(bool value) => OnLoadingStateChanged(value);
+    partial void OnIsLoadingChanged(bool value) => OnLoadingChanged();
 
     // The reader sorts songs, albums and artists by the leading-articles setting, so every list reloads for it.
     private void OnSettingChanged(Setting setting)
@@ -233,7 +233,7 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
 
             if (token.IsCancellationRequested) return;
 
-            await OnPageLoadedAsync(pagedResult, token);
+            OnPageLoaded();
 
             if (!IsPaged && pagedResult.HasNextPage)
                 _ = LoadRemainingPagesAsync(pagedResult.PageNumber + 1, pageSize, token);

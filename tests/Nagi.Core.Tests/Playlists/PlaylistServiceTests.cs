@@ -162,6 +162,21 @@ public class PlaylistServiceTests : IDisposable
         (await context.Playlists.FindAsync(playlist.Id))!.DateModified.Should().BeAfter(playlist.DateModified);
     }
 
+    [Theory]
+    [InlineData(1, 0.5)]
+    [InlineData(0.25, -0.75)]
+    public async Task MoveSongAsync_ToTheTop_OrdersTheSongBeforeTheFirstOne(double firstOrder, double expectedOrder)
+    {
+        var (playlist, songs) = await _dbHelper.SeedPlaylistAsync(firstOrder, firstOrder + 1, firstOrder + 2);
+
+        (await _playlistService.MoveSongAsync(playlist.Id, songs[2].Id, null, songs[0].Id)).Should().BeTrue();
+
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var entries = await context.PlaylistSongs.OrderBy(x => x.Order).ToListAsync();
+        entries.Select(x => x.SongId).Should().Equal(songs[2].Id, songs[0].Id, songs[1].Id);
+        entries[0].Order.Should().Be(expectedOrder);
+    }
+
     [Fact]
     public async Task UpdatePlaylistOrderAsync_NormalizesEvenNearIntegerValues()
     {

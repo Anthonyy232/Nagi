@@ -71,18 +71,12 @@
   <data name="Label_Title" xml:space="preserve">
     <value>ਸਿਰਲੇਖ</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟ</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>ਫੋਲਡਰ</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>ਅਣਜਾਣ {0}</value>
-  </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>ਨਵਾਂ {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} ਨਹੀਂ ਲੱਭਿਆ।</value>
@@ -224,9 +218,6 @@
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>ListenBrainz ਨਾਲ ਕਨੈਕਟ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ। ਆਪਣੇ ਕਨੈਕਸ਼ਨ ਅਤੇ ਸਰਵਰ URL ਦੀ ਜਾਂਚ ਕਰੋ।</value>
-  </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi ਨੂੰ ਆਪਣਾ ਲਾਇਬ੍ਰੇਰੀ ਡਾਟਾ ਫ਼ੋਲਡਰ ਨਹੀਂ ਮਿਲਿਆ।</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>ਰਿਸਟੋਰ ਅਸਫ਼ਲ ਰਿਹਾ, ਅਤੇ ਤੁਹਾਡਾ ਪਿਛਲਾ ਡਾਟਾ ਪੂਰੀ ਤਰ੍ਹਾਂ ਬਹਾਲ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ। ਰਿਕਵਰੀ ਫ਼ਾਈਲਾਂ &apos;{0}&apos; 'ਤੇ ਸੰਭਾਲੀਆਂ ਗਈਆਂ ਸਨ।</value>

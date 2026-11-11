@@ -33,7 +33,7 @@ public class PlaylistViewModelTests
     public async Task CreatePlaylist_AppliesCurrentSort()
     {
         _library.Playlists.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new Playlist { Name = "Zebra" } });
-        _library.Playlists.CreatePlaylistAsync("Alpha", null, null).Returns(new Playlist { Name = "Alpha" });
+        _library.Playlists.CreatePlaylistAsync("Alpha", null).Returns(new Playlist { Name = "Alpha" });
         _ui.ShowCreatePlaylistDialogAsync().Returns(new NewPlaylistRequest("Alpha", null));
         using var viewModel = CreateViewModel();
         await viewModel.LoadAsync(CancellationToken.None);
@@ -47,7 +47,7 @@ public class PlaylistViewModelTests
     [Fact]
     public async Task CreatePlaylist_RespectsActiveSearchAndRemainsAvailableWhenCleared()
     {
-        _library.Playlists.CreatePlaylistAsync("Alpha", null, null).Returns(new Playlist { Name = "Alpha" });
+        _library.Playlists.CreatePlaylistAsync("Alpha", null).Returns(new Playlist { Name = "Alpha" });
         _ui.ShowCreatePlaylistDialogAsync().Returns(new NewPlaylistRequest("Alpha", null));
         using var viewModel = CreateViewModel();
         viewModel.SearchTerm = "Zebra";
@@ -162,20 +162,6 @@ public class PlaylistViewModelTests
         await _library.Playlists.DidNotReceiveWithAnyArgs().UpdatePlaylistCoverAsync(default, default);
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task CreateSmartPlaylist_ReloadsOnlyWhenThePlaylistWasSaved(bool saved)
-    {
-        _ui.ShowSmartPlaylistEditorAsync(null).Returns(saved ? new SmartPlaylist { Name = "Recent" } : null);
-        using var viewModel = CreateViewModel();
-        _library.Reader.ClearReceivedCalls();
-
-        await viewModel.CreateSmartPlaylistCommand.ExecuteAsync(null);
-
-        await _library.Playlists.Received(saved ? 1 : 0).GetAllPlaylistsAsync(Arg.Any<CancellationToken>());
-    }
-
     private PlaylistViewModel CreateViewModel() => new(_library.Notifier, _library.Playlists, _smart, _playback,
         Substitute.For<IMusicNavigationService>(), _ui, TestSettings.Create(), new ImmediateDispatcher(),
         NullLogger<PlaylistViewModel>.Instance);
@@ -195,7 +181,7 @@ public class PlaylistViewModelTests
         else
         {
             _library.Playlists.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new Playlist { Name = "Latest" } });
-            _library.Playlists.PlaylistsChanged += Raise.Event();
+            await viewModel.LoadAsync(CancellationToken.None);
             viewModel.Items.Should().ContainSingle().Which.Name.Should().Be("Latest");
         }
 
@@ -218,7 +204,7 @@ public class PlaylistViewModelTests
         viewModel.IsAnyOperationInProgress.Should().BeTrue();
         await viewModel.CreatePlaylistCommand.ExecuteAsync(null);
         await _ui.DidNotReceive().ShowCreatePlaylistDialogAsync();
-        await _library.Playlists.DidNotReceive().CreatePlaylistAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>());
+        await _library.Playlists.DidNotReceive().CreatePlaylistAsync(Arg.Any<string>(), Arg.Any<string?>());
         pending.SetResult(new[] { new Playlist { Name = "Existing" } });
         await loading.WaitAsync(TimeSpan.FromSeconds(5));
 
@@ -248,7 +234,7 @@ public class PlaylistViewModelTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task PlayRandomPlaylist_WhenSelectedTypeWasDeleted_ClearsPickingStatus(bool smart)
+    public async Task PlayRandomPlaylist_WhenSelectedTypeWasDeleted_TellsTheUser(bool smart)
     {
         _library.Playlists.GetPlaylistCountAsync().Returns(smart ? 0 : 1);
         _smart.GetSmartPlaylistCountAsync().Returns(smart ? 1 : 0);

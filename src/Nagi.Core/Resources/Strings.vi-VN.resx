@@ -71,18 +71,12 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Tiêu đề</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Danh sách phát</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Thư mục</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>{0} không xác định</value>
-  </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>{0} mới</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>Không tìm thấy {0}.</value>
@@ -224,9 +218,6 @@
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Không thể kết nối tới ListenBrainz. Kiểm tra kết nối và URL máy chủ của bạn.</value>
-  </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi không thể tìm thấy thư mục dữ liệu thư viện.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Việc khôi phục thất bại và dữ liệu trước đó của bạn không thể được phục hồi hoàn toàn. Các tệp khôi phục đã được lưu tại &apos;{0}&apos;.</value>

@@ -71,18 +71,12 @@
   <data name="Label_Title" xml:space="preserve">
     <value>தலைப்பு</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>பிளேலிஸ்ட்</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>கோப்புறை</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>அறியப்படாத {0}</value>
-  </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>புதிய {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} கண்டறியப்படவில்லை.</value>
@@ -224,9 +218,6 @@
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>ListenBrainz உடன் இணைக்க முடியவில்லை. உங்கள் இணைப்பு மற்றும் சேவையக URL-ஐச் சரிபார்க்கவும்.</value>
-  </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi தன் லைப்ரரி தரவு கோப்புறையைக் கண்டறிய முடியவில்லை.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>மீட்டமைப்புத் தோல்வியடைந்தது, மேலும் உங்கள் முந்தைய தரவை முழுமையாக மீட்டெடுக்க முடியவில்லை. மீட்புக் கோப்புகள் &apos;{0}&apos; இல் சேமிக்கப்பட்டன.</value>

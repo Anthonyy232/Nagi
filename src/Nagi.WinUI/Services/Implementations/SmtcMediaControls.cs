@@ -94,9 +94,7 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
         {
             SystemMediaPlaybackStatus.Playing => MediaPlaybackStatus.Playing,
             SystemMediaPlaybackStatus.Paused => MediaPlaybackStatus.Paused,
-            SystemMediaPlaybackStatus.Stopped => MediaPlaybackStatus.Stopped,
-            SystemMediaPlaybackStatus.Changing => MediaPlaybackStatus.Changing,
-            _ => MediaPlaybackStatus.Closed
+            _ => MediaPlaybackStatus.Changing
         };
 
         try

@@ -71,18 +71,12 @@
   <data name="Label_Title" xml:space="preserve">
     <value>タイトル</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>プレイリスト</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>フォルダー</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>不明な{0}</value>
-  </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>新しい{0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0}が見つかりませんでした。</value>
@@ -224,9 +218,6 @@
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>ListenBrainz に接続できませんでした。接続とサーバー URL を確認してください。</value>
-  </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi のライブラリデータフォルダーが見つかりませんでした。</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>復元に失敗したため、以前のデータを完全には復元できませんでした。復旧ファイルは &apos;{0}&apos; に保存されました。</value>

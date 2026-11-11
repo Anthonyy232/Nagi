@@ -71,18 +71,12 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Teideal</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Seinmliosta</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Fillteán</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>{0} Anaithnid</value>
-  </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>{0} Nua</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>Níor aimsíodh {0}.</value>
@@ -224,9 +218,6 @@
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Níorbh fhéidir ceangal le ListenBrainz. Seiceáil do cheangal agus URL an fhreastalaí.</value>
-  </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Níorbh fhéidir le Nagi fillteán sonraí a leabharlainne a aimsiú.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Theip ar an athchóiriú, agus níorbh fhéidir do chuid sonraí roimhe seo a athchóiriú go hiomlán. Sábháladh comhaid slánaithe ag &apos;{0}&apos;.</value>

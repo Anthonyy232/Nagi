@@ -71,18 +71,12 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Názov</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Zoznam skladieb</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Priečinok</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>Neznáme {0}</value>
-  </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>Nové {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} sa nenašlo.</value>
@@ -224,9 +218,6 @@
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Nepodarilo sa pripojiť k službe ListenBrainz. Skontrolujte svoje pripojenie a URL adresu servera.</value>
-  </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Aplikácia Nagi nemohla nájsť svoj priečinok s údajmi knižnice.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Obnovenie zlyhalo a vaše predchádzajúce údaje sa nepodarilo úplne obnoviť. Súbory obnovenia boli uložené do &apos;{0}&apos;.</value>

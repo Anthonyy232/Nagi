@@ -71,18 +71,12 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Títol</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Llista de reproducció</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Carpeta</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>{0} desconegut</value>
-  </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>Nova {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>No s'ha trobat {0}.</value>
@@ -224,9 +218,6 @@
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>No s'ha pogut connectar amb ListenBrainz. Comprova la connexió i l'URL del servidor.</value>
-  </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi no ha trobat la carpeta de dades de la biblioteca.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>La restauració ha fallat i no s'han pogut restaurar completament les dades anteriors. S'han desat els fitxers de recuperació a &apos;{0}&apos;.</value>

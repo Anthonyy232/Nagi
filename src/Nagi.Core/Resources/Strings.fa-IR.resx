@@ -71,18 +71,12 @@
   <data name="Label_Title" xml:space="preserve">
     <value>عنوان</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>لیست پخش</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>پوشه</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>{0} ناشناخته</value>
-  </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>{0} جدید</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} یافت نشد.</value>
@@ -224,9 +218,6 @@
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>اتصال به ListenBrainz امکان‌پذیر نبود. اتصال شبکه و نشانی سرور خود را بررسی کنید.</value>
-  </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi نتوانست پوشه داده‌های کتابخانه خود را پیدا کند.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>بازیابی ناموفق بود و داده‌های قبلی شما به‌طور کامل بازیابی نشدند. فایل‌های بازیابی در &apos;{0}&apos; ذخیره شدند.</value>

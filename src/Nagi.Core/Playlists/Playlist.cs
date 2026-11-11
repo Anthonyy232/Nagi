@@ -12,7 +12,7 @@ public class Playlist
 
     [Required]
     [MaxLength(500)]
-    public string Name { get; set; } = string.Format(Resources.Strings.Format_New, Resources.Strings.Label_Playlist);
+    public string Name { get; set; } = string.Empty;
 
     public DateTime DateCreated { get; set; } = DateTime.UtcNow;
 

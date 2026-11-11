@@ -71,18 +71,12 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Tajuk</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Senarai Main</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Folder</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>{0} Tidak Dikenali</value>
-  </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>{0} Baharu</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} tidak ditemui.</value>
@@ -224,9 +218,6 @@
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Tidak dapat menyambung ke ListenBrainz. Semak sambungan dan URL pelayan anda.</value>
-  </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi tidak dapat mencari folder data pustakanya.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Pemulihan gagal, dan data sebelumnya tidak dapat dipulihkan sepenuhnya. Fail pemulihan telah disimpan di &apos;{0}&apos;.</value>

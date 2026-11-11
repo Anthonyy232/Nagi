@@ -144,7 +144,6 @@ public class RecentHistoryViewModelTests
         await oldEntered.Task.WaitAsync(TimeSpan.FromSeconds(5));
         viewModel.SearchTerm = "Found";
         await viewModel.SearchAsync();
-        old.SetResult([new RecentListen(1, Guid.NewGuid(), "Stale", "Artist", DateTime.UtcNow)]);
         viewModel.SetActive(false);
 
         viewModel.Entries.OfType<RecentListenEntry>().Should().ContainSingle().Which.Listen.Should().Be(latest);

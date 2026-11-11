@@ -71,18 +71,12 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Titlu</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Listă de redare</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Dosar</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>{0} necunoscut</value>
-  </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>Nou {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} nu a fost găsit.</value>
@@ -224,9 +218,6 @@
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Nu s-a putut conecta la ListenBrainz. Verifică conexiunea și URL-ul serverului.</value>
-  </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi nu a putut găsi folderul de date al bibliotecii.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Restaurarea a eșuat, iar datele anterioare nu au putut fi restaurate complet. Fișierele de recuperare au fost salvate la &apos;{0}&apos;.</value>

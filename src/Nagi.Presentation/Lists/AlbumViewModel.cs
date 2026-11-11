@@ -83,11 +83,7 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>, ICollection
     }
 
     // Service's own semaphore dedupes concurrent runs of the metadata fetch.
-    protected override Task OnPageLoadedAsync(PagedResult<Album> result, CancellationToken token)
-    {
-        _ = _artwork.StartMetadataBackgroundFetchAsync();
-        return Task.CompletedTask;
-    }
+    protected override void OnPageLoaded() => _ = _artwork.StartMetadataBackgroundFetchAsync();
 
     public void OpenAlbum(AlbumViewModelItem album) => _musicNavigationService.OpenAlbum(album.Id);
 

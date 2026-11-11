@@ -71,18 +71,12 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Наслов</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Плејлиста</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Фасцикла</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>Непознато {0}</value>
-  </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>Ново {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} није пронађено.</value>
@@ -224,9 +218,6 @@
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Повезивање са услугом ListenBrainz није успело. Проверите своју везу и URL сервера.</value>
-  </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi није могао да пронађе своју фасциклу са подацима библиотеке.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Враћање није успело и ваши претходни подаци нису могли бити у потпуности враћени. Датотеке за опоравак су сачуване на &apos;{0}&apos;.</value>

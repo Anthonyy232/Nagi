@@ -221,15 +221,14 @@ public partial class PlaylistViewModel : ClientFilteredListViewModelBase<Playlis
     }
 
     /// <summary>
-    ///     Opens the smart playlist editor and reloads the list if a playlist was created.
+    ///     Opens the smart playlist editor. Saving a playlist there announces it, which reloads the list.
     /// </summary>
     [RelayCommand]
     private async Task CreateSmartPlaylistAsync()
     {
         if (_isDisposed || IsAnyOperationInProgress) return;
 
-        var created = await _uiService.ShowSmartPlaylistEditorAsync();
-        if (created is not null && !_isDisposed) await LoadAsync(CancellationToken.None);
+        await _uiService.ShowSmartPlaylistEditorAsync();
     }
 
     /// <summary>
@@ -251,7 +250,7 @@ public partial class PlaylistViewModel : ClientFilteredListViewModelBase<Playlis
             var normalizedName = TextNormalizer.Normalize(playlistName) ?? playlistName;
             try
             {
-                var newPlaylist = await _playlistService.CreatePlaylistAsync(normalizedName, coverImageUri: coverImageUri);
+                var newPlaylist = await _playlistService.CreatePlaylistAsync(normalizedName, coverImageUri);
                 AllItems.Add(new PlaylistViewModelItem(newPlaylist));
                 ApplyFilter();
             }

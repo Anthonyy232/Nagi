@@ -71,18 +71,12 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Τίτλος</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Λίστα αναπαραγωγής</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Φάκελος</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>Άγνωστο {0}</value>
-  </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>Νέο {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>Δεν βρέθηκε το {0}.</value>
@@ -224,9 +218,6 @@
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Δεν ήταν δυνατή η σύνδεση στο ListenBrainz. Ελέγξτε τη σύνδεσή σας και τη διεύθυνση URL του διακομιστή.</value>
-  </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Το Nagi δεν μπόρεσε να βρει τον φάκελο δεδομένων της βιβλιοθήκης του.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Η επαναφορά απέτυχε και τα προηγούμενα δεδομένα σας δεν ήταν δυνατό να αποκατασταθούν πλήρως. Τα αρχεία ανάκτησης αποθηκεύτηκαν στο &apos;{0}&apos;.</value>

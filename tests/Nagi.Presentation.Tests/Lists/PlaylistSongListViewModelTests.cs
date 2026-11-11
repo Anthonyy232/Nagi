@@ -28,7 +28,7 @@ public class PlaylistSongListViewModelTests
             .Returns(call => new PagedResult<Song>
             {
                 PageNumber = 1,
-                PageSize = call.ArgAt<int>(2),
+                PageSize = call.ArgAt<int>(4),
                 TotalCount = _songs.Count,
                 Items = _songs.ToList()
             });

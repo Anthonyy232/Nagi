@@ -214,16 +214,9 @@ public partial class FolderSongListViewModel : DetailSongListViewModelBase<Folde
 
         foreach (var folderPath in folderPaths)
         {
-            try
-            {
-                var folderSongs = await _libraryReader.GetSongIdsAsync(
-                    new SongScope.DirectoryTree(rootFolderId, folderPath), null, SongSortOrder.TitleAsc, CancellationToken.None);
-                ids.AddRange(folderSongs.Except(ids));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to resolve songs for selected folder {FolderPath}", folderPath);
-            }
+            var folderSongs = await _libraryReader.GetSongIdsAsync(
+                new SongScope.DirectoryTree(rootFolderId, folderPath), null, SongSortOrder.TitleAsc, CancellationToken.None);
+            ids.AddRange(folderSongs.Except(ids));
             if (!IsSongContextCurrent(generation)) return [];
         }
 

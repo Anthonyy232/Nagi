@@ -11,6 +11,7 @@ using Nagi.Presentation.Player;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Settings;
 using Nagi.Presentation.Shell;
+using Nagi.Presentation.Tests.Utils;
 using NSubstitute;
 using Xunit;
 
@@ -20,15 +21,13 @@ public partial class PlayerViewModelTests : IDisposable
 {
     private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
     private readonly SettingsService _settings = TestSettings.Create();
-    private readonly IDispatcherService _dispatcher = Substitute.For<IDispatcherService>();
+    private readonly IDispatcherService _dispatcher = new ImmediateDispatcher();
     private readonly FakeTimeProvider _time = new();
     private readonly PlayerViewModel _viewModel;
     private readonly LibraryFakes _library = new LibraryFakes();
 
     public PlayerViewModelTests()
     {
-        _dispatcher.HasThreadAccess.Returns(true);
-        _dispatcher.EnqueueAsync(Arg.Any<Func<Task>>()).Returns(call => call.Arg<Func<Task>>()());
         _playback.PlayOrder.Returns(Array.Empty<Guid>());
         // Volume first, so it is one of the main transport buttons.
         _settings.Set(AppSettings.PlayerButtons, new[] { "Volume", "Shuffle", "Previous", "PlayPause", "Next", "Repeat", "Separator", "Lyrics", "Queue" }
@@ -191,6 +190,28 @@ public partial class PlayerViewModelTests : IDisposable
 
         _viewModel.CurrentPosition.Should().Be(0);
         _playback.DidNotReceive().SeekAsync(Arg.Any<TimeSpan>());
+    }
+
+    [Fact]
+    public void SeekSlider_SeeksOnceWhenADragEndsAndNotWhenItOnlyFollowsPlayback()
+    {
+        _playback.CurrentPosition.Returns(TimeSpan.FromSeconds(10));
+
+        _viewModel.IsUserDraggingSlider = true;
+        _viewModel.CurrentPosition = 40;
+        _viewModel.CurrentPosition = 90;
+        _playback.DidNotReceive().SeekAsync(Arg.Any<TimeSpan>());
+        _viewModel.IsUserDraggingSlider = false;
+
+        _playback.Received(1).SeekAsync(TimeSpan.FromSeconds(90));
+        _playback.ClearReceivedCalls();
+        // The slider's binding writes back the position playback just reported, a little behind it.
+        _playback.CurrentPosition.Returns(TimeSpan.FromSeconds(90.4));
+        _viewModel.CurrentPosition = 90;
+        _playback.DidNotReceive().SeekAsync(Arg.Any<TimeSpan>());
+
+        _viewModel.CurrentPosition = 120;
+        _playback.Received(1).SeekAsync(TimeSpan.FromSeconds(120));
     }
 
     [Fact]

@@ -40,7 +40,7 @@ public abstract partial class SearchableViewModelBase : ObservableObject
     ///     Executes an immediate search, cancelling any pending debounced search.
     /// </summary>
     [RelayCommand]
-    public virtual Task SearchAsync() => _searchDebouncer.RunAsync(ExecuteSearchWithErrorHandlingAsync, immediate: true);
+    public Task SearchAsync() => _searchDebouncer.RunAsync(ExecuteSearchWithErrorHandlingAsync, immediate: true);
 
     private async Task ExecuteSearchWithErrorHandlingAsync(CancellationToken token)
     {

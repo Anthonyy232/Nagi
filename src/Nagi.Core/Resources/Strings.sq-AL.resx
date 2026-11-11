@@ -71,18 +71,12 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Titull</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Listë luajtjeje</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Dosje</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>{0} i panjohur</value>
-  </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>{0} e re</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} nuk u gjet.</value>
@@ -224,9 +218,6 @@
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Nuk u mundësua lidhja me ListenBrainz. Kontrolloni lidhjen dhe URL-në e serverit tuaj.</value>
-  </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi nuk mund ta gjente dosjen e të dhënave të bibliotekës së tij.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Rikthimi dështoi dhe të dhënat tuaja të mëparshme nuk mund të riktheheshin plotësisht. Skedarët e rimëkëmbjes u ruajtën në &apos;{0}&apos;.</value>

@@ -369,10 +369,8 @@ public partial class PlayerViewModel : ObservableObject
     private Task RunActionAsync(Func<Task> action) => UserAction.RunAsync(action, _logger, _uiService, () => _isCleanedUp);
 
     [RelayCommand]
-    private Task ToggleShuffleAsync()
-    {
-        return _playbackService.SetShuffleAsync(!_playbackService.IsShuffleEnabled);
-    }
+    private Task ToggleShuffleAsync() =>
+        RunActionAsync(() => _playbackService.SetShuffleAsync(!_playbackService.IsShuffleEnabled));
 
     [RelayCommand]
     private Task CycleRepeatAsync()
@@ -383,22 +381,16 @@ public partial class PlayerViewModel : ObservableObject
             RepeatMode.RepeatAll => RepeatMode.RepeatOne,
             _ => RepeatMode.Off
         };
-        return _playbackService.SetRepeatModeAsync(nextMode);
+        return RunActionAsync(() => _playbackService.SetRepeatModeAsync(nextMode));
     }
 
     [RelayCommand]
-    private Task ToggleMuteAsync()
-    {
-        return _playbackService.ToggleMuteAsync();
-    }
+    private Task ToggleMuteAsync() => RunActionAsync(_playbackService.ToggleMuteAsync);
 
     public double PlaybackRate => _playbackService.PlaybackRate;
 
     [RelayCommand]
-    private Task SetPlaybackRateAsync(double rate)
-    {
-        return _playbackService.SetPlaybackRateAsync(rate);
-    }
+    private Task SetPlaybackRateAsync(double rate) => RunActionAsync(() => _playbackService.SetPlaybackRateAsync(rate));
 
     // Without a request it opens the playing song's artist.
     [RelayCommand(CanExecute = nameof(CanGoToArtist))]
@@ -430,7 +422,7 @@ public partial class PlayerViewModel : ObservableObject
         UpdateButtonState(PlayerButtonIds.Volume, VolumeIcon, VolumeButtonToolTip);
         var serviceVolume = Math.Clamp(value / 100.0, 0.0, 1.0);
         if (Math.Abs(_playbackService.Volume - serviceVolume) > 0.001)
-            _ = _playbackService.SetVolumeAsync(serviceVolume);
+            _ = ApplySliderChangeAsync(() => _playbackService.SetVolumeAsync(serviceVolume));
     }
 
     partial void OnCurrentPositionChanged(double value)
@@ -453,7 +445,14 @@ public partial class PlayerViewModel : ObservableObject
     private void SeekIfMoved()
     {
         if (Math.Abs(_playbackService.CurrentPosition.TotalSeconds - CurrentPosition) > SeekThresholdSeconds)
-            _ = _playbackService.SeekAsync(TimeSpan.FromSeconds(CurrentPosition));
+            _ = ApplySliderChangeAsync(() => _playbackService.SeekAsync(TimeSpan.FromSeconds(CurrentPosition)));
+    }
+
+    // A slider reports many values in a row, so a failure is logged rather than shown.
+    private async Task ApplySliderChangeAsync(Func<Task> change)
+    {
+        try { await change(); }
+        catch (Exception ex) { _logger.LogError(ex, "Failed to apply a slider change."); }
     }
 
     partial void OnTotalDurationChanged(double value)

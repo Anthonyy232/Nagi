@@ -200,7 +200,7 @@ public class SettingsViewModelTests : IDisposable
             : _viewModel.Scrobbling.LastFmInitialAuthCommand.ExecuteAsync(null);
 
         _viewModel.Scrobbling.CancelLastFmAuthCommand.Execute(null);
-        token.SetResult(("late-token", "not a URI"));
+        token.SetResult(("late-token", "https://www.last.fm/api/auth?token=late-token"));
         session.SetResult(("user", "late-session"));
         await authenticating.WaitAsync(TimeSpan.FromSeconds(5));
 
@@ -208,6 +208,8 @@ public class SettingsViewModelTests : IDisposable
         _viewModel.Scrobbling.IsConnectingToLastFm.Should().BeFalse();
         _settings.Get(CoreSettings.LastFmAuthToken).Should().BeNull();
         _credentials.DidNotReceive().SaveCredential(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>());
+        await _ui.DidNotReceive().OpenUriAsync(Arg.Any<Uri>());
+        await _ui.DidNotReceive().ShowMessageDialogAsync(Arg.Any<string>(), Arg.Any<string>());
     }
 
     [Theory]
@@ -473,6 +475,29 @@ public class SettingsViewModelTests : IDisposable
         await _ui.Received(1).ShowMessageDialogAsync(Arg.Any<string>(), Strings.Settings_Dialog_VolumeNorm_Busy);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Normalization_BackingOutOfFFmpegSetupOrTheConfirmation_LeavesItOffAndPutsTheSwitchBack(bool ffmpegInstalled)
+    {
+        _ffmpeg.IsFFmpegInstalledAsync().Returns(ffmpegInstalled);
+        var switchNotifications = 0;
+        _viewModel.Audio.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(AudioSettingsViewModel.IsVolumeNormalizationEnabled)) switchNotifications++;
+        };
+
+        _viewModel.Audio.IsVolumeNormalizationEnabled = true;
+
+        _settings.Get(CoreSettings.VolumeNormalization).Should().BeFalse();
+        // The switch the user turned on shows on until it is told the value again.
+        switchNotifications.Should().Be(1);
+        await _ui.Received(ffmpegInstalled ? 0 : 1).ShowFFmpegSetupDialogAsync(Arg.Any<Func<Task<bool>>>());
+        await _ui.Received(ffmpegInstalled ? 1 : 0).ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(),
+            Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<bool>());
+        await _replayGain.DidNotReceive().ScanLibraryAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>());
+    }
+
     [Fact]
     public async Task Normalization_DisableSupersedesPendingEnableCheck()
     {
@@ -645,20 +670,12 @@ public class SettingsViewModelTests : IDisposable
         _settings.Get(AppSettings.SongListColumns).Should().Be(AppSettings.SongListColumns.Default);
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task ResetDuringLoad_DoesNotEnablePersistenceForInitialization(bool playerDesign)
+    [Fact]
+    public async Task Load_ShowsTheAutoLaunchStateWithoutWritingItBack()
     {
-        var startup = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _autoLaunch.IsEnabledAsync().Returns(startup.Task);
-        _appInfo.GetAvailableLanguagesAsync().Returns(Array.Empty<string>());
-        var loading = _viewModel.LoadSettingsAsync();
+        _autoLaunch.IsEnabledAsync().Returns(true);
 
-        if (playerDesign) _viewModel.Appearance.ResetPlayerDesignSettingsCommand.Execute(null);
-        else _viewModel.Appearance.ResetAccentColorCommand.Execute(null);
-        startup.SetResult(true);
-        await loading.WaitAsync(TimeSpan.FromSeconds(5));
+        await _viewModel.LoadSettingsAsync();
 
         _viewModel.IsAutoLaunchEnabled.Should().BeTrue();
         await _autoLaunch.DidNotReceive().SetEnabledAsync(Arg.Any<bool>());

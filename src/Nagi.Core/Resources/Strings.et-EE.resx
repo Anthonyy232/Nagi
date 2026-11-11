@@ -71,18 +71,12 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Pealkiri</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Esitusloend</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Kaust</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>Tundmatu {0}</value>
-  </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>Uus {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} ei leitud.</value>
@@ -224,9 +218,6 @@
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>ListenBrainz-iga ei saanud ühendust luua. Kontrolli oma ühendust ja serveri URL-i.</value>
-  </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi ei leidnud oma teegi andmekausta.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Taastamine ebaõnnestus ja sinu varasemaid andmeid ei saanud täielikult taastada. Taastefailid salvestati asukohta &apos;{0}&apos;.</value>

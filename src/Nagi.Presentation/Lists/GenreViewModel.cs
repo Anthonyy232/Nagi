@@ -41,9 +41,8 @@ public partial class GenreViewModel : ClientFilteredListViewModelBase<GenreSumma
     // Song counts per genre change only when songs do.
     protected override bool ShouldReloadOnLibraryChange(LibraryChange change) => change.AffectsSongs;
 
-    // SQLite's async APIs still perform native I/O, so keep the query off the UI thread.
     protected override async Task<IEnumerable<GenreSummary>> LoadItemsAsync(CancellationToken token) =>
-        await Task.Run(() => _libraryReader.GetGenreSummariesAsync(token), token);
+        await _libraryReader.GetGenreSummariesAsync(token);
 
     protected override bool MatchesSearch(GenreSummary genre, string searchTerm) =>
         genre.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);

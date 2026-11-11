@@ -1,12 +1,8 @@
 using FluentAssertions;
-using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Library;
 using Nagi.Core.Listening;
 using Nagi.Core.Playback;
-using Nagi.Presentation.Common;
 using Nagi.Presentation.Player;
-using Nagi.Presentation.Resources;
-using Nagi.Presentation.Tests.Utils;
 using NSubstitute;
 using Xunit;
 

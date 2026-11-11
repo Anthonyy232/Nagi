@@ -71,18 +71,12 @@
   <data name="Label_Title" xml:space="preserve">
     <value>标题</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>播放列表</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>文件夹</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>未知 {0}</value>
-  </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>新建 {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>未找到 {0}。</value>
@@ -224,9 +218,6 @@
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>无法连接到 ListenBrainz。请检查您的连接和服务器 URL。</value>
-  </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi 无法找到其音乐库数据文件夹。</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>还原失败，无法完全恢复以前的数据。恢复文件已保存至 &apos;{0}&apos;。</value>

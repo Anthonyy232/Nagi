@@ -71,18 +71,12 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Назва</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Список відтворення</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Папка</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>Невідомий {0}</value>
-  </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>Новий {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} не знайдено.</value>
@@ -224,9 +218,6 @@
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Не вдалося підключитися до ListenBrainz. Перевірте з'єднання та URL-адресу сервера.</value>
-  </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi не вдалося знайти папку даних бібліотеки.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Не вдалося виконати відновлення, і ваші попередні дані не вдалося відновити повністю. Файли відновлення збережено в &apos;{0}&apos;.</value>

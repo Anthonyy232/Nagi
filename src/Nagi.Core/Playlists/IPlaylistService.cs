@@ -30,7 +30,7 @@ public interface IPlaylistService
     event EventHandler? PlaylistsChanged;
 
     /// <exception cref="PlaylistNameTakenException">Another playlist already has the name.</exception>
-    Task<Playlist> CreatePlaylistAsync(string name, string? description = null, string? coverImageUri = null);
+    Task<Playlist> CreatePlaylistAsync(string name, string? coverImageUri = null);
 
     /// <summary>
     ///     The name as a playlist would store it, or the first free "Name (2)", "Name (3)"… when that is taken.

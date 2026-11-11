@@ -71,18 +71,12 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Titre</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Liste de lecture</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Dossier</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>{0} inconnu</value>
-  </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>Nouvelle {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} introuvable.</value>
@@ -224,9 +218,6 @@
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Impossible de se connecter à ListenBrainz. Vérifiez votre connexion et l'URL du serveur.</value>
-  </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi n'a pas pu trouver son dossier de données de bibliothèque.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>La restauration a échoué et vos données précédentes n'ont pas pu être entièrement restaurées. Les fichiers de récupération ont été enregistrés dans &apos;{0}&apos;.</value>

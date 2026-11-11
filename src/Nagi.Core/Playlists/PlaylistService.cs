@@ -148,8 +148,7 @@ public class PlaylistService : IPlaylistService
         return changed;
     }
 
-    public async Task<Playlist> CreatePlaylistAsync(string name, string? description = null,
-        string? coverImageUri = null)
+    public async Task<Playlist> CreatePlaylistAsync(string name, string? coverImageUri = null)
     {
         var normalizedName = PlaylistRules.NormalizeName(name);
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -157,7 +156,6 @@ public class PlaylistService : IPlaylistService
         var playlist = new Playlist
         {
             Name = normalizedName,
-            Description = description,
             DateCreated = DateTime.UtcNow,
             DateModified = DateTime.UtcNow
         };

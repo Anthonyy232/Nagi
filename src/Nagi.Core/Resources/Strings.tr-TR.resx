@@ -71,18 +71,12 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Başlık</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Çalma Listesi</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Klasör</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>Bilinmeyen {0}</value>
-  </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>Yeni {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} bulunamadı.</value>
@@ -224,9 +218,6 @@
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>ListenBrainz'e bağlanılamadı. Bağlantınızı ve sunucu URL'nizi kontrol edin.</value>
-  </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi kitaplık veri klasörünü bulamadı.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Geri yükleme başarısız oldu ve önceki verileriniz tamamen geri yüklenemedi. Kurtarma dosyaları &apos;{0}&apos; konumuna kaydedildi.</value>

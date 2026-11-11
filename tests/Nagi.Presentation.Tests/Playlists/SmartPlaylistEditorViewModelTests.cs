@@ -126,5 +126,6 @@ public class SmartPlaylistEditorViewModelTests : IDisposable
         await _viewModel.PendingMatchCount.WaitAsync(TimeSpan.FromSeconds(5));
         await _service.Received(1).GetMatchingSongCountAsync(Arg.Is<SmartPlaylist>(p => p.Rules.Count == 1),
             token: Arg.Any<CancellationToken>());
+        _viewModel.MatchCountText.Should().Be(ResourceFormatter.Format(Strings.SmartPlaylist_Status_MatchCountFormat, 7));
     }
 }

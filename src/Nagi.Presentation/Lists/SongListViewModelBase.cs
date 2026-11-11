@@ -154,7 +154,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     protected override bool ShouldReloadOnLibraryChange(LibraryChange change) =>
         change.AffectsSongs || change.AffectsFavorites;
 
-    protected override void OnLoadingStateChanged(bool isLoading)
+    protected override void OnLoadingChanged()
     {
         NotifyPlayCommandsChanged();
     }

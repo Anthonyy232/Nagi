@@ -72,9 +72,6 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Title</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Playlist</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Folder</value>
   </data>
@@ -82,9 +79,6 @@
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>Unknown {0}</value>
-  </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>New {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} not found.</value>
@@ -236,9 +230,6 @@
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Could not connect to ListenBrainz. Check your connection and server URL.</value>
-  </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi could not find its library data folder.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>The restore failed, and your previous data could not be fully restored. Recovery files were saved at &apos;{0}&apos;.</value>

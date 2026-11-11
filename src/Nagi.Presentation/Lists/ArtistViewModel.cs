@@ -99,11 +99,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>, ICollecti
     }
 
     // Service's own semaphore dedupes concurrent runs of the metadata fetch.
-    protected override Task OnPageLoadedAsync(PagedResult<Artist> result, CancellationToken token)
-    {
-        _ = _artwork.StartMetadataBackgroundFetchAsync();
-        return Task.CompletedTask;
-    }
+    protected override void OnPageLoaded() => _ = _artwork.StartMetadataBackgroundFetchAsync();
 
     public void OpenArtist(ArtistViewModelItem artist) => _musicNavigationService.OpenArtist(artist.Id);
 
