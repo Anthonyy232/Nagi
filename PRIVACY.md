@@ -27,7 +27,7 @@ Nagi can fetch artist images, artist biographies, and album covers from the sour
 - **TheAudioDB**: For artist images and biographies.
 - **Deezer**: For artist images and album covers.
 - **Apple Music** (iTunes Search API): For album covers. Searches include your Windows region so they use your local catalog.
-- **Last.fm**: For artist biographies and album covers.
+- **Last.fm**: For artist images, biographies and album covers.
 
 Album covers are looked up only for albums without local artwork, except when Discord Rich Presence is also enabled (see below).
 
@@ -37,7 +37,7 @@ Nagi can fetch lyrics for your tracks from:
 - **NetEase Music**: For synchronized and plain text lyrics.
 
 ### Scrobbling and Social
-- **Last.fm Scrobbling**: If you choose to connect your Last.fm account, Nagi will send your playback history (track name, artist, album, album artist, track number, duration, timestamp, and the track's MusicBrainz ID when tagged) to Last.fm so you can track your listening habits.
+- **Last.fm Scrobbling**: If you choose to connect your Last.fm account, Nagi will send your playback history (track name, artist, album, album artist, track number, duration, timestamp, and the track's MusicBrainz ID when tagged) to Last.fm so you can track your listening habits and, when separately enabled, the currently playing track.
 - **ListenBrainz**: If enabled, Nagi sends listening history and, when separately enabled, the currently playing track to ListenBrainz or the compatible server you configure. Each listen includes the track details above, the release's MusicBrainz IDs when tagged, and Nagi's name and version. Requests use your user token to associate listening activity with your account.
 - **Discord Rich Presence**: If enabled, Nagi will share your currently playing track details with your Discord client to display as your status. Discord can only show images from the web, so when online metadata is also enabled and Discord is running, Nagi looks up the playing album's cover with the album cover sources above and shares that image link with Discord.
 
