@@ -28,6 +28,7 @@ public class CoreServiceRegistrationTests
         appInfo.GetAppVersion().Returns("2.7.0");
         services.AddSingleton(appInfo);
         services.AddSingleton(Substitute.For<ICredentialLockerService>());
+        services.AddSingleton(Substitute.For<IDispatcherService>());
         services.AddSingleton(Substitute.For<IAudioPlayer>());
         services.AddSingleton(Substitute.For<ISystemMediaControls>());
         services.AddNagiCore();

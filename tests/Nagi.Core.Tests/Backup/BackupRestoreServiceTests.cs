@@ -19,6 +19,7 @@ public class BackupRestoreServiceTests : IDisposable
     private readonly ISettingsService _settings = Substitute.For<ISettingsService>();
     private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
     private readonly ILibraryReset _libraryReset = Substitute.For<ILibraryReset>();
+    private readonly IDispatcherService _dispatcher = Substitute.For<IDispatcherService>();
     private readonly BackupRestoreService _service;
 
     private readonly List<string> _tempDirs = [];
@@ -30,8 +31,9 @@ public class BackupRestoreServiceTests : IDisposable
         _pathConfig.LibraryCacheFolders.Returns(_ => [Path.Combine(_pathConfig.AppDataRoot, "AlbumArt")]);
         _pathConfig.RomanizationPacksPath.Returns(_ => Path.Combine(_pathConfig.AppDataRoot, "RomanizationPacks"));
         _libraryReset.RunWhileQuietAsync(Arg.Any<string>(), Arg.Any<Func<Task>>()).Returns(call => call.Arg<Func<Task>>()());
+        _dispatcher.EnqueueAsync(Arg.Any<Func<Task>>()).Returns(call => call.Arg<Func<Task>>()());
         var logger = Substitute.For<ILogger<BackupRestoreService>>();
-        _service = new BackupRestoreService(_pathConfig, _settings, _playback, _libraryReset, logger);
+        _service = new BackupRestoreService(_pathConfig, _settings, _playback, _libraryReset, _dispatcher, logger);
     }
 
     public void Dispose()
@@ -72,18 +74,6 @@ public class BackupRestoreServiceTests : IDisposable
         result.Should().BeFalse("a corrupt or non-ZIP file must not pass validation");
     }
 
-    [Fact]
-    public async Task CreateBackupAsync_WhenSourceDirectoryDoesNotExist_ReturnsFailure()
-    {
-        _pathConfig.AppDataRoot.Returns(@"C:\nonexistent\appdata");
-        var destDir = CreateTempDir();
-
-        var result = await _service.CreateBackupAsync(destDir);
-
-        result.Success.Should().BeFalse();
-        result.BackupFilePath.Should().BeNull();
-    }
-
     [Theory]
     [InlineData("Library")]
     [InlineData("Library;Archive")]
@@ -116,7 +106,7 @@ public class BackupRestoreServiceTests : IDisposable
 
         var result = await _service.CreateBackupAsync(destinationDir);
 
-        result.Success.Should().BeTrue(result.ErrorMessage);
+        result.Success.Should().BeTrue();
         ZipFile.ExtractToDirectory(result.BackupFilePath!, extractedDir);
         using var backup = new SqliteConnection(new SqliteConnectionStringBuilder
         {
@@ -159,7 +149,7 @@ public class BackupRestoreServiceTests : IDisposable
         {
             _settings.ExportAsync().Returns($"version {i}");
             var result = await _service.CreateBackupAsync(destinationDir);
-            result.Success.Should().BeTrue(result.ErrorMessage);
+            result.Success.Should().BeTrue();
             paths.Add(result.BackupFilePath!);
         }
 
@@ -192,7 +182,7 @@ public class BackupRestoreServiceTests : IDisposable
 
         var result = await _service.CreateBackupAsync(destDir);
 
-        result.Success.Should().BeTrue(result.ErrorMessage);
+        result.Success.Should().BeTrue();
         using var archive = ZipFile.OpenRead(result.BackupFilePath!);
         archive.Entries.Select(e => e.FullName).Should().BeEquivalentTo(
             "nagi.db", "AlbumArt/cover.jpg", "RomanizationPacks/pack.json", "settings.json");
@@ -272,7 +262,7 @@ public class BackupRestoreServiceTests : IDisposable
 
         var result = await _service.RestoreFromBackupAsync(zipPath);
 
-        result.Success.Should().BeTrue(result.ErrorMessage);
+        result.Success.Should().BeTrue();
         clearedWhileQuiet.Should().BeTrue();
         titleWhenQuietEnded.Should().Be("Backup track");
     }
@@ -303,7 +293,7 @@ public class BackupRestoreServiceTests : IDisposable
 
         var result = await _service.RestoreFromBackupAsync(zipPath);
 
-        result.Success.Should().BeTrue(result.ErrorMessage);
+        result.Success.Should().BeTrue();
         using var restored = new SqliteConnection(new SqliteConnectionStringBuilder
         {
             DataSource = liveDb,
@@ -367,7 +357,7 @@ public class BackupRestoreServiceTests : IDisposable
 
         var result = await _service.RestoreFromBackupAsync(zipPath);
 
-        result.Success.Should().BeTrue(result.ErrorMessage);
+        result.Success.Should().BeTrue();
         foreach (var name in databaseFiles)
             (await File.ReadAllTextAsync(Path.Combine(destDir, name))).Should().Be($"original {name}");
     }
@@ -450,7 +440,7 @@ public class BackupRestoreServiceTests : IDisposable
 
         var result = await _service.RestoreFromBackupAsync(zipPath);
 
-        result.Success.Should().BeTrue(result.ErrorMessage);
+        result.Success.Should().BeTrue();
         await _settings.Received(1).ImportAsync("snapshot");
         File.Exists(Path.Combine(destDir, "settings.json")).Should().BeFalse();
     }
@@ -465,7 +455,7 @@ public class BackupRestoreServiceTests : IDisposable
 
         var result = await _service.RestoreFromBackupAsync(zipPath);
 
-        result.Success.Should().BeTrue(result.ErrorMessage);
+        result.Success.Should().BeTrue();
         File.Exists(Path.Combine(destDir, "nagi.db")).Should().BeTrue();
     }
 

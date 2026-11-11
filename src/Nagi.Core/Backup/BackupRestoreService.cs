@@ -19,6 +19,7 @@ public class BackupRestoreService : IBackupRestoreService
     private readonly ISettingsService _settingsService;
     private readonly IMusicPlaybackService _playback;
     private readonly ILibraryReset _libraryReset;
+    private readonly IDispatcherService _dispatcher;
     private readonly ILogger<BackupRestoreService> _logger;
 
     public BackupRestoreService(
@@ -26,12 +27,14 @@ public class BackupRestoreService : IBackupRestoreService
         ISettingsService settingsService,
         IMusicPlaybackService playback,
         ILibraryReset libraryReset,
+        IDispatcherService dispatcher,
         ILogger<BackupRestoreService> logger)
     {
         _pathConfiguration = pathConfiguration;
         _settingsService = settingsService;
         _playback = playback;
         _libraryReset = libraryReset;
+        _dispatcher = dispatcher;
         _logger = logger;
     }
 
@@ -42,13 +45,6 @@ public class BackupRestoreService : IBackupRestoreService
     {
         try
         {
-            var sourcePath = _pathConfiguration.AppDataRoot;
-
-            if (!Directory.Exists(sourcePath))
-            {
-                return new BackupResult(false, null, 0, Resources.Strings.Backup_DataFolderMissing);
-            }
-
             var stagingPath = Directory.CreateTempSubdirectory("NagiBackupStaging_").FullName;
 
             try
@@ -185,8 +181,8 @@ public class BackupRestoreService : IBackupRestoreService
                 {
                     // The app restarts through its normal shutdown after a restore, which ends the current listen by its
                     // row ID and saves the queue. Ending them now keeps the listen in the database it belongs to and leaves
-                    // nothing to write over the restored data.
-                    await _playback.ClearQueueAsync().ConfigureAwait(false);
+                    // nothing to write over the restored data. The playback service is changed from the UI context only.
+                    await _dispatcher.EnqueueAsync(_playback.ClearQueueAsync).ConfigureAwait(false);
 
                     try
                     {

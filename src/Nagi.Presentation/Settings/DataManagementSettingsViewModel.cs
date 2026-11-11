@@ -116,7 +116,7 @@ public partial class DataManagementSettingsViewModel : ObservableObject
         {
             await _uiService.ShowMessageDialogAsync(
                 Strings.Settings_Backup_Failed_Title,
-                result.ErrorMessage ?? Strings.Settings_Backup_Failed_Message);
+                Strings.Settings_Backup_Failed_Message);
         }
     }
 
