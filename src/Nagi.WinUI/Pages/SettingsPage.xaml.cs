@@ -21,7 +21,6 @@ public sealed partial class SettingsPage : ViewModelPage
     {
         base.OnNavigatedTo(e);
         await ViewModel.OpenAsync();
-        Bindings.Update();
     }
 
     private string Milliseconds(double value) => ResourceFormatter.Format(Strings.SettingsPage_Milliseconds_Format, value);
