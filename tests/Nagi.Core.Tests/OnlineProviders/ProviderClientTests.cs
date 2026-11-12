@@ -47,13 +47,10 @@ public sealed class ProviderClientTests : IDisposable
         _keyedClient.GetJsonAsync<Body, string>(key => $"https://provider.test/item?key={key}",
             body => ServiceResult<string>.FromSuccess(body.Name!), "item", CancellationToken.None);
 
-    private void Respond(HttpStatusCode status, string body = "{}") =>
-        _http.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(status) { Content = new StringContent(body) });
-
     [Fact]
     public async Task A404_IsNotFound()
     {
-        Respond(HttpStatusCode.NotFound);
+        _http.Respond(HttpStatusCode.NotFound, "{}");
 
         (await GetAsync()).Status.Should().Be(ServiceResultStatus.SuccessNotFound);
     }
@@ -65,7 +62,7 @@ public sealed class ProviderClientTests : IDisposable
     [InlineData(HttpStatusCode.Forbidden)]
     public async Task AnyOtherFailureStatus_IsRetryable(HttpStatusCode status)
     {
-        Respond(status);
+        _http.Respond(status, "{}");
 
         (await GetAsync()).Status.Should().Be(ServiceResultStatus.TemporaryError);
     }
@@ -84,7 +81,7 @@ public sealed class ProviderClientTests : IDisposable
     [Fact]
     public async Task ABodyThatIsNotJson_IsRetryable()
     {
-        Respond(HttpStatusCode.OK, "{ not json }");
+        _http.Respond(HttpStatusCode.OK, "{ not json }");
 
         (await GetAsync()).Status.Should().Be(ServiceResultStatus.TemporaryError);
     }
@@ -112,7 +109,7 @@ public sealed class ProviderClientTests : IDisposable
     public async Task WithoutItsKey_NothingIsSentAndTheNextCallAsksForTheKeyAgain()
     {
         _apiKeys.GetApiKeyAsync(KeyName, Arg.Any<CancellationToken>()).Returns((string?)null, "first-key");
-        Respond(HttpStatusCode.OK, """{"name":"found"}""");
+        _http.Respond(HttpStatusCode.OK, """{"name":"found"}""");
 
         var first = await GetWithKeyAsync();
         var requestsAfterFirst = _http.Requests.Count;
@@ -145,7 +142,7 @@ public sealed class ProviderClientTests : IDisposable
     public async Task AKeyThatStaysRejected_IsRetryableWithoutFurtherRequests(string? refreshedKey, int requests)
     {
         _apiKeys.RefreshApiKeyAsync(KeyName, Arg.Any<CancellationToken>()).Returns(refreshedKey);
-        Respond(HttpStatusCode.Unauthorized);
+        _http.Respond(HttpStatusCode.Unauthorized, "{}");
 
         var result = await GetWithKeyAsync();
 
@@ -160,7 +157,7 @@ public sealed class ProviderClientTests : IDisposable
     [InlineData(HttpStatusCode.OK, null, ServiceResultStatus.Success)]
     public async Task ABodyCheck_DecidesWhateverTheStatus(HttpStatusCode status, string? error, ServiceResultStatus expected)
     {
-        Respond(status, error is null ? """{"name":"found"}""" : $$"""{"error":"{{error}}"}""");
+        _http.Respond(status, error is null ? """{"name":"found"}""" : $$"""{"error":"{{error}}"}""");
 
         var result = await _client.GetJsonAsync<Body, string>("https://provider.test/item",
             body => ServiceResult<string>.FromSuccess(body.Name!), "item", CancellationToken.None,

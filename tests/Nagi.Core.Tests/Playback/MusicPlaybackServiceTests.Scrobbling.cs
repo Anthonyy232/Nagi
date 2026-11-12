@@ -1,61 +1,16 @@
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using Nagi.Core.Library;
-using Nagi.Core.Metadata;
-using Nagi.Core.MusicServers;
-using Nagi.Core.Platform;
 using Nagi.Core.Playback;
-using Nagi.Core.Playlists;
-using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
 
 namespace Nagi.Core.Tests.Playback;
 
-/// <summary>
-///     Tests that verify <see cref="MusicPlaybackService"/> independently marks listen sessions as
-///     eligible for scrobbling once the standard threshold is met (track &gt; 30 s, played ≥ 50% or
-///     ≥ 4 min), regardless of whether Last.fm is configured.
-/// </summary>
-public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
+// Tests that verify the playback service independently marks listen sessions as
+// eligible for scrobbling once the standard threshold is met (track > 30 s, played ≥ 50% or
+// ≥ 4 min), regardless of whether Last.fm is configured.
+public partial class MusicPlaybackServiceTests
 {
-    private readonly IAudioPlayer _audioPlayer;
-    private readonly LibraryFakes _library;
-    private readonly MusicPlaybackService _service;
-    private readonly List<Song> _testSongs;
     private int _eligibilityEvents;
-
-    public MusicPlaybackServiceScrobblingTests()
-    {
-        _audioPlayer = Substitute.For<IAudioPlayer>();
-        _library = new LibraryFakes();
-        _library.Listening.MarkListenAsEligibleForScrobblingAsync(Arg.Any<long>()).Returns(true);
-        var settingsService = TestSettings.Create();
-        var metadataService = Substitute.For<IMetadataService>();
-        var logger = Substitute.For<ILogger<MusicPlaybackService>>();
-
-        _service = new MusicPlaybackService(
-            settingsService,
-            Substitute.For<IPlaybackStateStore>(),
-            _audioPlayer,
-            Substitute.For<ISystemMediaControls>(),
-            _library.Reader, Substitute.For<ISmartPlaylistService>(), _library.Listening,
-            metadataService,
-            Substitute.For<IFileSystemService>(),
-            Substitute.For<IMusicServerService>(),
-            logger);
-
-        _testSongs = Enumerable.Range(1, 2)
-            .Select(i => new Song { Id = Guid.NewGuid(), Title = $"Song {i}", FilePath = $"C:\\music\\song{i}.mp3" })
-            .ToList();
-
-        foreach (var song in _testSongs)
-            _library.Reader.GetSongByIdAsync(song.Id).Returns(song);
-
-        _service.ScrobbleEligibilityReached += () => _eligibilityEvents++;
-    }
-
-    public ValueTask DisposeAsync() => _service.DisposeAsync();
 
     private void RaisePositionChanged() => _audioPlayer.PositionChanged += Raise.Event<Action>();
 

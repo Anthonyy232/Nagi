@@ -42,10 +42,7 @@ public class LrcLibServiceTests : IAsyncDisposable
     public async Task GetLyricsAsync_WithValidMetadata_ReturnsSyncedLyrics()
     {
         var lrcResponse = new { syncedLyrics = "[00:01.00]Hello World" };
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent(JsonSerializer.Serialize(lrcResponse))
-        });
+        _httpHandler.Respond(HttpStatusCode.OK, lrcResponse);
 
         var result = await _service.GetLyricsAsync(Track("Test Track", "Test Artist", "Test Album", TimeSpan.FromMinutes(3)));
 

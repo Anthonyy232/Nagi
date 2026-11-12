@@ -200,10 +200,10 @@ public class JellyfinClientTests : IDisposable
     [Fact]
     public async Task GetLyricsAsync_TimedLyrics_BecomeLrcFromTheirTicks()
     {
-        _handler.SendAsyncFunc = (_, _) => Task.FromResult(Json(new
+        _handler.Respond(HttpStatusCode.OK, new
         {
             Lyrics = new[] { new { Text = "Salt on the window", Start = 10_000_000L }, new { Text = "Ropes in the harbor", Start = 55_000_000L } }
-        }));
+        });
 
         var lyrics = await Client().GetLyricsAsync("song-1", CancellationToken.None);
 
@@ -214,10 +214,10 @@ public class JellyfinClientTests : IDisposable
     [Fact]
     public async Task GetLyricsAsync_UntimedLyrics_StayPlainText()
     {
-        _handler.SendAsyncFunc = (_, _) => Task.FromResult(Json(new
+        _handler.Respond(HttpStatusCode.OK, new
         {
             Lyrics = new[] { new { Text = "Gulls over the pier" }, new { Text = "Calling the morning in" }, new { Text = "" } }
-        }));
+        });
 
         var lyrics = await Client().GetLyricsAsync("song-1", CancellationToken.None);
 

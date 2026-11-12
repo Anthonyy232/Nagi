@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text;
+using System.Text.Json;
 
 namespace Nagi.Core.Tests.Utils;
 
@@ -21,6 +22,18 @@ public class TestHttpMessageHandler : HttpMessageHandler
     public void RespondSequence(params (HttpStatusCode Status, string Body)[] responses)
     {
         foreach (var r in responses) _sequence.Enqueue(r);
+    }
+
+    /// <summary>
+    ///     Answers every later request with this response. A string body is sent as is, anything else as JSON.
+    /// </summary>
+    public void Respond(HttpStatusCode status, object body)
+    {
+        var text = body as string ?? JsonSerializer.Serialize(body);
+        SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(status)
+        {
+            Content = new StringContent(text, Encoding.UTF8, "application/json")
+        });
     }
 
     protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,

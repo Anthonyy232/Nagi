@@ -49,7 +49,7 @@ public class OpenSubsonicClientTests : IDisposable
     }
 
     [Fact]
-    public async Task ConnectAsync_SignsInWithASaltedTokenRatherThanThePassword()
+    public async Task SignInAsync_SignsInWithASaltedTokenRatherThanThePassword()
     {
         _handler.RespondSequence((HttpStatusCode.OK, Response(new { status = "ok", type = "navidrome", openSubsonic = true })));
 
@@ -65,7 +65,7 @@ public class OpenSubsonicClientTests : IDisposable
     }
 
     [Fact]
-    public async Task ConnectAsync_WithAnApiKey_SendsOnlyTheKeyAndLearnsTheUserName()
+    public async Task SignInAsync_WithAnApiKey_SendsOnlyTheKeyAndLearnsTheUserName()
     {
         _handler.RespondSequence(
             (HttpStatusCode.OK, Response(new { status = "ok", type = "lms", openSubsonic = true })),
@@ -81,7 +81,7 @@ public class OpenSubsonicClientTests : IDisposable
     [Theory]
     [InlineData(HttpRequestError.SecureConnectionError, MusicServerError.SecureConnectionFailed)]
     [InlineData(HttpRequestError.ConnectionError, MusicServerError.Unreachable)]
-    public async Task ConnectAsync_FailedHttpsHandshake_IsToldApartFromAnUnreachableServer(HttpRequestError failure,
+    public async Task SignInAsync_FailedHttpsHandshake_IsToldApartFromAnUnreachableServer(HttpRequestError failure,
         MusicServerError expected)
     {
         _handler.SendAsyncFunc = (_, _) => throw new HttpRequestException(failure, "The connection failed.");
@@ -106,7 +106,7 @@ public class OpenSubsonicClientTests : IDisposable
     }
 
     [Fact]
-    public async Task ConnectAsync_RejectsASubsonicServerWithoutOpenSubsonic()
+    public async Task SignInAsync_RejectsASubsonicServerWithoutOpenSubsonic()
     {
         _handler.RespondSequence((HttpStatusCode.OK, Response(new { status = "ok", type = "subsonic", openSubsonic = false })));
 
@@ -120,7 +120,7 @@ public class OpenSubsonicClientTests : IDisposable
     [InlineData(44, MusicServerError.SignInFailed)]
     [InlineData(41, MusicServerError.SignInMethodUnsupported)]
     [InlineData(42, MusicServerError.SignInMethodUnsupported)]
-    public async Task ConnectAsync_TellsAWrongSignInFromOneTheServerDoesNotTake(int code, MusicServerError expected)
+    public async Task SignInAsync_TellsAWrongSignInFromOneTheServerDoesNotTake(int code, MusicServerError expected)
     {
         _handler.RespondSequence((HttpStatusCode.OK, Response(new
         {

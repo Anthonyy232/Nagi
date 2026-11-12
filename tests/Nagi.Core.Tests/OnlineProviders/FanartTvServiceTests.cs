@@ -1,5 +1,4 @@
 using System.Net;
-using System.Text.Json;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.OnlineProviders;
@@ -51,10 +50,7 @@ public class FanartTvServiceTests : IDisposable
             artistbackground = new[] { new { url = "https://fanart.tv/bg.jpg" } },
             artistthumb = new[] { new { url = "https://fanart.tv/thumb.jpg" } }
         };
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent(JsonSerializer.Serialize(fanartResponse))
-        });
+        _httpHandler.Respond(HttpStatusCode.OK, fanartResponse);
         var result = await _service.GetArtistImagesAsync(ValidMbid);
         result.Status.Should().Be(ServiceResultStatus.Success);
         result.Data.Should().NotBeNull();
@@ -69,10 +65,7 @@ public class FanartTvServiceTests : IDisposable
         {
             artistthumb = new[] { new { url = "https://fanart.tv/thumb.jpg" } }
         };
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent(JsonSerializer.Serialize(fanartResponse))
-        });
+        _httpHandler.Respond(HttpStatusCode.OK, fanartResponse);
         var result = await _service.GetArtistImagesAsync(ValidMbid);
         result.Status.Should().Be(ServiceResultStatus.Success);
         result.Data!.ThumbUrl.Should().Be("https://fanart.tv/thumb.jpg");
@@ -96,10 +89,7 @@ public class FanartTvServiceTests : IDisposable
             artistbackground = Array.Empty<object>(),
             artistthumb = Array.Empty<object>()
         };
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent(JsonSerializer.Serialize(fanartResponse))
-        });
+        _httpHandler.Respond(HttpStatusCode.OK, fanartResponse);
         var result = await _service.GetArtistImagesAsync(ValidMbid);
         result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
     }

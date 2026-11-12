@@ -257,4 +257,26 @@ public class ListeningServiceTests : LibraryTestBase
         await _library.Listening.SetSongsLovedAsync([songs[0].Id], false);
         (await _library.Listening.GetRediscoverySuggestionAsync())!.SongId.Should().Be(songs[1].Id);
     }
+
+    [Fact]
+    public async Task RecentListens_PreservesRepeatedListensAndStablePagingWhenTimestampsMatch()
+    {
+        var folder = new Folder { Name = "Music", Path = "C:\\Music" };
+        var song = new Song { Folder = folder, Title = "Same song", ArtistName = "Artist", FilePath = "C:\\Music\\1.mp3" };
+        var time = DateTime.UtcNow;
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Songs.Add(song);
+            context.ListenHistory.AddRange(Enumerable.Range(0, 3).Select(_ => new ListenHistory { Song = song, ListenTimestampUtc = time }));
+            await context.SaveChangesAsync();
+        }
+
+        var first = await _library.Listening.GetRecentListensAsync("Same song", 0, 2);
+        var second = await _library.Listening.GetRecentListensAsync("Same song", 2, 2);
+
+        first.Should().HaveCount(2);
+        second.Should().ContainSingle();
+        first.Concat(second).Select(h => h.Id).Should().BeInDescendingOrder().And.OnlyHaveUniqueItems();
+        first.Concat(second).Should().OnlyContain(h => h.SongId == song.Id);
+    }
 }

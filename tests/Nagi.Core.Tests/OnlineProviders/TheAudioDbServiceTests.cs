@@ -1,5 +1,4 @@
 using System.Net;
-using System.Text.Json;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.OnlineProviders;
@@ -59,10 +58,7 @@ public class TheAudioDbServiceTests : IDisposable
                 }
             }
         };
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent(JsonSerializer.Serialize(audioDbResponse))
-        });
+        _httpHandler.Respond(HttpStatusCode.OK, audioDbResponse);
         var result = await _service.GetArtistMetadataAsync(ValidMbid);
         result.Status.Should().Be(ServiceResultStatus.Success);
         result.Data.Should().NotBeNull();
@@ -84,10 +80,7 @@ public class TheAudioDbServiceTests : IDisposable
                 }
             }
         };
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent(JsonSerializer.Serialize(audioDbResponse))
-        });
+        _httpHandler.Respond(HttpStatusCode.OK, audioDbResponse);
         var result = await _service.GetArtistMetadataAsync(ValidMbid);
         result.Status.Should().Be(ServiceResultStatus.Success);
         result.Data!.Biography.Should().Be("Bio only artist.");
@@ -100,20 +93,17 @@ public class TheAudioDbServiceTests : IDisposable
     [InlineData(null, "https://theaudiodb.com/third.jpg")]
     public async Task GetArtistMetadataAsync_SkipsBlankFanartAndTrimsSelectedUrl(string? second, string expected)
     {
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+        _httpHandler.Respond(HttpStatusCode.OK, new
         {
-            Content = new StringContent(JsonSerializer.Serialize(new
+            artists = new[]
             {
-                artists = new[]
+                new
                 {
-                    new
-                    {
-                        strArtistFanart = "   ",
-                        strArtistFanart2 = second,
-                        strArtistFanart3 = " https://theaudiodb.com/third.jpg "
-                    }
+                    strArtistFanart = "   ",
+                    strArtistFanart2 = second,
+                    strArtistFanart3 = " https://theaudiodb.com/third.jpg "
                 }
-            }))
+            }
         });
 
         var result = await _service.GetArtistMetadataAsync(ValidMbid);
@@ -146,10 +136,7 @@ public class TheAudioDbServiceTests : IDisposable
                 }
             }
         };
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent(JsonSerializer.Serialize(audioDbResponse))
-        });
+        _httpHandler.Respond(HttpStatusCode.OK, audioDbResponse);
         var result = await _service.GetArtistMetadataAsync(ValidMbid, language);
         result.Status.Should().Be(ServiceResultStatus.Success);
         result.Data!.Biography.Should().Be(expected);
@@ -178,10 +165,7 @@ public class TheAudioDbServiceTests : IDisposable
                 }
             }
         };
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent(JsonSerializer.Serialize(audioDbResponse))
-        });
+        _httpHandler.Respond(HttpStatusCode.OK, audioDbResponse);
         var result = await _service.GetArtistMetadataAsync(ValidMbid);
         result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
     }
@@ -190,10 +174,7 @@ public class TheAudioDbServiceTests : IDisposable
     public async Task GetArtistMetadataAsync_WithNullArtistsArray_ReturnsSuccessNotFound()
     {
         var audioDbResponse = new { artists = (object[]?)null };
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent(JsonSerializer.Serialize(audioDbResponse))
-        });
+        _httpHandler.Respond(HttpStatusCode.OK, audioDbResponse);
         var result = await _service.GetArtistMetadataAsync(ValidMbid);
         result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
     }

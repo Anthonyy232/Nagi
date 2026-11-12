@@ -132,7 +132,7 @@ public class SmartPlaylistSongListViewModelTests
     }
 
     private SmartPlaylistSongListViewModel CreateViewModel() =>
-        new(_library.Reader, _library.Listening, _library.Notifier, Substitute.For<IPlaylistService>(), _playlists,
+        new(_library.Reader, _library.Listening, _library.Notifier, _library.Playlists, _playlists,
             _playback, Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), TestSettings.Create(),
             Substitute.For<IUIService>(), NullLogger<SmartPlaylistSongListViewModel>.Instance);
 }

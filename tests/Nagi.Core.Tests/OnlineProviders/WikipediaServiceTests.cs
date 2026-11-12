@@ -1,5 +1,4 @@
 using System.Net;
-using System.Text;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.OnlineProviders;
@@ -68,10 +67,7 @@ public class WikipediaServiceTests : IDisposable
     public async Task GetArtistBiographyAsync_WhenWikidataFails_IsRetryable()
     {
         _httpHandler.RespondSequence((HttpStatusCode.OK, SearchResponse));
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.BadRequest)
-        {
-            Content = new StringContent("{}", Encoding.UTF8, "application/json")
-        });
+        _httpHandler.Respond(HttpStatusCode.BadRequest, "{}");
 
         var result = await _service.GetArtistBiographyAsync(Mbid, "en");
 

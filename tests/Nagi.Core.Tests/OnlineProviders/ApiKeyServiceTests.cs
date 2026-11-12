@@ -1,5 +1,4 @@
 using System.Net;
-using System.Text;
 using System.Text.Json;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
@@ -47,7 +46,7 @@ public class ApiKeyServiceTests : IDisposable
         const string keyName = ApiKeyNames.TheAudioDb;
         const string expectedApiKey = "12345-abcde";
         SetupValidConfiguration();
-        SetupHttpResponse(HttpStatusCode.OK, new { Value = expectedApiKey });
+        _httpMessageHandler.Respond(HttpStatusCode.OK, new { Value = expectedApiKey });
 
         var result = await _apiKeyService.GetApiKeyAsync(keyName);
 
@@ -68,10 +67,10 @@ public class ApiKeyServiceTests : IDisposable
         const string refreshedApiKey = "refreshed-key";
         SetupValidConfiguration();
 
-        SetupHttpResponse(HttpStatusCode.OK, new { Value = initialApiKey });
+        _httpMessageHandler.Respond(HttpStatusCode.OK, new { Value = initialApiKey });
         var result1 = await _apiKeyService.GetApiKeyAsync(keyName);
 
-        SetupHttpResponse(HttpStatusCode.OK, new { Value = refreshedApiKey });
+        _httpMessageHandler.Respond(HttpStatusCode.OK, new { Value = refreshedApiKey });
         var result2 = await _apiKeyService.RefreshApiKeyAsync(keyName);
         var result3 = await _apiKeyService.GetApiKeyAsync(keyName);
 
@@ -89,7 +88,7 @@ public class ApiKeyServiceTests : IDisposable
     {
         const string keyName = ApiKeyNames.FanartTv;
         SetupValidConfiguration();
-        SetupHttpResponse(HttpStatusCode.OK, new { Value = invalidValue });
+        _httpMessageHandler.Respond(HttpStatusCode.OK, new { Value = invalidValue });
 
         var result = await _apiKeyService.GetApiKeyAsync(keyName);
 
@@ -199,7 +198,7 @@ public class ApiKeyServiceTests : IDisposable
     public async Task GetApiKeyAsync_ConstructsRequestUrlCorrectly(string configuredUrl, string expectedRequestUrl)
     {
         SetupValidConfiguration(configuredUrl);
-        SetupHttpResponse(HttpStatusCode.OK, new { Value = "some-key" });
+        _httpMessageHandler.Respond(HttpStatusCode.OK, new { Value = "some-key" });
 
         await _apiKeyService.GetApiKeyAsync(ApiKeyNames.FanartTv);
 
@@ -215,7 +214,7 @@ public class ApiKeyServiceTests : IDisposable
         bool shouldHaveHeader)
     {
         SetupValidConfiguration(subscriptionKey: subscriptionKey);
-        SetupHttpResponse(HttpStatusCode.OK, new { Value = "some-key" });
+        _httpMessageHandler.Respond(HttpStatusCode.OK, new { Value = "some-key" });
 
         await _apiKeyService.GetApiKeyAsync(ApiKeyNames.TheAudioDb);
 
@@ -230,21 +229,6 @@ public class ApiKeyServiceTests : IDisposable
         _configuration["NagiApiServer:Url"].Returns(url);
         _configuration["NagiApiServer:ApiKey"].Returns("server-api-key");
         _configuration["NagiApiServer:SubscriptionKey"].Returns(subscriptionKey);
-    }
-
-    private void SetupHttpResponse(HttpStatusCode statusCode, object? content = null)
-    {
-        // Each request owns and disposes its response.
-        _httpMessageHandler.SendAsyncFunc = (_, _) =>
-        {
-            var response = new HttpResponseMessage(statusCode);
-            if (content != null)
-            {
-                var jsonContent = JsonSerializer.Serialize(content);
-                response.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-            }
-            return Task.FromResult(response);
-        };
     }
 
 }

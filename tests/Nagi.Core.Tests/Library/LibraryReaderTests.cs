@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Artwork;
 using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Library;
-using Nagi.Core.Listening;
 using Nagi.Core.MusicServers;
 using Nagi.Core.Platform;
 using Nagi.Core.Playlists;
@@ -832,29 +831,6 @@ public class LibraryReaderTests : IDisposable
         result!.Title.Should().Be("S");
         (await _libraryReader.GetSongByFilePathAsync("   ")).Should().BeNull();
         (await _libraryReader.GetSongByFilePathAsync(@"C:\Music\missing.mp3")).Should().BeNull();
-    }
-
-    [Fact]
-    public async Task RecentListens_PreservesRepeatedListensAndStablePagingWhenTimestampsMatch()
-    {
-        var folder = new Folder { Name = "Music", Path = "C:\\Music" };
-        var song = new Song { Folder = folder, Title = "Same song", ArtistName = "Artist", FilePath = "C:\\Music\\1.mp3" };
-        var time = DateTime.UtcNow;
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Songs.Add(song);
-            context.ListenHistory.AddRange(Enumerable.Range(0, 3).Select(_ => new ListenHistory { Song = song, ListenTimestampUtc = time }));
-            await context.SaveChangesAsync();
-        }
-
-        var listening = new ListeningService(_dbHelper.ContextFactory, new LibraryNotifier(), NullLogger<ListeningService>.Instance);
-        var first = await listening.GetRecentListensAsync("Same song", 0, 2);
-        var second = await listening.GetRecentListensAsync("Same song", 2, 2);
-
-        first.Should().HaveCount(2);
-        second.Should().ContainSingle();
-        first.Concat(second).Select(h => h.Id).Should().BeInDescendingOrder().And.OnlyHaveUniqueItems();
-        first.Concat(second).Should().OnlyContain(h => h.SongId == song.Id);
     }
 
     [Fact]

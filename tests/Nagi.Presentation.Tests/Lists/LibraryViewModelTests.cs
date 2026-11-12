@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Library;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
-using Nagi.Core.Playlists;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Lists;
@@ -34,7 +33,7 @@ public class LibraryViewModelTests
             .Returns([favorite.Id]);
         library.Reader.GetSongIdsAsync(SongScope.Library, Arg.Any<string?>(), Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns([favorite.Id, other.Id]);
-        using var viewModel = new LibraryViewModel(library.Reader, library.Listening, library.Notifier, Substitute.For<IPlaylistService>(), playback,
+        using var viewModel = new LibraryViewModel(library.Reader, library.Listening, library.Notifier, library.Playlists, playback,
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), settings,
             Substitute.For<IUIService>(), NullLogger<LibraryViewModel>.Instance);
 
@@ -70,7 +69,7 @@ public class LibraryViewModelTests
             });
         library.Reader.GetSongIdsAsync(SongScope.Library, Arg.Any<string?>(), Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(_ => orderedSongs.Select(song => song.Id).ToList());
-        using var viewModel = new LibraryViewModel(library.Reader, library.Listening, library.Notifier, Substitute.For<IPlaylistService>(), playback,
+        using var viewModel = new LibraryViewModel(library.Reader, library.Listening, library.Notifier, library.Playlists, playback,
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), settings,
             Substitute.For<IUIService>(), NullLogger<LibraryViewModel>.Instance);
         await viewModel.LoadAsync(CancellationToken.None);
@@ -110,7 +109,7 @@ public class LibraryViewModelTests
                     TotalCount = 1,
                     Items = [new Song { Title = "Recovered" }]
                 }));
-        using var viewModel = new LibraryViewModel(library.Reader, library.Listening, library.Notifier, Substitute.For<IPlaylistService>(),
+        using var viewModel = new LibraryViewModel(library.Reader, library.Listening, library.Notifier, library.Playlists,
             Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), settings,
             Substitute.For<IUIService>(), NullLogger<LibraryViewModel>.Instance);
@@ -139,7 +138,7 @@ public class LibraryViewModelTests
                 Items = [new Song { Title = "New song" }]
             });
         var dispatcher = new HeldDispatcher();
-        using var viewModel = new LibraryViewModel(library.Reader, library.Listening, library.Notifier, Substitute.For<IPlaylistService>(),
+        using var viewModel = new LibraryViewModel(library.Reader, library.Listening, library.Notifier, library.Playlists,
             Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), dispatcher, settings, Substitute.For<IUIService>(),
             NullLogger<LibraryViewModel>.Instance);

@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Library;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
-using Nagi.Core.Playlists;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Lists;
 using Nagi.Presentation.Navigation;
@@ -104,7 +103,7 @@ public class AlbumViewViewModelTests
     private static AlbumViewViewModel CreateViewModel(LibraryFakes library, IDispatcherService? dispatcher = null)
     {
         var settings = TestSettings.Create();
-        return new AlbumViewViewModel(library.Reader, library.Listening, library.Notifier, Substitute.For<IPlaylistService>(),
+        return new AlbumViewViewModel(library.Reader, library.Listening, library.Notifier, library.Playlists,
             Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), dispatcher ?? new ImmediateDispatcher(), settings,
             Substitute.For<IUIService>(), NullLogger<AlbumViewViewModel>.Instance);

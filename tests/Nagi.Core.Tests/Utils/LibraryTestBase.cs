@@ -35,6 +35,8 @@ public abstract class LibraryTestBase : IDisposable
     protected readonly IMusicBrainzService _musicBrainzService;
     protected readonly IFanartTvService _fanartTvService;
     protected readonly ITheAudioDbService _theAudioDbService;
+    protected readonly IDeezerService _deezerService = Substitute.For<IDeezerService>();
+    protected readonly IAlbumCoverService _albumCoverService = Substitute.For<IAlbumCoverService>();
     protected readonly IImageProcessor _imageProcessor;
     private readonly ProviderPipelineProvider _pipelines;
 
@@ -79,11 +81,11 @@ public abstract class LibraryTestBase : IDisposable
                 _musicBrainzService,
                 _fanartTvService,
                 _theAudioDbService,
-                Substitute.For<IDeezerService>(),
+                _deezerService,
                 Substitute.For<IWikipediaService>(),
                 _settingsService,
                 _artistMetadataLogger),
-            Substitute.For<IAlbumCoverService>(),
+            _albumCoverService,
             _httpClientFactory,
             _pathConfig,
             _settingsService,
@@ -105,7 +107,7 @@ public abstract class LibraryTestBase : IDisposable
     protected TestLibrary CreateLibrary(DbContextFactoryTestHelper database) =>
         new(database.ContextFactory, _fileSystem, _metadataService,
             new ArtistMetadataService(_lastFmService, _musicBrainzService, _fanartTvService, _theAudioDbService,
-                Substitute.For<IDeezerService>(), Substitute.For<IWikipediaService>(), _settingsService, _artistMetadataLogger),
-            Substitute.For<IAlbumCoverService>(), _httpClientFactory, _pathConfig, _settingsService, _replayGainService,
+                _deezerService, Substitute.For<IWikipediaService>(), _settingsService, _artistMetadataLogger),
+            _albumCoverService, _httpClientFactory, _pathConfig, _settingsService, _replayGainService,
             _imageProcessor, _pipelines);
 }

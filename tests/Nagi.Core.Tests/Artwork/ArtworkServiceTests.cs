@@ -1,13 +1,6 @@
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Nagi.Core.Artwork;
 using Nagi.Core.Library;
-using Nagi.Core.Metadata;
-using Nagi.Core.OnlineProviders;
-using Nagi.Core.OnlineProviders.Pipelines;
-using Nagi.Core.Platform;
-using Nagi.Core.Playback;
 using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
@@ -16,7 +9,7 @@ using Xunit;
 
 namespace Nagi.Core.Tests.Artwork;
 
-public class ArtworkServiceTests : IDisposable
+public class ArtworkServiceTests : LibraryTestBase
 {
     private const string ArtistImageCachePath = "C:\\cache\\artistimages";
     private const string FolderPath = "C:\\Music\\Artist";
@@ -28,34 +21,9 @@ public class ArtworkServiceTests : IDisposable
     private static readonly byte[] ImageBytes = new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 };
     private static readonly byte[] ProcessedBytes = new byte[] { 0x10, 0x20, 0x30 };
 
-    private readonly DbContextFactoryTestHelper _dbHelper;
-    private readonly IFileSystemService _fileSystem;
-    private readonly IHttpClientFactory _httpClientFactory;
-    private readonly IImageProcessor _imageProcessor;
-    private readonly TestLibrary _library;
-    private readonly IMetadataService _metadataService;
-    private readonly IPathConfiguration _pathConfig;
-    private readonly SettingsService _settingsService;
-    private readonly IReplayGainService _replayGainService;
-    private readonly ProviderPipelineProvider _pipelines;
-
     public ArtworkServiceTests()
     {
-        _fileSystem = Substitute.For<IFileSystemService>();
-        _metadataService = Substitute.For<IMetadataService>();
-        _httpClientFactory = Substitute.For<IHttpClientFactory>();
-        _pathConfig = Substitute.For<IPathConfiguration>();
-        _settingsService = TestSettings.Create();
-        _replayGainService = Substitute.For<IReplayGainService>();
-        _imageProcessor = Substitute.For<IImageProcessor>();
-
-        _dbHelper = new DbContextFactoryTestHelper();
-
         _pathConfig.ArtistImageCachePath.Returns(ArtistImageCachePath);
-        _pathConfig.AlbumArtCachePath.Returns("C:\\cache\\albumart");
-        _pathConfig.PlaylistImageCachePath.Returns("C:\\cache\\playlistimages");
-        _pathConfig.LrcCachePath.Returns("C:\\cache\\lrc");
-
         _fileSystem.GetFiles(Arg.Any<string>(), Arg.Any<string>()).Returns(Array.Empty<string>());
         _fileSystem.DirectoryExists(Arg.Any<string>()).Returns(false);
         _fileSystem.FileExists(Arg.Any<string>()).Returns(false);
@@ -67,21 +35,6 @@ public class ArtworkServiceTests : IDisposable
         _imageProcessor.ProcessImageBytesAsync(ImageBytes).Returns(Task.FromResult(ProcessedBytes));
 
         _settingsService.EnableOnly(CoreSettings.MetadataProviders);
-
-        _pipelines = TestProviderPipeline.Build(ProviderCatalog.ImageDownload.ProviderId);
-
-        _library = new TestLibrary(
-            _dbHelper.ContextFactory,
-            _fileSystem,
-            _metadataService,
-            Substitute.For<IArtistMetadataService>(),
-            Substitute.For<IAlbumCoverService>(),
-            _httpClientFactory,
-            _pathConfig,
-            _settingsService,
-            _replayGainService,
-            _imageProcessor,
-            _pipelines);
     }
 
     [Theory]
@@ -114,13 +67,6 @@ public class ArtworkServiceTests : IDisposable
         _fileSystem.Received(1).DeleteFile(customPath);
         _fileSystem.DidNotReceive().DeleteFile(localPath);
         _fileSystem.DidNotReceive().DeleteFile(fetchedPath);
-    }
-
-    public void Dispose()
-    {
-        _library.Dispose();
-        _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
-        _dbHelper.Dispose();
     }
 
     // Matching timestamps exercise image discovery without importing song metadata again.
@@ -277,7 +223,7 @@ public class ArtworkServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task RescanFolder_ArtistJpgInBothPassA_AndPassB_PassATakesPriority()
+    public async Task RescanFolder_ArtistImageInBothTheArtistAndAlbumFolders_ArtistFolderTakesPriority()
     {
         var (folder, _, _) = await SeedUpToDateSongAsync();
 
@@ -302,7 +248,7 @@ public class ArtworkServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task RescanFolder_ImageProcessingThrows_LogsWarningAndContinues()
+    public async Task RescanFolder_ImageProcessingThrows_SkipsThatArtistAndContinues()
     {
         var timestamp = new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Utc);
         var folder = new Folder { Id = Guid.NewGuid(), Name = "Artist", Path = FolderPath };
@@ -414,7 +360,7 @@ public class ArtworkServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task FindArtistImageInDirectory_OnlyMatchesArtistFileName()
+    public async Task RescanFolder_OnlyMatchesArtistFileName()
     {
         var (folder, _, _) = await SeedUpToDateSongAsync();
 

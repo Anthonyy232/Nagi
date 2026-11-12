@@ -90,10 +90,7 @@ public class ScrobbleQueueCancellationTests
             submitted.Take(batchSize).Should().OnlyContain(value => value);
             submitted.Last().Should().BeFalse();
 
-            handler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent(successBody)
-            });
+            handler.Respond(HttpStatusCode.OK, successBody);
             await submitter.SubmitPendingAsync(CancellationToken.None);
             handler.Requests.Should().HaveCount(3);
             (await context.ListenHistory.AsNoTracking().AllAsync(listen => provider == ServiceProviderIds.LastFm

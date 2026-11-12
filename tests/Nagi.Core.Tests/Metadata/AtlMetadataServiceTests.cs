@@ -222,7 +222,7 @@ public class AtlMetadataServiceTests : IDisposable
     [Theory]
     [InlineData(1, true)]
     [InlineData(-1, false)]
-    public async Task GetLrcPathAsync_UsesTheCacheOnlyWhileItIsNewerThanTheAudioFile(int cacheAgeHours, bool usesCache)
+    public async Task ExtractMetadataAsync_UsesTheLrcCacheOnlyWhileItIsNewerThanTheAudioFile(int cacheAgeHours, bool usesCache)
     {
         var audioFilePath = CreateTestAudioFile("cached.mp3", track =>
         {
@@ -242,7 +242,7 @@ public class AtlMetadataServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetLrcPathAsync_OverrideWinsOverAFreshCache()
+    public async Task ExtractMetadataAsync_LrcOverrideWinsOverAFreshCache()
     {
         var audioFilePath = CreateTestAudioFile("override.mp3", track =>
         {
@@ -263,7 +263,7 @@ public class AtlMetadataServiceTests : IDisposable
     [Theory]
     [InlineData("lrc")]
     [InlineData("txt")]
-    public async Task FindLrcFilePath_WithSidecar_ReturnsExternalPath(string extension)
+    public async Task ExtractMetadataAsync_WithLyricsSidecar_ReturnsItsPath(string extension)
     {
         var audioFilePath = CreateTestAudioFile("external.mp3", _ => { });
         var expectedPath = Path.Combine(_tempDirectory, "external." + extension);
@@ -293,7 +293,7 @@ public class AtlMetadataServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task ProcessAlbumArtAsync_DirectoryArtTakesPriorityOverEmbeddedArt()
+    public async Task ExtractMetadataAsync_DirectoryArtTakesPriorityOverEmbeddedArt()
     {
         var embeddedPictureData = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A }; // PNG header
         var audioFilePath = CreateTestAudioFile("botharts.mp3", track =>
@@ -320,7 +320,7 @@ public class AtlMetadataServiceTests : IDisposable
     [Theory]
     [InlineData("folder", "cover")]
     [InlineData("album", "front")]
-    public async Task ProcessAlbumArtAsync_SelectsCoverByPriorityRatherThanEnumerationOrder(string otherName, string preferredName)
+    public async Task ExtractMetadataAsync_SelectsCoverByPriorityRatherThanEnumerationOrder(string otherName, string preferredName)
     {
         var audioPath = CreateTestAudioFile("cover-priority.mp3", _ => { });
         var otherPath = Path.Combine(_tempDirectory, otherName + ".jpg");
@@ -339,7 +339,7 @@ public class AtlMetadataServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task ProcessAlbumArtAsync_DirectoryScanException_FallsBackToEmbeddedArt()
+    public async Task ExtractMetadataAsync_DirectoryScanException_FallsBackToEmbeddedArt()
     {
         byte[] embeddedBytes = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
         var audioPath = CreateTestAudioFile("scan-failure.mp3", track =>
@@ -355,7 +355,7 @@ public class AtlMetadataServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task ExtractAndCacheEmbeddedLrcAsync_PreservesLongTimestampsAndReplacesCacheAfterWriting()
+    public async Task ExtractMetadataAsync_EmbeddedSyncedLyrics_KeepLongTimestampsAndReplaceTheCacheAfterWriting()
     {
         var audioPath = CreateTestAudioFile("synced.mp3", track =>
         {

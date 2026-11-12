@@ -6,7 +6,7 @@ using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
 
-namespace Nagi.Core.Tests.Artwork;
+namespace Nagi.Core.Tests.OnlineProviders;
 
 public class AlbumCoverSourceTests : IDisposable
 {

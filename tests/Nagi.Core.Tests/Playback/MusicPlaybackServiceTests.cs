@@ -44,6 +44,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _logger = Substitute.For<ILogger<MusicPlaybackService>>();
 
         _playbackStateStore.LoadAsync().Returns((PlaybackState?)null);
+        _library.Listening.MarkListenAsEligibleForScrobblingAsync(Arg.Any<long>()).Returns(true);
 
         _service = new MusicPlaybackService(
             _settingsService, _playbackStateStore,
@@ -55,6 +56,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
             _musicServers,
             _logger,
             _clock);
+        _service.ScrobbleEligibilityReached += () => _eligibilityEvents++;
 
         _testSongs = CreateTestSongs(5);
 
@@ -352,6 +354,31 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _service.CurrentTrack!.LrcFilePath.Should().Be("C:\\temp\\transient.lrc");
         await _audioPlayer.Received(1).LoadAsync(Arg.Is<Song>(s => s != null && s.FilePath == filePath));
         await _audioPlayer.Received(1).PlayAsync();
+    }
+
+    [Fact]
+    public async Task PlayTransientFileAsync_PopulatesDenormalizedFields()
+    {
+        var filePath = "C:\\transient.mp3";
+        var metadata = new SongFileMetadata
+        {
+            Title = "Transient Song",
+            Artists = new List<string> { "Artist 1", "Artist 2" },
+            Album = "Transient Album",
+            AlbumArtists = new List<string> { "Artist 1" },
+            Duration = TimeSpan.FromMinutes(3)
+        };
+        _metadataService.ExtractMetadataAsync(filePath).Returns(metadata);
+
+        await _service.PlayTransientFileAsync(filePath);
+
+        _service.CurrentTrack.Should().NotBeNull();
+        _service.CurrentTrack!.ArtistName.Should().Be("Artist 1 & Artist 2");
+        _service.CurrentTrack.PrimaryArtistName.Should().Be("Artist 1");
+
+        _service.CurrentTrack.Album.Should().NotBeNull();
+        _service.CurrentTrack.Album!.ArtistName.Should().Be("Artist 1");
+        _service.CurrentTrack.Album.PrimaryArtistName.Should().Be("Artist 1");
     }
 
     [Fact]
@@ -909,7 +936,6 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
 
         var duration = TimeSpan.FromMinutes(3);
         _audioPlayer.Duration.Returns(duration);
-        _audioPlayer.CurrentPosition.Returns(duration);
 
         _audioPlayer.PlaybackEnded += Raise.Event<Action>();
         await _service.AwaitPendingOperationsAsync();

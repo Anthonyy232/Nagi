@@ -49,19 +49,19 @@ public class ProviderPipelineProviderTests
     }
 
     [Fact]
-    public async Task RateLimiter_QueuesCallsBeyondPermitsPerSecond()
+    public async Task RateLimiter_QueuesCallsBeyondPermitsPerWindow()
     {
-        // 2 RPS, single bucket. Three calls should take ~1 second total: the third has to
-        // wait for the bucket to refill (1s replenishment period).
-        await using var sut = Build(Policy("p", channel: ApiPolicy(rps: 2, concurrency: 8)));
-
+        // Two permits per 200 ms window, so the third call has to wait for the bucket to refill. The clock starts
+        // before the limiter is built because its refill timer starts then.
         var stopwatch = Stopwatch.StartNew();
+        await using var sut = Build(Policy("p", channel: ApiPolicy(rps: 2) with { Window = TimeSpan.FromMilliseconds(200) }));
+
         var tasks = Enumerable.Range(0, 3).Select(_ => sut.ExecuteAsync("p", _ => ValueTask.FromResult(Resp(HttpStatusCode.OK))).AsTask()).ToArray();
         var responses = await Task.WhenAll(tasks);
         stopwatch.Stop();
         foreach (var response in responses) response.Dispose();
 
-        stopwatch.Elapsed.Should().BeGreaterThan(TimeSpan.FromMilliseconds(800),
+        stopwatch.Elapsed.Should().BeGreaterThan(TimeSpan.FromMilliseconds(150),
             "the third request must wait for the rate-limit bucket to refill");
     }
 
@@ -169,6 +169,29 @@ public class ProviderPipelineProviderTests
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         stopwatch.Elapsed.Should().BeGreaterThan(TimeSpan.FromMilliseconds(350),
             "the retry must wait at least the Retry-After value");
+    }
+
+    [Fact]
+    public async Task Retry_ClampsALongRetryAfterToMaxRetryDelay()
+    {
+        var attempt = 0;
+        await using var sut = Build(Policy("p",
+            channel: ApiPolicy(retries: 1) with { MaxRetryDelay = TimeSpan.FromMilliseconds(50) }));
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+        using var response = await sut.ExecuteAsync("p", _ =>
+        {
+            attempt++;
+            if (attempt == 1)
+            {
+                var rateLimited = Resp(HttpStatusCode.TooManyRequests);
+                rateLimited.Headers.RetryAfter = new RetryConditionHeaderValue(TimeSpan.FromSeconds(60));
+                return ValueTask.FromResult(rateLimited);
+            }
+            return ValueTask.FromResult(Resp(HttpStatusCode.OK));
+        }, timeout.Token);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [Fact]

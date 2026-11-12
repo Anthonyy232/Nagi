@@ -1,57 +1,14 @@
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using Nagi.Core.Artwork;
 using Nagi.Core.Library;
 using Nagi.Core.Metadata;
-using Nagi.Core.OnlineProviders;
-using Nagi.Core.OnlineProviders.Pipelines;
-using Nagi.Core.Platform;
-using Nagi.Core.Playback;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
 
 namespace Nagi.Core.Tests.Library;
 
-public class LibraryChangeEventTests : IDisposable
+public class LibraryChangeEventTests : LibraryTestBase
 {
-    private readonly DbContextFactoryTestHelper _dbHelper;
-    private readonly IFileSystemService _fileSystem;
-    private readonly TestLibrary _library;
-    private readonly IMetadataService _metadataService;
-    private readonly ProviderPipelineProvider _pipelines;
-
-    public LibraryChangeEventTests()
-    {
-        _fileSystem = Substitute.For<IFileSystemService>();
-        _fileSystem.NormalizePath(Arg.Any<string>()).Returns(call => PathCanonicalizer.Normalize(call.Arg<string>()));
-        _metadataService = Substitute.For<IMetadataService>();
-
-        _dbHelper = new DbContextFactoryTestHelper();
-
-        _pipelines = TestProviderPipeline.Build(ProviderCatalog.ImageDownload.ProviderId);
-
-        _library = new TestLibrary(
-            _dbHelper.ContextFactory,
-            _fileSystem,
-            _metadataService,
-            Substitute.For<IArtistMetadataService>(),
-            Substitute.For<IAlbumCoverService>(),
-            Substitute.For<IHttpClientFactory>(),
-            Substitute.For<IPathConfiguration>(),
-            TestSettings.Create(),
-            Substitute.For<IReplayGainService>(),
-            Substitute.For<IImageProcessor>(),
-            _pipelines);
-    }
-
-    public void Dispose()
-    {
-        _library.Dispose();
-        _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
-        _dbHelper.Dispose();
-    }
-
     // What each kind touches decides who reloads: the folder watcher (roots), playlists (songs added or removed), song,
     // album, artist and genre lists (songs), the folders page (folders), song lists again (favorites) and the
     // player's history (listen history).

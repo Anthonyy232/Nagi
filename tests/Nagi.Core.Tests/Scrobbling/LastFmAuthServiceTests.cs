@@ -48,7 +48,7 @@ public class LastFmAuthServiceTests : IDisposable
     {
         const string token = "auth-token-123";
         SetupValidCredentials();
-        SetupHttpResponse(HttpStatusCode.OK, new { token });
+        _httpMessageHandler.Respond(HttpStatusCode.OK, new { token });
 
         var result = await _authService.GetAuthenticationTokenAsync();
 
@@ -69,7 +69,7 @@ public class LastFmAuthServiceTests : IDisposable
         const string username = "testuser";
         const string sessionKey = "session-key-456";
         SetupValidCredentials();
-        SetupHttpResponse(HttpStatusCode.OK, new { session = new { name = username, key = sessionKey } });
+        _httpMessageHandler.Respond(HttpStatusCode.OK, new { session = new { name = username, key = sessionKey } });
 
         var result = await _authService.GetSessionAsync(token);
 
@@ -103,7 +103,7 @@ public class LastFmAuthServiceTests : IDisposable
     public async Task GetAuthenticationTokenAsync_WhenApiCallFails_ReturnsNull()
     {
         SetupValidCredentials();
-        SetupHttpResponse(HttpStatusCode.InternalServerError, null);
+        _httpMessageHandler.Respond(HttpStatusCode.InternalServerError, "");
 
         var result = await _authService.GetAuthenticationTokenAsync();
 
@@ -113,7 +113,7 @@ public class LastFmAuthServiceTests : IDisposable
     public async Task GetSessionAsync_WhenResponseIsMalformed_ReturnsNull()
     {
         SetupValidCredentials();
-        SetupHttpResponse(HttpStatusCode.OK, new { session = new { name = "user" } });
+        _httpMessageHandler.Respond(HttpStatusCode.OK, new { session = new { name = "user" } });
 
         var result = await _authService.GetSessionAsync("any-token");
 
@@ -156,7 +156,7 @@ public class LastFmAuthServiceTests : IDisposable
         const string token = "token/?with&reserved=characters+#";
         _apiKeyService.GetApiKeyAsync(ApiKeyNames.LastFm).Returns(key);
         _apiKeyService.GetApiKeyAsync(ApiKeyNames.LastFmSecret).Returns(ApiSecret);
-        SetupHttpResponse(HttpStatusCode.OK, new { token });
+        _httpMessageHandler.Respond(HttpStatusCode.OK, new { token });
 
         var authentication = await _authService.GetAuthenticationTokenAsync();
 
@@ -167,7 +167,7 @@ public class LastFmAuthServiceTests : IDisposable
         browserQuery["token"].Should().Be(token);
         HttpUtility.ParseQueryString(_httpMessageHandler.Requests[0].RequestUri!.Query)["api_key"].Should().Be(key);
 
-        SetupHttpResponse(HttpStatusCode.OK, new { session = new { name = "user", key = "session" } });
+        _httpMessageHandler.Respond(HttpStatusCode.OK, new { session = new { name = "user", key = "session" } });
         await _authService.GetSessionAsync(token);
 
         var sessionQuery = HttpUtility.ParseQueryString(_httpMessageHandler.Requests[1].RequestUri!.Query);
@@ -180,13 +180,6 @@ public class LastFmAuthServiceTests : IDisposable
     {
         _apiKeyService.GetApiKeyAsync("lastfm").Returns(Task.FromResult<string?>(ApiKey));
         _apiKeyService.GetApiKeyAsync("lastfm-secret").Returns(Task.FromResult<string?>(ApiSecret));
-    }
-    private void SetupHttpResponse(HttpStatusCode statusCode, object? content)
-    {
-        _httpMessageHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(statusCode)
-        {
-            Content = JsonContent.Create(content)
-        });
     }
 
 }

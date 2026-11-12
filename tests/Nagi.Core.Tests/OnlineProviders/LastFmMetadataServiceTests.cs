@@ -1,5 +1,4 @@
 using System.Net;
-using System.Text;
 using System.Text.Json;
 using System.Web;
 using FluentAssertions;
@@ -50,7 +49,7 @@ public class LastFmMetadataServiceTests : IDisposable
         const string bio = "This is a summary. <a href=\"https://www.last.fm\">Read more</a>";
         var responseContent = CreateValidArtistResponse(bio, "http://extralarge.jpg", "http://large.jpg");
         SetupApiKey();
-        SetupHttpResponse(HttpStatusCode.OK, responseContent);
+        _httpMessageHandler.Respond(HttpStatusCode.OK, responseContent);
 
         var result = await _metadataService.GetArtistInfoAsync(ArtistName);
 
@@ -69,7 +68,7 @@ public class LastFmMetadataServiceTests : IDisposable
     {
         var responseContent = CreateValidArtistResponse("Localized Bio", "http://url.jpg", "http://url.jpg");
         SetupApiKey();
-        SetupHttpResponse(HttpStatusCode.OK, responseContent);
+        _httpMessageHandler.Respond(HttpStatusCode.OK, responseContent);
 
         await _metadataService.GetArtistInfoAsync(ArtistName, "de");
 
@@ -83,7 +82,7 @@ public class LastFmMetadataServiceTests : IDisposable
     public async Task GetArtistInfoAsync_WithThreeLetterLanguageCode_OmitsLangParam()
     {
         SetupApiKey();
-        SetupHttpResponse(HttpStatusCode.OK, CreateValidArtistResponse("Bio", "http://url.jpg", "http://url.jpg"));
+        _httpMessageHandler.Respond(HttpStatusCode.OK, CreateValidArtistResponse("Bio", "http://url.jpg", "http://url.jpg"));
 
         await _metadataService.GetArtistInfoAsync(ArtistName, "fil");
 
@@ -104,14 +103,9 @@ public class LastFmMetadataServiceTests : IDisposable
         var errorResponse = CreateErrorResponse(errorCode, "Invalid API Key");
         var successResponse = CreateValidArtistResponse("Bio", "http://url.jpg", "http://url.jpg");
 
-        var responseQueue = new Queue<HttpResponseMessage>(new[]
-        {
-            new HttpResponseMessage(statusCode)
-                { Content = new StringContent(JsonSerializer.Serialize(errorResponse)) },
-            new HttpResponseMessage(HttpStatusCode.OK)
-                { Content = new StringContent(JsonSerializer.Serialize(successResponse)) }
-        });
-        _httpMessageHandler.SendAsyncFunc = (_, _) => Task.FromResult(responseQueue.Dequeue());
+        _httpMessageHandler.RespondSequence(
+            (statusCode, JsonSerializer.Serialize(errorResponse)),
+            (HttpStatusCode.OK, JsonSerializer.Serialize(successResponse)));
 
         var result = await _metadataService.GetArtistInfoAsync(ArtistName);
 
@@ -130,7 +124,7 @@ public class LastFmMetadataServiceTests : IDisposable
         _apiKeyService.RefreshApiKeyAsync("lastfm", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<string?>(null));
         var errorResponse = CreateErrorResponse(10, "Invalid API Key");
-        SetupHttpResponse(HttpStatusCode.BadRequest, errorResponse);
+        _httpMessageHandler.Respond(HttpStatusCode.BadRequest, errorResponse);
 
         var result = await _metadataService.GetArtistInfoAsync(ArtistName);
 
@@ -143,7 +137,7 @@ public class LastFmMetadataServiceTests : IDisposable
     public async Task GetArtistInfoAsync_WithoutBiographyOrRealImage_ReturnsNotFound(string summary)
     {
         SetupApiKey();
-        SetupHttpResponse(HttpStatusCode.OK, new
+        _httpMessageHandler.Respond(HttpStatusCode.OK, new
         {
             artist = new
             {
@@ -167,7 +161,7 @@ public class LastFmMetadataServiceTests : IDisposable
     public async Task GetArtistInfoAsync_WhenApiResponseIsNotFound_ReturnsSuccessNotFound()
     {
         SetupApiKey();
-        SetupHttpResponse(HttpStatusCode.OK, new { artist = (object?)null });
+        _httpMessageHandler.Respond(HttpStatusCode.OK, new { artist = (object?)null });
 
         var result = await _metadataService.GetArtistInfoAsync(ArtistName);
 
@@ -182,7 +176,7 @@ public class LastFmMetadataServiceTests : IDisposable
     public async Task GetArtistInfoAsync_WhenArtistIsUnknown_ReturnsConclusiveNotFound(HttpStatusCode statusCode)
     {
         SetupApiKey();
-        SetupHttpResponse(statusCode, CreateErrorResponse(6, "The artist you supplied could not be found"));
+        _httpMessageHandler.Respond(statusCode, CreateErrorResponse(6, "The artist you supplied could not be found"));
 
         var result = await _metadataService.GetArtistInfoAsync(ArtistName);
 
@@ -192,7 +186,7 @@ public class LastFmMetadataServiceTests : IDisposable
     public async Task GetArtistInfoAsync_WhenSuccessfulHttpResponseContainsApiError_ReturnsTemporaryError()
     {
         SetupApiKey();
-        SetupHttpResponse(HttpStatusCode.OK, CreateErrorResponse(11, "Service unavailable"));
+        _httpMessageHandler.Respond(HttpStatusCode.OK, CreateErrorResponse(11, "Service unavailable"));
 
         var result = await _metadataService.GetArtistInfoAsync(ArtistName);
 
@@ -217,7 +211,7 @@ public class LastFmMetadataServiceTests : IDisposable
             }
         };
         SetupApiKey();
-        SetupHttpResponse(HttpStatusCode.OK, responseContent);
+        _httpMessageHandler.Respond(HttpStatusCode.OK, responseContent);
 
         var result = await _metadataService.GetArtistInfoAsync(ArtistName);
 
@@ -232,7 +226,7 @@ public class LastFmMetadataServiceTests : IDisposable
     public async Task GetAlbumCoverUrlAsync_PrefersTheLargestRealImageOfTheRequestedAlbum(string returnedTitle, string? expected)
     {
         SetupApiKey();
-        SetupHttpResponse(HttpStatusCode.OK, """
+        _httpMessageHandler.Respond(HttpStatusCode.OK, """
             {"album":{"name":"TITLE","artist":"Radiohead","image":[
               {"#text":"http://large.jpg","size":"large"},
               {"#text":"","size":"extralarge"},
@@ -250,17 +244,6 @@ public class LastFmMetadataServiceTests : IDisposable
     private void SetupApiKey(string key = ApiKey)
     {
         _apiKeyService.GetApiKeyAsync("lastfm", Arg.Any<CancellationToken>()).Returns(Task.FromResult<string?>(key));
-    }
-    private void SetupHttpResponse(HttpStatusCode statusCode, object? content)
-    {
-        var response = new HttpResponseMessage(statusCode);
-        if (content != null)
-        {
-            var jsonContent = content is string s ? s : JsonSerializer.Serialize(content);
-            response.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-        }
-
-        _httpMessageHandler.SendAsyncFunc = (_, _) => Task.FromResult(response);
     }
     private static object CreateValidArtistResponse(string summary, string extraLargeUrl, string largeUrl)
     {

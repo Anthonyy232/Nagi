@@ -128,10 +128,7 @@ public class NetEaseLyricsServiceTests : IAsyncDisposable
     public async Task GetLyricsAsync_WhenSearchReturnsNoResults_ReturnsNull()
     {
         var searchResponse = new { result = new { songs = Array.Empty<object>() } };
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent(JsonSerializer.Serialize(searchResponse))
-        });
+        _httpHandler.Respond(HttpStatusCode.OK, searchResponse);
 
         var result = await _service.GetLyricsAsync(Track("NonExistent Track", "Artist"));
 

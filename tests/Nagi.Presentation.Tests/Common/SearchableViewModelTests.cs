@@ -5,7 +5,7 @@ using Nagi.Presentation.Common;
 using Nagi.Presentation.Tests.Utils;
 using Xunit;
 
-namespace Nagi.Presentation.Tests.Lists;
+namespace Nagi.Presentation.Tests.Common;
 
 public class SearchableViewModelTests
 {

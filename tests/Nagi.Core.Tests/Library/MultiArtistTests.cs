@@ -1,66 +1,15 @@
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Nagi.Core.Artwork;
 using Nagi.Core.Library;
-using Nagi.Core.Listening;
 using Nagi.Core.Metadata;
-using Nagi.Core.MusicServers;
-using Nagi.Core.OnlineProviders;
-using Nagi.Core.OnlineProviders.Pipelines;
-using Nagi.Core.Platform;
-using Nagi.Core.Playback;
-using Nagi.Core.Playlists;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
 
 namespace Nagi.Core.Tests.Library;
 
-public class MultiArtistTests : IDisposable
+public class MultiArtistTests : LibraryTestBase
 {
-    private readonly DbContextFactoryTestHelper _dbHelper;
-    private readonly IFileSystemService _fileSystem;
-    private readonly IMetadataService _metadataService;
-    private readonly TestLibrary _library;
-    private readonly ProviderPipelineProvider _pipelines;
-
-    public MultiArtistTests()
-    {
-        _dbHelper = new DbContextFactoryTestHelper();
-        _fileSystem = Substitute.For<IFileSystemService>();
-        _metadataService = Substitute.For<IMetadataService>();
-
-        var httpClientFactory = Substitute.For<IHttpClientFactory>();
-        var settingsService = TestSettings.Create();
-        var pathConfig = Substitute.For<IPathConfiguration>();
-        pathConfig.AlbumArtCachePath.Returns("C:\\cache\\albumart");
-        pathConfig.ArtistImageCachePath.Returns("C:\\cache\\artistimages");
-        pathConfig.LrcCachePath.Returns("C:\\cache\\lrc");
-
-        _pipelines = TestProviderPipeline.Build(ProviderCatalog.ImageDownload.ProviderId);
-
-        _library = new TestLibrary(
-            _dbHelper.ContextFactory,
-            _fileSystem,
-            _metadataService,
-            Substitute.For<IArtistMetadataService>(),
-            Substitute.For<IAlbumCoverService>(),
-            httpClientFactory,
-            pathConfig,
-            settingsService,
-            Substitute.For<IReplayGainService>(),
-            Substitute.For<IImageProcessor>(),
-            _pipelines);
-    }
-
-    public void Dispose()
-    {
-        _library.Dispose();
-        _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
-        _dbHelper.Dispose();
-    }
-
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -234,45 +183,5 @@ public class MultiArtistTests : IDisposable
         var songs = await assertContext.Songs.Include(s => s.Album).OrderBy(s => s.Title).ToListAsync();
         songs.Select(s => s.Album!.Title).Should().Equal("A|B", "A");
         songs.Select(s => s.AlbumId).Should().OnlyHaveUniqueItems();
-    }
-
-    [Fact]
-    public async Task PlayTransientFileAsync_PopulatesDenormalizedFields()
-    {
-
-        var filePath = "C:\\transient.mp3";
-        var metadata = new SongFileMetadata
-        {
-            Title = "Transient Song",
-            Artists = new List<string> { "Artist 1", "Artist 2" },
-            Album = "Transient Album",
-            AlbumArtists = new List<string> { "Artist 1" },
-            Duration = TimeSpan.FromMinutes(3)
-        };
-        _metadataService.ExtractMetadataAsync(filePath).Returns(metadata);
-
-        using var playbackService = new MusicPlaybackService(
-            TestSettings.Create(),
-            Substitute.For<IPlaybackStateStore>(),
-            Substitute.For<IAudioPlayer>(),
-            Substitute.For<ISystemMediaControls>(),
-            Substitute.For<ILibraryReader>(),
-            Substitute.For<ISmartPlaylistService>(),
-            Substitute.For<IListeningService>(),
-            _metadataService,
-            Substitute.For<IFileSystemService>(),
-            Substitute.For<IMusicServerService>(),
-            Substitute.For<ILogger<MusicPlaybackService>>()
-        );
-
-        await playbackService.PlayTransientFileAsync(filePath);
-
-        playbackService.CurrentTrack.Should().NotBeNull();
-        playbackService.CurrentTrack!.ArtistName.Should().Be("Artist 1 & Artist 2");
-        playbackService.CurrentTrack.PrimaryArtistName.Should().Be("Artist 1");
-
-        playbackService.CurrentTrack.Album.Should().NotBeNull();
-        playbackService.CurrentTrack.Album!.ArtistName.Should().Be("Artist 1");
-        playbackService.CurrentTrack.Album.PrimaryArtistName.Should().Be("Artist 1");
     }
 }

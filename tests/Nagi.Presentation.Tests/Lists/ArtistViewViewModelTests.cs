@@ -2,7 +2,6 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Library;
 using Nagi.Core.Playback;
-using Nagi.Core.Playlists;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Lists;
 using Nagi.Presentation.Navigation;
@@ -85,7 +84,7 @@ public class ArtistViewViewModelTests
                 Items = []
             });
         var settings = TestSettings.Create();
-        return new ArtistViewViewModel(library.Reader, library.Listening, library.Notifier, library.Artwork, Substitute.For<IPlaylistService>(),
+        return new ArtistViewViewModel(library.Reader, library.Listening, library.Notifier, library.Artwork, library.Playlists,
             Substitute.For<IMusicPlaybackService>(), Substitute.For<IMusicNavigationService>(),
             settings, new ImmediateDispatcher(), ui ?? Substitute.For<IUIService>(), NullLogger<ArtistViewViewModel>.Instance);
     }

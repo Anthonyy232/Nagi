@@ -66,7 +66,7 @@ public class SettingsServiceTests
     }
 
     [Fact]
-    public void Providers_AreSavedAsTheirIdAndToggleInPriorityOrder()
+    public void Providers_AreSavedAsTheirIdAndEnabledStateInPriorityOrder()
     {
         var values = new Dictionary<string, object>();
         var settings = TestSettings.Create(values);

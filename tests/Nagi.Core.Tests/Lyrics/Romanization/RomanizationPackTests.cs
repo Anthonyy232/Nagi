@@ -1,17 +1,15 @@
-using System.IO.Compression;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
-using Nagi.Core.Lyrics;
 using Nagi.Core.Lyrics.Romanization;
 using Nagi.Core.Platform;
-using Nagi.Core.Settings;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
+using static Nagi.Core.Tests.Lyrics.Romanization.RomanizationTestPacks;
 
 namespace Nagi.Core.Tests.Lyrics.Romanization;
 
@@ -362,108 +360,6 @@ public sealed class RomanizationPackTests : IDisposable
         new EcdsaRomanizationCatalogVerifier().Verify(envelope).Should().BeFalse("the signature covers the pack hashes");
     }
 
-    [Fact]
-    public async Task LyricRomanizationService_WhenDisabled_LeavesLyricsUnchanged()
-    {
-        var service = CreateLyricService(isEnabled: false, installedPack: CreateInstalledDevanagariPack());
-
-        var lines = await service.ApplyRomanizationAsync(new[] { new LyricLine(TimeSpan.Zero, HindiText) });
-
-        lines.Should().ContainSingle();
-        lines[0].RomanizedText.Should().BeNull();
-    }
-
-    [Fact]
-    public async Task LyricRomanizationService_ReadsAPacksRulesOnceAcrossLyrics()
-    {
-        var pack = CreateInstalledDevanagariPack();
-        var fileSystem = Substitute.For<IFileSystemService>();
-        fileSystem.ReadAllTextAsync(Arg.Any<string>()).Returns(call => File.ReadAllTextAsync(call.Arg<string>()));
-        var settings = TestSettings.Create();
-        settings.Set(CoreSettings.LyricsRomanization, true);
-        var packManager = Substitute.For<IRomanizationPackManager>();
-        packManager.GetInstalledPacksAsync(Arg.Any<CancellationToken>()).Returns([pack]);
-        var service = new LyricRomanizationService(settings, packManager, [new DevanagariRomanizationProvider()], fileSystem);
-
-        var first = await service.ApplyRomanizationAsync([new LyricLine(TimeSpan.Zero, HindiText)]);
-        var second = await service.ApplyRomanizationAsync([new LyricLine(TimeSpan.Zero, $"{HindiText}!")]);
-
-        first[0].RomanizedText.Should().Be("hindi");
-        second[0].RomanizedText.Should().Be("hindi!");
-        await fileSystem.Received(1).ReadAllTextAsync(Arg.Any<string>());
-    }
-
-    [Fact]
-    public async Task LyricRomanizationService_WithMissingPack_LeavesSupportedLyricsUnchanged()
-    {
-        var service = CreateLyricService(isEnabled: true, installedPack: null);
-
-        var lines = await service.ApplyRomanizationAsync(new[] { new LyricLine(TimeSpan.Zero, HindiText) });
-
-        lines[0].RomanizedText.Should().BeNull();
-    }
-
-    [Fact]
-    public async Task LyricRomanizationService_WithInstalledPack_RomanizesMixedScriptLine()
-    {
-        var service = CreateLyricService(isEnabled: true, installedPack: CreateInstalledDevanagariPack());
-
-        var lines = await service.ApplyRomanizationAsync(new[] { new LyricLine(TimeSpan.Zero, $"hello {HindiText}!") });
-
-        lines[0].Text.Should().Be($"hello {HindiText}!");
-        lines[0].RomanizedText.Should().Be("hello hindi!");
-    }
-
-    [Fact]
-    public async Task LyricRomanizationService_KeepsTranslationWithoutRomanizingIt()
-    {
-        var service = CreateLyricService(isEnabled: true, installedPack: CreateInstalledDevanagariPack());
-
-        var lines = await service.ApplyRomanizationAsync(new[]
-        {
-            new LyricLine(TimeSpan.Zero, "hello") { TranslatedText = HindiText }
-        });
-
-        lines[0].TranslatedText.Should().Be(HindiText);
-        lines[0].RomanizedText.Should().BeNull();
-    }
-
-    [Fact]
-    public async Task LyricRomanizationService_WithMissingEarlierProviderPack_UsesInstalledLaterProvider()
-    {
-        var service = CreateLyricService(isEnabled: true, installedPack: LoadSourcePack("korean-revised"));
-
-        var lines = await service.ApplyRomanizationAsync(new[] { new LyricLine(TimeSpan.Zero, $"世界 {KoreanText}") });
-
-        lines[0].RomanizedText.Should().Be("世界 saranghae");
-    }
-
-    [Fact]
-    public async Task LyricRomanizationService_WithMultipleInstalledPacks_RomanizesAllSupportedScripts()
-    {
-        var service = CreateLyricService(
-            isEnabled: true,
-            installedPack: CreateInstalledDevanagariPack(),
-            LoadSourcePack("korean-revised"));
-
-        var lines = await service.ApplyRomanizationAsync(new[] { new LyricLine(TimeSpan.Zero, $"{HindiText} {KoreanText}") });
-
-        lines[0].RomanizedText.Should().Be("hindi saranghae");
-    }
-
-    [Fact]
-    public async Task LyricRomanizationService_WithUnsupportedLine_LeavesLineUnchanged()
-    {
-        var service = CreateLyricService(isEnabled: true, installedPack: CreateInstalledDevanagariPack());
-
-        var lines = await service.ApplyRomanizationAsync(new[] { new LyricLine(TimeSpan.Zero, "hello world") });
-
-        lines[0].RomanizedText.Should().BeNull();
-    }
-
-    private static readonly string HindiText = "\u0939\u093F\u0928\u094D\u0926\u0940";
-    private static readonly string KoreanText = "\uC0AC\uB791\uD574";
-
     private RomanizationPackManager CreateManager(string catalogJson, byte[] packBytes, bool catalogIsValid = true,
         long maxResponseContentBufferSize = int.MaxValue, IRomanizationProvider? validationProvider = null)
     {
@@ -526,77 +422,6 @@ public sealed class RomanizationPackTests : IDisposable
         return provider;
     }
 
-    private ILyricRomanizationService CreateLyricService(
-        bool isEnabled,
-        InstalledRomanizationPack? installedPack,
-        params InstalledRomanizationPack[] additionalInstalledPacks)
-    {
-        var settings = TestSettings.Create();
-        settings.Set(CoreSettings.LyricsRomanization, isEnabled);
-
-        var installedPacks = new List<InstalledRomanizationPack>();
-        if (installedPack is not null) installedPacks.Add(installedPack);
-        installedPacks.AddRange(additionalInstalledPacks);
-
-        var packManager = Substitute.For<IRomanizationPackManager>();
-        packManager.GetInstalledPacksAsync(Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult<IReadOnlyList<InstalledRomanizationPack>>(
-                installedPacks));
-
-        return new LyricRomanizationService(
-            settings,
-            packManager,
-            new IRomanizationProvider[] { new DevanagariRomanizationProvider(), new JapaneseRomanizationProvider(), new KoreanRomanizationProvider() },
-            new FileSystemService());
-    }
-
-    private InstalledRomanizationPack CreateInstalledDevanagariPack()
-    {
-        var packDirectory = Path.Combine(_tempRoot, Guid.NewGuid().ToString("N"));
-        ExtractArchive(CreateDevanagariPack(), packDirectory);
-        return new InstalledRomanizationPack
-        {
-            Manifest = new RomanizationPackManifest
-            {
-                Id = "hindi",
-                DisplayName = "Hindi",
-                Language = "Hindi",
-                Script = "Devanagari",
-                EngineId = "devanagari-v1",
-                Version = "1.0.0"
-            },
-            DirectoryPath = packDirectory
-        };
-    }
-
-    private static InstalledRomanizationPack LoadSourcePack(string packId)
-    {
-        var packDirectory = Path.Combine(FindRepoRoot(), "tools", "romanization-packs", "src", packId);
-        var manifest = JsonSerializer.Deserialize<RomanizationPackManifest>(
-            File.ReadAllText(Path.Combine(packDirectory, "manifest.json")),
-            RomanizationJson.Options)!;
-
-        return new InstalledRomanizationPack
-        {
-            Manifest = manifest,
-            DirectoryPath = packDirectory
-        };
-    }
-
-    private static string FindRepoRoot()
-    {
-        var directory = new DirectoryInfo(AppContext.BaseDirectory);
-        while (directory is not null)
-        {
-            if (Directory.Exists(Path.Combine(directory.FullName, "tools", "romanization-packs", "src")))
-                return directory.FullName;
-
-            directory = directory.Parent;
-        }
-
-        throw new DirectoryNotFoundException("Could not find repository root.");
-    }
-
     private static string CreateCatalogJson(RomanizationPackCatalogEntry entry)
     {
         var envelope = new RomanizationCatalogEnvelope
@@ -630,69 +455,6 @@ public sealed class RomanizationPackTests : IDisposable
             Sha256 = Convert.ToHexString(SHA256.HashData(bytes)),
             DownloadUrl = $"https://packs.test/{id}.nagipack"
         };
-    }
-
-    private static byte[] CreateDevanagariPack(params (string Path, string Content)[] extraEntries)
-    {
-        var manifest = new RomanizationPackManifest
-        {
-            Id = "hindi",
-            DisplayName = "Hindi",
-            Language = "Hindi",
-            Script = "Devanagari",
-            EngineId = "devanagari-v1",
-            Version = "1.0.0",
-            License = "Test",
-            Attribution = "Test"
-        };
-
-        var rules = new
-        {
-            Phrases = new Dictionary<string, string> { [HindiText] = "hindi" },
-        };
-
-        var golden = new[] { new RomanizationGoldenCase { Input = HindiText, Expected = "hindi" } };
-        return CreatePackArchive(manifest, "devanagari-rules.json", rules, golden, extraEntries);
-    }
-
-    private static byte[] CreatePackArchive(
-        RomanizationPackManifest manifest,
-        string rulesFileName,
-        object rules,
-        IReadOnlyList<RomanizationGoldenCase> golden,
-        IReadOnlyList<(string Path, string Content)> extraEntries)
-    {
-        using var stream = new MemoryStream();
-        using (var archive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true))
-        {
-            WriteJsonEntry(archive, "manifest.json", manifest);
-            WriteJsonEntry(archive, $"data/{rulesFileName}", rules);
-            WriteJsonEntry(archive, "tests/golden.json", golden);
-            WriteTextEntry(archive, "NOTICE.txt", "Test attribution");
-            foreach (var (path, content) in extraEntries)
-                WriteTextEntry(archive, path, content);
-        }
-
-        return stream.ToArray();
-    }
-
-    private static void WriteJsonEntry(ZipArchive archive, string path, object value)
-    {
-        WriteTextEntry(archive, path, JsonSerializer.Serialize(value, RomanizationJson.Options));
-    }
-
-    private static void WriteTextEntry(ZipArchive archive, string path, string value)
-    {
-        var entry = archive.CreateEntry(path);
-        using var writer = new StreamWriter(entry.Open(), Encoding.UTF8);
-        writer.Write(value);
-    }
-
-    private static void ExtractArchive(byte[] archiveBytes, string destination)
-    {
-        using var stream = new MemoryStream(archiveBytes);
-        using var archive = new ZipArchive(stream, ZipArchiveMode.Read);
-        archive.ExtractToDirectory(destination);
     }
 
     private sealed class StalledDownloadStream : MemoryStream

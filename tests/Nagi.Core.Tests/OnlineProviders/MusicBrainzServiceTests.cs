@@ -1,5 +1,4 @@
 using System.Net;
-using System.Text.Json;
 using System.Web;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -45,10 +44,7 @@ public class MusicBrainzServiceTests : IDisposable
                 new { id = "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d", name = "The Beatles", score = 100 }
             }
         };
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent(JsonSerializer.Serialize(mbResponse))
-        });
+        _httpHandler.Respond(HttpStatusCode.OK, mbResponse);
         var result = await _service.SearchArtistAsync("The Beatles");
         result.Data.Should().Be("b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d");
     }
@@ -63,10 +59,7 @@ public class MusicBrainzServiceTests : IDisposable
                 new { id = "some-id", name = "Similar Artist", score = 50 }
             }
         };
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent(JsonSerializer.Serialize(mbResponse))
-        });
+        _httpHandler.Respond(HttpStatusCode.OK, mbResponse);
         var result = await _service.SearchArtistAsync("The Beatles");
         result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
     }
@@ -75,10 +68,7 @@ public class MusicBrainzServiceTests : IDisposable
     public async Task SearchArtistAsync_WithNoResults_ReturnsNoMatch()
     {
         var mbResponse = new { artists = Array.Empty<object>() };
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent(JsonSerializer.Serialize(mbResponse))
-        });
+        _httpHandler.Respond(HttpStatusCode.OK, mbResponse);
         var result = await _service.SearchArtistAsync("NonExistent Artist XYZ123");
         result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
     }
