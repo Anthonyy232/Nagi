@@ -68,7 +68,7 @@
 
                             <uicontrols:ArtworkImage Grid.Row="0" HorizontalAlignment="Center" Size="{StaticResource CollectionCardImageSize}" IsCircular="True"
                                                          Source="{x:Bind ImageUri, Mode=OneWay}"
-                                                         PlaceholderGlyph="" />
+                                                         PlaceholderGlyph="&#xE77B;" />
 
                             <TextBlock
                                 Grid.Row="1"

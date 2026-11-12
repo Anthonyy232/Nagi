@@ -22,7 +22,7 @@ public sealed class SortButton : Button
     public SortButton()
     {
         Style = (Style)Application.Current.Resources[AppResourceKeys.SongListViewPageIconButton];
-        Content = new FontIcon { FontSize = 16, Glyph = "" };
+        Content = new FontIcon { FontSize = 16, Glyph = "\uE8CB" };
         Flyout = _menu;
         _menu.Opening += (_, _) => FillMenu();
     }

@@ -106,7 +106,7 @@
                                       Visibility="{x:Bind IsServer}" />
                             <FontIcon HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48"
                                       Visibility="{x:Bind IsServer, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
-                                      Glyph="" />
+                                      Glyph="&#xE838;" />
                         </Grid>
 
                         <TextBlock

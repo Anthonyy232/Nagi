@@ -36,7 +36,7 @@
                                           Padding="{TemplateBinding Padding}" />
                         <Border x:Name="HoverOverlay" Background="Black" Opacity="0"
                                 CornerRadius="{TemplateBinding CornerRadius}" />
-                        <FontIcon x:Name="PlayIcon" Glyph="" FontSize="20" Opacity="0" RenderTransformOrigin="0.5,0.5">
+                        <FontIcon x:Name="PlayIcon" Glyph="&#xE768;" FontSize="20" Opacity="0" RenderTransformOrigin="0.5,0.5">
                             <FontIcon.RenderTransform>
                                 <ScaleTransform x:Name="IconScale" />
                             </FontIcon.RenderTransform>

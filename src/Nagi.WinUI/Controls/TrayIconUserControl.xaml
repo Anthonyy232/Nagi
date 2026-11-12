@@ -34,7 +34,7 @@
                     Text="{x:Bind resources:Strings.TrayIcon_Exit, Mode=OneTime}"
                     Command="{x:Bind ViewModel.ExitApplicationCommand}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Glyph="" />
+                        <FontIcon Glyph="&#xE7E8;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
             </MenuFlyout>
