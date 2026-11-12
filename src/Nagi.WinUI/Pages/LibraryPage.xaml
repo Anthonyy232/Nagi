@@ -59,9 +59,7 @@
 
         <uicontrols:PaginationControl
             Grid.Row="3"
-            ViewModel="{x:Bind ViewModel}"
-            HorizontalAlignment="Right"
-            Margin="0,16,24,16" />
+            ViewModel="{x:Bind ViewModel}" />
 
         <uicontrols:EmptyState Grid.Row="2"
                                Glyph="&#xE8D6;"

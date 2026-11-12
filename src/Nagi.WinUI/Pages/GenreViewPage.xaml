@@ -54,9 +54,7 @@
 
         <uicontrols:PaginationControl
             Grid.Row="2"
-            ViewModel="{x:Bind ViewModel}"
-            HorizontalAlignment="Right"
-            Margin="0,16,24,16" />
+            ViewModel="{x:Bind ViewModel}" />
         <uicontrols:EmptyState Grid.Row="1"
                                Glyph="&#xE8D6;"
                                Title="{x:Bind resources:Strings.GenreViewPage_EmptyState_Title, Mode=OneTime}"

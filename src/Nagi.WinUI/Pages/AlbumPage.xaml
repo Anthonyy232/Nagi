@@ -92,8 +92,6 @@
 
         <uicontrols:PaginationControl
             Grid.Row="2"
-            ViewModel="{x:Bind ViewModel}"
-            HorizontalAlignment="Right"
-            Margin="0,16,24,16" />
+            ViewModel="{x:Bind ViewModel}" />
     </Grid>
 </pages:CollectionPage>

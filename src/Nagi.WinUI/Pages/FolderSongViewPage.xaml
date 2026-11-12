@@ -120,9 +120,7 @@
 
         <uicontrols:PaginationControl
             Grid.Row="2"
-            ViewModel="{x:Bind ViewModel}"
-            HorizontalAlignment="Right"
-            Margin="0,16,24,16" />
+            ViewModel="{x:Bind ViewModel}" />
         <uicontrols:EmptyState Grid.Row="1"
                                Glyph="{x:Bind EmptyGlyph(ViewModel.IsServer), Mode=OneWay}"
                                Title="{x:Bind ViewModel.EmptyTitle, Mode=OneWay}"
