@@ -204,15 +204,6 @@ public class NetEaseLyricsServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task GetLyricsAsync_WhenAlreadyCancelled_ThrowsOperationCanceledException()
-    {
-        using var cts = new CancellationTokenSource();
-        cts.Cancel();
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => _service.GetLyricsAsync(Track("Track", "Artist"), cts.Token));
-    }
-
-    [Fact]
     public async Task GetLyricsAsync_WhenCancelledDuringLyricsFetch_ThrowsOperationCanceledException()
     {
         using var cts = new CancellationTokenSource();

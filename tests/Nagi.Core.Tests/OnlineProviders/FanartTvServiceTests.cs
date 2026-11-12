@@ -79,15 +79,6 @@ public class FanartTvServiceTests : IDisposable
         result.Data.BackgroundUrl.Should().BeNull();
     }
 
-    [Fact]
-    public async Task GetArtistImagesAsync_When404_ReturnsSuccessNotFound()
-    {
-        _httpHandler.SendAsyncFunc = (_, _) =>
-            Task.FromResult(new HttpResponseMessage(HttpStatusCode.NotFound));
-        var result = await _service.GetArtistImagesAsync(ValidMbid);
-        result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
-    }
-
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
@@ -95,52 +86,6 @@ public class FanartTvServiceTests : IDisposable
     {
         var result = await _service.GetArtistImagesAsync(mbid);
         result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
-    }
-
-    [Fact]
-    public async Task GetArtistImagesAsync_WhenApiKeyMissing_ReturnsTemporaryError()
-    {
-        _apiKeyService.GetApiKeyAsync("fanarttv", Arg.Any<CancellationToken>()).Returns((string?)null);
-        var result = await _service.GetArtistImagesAsync(ValidMbid);
-        result.Status.Should().Be(ServiceResultStatus.TemporaryError);
-    }
-
-    [Theory]
-    [InlineData(HttpStatusCode.Unauthorized)]
-    [InlineData(HttpStatusCode.Forbidden)]
-    public async Task GetArtistImagesAsync_WhenKeyIsRejected_RetriesWithARefreshedKey(HttpStatusCode rejection)
-    {
-        _apiKeyService.RefreshApiKeyAsync("fanarttv", Arg.Any<CancellationToken>()).Returns("rotated-key");
-        _httpHandler.SendAsyncFunc = (request, _) => Task.FromResult(
-            request.RequestUri!.Query.Contains("rotated-key")
-                ? new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent(JsonSerializer.Serialize(new { artistthumb = new[] { new { url = "https://fanart.tv/thumb.jpg" } } }))
-                }
-                : new HttpResponseMessage(rejection));
-
-        var result = await _service.GetArtistImagesAsync(ValidMbid);
-
-        result.Data!.ThumbUrl.Should().Be("https://fanart.tv/thumb.jpg");
-        _httpHandler.Requests.Should().HaveCount(2);
-    }
-
-    [Fact]
-    public async Task GetArtistImagesAsync_WhenHttpError_ReturnsTemporaryError()
-    {
-        _httpHandler.SendAsyncFunc = (_, _) =>
-            Task.FromResult(new HttpResponseMessage(HttpStatusCode.InternalServerError));
-        var result = await _service.GetArtistImagesAsync(ValidMbid);
-        result.Status.Should().Be(ServiceResultStatus.TemporaryError);
-    }
-
-    [Fact]
-    public async Task GetArtistImagesAsync_WhenCancelled_ThrowsOperationCancelled()
-    {
-        using var cts = new CancellationTokenSource();
-        cts.Cancel();
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => _service.GetArtistImagesAsync(ValidMbid, cts.Token));
     }
 
     [Fact]

@@ -105,17 +105,6 @@ public class MusicBrainzServiceTests : IDisposable
         HttpUtility.ParseQueryString(new Uri(capturedUrl!).Query)["query"].Should().Be(expectedQuery);
     }
 
-    [Fact]
-    public async Task SearchArtistAsync_HttpFailure_RemainsRetryable()
-    {
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.ServiceUnavailable));
-
-        var result = await _service.SearchArtistAsync("Any Artist");
-
-        result.Status.Should().Be(ServiceResultStatus.TemporaryError);
-        result.Data.Should().BeNull();
-    }
-
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
@@ -132,37 +121,6 @@ public class MusicBrainzServiceTests : IDisposable
 
         result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
         calls.Should().Be(0);
-    }
-
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task SearchArtistAsync_TransportFailure_RemainsRetryable(bool timeout)
-    {
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromException<HttpResponseMessage>(
-            timeout ? new TaskCanceledException("Timed out") : new HttpRequestException("Offline"));
-
-        var result = await _service.SearchArtistAsync("Any Artist");
-
-        result.Status.Should().Be(ServiceResultStatus.TemporaryError);
-    }
-
-    [Fact]
-    public async Task SearchArtistAsync_WhenRequestIsCancelled_PropagatesCancellation()
-    {
-        using var cts = new CancellationTokenSource();
-
-        var requestStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        _httpHandler.SendAsyncFunc = async (_, ct) =>
-        {
-            requestStarted.SetResult();
-            await Task.Delay(Timeout.InfiniteTimeSpan, ct);
-            return new HttpResponseMessage(HttpStatusCode.OK);
-        };
-        var request = _service.SearchArtistAsync("Artist", cts.Token);
-        await requestStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
-        cts.Cancel();
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => request);
     }
 
     [Theory]

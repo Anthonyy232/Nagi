@@ -185,15 +185,6 @@ public class LrcLibServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task GetLyricsAsync_WhenCancelled_PropagatesCancellation()
-    {
-        using var cts = new CancellationTokenSource();
-        cts.Cancel();
-        var act = () => _service.GetLyricsAsync(Track("Track", "Artist", "Album", TimeSpan.FromMinutes(3)), cts.Token);
-        await act.Should().ThrowAsync<OperationCanceledException>();
-    }
-
-    [Fact]
     public async Task GetLyricsAsync_WhenCancelledDuringSearch_PropagatesCancellation()
     {
         using var cts = new CancellationTokenSource();

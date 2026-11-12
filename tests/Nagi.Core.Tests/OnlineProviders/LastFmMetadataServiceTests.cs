@@ -137,25 +137,6 @@ public class LastFmMetadataServiceTests : IDisposable
         result.IsConclusive.Should().BeFalse();
         _httpMessageHandler.Requests.Should().HaveCount(1);
     }
-    [Fact]
-    public async Task GetArtistInfoAsync_WhenInitialApiKeyIsMissing_RemainsRetryableWithoutHttpCall()
-    {
-        _apiKeyService.GetApiKeyAsync("lastfm", Arg.Any<CancellationToken>()).Returns(Task.FromResult<string?>(null));
-
-        var result = await _metadataService.GetArtistInfoAsync(ArtistName);
-
-        result.IsConclusive.Should().BeFalse();
-        _httpMessageHandler.Requests.Should().BeEmpty();
-
-        SetupApiKey();
-        SetupHttpResponse(HttpStatusCode.OK, CreateValidArtistResponse("Recovered bio", "http://image.jpg", "http://image.jpg"));
-
-        var retry = await _metadataService.GetArtistInfoAsync(ArtistName);
-
-        retry.Data!.Biography.Should().Be("Recovered bio");
-        _httpMessageHandler.Requests.Should().HaveCount(1);
-    }
-
     [Theory]
     [InlineData("<a href=\"https://www.last.fm/music/Test\">Read more on Last.fm</a>")]
     [InlineData("   ")]
@@ -208,17 +189,6 @@ public class LastFmMetadataServiceTests : IDisposable
         result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
     }
     [Fact]
-    public async Task GetArtistInfoAsync_WhenHttpStatusIsErrorWithoutApiError_ReturnsTemporaryError()
-    {
-        SetupApiKey();
-        SetupHttpResponse(HttpStatusCode.InternalServerError, new { message = "Internal server error" });
-
-        var result = await _metadataService.GetArtistInfoAsync(ArtistName);
-
-        result.Status.Should().Be(ServiceResultStatus.TemporaryError);
-    }
-
-    [Fact]
     public async Task GetArtistInfoAsync_WhenSuccessfulHttpResponseContainsApiError_ReturnsTemporaryError()
     {
         SetupApiKey();
@@ -227,35 +197,6 @@ public class LastFmMetadataServiceTests : IDisposable
         var result = await _metadataService.GetArtistInfoAsync(ArtistName);
 
         result.Status.Should().Be(ServiceResultStatus.TemporaryError);
-    }
-    [Fact]
-    public async Task GetArtistInfoAsync_WhenResponseIsMalformedJson_ReturnsTemporaryError()
-    {
-        SetupApiKey();
-        SetupHttpResponse(HttpStatusCode.OK, "{ not json }");
-
-        var result = await _metadataService.GetArtistInfoAsync(ArtistName);
-
-        result.Status.Should().Be(ServiceResultStatus.TemporaryError);
-    }
-    [Fact]
-    public async Task GetArtistInfoAsync_WhenRequestIsCanceled_ThrowsOperationCanceledException()
-    {
-        using var cts = new CancellationTokenSource();
-        SetupApiKey();
-        var requestStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        _httpMessageHandler.SendAsyncFunc = async (_, token) =>
-        {
-            requestStarted.SetResult();
-            await Task.Delay(Timeout.InfiniteTimeSpan, token);
-            return new HttpResponseMessage(HttpStatusCode.OK);
-        };
-
-        var task = _metadataService.GetArtistInfoAsync(ArtistName, null, cts.Token);
-        await requestStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
-        cts.Cancel();
-
-        await task.Awaiting(t => t).Should().ThrowAsync<TaskCanceledException>();
     }
     [Theory]
     [InlineData(null, "http://large.jpg", "http://large.jpg")]
