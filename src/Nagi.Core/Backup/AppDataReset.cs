@@ -46,8 +46,10 @@ public sealed class AppDataReset : IAppDataReset
             await _accounts.DisconnectLastFmAsync();
             await _accounts.DisconnectListenBrainzAsync();
             _settings.ResetToDefaults();
-            await _autoLaunch.SetEnabledAsync(false);
+            // Before the OS call that policy can refuse: only this reset forgets the server sign-ins, and the
+            // fallback below can't.
             await _libraryReset.ClearAllLibraryDataAsync();
+            await _autoLaunch.SetEnabledAsync(false);
         }
         catch (Exception ex)
         {

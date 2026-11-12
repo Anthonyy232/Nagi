@@ -53,11 +53,21 @@ public class AppDataResetTests : IDisposable
             _accounts.DisconnectLastFmAsync();
             _accounts.DisconnectListenBrainzAsync();
             _settings.ResetToDefaults();
-            _autoLaunch.SetEnabledAsync(false);
             _libraryReset.ClearAllLibraryDataAsync();
+            _autoLaunch.SetEnabledAsync(false);
         });
         File.Exists(_paths.PlaybackStateFilePath).Should().BeFalse();
         Directory.Exists(_paths.RomanizationPacksPath).Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task Reset_WhenLaunchAtSignInCannotBeTurnedOff_StillClearsTheLibraryAndItsServerSignIns()
+    {
+        _autoLaunch.SetEnabledAsync(false).ThrowsAsync(new ArgumentException("No startup task"));
+
+        await _reset.ResetAsync();
+
+        await _libraryReset.Received(1).ClearAllLibraryDataAsync();
     }
 
     [Fact]
