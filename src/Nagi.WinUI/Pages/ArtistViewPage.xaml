@@ -94,64 +94,62 @@
 
         <ScrollViewer uihelpers:ScrollEdgeFade.IsEnabled="True" Grid.Row="0" VerticalScrollBarVisibility="Auto">
             <StackPanel Padding="{StaticResource ViewPageHeaderPadding}">
-                <Grid Margin="{StaticResource SectionHeaderMargin}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid Grid.Column="0" Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}" CornerRadius="{StaticResource HeaderImageCircleRadius}"
-                          PointerEntered="ArtistImage_PointerEntered" PointerExited="ArtistImage_PointerExited"
-                          Background="Transparent">
-                        <uicontrols:ArtworkImage Size="{StaticResource HeaderImageSize}" IsCircular="True"
-                                                 Source="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay}"
-                                                 PlaceholderGlyph="&#xE77B;" PlaceholderGlyphSize="64" />
-                        <!-- A button, so the image menu is reachable by keyboard and screen readers, not only by pointer. -->
-                        <Button x:Name="EditOverlay"
-                                Padding="0"
-                                BorderThickness="0"
-                                Background="Transparent"
-                                CornerRadius="{StaticResource HeaderImageCircleRadius}"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                HorizontalContentAlignment="Stretch"
-                                VerticalContentAlignment="Stretch"
-                                Opacity="0"
-                                GotFocus="EditOverlay_GotFocus"
-                                LostFocus="EditOverlay_LostFocus"
-                                ToolTipService.ToolTip="{x:Bind resources:Strings.ArtistViewPage_EditOverlay_Content, Mode=OneTime}"
-                                AutomationProperties.Name="{x:Bind resources:Strings.ArtistViewPage_EditOverlay_Content, Mode=OneTime}">
-                            <Button.Flyout>
-                                <MenuFlyout>
-                                    <MenuFlyoutItem Text="{x:Bind resources:Strings.Generic_ChangeImage, Mode=OneTime}" Command="{x:Bind ViewModel.ChangeArtistImageCommand}" />
-                                    <MenuFlyoutItem Text="{x:Bind resources:Strings.Generic_RemoveImage, Mode=OneTime}" Command="{x:Bind ViewModel.RemoveArtistImageCommand}"
-                                                    Visibility="{x:Bind ViewModel.IsCustomImage, Mode=OneWay}" />
-                                </MenuFlyout>
-                            </Button.Flyout>
-                            <Grid Background="{StaticResource MediaOnImageHoverScrimBrush}" CornerRadius="{StaticResource HeaderImageCircleRadius}">
-                                <FontIcon Glyph="&#xE70F;" Foreground="{StaticResource MediaOnImageTextPrimaryBrush}" FontSize="32" />
-                            </Grid>
-                        </Button>
-                    </Grid>
-
-                    <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Center" Spacing="8">
-                        <TextBlock Text="{x:Bind resources:Strings.ArtistViewPage_Header_Label, Mode=OneTime}" Style="{ThemeResource CaptionTextBlockStyle}" />
-                        <TextBlock Style="{ThemeResource HeaderTextBlockStyle}"
-                                   Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}" />
-                        <TextBlock
-                            MaxLines="3"
-                            Opacity="0.8"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="{x:Bind ViewModel.ArtistBio, Mode=OneWay}"
-                            TextTrimming="CharacterEllipsis"
-                            TextWrapping="Wrap" />
-                        <TextBlock
-                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                            Style="{ThemeResource CaptionTextBlockStyle}"
-                            Text="{x:Bind ViewModel.BiographyCredit, Mode=OneWay}"
-                            TextWrapping="Wrap"
-                            Visibility="{x:Bind ViewModel.BiographyCredit, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}" />
-                    </StackPanel>
-                </Grid>
+                <uicontrols:DetailPageHeader Margin="{StaticResource SectionHeaderMargin}"
+                                             Caption="{x:Bind resources:Strings.ArtistViewPage_Header_Label, Mode=OneTime}"
+                                             Title="{x:Bind ViewModel.PageTitle, Mode=OneWay}">
+                    <uicontrols:DetailPageHeader.Artwork>
+                        <Grid Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}" CornerRadius="{StaticResource HeaderImageCircleRadius}"
+                              PointerEntered="ArtistImage_PointerEntered" PointerExited="ArtistImage_PointerExited"
+                              Background="Transparent">
+                            <uicontrols:ArtworkImage Size="{StaticResource HeaderImageSize}" IsCircular="True"
+                                                     Source="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay}"
+                                                     PlaceholderGlyph="&#xE77B;" PlaceholderGlyphSize="64" />
+                            <!-- A button, so the image menu is reachable by keyboard and screen readers, not only by pointer. -->
+                            <Button x:Name="EditOverlay"
+                                    Padding="0"
+                                    BorderThickness="0"
+                                    Background="Transparent"
+                                    CornerRadius="{StaticResource HeaderImageCircleRadius}"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    HorizontalContentAlignment="Stretch"
+                                    VerticalContentAlignment="Stretch"
+                                    Opacity="0"
+                                    GotFocus="EditOverlay_GotFocus"
+                                    LostFocus="EditOverlay_LostFocus"
+                                    ToolTipService.ToolTip="{x:Bind resources:Strings.ArtistViewPage_EditOverlay_Content, Mode=OneTime}"
+                                    AutomationProperties.Name="{x:Bind resources:Strings.ArtistViewPage_EditOverlay_Content, Mode=OneTime}">
+                                <Button.Flyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem Text="{x:Bind resources:Strings.Generic_ChangeImage, Mode=OneTime}" Command="{x:Bind ViewModel.ChangeArtistImageCommand}" />
+                                        <MenuFlyoutItem Text="{x:Bind resources:Strings.Generic_RemoveImage, Mode=OneTime}" Command="{x:Bind ViewModel.RemoveArtistImageCommand}"
+                                                        Visibility="{x:Bind ViewModel.IsCustomImage, Mode=OneWay}" />
+                                    </MenuFlyout>
+                                </Button.Flyout>
+                                <Grid Background="{StaticResource MediaOnImageHoverScrimBrush}" CornerRadius="{StaticResource HeaderImageCircleRadius}">
+                                    <FontIcon Glyph="&#xE70F;" Foreground="{StaticResource MediaOnImageTextPrimaryBrush}" FontSize="32" />
+                                </Grid>
+                            </Button>
+                        </Grid>
+                    </uicontrols:DetailPageHeader.Artwork>
+                    <uicontrols:DetailPageHeader.Details>
+                        <StackPanel Spacing="8">
+                            <TextBlock
+                                MaxLines="3"
+                                Opacity="0.8"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Text="{x:Bind ViewModel.ArtistBio, Mode=OneWay}"
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="Wrap" />
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                Text="{x:Bind ViewModel.BiographyCredit, Mode=OneWay}"
+                                TextWrapping="Wrap"
+                                Visibility="{x:Bind ViewModel.BiographyCredit, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}" />
+                        </StackPanel>
+                    </uicontrols:DetailPageHeader.Details>
+                </uicontrols:DetailPageHeader>
 
                 <Grid x:Name="AlbumsViewport" VerticalAlignment="Top"
                       Visibility="{x:Bind ViewModel.HasAlbums, Mode=OneWay}">

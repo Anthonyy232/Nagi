@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 namespace Nagi.WinUI.Controls;
 
 /// <summary>
-///     The top of a page that shows one album, playlist, genre or folder: its artwork beside a caption and its name.
+///     The top of a page that shows one album, artist, playlist, genre or folder: its artwork beside a caption and its name.
 /// </summary>
 public sealed partial class DetailPageHeader : UserControl
 {
