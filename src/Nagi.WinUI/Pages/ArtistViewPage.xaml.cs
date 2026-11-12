@@ -10,7 +10,6 @@ namespace Nagi.WinUI.Pages;
 
 public sealed partial class ArtistViewPage : SongListPage
 {
-    private bool _isUpdatingAlbumsLayout;
     private bool _pendingLayoutUpdate;
     private ScrollViewer? _songsScrollViewer;
     private double _lastKnownAlbumsHeight;
@@ -93,36 +92,27 @@ public sealed partial class ArtistViewPage : SongListPage
 
     private void UpdateAlbumsLayout()
     {
-        if (_isUpdatingAlbumsLayout || _songsScrollViewer == null || !ViewModel.HasAlbums) return;
+        if (_songsScrollViewer == null || !ViewModel.HasAlbums) return;
 
-        try
+        var scrollOffset = _songsScrollViewer.VerticalOffset;
+        var newHeight = Math.Max(0, _lastKnownAlbumsHeight - scrollOffset);
+
+        // Only apply height if it changed significantly to avoid layout cycles
+        if (Math.Abs(AlbumsViewport.Height - newHeight) > 0.5 || double.IsNaN(AlbumsViewport.Height))
         {
-            _isUpdatingAlbumsLayout = true;
-
-            var scrollOffset = _songsScrollViewer.VerticalOffset;
-            var newHeight = Math.Max(0, _lastKnownAlbumsHeight - scrollOffset);
-
-            // Only apply height if it changed significantly to avoid layout cycles
-            if (Math.Abs(AlbumsViewport.Height - newHeight) > 0.5 || double.IsNaN(AlbumsViewport.Height))
-            {
-                AlbumsViewport.Height = newHeight;
-            }
-
-            var translationY = (float)-Math.Min(scrollOffset, _lastKnownAlbumsHeight);
-            AlbumsContent.Translation = new Vector3(0, translationY, 0);
-
-            if (_lastKnownAlbumsHeight > 0)
-            {
-                var opacity = Math.Clamp(newHeight / _lastKnownAlbumsHeight, 0, 1);
-
-                if (opacity < 0.05) opacity = 0;
-
-                AlbumsViewport.Opacity = opacity;
-            }
+            AlbumsViewport.Height = newHeight;
         }
-        finally
+
+        var translationY = (float)-Math.Min(scrollOffset, _lastKnownAlbumsHeight);
+        AlbumsContent.Translation = new Vector3(0, translationY, 0);
+
+        if (_lastKnownAlbumsHeight > 0)
         {
-            _isUpdatingAlbumsLayout = false;
+            var opacity = Math.Clamp(newHeight / _lastKnownAlbumsHeight, 0, 1);
+
+            if (opacity < 0.05) opacity = 0;
+
+            AlbumsViewport.Opacity = opacity;
         }
     }
 }
