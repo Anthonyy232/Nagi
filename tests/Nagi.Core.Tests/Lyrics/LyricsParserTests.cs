@@ -107,6 +107,65 @@ public class LyricsParserTests
         nextWordStart.Should().Be(expectedNextSec is { } seconds ? TimeSpan.FromSeconds(seconds) : null);
     }
 
+    [Fact]
+    public void ParseTtml_WithTimedSpans_SplitsWordsOnWhitespaceAndKeepsSyllablesTogether()
+    {
+        const string content = """
+            <?xml version="1.0" encoding="utf-8"?>
+            <tt xmlns="http://www.w3.org/ns/ttml" xmlns:ttm="http://www.w3.org/ns/ttml#metadata">
+              <body>
+                <div>
+                  <p begin="1:05.250" end="1:08.000">
+                    <span begin="1:05.250" end="1:05.600">Beau</span><span begin="1:05.600" end="1:06.000">ti</span><span begin="1:06.000" end="1:06.400">ful</span>
+                    <span begin="66.5s" end="67s">day</span>
+                    <span ttm:role="x-bg"><span begin="1:07.500" end="1:08.000">(oh)</span></span>
+                    <span ttm:role="x-translation" xml:lang="fr">Belle
+                      journée</span>
+                    <span ttm:role="x-roman">byutifuru</span>
+                  </p>
+                  <p begin="10.5" end="12">Line timed only</p>
+                </div>
+              </body>
+            </tt>
+            """;
+
+        var result = LyricsParser.Parse(content)!;
+
+        result.IsSynced.Should().BeTrue();
+        result.RawLyrics.Should().Be(content);
+        result.Lines.Select(line => (line.StartTime.TotalSeconds, line.Text)).Should().Equal(
+            (10.5, "Line timed only"),
+            (65.25, "Beautiful day (oh)"));
+        result.Lines[0].Words.Should().BeEmpty();
+        result.Lines[1].TranslatedText.Should().Be("Belle journée");
+        result.Lines[1].Words.Should().Equal(
+            new LyricWord(TimeSpan.FromSeconds(65.25), "Beau"),
+            new LyricWord(TimeSpan.FromSeconds(65.6), "ti"),
+            new LyricWord(TimeSpan.FromSeconds(66), "ful"),
+            new LyricWord(TimeSpan.FromSeconds(66.5), " day"),
+            new LyricWord(TimeSpan.FromSeconds(67.5), " (oh)"));
+    }
+
+    [Fact]
+    public void ParseTtml_WithoutTimes_GivesPlainLines()
+    {
+        var result = LyricsParser.Parse("<tt xmlns=\"http://www.w3.org/ns/ttml\"><body><div><p>First</p><p begin=\"12f\">Second</p></div></body></tt>")!;
+
+        result.IsSynced.Should().BeFalse();
+        result.Lines.Select(line => line.Text).Should().Equal("First", "Second");
+    }
+
+    [Theory]
+    [InlineData("<3 this song\nSecond line")]
+    [InlineData("<lyrics><p begin=\"1s\">Not TTML</p></lyrics>")]
+    public void ParseLyrics_StartingWithAngleBracketButNotTtml_KeepsTheTextAsPlainLines(string content)
+    {
+        var result = LyricsParser.Parse(content)!;
+
+        result.IsSynced.Should().BeFalse();
+        string.Join('\n', result.Lines.Select(line => line.Text)).Should().Be(content);
+    }
+
     private static List<LyricLine> CreateTestLines() =>
     [
         new(TimeSpan.FromSeconds(10), "Line 1"),

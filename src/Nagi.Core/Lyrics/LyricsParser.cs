@@ -6,10 +6,11 @@ namespace Nagi.Core.Lyrics;
 
 public static partial class LyricsParser
 {
-    /// <returns>Timed lines when the text is LRC, otherwise its plain lines; null for blank text.</returns>
+    /// <returns>Timed lines when the text is LRC or TTML, otherwise its plain lines; null for blank text.</returns>
     public static SongLyrics? Parse(string? rawLyrics)
     {
         if (string.IsNullOrWhiteSpace(rawLyrics)) return null;
+        if (TtmlLyricsParser.Parse(rawLyrics) is { } ttmlLyrics) return ttmlLyrics;
 
         var document = LrcParser.Parse(rawLyrics).Document;
         // LRC has no translation syntax, so files commonly repeat the original line's timestamp for it.

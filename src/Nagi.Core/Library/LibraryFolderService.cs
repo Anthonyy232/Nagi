@@ -865,7 +865,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
     }
 
     /// <summary>
-    ///     Gives songs without lyrics the .lrc or .txt file the user put beside them since the song was read.
+    ///     Gives songs without lyrics the .lrc, .ttml or .txt file the user put beside them since the song was read.
     /// </summary>
     /// <returns>The number of songs updated.</returns>
     private async Task<int> UpdateMissingLrcPathsAsync(Guid folderId, CancellationToken cancellationToken)
