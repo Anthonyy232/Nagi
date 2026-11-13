@@ -1,14 +1,7 @@
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
-using Nagi.Core.Constants;
-using Nagi.Presentation.Helpers;
-using Nagi.Presentation.Models;
-using Nagi.Presentation.Resources;
-using Nagi.WinUI.Helpers;
+using Nagi.Presentation.Common;
+using Nagi.Presentation.Playlists;
+using Nagi.WinUI.Dialogs;
 
 namespace Nagi.WinUI.Services.Implementations;
 
@@ -16,93 +9,23 @@ public partial class UIService
 {
     public async Task<NewPlaylistRequest?> ShowCreatePlaylistDialogAsync()
     {
-        if (!TryGetXamlRoot(out var xamlRoot)) return null;
-
-        string? coverImagePath = null;
-        var inputTextBox = new TextBox { PlaceholderText = Strings.PlaylistPage_CreateDialog_Placeholder };
-        var imagePreview = new ImageEx.ImageEx
-        {
-            Stretch = Stretch.UniformToFill,
-            IsCacheEnabled = true,
-            DecodePixelWidth = 80,
-            DecodePixelType = DecodePixelType.Logical
-        };
-        var imagePlaceholder = new FontIcon { Glyph = "", FontSize = 48 };
-        var imageGrid = new Grid
-        {
-            Width = 80,
-            Height = 80,
-            CornerRadius = (CornerRadius)Application.Current.Resources["ArtworkCornerRadius"],
-            Margin = new Thickness(0, 0, 0, 12),
-            HorizontalAlignment = HorizontalAlignment.Center
-        };
-        imageGrid.Children.Add(imagePlaceholder);
-        imageGrid.Children.Add(imagePreview);
-        var pickImageButton = new Button
-        {
-            Content = Strings.PlaylistPage_CreateDialog_PickImage,
-            Margin = new Thickness(0, 12, 0, 0),
-            HorizontalAlignment = HorizontalAlignment.Stretch
-        };
-        var dialogContent = new StackPanel();
-        dialogContent.Children.Add(imageGrid);
-        dialogContent.Children.Add(inputTextBox);
-        dialogContent.Children.Add(pickImageButton);
-
-        var dialog = new ContentDialog
-        {
-            Title = Strings.PlaylistPage_CreateDialog_Title,
-            Content = dialogContent,
-            PrimaryButtonText = Strings.PlaylistPage_CreateDialog_CreateButton,
-            CloseButtonText = Strings.PlaylistPage_CreateDialog_CancelButton,
-            DefaultButton = ContentDialogButton.Primary,
-            IsPrimaryButtonEnabled = false,
-            XamlRoot = xamlRoot
-        };
-
-        pickImageButton.Click += async (_, _) =>
-        {
-            try
-            {
-                var pickedPath = await PickSingleFileAsync(FileExtensions.ImageFileExtensions);
-                if (string.IsNullOrWhiteSpace(pickedPath)) return;
-
-                coverImagePath = pickedPath;
-                imagePreview.Source = BitmapImageFactory.Create(pickedPath);
-                imagePlaceholder.Visibility = Visibility.Collapsed;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error picking cover image for new playlist");
-            }
-        };
-        inputTextBox.TextChanged += (_, _) =>
-            dialog.IsPrimaryButtonEnabled = PlaylistNames.IsValid(inputTextBox.Text);
-
-        var result = await ShowDialogAsync(dialog);
-        return result == ContentDialogResult.Primary ? new NewPlaylistRequest(inputTextBox.Text, coverImagePath) : null;
+        var viewModel = new PlaylistNameDialogViewModel(this);
+        return await ShowPlaylistNameDialogAsync(viewModel)
+            ? new NewPlaylistRequest(viewModel.Name, viewModel.CoverImagePath)
+            : null;
     }
 
     public async Task<string?> ShowRenamePlaylistDialogAsync(string currentName)
     {
-        if (!TryGetXamlRoot(out var xamlRoot)) return null;
+        var viewModel = new PlaylistNameDialogViewModel(this, currentName);
+        return await ShowPlaylistNameDialogAsync(viewModel) ? viewModel.Name : null;
+    }
 
-        var inputTextBox = new TextBox { Text = currentName };
-        var dialog = new ContentDialog
-        {
-            Title = string.Format(Strings.PlaylistPage_RenameDialog_Title_Format, currentName),
-            Content = inputTextBox,
-            PrimaryButtonText = Strings.PlaylistPage_RenameDialog_RenameButton,
-            CloseButtonText = Strings.PlaylistPage_CreateDialog_CancelButton,
-            DefaultButton = ContentDialogButton.Primary,
-            IsPrimaryButtonEnabled = false,
-            XamlRoot = xamlRoot
-        };
+    private async Task<bool> ShowPlaylistNameDialogAsync(PlaylistNameDialogViewModel viewModel)
+    {
+        if (!TryGetXamlRoot(out var xamlRoot)) return false;
 
-        inputTextBox.TextChanged += (_, _) =>
-            dialog.IsPrimaryButtonEnabled = PlaylistNames.CanRename(inputTextBox.Text, currentName);
-
-        var result = await ShowDialogAsync(dialog);
-        return result == ContentDialogResult.Primary ? inputTextBox.Text : null;
+        var dialog = new PlaylistNameDialog(viewModel) { XamlRoot = xamlRoot };
+        return await ShowDialogAsync(dialog) == ContentDialogResult.Primary;
     }
 }

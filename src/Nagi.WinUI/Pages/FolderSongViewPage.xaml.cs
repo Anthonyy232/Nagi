@@ -1,43 +1,25 @@
-using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Navigation;
-using Nagi.Core.Models;
-using Nagi.Presentation.Models;
-using Nagi.Presentation.Navigation;
-using Nagi.Presentation.Resources;
-using Nagi.Presentation.Services.Implementations;
-using Nagi.Presentation.ViewModels;
+using Nagi.Core.Library;
+using Nagi.Presentation.Lists;
 using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Pages;
 
 public sealed partial class FolderSongViewPage : SongListPage
 {
-
     public FolderSongViewPage()
     {
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<ViewModelFactory>().Create<FolderSongListViewModel>();
-        DataContext = ViewModel;
-        InitializeSongList(ViewModel, ownsViewModel: true, SearchToggleButton, SearchTextBox,
-            Strings.FolderSongViewPage_SearchButton_Search_ToolTip, ColumnHeaderHost, FolderContentsListView);
+        ViewModel = GetViewModel<FolderSongListViewModel>();
+        InitializeSongList(ViewModel, ColumnHeaderHost, FolderContentsListView);
     }
 
     public FolderSongListViewModel ViewModel { get; }
 
+    public string EmptyGlyph(bool isServer) => isServer ? "\uE8CE" : "\uE8B7";
+
     // Rows are subfolders or songs.
     protected override Song? GetSong(object? item) => (item as FolderContentItem)?.Song;
-
-    protected override async void OnNavigatedTo(NavigationEventArgs e)
-    {
-        base.OnNavigatedTo(e);
-
-        var navParam = (FolderSongViewNavigationParameter)e.Parameter;
-        await ViewModel.InitializeAsync(navParam.Title, navParam.FolderId, navParam.DirectoryPath, navParam.IsServer);
-    }
 
     private void OnBreadcrumbItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
     {
@@ -51,15 +33,6 @@ public sealed partial class FolderSongViewPage : SongListPage
             await ViewModel.NavigateToSubfolderCommand.ExecuteAsync(folder);
     }
 
-    private async void FolderContentsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-    {
-        if (e.OriginalSource is not FrameworkElement { DataContext: FolderContentItem contentItem }) return;
-        if (contentItem.Folder is { } folder)
-            await ViewModel.NavigateToSubfolderCommand.ExecuteAsync(folder);
-        else
-            SongsListView_DoubleTapped(sender, e);
-    }
-
     private void FolderItemMenuFlyout_Opening(object sender, object e)
     {
         if (sender is not MenuFlyout menuFlyout) return;
@@ -68,9 +41,8 @@ public sealed partial class FolderSongViewPage : SongListPage
             && !FolderContentsListView.SelectedItems.Contains(contentItem))
             FolderContentsListView.SelectedItem = contentItem;
 
-        if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
-                .FirstOrDefault(item => item.Name == "FolderAddToPlaylistSubMenu") is { } addToPlaylistSubMenu)
-            PlaylistMenuFlyoutHelper.Populate(addToPlaylistSubMenu, ViewModel.AvailablePlaylists,
-                ViewModel.AddSelectedSongsToPlaylistCommand);
+        // The folder menu's one submenu is Add to playlist.
+        PlaylistMenuFlyoutHelper.Populate(menuFlyout.Items.OfType<MenuFlyoutSubItem>().Single(), ViewModel.AvailablePlaylists,
+            ViewModel.AddSelectedSongsToPlaylistCommand);
     }
 }

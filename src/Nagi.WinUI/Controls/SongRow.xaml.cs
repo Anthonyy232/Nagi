@@ -1,15 +1,15 @@
-using System.Collections.Generic;
-using System.Windows.Input;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Controls;
-using Nagi.Core.Models;
-using Nagi.Presentation.Helpers;
-using Nagi.Presentation.Models;
-using Nagi.Presentation.ViewModels;
+using Microsoft.UI.Xaml.Data;
+using Nagi.Core.Library;
+using Nagi.Presentation.Lists;
+using Nagi.Presentation.Navigation;
+using Nagi.Presentation.Resources;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Styles;
 
 namespace Nagi.WinUI.Controls;
 
@@ -17,30 +17,22 @@ namespace Nagi.WinUI.Controls;
 ///     A row of a song list with its context menu, shared by every song list page. Created with
 ///     <c>isHeader</c> it is instead the list's column header, so the two always line up.
 /// </summary>
-public sealed partial class SongRow : UserControl
+public sealed partial class SongRow : UserControl, INowPlayingRow
 {
     public static readonly DependencyProperty SongProperty = DependencyProperty.Register(
         nameof(Song), typeof(Song), typeof(SongRow),
         new PropertyMetadata(null, (d, _) => ((SongRow)d).UpdateTextCells()));
 
     public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(
-        nameof(ViewModel), typeof(SongListViewModelBase), typeof(SongRow), new PropertyMetadata(null));
+        nameof(ViewModel), typeof(SongListViewModelBase), typeof(SongRow),
+        new PropertyMetadata(null, (d, e) => ((SongRow)d).BindColumns((SongListViewModelBase?)e.NewValue)));
 
-    public static readonly DependencyProperty ColumnsProperty = DependencyProperty.Register(
+    private static readonly DependencyProperty ColumnsProperty = DependencyProperty.Register(
         nameof(Columns), typeof(SongListColumns), typeof(SongRow),
         new PropertyMetadata(SongListColumns.None, (d, _) => ((SongRow)d).ApplyColumns()));
 
     public static readonly DependencyProperty ShowDiscNumberProperty = DependencyProperty.Register(
         nameof(ShowDiscNumber), typeof(bool), typeof(SongRow), new PropertyMetadata(true));
-
-    public static readonly DependencyProperty ShowGoToAlbumProperty = DependencyProperty.Register(
-        nameof(ShowGoToAlbum), typeof(bool), typeof(SongRow), new PropertyMetadata(true));
-
-    public static readonly DependencyProperty ShowGoToArtistProperty = DependencyProperty.Register(
-        nameof(ShowGoToArtist), typeof(bool), typeof(SongRow), new PropertyMetadata(true));
-
-    public static readonly DependencyProperty RemoveFromPlaylistCommandProperty = DependencyProperty.Register(
-        nameof(RemoveFromPlaylistCommand), typeof(ICommand), typeof(SongRow), new PropertyMetadata(null));
 
     private readonly List<(SongListColumns Column, TextBlock Cell)> _textCells = new();
     // The cells the star columns hide: the title and links in a row, the labels in a header.
@@ -84,11 +76,7 @@ public sealed partial class SongRow : UserControl
         set => SetValue(ViewModelProperty, value);
     }
 
-    public SongListColumns Columns
-    {
-        get => (SongListColumns)GetValue(ColumnsProperty);
-        set => SetValue(ColumnsProperty, value);
-    }
+    private SongListColumns Columns => (SongListColumns)GetValue(ColumnsProperty);
 
     /// <summary>
     ///     Whether the track column includes the disc number. Lists grouped under disc headers turn it off.
@@ -99,28 +87,14 @@ public sealed partial class SongRow : UserControl
         set => SetValue(ShowDiscNumberProperty, value);
     }
 
-    public bool ShowGoToAlbum
+    // The list decides which columns every row shows.
+    private void BindColumns(SongListViewModelBase? viewModel)
     {
-        get => (bool)GetValue(ShowGoToAlbumProperty);
-        set => SetValue(ShowGoToAlbumProperty, value);
+        if (viewModel is null) ClearValue(ColumnsProperty);
+        else SetBinding(ColumnsProperty, new Binding { Source = viewModel, Path = new PropertyPath(nameof(SongListViewModelBase.VisibleColumns)) });
     }
 
-    public bool ShowGoToArtist
-    {
-        get => (bool)GetValue(ShowGoToArtistProperty);
-        set => SetValue(ShowGoToArtistProperty, value);
-    }
-
-    /// <summary>
-    ///     Adds "Remove from playlist" to the menu when set.
-    /// </summary>
-    public ICommand? RemoveFromPlaylistCommand
-    {
-        get => (ICommand?)GetValue(RemoveFromPlaylistCommandProperty);
-        set => SetValue(RemoveFromPlaylistCommandProperty, value);
-    }
-
-    private static Style SecondaryTextStyle => (Style)Application.Current.Resources["SongListViewPageSecondaryTextBlockStyle"];
+    private static Style SecondaryTextStyle => (Style)Application.Current.Resources[AppResourceKeys.SongListViewPageSecondaryTextBlockStyle];
 
     // Fixed widths, not Auto, so the cells line up from row to row and with the header.
     private static (double Width, TextAlignment Alignment) GetCellLayout(SongListColumns column) => column switch
@@ -208,8 +182,12 @@ public sealed partial class SongRow : UserControl
 
     private static Visibility ToVisibility(bool isVisible) => isVisible ? Visibility.Visible : Visibility.Collapsed;
 
-    // Keeps the artist links from growing past their column, so long multi-artist names trim.
-    private void ArtistCell_SizeChanged(object sender, SizeChangedEventArgs e) => ArtistLinks.MaxWidth = e.NewSize.Width;
+    public void SetNowPlaying(bool isCurrent, bool isPlaying)
+    {
+        NowPlayingIndicator.IsActive = isCurrent;
+        NowPlayingIndicator.IsPlaying = isPlaying;
+        INowPlayingRow.HighlightTitle(SongTitle, isCurrent);
+    }
 
     private void SongMenu_Opening(object sender, object e)
     {
@@ -222,19 +200,63 @@ public sealed partial class SongRow : UserControl
             list.SelectedItem = container.Content;
 
         var isSingle = viewModel.IsSingleSongSelected;
+        FavoriteItem.Visibility = ToVisibility(isSingle);
+        FavoriteItem.Text = viewModel.SelectedFavoriteActionText;
+        FavoritesSubMenu.Visibility = ToVisibility(!isSingle);
         SingleSongSeparator.Visibility = ToVisibility(isSingle);
-        GoToAlbumItem.Visibility = ToVisibility(isSingle && ShowGoToAlbum);
-        GoToArtistSubMenu.Visibility = ToVisibility(isSingle && ShowGoToArtist);
-        ShowInExplorerItem.Visibility = ToVisibility(isSingle && Song is { IsRemote: false });
+        GoToAlbumItem.Visibility = ToVisibility(isSingle && viewModel.ShowsGoToAlbum);
+        GoToArtistSubMenu.Visibility = ToVisibility(isSingle && viewModel.ShowsGoToArtist);
+        ShowInExplorerItem.Visibility = ToVisibility(viewModel.ShowInFolderCommand.CanExecute(Song));
         SongInfoItem.Visibility = ToVisibility(isSingle);
-        RemoveFromPlaylistSeparator.Visibility = ToVisibility(RemoveFromPlaylistCommand is not null);
-        RemoveFromPlaylistItem.Visibility = ToVisibility(RemoveFromPlaylistCommand is not null);
+        RemoveFromPlaylistSeparator.Visibility = ToVisibility(viewModel.RemoveSelectionCommand is not null);
+        RemoveFromPlaylistItem.Visibility = ToVisibility(viewModel.RemoveSelectionCommand is not null);
 
         PlaylistMenuFlyoutHelper.Populate(AddToPlaylistSubMenu, viewModel.AvailablePlaylists,
             viewModel.AddSelectedSongsToPlaylistCommand);
-        if (isSingle && ShowGoToArtist)
-            ArtistMenuFlyoutHelper.PopulateSubMenu(GoToArtistSubMenu, Song!, viewModel.GoToArtistCommand,
-                viewModel.GetArtistsForSongAsync, DispatcherQueue);
-        ListeningMenuFlyoutHelper.PopulateFavorites((MenuFlyout)sender, viewModel);
+        if (isSingle && viewModel.ShowsGoToArtist) PopulateArtistMenu(Song!, viewModel);
+    }
+
+    // A song read without its artists loads them while the menu is open.
+    private void PopulateArtistMenu(Song song, SongListViewModelBase viewModel)
+    {
+        GoToArtistSubMenu.Items.Clear();
+        var artists = song.GetCreditedArtists();
+        if (artists.Count > 0)
+        {
+            AddArtistItems(song, artists, viewModel);
+            return;
+        }
+
+        var loadingItem = new MenuFlyoutItem { Text = Strings.Status_Loading, IsEnabled = false };
+        GoToArtistSubMenu.Items.Add(loadingItem);
+        _ = LoadArtistMenuAsync(song, loadingItem, viewModel);
+    }
+
+    private async Task LoadArtistMenuAsync(Song song, MenuFlyoutItem loadingItem, SongListViewModelBase viewModel)
+    {
+        var artists = await viewModel.GetArtistsForSongAsync(song);
+        if (!GoToArtistSubMenu.Items.Contains(loadingItem)) return;
+        if (artists is null)
+        {
+            loadingItem.Text = Strings.Error_FailedToLoadArtists;
+            return;
+        }
+
+        GoToArtistSubMenu.Items.Remove(loadingItem);
+        if (artists.Count == 0)
+            GoToArtistSubMenu.Items.Add(new MenuFlyoutItem { Text = Artist.UnknownArtistName, IsEnabled = false });
+        else
+            AddArtistItems(song, artists, viewModel);
+    }
+
+    private void AddArtistItems(Song song, IEnumerable<Artist> artists, SongListViewModelBase viewModel)
+    {
+        foreach (var artist in artists)
+            GoToArtistSubMenu.Items.Add(new MenuFlyoutItem
+            {
+                Text = artist.Name,
+                Command = viewModel.GoToArtistCommand,
+                CommandParameter = new ArtistNavigationRequest { Song = song, ArtistName = artist.Name }
+            });
     }
 }

@@ -1,0 +1,21 @@
+<ContentDialog
+    x:Class="Nagi.WinUI.Dialogs.LyricsEditorDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:resources="using:Nagi.Presentation.Resources"
+    Title="{x:Bind resources:Strings.LyricsPage_EditLyrics_Title}"
+    PrimaryButtonText="{x:Bind resources:Strings.LyricsPage_EditLyrics_Save}"
+    SecondaryButtonText="{x:Bind ViewModel.RemoveButtonText}"
+    CloseButtonText="{x:Bind resources:Strings.Generic_Cancel}"
+    DefaultButton="Primary"
+    IsPrimaryButtonEnabled="{x:Bind ViewModel.CanSave, Mode=OneWay}"
+    Style="{StaticResource DefaultContentDialogStyle}">
+
+    <TextBox AcceptsReturn="True"
+             MinWidth="520"
+             Height="360"
+             PlaceholderText="{x:Bind resources:Strings.LyricsPage_EditLyrics_Placeholder}"
+             Text="{x:Bind ViewModel.Lyrics, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+             TextWrapping="Wrap"
+             ScrollViewer.VerticalScrollBarVisibility="Auto" />
+</ContentDialog>

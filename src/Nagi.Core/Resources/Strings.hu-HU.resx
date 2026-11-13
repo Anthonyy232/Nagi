@@ -71,96 +71,15 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Cím</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Lejátszási lista</value>
-  </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>Fájl</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>Év</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>Hozzáadás dátuma</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>Létrehozás dátuma</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>Módosítás dátuma</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>Utoljára lejátszott</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>Időtartam</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>Szám sorszáma</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>Lejátszások</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>Dalok</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Mappa</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>Kézi sorrend</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>Véletlenszerű</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>Ismeretlen {0}</value>
   </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>Új {0}</value>
-  </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>A(z) {0} nem található.</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (A-tól Z-ig)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (Z-től A-ig)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Legújabb)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Legrégebbi)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (növekvő)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (csökkenő)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>Legrövidebb elöl</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>Leghosszabb elöl</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>Leglassabb elöl ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>Leggyorsabb elöl ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>Legtöbb {0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>Legkevesebb {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Mappa beolvasása {0}/{1}: {2} - {3}</value>
@@ -224,9 +143,6 @@
     <value>Könyvtár frissítése kész.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>A mappa hozzáadása nem sikerült.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>A lejátszási lista neve nem lehet üres.</value>
   </data>
@@ -236,9 +152,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> &amp; </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Rendezés: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Nincsenek exportálható lejátszási listák.</value>
@@ -306,23 +219,11 @@
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Nem sikerült csatlakozni a ListenBrainz szolgáltatáshoz. Ellenőrizze a kapcsolatot és a szerver URL-jét.</value>
   </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>A Nagi nem találta a könyvtár adatmappáját.</value>
-  </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>A helyreállítás nem sikerült, és a korábbi adatokat nem sikerült teljesen visszaállítani. A helyreállítási fájlok ide lettek mentve: &apos;{0}&apos;.</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>A kiválasztott fájl nem érvényes Nagi-biztonsági mentés.</value>
-  </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>A LibVLC nem meghatározott hibába ütközött.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC hiba: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Nem sikerült betölteni: „{0}”.</value>
   </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>Zenei könyvtár böngészése</value>

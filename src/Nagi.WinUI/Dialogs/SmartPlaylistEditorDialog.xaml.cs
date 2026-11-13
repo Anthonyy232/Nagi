@@ -1,10 +1,8 @@
-using System.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Common;
+using Nagi.Presentation.Playlists;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.ViewModels;
-using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Dialogs;
 
@@ -17,31 +15,9 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
     {
         ViewModel = viewModel;
         InitializeComponent();
-
-        ViewModel.PropertyChanged += OnViewModelPropertyChanged;
-        Closed += OnDialogClosed;
-        UpdateCoverImage();
     }
 
     public SmartPlaylistEditorViewModel ViewModel { get; }
-
-    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(SmartPlaylistEditorViewModel.CoverImageUri)) UpdateCoverImage();
-    }
-
-    private void UpdateCoverImage()
-    {
-        CoverImagePreview.Source = ViewModel.HasCoverImage
-            ? BitmapImageFactory.Create(ImageUriHelper.GetUriWithCacheBuster(ViewModel.CoverImageUri))
-            : null;
-    }
-
-    private void OnDialogClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
-    {
-        ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
-        Closed -= OnDialogClosed;
-    }
 
     private void RemoveRule_Click(object sender, RoutedEventArgs e)
     {

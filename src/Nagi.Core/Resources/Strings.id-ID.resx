@@ -71,96 +71,15 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Judul</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Daftar Putar</value>
-  </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>Berkas</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>Tahun</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>Tanggal Ditambahkan</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>Tanggal Dibuat</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>Tanggal Dimodifikasi</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>Terakhir Diputar</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>Durasi</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>Nomor Trek</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>Pemutaran</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>Lagu</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Folder</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>Urutan Manual</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>Acak</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>{0} Tidak Dikenal</value>
   </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>{0} Baru</value>
-  </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} tidak ditemukan.</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (A ke Z)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (Z ke A)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Terbaru)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Terlama)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Menaik)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Menurun)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>Terpendek Dahulu</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>Terpanjang Dahulu</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>Paling lambat dahulu ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>Tercepat Dahulu ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>{0} Terbanyak</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>Paling sedikit {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Memindai folder {0} dari {1}: {2} - {3}</value>
@@ -224,9 +143,6 @@
     <value>Penyegaran pustaka selesai.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Tidak dapat menambahkan folder.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Nama daftar putar tidak boleh kosong.</value>
   </data>
@@ -236,9 +152,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> &amp; </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Urutkan Berdasarkan: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Tidak ada daftar putar untuk diekspor.</value>
@@ -306,23 +219,11 @@
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Tidak dapat terhubung ke ListenBrainz. Periksa koneksi dan URL server Anda.</value>
   </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi tidak dapat menemukan folder data pustakanya.</value>
-  </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Pemulihan gagal, dan data Anda sebelumnya tidak dapat dipulihkan sepenuhnya. Berkas pemulihan disimpan di &apos;{0}&apos;.</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>File yang dipilih bukan cadangan Nagi yang valid.</value>
-  </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC mengalami kesalahan yang tidak ditentukan.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Kesalahan LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Gagal memuat '{0}'.</value>
   </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>Menjelajahi Pustaka Musik</value>

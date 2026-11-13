@@ -1,63 +1,58 @@
-﻿using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Presentation.Navigation;
-using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Pages;
 
 namespace Nagi.WinUI.Services.Implementations;
 
 /// <summary>
-///     Opens detail pages in the frame that <see cref="MainPage" /> hands over through <see cref="Initialize" />.
+///     Opens pages in the frame that <see cref="MainPage" /> hands over through <see cref="Initialize" />.
 /// </summary>
-public class NavigationService : INavigationService, IDisposable
+public class NavigationService : INavigationService
 {
-    private static readonly Dictionary<Type, Type> DetailPages = new()
-    {
-        [typeof(AlbumViewNavigationParameter)] = typeof(AlbumViewPage),
-        [typeof(ArtistViewNavigationParameter)] = typeof(ArtistViewPage),
-        [typeof(FolderSongViewNavigationParameter)] = typeof(FolderSongViewPage),
-        [typeof(GenreViewNavigationParameter)] = typeof(GenreViewPage),
-        [typeof(PlaylistSongViewNavigationParameter)] = typeof(PlaylistSongViewPage),
-        [typeof(SmartPlaylistSongViewNavigationParameter)] = typeof(SmartPlaylistSongViewPage),
-    };
-
     private readonly ILogger<NavigationService> _logger;
-
     private Frame? _frame;
-    private bool _isDisposed;
-    private object? _lastParameter;
+    private object? _currentParameter;
 
     public NavigationService(ILogger<NavigationService> logger)
     {
         _logger = logger;
     }
 
-    public void Dispose()
-    {
-        if (_isDisposed) return;
+    /// <summary>
+    ///     Raised after each navigation, once this service's state describes the new page.
+    /// </summary>
+    public event Action<Type>? Navigated;
 
-        if (_frame != null) _frame.Navigated -= OnFrameNavigated;
+    /// <summary>
+    ///     The menu item the current page belongs to, or null when no menu item leads there.
+    /// </summary>
+    public string? CurrentMenuTag => AppDestinations.GetMenuTag(_frame?.CurrentSourcePageType, _currentParameter);
 
-        _isDisposed = true;
-        GC.SuppressFinalize(this);
-    }
+    public bool ShowsBackButton =>
+        _frame is { CanGoBack: true, CurrentSourcePageType: { } page } && AppDestinations.ShowsBackButton(page);
 
     public void Initialize(Frame frame)
     {
-        ArgumentNullException.ThrowIfNull(frame);
         if (_frame != null) _frame.Navigated -= OnFrameNavigated;
-        _lastParameter = null;
+        _currentParameter = null;
         _frame = frame;
         _frame.Navigated += OnFrameNavigated;
+    }
+
+    public void NavigateToMenu(string tag, NavigationTransitionInfo transition)
+    {
+        if (_frame is null || !AppDestinations.TryGetMenuPage(tag, out var pageType, out var parameter)) return;
+        if (_frame.CurrentSourcePageType != pageType || !Equals(_currentParameter, parameter))
+            _frame.Navigate(pageType, parameter, transition);
     }
 
     public void NavigateTo(INavigationParameter parameter)
     {
         ArgumentNullException.ThrowIfNull(parameter);
-        if (!DetailPages.TryGetValue(parameter.GetType(), out var pageType))
-            throw new ArgumentException($"No page accepts {parameter.GetType().Name}.", nameof(parameter));
+        var pageType = AppDestinations.GetDetailPage(parameter);
 
         if (_frame is null)
         {
@@ -65,7 +60,7 @@ public class NavigationService : INavigationService, IDisposable
             return;
         }
 
-        if (Equals(_lastParameter, parameter))
+        if (Equals(_currentParameter, parameter))
         {
             _logger.LogDebug("Navigation to same page {PageName} prevented.", pageType.Name);
             return;
@@ -74,8 +69,24 @@ public class NavigationService : INavigationService, IDisposable
         _frame.Navigate(pageType, parameter);
     }
 
+    /// <summary>
+    ///     Opens the lyrics page, or leaves it when it is already open.
+    /// </summary>
+    public void ToggleLyrics()
+    {
+        if (_frame?.CurrentSourcePageType == typeof(LyricsPage)) GoBack();
+        else _frame?.Navigate(typeof(LyricsPage));
+    }
+
+    public void GoBack()
+    {
+        if (_frame is { CanGoBack: true }) _frame.GoBack();
+    }
+
     private void OnFrameNavigated(object sender, NavigationEventArgs e)
     {
-        _lastParameter = e.Parameter;
+        _currentParameter = e.Parameter;
+        _logger.LogDebug("Navigated to {PageName}.", e.SourcePageType.Name);
+        Navigated?.Invoke(e.SourcePageType);
     }
 }

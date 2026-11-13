@@ -1,18 +1,19 @@
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+using Nagi.Presentation.Common;
 using Windows.Storage;
 using Windows.System;
 using Microsoft.Extensions.Logging;
 using Microsoft.Windows.Storage.Pickers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Nagi.Core.Models;
+using Nagi.Core.Library;
+using Nagi.Core.Playlists;
+using Nagi.Presentation.Lists;
+using Nagi.Presentation.Playlists;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Services.Abstractions;
-using Nagi.Presentation.Services.Implementations;
-using Nagi.Presentation.ViewModels;
+using Nagi.Presentation.Settings;
+using Nagi.Presentation;
+using Nagi.Presentation.Shell;
+using Microsoft.Extensions.DependencyInjection;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Dialogs;
 using Nagi.WinUI.Helpers;
@@ -22,21 +23,16 @@ namespace Nagi.WinUI.Services.Implementations;
 
 public partial class UIService : IUIService
 {
-    private const uint MB_OK = 0x00000000;
-    private const uint MB_ICONERROR = 0x00000010;
-    private const string IssuesUrl = "https://github.com/Anthonyy232/Nagi/issues";
-
-    private readonly Win32InteropService _win32InteropService;
-    private readonly ViewModelFactory _viewModelFactory;
+    private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<UIService> _logger;
     private readonly MainWindow _window;
+    private readonly SemaphoreSlim _dialogTurn = new(1, 1);
 
-    public UIService(MainWindow window, Win32InteropService win32InteropService, ViewModelFactory viewModelFactory,
+    public UIService(MainWindow window, IServiceScopeFactory scopeFactory,
         ILogger<UIService> logger)
     {
         _window = window;
-        _win32InteropService = win32InteropService;
-        _viewModelFactory = viewModelFactory;
+        _scopeFactory = scopeFactory;
         _logger = logger;
     }
 
@@ -119,41 +115,38 @@ public partial class UIService : IUIService
         await ShowDialogAsync(dialog);
     }
 
-    public async Task<CrashReportResult> ShowCrashReportDialogAsync(string report)
+    /// <summary>
+    ///     Tells the user the app crashed, shows <paramref name="report" /> for an issue report, and offers a data reset.
+    /// </summary>
+    /// <returns>Whether the user asked for the reset.</returns>
+    public async Task<bool> ShowCrashReportDialogAsync(string report)
     {
-        if (!TryGetXamlRoot(out var xamlRoot)) return CrashReportResult.Close;
-
-        var dialogContent = new CrashReportDialogContent
-        {
-            Introduction = Strings.CrashReport_Message,
-            LogContent = report,
-            GitHubUrl = IssuesUrl
-        };
+        if (!TryGetXamlRoot(out var xamlRoot)) return false;
 
         var dialog = new ContentDialog
         {
             Title = Strings.CrashReport_Title,
-            Content = dialogContent,
+            Content = new CrashReportDialogContent(report),
             PrimaryButtonText = Strings.CrashReport_Button_Reset,
             CloseButtonText = Strings.Generic_Close,
             DefaultButton = ContentDialogButton.Close,
             XamlRoot = xamlRoot
         };
 
-        DialogThemeHelper.ApplyThemeOverrides(dialog);
+        DialogThemeHelper.ApplyThemeOverrides(dialog, _window.Content as FrameworkElement);
 
         try
         {
-            var result = await dialog.ShowAsync();
-            return result == ContentDialogResult.Primary ? CrashReportResult.Reset : CrashReportResult.Close;
+            return await dialog.ShowAsync() == ContentDialogResult.Primary;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // Fallback to Win32 MessageBox if ContentDialog fails (e.g. another dialog is open)
+            // Fall back to a message box when the dialog can't show, for example while another dialog is open.
+            _logger.LogWarning(ex, "Could not show the crash report dialog");
             var hwnd = WindowNative.GetWindowHandle(_window);
             var message = $"{Strings.CrashReport_Message}\n\n{report}";
-            _win32InteropService.ShowMessageBox(hwnd, message, Strings.CrashReport_Title, MB_ICONERROR | MB_OK);
-            return CrashReportResult.Close;
+            NativeMethods.MessageBox(hwnd, message, Strings.CrashReport_Title, NativeMethods.MB_ICONERROR | NativeMethods.MB_OK);
+            return false;
         }
     }
 
@@ -196,7 +189,8 @@ public partial class UIService : IUIService
     {
         if (!TryGetXamlRoot(out var xamlRoot)) return;
 
-        var viewModel = _viewModelFactory.Create<SongInfoViewModel>();
+        using var scope = _scopeFactory.CreateScope();
+        var viewModel = scope.ServiceProvider.GetRequiredService<SongInfoViewModel>();
         await viewModel.LoadAsync(song);
         await ShowDialogAsync(new SongInfoDialog(viewModel) { XamlRoot = xamlRoot });
     }
@@ -205,7 +199,8 @@ public partial class UIService : IUIService
     {
         if (!TryGetXamlRoot(out var xamlRoot)) return null;
 
-        using var viewModel = _viewModelFactory.Create<SmartPlaylistEditorViewModel>();
+        using var scope = _scopeFactory.CreateScope();
+        var viewModel = scope.ServiceProvider.GetRequiredService<SmartPlaylistEditorViewModel>();
         viewModel.Initialize(editing);
         var dialog = new SmartPlaylistEditorDialog(viewModel) { XamlRoot = xamlRoot };
         var result = await ShowDialogAsync(dialog);
@@ -216,44 +211,8 @@ public partial class UIService : IUIService
     {
         if (!TryGetXamlRoot(out var xamlRoot)) return false;
 
-        var viewModel = new FFmpegSetupViewModel(checkAction);
-        var statusBlock = new TextBlock { TextWrapping = TextWrapping.Wrap };
-        void ShowStatus()
-        {
-            statusBlock.Text = viewModel.StatusText;
-            statusBlock.Style = (Style)Application.Current.Resources[viewModel.Status switch
-            {
-                FFmpegSetupStatus.Checking => "FFmpegStatusCheckingTextStyle",
-                FFmpegSetupStatus.Detected => "FFmpegStatusDetectedTextStyle",
-                _ => "FFmpegStatusMissingTextStyle"
-            }];
-        }
-        viewModel.PropertyChanged += (_, _) => ShowStatus();
-        ShowStatus();
-
-        var contentPanel = new StackPanel { Spacing = 12 };
-        contentPanel.Children.Add(new TextBlock { Text = Strings.FFmpeg_SetupInstructions, TextWrapping = TextWrapping.Wrap });
-        contentPanel.Children.Add(statusBlock);
-
-        var dialog = new ContentDialog
-        {
-            Title = Strings.Settings_Dialog_FFmpegNotFound_Title,
-            Content = contentPanel,
-            PrimaryButtonText = Strings.Generic_Recheck,
-            CloseButtonText = Strings.Generic_Cancel,
-            XamlRoot = xamlRoot,
-            DefaultButton = ContentDialogButton.Primary
-        };
-
-        dialog.PrimaryButtonClick += async (_, args) =>
-        {
-            var deferral = args.GetDeferral();
-            args.Cancel = !await viewModel.RecheckAsync();
-            deferral.Complete();
-        };
-
-        var result = await ShowDialogAsync(dialog);
-        return result == ContentDialogResult.Primary;
+        var dialog = new FFmpegSetupDialog(new FFmpegSetupViewModel(checkAction)) { XamlRoot = xamlRoot };
+        return await ShowDialogAsync(dialog) == ContentDialogResult.Primary;
     }
 
     private bool TryGetXamlRoot(out XamlRoot? xamlRoot)
@@ -263,20 +222,25 @@ public partial class UIService : IUIService
     }
 
     /// <summary>
-    ///     Shows <paramref name="dialog" /> in the app's theme. WinUI throws when another dialog is already open;
-    ///     that is reported as <see cref="ContentDialogResult.None" />, the same as a cancel.
+    ///     Shows <paramref name="dialog" /> in the app's theme once any dialog before it has closed, since WinUI
+    ///     throws when a second one opens. A dialog that can't show is reported as a cancel.
     /// </summary>
     private async Task<ContentDialogResult> ShowDialogAsync(ContentDialog dialog)
     {
-        DialogThemeHelper.ApplyThemeOverrides(dialog);
+        await _dialogTurn.WaitAsync();
         try
         {
+            DialogThemeHelper.ApplyThemeOverrides(dialog, _window.Content as FrameworkElement);
             return await dialog.ShowAsync();
         }
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Could not show dialog {Title}", dialog.Title);
             return ContentDialogResult.None;
+        }
+        finally
+        {
+            _dialogTurn.Release();
         }
     }
 }

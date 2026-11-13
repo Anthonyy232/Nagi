@@ -1,12 +1,14 @@
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Nagi.Core.Helpers;
-using Nagi.Core.Http;
-using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Implementations;
-using Nagi.Core.Services.Implementations.MusicServers;
-using Nagi.Core.Services;
+using Nagi.Core.Artwork;
+using Nagi.Core.Library;
+using Nagi.Core.MusicServers;
+using Nagi.Core.OnlineProviders;
+using Nagi.Core.Platform;
+using Nagi.Core.Playback;
+using Nagi.Core.Playlists;
+using Nagi.Core.Scrobbling;
 using NSubstitute;
 using Xunit;
 
@@ -20,9 +22,13 @@ public class CoreServiceRegistrationTests
         services.AddLogging();
         services.AddSingleton(Substitute.For<IConfiguration>());
         services.AddSingleton(Substitute.For<IPathConfiguration>());
-        services.AddSingleton(Substitute.For<ISettingsService>());
-        services.AddSingleton(Substitute.For<IAppInfoService>());
+        services.AddSingleton(Substitute.For<ISettingsStore>());
+        services.AddSingleton(Substitute.For<IAutoLaunchService>());
+        var appInfo = Substitute.For<IAppInfoService>();
+        appInfo.GetAppVersion().Returns("2.7.0");
+        services.AddSingleton(appInfo);
         services.AddSingleton(Substitute.For<ICredentialLockerService>());
+        services.AddSingleton(Substitute.For<IDispatcherService>());
         services.AddSingleton(Substitute.For<IAudioPlayer>());
         services.AddSingleton(Substitute.For<ISystemMediaControls>());
         services.AddNagiCore();
@@ -31,28 +37,25 @@ public class CoreServiceRegistrationTests
     }
 
     [Fact]
-    public async Task AddNagiCore_SharesOneLibraryServiceAcrossWriterAndScanner()
+    public async Task AddNagiCore_SharesTheLibraryServicesTheirCollaboratorsUseDirectly()
     {
         await using var provider = BuildProvider();
 
-        var writer = provider.GetRequiredService<ILibraryWriter>();
-        var scanner = provider.GetRequiredService<ILibraryScanner>();
-
-        writer.Should().BeOfType<LibraryService>().And.BeSameAs(scanner);
+        provider.GetRequiredService<ILibraryNotifier>().Should().BeSameAs(provider.GetRequiredService<LibraryNotifier>());
+        provider.GetRequiredService<IPlaylistService>().Should().BeSameAs(provider.GetRequiredService<PlaylistService>());
     }
 
     [Fact]
-    public async Task AddNagiCore_RegistersEveryListenSubmitterAndPresenceService()
+    public async Task AddNagiCore_RegistersEveryListenSubmitter()
     {
         await using var provider = BuildProvider();
 
-        provider.GetServices<IListenSubmitter>().Should().HaveCount(2);
-        provider.GetServices<IPresenceService>().Should().HaveCount(4);
+        provider.GetServices<IListenSubmitter>().Should().HaveCount(3);
     }
 
     [Theory]
     [InlineData("")]
-    [InlineData("ImageDownloader")]
+    [InlineData(ArtworkService.ImageHttpClientName)]
     [InlineData(MusicServerService.HttpClientName)]
     public async Task AddNagiCore_IdentifiesNagiOnceOnEveryHttpClient(string clientName)
     {
@@ -60,6 +63,6 @@ public class CoreServiceRegistrationTests
 
         using var client = provider.GetRequiredService<IHttpClientFactory>().CreateClient(clientName);
 
-        client.DefaultRequestHeaders.UserAgent.ToString().Should().Be(ProviderUserAgent.Value);
+        client.DefaultRequestHeaders.UserAgent.ToString().Should().Be("Nagi/2.7.0 (+" + AppLinks.Repository + ")");
     }
 }

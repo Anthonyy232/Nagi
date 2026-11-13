@@ -71,96 +71,15 @@
   <data name="Label_Title" xml:space="preserve">
     <value>כותרת</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>רשימת השמעה</value>
-  </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>קובץ</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>שנה</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>תאריך הוספה</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>תאריך יצירה</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>תאריך שינוי</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>נוגן לאחרונה</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>משך</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>מספר רצועה</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>השמעות</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>שירים</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>תיקייה</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>סדר ידני</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>אקראי</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>{0} לא ידוע</value>
   </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>{0} חדש</value>
-  </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} לא נמצא.</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (א' עד ת')</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (ת' עד א')</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (חדש ביותר)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (ישן ביותר)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (בסדר עולה)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (בסדר יורד)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>הקצר ביותר תחילה</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>הארוך ביותר תחילה</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>האיטי ביותר תחילה ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>המהיר ביותר תחילה ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>הכי הרבה {0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>הכי מעט {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>סורק תיקייה {0} מתוך {1}: {2} - {3}</value>
@@ -224,9 +143,6 @@
     <value>רענון הספרייה הושלם.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>לא הייתה אפשרות להוסיף את התיקייה.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>שם רשימת ההשמעה אינו יכול להיות ריק.</value>
   </data>
@@ -236,9 +152,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> &amp; </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>מיין לפי: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>אין רשימות השמעה לייצוא.</value>
@@ -306,23 +219,11 @@
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>לא הייתה אפשרות להתחבר ל-ListenBrainz. בדוק את החיבור ואת כתובת ה-URL של השרת.</value>
   </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi לא הצליח למצוא את תיקיית נתוני הספרייה שלו.</value>
-  </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>השחזור נכשל, ולא הייתה אפשרות לשחזר במלואם את הנתונים הקודמים שלך. קובצי התאוששות נשמרו ב-&apos;{0}&apos;.</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>הקובץ שנבחר אינו גיבוי תקין של Nagi.</value>
-  </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC נתקלה בשגיאה לא מוגדרת.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>שגיאת LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>טעינת '{0}' נכשלה.</value>
   </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>גולש בספריית המוזיקה</value>

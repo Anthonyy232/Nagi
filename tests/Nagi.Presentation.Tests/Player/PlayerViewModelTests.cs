@@ -1,0 +1,228 @@
+using FluentAssertions;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Time.Testing;
+using Nagi.Core.Library;
+using Nagi.Core.Platform;
+using Nagi.Core.Playback;
+using Nagi.Core.Settings;
+using Nagi.Presentation.Common;
+using Nagi.Presentation.Navigation;
+using Nagi.Presentation.Player;
+using Nagi.Presentation.Resources;
+using Nagi.Presentation.Settings;
+using Nagi.Presentation.Shell;
+using Nagi.Presentation.Tests.Utils;
+using NSubstitute;
+using Xunit;
+
+namespace Nagi.Presentation.Tests.Player;
+
+public partial class PlayerViewModelTests : IDisposable
+{
+    private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
+    private readonly SettingsService _settings = TestSettings.Create();
+    private readonly IDispatcherService _dispatcher = new ImmediateDispatcher();
+    private readonly FakeTimeProvider _time = new();
+    private readonly PlayerViewModel _viewModel;
+    private readonly LibraryFakes _library = new LibraryFakes();
+
+    public PlayerViewModelTests()
+    {
+        _playback.PlayOrder.Returns(Array.Empty<Guid>());
+        // Volume first, so it is one of the main transport buttons.
+        _settings.Set(AppSettings.PlayerButtons, new[] { "Volume", "Shuffle", "Previous", "PlayPause", "Next", "Repeat", "Separator", "Lyrics", "Queue" }
+            .Select(id => new PlayerButtonSetting { Id = id, DisplayName = id, IsEnabled = true }).ToList());
+        _viewModel = new PlayerViewModel(_playback, Substitute.For<IMusicNavigationService>(),
+            _dispatcher, _settings, Substitute.For<IWindowService>(),
+            _library.Reader, _library.Listening, _library.Notifier, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>(), _time);
+    }
+
+    public void Dispose() => _viewModel.Cleanup();
+
+    [Fact]
+    public async Task OpeningIndicator_ShowsOnlyForASongSlowToOpen()
+    {
+        _playback.IsOpening.Returns(true);
+        _playback.PlaybackStateChanged += Raise.Event<Action>();
+        _time.Advance(TimeSpan.FromMilliseconds(250));
+        _playback.IsOpening.Returns(false);
+        _playback.PlaybackStateChanged += Raise.Event<Action>();
+        _time.Advance(TimeSpan.FromMilliseconds(500));
+        await _viewModel.PendingOpeningIndicator.WaitAsync(TimeSpan.FromSeconds(5));
+        _viewModel.IsOpening.Should().BeFalse("a song that opens at once shouldn't flash the indicator");
+
+        _playback.IsOpening.Returns(true);
+        _playback.PlaybackStateChanged += Raise.Event<Action>();
+        _time.Advance(TimeSpan.FromMilliseconds(500));
+        await _viewModel.PendingOpeningIndicator.WaitAsync(TimeSpan.FromSeconds(5));
+        _viewModel.IsOpening.Should().BeTrue();
+        _viewModel.PlayPauseButtonToolTip.Should().Be(Strings.Status_Loading);
+
+        _playback.IsOpening.Returns(false);
+        _playback.PlaybackStateChanged += Raise.Event<Action>();
+        _viewModel.IsOpening.Should().BeFalse();
+    }
+
+    [Fact]
+    public void ASongRestoredAfterThePlayerIsCreated_ShowsItsDurationBeforeItPlays()
+    {
+        _playback.CurrentTrack.Returns(new Song { Title = "Restored" });
+        _playback.Duration.Returns(TimeSpan.FromSeconds(248));
+        _playback.TrackChanged += Raise.Event<Action>();
+
+        _viewModel.TotalDuration.Should().Be(248);
+    }
+
+    [Fact]
+    public void ServiceVolumeChanges_UpdateBothIconsAndMuteTooltip()
+    {
+        var volumeButton = _viewModel.MainTransportButtons.Single(button => button.Id == PlayerButtonIds.Volume);
+        _playback.Volume.Returns(.9);
+        _playback.VolumeStateChanged += Raise.Event<Action>();
+        _viewModel.VolumeIcon.Should().Be(AppIcon.VolumeHigh);
+        volumeButton.DynamicIcon.Should().Be(_viewModel.VolumeIcon);
+
+        _playback.Volume.Returns(0);
+        _playback.VolumeStateChanged += Raise.Event<Action>();
+        var muteTooltip = volumeButton.DynamicToolTip;
+        _playback.IsMuted.Returns(true);
+        _playback.VolumeStateChanged += Raise.Event<Action>();
+
+        _viewModel.VolumeIcon.Should().Be(AppIcon.Mute);
+        volumeButton.DynamicIcon.Should().Be(_viewModel.VolumeIcon);
+        volumeButton.DynamicToolTip.Should().NotBe(muteTooltip);
+        _playback.DidNotReceive().SetVolumeAsync(Arg.Any<double>());
+    }
+
+    [Fact]
+    public async Task HiddenQueuePreview_DefersFetchUntilOpenedAndRefreshesOnReopen()
+    {
+        var first = new Song { Title = "First" };
+        var next = new Song { Title = "Next" };
+        _playback.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(new Dictionary<Guid, Song> { [first.Id] = first, [next.Id] = next });
+        _playback.UpcomingQueue.Returns(new[] { first.Id });
+        _playback.QueueChanged += Raise.Event<Action>();
+        _playback.TrackChanged += Raise.Event<Action>();
+        await _playback.DidNotReceive().GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>());
+
+        var preview = _viewModel.PreviewQueue();
+        _viewModel.CurrentQueue.Should().ContainSingle().Which.Should().BeSameAs(first);
+        preview.Dispose();
+        _playback.ClearReceivedCalls();
+        _playback.UpcomingQueue.Returns(new[] { next.Id });
+        _playback.QueueChanged += Raise.Event<Action>();
+        await _playback.DidNotReceive().GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>());
+
+        using var reopened = _viewModel.PreviewQueue();
+        _viewModel.CurrentQueue.Should().ContainSingle().Which.Should().BeSameAs(next);
+    }
+
+    [Fact]
+    public async Task ShownQueue_IsReloadedWhenSongsChangeButNotWhenAFavoriteDoes()
+    {
+        var first = new Song { Title = "First" };
+        _playback.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(new Dictionary<Guid, Song> { [first.Id] = first });
+        _playback.UpcomingQueue.Returns(new[] { first.Id });
+        using var preview = _viewModel.PreviewQueue();
+        _playback.ClearReceivedCalls();
+
+        _library.Notifier.Changed += Raise.Event<EventHandler<LibraryChange>>(_library.Notifier, new LibraryChange(LibraryChangeKind.FavoritesChanged));
+        await _playback.DidNotReceive().GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>());
+
+        _library.Notifier.Changed += Raise.Event<EventHandler<LibraryChange>>(_library.Notifier, new LibraryChange(LibraryChangeKind.SongsChanged));
+        await _playback.Received().GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>());
+    }
+
+    // The mini player and the tray popup each show the queue on their own.
+    [Fact]
+    public void QueuePreview_ClosedInOneView_KeepsFollowingTheQueueForAnother()
+    {
+        var first = new Song { Title = "First" };
+        var next = new Song { Title = "Next" };
+        _playback.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(new Dictionary<Guid, Song> { [first.Id] = first, [next.Id] = next });
+        _playback.UpcomingQueue.Returns(new[] { first.Id });
+        using var miniPlayer = _viewModel.PreviewQueue();
+        var trayPopup = _viewModel.PreviewQueue();
+
+        trayPopup.Dispose();
+        _playback.UpcomingQueue.Returns(new[] { next.Id });
+        _playback.QueueChanged += Raise.Event<Action>();
+
+        _viewModel.CurrentQueue.Should().ContainSingle().Which.Should().BeSameAs(next);
+    }
+
+    [Fact]
+    public void QueuePreview_ShowsAtMostAHundredUpcomingSongsAndFollowsRepeatChanges()
+    {
+        var songs = Enumerable.Range(0, 150).Select(i => new Song { Title = i.ToString() }).ToArray();
+        var ids = songs.Select(song => song.Id).ToArray();
+        _playback.UpcomingQueue.Returns(ids);
+        _playback.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(songs.ToDictionary(song => song.Id));
+        using var preview = _viewModel.PreviewQueue();
+        _playback.QueueChanged += Raise.Event<Action>();
+        _viewModel.CurrentQueue.Should().Equal(songs.Take(100));
+
+        _playback.UpcomingQueue.Returns(ids.Skip(140).ToArray());
+        _playback.RepeatModeChanged += Raise.Event<Action>();
+
+        _viewModel.CurrentQueue.Should().Equal(songs.Skip(140));
+    }
+
+    [Fact]
+    public void TrackChange_NeverSeeks()
+    {
+        _playback.CurrentPosition.Returns(TimeSpan.FromSeconds(10));
+        _playback.PositionChanged += Raise.Event<Action>();
+        _viewModel.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(PlayerViewModel.SongTitle))
+                _playback.VolumeStateChanged += Raise.Event<Action>();
+        };
+        _playback.CurrentTrack.Returns(new Song { Title = "Next track" });
+
+        _playback.TrackChanged += Raise.Event<Action>();
+        _playback.CurrentPosition.Returns(TimeSpan.Zero);
+        _playback.PositionChanged += Raise.Event<Action>();
+
+        _viewModel.CurrentPosition.Should().Be(0);
+        _playback.DidNotReceive().SeekAsync(Arg.Any<TimeSpan>());
+    }
+
+    [Fact]
+    public void SeekSlider_SeeksOnceWhenADragEndsAndNotWhenItOnlyFollowsPlayback()
+    {
+        _playback.CurrentPosition.Returns(TimeSpan.FromSeconds(10));
+
+        _viewModel.IsUserDraggingSlider = true;
+        _viewModel.CurrentPosition = 40;
+        _viewModel.CurrentPosition = 90;
+        _playback.DidNotReceive().SeekAsync(Arg.Any<TimeSpan>());
+        _viewModel.IsUserDraggingSlider = false;
+
+        _playback.Received(1).SeekAsync(TimeSpan.FromSeconds(90));
+        _playback.ClearReceivedCalls();
+        // The slider's binding writes back the position playback just reported, a little behind it.
+        _playback.CurrentPosition.Returns(TimeSpan.FromSeconds(90.4));
+        _viewModel.CurrentPosition = 90;
+        _playback.DidNotReceive().SeekAsync(Arg.Any<TimeSpan>());
+
+        _viewModel.CurrentPosition = 120;
+        _playback.Received(1).SeekAsync(TimeSpan.FromSeconds(120));
+    }
+
+    [Fact]
+    public async Task AddFilesToQueue_QueuesDroppedItemsByFileNameNotByFolder()
+    {
+        IEnumerable<string>? queued = null;
+        _playback.AddTransientFilesToQueueAsync(Arg.Do<IEnumerable<string>>(paths => queued = paths.ToList()))
+            .Returns(Task.CompletedTask);
+
+        await _viewModel.AddFilesToQueueAsync([@"C:\b\Charlie.mp3", @"C:\a\bravo.mp3", @"C:\c\Alpha"]);
+
+        queued.Should().Equal(@"C:\c\Alpha", @"C:\a\bravo.mp3", @"C:\b\Charlie.mp3");
+    }
+}

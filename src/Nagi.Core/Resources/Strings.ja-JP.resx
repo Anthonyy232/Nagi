@@ -71,96 +71,15 @@
   <data name="Label_Title" xml:space="preserve">
     <value>タイトル</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>プレイリスト</value>
-  </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>ファイル</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>年</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>追加日</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>作成日</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>更新日</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>最終再生日</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>再生時間</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>トラック番号</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>再生回数</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>曲</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>フォルダー</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>手動順</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>ランダム</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>不明な{0}</value>
   </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>新しい{0}</value>
-  </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0}が見つかりませんでした。</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (A-Z順)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (Z-A順)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (新しい順)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (古い順)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0}（昇順）</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0}（降順）</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>最短から</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>最長から</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>最も遅い順 ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>最も速い順 ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>最も多い{0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>{0}が最も少ない</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>フォルダーをスキャン中 ({0}/{1}): {2} - {3}</value>
@@ -224,9 +143,6 @@
     <value>ライブラリの更新が完了しました。</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>フォルダーを追加できませんでした。</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>プレイリスト名を空にすることはできません。</value>
   </data>
@@ -236,9 +152,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value>と</value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>並べ替え: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>エクスポートするプレイリストがありません。</value>
@@ -306,23 +219,11 @@
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>ListenBrainz に接続できませんでした。接続とサーバー URL を確認してください。</value>
   </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi のライブラリデータフォルダーが見つかりませんでした。</value>
-  </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>復元に失敗したため、以前のデータを完全には復元できませんでした。復旧ファイルは &apos;{0}&apos; に保存されました。</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>選択されたファイルは有効な Nagi のバックアップではありません。</value>
-  </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLCで不明なエラーが発生しました。</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLCエラー: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>'{0}'の読み込みに失敗しました。</value>
   </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>音楽ライブラリを閲覧中</value>

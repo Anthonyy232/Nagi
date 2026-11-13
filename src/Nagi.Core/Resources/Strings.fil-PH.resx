@@ -71,96 +71,15 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Pamagat</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Playlist</value>
-  </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>File</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>Taon</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>Petsa ng Pagdagdag</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>Petsa ng Pagkagawa</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>Petsa ng Pagbabago</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>Huling Pinatugtog</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>Tagal</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>Numero ng Track</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>Mga Pagpapatugtog</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>Mga Kanta</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Folder</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>Manu-manong Pagkakasunod</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>Random</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>Hindi Alam na {0}</value>
   </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>Bagong {0}</value>
-  </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>Hindi natagpuan ang {0}.</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (A hanggang Z)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (Z hanggang A)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Pinakabago)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Pinakaluma)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Pataas)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Pababa)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>Pinakamaikli Muna</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>Pinakamahaba Muna</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>Pinakamabagal Muna ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>Pinakamabilis Muna ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>Pinakamaraming {0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>Pinakakaunting {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Ini-scan ang folder {0} sa {1}: {2} - {3}</value>
@@ -224,9 +143,6 @@
     <value>Kumpleto na ang pag-refresh ng library.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Hindi maidagdag ang folder.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Hindi maaaring walang laman ang pangalan ng playlist.</value>
   </data>
@@ -236,9 +152,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> &amp; </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Pagbukud-bukurin Ayon sa: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Walang mga playlist na i-e-export.</value>
@@ -306,23 +219,11 @@
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Hindi makakonekta sa ListenBrainz. Suriin ang iyong koneksyon at URL ng server.</value>
   </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Hindi mahanap ng Nagi ang folder ng data ng library nito.</value>
-  </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Pumalya ang pag-restore, at hindi ganap na naibalik ang iyong nakaraang data. Na-save ang mga recovery file sa &apos;{0}&apos;.</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Ang napiling file ay hindi isang balidong backup ng Nagi.</value>
-  </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>Nakaranas ang LibVLC ng hindi tinukoy na error.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Error sa LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Nabigo ang pag-load ng '{0}'.</value>
   </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>Nagba-browse sa Music Library</value>

@@ -71,96 +71,15 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Título</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Lista de reproducción</value>
-  </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>Archivo</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>Año</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>Fecha de adición</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>Fecha de creación</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>Fecha de modificación</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>Última reproducción</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>Duración</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>Número de pista</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>Reproducciones</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>Canciones</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Carpeta</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>Orden manual</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>Aleatorio</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>{0} desconocido</value>
   </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>Nueva {0}</value>
-  </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} no encontrado.</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (A a Z)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (Z a A)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Más reciente)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Más antiguo)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (ascendente)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (descendente)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>Más corto primero</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>Más largo primero</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>Más lento primero ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>Más rápido primero ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>Más {0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>Menos {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Escaneando carpeta {0} de {1}: {2} - {3}</value>
@@ -224,9 +143,6 @@
     <value>Actualización de la biblioteca completa.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>No se pudo agregar la carpeta.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>El nombre de la lista de reproducción no puede estar vacío.</value>
   </data>
@@ -236,9 +152,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> &amp; </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Ordenar por: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>No hay listas de reproducción para exportar.</value>
@@ -306,23 +219,11 @@
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>No se pudo conectar a ListenBrainz. Comprueba tu conexión y la URL del servidor.</value>
   </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi no pudo encontrar la carpeta de datos de su biblioteca.</value>
-  </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>La restauración falló y tus datos anteriores no se pudieron restaurar por completo. Los archivos de recuperación se guardaron en &apos;{0}&apos;.</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>El archivo seleccionado no es una copia de seguridad válida de Nagi.</value>
-  </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC encontró un error no especificado.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Error de LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>No se pudo cargar «{0}».</value>
   </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>Navegando en la biblioteca de música</value>

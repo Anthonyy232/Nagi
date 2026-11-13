@@ -1,107 +1,81 @@
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
-using Nagi.Core.Services.Abstractions;
-using Nagi.Presentation.Models;
-using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Theme;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Styles;
 
 namespace Nagi.WinUI.Services.Implementations;
 
-public class ThemeService : IThemeService
+public sealed class ThemeService : IThemeService
 {
     private readonly MainWindow _window;
     private readonly ILogger<ThemeService> _logger;
-    private readonly IMusicPlaybackService _playbackService;
-    private readonly IUISettingsService _settingsService;
-    private readonly IDispatcherService _dispatcherService;
+    private AppTheme _theme = AppTheme.Default;
+    private FrameworkElement? _root;
+    private bool _isLightTheme;
 
-    public ThemeService(MainWindow window, IUISettingsService settingsService, IMusicPlaybackService playbackService,
-        IDispatcherService dispatcherService, ILogger<ThemeService> logger)
+    public ThemeService(MainWindow window, ILogger<ThemeService> logger)
     {
         _window = window;
-        _settingsService = settingsService;
-        _playbackService = playbackService;
-        _dispatcherService = dispatcherService;
         _logger = logger;
+        _window.ContentChanged += OnContentChanged;
+        OnContentChanged();
     }
 
-    public AppTheme CurrentTheme { get; private set; } = AppTheme.Default;
+    public bool IsLightTheme => _root?.ActualTheme == ElementTheme.Light;
 
-    public void ApplyTheme(AppTheme theme)
+    public event Action? ActualThemeChanged;
+
+    public void SetTheme(AppTheme theme)
     {
-        _logger.LogDebug("Applying application theme: {Theme}", theme);
-        CurrentTheme = theme;
-        RunOnUIThread(() =>
-        {
-            if (_window.Content is not FrameworkElement rootElement) return;
-
-            rootElement.RequestedTheme = theme.ToElementTheme();
-            _ = ReapplyCurrentDynamicThemeAsync();
-            _window.InitializeCustomTitleBar();
-        });
+        _theme = theme;
+        if (_root is not null) _root.RequestedTheme = theme.ToElementTheme();
     }
 
-    public Task ReapplyCurrentDynamicThemeAsync()
+    public void SetColors(ThemePalette palette)
     {
-        var currentTrack = _playbackService.CurrentTrack;
-        return ApplyDynamicThemeFromSwatchesAsync(currentTrack?.LightSwatchId, currentTrack?.DarkSwatchId);
+        SetBrushColor(AppResourceKeys.AppPrimaryColorBrush, palette.Primary);
+        SetBrushColor(AppResourceKeys.MediaOnImageAccentBrush, palette.MediaOnImageAccent);
+        SetBrushColor(AppResourceKeys.PlayerTintColorBrush, palette.PlayerTint);
+        SetBrushColor(AppResourceKeys.PlayerBackgroundBrush, palette.PlayerBackground);
+        SetBrushColor(AppResourceKeys.PlayerAccentBrush, palette.PlayerAccent);
     }
 
-    public async Task ApplyDynamicThemeFromSwatchesAsync(string? lightSwatchId, string? darkSwatchId)
+    // Each new root takes the current theme, and the theme shown can change with it.
+    private void OnContentChanged()
     {
-        var isLightTheme = await IsLightThemeAsync();
-        SetAppColors(ThemePalette.ForTrack(await _settingsService.GetDynamicThemingAsync(), lightSwatchId, darkSwatchId,
-            await _settingsService.GetAccentColorAsync(), isLightTheme, await _settingsService.GetPlayerTintIntensityAsync()));
+        if (_root is not null) _root.ActualThemeChanged -= OnRootActualThemeChanged;
+        _root = _window.Content as FrameworkElement;
+        if (_root is null) return;
+
+        _root.RequestedTheme = _theme.ToElementTheme();
+        _root.ActualThemeChanged += OnRootActualThemeChanged;
+        OnRootActualThemeChanged(_root, null);
     }
 
-    public async Task ApplyAccentColorAsync(ArgbColor? color)
+    private void OnRootActualThemeChanged(FrameworkElement sender, object? args)
     {
-        var isLightTheme = await IsLightThemeAsync();
-        SetAppColors(ThemePalette.ForAccent(color, isLightTheme, await _settingsService.GetPlayerTintIntensityAsync()));
-    }
-
-    private void SetAppColors(ThemePalette palette)
-    {
-        SetBrushColor("AppPrimaryColorBrush", palette.Primary, refreshTaskbarIcons: true);
-        SetBrushColor("MediaOnImageAccentBrush", palette.MediaOnImageAccent);
-        SetBrushColor("PlayerTintColorBrush", palette.PlayerTint);
-        SetBrushColor("PlayerBackgroundBrush", palette.PlayerBackground);
-        SetBrushColor("PlayerAccentBrush", palette.PlayerAccent);
+        if (IsLightTheme == _isLightTheme) return;
+        _isLightTheme = IsLightTheme;
+        ActualThemeChanged?.Invoke();
     }
 
     /// <summary>
-    ///     Updates the color of the app-level <see cref="SolidColorBrush" /> resource
-    ///     <paramref name="resourceKey" />, which every bound element picks up.
+    ///     Updates the color of the app-level <see cref="SolidColorBrush" /> resource <paramref name="resourceKey" />,
+    ///     which every window picks up.
     /// </summary>
-    private void SetBrushColor(string resourceKey, ArgbColor color, bool refreshTaskbarIcons = false)
+    private void SetBrushColor(string resourceKey, ArgbColor color)
     {
-        var newColor = color.ToWindowsColor();
-        RunOnUIThread(() =>
+        if (Application.Current.Resources.TryGetValue(resourceKey, out var brushObject) &&
+            brushObject is SolidColorBrush brush)
         {
-            if (Application.Current.Resources.TryGetValue(resourceKey, out var brushObject) &&
-                brushObject is SolidColorBrush brush)
-            {
-                if (brush.Color == newColor) return;
-
-                brush.Color = newColor;
-                if (refreshTaskbarIcons) _ = _window.TaskbarService?.RefreshIconsAsync();
-            }
-            else
-            {
-                _logger.LogCritical("{ResourceKey} resource not found", resourceKey);
-            }
-        });
+            var newColor = color.ToWindowsColor();
+            if (brush.Color != newColor) brush.Color = newColor;
+        }
+        else
+        {
+            _logger.LogCritical("{ResourceKey} resource not found", resourceKey);
+        }
     }
-
-    private void RunOnUIThread(Action action)
-    {
-        if (_dispatcherService.HasThreadAccess) action();
-        else _dispatcherService.TryEnqueue(action);
-    }
-
-    private async Task<bool> IsLightThemeAsync() =>
-        await _dispatcherService.EnqueueAsync(() =>
-            _window.Content is FrameworkElement { ActualTheme: ElementTheme.Light });
 }

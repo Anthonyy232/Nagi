@@ -1,0 +1,184 @@
+using System.Text.Json;
+using FluentAssertions;
+using Nagi.Core.OnlineProviders;
+using Nagi.Core.Playback;
+using Nagi.Core.Settings;
+using Nagi.Core.Tests.Utils;
+using Xunit;
+
+namespace Nagi.Core.Tests.Settings;
+
+public class SettingsServiceTests
+{
+    [Fact]
+    public void Set_NotifiesOnlyWhenTheEffectiveValueChanges()
+    {
+        var settings = TestSettings.Create();
+        var changes = new List<Setting>();
+        settings.SettingChanged += changes.Add;
+
+        settings.Set(CoreSettings.Volume, 1.5);
+        settings.Set(CoreSettings.Volume, 1.0);
+        settings.Set(CoreSettings.IsMuted, false);
+        settings.Set(CoreSettings.LyricsProviders, settings.Get(CoreSettings.LyricsProviders));
+        settings.Set(CoreSettings.RepeatMode, RepeatMode.RepeatAll);
+
+        changes.Should().Equal(CoreSettings.Volume, CoreSettings.RepeatMode);
+        settings.Get(CoreSettings.Volume).Should().Be(1.0);
+    }
+
+    [Fact]
+    public void ResetToDefaults_NotifiesChangedSettingsAfterRemovingSavedValues()
+    {
+        var values = new Dictionary<string, object> { ["ObsoleteSetting"] = true };
+        var settings = TestSettings.Create(values);
+        settings.Set(CoreSettings.VolumeNormalization, true);
+        settings.Set(CoreSettings.IgnoreLeadingArticlesOnSort, false);
+        settings.Set(CoreSettings.FetchOnlineLyrics, CoreSettings.FetchOnlineLyrics.Default);
+        var notifications = new List<string>();
+        settings.SettingChanged += setting => notifications.Add($"{setting.Key}:{values.ContainsKey(setting.Key)}");
+
+        settings.ResetToDefaults();
+
+        notifications.Should().BeEquivalentTo("VolumeNormalizationEnabled:False", "IgnoreLeadingArticlesOnSort:False");
+        values.Should().NotContainKey("ObsoleteSetting");
+        settings.Get(CoreSettings.VolumeNormalization).Should().BeFalse();
+        settings.Get(CoreSettings.IgnoreLeadingArticlesOnSort).Should().BeTrue();
+    }
+
+    [Fact]
+    public void Providers_ReconcileSavedPriorityWithCurrentDefinitionsWithoutRewritingStorage()
+    {
+        // As older versions saved it, with a name, category and position for each provider.
+        const string saved = """
+            [{"Id":"NETEASE","DisplayName":"Old","Category":0,"IsEnabled":false,"Order":0},
+             {"Id":"netease","DisplayName":"NetEase","Category":0,"IsEnabled":true,"Order":1},
+             {"Id":"Removed","DisplayName":"Removed","Category":0,"IsEnabled":true,"Order":2}]
+            """;
+        var values = new Dictionary<string, object> { ["LyricsServiceProviders"] = saved };
+        var settings = TestSettings.Create(values);
+
+        var providers = settings.Get(CoreSettings.LyricsProviders);
+
+        providers.Should().Equal(new ServiceProviderSetting(ServiceProviderIds.LrcLib),
+            new ServiceProviderSetting(ServiceProviderIds.NetEase, IsEnabled: false));
+        values["LyricsServiceProviders"].Should().Be(saved);
+    }
+
+    [Fact]
+    public void Providers_AreSavedAsTheirIdAndEnabledStateInPriorityOrder()
+    {
+        var values = new Dictionary<string, object>();
+        var settings = TestSettings.Create(values);
+
+        settings.Set(CoreSettings.LyricsProviders,
+            [new ServiceProviderSetting(ServiceProviderIds.NetEase, IsEnabled: false), new ServiceProviderSetting(ServiceProviderIds.LrcLib)]);
+
+        values["LyricsServiceProviders"].Should().Be("""[{"Id":"netease","IsEnabled":false},{"Id":"lrclib","IsEnabled":true}]""");
+    }
+
+    [Fact]
+    public void Providers_MissingFromASavedOrderTakeTheirDefaultSlot()
+    {
+        var saved = JsonSerializer.Serialize(new[]
+        {
+            new ServiceProviderSetting(ServiceProviderIds.MusicBrainz),
+            new ServiceProviderSetting(ServiceProviderIds.LastFm)
+        });
+        var settings = TestSettings.Create(new Dictionary<string, object> { ["MetadataServiceProviders"] = saved });
+
+        var providers = settings.Get(CoreSettings.MetadataProviders);
+
+        // The saved two agree with the default ranking, so every source missing from it lands in its default slot.
+        providers.Select(p => p.Id).Should().Equal(CoreSettings.MetadataProviders.Default.Select(p => p.Id));
+    }
+
+    [Fact]
+    public void Providers_MissingFromASavedOrderStayBelowSourcesTheUserRankedDifferently()
+    {
+        // The pre-update default order, which ranked TheAudioDB above Fanart.tv.
+        var saved = JsonSerializer.Serialize(new[]
+        {
+            new ServiceProviderSetting(ServiceProviderIds.MusicBrainz),
+            new ServiceProviderSetting(ServiceProviderIds.TheAudioDb),
+            new ServiceProviderSetting(ServiceProviderIds.FanartTv),
+            new ServiceProviderSetting(ServiceProviderIds.LastFm)
+        });
+        var settings = TestSettings.Create(new Dictionary<string, object> { ["MetadataServiceProviders"] = saved });
+
+        var ids = settings.Get(CoreSettings.MetadataProviders).Select(p => p.Id).ToList();
+
+        ids.IndexOf(ServiceProviderIds.TheAudioDb).Should().BeLessThan(ids.IndexOf(ServiceProviderIds.FanartTv));
+        ids.IndexOf(ServiceProviderIds.Deezer).Should().BeGreaterThan(ids.IndexOf(ServiceProviderIds.FanartTv));
+        ids.IndexOf(ServiceProviderIds.AppleMusic).Should().BeGreaterThan(ids.IndexOf(ServiceProviderIds.FanartTv));
+    }
+
+    [Fact]
+    public void InvalidStoredValues_FallBackToDefaults()
+    {
+        var settings = TestSettings.Create(new Dictionary<string, object>
+        {
+            ["MusicRepeatMode"] = "999",
+            ["LyricsServiceProviders"] = "{broken",
+            ["AppVolume"] = "loud",
+            ["EqualizerSettings"] = "{broken"
+        });
+
+        settings.Get(CoreSettings.RepeatMode).Should().Be(CoreSettings.RepeatMode.Default);
+        settings.Get(CoreSettings.LyricsProviders).Select(provider => provider.Id)
+            .Should().Equal(ServiceProviderIds.LrcLib, ServiceProviderIds.NetEase);
+        settings.Get(CoreSettings.Volume).Should().Be(CoreSettings.Volume.Default);
+        settings.Get(CoreSettings.Equalizer).Should().BeNull();
+    }
+
+    [Fact]
+    public void ListenBrainzEnabledSince_IsStoredAsUtcTicksWithZeroForUnset()
+    {
+        var values = new Dictionary<string, object>();
+        var settings = TestSettings.Create(values);
+        var timestamp = new DateTime(2026, 1, 2, 3, 4, 5, DateTimeKind.Utc);
+
+        settings.Set(CoreSettings.ListenBrainzEnabledSinceUtc, timestamp);
+        values["ListenBrainzEnabledSinceUtcTicks"].Should().Be(timestamp.Ticks);
+        settings.Get(CoreSettings.ListenBrainzEnabledSinceUtc).Should().Be(timestamp);
+
+        settings.Set(CoreSettings.ListenBrainzEnabledSinceUtc, null);
+        values["ListenBrainzEnabledSinceUtcTicks"].Should().Be(0L);
+        settings.Get(CoreSettings.ListenBrainzEnabledSinceUtc).Should().BeNull();
+    }
+
+    [Fact]
+    public async Task ExportThenImport_RestoresEveryValueWithItsType_ButNotTheLastFmAuthToken()
+    {
+        var exported = new Dictionary<string, object>
+        {
+            ["AppMuteState"] = true,
+            ["FadeInDurationMs"] = 3,
+            ["ListenBrainzEnabledSinceUtcTicks"] = 638_000_000_000_000_000L,
+            ["AppVolume"] = 1.0,
+            ["MusicRepeatMode"] = "RepeatAll",
+            ["LastFmAuthToken"] = "temporary"
+        };
+        var snapshot = await TestSettings.Create(exported).ExportAsync();
+        var restored = new Dictionary<string, object> { ["Stale"] = "removed" };
+
+        await TestSettings.Create(restored).ImportAsync(snapshot);
+
+        exported.Remove("LastFmAuthToken");
+        // Boxed values compare by type too, so 1.0 restored as an int would fail.
+        restored.Should().Equal(exported);
+    }
+
+    [Theory]
+    [InlineData("{\"AppVolume\":0.5}")]
+    [InlineData("{\"AppVolume\":{\"Type\":\"Double\",\"Value\":\"loud\"}}")]
+    [InlineData("{\"When\":{\"Type\":\"DateTimeOffset\",\"Value\":\"2026-01-01\"}}")]
+    public async Task Import_WithAnInvalidSnapshot_ThrowsAndKeepsCurrentSettings(string snapshot)
+    {
+        var values = new Dictionary<string, object> { ["AppVolume"] = 0.8 };
+
+        await TestSettings.Create(values).Invoking(settings => settings.ImportAsync(snapshot)).Should().ThrowAsync<JsonException>();
+
+        values.Should().Equal(new Dictionary<string, object> { ["AppVolume"] = 0.8 });
+    }
+}

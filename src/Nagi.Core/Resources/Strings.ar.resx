@@ -71,96 +71,15 @@
   <data name="Label_Title" xml:space="preserve">
     <value>عنوان</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>قائمة تشغيل</value>
-  </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>ملف</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>سنة</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>تاريخ الإضافة</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>تاريخ الإنشاء</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>تاريخ التعديل</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>آخر تشغيل</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>المدة</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>رقم المسار</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>عدد التشغيلات</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>الأغاني</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>مجلد</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>ترتيب يدوي</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>عشوائي</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>{0} غير معروف</value>
   </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>{0} جديد</value>
-  </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>لم يتم العثور على {0}.</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (ألف إلى ياء)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (ياء إلى ألف)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (الأحدث)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (الأقدم)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (تصاعدي)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (تنازلي)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>الأقصر أولاً</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>الأطول أولاً</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>الأبطأ أولاً ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>الأسرع أولاً ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>الأكثر {0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>أقل {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>جاري فحص المجلد {0} من {1}: {2} - {3}</value>
@@ -224,9 +143,6 @@
     <value>اكتمل تحديث المكتبة.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>تعذر إضافة المجلد.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>لا يمكن أن يكون اسم قائمة التشغيل فارغًا.</value>
   </data>
@@ -236,9 +152,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> &amp; </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>فرز حسب: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>لا توجد قوائم تشغيل لتصديرها.</value>
@@ -306,23 +219,11 @@
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>تعذر الاتصال بـ ListenBrainz. تحقق من اتصالك وعنوان URL للخادم.</value>
   </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>لم يتمكن Nagi من العثور على مجلد بيانات مكتبته.</value>
-  </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>فشلت الاستعادة، ولم يتم التمكن من استعادة بياناتك السابقة بالكامل. تم حفظ ملفات الاسترداد في &apos;{0}&apos;.</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>الملف المحدد ليس نسخة احتياطية صالحة لـ Nagi.</value>
-  </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>واجه LibVLC خطأ غير محدد.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>خطأ LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>فشل تحميل '{0}'.</value>
   </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>يتصفح مكتبة الموسيقى</value>

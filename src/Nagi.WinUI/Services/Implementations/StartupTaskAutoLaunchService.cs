@@ -1,7 +1,6 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Nagi.Presentation.Services.Abstractions;
+﻿using Microsoft.Extensions.Logging;
 using Windows.ApplicationModel;
+using Nagi.Core.Platform;
 
 namespace Nagi.WinUI.Services.Implementations;
 

@@ -71,96 +71,15 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Pealkiri</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Esitusloend</value>
-  </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>Fail</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>Aasta</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>Lisamise kuupäev</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>Loomise kuupäev</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>Muutmise kuupäev</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>Viimati mängitud</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>Kestus</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>Loo number</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>Esituskorrad</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>Laulud</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Kaust</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>Käsitsi järjestus</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>Juhuslik</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>Tundmatu {0}</value>
   </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>Uus {0}</value>
-  </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} ei leitud.</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (A-Z)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (Z-A)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Uusim)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Vanim)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (kasvavalt)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (kahanevalt)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>Lühimad enne</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>Pikimad enne</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>Aeglasemad enne ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>Kiiremad enne ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>Kõige rohkem {0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>Kõige vähem {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Kausta {0}/{1} skaneerimine: {2} - {3}</value>
@@ -224,9 +143,6 @@
     <value>Teegi värskendamine lõpetatud.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Kausta ei saanud lisada.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Esitusloendi nimi ei tohi olla tühi.</value>
   </data>
@@ -236,9 +152,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> &amp; </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Sorteeri: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Eksportimiseks pole ühtegi esitusloendit.</value>
@@ -306,23 +219,11 @@
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>ListenBrainz-iga ei saanud ühendust luua. Kontrolli oma ühendust ja serveri URL-i.</value>
   </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi ei leidnud oma teegi andmekausta.</value>
-  </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Taastamine ebaõnnestus ja sinu varasemaid andmeid ei saanud täielikult taastada. Taastefailid salvestati asukohta &apos;{0}&apos;.</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Valitud fail ei ole kehtiv Nagi varukoopia.</value>
-  </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC-s ilmnes määramata viga.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC viga: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Faili '{0}' laadimine ebaõnnestus.</value>
   </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>Sirvib muusikakogu</value>

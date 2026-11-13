@@ -1,5 +1,5 @@
 using Microsoft.UI.Xaml.Controls;
-using Nagi.Presentation.ViewModels;
+using Nagi.Presentation.MusicServers;
 
 namespace Nagi.WinUI.Dialogs;
 
@@ -19,14 +19,8 @@ public sealed partial class MusicServerDialog : ContentDialog
     private async void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
         var deferral = args.GetDeferral();
-        try
-        {
-            args.Cancel = !await ViewModel.SubmitAsync();
-        }
-        finally
-        {
-            deferral.Complete();
-        }
+        args.Cancel = !await ViewModel.SubmitAsync();
+        deferral.Complete();
     }
 
     // Cancelling mid-check would close the dialog while the server could still be added, leaving it unsynced.

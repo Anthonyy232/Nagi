@@ -1,6 +1,6 @@
 using Microsoft.UI.Xaml.Media;
-using Nagi.Core.Models;
-using Nagi.Presentation.Helpers;
+using Nagi.Core.Playback;
+using Nagi.Presentation.Insights;
 
 namespace Nagi.WinUI.Helpers;
 

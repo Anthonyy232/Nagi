@@ -1,6 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Nagi.Presentation.Models;
+using Nagi.Presentation.Lists;
 
 namespace Nagi.WinUI.Helpers;
 

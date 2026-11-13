@@ -1,0 +1,195 @@
+using Microsoft.Extensions.Logging;
+using Nagi.Core.Metadata;
+
+namespace Nagi.Core.Library;
+
+/// <summary>
+///     Watches the library's root folders and refreshes a folder in the background when audio files
+///     in it are added, removed, renamed or changed.
+/// </summary>
+public sealed class LibraryFolderWatcher : IDisposable
+{
+    private readonly ILibraryReader _libraryReader;
+    private readonly ILibraryNotifier _libraryNotifier;
+    private readonly ILibraryFolderService _folderService;
+    private readonly ILogger<LibraryFolderWatcher> _logger;
+    private readonly TimeProvider _timeProvider;
+    private readonly CancellationTokenSource _shutdownCts = new();
+    private readonly CancellationToken _shutdownToken;
+    private readonly SemaphoreSlim _syncTurn = new(1, 1);
+    private readonly Lock _lock = new();
+    private readonly Dictionary<Guid, WatchedFolder> _folders = new();
+
+    public LibraryFolderWatcher(ILibraryReader libraryReader, ILibraryNotifier libraryNotifier, ILibraryFolderService folders,
+        ILogger<LibraryFolderWatcher> logger, TimeProvider? timeProvider = null)
+    {
+        _libraryReader = libraryReader;
+        _libraryNotifier = libraryNotifier;
+        _folderService = folders;
+        _logger = logger;
+        _timeProvider = timeProvider ?? TimeProvider.System;
+        _shutdownToken = _shutdownCts.Token;
+    }
+
+    /// <summary>
+    ///     How long the folder must stay quiet before it is refreshed, so a large copy triggers one scan.
+    /// </summary>
+    internal static readonly TimeSpan QuietPeriod = TimeSpan.FromSeconds(3);
+
+    public void Start()
+    {
+        _libraryNotifier.Changed += OnLibraryChanged;
+        _ = SyncFoldersAsync();
+    }
+
+    public void Dispose()
+    {
+        if (_shutdownToken.IsCancellationRequested) return;
+        _libraryNotifier.Changed -= OnLibraryChanged;
+        _shutdownCts.Cancel();
+        lock (_lock)
+        {
+            foreach (var folder in _folders.Values) folder.Dispose();
+            _folders.Clear();
+        }
+        _shutdownCts.Dispose();
+    }
+
+    private void OnLibraryChanged(object? sender, LibraryChange change)
+    {
+        if (change.AffectsRoots)
+            _ = SyncFoldersAsync();
+    }
+
+    private async Task SyncFoldersAsync()
+    {
+        try
+        {
+            // One sync at a time: an older query that finished last would unwatch a folder a newer one just added.
+            await _syncTurn.WaitAsync(_shutdownToken).ConfigureAwait(false);
+            try
+            {
+                var roots = await _libraryReader.GetRootFoldersOnDiskAsync(_shutdownToken).ConfigureAwait(false);
+
+                lock (_lock)
+                {
+                    if (_shutdownToken.IsCancellationRequested) return;
+
+                    foreach (var id in _folders.Keys.Except(roots.Select(f => f.Id)).ToList())
+                    {
+                        _folders[id].Dispose();
+                        _folders.Remove(id);
+                    }
+
+                    foreach (var folder in roots.Where(f => !_folders.ContainsKey(f.Id)))
+                    {
+                        var watched = TryWatch(folder.Id, folder.Path);
+                        if (watched is not null) _folders[folder.Id] = watched;
+                    }
+                }
+            }
+            finally
+            {
+                _syncTurn.Release();
+            }
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to update the watched library folders.");
+        }
+    }
+
+    private WatchedFolder? TryWatch(Guid folderId, string path)
+    {
+        try
+        {
+            var watcher = new FileSystemWatcher(path)
+            {
+                IncludeSubdirectories = true,
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite | NotifyFilters.Size,
+                InternalBufferSize = 64 * 1024
+            };
+            var watched = new WatchedFolder(watcher,
+                _timeProvider.CreateTimer(_ => _ = RefreshAsync(folderId), null, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan));
+
+            watcher.Created += (_, e) => OnFileSystemEvent(watched, e.FullPath, includeFolders: true);
+            watcher.Deleted += (_, e) => OnFileSystemEvent(watched, e.FullPath, includeFolders: true);
+            watcher.Changed += (_, e) => OnFileSystemEvent(watched, e.FullPath, includeFolders: false);
+            watcher.Renamed += (_, e) =>
+            {
+                OnFileSystemEvent(watched, e.OldFullPath, includeFolders: true);
+                OnFileSystemEvent(watched, e.FullPath, includeFolders: true);
+            };
+            // A buffer overflow means events were lost, so refresh to catch up.
+            watcher.Error += (_, e) =>
+            {
+                _logger.LogWarning(e.GetException(), "Watcher for library folder {FolderPath} reported an error.", path);
+                watched.ScheduleRefresh(QuietPeriod);
+            };
+
+            watcher.EnableRaisingEvents = true;
+            _logger.LogDebug("Watching library folder {FolderPath} for changes.", path);
+            return watched;
+        }
+        catch (Exception ex) when (ex is ArgumentException or IOException or UnauthorizedAccessException or PlatformNotSupportedException)
+        {
+            // An unreachable drive or share is picked up again by the next full refresh.
+            _logger.LogWarning(ex, "Cannot watch library folder {FolderPath} for changes.", path);
+            return null;
+        }
+    }
+
+    private static void OnFileSystemEvent(WatchedFolder folder, string path, bool includeFolders)
+    {
+        if (CanChangeLibrary(path, includeFolders)) folder.ScheduleRefresh(QuietPeriod);
+    }
+
+    internal static bool CanChangeLibrary(string path, bool includeFolders)
+    {
+        var extension = Path.GetExtension(path);
+        // Folder events have no extension; a moved or deleted folder can take songs with it.
+        return FileExtensions.MusicFileExtensions.Contains(extension) || (includeFolders && extension.Length == 0);
+    }
+
+    private async Task RefreshAsync(Guid folderId)
+    {
+        try
+        {
+            _logger.LogDebug("Refreshing library folder {FolderId} after file changes.", folderId);
+            await _folderService.RefreshFolderInBackgroundAsync(folderId, _shutdownToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (ObjectDisposedException) when (_shutdownToken.IsCancellationRequested)
+        {
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Background refresh of library folder {FolderId} failed.", folderId);
+        }
+    }
+
+    private sealed class WatchedFolder(FileSystemWatcher watcher, ITimer timer) : IDisposable
+    {
+        public void ScheduleRefresh(TimeSpan quietPeriod)
+        {
+            try
+            {
+                timer.Change(quietPeriod, Timeout.InfiniteTimeSpan);
+            }
+            catch (ObjectDisposedException)
+            {
+            }
+        }
+
+        public void Dispose()
+        {
+            watcher.Dispose();
+            timer.Dispose();
+        }
+    }
+}

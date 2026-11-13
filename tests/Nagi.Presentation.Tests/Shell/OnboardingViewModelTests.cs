@@ -1,0 +1,128 @@
+using FluentAssertions;
+using Microsoft.Extensions.Logging.Abstractions;
+using Nagi.Core.Library;
+using Nagi.Core.MusicServers;
+using Nagi.Presentation.Common;
+using Nagi.Presentation.MusicServers;
+using Nagi.Presentation.Shell;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
+using Xunit;
+
+namespace Nagi.Presentation.Tests.Shell;
+
+public class OnboardingViewModelTests
+{
+    private const string FolderPath = @"C:\Music";
+
+    private readonly LibraryFakes _library = new();
+    private readonly IMusicServerService _musicServers = Substitute.For<IMusicServerService>();
+    private readonly IUIService _ui = Substitute.For<IUIService>();
+    private readonly IApplicationLifecycle _lifecycle = Substitute.For<IApplicationLifecycle>();
+    private readonly OnboardingViewModel _viewModel;
+
+    public OnboardingViewModelTests()
+    {
+        _ui.PickSingleFolderAsync().Returns(FolderPath);
+        _library.Folders.AddFolderAsync(FolderPath).Returns(new Folder { Name = "Music", Path = FolderPath });
+        _viewModel = new OnboardingViewModel(_library.Folders, _musicServers, _ui, _lifecycle,
+            NullLogger<OnboardingViewModel>.Instance);
+        _viewModel.GoNextCommand.Execute(null);
+    }
+
+    [Fact]
+    public async Task ChoosingAFolder_MovesOnWhileScanningAndOnlyAllowsFinishingOnceTheLibraryIsReady()
+    {
+        var scan = new TaskCompletionSource<bool>();
+        _library.Folders.RescanFolderForMusicAsync(Arg.Any<Guid>(), Arg.Any<IProgress<ScanProgress>>())
+            .Returns(scan.Task);
+
+        var choosing = _viewModel.ChooseFolderCommand.ExecuteAsync(null);
+
+        _viewModel.CurrentStep.Should().Be(OnboardingStep.Appearance);
+        _viewModel.IsScanning.Should().BeTrue();
+        _viewModel.SkipSetupCommand.CanExecute(null).Should().BeTrue();
+        _viewModel.FinishCommand.CanExecute(null).Should().BeFalse();
+        // Going back to the welcome step would offer a language change, which restarts the app mid-scan.
+        _viewModel.GoToStepCommand.CanExecute(OnboardingStep.Library).Should().BeTrue();
+        _viewModel.GoToStepCommand.CanExecute(OnboardingStep.Welcome).Should().BeFalse();
+
+        scan.SetResult(true);
+        await choosing;
+
+        _viewModel.IsLibraryReady.Should().BeTrue();
+        _viewModel.FinishCommand.CanExecute(null).Should().BeTrue();
+        await _viewModel.FinishCommand.ExecuteAsync(null);
+        _lifecycle.Received(1).ShowMainShell();
+    }
+
+    [Fact]
+    public async Task LibraryStep_StaysUntilAFolderIsChosen()
+    {
+        _ui.PickSingleFolderAsync().Returns((string?)null);
+
+        _viewModel.GoNextCommand.CanExecute(null).Should().BeFalse();
+        await _viewModel.ChooseFolderCommand.ExecuteAsync(null);
+
+        _viewModel.CurrentStep.Should().Be(OnboardingStep.Library);
+        await _library.Folders.DidNotReceiveWithAnyArgs().AddFolderAsync(default!);
+    }
+
+    [Fact]
+    public async Task ConnectingAServer_LetsSetupFinishWithoutAFolder()
+    {
+        _ui.ShowAddMusicServerDialogAsync().Returns(new Folder { Name = "Navidrome", Path = "nagi-server:0123" });
+
+        await _viewModel.ConnectServerCommand.ExecuteAsync(null);
+
+        _viewModel.LibrarySource.Should().Be("Navidrome");
+        _viewModel.FinishCommand.CanExecute(null).Should().BeTrue();
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ConnectingAServerWhoseSyncFails_RemovesItAndSaysWhatWentWrong(bool removalFails)
+    {
+        var server = new Folder { Name = "Navidrome", Path = "nagi-server:0123" };
+        _ui.ShowAddMusicServerDialogAsync().Returns(server);
+        _musicServers.SyncAsync(server.Id, Arg.Any<IProgress<ScanProgress>?>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromException(new MusicServerException(MusicServerError.Unreachable, "timed out")));
+        if (removalFails) _musicServers.RemoveAsync(server.Id).ThrowsAsync(new IOException("locked"));
+
+        await _viewModel.ConnectServerCommand.ExecuteAsync(null);
+
+        await _musicServers.Received(1).RemoveAsync(server.Id);
+        _viewModel.HasLibraryFailed.Should().BeTrue();
+        _viewModel.ScanStatus.Should().Be(MusicServerErrors.DescribeForServer(MusicServerError.Unreachable, "Navidrome"));
+        _viewModel.ConnectServerCommand.CanExecute(null).Should().BeTrue();
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task FailedFolder_KeepsTheStepsOpenButOnlyFinishesAfterAnotherFolderIsChosen(bool cannotAddFolder)
+    {
+        if (cannotAddFolder)
+            _library.Folders.AddFolderAsync(FolderPath).Returns((Folder?)null);
+        else
+            _library.Folders.RescanFolderForMusicAsync(Arg.Any<Guid>(), Arg.Any<IProgress<ScanProgress>>())
+                .ThrowsAsync(new IOException("unreadable"));
+
+        await _viewModel.ChooseFolderCommand.ExecuteAsync(null);
+
+        _viewModel.HasLibraryFailed.Should().BeTrue();
+        _viewModel.SkipSetupCommand.CanExecute(null).Should().BeTrue();
+        _viewModel.FinishCommand.CanExecute(null).Should().BeFalse();
+        _viewModel.GoToStepCommand.CanExecute(OnboardingStep.Welcome).Should().BeTrue();
+
+        _viewModel.SkipSetupCommand.Execute(null);
+        _library.Folders.AddFolderAsync(FolderPath).Returns(new Folder { Name = "Music", Path = FolderPath });
+        _library.Folders.RescanFolderForMusicAsync(Arg.Any<Guid>(), Arg.Any<IProgress<ScanProgress>>())
+            .Returns(true);
+        await _viewModel.ChooseFolderCommand.ExecuteAsync(null);
+
+        _viewModel.CurrentStep.Should().Be(OnboardingStep.Finish);
+        _viewModel.FinishCommand.CanExecute(null).Should().BeTrue();
+    }
+}

@@ -71,96 +71,15 @@
   <data name="Label_Title" xml:space="preserve">
     <value>ชื่อเพลง</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>เพลย์ลิสต์</value>
-  </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>ไฟล์</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>ปี</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>วันที่เพิ่ม</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>วันที่สร้าง</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>วันที่แก้ไข</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>เล่นล่าสุด</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>ระยะเวลา</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>หมายเลขแทร็ก</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>จำนวนการเล่น</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>เพลง</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>โฟลเดอร์</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>ลำดับเอง</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>สุ่ม</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>{0} ไม่ทราบ</value>
   </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>{0} ใหม่</value>
-  </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>ไม่พบ {0}</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (A ถึง Z)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (Z ถึง A)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (ใหม่ที่สุด)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (เก่าที่สุด)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (จากน้อยไปมาก)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (จากมากไปน้อย)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>สั้นที่สุดก่อน</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>ยาวที่สุดก่อน</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>ช้าที่สุดก่อน ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>เร็วที่สุดก่อน ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>{0} มากที่สุด</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>{0} น้อยที่สุด</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>กำลังสแกนโฟลเดอร์ {0} จาก {1}: {2} - {3}</value>
@@ -224,9 +143,6 @@
     <value>รีเฟรชคลังเพลงเสร็จสมบูรณ์</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>ไม่สามารถเพิ่มโฟลเดอร์ได้</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>ชื่อเพลย์ลิสต์ต้องไม่ว่างเปล่า</value>
   </data>
@@ -236,9 +152,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> &amp; </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>จัดเรียงตาม: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>ไม่มีเพลย์ลิสต์ที่จะส่งออก</value>
@@ -306,23 +219,11 @@
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>ไม่สามารถเชื่อมต่อกับ ListenBrainz ได้ โปรดตรวจสอบการเชื่อมต่อและ URL เซิร์ฟเวอร์</value>
   </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi ไม่พบโฟลเดอร์ข้อมูลคลังเพลง</value>
-  </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>การกู้คืนล้มเหลว และไม่สามารถกู้คืนข้อมูลก่อนหน้าของคุณได้อย่างสมบูรณ์ บันทึกไฟล์กู้คืนไว้ที่ &apos;{0}&apos;</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>ไฟล์ที่เลือกไม่ใช่ไฟล์สำรองข้อมูล Nagi ที่ถูกต้อง</value>
-  </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC พบข้อผิดพลาดที่ไม่ระบุ</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>ข้อผิดพลาด LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>ไม่สามารถโหลด '{0}' ได้</value>
   </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>กำลังเรียกดูคลังเพลง</value>

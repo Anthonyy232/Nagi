@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
-using Nagi.Core.Http.Pipelines;
+using Nagi.Core.OnlineProviders.Pipelines;
 
-namespace Nagi.Core.Tests;
+namespace Nagi.Core.Tests.Utils;
 
 /// <summary>
 ///     Builds a fast, no-retry <see cref="ProviderPipelineProvider"/> for a given provider id

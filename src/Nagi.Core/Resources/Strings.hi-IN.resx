@@ -71,96 +71,15 @@
   <data name="Label_Title" xml:space="preserve">
     <value>शीर्षक</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>प्लेलिस्ट</value>
-  </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>फ़ाइल</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>वर्ष</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>जोड़ी गई दिनांक</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>बनाई गई दिनांक</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>संशोधित दिनांक</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>अंतिम बार बजाया गया</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>अवधि</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>बीपीएम</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>ट्रैक संख्या</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>प्ले</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>गाने</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>फ़ोल्डर</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>मैन्युअल क्रम</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>रैंडम</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>अज्ञात {0}</value>
   </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>नया {0}</value>
-  </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} नहीं मिला।</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (ए से ज़ेड तक)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (ज़ेड से ए तक)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (नवीनतम)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (सबसे पुराना)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (आरोही)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (अवरोही)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>सबसे छोटा पहले</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>सबसे लंबा पहले</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>सबसे धीमा पहले ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>सबसे तेज़ पहले ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>सबसे अधिक {0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>सबसे कम {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>{1} में से फ़ोल्डर {0} स्कैन किया जा रहा है: {2} - {3}</value>
@@ -224,9 +143,6 @@
     <value>लाइब्रेरी रीफ्रेश पूरा हुआ।</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>फ़ोल्डर जोड़ा नहीं जा सका।</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>प्लेलिस्ट का नाम खाली नहीं हो सकता।</value>
   </data>
@@ -236,9 +152,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> और </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>क्रमबद्ध करें: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>निर्यात करने के लिए कोई प्लेलिस्ट नहीं है।</value>
@@ -306,23 +219,11 @@
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>ListenBrainz से कनेक्ट नहीं किया जा सका। अपने कनेक्शन और सर्वर URL की जांच करें।</value>
   </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi को अपना लाइब्रेरी डेटा फ़ोल्डर नहीं मिला।</value>
-  </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>रीस्टोर विफल रहा, और आपका पिछला डेटा पूरी तरह से रीस्टोर नहीं किया जा सका। रिकवरी फ़ाइलें &apos;{0}&apos; पर सहेजी गईं।</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>चुनी गई फ़ाइल मान्य Nagi बैकअप नहीं है।</value>
-  </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC को एक अनिर्दिष्ट त्रुटि का सामना करना पड़ा।</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC त्रुटि: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>'{0}' लोड करने में विफल।</value>
   </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>संगीत लाइब्रेरी ब्राउज़ कर रहे हैं</value>

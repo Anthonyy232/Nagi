@@ -25,12 +25,12 @@ Nagi plays the music already on your computer, and can stream from your own Navi
 <div align="center">
   <a href="https://apps.microsoft.com/detail/9P1V1PPML3QT?referrer=appbadge&launch=true&mode=full"><img src="https://get.microsoft.com/images/en-us%20dark.svg" alt="Download from Microsoft Store" width="205"></a>
   &nbsp;
-  <a href="https://github.com/Anthonyy232/Nagi/releases"><img src="media/GetItOnGitHub.png" alt="Download from GitHub" width="188"></a>
+  <a href="https://github.com/Anthonyy232/Nagi/releases/latest"><img src="media/GetItOnGitHub.png" alt="Download from GitHub" width="188"></a>
 </div>
 
 <br>
 
-Windows 10 (1809 or later) or Windows 11, on x64 or ARM64. The Store version updates through the Store; the GitHub release is a signed MSIX bundle that updates itself from GitHub.
+Windows 10 (1809 or later) or Windows 11, on x64 or ARM64. The Store version updates through the Store. From GitHub, install `Nagi.appinstaller` from the latest release so it updates itself.
 
 ## Features
 
@@ -39,7 +39,7 @@ Windows 10 (1809 or later) or Windows 11, on x64 or ARM64. The Store version upd
 - Folder-based library that rescans automatically when files change.
 - Streaming from your own Navidrome or other OpenSubsonic server, or Jellyfin 10.11 and later, alongside your local music. Favorites and play counts sync both ways, the server's playlists show up read-only next to yours, and lyrics stored on the server are used first.
 - MP3, FLAC, AAC, OGG, WAV, AIFF, APE, DSD, M4A, WMA, WavPack and more.
-- Playlists, rule-based smart playlists, and M3U export.
+- Playlists, rule-based smart playlists, and M3U import and export.
 - Favorites (Ctrl+D), stored in Nagi's database without touching your files.
 - Searchable listening history and an Insights page.
 - Choose which columns song lists show, such as BPM, plays or date added, and open Song Info for a track's tags and file details.
@@ -100,82 +100,13 @@ Windows 10 (1809 or later) or Windows 11, on x64 or ARM64. The Store version upd
 </table>
 </div>
 
-## Build from source
-
-Requirements:
-
-- Visual Studio 2026 (18.0) or later with the **.NET Desktop Development** and **Universal Windows Platform development** workloads.
-- .NET 10 SDK 10.0.401 or later (see `global.json`).
-- `ffmpeg` on `PATH`, only for the loudness tests and scan benchmarks.
-
-Clone the repository, open `Nagi.sln`, set the platform to `x64` or `ARM64`, and run `Nagi (Package)`.
-
-```bash
-git clone https://github.com/Anthonyy232/Nagi.git
-```
-
-<details>
-<summary>Build an unsigned MSIX bundle</summary>
-<br>
-
-From `src/Nagi.WinUI`:
-
-```bash
-dotnet publish Nagi.WinUI.csproj -c Release -r win-x64 -p:Platform=x64 -p:PublishReadyToRun=true -p:GenerateAppxPackageOnBuild=false
-dotnet publish Nagi.WinUI.csproj -c Release -r win-arm64 -p:Platform=ARM64 -p:PublishReadyToRun=true -p:GenerateAppxPackageOnBuild=false
-dotnet msbuild Nagi.WinUI.csproj -p:Configuration=Release -p:Platform=x64 -p:GenerateAppxPackageOnBuild=true -p:AppxBundle=Always "-p:AppxBundlePlatforms=x64|ARM64" -p:AppxPackageSigningEnabled=False
-```
-
-GitHub releases are signed through SignPath in CI.
-
-</details>
-
-<details>
-<summary>Run the tests</summary>
-<br>
-
-```powershell
-dotnet test --project tests/Nagi.Core.Tests/Nagi.Core.Tests.csproj -c Release
-dotnet test --project tests/Nagi.Presentation.Tests/Nagi.Presentation.Tests.csproj -c Release
-dotnet test --project tests/Nagi.WinUI.Tests/Nagi.WinUI.Tests.csproj -c Release -p:Platform=x64
-```
-
-The suites use xUnit on Microsoft.Testing.Platform and run on every pull request.
-
-</details>
-
-<details>
-<summary>Add a database migration</summary>
-<br>
-
-```bash
-dotnet ef migrations add <name> --project src\Nagi.Core --startup-project src\Nagi.Core --context MusicDbContext --no-build
-```
-
-</details>
-
-## Project structure
-
-| Path | Contents |
-| --- | --- |
-| `src/Nagi.Core` | Library scanning, database, playback queue, playlists, metadata, lyrics, scrobbling, ReplayGain |
-| `src/Nagi.Presentation` | Platform-neutral view models, app services and localized strings |
-| `src/Nagi.Audio.LibVlc` | LibVLC audio player |
-| `src/Nagi.WinUI` | The Windows app: XAML, windowing, tray, media controls, MSIX packaging |
-| `tests/` | Core, Presentation and WinUI test suites |
-| `benchmarks/Nagi.Benchmarks` | Scanning and query benchmarks ([README](benchmarks/Nagi.Benchmarks/README.md)) |
-| `tools/` | Romanization pack builder and packs |
-| `api/NagiAppFunctions` | Azure Functions app that serves third-party API keys so they aren't shipped in the client |
-
-Everything except `Nagi.WinUI` targets plain `net10.0`. See [AGENTS.md](AGENTS.md) for architecture and code conventions.
-
 ## Built with
 
-[.NET 10](https://dotnet.microsoft.com/), [WinUI 3](https://learn.microsoft.com/windows/apps/winui/winui3/), [LibVLCSharp](https://github.com/videolan/libvlcsharp), [EF Core](https://learn.microsoft.com/ef/core/) with SQLite, [ATL](https://github.com/Zeugma440/atldotnet), [libebur128](https://github.com/jiixyj/libebur128) ([build notes](src/Nagi.Core/Native/libebur128/README.md)), [ModernLrc](https://github.com/Anthonyy232/ModernLrcParser), [ImageSharp](https://github.com/SixLabors/ImageSharp), [Material Color Utilities](https://github.com/material-foundation/material-color-utilities), [Windows Community Toolkit](https://github.com/CommunityToolkit/Windows), [H.NotifyIcon](https://github.com/HavenDV/H.NotifyIcon) and [Serilog](https://serilog.net/).
+[.NET 10](https://dotnet.microsoft.com/), [WinUI 3](https://learn.microsoft.com/windows/apps/winui/winui3/), [LibVLCSharp](https://github.com/videolan/libvlcsharp), [EF Core](https://learn.microsoft.com/ef/core/) with SQLite, [ATL](https://github.com/Zeugma440/atldotnet), [libebur128](https://github.com/jiixyj/libebur128), [ModernLrc](https://github.com/Anthonyy232/ModernLrcParser), [ImageSharp](https://github.com/SixLabors/ImageSharp), [Material Color Utilities](https://github.com/albi005/MaterialColorUtilities), [Windows Community Toolkit](https://github.com/CommunityToolkit/Windows), [H.NotifyIcon](https://github.com/HavenDV/H.NotifyIcon) and [Serilog](https://serilog.net/).
 
 ## Contributing
 
-Issues and pull requests are welcome. Translations are handled on [Crowdin](https://crowdin.com/project/nagi) and need no code changes.
+Issues and pull requests are welcome. Code changes are made with coding agents; point yours at [AGENTS.md](AGENTS.md). Translations are handled on [Crowdin](https://crowdin.com/project/nagi) and need no code changes.
 
 If you'd like to support development, you can [sponsor on GitHub](https://github.com/sponsors/Anthonyy232).
 

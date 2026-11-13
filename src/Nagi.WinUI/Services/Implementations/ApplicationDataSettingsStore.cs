@@ -1,5 +1,5 @@
-﻿using Nagi.Presentation.Services.Abstractions;
-using Windows.Storage;
+﻿using Windows.Storage;
+using Nagi.Core.Platform;
 
 namespace Nagi.WinUI.Services.Implementations;
 

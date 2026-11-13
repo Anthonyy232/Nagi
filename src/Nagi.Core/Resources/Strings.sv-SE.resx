@@ -71,96 +71,15 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Titel</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Spellista</value>
-  </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>Fil</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>År</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>Datum tillagt</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>Datum skapat</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>Datum ändrat</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>Senast spelad</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>Speltid</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>Spårnummer</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>Spelningar</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>Låtar</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Mapp</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>Manuell ordning</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>Slumpmässigt</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>Okänd {0}</value>
   </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>Ny {0}</value>
-  </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} hittades inte.</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (A till Ö)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (Ö till A)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Nyaste)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Äldsta)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (stigande)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (fallande)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>Kortast först</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>Längst först</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>Långsammast först ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>Snabbast först ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>Mest {0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>Minst {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Skannar mapp {0} av {1}: {2} - {3}</value>
@@ -224,9 +143,6 @@
     <value>Biblioteksuppdatering klar.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Det gick inte att lägga till mappen.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Spellistans namn får inte vara tomt.</value>
   </data>
@@ -236,9 +152,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> &amp; </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Sortera efter: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Inga spellistor att exportera.</value>
@@ -306,23 +219,11 @@
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Kunde inte ansluta till ListenBrainz. Kontrollera din anslutning och server-URL.</value>
   </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi kunde inte hitta sin datamapp för biblioteket.</value>
-  </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Återställningen misslyckades och dina tidigare data kunde inte återställas helt. Återställningsfiler sparades i &apos;{0}&apos;.</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Den valda filen är inte en giltig Nagi-säkerhetskopia.</value>
-  </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC stötte på ett ospecificerat fel.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC-fel: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Kunde inte läsa in '{0}'.</value>
   </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>Bläddrar i musikbiblioteket</value>

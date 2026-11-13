@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-This ResourceDictionary centralizes commonly-used value converters
-to avoid duplicate declarations across pages and controls.
--->
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -10,10 +6,7 @@ to avoid duplicate declarations across pages and controls.
 
     <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
-    <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
-    <converters:StringToDecodedImageSourceConverter x:Key="StringToDecodedImageSourceConverter" />
     <converters:CollectionCountToVisibilityConverter x:Key="CollectionCountToVisibilityConverter" />
-    <converters:CollectionCountToVisibilityConverter x:Key="InverseCollectionCountToVisibilityConverter" Invert="True" />
     <converters:BooleanToInverseBooleanConverter x:Key="BooleanToInverseBooleanConverter" />
     <converters:IncrementalLoadingConverter x:Key="IncrementalLoadingConverter" />
     <converters:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
@@ -21,12 +14,7 @@ to avoid duplicate declarations across pages and controls.
     <converters:BooleanToOpacityConverter x:Key="ToggleIconOpacityConverter" FalseValue="0.6" />
     <converters:GenreToGradientConverter x:Key="GenreToGradientConverter" />
     <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
-    <converters:StringToVisibilityConverter x:Key="InverseStringToVisibilityConverter" Invert="True" />
     <converters:VolumeToClipRectConverter x:Key="VolumeToClipRectConverter" />
-    <converters:AppIconToGlyphConverter x:Key="AppIconToGlyphConverter" />
-    <converters:AppThemeToFriendlyStringConverter x:Key="ThemeToStringConverter" />
-    <converters:BackdropMaterialToStringConverter x:Key="BackdropMaterialToStringConverter" />
-    <converters:SortOrderEqualsConverter x:Key="SortOrderEqualsConverter" />
     <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
 
     <!-- Slider helper converter to prevent E_INVALIDARG when Maximum is 0 -->

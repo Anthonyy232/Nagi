@@ -1,27 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using LibVLCSharp;
+﻿using LibVLCSharp;
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Helpers;
-using Nagi.Core.Models;
-using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Resources;
+using Nagi.Core.Library;
+using Nagi.Core.Platform;
+using Nagi.Core.Playback;
+using Nagi.Core.Settings;
 
 namespace Nagi.Audio.LibVlc;
 
-/// <summary>
-///     Implements <see cref="IAudioPlayer" /> using LibVLCSharp, and reports what is playing to the
-///     <see cref="ISystemMediaControls" />.
-///     Uses lazy initialization to avoid blocking app startup.
-/// </summary>
 public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable, IAsyncDisposable
 {
     private static readonly TimeSpan NativeStopTimeout = TimeSpan.FromSeconds(5);
 
     private readonly IAppInfoService _appInfoService;
     private readonly IDispatcherService _dispatcherService;
-    private readonly ISystemMediaControls _mediaControls;
     private readonly ISettingsService _settingsService;
     private readonly ILogger<LibVlcAudioPlayerService> _logger;
     private readonly CancellationTokenSource _disposeCts = new();
@@ -40,20 +31,15 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private Song? _currentSong;
 
     private volatile bool _isDisposed;
-    private volatile bool _isExplicitStop; // Prevents false PlaybackEnded events on user/error stop
+    private volatile bool _isExplicitStop; // Prevents false PlaybackEnded events on a stop, error or media replacement
     private double _replayGainOffset;
 
-    // Nagi intentionally keeps approximately 2 dB of headroom below LibVLC's
-    // nominal 12 dB flat/unity preset.
     private float _basePreamp = EqualizerSettings.DefaultPreampDb;
 
     // Fade support: tracks user-set volume separately from the live VLC volume so that
     // fade animations do not propagate to the UI or persist to settings.
-    private double _userVolume = 1.0;
+    private double _userVolume = CoreSettings.Volume.Default;
     private volatile bool _isFading;
-    private volatile bool _isFadeOnPlayPauseEnabled;
-    private int _fadeInDurationMs = 200;
-    private int _fadeOutDurationMs = 150;
     private CancellationTokenSource? _fadeCts;
 
     private float _playbackRate = 1f;
@@ -68,34 +54,26 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     public LibVlcAudioPlayerService(
         IDispatcherService dispatcherService,
-        ISystemMediaControls mediaControls,
         IAppInfoService appInfoService,
         ISettingsService settingsService,
         ILogger<LibVlcAudioPlayerService> logger)
     {
         _dispatcherService = dispatcherService;
-        _mediaControls = mediaControls;
         _appInfoService = appInfoService;
         _settingsService = settingsService;
         _logger = logger;
         _disposeTask = new Lazy<Task>(DisposeCoreAsync);
     }
 
-    private void EnsureInitialized()
-    {
-        if (_isInitialized || _isDisposed) return;
-        EnsureInitializedAsync().GetAwaiter().GetResult();
-    }
-
-    public async Task EnsureInitializedAsync()
+    private async Task EnsureInitializedAsync()
     {
         if (_isInitialized || _isDisposed) return;
         await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
         try
         {
             if (_isInitialized || _isDisposed) return;
-            var useWasapiExclusive = await _settingsService.GetWasapiExclusiveModeEnabledAsync().ConfigureAwait(false);
-            var outputDeviceId = await _settingsService.GetAudioOutputDeviceIdAsync().ConfigureAwait(false);
+            var useWasapiExclusive = _settingsService.Get(CoreSettings.WasapiExclusiveMode);
+            var outputDeviceId = _settingsService.Get(CoreSettings.AudioOutputDeviceId);
             await Task.Run(() => InitializeLibVlcCore(useWasapiExclusive, outputDeviceId), _disposeCts.Token).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (_isDisposed)
@@ -116,10 +94,6 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     {
         _logger.LogDebug("Initializing LibVLC core (deferred).");
 
-        // Register the native library resolver in the same serialized path that creates
-        // LibVLC. Callers can reach this method before the background audio warm-up runs
-        // (for example, while DI constructs MusicPlaybackService for the taskbar service),
-        // so initialization cannot safely live in App.InitializeCoreServicesAsync.
         LibVLCSharp.Core.Initialize();
 
         // LibVLC explicitly does not guarantee compatibility for constructor options.
@@ -209,8 +183,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         };
     }
 
-    public event Action? PlaybackEnded, PositionChanged, StateChanged, VolumeChanged, MediaOpened, DurationChanged;
-    public event Action<string>? ErrorOccurred;
+    public event Action? PlaybackEnded, PositionChanged, StateChanged, VolumeChanged, MediaOpened, DurationChanged, ErrorOccurred;
 
     public bool IsPlaying => !_isPausing && ReadNative(() => _mediaPlayer?.State == VLCState.Playing, false);
     public bool IsOpening => _isOpening;
@@ -254,7 +227,6 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
         try
         {
-            // If a newer LoadAsync call superseded us while we waited for the lock, skip entirely.
             token.ThrowIfCancellationRequested();
             _currentSong = song;
 
@@ -268,10 +240,11 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             {
                 if (_isDisposed) return;
 
+                // Replacing the media stops the old one, which LibVLC reports like a natural end.
+                _isExplicitStop = true;
                 DisposeCurrentMedia("replacement load");
 
-                // A server song's path ends in its file's extension, so its stream is read like the file would be.
-                var extension = System.IO.Path.GetExtension(song.FilePath).ToLowerInvariant();
+                var extension = song.FileExtension;
                 _currentMedia = streamUri is null ? new Media(song.FilePath, FromType.FromPath) : new Media(streamUri);
 
                 // Native Ogg and Matroska demuxers integrate more safely with VLC's player clock.
@@ -292,7 +265,6 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
                 _mediaPlayer!.Media = _currentMedia;
                 _hasCurrentMediaStarted = false;
-                // Do NOT dispose the media immediately - let it be disposed when no longer needed
             }).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
@@ -302,9 +274,8 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         }
         catch (Exception ex)
         {
-            var errorMessage = string.Format(Strings.Player_Error_LoadFailed, song.Title);
             _logger.LogError(ex, "Failed to load song '{SongTitle}' from path: {FilePath}", song.Title, song.FilePath);
-            _dispatcherService.TryEnqueue(() => ErrorOccurred?.Invoke(errorMessage));
+            _dispatcherService.TryEnqueue(() => ErrorOccurred?.Invoke());
             _currentSong = null;
 
             try
@@ -330,18 +301,16 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         await EnsureInitializedAsync().ConfigureAwait(false);
         if (_isDisposed || _mediaPlayer is null) return;
 
-        // Cancel any ongoing fade (e.g. a fade-out from a previous pause that didn't complete)
         var newPlayCts = CancellationTokenSource.CreateLinkedTokenSource(_disposeCts.Token);
         var fadeCt = newPlayCts.Token;
         var oldPlayCts = Interlocked.Exchange(ref _fadeCts, newPlayCts);
         oldPlayCts?.Cancel();
         oldPlayCts?.Dispose();
+        var fadeOnPlay = _settingsService.Get(CoreSettings.FadeOnPlayPause);
         var startFadeIn = false;
 
         _isPausing = false;
 
-        // Immediately broadcast state change so UI Play/Pause button switches
-        // instantly to play (and registers that IsPausing is now false)
         _dispatcherService.TryEnqueue(() =>
         {
             if (!_isDisposed) StateChanged?.Invoke();
@@ -354,7 +323,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             {
                 if (_isDisposed) return;
 
-                if (_isFadeOnPlayPauseEnabled)
+                if (fadeOnPlay)
                 {
                     // Silence before playing so fade-in starts from zero.
                     _isFading = true;
@@ -373,7 +342,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
                 if (!_hasCurrentMediaStarted) SetOpening(true);
                 if (_mediaPlayer.Play())
                 {
-                    startFadeIn = _isFadeOnPlayPauseEnabled;
+                    startFadeIn = fadeOnPlay;
                 }
                 else
                 {
@@ -396,14 +365,14 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         }
 
         if (startFadeIn)
-            _ = FadeAsync(0.0, _userVolume, TimeSpan.FromMilliseconds(_fadeInDurationMs), fadeCt);
+            _ = FadeAsync(0.0, _userVolume, TimeSpan.FromMilliseconds(_settingsService.Get(CoreSettings.FadeInDurationMs)), fadeCt);
     }
 
     public async Task PauseAsync()
     {
         if (_isDisposed || !_isInitialized || _mediaPlayer is null) return;
 
-        if (_isFadeOnPlayPauseEnabled)
+        if (_settingsService.Get(CoreSettings.FadeOnPlayPause))
         {
             var newPauseCts = CancellationTokenSource.CreateLinkedTokenSource(_disposeCts.Token);
             var fadeCt = newPauseCts.Token;
@@ -440,13 +409,10 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
         _logger.LogDebug("Stop command received.");
 
-        // Cancel any active fade immediately so audio stops without delay
         CancelFade();
 
-        // Mark as explicit stop to prevent false PlaybackEnded in state changed handler
         _isExplicitStop = true;
 
-        // Cancel any pending load — no point loading media we're about to stop
         var pendingLoad = Interlocked.Exchange(ref _loadCts, null);
         pendingLoad?.Cancel();
         pendingLoad?.Dispose();
@@ -477,7 +443,6 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             _vlcOperationLock.Release();
         }
 
-        if (!_isDisposed) _mediaControls.Clear();
     }
 
     private async Task StopNativePlaybackAsync(MediaPlayer player)

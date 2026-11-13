@@ -71,96 +71,15 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Název</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Seznam skladeb</value>
-  </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>Soubor</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>Rok</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>Datum přidání</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>Datum vytvoření</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>Datum úpravy</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>Naposledy přehráno</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>Délka</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>Číslo stopy</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>Přehrání</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>Skladby</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Složka</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>Ruční pořadí</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>Náhodně</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>Neznámý {0}</value>
   </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>Nový {0}</value>
-  </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} nenalezeno.</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (A až Z)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (Z až A)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Nejnovější)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Nejstarší)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (vzestupně)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (sestupně)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>Nejkratší první</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>Nejdelší první</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>Nejpomalejší první ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>Nejrychlejší první ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>Nejvíce: {0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>Nejméně: {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Skenuji složku {0} z {1}: {2} - {3}</value>
@@ -224,9 +143,6 @@
     <value>Aktualizace knihovny dokončena.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Složku se nepodařilo přidat.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Název seznamu skladeb nemůže být prázdný.</value>
   </data>
@@ -236,9 +152,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> &amp; </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Seřadit podle: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Žádné seznamy skladeb k exportu.</value>
@@ -306,23 +219,11 @@
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>K ListenBrainz se nepodařilo připojit. Zkontrolujte připojení a URL serveru.</value>
   </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi nemohl najít svou složku s daty knihovny.</value>
-  </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Obnovení selhalo a vaše předchozí data se nepodařilo plně obnovit. Záchranné soubory byly uloženy do &apos;{0}&apos;.</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Vybraný soubor není platnou zálohou Nagi.</value>
-  </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC narazil na nespecifikovanou chybu.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Chyba LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Nepodařilo se načíst „{0}“.</value>
   </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>Prochází hudební knihovnu</value>

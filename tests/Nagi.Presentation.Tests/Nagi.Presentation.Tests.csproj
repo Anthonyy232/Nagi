@@ -24,6 +24,7 @@
     <!-- Shared with the Core tests rather than copied. -->
     <ItemGroup>
         <Compile Include="..\Nagi.Core.Tests\Utils\LibraryFakes.cs" Link="LibraryFakes.cs" />
+        <Compile Include="..\Nagi.Core.Tests\Utils\TestSettings.cs" Link="TestSettings.cs" />
         <Using Include="Nagi.Core.Tests.Utils" />
     </ItemGroup>
 </Project>

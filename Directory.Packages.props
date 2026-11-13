@@ -23,7 +23,6 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.12" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12" />
     <!-- Microsoft Extensions -->
-    <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="10.0.12" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.12" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.12" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
@@ -41,7 +40,7 @@
     <PackageVersion Include="Serilog.Sinks.Debug" Version="3.0.0" />
     <PackageVersion Include="Serilog.Sinks.File" Version="8.0.0-nblumhardt-02322" />
     <!-- Audio & Metadata -->
-    <PackageVersion Include="ModernLrc" Version="2.0.1" />
+    <PackageVersion Include="ModernLrc" Version="2.0.2" />
     <PackageVersion Include="z440.atl.core" Version="7.18.0" />
     <!-- Image Processing -->
     <PackageVersion Include="MaterialColorUtilities" Version="0.3.0" />

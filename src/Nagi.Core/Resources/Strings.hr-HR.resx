@@ -71,96 +71,15 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Naslov</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Popis pjesama</value>
-  </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>Datoteka</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>Godina</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>Datum dodavanja</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>Datum stvaranja</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>Datum izmjene</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>Zadnje reproducirano</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>Trajanje</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>Broj pjesme</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>Broj reprodukcija</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>Pjesme</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Mapa</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>Ručni redoslijed</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>Nasumično</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>Nepoznato {0}</value>
   </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>Novi {0}</value>
-  </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} nije pronađeno.</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (A do Ž)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (Ž do A)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Najnovije)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Najstarije)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (uzlazno)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (silazno)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>Prvo najkraće</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>Prvo najdulje</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>Prvo najsporije ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>Prvo najbrže ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>Najviše {0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>Najmanje {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Skeniranje mape {0} od {1}: {2} - {3}</value>
@@ -224,9 +143,6 @@
     <value>Osvježavanje biblioteke završeno.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Nije moguće dodati mapu.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Naziv popisa pjesama ne može biti prazan.</value>
   </data>
@@ -236,9 +152,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> &amp; </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Sortiraj po: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Nema popisa pjesama za izvoz.</value>
@@ -306,23 +219,11 @@
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Nije se moguće povezati s ListenBrainz-om. Provjerite vezu i URL poslužitelja.</value>
   </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi nije mogao pronaći svoju mapu s podacima biblioteke.</value>
-  </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Obnova nije uspjela i vaši prethodni podaci nisu se mogli potpuno obnoviti. Datoteke za oporavak spremljene su u &apos;{0}&apos;.</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Odabrana datoteka nije valjana sigurnosna kopija za Nagi.</value>
-  </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC je naišao na nespecificiranu pogrešku.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC pogreška: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Učitavanje '{0}' nije uspjelo.</value>
   </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>Pregledava glazbenu knjižnicu</value>

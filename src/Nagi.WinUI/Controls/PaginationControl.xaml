@@ -3,33 +3,24 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:resources="using:Nagi.Presentation.Resources"
-    xmlns:converters="using:Nagi.WinUI.Converters"
     xmlns:controls="using:Nagi.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
-
-    <UserControl.Resources>
-        <converters:PageSizeLabelConverter x:Key="PageSizeLabelConverter" />
-    </UserControl.Resources>
+    mc:Ignorable="d"
+    HorizontalAlignment="Right"
+    Margin="0,16,24,16">
 
     <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center"
-                Visibility="{x:Bind ViewModel.CanPaginate, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.CanPaginate, Mode=OneWay}">
         <TextBlock Text="{x:Bind resources:Strings.PaginationControl_ItemsPerPage, Mode=OneTime}" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12"/>
 
         <controls:PageSizeComboBox Style="{StaticResource DefaultComboBoxStyle}"
-                  ItemsSource="{x:Bind PageSizeOptions}"
-                  SelectedItem="{x:Bind ViewModel.SongsPerPage, Mode=TwoWay}"
-                  MinWidth="80" Margin="0,0,16,0" FontSize="12">
-            <ComboBox.ItemTemplate>
-                <DataTemplate x:DataType="x:Int32">
-                    <TextBlock Text="{x:Bind Converter={StaticResource PageSizeLabelConverter}}" />
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </controls:PageSizeComboBox>
+                  ItemsSource="{x:Bind ViewModel.PageSize.Options, Mode=OneWay}"
+                  DisplayMemberPath="DisplayName"
+                  SelectedItem="{x:Bind ViewModel.PageSize.Selected, Mode=TwoWay}"
+                  MinWidth="80" Margin="0,0,16,0" FontSize="12" />
 
         <Button Command="{x:Bind ViewModel.PreviousPageCommand, Mode=OneWay}"
-                IsEnabled="{x:Bind ViewModel.HasPreviousPage, Mode=OneWay}"
                 Style="{ThemeResource SubtleButtonStyle}"
                 ToolTipService.ToolTip="{x:Bind resources:Strings.PaginationControl_PreviousPage_ToolTip, Mode=OneTime}"
                 AutomationProperties.Name="{x:Bind resources:Strings.PaginationControl_PreviousPage_ToolTip, Mode=OneTime}"
@@ -44,7 +35,6 @@
         </TextBlock>
 
         <Button Command="{x:Bind ViewModel.NextPageCommand, Mode=OneWay}"
-                IsEnabled="{x:Bind ViewModel.HasNextPage, Mode=OneWay}"
                 Style="{ThemeResource SubtleButtonStyle}"
                 ToolTipService.ToolTip="{x:Bind resources:Strings.PaginationControl_NextPage_ToolTip, Mode=OneTime}"
                 AutomationProperties.Name="{x:Bind resources:Strings.PaginationControl_NextPage_ToolTip, Mode=OneTime}"

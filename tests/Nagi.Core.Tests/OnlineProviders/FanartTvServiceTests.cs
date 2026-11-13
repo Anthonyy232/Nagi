@@ -1,0 +1,97 @@
+using System.Net;
+using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Nagi.Core.OnlineProviders;
+using Nagi.Core.OnlineProviders.Pipelines;
+using Nagi.Core.Tests.Utils;
+using NSubstitute;
+using Xunit;
+
+namespace Nagi.Core.Tests.OnlineProviders;
+
+public class FanartTvServiceTests : IDisposable
+{
+    private const string ValidMbid = "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d";
+
+    private readonly TestHttpMessageHandler _httpHandler;
+    private readonly FanartTvService _service;
+    private readonly IApiKeyService _apiKeyService;
+    private readonly ILogger<FanartTvService> _logger;
+
+    private readonly ProviderPipelineProvider _pipelines;
+
+    public FanartTvServiceTests()
+    {
+        _httpHandler = new TestHttpMessageHandler();
+        var httpClient = new HttpClient(_httpHandler) { BaseAddress = new Uri("https://webservice.fanart.tv") };
+        var httpClientFactory = Substitute.For<IHttpClientFactory>();
+        httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
+
+        _apiKeyService = Substitute.For<IApiKeyService>();
+        _apiKeyService.GetApiKeyAsync("fanarttv", Arg.Any<CancellationToken>()).Returns("test-api-key");
+
+        _logger = Substitute.For<ILogger<FanartTvService>>();
+
+        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.FanartTv);
+        _service = new FanartTvService(httpClientFactory, _pipelines, _apiKeyService, _logger);
+    }
+
+    public void Dispose()
+    {
+        _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
+        _httpHandler.Dispose();
+    }
+
+    [Fact]
+    public async Task GetArtistImagesAsync_WithValidMbid_ReturnsAllImageTypes()
+    {
+        var fanartResponse = new
+        {
+            artistbackground = new[] { new { url = "https://fanart.tv/bg.jpg" } },
+            artistthumb = new[] { new { url = "https://fanart.tv/thumb.jpg" } }
+        };
+        _httpHandler.Respond(HttpStatusCode.OK, fanartResponse);
+        var result = await _service.GetArtistImagesAsync(ValidMbid);
+        result.Status.Should().Be(ServiceResultStatus.Success);
+        result.Data.Should().NotBeNull();
+        result.Data!.BackgroundUrl.Should().Be("https://fanart.tv/bg.jpg");
+        result.Data.ThumbUrl.Should().Be("https://fanart.tv/thumb.jpg");
+    }
+
+    [Fact]
+    public async Task GetArtistImagesAsync_WithOnlyThumb_ReturnsPartialResult()
+    {
+        var fanartResponse = new
+        {
+            artistthumb = new[] { new { url = "https://fanart.tv/thumb.jpg" } }
+        };
+        _httpHandler.Respond(HttpStatusCode.OK, fanartResponse);
+        var result = await _service.GetArtistImagesAsync(ValidMbid);
+        result.Status.Should().Be(ServiceResultStatus.Success);
+        result.Data!.ThumbUrl.Should().Be("https://fanart.tv/thumb.jpg");
+        result.Data.BackgroundUrl.Should().BeNull();
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public async Task GetArtistImagesAsync_WithEmptyMbid_ReturnsSuccessNotFound(string mbid)
+    {
+        var result = await _service.GetArtistImagesAsync(mbid);
+        result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
+    }
+
+    [Fact]
+    public async Task GetArtistImagesAsync_WithEmptyImages_ReturnsSuccessNotFound()
+    {
+        var fanartResponse = new
+        {
+            artistbackground = Array.Empty<object>(),
+            artistthumb = Array.Empty<object>()
+        };
+        _httpHandler.Respond(HttpStatusCode.OK, fanartResponse);
+        var result = await _service.GetArtistImagesAsync(ValidMbid);
+        result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
+    }
+
+}

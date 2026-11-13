@@ -1,9 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using Nagi.Presentation.Models;
+using Nagi.Presentation.Common;
+using Nagi.Presentation.Settings;
 
 namespace Nagi.Presentation.Navigation;
 
-public partial class NavigationItemSetting : ObservableObject
+public partial class NavigationItemSetting : ObservableObject, IToggleItem
 {
     [ObservableProperty] public partial bool IsEnabled { get; set; }
 

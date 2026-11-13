@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Nagi.Presentation.Models;
+using Nagi.Presentation.Player;
 
 namespace Nagi.WinUI.Controls;
 
@@ -19,9 +19,9 @@ public class PlayerButtonTemplateSelector : DataTemplateSelector
 
         return buttonSetting.Id switch
         {
-            "PlayPause" => PlayPauseButtonTemplate,
-            "Lyrics" => LyricsButtonTemplate,
-            "Queue" => QueueButtonTemplate,
+            PlayerButtonIds.PlayPause => PlayPauseButtonTemplate,
+            PlayerButtonIds.Lyrics => LyricsButtonTemplate,
+            PlayerButtonIds.Queue => QueueButtonTemplate,
             _ => DefaultButtonTemplate
         };
     }

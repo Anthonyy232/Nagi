@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 using Windows.ApplicationModel;
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Platform;
 using Nagi.Presentation.Resources;
 
 namespace Nagi.WinUI.Services.Implementations;
@@ -29,8 +27,6 @@ public class AppInfoService : IAppInfoService
         var version = Package.Current.Id.Version;
         return $"{version.Major}.{version.Minor}.{version.Build}";
     }
-
-    public Task InitializeAsync() => GetAvailableLanguagesAsync();
 
     public async Task<IReadOnlyList<string>> GetAvailableLanguagesAsync()
     {

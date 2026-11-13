@@ -1,0 +1,46 @@
+using Nagi.Core.Library;
+using Nagi.Core.Playback;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Nagi.Core.Listening;
+
+public class ListenHistory
+{
+    [Key]
+    public long Id { get; set; }
+
+    [Required]
+    public Guid SongId { get; set; }
+
+    [ForeignKey("SongId")]
+    public virtual Song Song { get; set; } = null!;
+
+    public DateTime ListenTimestampUtc { get; set; } = DateTime.UtcNow;
+
+    /// <summary>
+    ///     Indicates whether this listen has met the time requirements (e.g., >4 mins or 50% played)
+    ///     to be submitted to a scrobbling service.
+    /// </summary>
+    public bool IsEligibleForScrobbling { get; set; }
+
+    public long ListenDurationTicks { get; set; }
+
+    public PlaybackEndReason EndReason { get; set; }
+
+    public PlaybackContextType ContextType { get; set; }
+
+    public Guid? ContextId { get; set; }
+
+    /// <summary>
+    ///     Whether the listen was sent to Last.fm, or dropped because Last.fm rejected it for good.
+    /// </summary>
+    public bool IsScrobbled { get; set; }
+
+    public bool IsSubmittedToListenBrainz { get; set; }
+
+    /// <summary>
+    ///     Whether the play was reported to the music server the song streams from. Unused for songs on disk.
+    /// </summary>
+    public bool IsSubmittedToServer { get; set; }
+}

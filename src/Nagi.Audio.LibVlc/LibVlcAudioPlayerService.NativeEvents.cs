@@ -1,7 +1,6 @@
 using LibVLCSharp;
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Helpers;
-using Nagi.Core.Resources;
+using Nagi.Core.Platform;
 
 namespace Nagi.Audio.LibVlc;
 
@@ -35,16 +34,11 @@ public sealed partial class LibVlcAudioPlayerService
 
     private void OnMediaPlayerMediaChanged(object? sender, MediaPlayerMediaChangedEventArgs e)
     {
-        if (_isDisposed) return;
-        if (e.Media is not null)
+        if (_isDisposed || e.Media is null) return;
+        _dispatcherService.TryEnqueue(() =>
         {
-            _dispatcherService.TryEnqueue(() =>
-            {
-                if (_isDisposed) return;
-                MediaOpened?.Invoke();
-            });
-            ReportNowPlaying();
-        }
+            if (!_isDisposed) MediaOpened?.Invoke();
+        });
     }
 
     private void OnMediaPlayerLengthChanged(object? sender, MediaPlayerLengthChangedEventArgs e)
@@ -64,16 +58,13 @@ public sealed partial class LibVlcAudioPlayerService
         _isExplicitStop = true;
         SetOpening(false);
 
-        // Also shown to the user, so redacted like VLC's log.
+        // Redacted like VLC's log: a server stream's URL carries the sign-in.
         var lastVlcError = UrlRedaction.RemoveQueries(ReadNative(() => _libVlc?.LastLibVLCError, null));
-        var errorMessage = string.IsNullOrEmpty(lastVlcError)
-            ? Strings.Player_Error_LibVLC_Unspecified
-            : string.Format(Strings.Player_Error_LibVLC_WithDetails, lastVlcError);
-        _logger.LogError("Playback error occurred. {ErrorMessage}", errorMessage);
+        _logger.LogError("Playback error occurred. LibVLC error: {LastError}", lastVlcError);
         _dispatcherService.TryEnqueue(() =>
         {
             if (_isDisposed) return;
-            ErrorOccurred?.Invoke(errorMessage);
+            ErrorOccurred?.Invoke();
         });
     }
 
@@ -93,7 +84,6 @@ public sealed partial class LibVlcAudioPlayerService
             if (state is VLCState.Paused or VLCState.Stopped) _isOpening = false;
             StateChanged?.Invoke();
 
-            // Only fire PlaybackEnded for natural end of playback, not explicit stops
             if (state == VLCState.Stopped && currentSong is not null && !isExplicitStop)
             {
                 _logger.LogDebug("Detected natural end of playback for song '{SongTitle}'.", currentSong.Title);
@@ -106,7 +96,6 @@ public sealed partial class LibVlcAudioPlayerService
                 _isPausing = false;
             }
         });
-        ReportPlaybackStatus();
     }
 
     private void SetOpening(bool isOpening)

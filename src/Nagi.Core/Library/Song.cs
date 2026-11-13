@@ -1,0 +1,237 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Nagi.Core.Listening;
+using Nagi.Core.Playlists;
+
+namespace Nagi.Core.Library;
+
+public class Song
+{
+    [Key] public Guid Id { get; set; } = Guid.NewGuid();
+
+    public static string UnknownTitle => string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Title);
+
+    [Required][MaxLength(500)] public string Title { get; set; } = UnknownTitle;
+
+    /// <summary>
+    ///     Denormalized sort key for <see cref="Title"/> with leading articles stripped.
+    ///     Populated by <see cref="SyncDenormalizedFields"/>.
+    /// </summary>
+    [Required]
+    [MaxLength(500)]
+    public string SortTitle { get; set; } = string.Empty;
+
+    public Guid? AlbumId { get; set; }
+
+    [ForeignKey("AlbumId")] public virtual Album? Album { get; set; }
+
+    [MaxLength(200)] public string? Composer { get; set; }
+
+    [Required] public Guid FolderId { get; set; }
+
+    [ForeignKey("FolderId")] public virtual Folder Folder { get; set; } = null!;
+
+    /// <summary>
+    ///     The duration of the song stored as ticks for database compatibility with SQLite.
+    /// </summary>
+    public long DurationTicks { get; set; }
+
+    [NotMapped]
+    public TimeSpan Duration
+    {
+        get => TimeSpan.FromTicks(DurationTicks);
+        set => DurationTicks = value.Ticks;
+    }
+
+    [MaxLength(2000)] public string? AlbumArtUriFromTrack { get; set; }
+
+    /// <summary>
+    ///     The file on disk, or for a song on a music server a unique key that is not a file path. A server song's key
+    ///     ends in the extension of its file on the server, so <see cref="FileExtension" /> works for both.
+    /// </summary>
+    [Required][MaxLength(1000)] public string FilePath { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     The song's ID on its music server, or null for a song on disk.
+    /// </summary>
+    [MaxLength(200)] public string? RemoteId { get; set; }
+
+    /// <summary>
+    ///     Whether the song streams from a music server instead of playing from a file on disk. Queries use
+    ///     <see cref="LibraryQueries.OnDisk(IQueryable{Song})" /> for the songs with files.
+    /// </summary>
+    [NotMapped] public bool IsFromServer => RemoteId is not null;
+
+    /// <summary>
+    ///     The file's lowercase extension with its dot, or empty when it has none.
+    /// </summary>
+    [NotMapped] public string FileExtension => Path.GetExtension(FilePath).ToLowerInvariant();
+
+    /// <summary>
+    ///     A hash of the song as its server last described it, so a sync can skip songs that haven't changed.
+    /// </summary>
+    [MaxLength(64)] public string? RemoteHash { get; set; }
+
+    /// <summary>
+    ///     The server's ID for the cover <see cref="AlbumArtUriFromTrack" /> was downloaded from, so a sync can tell
+    ///     when the server's cover changed.
+    /// </summary>
+    [MaxLength(200)] public string? RemoteCoverArtId { get; set; }
+
+    /// <summary>
+    ///     Set when <see cref="IsLoved" /> changed locally and the server hasn't been told yet, so a sync keeps the
+    ///     local value instead of the server's.
+    /// </summary>
+    public bool IsLovedSyncPending { get; set; }
+
+    /// <summary>
+    ///     The directory path where the song file is located. This is used for efficient
+    ///     folder hierarchy navigation and querying songs by directory.
+    /// </summary>
+    [Required]
+    [MaxLength(1000)]
+    public string DirectoryPath { get; set; } = string.Empty;
+
+    public int? Year { get; set; }
+    public int? TrackNumber { get; set; }
+    public int? TrackCount { get; set; }
+    public int? DiscNumber { get; set; }
+    public int? DiscCount { get; set; }
+    public int? SampleRate { get; set; }
+    public int? Bitrate { get; set; }
+    public int? Channels { get; set; }
+    public DateTime? DateAddedToLibrary { get; set; } = DateTime.UtcNow;
+    public DateTime? FileCreatedDate { get; set; }
+    public DateTime? FileModifiedDate { get; set; }
+    [MaxLength(50)] public string? LightSwatchId { get; set; }
+    [MaxLength(50)] public string? DarkSwatchId { get; set; }
+
+    /// <summary>
+    ///     A user-assigned rating, typically from 1 to 5.
+    /// </summary>
+    public int? Rating { get; set; }
+
+    public bool IsLoved { get; set; }
+
+    public int PlayCount { get; set; }
+
+    public int SkipCount { get; set; }
+
+    public DateTime? LastPlayedDate { get; set; }
+
+    public long TotalListenTimeTicks { get; set; }
+
+    [MaxLength(50000)]
+    public string? Lyrics { get; set; }
+
+    [MaxLength(1000)]
+    public string? LrcFilePath { get; set; }
+
+    /// <summary>
+    ///     The date and time when online lyrics were last searched.
+    ///     Null indicates never checked. If set, online fetch will be skipped.
+    /// </summary>
+    public DateTime? LyricsLastCheckedUtc { get; set; }
+
+    public double? Bpm { get; set; }
+
+    /// <summary>
+    ///     The ReplayGain track gain value in dB. Used for volume normalization.
+    /// </summary>
+    public double? ReplayGainTrackGain { get; set; }
+
+    /// <summary>
+    ///     The ReplayGain track peak value (0.0 to 1.0). Used to prevent clipping.
+    /// </summary>
+    public double? ReplayGainTrackPeak { get; set; }
+
+    [MaxLength(200)]
+    public string? Grouping { get; set; }
+
+    [MaxLength(1000)]
+    public string? Copyright { get; set; }
+
+    [MaxLength(1000)]
+    public string? Comment { get; set; }
+
+    [MaxLength(200)]
+    public string? Conductor { get; set; }
+
+    [MaxLength(100)]
+    public string? MusicBrainzTrackId { get; set; }
+
+    [MaxLength(100)]
+    public string? MusicBrainzReleaseId { get; set; }
+
+    [MaxLength(100)]
+    public string? MusicBrainzReleaseGroupId { get; set; }
+
+
+    public virtual ICollection<SongArtist> SongArtists { get; set; } = new List<SongArtist>();
+    public virtual ICollection<Genre> Genres { get; set; } = new List<Genre>();
+    public virtual ICollection<PlaylistSong> PlaylistSongs { get; set; } = new List<PlaylistSong>();
+    public virtual ICollection<ListenHistory> ListenHistory { get; set; } = new List<ListenHistory>();
+
+    /// <summary>
+    ///     The names of all associated artists joined by <see cref="Artist.ArtistSeparator"/>, which is localized.
+    ///     This is a denormalized field for efficient display and searching.
+    /// </summary>
+    [MaxLength(Artist.MaxCreditLength)]
+    public string ArtistName { get; set; } = Artist.UnknownArtistName;
+
+    /// <summary>
+    ///     The name of the primary artist (the one with the lowest order).
+    ///     This is a denormalized field for efficient sorting.
+    /// </summary>
+    [MaxLength(500)]
+    public string PrimaryArtistName { get; set; } = Artist.UnknownArtistName;
+
+    /// <summary>
+    ///     Denormalized sort key for <see cref="PrimaryArtistName"/> with leading articles stripped.
+    ///     Populated by <see cref="SyncDenormalizedFields"/>.
+    /// </summary>
+    [Required]
+    [MaxLength(500)]
+    public string PrimaryArtistSortName { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     The credited artists in credit order. Empty when <see cref="SongArtists" /> and their artists aren't loaded.
+    /// </summary>
+    public List<Artist> GetCreditedArtists() =>
+        SongArtists.OrderBy(sa => sa.Order).Select(sa => sa.Artist).OfType<Artist>().ToList();
+
+    /// <summary>
+    ///     Updates the denormalized <see cref="ArtistName" />, <see cref="PrimaryArtistName" />,
+    ///     <see cref="SortTitle"/> and <see cref="PrimaryArtistSortName"/> fields based on the
+    ///     current <see cref="Title"/> and <see cref="SongArtists" /> collection.
+    /// </summary>
+    public void SyncDenormalizedFields()
+    {
+        SortTitle = SortKeyHelper.Normalize(Title);
+
+        // Fast path: a single artist is the common case during scans, so skip the LINQ and joining.
+        if (SongArtists.Count == 1 && SongArtists.First().Artist?.Name is { Length: > 0 } name)
+        {
+            (ArtistName, PrimaryArtistName, PrimaryArtistSortName) = (name, name, SortKeyHelper.Normalize(name));
+            return;
+        }
+
+        (ArtistName, PrimaryArtistName, PrimaryArtistSortName) = Artist.GetCreditNames(GetCreditedArtists().Select(artist => artist.Name));
+    }
+
+    public override string ToString()
+    {
+        return $"{Title} — {ArtistName}";
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is not Song other) return false;
+        return Id.Equals(other.Id);
+    }
+
+    public override int GetHashCode()
+    {
+        return Id.GetHashCode();
+    }
+}

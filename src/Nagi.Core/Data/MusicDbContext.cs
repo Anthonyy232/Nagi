@@ -1,12 +1,19 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Data.Sqlite;
-using Nagi.Core.Helpers;
-using Nagi.Core.Models;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Nagi.Core.Library;
+using Nagi.Core.Listening;
+using Nagi.Core.MusicServers;
+using Nagi.Core.Playlists;
 
 namespace Nagi.Core.Data;
 
 public class MusicDbContext : DbContext
 {
+    /// <summary>
+    ///     How many values a query passes in one IN list; SQLite caps the parameters one statement can have.
+    /// </summary>
+    internal const int MaxParametersPerQuery = 500;
+
     private static readonly Data.Interceptors.DenormalizationInterceptor _interceptor = new();
 
     public MusicDbContext(DbContextOptions<MusicDbContext> options) : base(options)
@@ -35,9 +42,7 @@ public class MusicDbContext : DbContext
 
     public Task BackfillSortKeysAsync(CancellationToken cancellationToken = default)
     {
-        // Use the same Unicode normalization as new writes, without tracking the library in memory.
-        var connection = (SqliteConnection)Database.GetDbConnection();
-        connection.CreateFunction<string, string>("nagi_sort_key", SortKeyHelper.Normalize, isDeterministic: true);
+        // Uses the same Unicode normalization as new writes, without tracking the library in memory.
         return Database.ExecuteSqlRawAsync("""
             UPDATE Artists SET SortName = nagi_sort_key(Name) WHERE SortName = '';
             UPDATE Albums
@@ -249,6 +254,12 @@ public class MusicDbContext : DbContext
             entity.HasIndex(aa => new { aa.AlbumId, aa.Order });
             entity.HasIndex(aa => aa.ArtistId);
         });
+
+        // SQLite stores no time zone, so a time reads back as Unspecified. Every stored time is UTC.
+        var utc = new ValueConverter<DateTime, DateTime>(value => value, value => DateTime.SpecifyKind(value, DateTimeKind.Utc));
+        foreach (var property in modelBuilder.Model.GetEntityTypes().SelectMany(entity => entity.GetProperties())
+                     .Where(property => property.ClrType == typeof(DateTime) || property.ClrType == typeof(DateTime?)))
+            property.SetValueConverter(utc);
     }
 
 }

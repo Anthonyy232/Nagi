@@ -71,96 +71,15 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Τίτλος</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Λίστα αναπαραγωγής</value>
-  </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>Αρχείο</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>Έτος</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>Ημερομηνία προσθήκης</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>Ημερομηνία δημιουργίας</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>Ημερομηνία τροποποίησης</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>Τελευταία αναπαραγωγή</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>Διάρκεια</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>Αριθμός κομματιού</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>Αναπαραγωγές</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>Τραγούδια</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Φάκελος</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>Χειροκίνητη σειρά</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>Τυχαία</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>Άγνωστο {0}</value>
   </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>Νέο {0}</value>
-  </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>Δεν βρέθηκε το {0}.</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (Α προς Ω)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (Ω προς Α)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Νεότερα)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Παλαιότερα)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Αύξουσα)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Φθίνουσα)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>Πρώτα τα μικρότερα</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>Πρώτα τα μεγαλύτερα</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>Πρώτα τα πιο αργά ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>Πρώτα τα πιο γρήγορα ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>Πιο πολλά {0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>Λιγότερα {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Σάρωση φακέλου {0} από {1}: {2} - {3}</value>
@@ -224,9 +143,6 @@
     <value>Ολοκληρώθηκε η ανανέωση της βιβλιοθήκης.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Δεν ήταν δυνατή η προσθήκη του φακέλου.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Το όνομα της λίστας αναπαραγωγής δεν μπορεί να είναι κενό.</value>
   </data>
@@ -236,9 +152,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> &amp; </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Ταξινόμηση ανά: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Δεν υπάρχουν λίστες αναπαραγωγής για εξαγωγή.</value>
@@ -306,23 +219,11 @@
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Δεν ήταν δυνατή η σύνδεση στο ListenBrainz. Ελέγξτε τη σύνδεσή σας και τη διεύθυνση URL του διακομιστή.</value>
   </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Το Nagi δεν μπόρεσε να βρει τον φάκελο δεδομένων της βιβλιοθήκης του.</value>
-  </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Η επαναφορά απέτυχε και τα προηγούμενα δεδομένα σας δεν ήταν δυνατό να αποκατασταθούν πλήρως. Τα αρχεία ανάκτησης αποθηκεύτηκαν στο &apos;{0}&apos;.</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Το επιλεγμένο αρχείο δεν είναι έγκυρο αντίγραφο ασφαλείας του Nagi.</value>
-  </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>Το LibVLC αντιμετώπισε ένα μη καθορισμένο σφάλμα.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Σφάλμα LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Αποτυχία φόρτωσης '{0}'.</value>
   </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>Περιήγηση στη μουσική βιβλιοθήκη</value>

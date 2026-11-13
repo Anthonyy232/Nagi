@@ -3,11 +3,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nagi.Core.Artwork;
 using Nagi.Core.Data;
-using Nagi.Core.Helpers;
-using Nagi.Core.Http.Pipelines;
-using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Implementations;
+using Nagi.Core.Library;
+using Nagi.Core.Metadata;
+using Nagi.Core.OnlineProviders.Pipelines;
+using Nagi.Core.Platform;
+using Nagi.Core.Playback;
+using Nagi.Core.Playlists;
+using Nagi.Core.Settings;
 using NSubstitute;
 
 namespace Nagi.Benchmarks.Helpers;
@@ -19,7 +23,7 @@ internal sealed class LibraryBenchmarkFixture : IDisposable
     public string RootPath { get; } = Directory.CreateTempSubdirectory("NagiBenchmarks-").FullName;
     public IDbContextFactory<MusicDbContext> ContextFactory { get; }
     public LibraryReader Reader { get; }
-    public LibraryService Library { get; }
+    public LibraryFolderService Folders { get; }
     public SmartPlaylistService SmartPlaylists { get; }
 
     public LibraryBenchmarkFixture()
@@ -44,13 +48,19 @@ internal sealed class LibraryBenchmarkFixture : IDisposable
         services.AddSingleton<IAlbumCoverService>(Substitute.For<IAlbumCoverService>());
 
         var settingsService = Substitute.For<ISettingsService>();
-        settingsService.GetVolumeNormalizationEnabledAsync().Returns(false);
+        settingsService.Get(CoreSettings.VolumeNormalization).Returns(false);
         services.AddSingleton<ISettingsService>(settingsService);
 
         services.AddSingleton<IReplayGainService>(Substitute.For<IReplayGainService>());
-        services.AddSingleton<IProviderPipelineProvider>(Substitute.For<IProviderPipelineProvider>());
+        services.AddSingleton(new ProviderPipelineProvider([], NullLogger<ProviderPipelineProvider>.Instance));
         services.AddSingleton<IMetadataService, AtlMetadataService>();
         services.AddSingleton<ILibraryReader, LibraryReader>();
+        services.AddSingleton<LibraryNotifier>();
+        services.AddSingleton<LibraryWriteLock>();
+        services.AddSingleton<LibraryArtwork>();
+        services.AddSingleton<IArtworkService, ArtworkService>();
+        services.AddSingleton<LibraryImporter>();
+        services.AddSingleton<LibraryFolderService>();
         services.AddHttpClient();
         services.AddLogging(b => b.AddProvider(NullLoggerProvider.Instance));
 
@@ -61,13 +71,12 @@ internal sealed class LibraryBenchmarkFixture : IDisposable
         context.Database.EnsureCreated();
 
         Reader = (LibraryReader)_services.GetRequiredService<ILibraryReader>();
-        Library = ActivatorUtilities.CreateInstance<LibraryService>(_services);
+        Folders = _services.GetRequiredService<LibraryFolderService>();
         SmartPlaylists = ActivatorUtilities.CreateInstance<SmartPlaylistService>(_services);
     }
 
     public void Dispose()
     {
-        Library.Dispose();
         _services.Dispose();
         Directory.Delete(RootPath, recursive: true);
     }
@@ -78,6 +87,10 @@ internal sealed class LibraryBenchmarkFixture : IDisposable
         public void DeleteDirectory(string path, bool recursive) => Directory.Delete(path, recursive);
         public void DeleteFile(string path) => File.Delete(path);
         public bool DirectoryExists(string path) => Directory.Exists(path);
+        public IEnumerable<string> EnumerateDirectories(string path) => Directory.EnumerateDirectories(path);
+        public void MoveDirectory(string source, string dest) => Directory.Move(source, dest);
+        public Stream OpenRead(string path) => File.OpenRead(path);
+        public Stream CreateFile(string path) => File.Create(path);
         public IEnumerable<string> EnumerateFiles(string path, string searchPattern, SearchOption searchOption) => Directory.EnumerateFiles(path, searchPattern, searchOption);
         public IEnumerable<(string Path, DateTime LastWriteTimeUtc)> EnumerateFilesWithLastWriteTime(string path, string searchPattern, SearchOption searchOption) =>
             new DirectoryInfo(path).EnumerateFiles(searchPattern, searchOption).Select(fi => (fi.FullName, fi.LastWriteTimeUtc));

@@ -1,7 +1,7 @@
-using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
-using Nagi.Core.Models;
-using Nagi.Presentation.ViewModels;
+using Nagi.Core.Library;
+using Nagi.Presentation.MusicServers;
 using Nagi.WinUI.Dialogs;
 
 namespace Nagi.WinUI.Services.Implementations;
@@ -12,7 +12,8 @@ public partial class UIService
     {
         if (!TryGetXamlRoot(out var xamlRoot)) return null;
 
-        var viewModel = _viewModelFactory.Create<MusicServerDialogViewModel>();
+        using var scope = _scopeFactory.CreateScope();
+        var viewModel = scope.ServiceProvider.GetRequiredService<MusicServerDialogViewModel>();
         var result = await ShowDialogAsync(new MusicServerDialog(viewModel) { XamlRoot = xamlRoot });
         return result == ContentDialogResult.Primary ? viewModel.AddedServer : null;
     }
@@ -21,7 +22,8 @@ public partial class UIService
     {
         if (!TryGetXamlRoot(out var xamlRoot)) return false;
 
-        var viewModel = _viewModelFactory.Create<MusicServerDialogViewModel>();
+        using var scope = _scopeFactory.CreateScope();
+        var viewModel = scope.ServiceProvider.GetRequiredService<MusicServerDialogViewModel>();
         if (!await viewModel.InitializeForSignInAsync(folderId)) return false;
         var result = await ShowDialogAsync(new MusicServerDialog(viewModel) { XamlRoot = xamlRoot });
         return result == ContentDialogResult.Primary;

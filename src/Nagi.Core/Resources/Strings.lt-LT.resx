@@ -71,96 +71,15 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Pavadinimas</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Grojaraštis</value>
-  </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>Failas</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>Metai</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>Pridėjimo data</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>Sukūrimo data</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>Pakeitimo data</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>Paskutinį kartą grota</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>Trukmė</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>Takelio numeris</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>Perklausos</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>Dainos</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Aplankas</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>Rankinė tvarka</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>Atsitiktinis</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>Nežinoma {0}</value>
   </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>Nauja {0}</value>
-  </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} nerasta.</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (A iki Z)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (Z iki A)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Naujausia)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Seniausia)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (didėjančia tvarka)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (mažėjančia tvarka)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>Trumpiausi pirmiausia</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>Ilgiausi pirmiausia</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>Lėčiausi pirmiausia ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>Greičiausi pirmiausia ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>Daugiausia {0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>Mažiausiai {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Nuskaitomas aplankas {0} iš {1}: {2} - {3}</value>
@@ -224,9 +143,6 @@
     <value>Bibliotekos atnaujinimas baigtas.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Nepavyko pridėti aplanko.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Grojaraščio pavadinimas negali būti tuščias.</value>
   </data>
@@ -236,9 +152,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> ir </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Rūšiuoti pagal: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Nėra grojaraščių eksportavimui.</value>
@@ -306,23 +219,11 @@
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Nepavyko prisijungti prie ListenBrainz. Patikrinkite ryšį ir serverio URL.</value>
   </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi nerado savo bibliotekos duomenų aplanko.</value>
-  </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Atkūrimas nepavyko, ir ankstesni duomenys nebuvo visiškai atkurti. Atkūrimo failai išsaugoti čia: &apos;{0}&apos;.</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Pasirinktas failas nėra tinkama Nagi atsarginė kopija.</value>
-  </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC susidūrė su nepatikslinta klaida.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC klaida: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Nepavyko įkelti „{0}“.</value>
   </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>Naršo muzikos biblioteką</value>

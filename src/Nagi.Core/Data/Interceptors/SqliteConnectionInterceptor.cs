@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Data.Common;
 using System.Globalization;
+using Nagi.Core.Library;
 
 namespace Nagi.Core.Data.Interceptors;
 
@@ -32,6 +33,7 @@ public sealed class SqliteConnectionInterceptor : DbConnectionInterceptor
             isDeterministic: true);
         sqlite.CreateFunction("nagi_duration_text", (long ticks) => TimeSpan.FromTicks(ticks).ToString("c", CultureInfo.InvariantCulture),
             isDeterministic: true);
+        sqlite.CreateFunction<string, string>("nagi_sort_key", SortKeyHelper.Normalize, isDeterministic: true);
         sqlite.CreateFunction("nagi_directory_path", (string path) => Path.GetDirectoryName(path) ?? string.Empty,
             isDeterministic: true);
         // SQLite's built-in lower() folds only ASCII, so smart playlist rules would miss accented capitals.

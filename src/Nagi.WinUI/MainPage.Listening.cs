@@ -1,24 +1,14 @@
-using System.Collections.Generic;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.ViewModels;
+using Nagi.WinUI.Pages;
 
 namespace Nagi.WinUI;
 
 public sealed partial class MainPage
 {
     private Visibility GetQueueDetailVisibility(bool history, bool enabled) => !history && enabled ? Visibility.Visible : Visibility.Collapsed;
-    private async void HistoryEntry_DoubleTapped(object sender, DoubleTappedRoutedEventArgs args)
-    {
-        if (sender is FrameworkElement { Tag: RecentListenEntry entry })
-        {
-            args.Handled = true;
-            await ViewModel.PlayHistoryNowCommand.ExecuteAsync(entry);
-        }
-    }
 
     private void PlayerOptions_Opening(object sender, object e)
     {
@@ -64,24 +54,16 @@ public sealed partial class MainPage
         }
     }
 
-    private string GetListeningPaneToggleIcon(bool history) => history ? "\uE90B" : "\uE81C";
     private void ToggleListeningPane_Click(object sender, RoutedEventArgs e) => ViewModel.IsHistoryVisible = !ViewModel.IsHistoryVisible;
 
     private async void OnListeningShortcutInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
     {
-        if (FocusManager.GetFocusedElement(XamlRoot) is Control { IsHitTestVisible: true, IsEnabled: true } input &&
-            input is TextBox or PasswordBox or RichEditBox ||
-            Microsoft.UI.Xaml.Media.VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot).Count != 0) return;
-        var list = (ContentFrame.Content as FrameworkElement)?.DataContext as SongListViewModelBase;
-        if (list?.ToggleSelectedFavoriteCommand.CanExecute(null) == true)
-        {
-            args.Handled = true;
-            await list.ToggleSelectedFavoriteCommand.ExecuteAsync(null);
-        }
-        else if (list?.HasSelectedSongs != true && ViewModel.ToggleFavoriteCommand.CanExecute(null))
-        {
-            args.Handled = true;
-            await ViewModel.ToggleFavoriteCommand.ExecuteAsync(null);
-        }
+        if (IsShortcutBlocked(FocusManager.GetFocusedElement(XamlRoot) as DependencyObject)) return;
+
+        var activeList = (ContentFrame.Content as SongListPage)?.SongList;
+        if (ViewModel.GetFavoriteShortcutCommand(activeList?.ToggleSelectedFavoriteCommand, activeList?.HasSelectedSongs == true)
+            is not { } command) return;
+        args.Handled = true;
+        await command.ExecuteAsync(null);
     }
 }

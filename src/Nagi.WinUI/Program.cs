@@ -1,10 +1,8 @@
-using System.IO;
-using System.Linq;
-using System.Threading;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Settings;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Services.Implementations;
 using WinRT;
 
 namespace Nagi.WinUI;
@@ -16,12 +14,14 @@ public static class Program
     {
         ComWrappersSupport.InitializeComWrappers();
         using var singleInstanceManager = new SingleInstanceManager();
+        var filePath = TryGetFilePathFromArgs(args);
+        var command = JumpListService.Parse(args);
 
         if (!singleInstanceManager.TryAcquire())
         {
             using var activationTimeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
             singleInstanceManager
-                .SendActivationAsync(TryGetFilePathFromArgs(args), JumpListTasks.Parse(args), activationTimeout.Token)
+                .SendActivationAsync(filePath, command, activationTimeout.Token)
                 .GetAwaiter()
                 .GetResult();
             return 0;
@@ -38,14 +38,13 @@ public static class Program
         {
             var context = new DispatcherQueueSynchronizationContext(DispatcherQueue.GetForCurrentThread());
             SynchronizationContext.SetSynchronizationContext(context);
-            var app = new App();
-            singleInstanceManager.StartListening(app.HandleExternalActivation);
+            new App(singleInstanceManager, filePath, command);
         });
 
         return 0;
     }
 
-    internal static string? TryGetFilePathFromArgs(string[] args)
+    private static string? TryGetFilePathFromArgs(string[] args)
     {
         var path = args.LastOrDefault();
         return File.Exists(path) || Directory.Exists(path) ? path : null;

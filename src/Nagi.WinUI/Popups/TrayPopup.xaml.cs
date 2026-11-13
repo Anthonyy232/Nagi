@@ -1,54 +1,54 @@
-﻿using System.ComponentModel;
-using System.Runtime.InteropServices;
-using Windows.Foundation;
+﻿using Windows.Foundation;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Input;
-using Nagi.Presentation.Services.Abstractions;
-using Nagi.Presentation.ViewModels;
+using Nagi.Presentation.Player;
+using Nagi.Presentation.Theme;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Services.Implementations;
 using WinRT.Interop;
 
 namespace Nagi.WinUI.Popups;
 
 public sealed partial class TrayPopup : Window
 {
-    private readonly IUISettingsService _settingsService;
-    private readonly Win32InteropService _win32InteropService;
-    private bool _isClosed;
-    private bool _isCoverArtInFlyoutEnabled;
+    private readonly IThemeService _themeService;
 
-    public TrayPopup(ElementTheme initialTheme, PlayerViewModel viewModel, IUISettingsService settingsService,
-        Win32InteropService win32InteropService)
+    public TrayPopup(PlayerViewModel viewModel, IThemeService themeService)
     {
+        ViewModel = viewModel;
+        _themeService = themeService;
         InitializeComponent();
 
-        ViewModel = viewModel;
-        _settingsService = settingsService;
-        _win32InteropService = win32InteropService;
-
-        OuterBorder.RequestedTheme = initialTheme;
-        OuterBorder.DataContext = ViewModel;
-        PlayerInputHelper.AttachSeekSlider(MediaSeekerSlider, ViewModel);
+        // Set in code: a window's bindings start only when it activates, and the popup is measured as soon as it loads.
+        Player.ViewModel = ViewModel;
+        ApplyTheme();
 
         ConfigureWindowAppearance();
-        _ = InitializeSettingsAsync();
 
         Activated += OnActivated;
         Closed += OnClosed;
-        ViewModel.PropertyChanged += OnViewModelPropertyChanged;
-        _settingsService.ShowCoverArtInTrayFlyoutSettingChanged += OnShowCoverArtSettingChanged;
+        _themeService.ActualThemeChanged += ApplyTheme;
     }
 
     public PlayerViewModel ViewModel { get; }
 
     public event EventHandler? Deactivated;
 
+    public void ShowPlayerView() => Player.ShowPlayer();
+
+    // The popup is kept and reused, so it follows theme changes made while it exists.
+    private void ApplyTheme() =>
+        OuterBorder.RequestedTheme = _themeService.IsLightTheme ? ElementTheme.Light : ElementTheme.Dark;
+
     public void SetWindowOpacity(byte alpha)
     {
         var hwnd = WindowNative.GetWindowHandle(this);
-        SetLayeredWindowAttributes(hwnd, 0, alpha, LWA_ALPHA);
+        NativeMethods.SetLayeredWindowAttributes(hwnd, 0, alpha, NativeMethods.LWA_ALPHA);
+    }
+
+    public void ShowInForeground()
+    {
+        AppWindow.Show();
+        NativeMethods.SetForegroundWindow(WindowNative.GetWindowHandle(this));
     }
 
     public async Task<double> ShowAndMeasureAsync(double targetWidthDips)
@@ -69,21 +69,6 @@ public sealed partial class TrayPopup : Window
         return OuterBorder.DesiredSize.Height;
     }
 
-    private async Task InitializeSettingsAsync()
-    {
-        _isCoverArtInFlyoutEnabled = await _settingsService.GetShowCoverArtInTrayFlyoutAsync();
-        if (_isClosed) return;
-        UpdateCoverArtVisibility();
-    }
-
-    private void UpdateCoverArtVisibility()
-    {
-        var shouldBeVisible = _isCoverArtInFlyoutEnabled && !string.IsNullOrEmpty(ViewModel.AlbumArtUri);
-        CoverArtBackground.Visibility = shouldBeVisible ? Visibility.Visible : Visibility.Collapsed;
-
-        CoverArtBrush.Source = BitmapImageFactory.Create(ViewModel.AlbumArtUri)!;
-    }
-
     private void ConfigureWindowAppearance()
     {
         var presenter = OverlappedPresenter.CreateForDialog();
@@ -98,14 +83,14 @@ public sealed partial class TrayPopup : Window
 
         var windowHandle = WindowNative.GetWindowHandle(this);
 
-        var exStyle = (int)GetWindowLongPtr(windowHandle, GWL_EXSTYLE);
-        exStyle |= WS_EX_LAYERED;
-        SetWindowLongPtr(windowHandle, GWL_EXSTYLE, (IntPtr)exStyle);
+        var exStyle = NativeMethods.GetWindowLongPtr(windowHandle, NativeMethods.GWL_EXSTYLE);
+        NativeMethods.SetWindowLongPtr(windowHandle, NativeMethods.GWL_EXSTYLE, exStyle | NativeMethods.WS_EX_LAYERED);
 
-        if (_win32InteropService.IsWindows11OrNewer)
+        if (NativeMethods.IsWindows11OrNewer)
         {
-            var preference = DWMWCP_ROUND; // DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_ROUND
-            DwmSetWindowAttribute(windowHandle, DWMWA_WINDOW_CORNER_PREFERENCE, ref preference, sizeof(uint));
+            var preference = NativeMethods.DWMWCP_ROUND;
+            NativeMethods.DwmSetWindowAttribute(windowHandle, NativeMethods.DWMWA_WINDOW_CORNER_PREFERENCE,
+                ref preference, sizeof(uint));
         }
     }
 
@@ -117,51 +102,5 @@ public sealed partial class TrayPopup : Window
         }
     }
 
-    private void OnShowCoverArtSettingChanged(bool isEnabled)
-    {
-        DispatcherQueue.TryEnqueue(() =>
-        {
-            if (_isClosed) return;
-
-            _isCoverArtInFlyoutEnabled = isEnabled;
-            UpdateCoverArtVisibility();
-        });
-    }
-
-    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(PlayerViewModel.AlbumArtUri))
-        {
-            UpdateCoverArtVisibility();
-        }
-    }
-
-    private void OnClosed(object sender, WindowEventArgs args)
-    {
-        _isClosed = true;
-        ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
-        _settingsService.ShowCoverArtInTrayFlyoutSettingChanged -= OnShowCoverArtSettingChanged;
-    }
-
-    private void VolumeButton_PointerWheelChanged(object sender, PointerRoutedEventArgs e) =>
-        PlayerInputHelper.StepVolumeWithWheel(sender, e, ViewModel);
-
-    private const int GWL_EXSTYLE = -20;
-    private const int WS_EX_LAYERED = 0x00080000;
-    private const uint LWA_ALPHA = 0x00000002;
-    private const uint DWMWA_WINDOW_CORNER_PREFERENCE = 33;
-    private const uint DWMWCP_ROUND = 2;
-
-    [DllImport("user32.dll", EntryPoint = "GetWindowLongPtrW")]
-    private static extern IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);
-
-    [DllImport("user32.dll", EntryPoint = "SetWindowLongPtrW")]
-    private static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
-
-    [DllImport("user32.dll")]
-    private static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
-
-    [DllImport("dwmapi.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
-    private static extern void DwmSetWindowAttribute(IntPtr hwnd, uint attribute, ref uint pvAttribute,
-        uint cbAttribute);
+    private void OnClosed(object sender, WindowEventArgs args) => _themeService.ActualThemeChanged -= ApplyTheme;
 }

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="Nagi.WinUI.Controls.InsightsSeeAllOverlay"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resources="using:Nagi.Presentation.Resources"
+    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
+    xmlns:local="using:Nagi.WinUI.Controls"
+    mc:Ignorable="d"
+    Visibility="{x:Bind ViewModel.IsOpen, Mode=OneWay}">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="18*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.ColumnSpan="3"
+              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+              Opacity="0.85"
+              Tapped="OnBackdropTapped" />
+
+        <Grid
+              Grid.Column="1"
+              Margin="0,156,0,156"
+              VerticalAlignment="Stretch"
+              Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
+              CornerRadius="{ThemeResource OverlayCornerRadius}"
+              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+              BorderThickness="1"
+              Tapped="OnPanelTapped">
+
+            <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="{ThemeResource OverlayCornerRadius}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Padding="{StaticResource SurfaceContentPadding}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Text="{x:Bind ViewModel.Category.Title, Mode=OneWay}"
+                               Style="{StaticResource InsightsCardHeaderStyle}"
+                               Margin="0"
+                               VerticalAlignment="Center" />
+
+                    <local:SearchToggle Grid.Column="1" Margin="0,0,8,0"
+                                        SearchTerm="{x:Bind ViewModel.SearchTerm, Mode=TwoWay}"
+                                        PlaceholderText="{x:Bind resources:Strings.InsightsPage_SeeAll_SearchBox_Placeholder, Mode=OneTime}"
+                                        SearchToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_SearchButton_ToolTip, Mode=OneTime}" />
+
+                    <local:SortButton Grid.Column="2" Margin="0,0,8,0" VerticalAlignment="Center"
+                                      Selection="{x:Bind ViewModel.Category.Sort, Mode=OneWay}" />
+
+                    <Button Grid.Column="3"
+                            Command="{x:Bind ViewModel.CloseCommand}"
+                            ToolTipService.ToolTip="{x:Bind resources:Strings.Generic_Close, Mode=OneTime}"
+                            AutomationProperties.Name="{x:Bind resources:Strings.Generic_Close, Mode=OneTime}"
+                            Style="{StaticResource SubtleButtonStyle}"
+                            Width="32" Height="32" Padding="0">
+                        <FontIcon Glyph="&#xE711;" FontSize="12" />
+                    </Button>
+                </Grid>
+
+                <Grid Grid.Row="1">
+                    <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                                  Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                                  Width="40" Height="40" />
+
+                    <ListView uihelpers:ScrollEdgeFade.IsEnabled="True"
+                              Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                              ItemsSource="{x:Bind ViewModel.Items}"
+                              SelectionMode="None"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              Padding="16,0,16,8"
+                              ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
+                              ItemTemplateSelector="{StaticResource InsightsItemTemplateSelector}" />
+                </Grid>
+
+                <local:PaginationControl Grid.Row="2" Margin="16,8,16,16" HorizontalAlignment="Right"
+                                            ViewModel="{x:Bind ViewModel}" />
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

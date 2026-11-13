@@ -64,9 +64,6 @@
   <data name="Status_NoTrackPlaying" xml:space="preserve">
     <value>Nenhuma música em reprodução</value>
   </data>
-  <data name="Tooltip_Play" xml:space="preserve">
-    <value>Reproduzir</value>
-  </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pausar</value>
   </data>
@@ -247,22 +244,13 @@
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>Álbum</value>
   </data>
-  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>Artista</value>
-  </data>
-  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} música</value>
-  </data>
-  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} músicas</value>
-  </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Artista Não Encontrado</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>Erro ao Carregar Artista</value>
   </data>
-  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+  <data name="Generic_DefaultArtistName" xml:space="preserve">
     <value>Artista</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
@@ -310,29 +298,17 @@
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Erro ao reanalisar pasta: {0}</value>
   </data>
-  <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0} pasta</value>
+  <data name="Folders_Count" xml:space="preserve">
+    <value>{0, plural, one {# pasta} other {# pastas}}</value>
   </data>
-  <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} pastas</value>
+  <data name="Songs_Count" xml:space="preserve">
+    <value>{0, plural, one {# música} other {# músicas}}</value>
   </data>
-  <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} música</value>
+  <data name="Albums_Count" xml:space="preserve">
+    <value>{0, plural, one {# álbum} other {# álbuns}}</value>
   </data>
-  <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} músicas</value>
-  </data>
-  <data name="Albums_Count_Singular" xml:space="preserve">
-    <value>{0} álbum</value>
-  </data>
-  <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} álbuns</value>
-  </data>
-  <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} artista</value>
-  </data>
-  <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} artistas</value>
+  <data name="Artists_Count" xml:space="preserve">
+    <value>{0, plural, one {# artista} other {# artistas}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Nenhum item</value>
@@ -358,29 +334,14 @@
   <data name="Onboarding_LibraryReady" xml:space="preserve">
     <value>A sua biblioteca está pronta.</value>
   </data>
-  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>Inteligente • {0} música</value>
-  </data>
-  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Inteligente • {0} músicas</value>
-  </data>
-  <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} música</value>
-  </data>
-  <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} músicas</value>
-  </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>A iniciar a lista de reprodução…</value>
+  <data name="Playlist_Smart_Count" xml:space="preserve">
+    <value>Inteligente • {0, plural, one {# música} other {# músicas}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Nenhuma música corresponde às regras desta lista de reprodução inteligente.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>Erro ao iniciar a reprodução para esta lista de reprodução.</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>A escolher uma lista de reprodução aleatória…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Nenhuma lista de reprodução encontrada.</value>
@@ -391,20 +352,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>Erro ao reproduzir lista de reprodução aleatória.</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>A carregar listas de reprodução…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>Erro ao carregar listas de reprodução.</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>A criar nova lista de reprodução…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Ocorreu um erro ao criar a lista de reprodução.</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>A atualizar a capa da lista de reprodução…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Falha ao atualizar capa da lista de reprodução.</value>
@@ -412,26 +361,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>Ocorreu um erro ao atualizar a capa da lista de reprodução.</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>A remover a imagem da lista de reprodução…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Falha ao remover imagem da lista de reprodução.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>Ocorreu um erro ao remover a imagem da lista de reprodução.</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>A mudar o nome da lista de reprodução…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Falha ao mudar o nome da lista de reprodução.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>Ocorreu um erro ao mudar o nome da lista de reprodução.</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>A eliminar a lista de reprodução…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Falha ao eliminar a lista de reprodução.</value>
@@ -447,12 +387,6 @@
   </data>
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>Repor</value>
-  </data>
-  <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>Erro de Reposição</value>
-  </data>
-  <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>Ocorreu um erro ao repor os dados da aplicação: {0}. Por favor, tente reiniciar a aplicação manualmente.</value>
   </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>Erro</value>
@@ -471,9 +405,6 @@
   </data>
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
     <value>Tem a certeza de que pretende desligar a sua conta Last.fm? O seu histórico de scrobbling será preservado no Last.fm, mas o Nagi deixará de poder fazer scrobble.</value>
-  </data>
-  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Desligar</value>
   </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
     <value>Exportação Bem-sucedida</value>
@@ -515,29 +446,14 @@ Ficheiros que não puderam ser importados: {0}.</value>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
     <value>Nenhuma regra definida • Todas as músicas correspondem</value>
   </data>
-  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Corresponder {0} de {1} {2}</value>
+  <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
+    <value>Corresponder todas de {0, plural, one {# regra} other {# regras}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>todas</value>
+  <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
+    <value>Corresponder qualquer de {0, plural, one {# regra} other {# regras}}</value>
   </data>
-  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>qualquer</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>regra</value>
-  </data>
-  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>regras</value>
-  </data>
-  <data name="SongList_PageTitle_Default" xml:space="preserve">
-    <value>Músicas</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} item</value>
-  </data>
-  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>{0} itens</value>
+  <data name="SongList_TotalItems_Format" xml:space="preserve">
+    <value>{0, plural, one {# item} other {# itens}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0, plural, one {# selecionado} other {# selecionados}}</value>
@@ -571,18 +487,6 @@ Ficheiros que não puderam ser importados: {0}.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg ainda não detetado. Por favor, instale o FFmpeg e clique em 'Verificar novamente'.</value>
-  </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>Anterior</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Reproduzir</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>Pausar</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>Seguinte</value>
   </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Biblioteca</value>
@@ -680,9 +584,6 @@ Ficheiros que não puderam ser importados: {0}.</value>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Remover</value>
   </data>
-  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Cancelar</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Pesquisar na pasta</value>
   </data>
@@ -706,9 +607,6 @@ Ficheiros que não puderam ser importados: {0}.</value>
   </data>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
     <value>Criar</value>
-  </data>
-  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>Cancelar</value>
   </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>Renomear '{0}'</value>
@@ -792,23 +690,14 @@ Pretende continuar?</value>
   <data name="TrayIcon_Exit" xml:space="preserve">
     <value>Sair</value>
   </data>
-  <data name="MiniPlayer_BackButton_ToolTip" xml:space="preserve">
+  <data name="Player_BackButton_ToolTip" xml:space="preserve">
     <value>Voltar ao Reprodutor</value>
   </data>
-  <data name="MiniPlayer_UpNextHeader" xml:space="preserve">
+  <data name="Player_UpNextHeader" xml:space="preserve">
     <value>A Seguir</value>
   </data>
   <data name="MiniPlayer_RestoreButton_ToolTip" xml:space="preserve">
     <value>Mostrar Nagi</value>
-  </data>
-  <data name="MiniPlayer_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Anterior</value>
-  </data>
-  <data name="MiniPlayer_NextButton_ToolTip" xml:space="preserve">
-    <value>Seguinte</value>
-  </data>
-  <data name="MiniPlayer_QueueButton_ToolTip" xml:space="preserve">
-    <value>A Seguir</value>
   </data>
   <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
     <value>Considere reportar isto criando um problema na </value>
@@ -891,24 +780,6 @@ Pretende continuar?</value>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Guardar</value>
   </data>
-  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Cancelar</value>
-  </data>
-  <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Anterior</value>
-  </data>
-  <data name="TrayPopup_NextButton_ToolTip" xml:space="preserve">
-    <value>Seguinte</value>
-  </data>
-  <data name="TrayPopup_QueueButton_ToolTip" xml:space="preserve">
-    <value>A Seguir</value>
-  </data>
-  <data name="TrayPopup_BackButton_ToolTip" xml:space="preserve">
-    <value>Voltar ao Reprodutor</value>
-  </data>
-  <data name="TrayPopup_UpNextHeader" xml:space="preserve">
-    <value>A Seguir</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Anterior</value>
   </data>
@@ -926,9 +797,6 @@ Pretende continuar?</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Posição de reprodução</value>
-  </data>
-  <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>A Seguir</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>Limpar fila</value>
@@ -960,9 +828,6 @@ Pretende continuar?</value>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Duração total</value>
   </data>
-  <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Reproduzir</value>
-  </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
     <value>Mover para cima</value>
   </data>
@@ -978,11 +843,8 @@ Pretende continuar?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar álbuns…</value>
   </data>
-  <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
+  <data name="Generic_PickRandom" xml:space="preserve">
     <value>Escolher um aleatoriamente</value>
-  </data>
-  <data name="AlbumPage_Menu_Play" xml:space="preserve">
-    <value>Reproduzir</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
     <value>Nenhum álbum encontrado</value>
@@ -993,23 +855,14 @@ Pretende continuar?</value>
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>Álbum</value>
   </data>
-  <data name="AlbumViewPage_Songs_Title" xml:space="preserve">
+  <data name="SongList_Songs" xml:space="preserve">
     <value>Músicas</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar no álbum…</value>
   </data>
-  <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Reproduzir tudo</value>
-  </data>
-  <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Reproduzir tudo aleatoriamente</value>
-  </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
     <value>Nenhuma música encontrada neste álbum</value>
-  </data>
-  <data name="AlbumViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Tente pesquisar por outra coisa</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
     <value>Artistas</value>
@@ -1017,16 +870,10 @@ Pretende continuar?</value>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar artistas…</value>
   </data>
-  <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Escolher um aleatoriamente</value>
-  </data>
-  <data name="ArtistPage_Menu_Play" xml:space="preserve">
-    <value>Reproduzir</value>
-  </data>
-  <data name="ArtistPage_Menu_ChangeImage" xml:space="preserve">
+  <data name="Generic_ChangeImage" xml:space="preserve">
     <value>Alterar Imagem</value>
   </data>
-  <data name="ArtistPage_Menu_RemoveImage" xml:space="preserve">
+  <data name="Generic_RemoveImage" xml:space="preserve">
     <value>Remover Imagem</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
@@ -1038,47 +885,23 @@ Pretende continuar?</value>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
     <value>Alterar imagem do artista</value>
   </data>
-  <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
-    <value>Alterar Imagem</value>
-  </data>
-  <data name="ArtistViewPage_ImageMenu_RemoveImage" xml:space="preserve">
-    <value>Remover Imagem</value>
-  </data>
   <data name="ArtistViewPage_Header_Label" xml:space="preserve">
     <value>Artista</value>
   </data>
   <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
     <value>Principais Álbuns</value>
   </data>
-  <data name="ArtistViewPage_Songs_Title" xml:space="preserve">
-    <value>Músicas</value>
-  </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar no artista…</value>
-  </data>
-  <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Reproduzir tudo</value>
-  </data>
-  <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Reproduzir tudo aleatoriamente</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
     <value>Nenhuma música encontrada para este artista</value>
   </data>
-  <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Tente pesquisar por outra coisa</value>
-  </data>
   <data name="FolderPage_Title" xml:space="preserve">
     <value>Pastas</value>
   </data>
-  <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Escolher um aleatoriamente</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Adicionar Pasta</value>
-  </data>
-  <data name="FolderPage_Menu_Play" xml:space="preserve">
-    <value>Reproduzir</value>
   </data>
   <data name="FolderPage_Menu_Rescan" xml:space="preserve">
     <value>Reanalisar</value>
@@ -1092,26 +915,11 @@ Pretende continuar?</value>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
     <value>Adicione pastas de música para começar</value>
   </data>
-  <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
-    <value>Reproduzir</value>
-  </data>
-  <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Adicionar à lista de reprodução</value>
-  </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Pasta</value>
   </data>
-  <data name="FolderSongViewPage_Songs_Title" xml:space="preserve">
-    <value>Músicas</value>
-  </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar na pasta…</value>
-  </data>
-  <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Reproduzir tudo</value>
-  </data>
-  <data name="FolderSongViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Reproduzir tudo aleatoriamente</value>
   </data>
   <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
     <value>Esta pasta está vazia</value>
@@ -1125,12 +933,6 @@ Pretende continuar?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar géneros…</value>
   </data>
-  <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Escolher um aleatoriamente</value>
-  </data>
-  <data name="GenrePage_Menu_Play" xml:space="preserve">
-    <value>Reproduzir</value>
-  </data>
   <data name="GenrePage_Empty_Title" xml:space="preserve">
     <value>Nenhum género encontrado</value>
   </data>
@@ -1143,40 +945,37 @@ Pretende continuar?</value>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar na biblioteca…</value>
   </data>
-  <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_PlayAll" xml:space="preserve">
     <value>Reproduzir tudo</value>
   </data>
-  <data name="LibraryPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_ShuffleAll" xml:space="preserve">
     <value>Reproduzir tudo aleatoriamente</value>
   </data>
-  <data name="LibraryPage_Context_Play" xml:space="preserve">
+  <data name="Generic_Play" xml:space="preserve">
     <value>Reproduzir</value>
   </data>
-  <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
+  <data name="SongList_Context_PlayNext" xml:space="preserve">
     <value>Reproduzir a Seguir</value>
   </data>
-  <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
+  <data name="SongList_Context_AddToQueue" xml:space="preserve">
     <value>Adicionar à Fila</value>
   </data>
-  <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
+  <data name="SongList_Context_AddToPlaylist" xml:space="preserve">
     <value>Adicionar à Lista de Reprodução</value>
   </data>
-  <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
+  <data name="SongList_Context_GoToAlbum" xml:space="preserve">
     <value>Ir para o álbum</value>
   </data>
-  <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
+  <data name="SongList_Context_GoToArtist" xml:space="preserve">
     <value>Ir para o artista</value>
   </data>
-  <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
+  <data name="SongList_Context_ShowInExplorer" xml:space="preserve">
     <value>Mostrar no Explorador de Ficheiros</value>
-  </data>
-  <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Reproduzir</value>
   </data>
   <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
     <value>Nenhuma música encontrada</value>
   </data>
-  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+  <data name="Generic_TrySearchingElse" xml:space="preserve">
     <value>Tente pesquisar outra coisa</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
@@ -1287,9 +1086,6 @@ Pretende continuar?</value>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar listas de reprodução…</value>
   </data>
-  <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Escolher uma aleatoriamente</value>
-  </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
     <value>Criar uma nova lista de reprodução</value>
   </data>
@@ -1302,17 +1098,8 @@ Pretende continuar?</value>
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
     <value>Lista de Reprodução Inteligente</value>
   </data>
-  <data name="PlaylistPage_Context_Play" xml:space="preserve">
-    <value>Reproduzir</value>
-  </data>
   <data name="PlaylistPage_Context_Rename" xml:space="preserve">
     <value>Renomear</value>
-  </data>
-  <data name="PlaylistPage_Context_ChangeImage" xml:space="preserve">
-    <value>Alterar Imagem</value>
-  </data>
-  <data name="PlaylistPage_Context_RemoveImage" xml:space="preserve">
-    <value>Remover Imagem</value>
   </data>
   <data name="PlaylistPage_Context_Delete" xml:space="preserve">
     <value>Eliminar</value>
@@ -1326,19 +1113,10 @@ Pretende continuar?</value>
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Lista de Reprodução</value>
   </data>
-  <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Músicas</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar na lista de reprodução…</value>
   </data>
-  <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Reproduzir tudo</value>
-  </data>
-  <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Reproduzir tudo aleatoriamente</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
+  <data name="SongList_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>Remover da lista de reprodução</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
@@ -1350,23 +1128,11 @@ Pretende continuar?</value>
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>Género</value>
   </data>
-  <data name="GenreViewPage_Section_Songs" xml:space="preserve">
-    <value>Músicas</value>
-  </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar no género…</value>
   </data>
-  <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Reproduzir tudo</value>
-  </data>
-  <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Reproduzir tudo aleatoriamente</value>
-  </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
     <value>Nenhuma música encontrada para este género</value>
-  </data>
-  <data name="GenreViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Tente pesquisar por outra coisa</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Definições</value>
@@ -1384,6 +1150,12 @@ Pretende continuar?</value>
     <value>Cor de Destaque</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
+    <value>Repor predefinição</value>
+  </data>
+  <data name="SettingsPage_ResetPlayerStyling_Content" xml:space="preserve">
+    <value>Repor predefinição</value>
+  </data>
+  <data name="SettingsPage_ResetSongListColumns_Content" xml:space="preserve">
     <value>Repor predefinição</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
@@ -1590,9 +1362,6 @@ Pretende continuar?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Nenhum pacote de romanização compatível está disponível.</value>
   </data>
-  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Não foi possível carregar pacotes de romanização: {0}</value>
-  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>A instalação do pacote falhou.</value>
   </data>
@@ -1653,10 +1422,7 @@ Pretende continuar?</value>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
     <value>Concluir</value>
   </data>
-  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Cancelar</value>
-  </data>
-  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+  <data name="Generic_Disconnect" xml:space="preserve">
     <value>Desligar</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
@@ -1713,9 +1479,6 @@ Pretende continuar?</value>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
     <value>Isto removerá o seu token guardado. Pode voltar a ligar a qualquer momento.</value>
   </data>
-  <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>Desligar</value>
-  </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>
   </data>
@@ -1725,20 +1488,11 @@ Pretende continuar?</value>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Lista de Reprodução Inteligente</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Músicas</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar na lista de reprodução inteligente…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Editar regras</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Reproduzir tudo</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Reproduzir tudo aleatoriamente</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>Nenhuma música corresponde às regras atuais</value>
@@ -1757,9 +1511,6 @@ Pretende continuar?</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Redescubra a sua coleção de música local com o Nagi, um reprodutor de música focado em velocidade, simplicidade e privacidade.</value>
-  </data>
-  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>Versão </value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Ver Licenças</value>
@@ -1983,14 +1734,8 @@ Pretende continuar?</value>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Página seguinte</value>
   </data>
-  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+  <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>ex: ;/\\</value>
-  </data>
-  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value> ms</value>
-  </data>
-  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Último 1 dia</value>
@@ -2175,7 +1920,7 @@ Pretende continuar?</value>
   <data name="Listening_Dismiss" xml:space="preserve">
     <value>Descartar</value>
   </data>
-  <data name="Listening_ActionError" xml:space="preserve">
+  <data name="Generic_ActionError" xml:space="preserve">
     <value>Não foi possível concluir esta ação. Tente novamente.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
@@ -2272,5 +2017,83 @@ Pretende continuar?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Mostrar um rótulo por cima de cada coluna das listas de músicas.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A a Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z a A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Mais recentes)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Mais antigos)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Crescente)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Decrescente)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Mais curtos primeiro</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Mais longos primeiro</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Mais lentos primeiro ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Mais rápidos primeiro ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Mais {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Menos {0}</value>
+  </data>
+  <data name="SortBy_Format" xml:space="preserve">
+    <value>Ordenar por: {0}</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Ficheiro</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Ano</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Data de Adição</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Data de Criação</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Data de Modificação</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Última Reprodução</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Duração</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Número da Faixa</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Reproduções</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Músicas</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Ordem Manual</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Aleatório</value>
   </data>
 </root>

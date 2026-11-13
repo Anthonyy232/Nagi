@@ -1,19 +1,18 @@
-using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using Nagi.Core.Models;
-using Nagi.Presentation.ViewModels;
+using Nagi.Core.Playback;
+using Nagi.Presentation.Common;
+using Nagi.Presentation.Resources;
+using Nagi.Presentation.Settings;
 
 namespace Nagi.WinUI.Pages;
 
-public sealed partial class SettingsPage : Page
+public sealed partial class SettingsPage : ViewModelPage
 {
     public SettingsPage()
     {
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<SettingsViewModel>();
-        DataContext = ViewModel;
+        ViewModel = GetViewModel<SettingsViewModel>();
     }
 
     public SettingsViewModel ViewModel { get; }
@@ -22,13 +21,13 @@ public sealed partial class SettingsPage : Page
     {
         base.OnNavigatedTo(e);
         await ViewModel.OpenAsync();
-        Bindings.Update();
     }
 
-    private void ProvidersListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
-    {
-        if (e.Items.Any(i => i is ServiceProviderSettingViewModel { IsPinnedFirst: true })) e.Cancel = true;
-    }
+    private string Milliseconds(double value) => ResourceFormatter.Format(Strings.SettingsPage_Milliseconds_Format, value);
+
+    private string Decibels(float value) => ResourceFormatter.Format(Strings.SettingsPage_Decibels_Format, value);
+
+    private string Version(string version) => ResourceFormatter.Format(Strings.SettingsPage_About_Version_Format, version);
 
     private async void AudioOutput_DropDownOpened(object sender, object e) =>
         await ViewModel.Audio.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);

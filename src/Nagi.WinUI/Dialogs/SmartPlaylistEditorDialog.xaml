@@ -5,12 +5,12 @@
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:ImageEx"
-    xmlns:viewmodels="using:Nagi.Presentation.ViewModels"
+    xmlns:uicontrols="using:Nagi.WinUI.Controls"
+    xmlns:playlists="using:Nagi.Presentation.Playlists"
     xmlns:resources="using:Nagi.Presentation.Resources"
     mc:Ignorable="d"
     PrimaryButtonText="{x:Bind resources:Strings.SmartPlaylist_Dialog_PrimaryButton, Mode=OneTime}"
-    CloseButtonText="{x:Bind resources:Strings.SmartPlaylist_Dialog_CloseButton, Mode=OneTime}"
+    CloseButtonText="{x:Bind resources:Strings.Generic_Cancel, Mode=OneTime}"
     DefaultButton="Primary"
     PrimaryButtonClick="OnPrimaryButtonClick"
     Title="{x:Bind ViewModel.Title, Mode=OneWay}"
@@ -31,21 +31,10 @@
 
         <Grid Grid.Row="0" ColumnDefinitions="Auto, 24, *, 24, Auto" Margin="0,0,0,24">
             <StackPanel Grid.Column="0" Spacing="8" VerticalAlignment="Top">
-                <Grid Width="100" Height="100"
-                      Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                      CornerRadius="{StaticResource ArtworkCornerRadius}">
-                    <FontIcon Glyph="&#xE91B;" FontSize="40"
-                              Visibility="{x:Bind ViewModel.HasCoverImage, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
-                              HorizontalAlignment="Center" VerticalAlignment="Center"
-                              Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                    <controls:ImageEx Width="100" Height="100" x:Name="CoverImagePreview"
-                                      Stretch="UniformToFill"
-                                      IsCacheEnabled="True"
-                                      DecodePixelWidth="100"
-                                      DecodePixelType="Logical"
-                                      CornerRadius="{StaticResource ArtworkCornerRadius}"
-                                      Visibility="{x:Bind ViewModel.HasCoverImage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                </Grid>
+                <uicontrols:ArtworkImage Size="100"
+                                         PlaceholderGlyph="&#xE91B;"
+                                         PlaceholderGlyphSize="40"
+                                         Source="{x:Bind ViewModel.CoverPreviewUri, Mode=OneWay}" />
                 <Button
                         Content="{x:Bind resources:Strings.SmartPlaylist_PickCoverButton_Content, Mode=OneTime}"
                         ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylist_PickCoverButton_ToolTip, Mode=OneTime}"
@@ -65,8 +54,8 @@
                 <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_SortOrderLabel, Mode=OneTime}" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
                 <ComboBox HorizontalAlignment="Stretch"
                           AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylist_SortOrderLabel, Mode=OneTime}"
-                          ItemsSource="{x:Bind viewmodels:SmartPlaylistEditorViewModel.SortOptions}"
-                          DisplayMemberPath="DisplayName"
+                          ItemsSource="{x:Bind playlists:SmartPlaylistEditorViewModel.SortOptions}"
+                          DisplayMemberPath="Label"
                           SelectedItem="{x:Bind ViewModel.SelectedSortOption, Mode=TwoWay}" />
             </StackPanel>
         </Grid>
@@ -77,8 +66,8 @@
                 <ComboBox MinWidth="80"
                           AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylist_MatchLabel, Mode=OneTime}"
                           SelectedIndex="{x:Bind ViewModel.MatchLogicIndex, Mode=TwoWay}">
-                    <ComboBoxItem Content="{x:Bind resources:Strings.SmartPlaylist_MatchLogic_All_Content, Mode=OneTime}" Tag="All" />
-                    <ComboBoxItem Content="{x:Bind resources:Strings.SmartPlaylist_MatchLogic_Any_Content, Mode=OneTime}" Tag="Any" />
+                    <ComboBoxItem Content="{x:Bind resources:Strings.SmartPlaylist_MatchLogic_All_Content, Mode=OneTime}" />
+                    <ComboBoxItem Content="{x:Bind resources:Strings.SmartPlaylist_MatchLogic_Any_Content, Mode=OneTime}" />
                 </ComboBox>
                 <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_MatchSuffixLabel, Mode=OneTime}" VerticalAlignment="Center"/>
             </StackPanel>
@@ -112,7 +101,7 @@
                                 </Style>
                             </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="viewmodels:RuleViewModel">
+                                <DataTemplate x:DataType="playlists:RuleViewModel">
                                     <Border Style="{StaticResource RuleRowStyle}">
                                         <Grid ColumnSpacing="12">
                                             <Grid.ColumnDefinitions>
@@ -123,7 +112,7 @@
                                             </Grid.ColumnDefinitions>
 
                                             <ComboBox Grid.Column="0"
-                                                      ItemsSource="{x:Bind viewmodels:RuleViewModel.AvailableFields}"
+                                                      ItemsSource="{x:Bind playlists:RuleViewModel.AvailableFields}"
                                                       AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylist_RuleField_Name, Mode=OneTime}"
                                                       SelectedItem="{x:Bind SelectedField, Mode=TwoWay}"
                                                       DisplayMemberPath="DisplayName"
@@ -189,8 +178,7 @@
                 HorizontalAlignment="Stretch">
             <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Left">
                 <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
-                <TextBlock x:Name="MatchCountText"
-                           Text="{x:Bind ViewModel.MatchCountText, Mode=OneWay}"
+                <TextBlock Text="{x:Bind ViewModel.MatchCountText, Mode=OneWay}"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                            VerticalAlignment="Center"
                            Style="{ThemeResource CaptionTextBlockStyle}"/>

@@ -71,96 +71,15 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Teideal</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Seinmliosta</value>
-  </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>Comhad</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>Bliain</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>Dáta Curtha Leis</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>Dáta Cruthaithe</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>Dáta Athraithe</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>Seinnte Go Deireanach</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>Fad</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>Uimhir an Riain</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>Seinnte</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>Amhráin</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Fillteán</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>Ord Láimhe</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>Randamach</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>{0} Anaithnid</value>
   </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>{0} Nua</value>
-  </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>Níor aimsíodh {0}.</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (A go Z)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (Z go A)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Is Nuaí)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Is Sine)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Ag dul i méid)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Ag dul i laghad)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>An Ceann is Giorra ar dTús</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>An Ceann is Faide ar dTús</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>An Ceann is Moille ar dTús ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>An Ceann is Tapa ar dTús ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>An líon is mó {0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>An líon is lú {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Ag scanadh fillteáin {0} de {1}: {2} - {3}</value>
@@ -224,9 +143,6 @@
     <value>Athnuachan leabharlainne críochnaithe.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Níorbh fhéidir an fillteán a chur leis.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Ní féidir ainm an tseinmliosta a bheith folamh.</value>
   </data>
@@ -236,9 +152,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> &amp; </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Sórtáil De Réir: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Níl aon seinmliostaí le heaspórtáil.</value>
@@ -306,23 +219,11 @@
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Níorbh fhéidir ceangal le ListenBrainz. Seiceáil do cheangal agus URL an fhreastalaí.</value>
   </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Níorbh fhéidir le Nagi fillteán sonraí a leabharlainne a aimsiú.</value>
-  </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Theip ar an athchóiriú, agus níorbh fhéidir do chuid sonraí roimhe seo a athchóiriú go hiomlán. Sábháladh comhaid slánaithe ag &apos;{0}&apos;.</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Ní cúltaca bailí Nagi é an comhad roghnaithe.</value>
-  </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>Tharla earráid neamhshonraithe le LibVLC.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Earráid LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Theip ar '{0}' a luchtú.</value>
   </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>Ag Brabhsáil na Leabharlainne Ceoil</value>

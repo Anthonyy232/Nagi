@@ -1,7 +1,6 @@
-﻿using System.Linq;
-using Windows.Security.Credentials;
+﻿using Windows.Security.Credentials;
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Platform;
 
 namespace Nagi.WinUI.Services.Implementations;
 

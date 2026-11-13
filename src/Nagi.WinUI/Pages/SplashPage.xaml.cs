@@ -14,7 +14,7 @@ public sealed partial class SplashPage : Page, ICustomTitleBarProvider
             LogoEntrance.Begin();
             TitleEntrance.Begin();
             StatusEntrance.Begin();
-            if (!CompositionAnimationHelper.AreAnimationsEnabled)
+            if (!SystemVisualSettings.AnimationsEnabled)
             {
                 LogoEntrance.SkipToFill();
                 TitleEntrance.SkipToFill();
@@ -28,4 +28,5 @@ public sealed partial class SplashPage : Page, ICustomTitleBarProvider
         return AppTitleBar;
     }
 
+    public bool ShowsCaptionButtons => false;
 }

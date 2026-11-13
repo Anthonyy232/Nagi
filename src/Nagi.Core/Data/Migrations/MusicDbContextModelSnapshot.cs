@@ -32,7 +32,7 @@ namespace Nagi.Core.Data.Migrations
                     b.ToTable("GenreSong");
                 });
 
-            modelBuilder.Entity("Nagi.Core.Models.Album", b =>
+            modelBuilder.Entity("Nagi.Core.Library.Album", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -93,7 +93,7 @@ namespace Nagi.Core.Data.Migrations
                     b.ToTable("Albums");
                 });
 
-            modelBuilder.Entity("Nagi.Core.Models.AlbumArtist", b =>
+            modelBuilder.Entity("Nagi.Core.Library.AlbumArtist", b =>
                 {
                     b.Property<Guid>("AlbumId")
                         .HasColumnType("TEXT");
@@ -113,7 +113,7 @@ namespace Nagi.Core.Data.Migrations
                     b.ToTable("AlbumArtists");
                 });
 
-            modelBuilder.Entity("Nagi.Core.Models.Artist", b =>
+            modelBuilder.Entity("Nagi.Core.Library.Artist", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -121,6 +121,13 @@ namespace Nagi.Core.Data.Migrations
 
                     b.Property<string>("Biography")
                         .HasMaxLength(50000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BiographySource")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ImageModifiedUtc")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LocalImageCachePath")
@@ -160,7 +167,7 @@ namespace Nagi.Core.Data.Migrations
                     b.ToTable("Artists");
                 });
 
-            modelBuilder.Entity("Nagi.Core.Models.Folder", b =>
+            modelBuilder.Entity("Nagi.Core.Library.Folder", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -193,7 +200,7 @@ namespace Nagi.Core.Data.Migrations
                     b.ToTable("Folders");
                 });
 
-            modelBuilder.Entity("Nagi.Core.Models.Genre", b =>
+            modelBuilder.Entity("Nagi.Core.Library.Genre", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -213,229 +220,7 @@ namespace Nagi.Core.Data.Migrations
                     b.ToTable("Genres");
                 });
 
-            modelBuilder.Entity("Nagi.Core.Models.ListenHistory", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid?>("ContextId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ContextType")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("EndReason")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsEligibleForScrobbling")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsScrobbled")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsSubmittedToListenBrainz")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsSubmittedToServer")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("ListenDurationTicks")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("ListenTimestampUtc")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("SongId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EndReason");
-
-                    b.HasIndex("IsScrobbled");
-
-                    b.HasIndex("ListenTimestampUtc");
-
-                    b.HasIndex("SongId");
-
-                    b.HasIndex("ContextType", "ContextId");
-
-                    b.HasIndex("ListenTimestampUtc", "SongId");
-
-                    b.ToTable("ListenHistory");
-                });
-
-            modelBuilder.Entity("Nagi.Core.Models.MusicServer", b =>
-                {
-                    b.Property<Guid>("FolderId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("BaseUrl")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Kind")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("UserId")
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
-
-                    b.Property<bool>("UsesApiKey")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("FolderId");
-
-                    b.ToTable("MusicServers");
-                });
-
-            modelBuilder.Entity("Nagi.Core.Models.Playlist", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CoverImageUri")
-                        .HasMaxLength(2000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("DateModified")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(5000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
-
-                    b.Property<string>("RemoteId")
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("ServerFolderId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique()
-                        .HasFilter("\"ServerFolderId\" IS NULL");
-
-                    b.HasIndex("ServerFolderId", "RemoteId")
-                        .IsUnique();
-
-                    b.ToTable("Playlists");
-                });
-
-            modelBuilder.Entity("Nagi.Core.Models.PlaylistSong", b =>
-                {
-                    b.Property<Guid>("PlaylistId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("SongId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<double>("Order")
-                        .HasColumnType("REAL");
-
-                    b.HasKey("PlaylistId", "SongId");
-
-                    b.HasIndex("SongId");
-
-                    b.HasIndex("PlaylistId", "Order");
-
-                    b.ToTable("PlaylistSongs");
-                });
-
-            modelBuilder.Entity("Nagi.Core.Models.SmartPlaylist", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CoverImageUri")
-                        .HasMaxLength(2000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("DateModified")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(5000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("MatchAllRules")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT")
-                        .UseCollation("NOCASE");
-
-                    b.Property<int>("SortOrder")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("SmartPlaylists");
-                });
-
-            modelBuilder.Entity("Nagi.Core.Models.SmartPlaylistRule", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Field")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Operator")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("SecondValue")
-                        .HasMaxLength(1000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("SmartPlaylistId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Value")
-                        .HasMaxLength(1000)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SmartPlaylistId", "Order");
-
-                    b.ToTable("SmartPlaylistRules");
-                });
-
-            modelBuilder.Entity("Nagi.Core.Models.Song", b =>
+            modelBuilder.Entity("Nagi.Core.Library.Song", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -660,7 +445,7 @@ namespace Nagi.Core.Data.Migrations
                     b.ToTable("Songs");
                 });
 
-            modelBuilder.Entity("Nagi.Core.Models.SongArtist", b =>
+            modelBuilder.Entity("Nagi.Core.Library.SongArtist", b =>
                 {
                     b.Property<Guid>("SongId")
                         .HasColumnType("TEXT");
@@ -680,30 +465,252 @@ namespace Nagi.Core.Data.Migrations
                     b.ToTable("SongArtists");
                 });
 
+            modelBuilder.Entity("Nagi.Core.Listening.ListenHistory", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid?>("ContextId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ContextType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EndReason")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsEligibleForScrobbling")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsScrobbled")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsSubmittedToListenBrainz")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsSubmittedToServer")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("ListenDurationTicks")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("ListenTimestampUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("SongId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EndReason");
+
+                    b.HasIndex("IsScrobbled");
+
+                    b.HasIndex("ListenTimestampUtc");
+
+                    b.HasIndex("SongId");
+
+                    b.HasIndex("ContextType", "ContextId");
+
+                    b.HasIndex("ListenTimestampUtc", "SongId");
+
+                    b.ToTable("ListenHistory");
+                });
+
+            modelBuilder.Entity("Nagi.Core.MusicServers.MusicServer", b =>
+                {
+                    b.Property<Guid>("FolderId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BaseUrl")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserId")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
+                    b.Property<bool>("UsesApiKey")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("FolderId");
+
+                    b.ToTable("MusicServers");
+                });
+
+            modelBuilder.Entity("Nagi.Core.Playlists.Playlist", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CoverImageUri")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateModified")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(5000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
+                    b.Property<string>("RemoteId")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("ServerFolderId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasFilter("\"ServerFolderId\" IS NULL");
+
+                    b.HasIndex("ServerFolderId", "RemoteId")
+                        .IsUnique();
+
+                    b.ToTable("Playlists");
+                });
+
+            modelBuilder.Entity("Nagi.Core.Playlists.PlaylistSong", b =>
+                {
+                    b.Property<Guid>("PlaylistId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("SongId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("Order")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("PlaylistId", "SongId");
+
+                    b.HasIndex("SongId");
+
+                    b.HasIndex("PlaylistId", "Order");
+
+                    b.ToTable("PlaylistSongs");
+                });
+
+            modelBuilder.Entity("Nagi.Core.Playlists.SmartPlaylist", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CoverImageUri")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateModified")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(5000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("MatchAllRules")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("SmartPlaylists");
+                });
+
+            modelBuilder.Entity("Nagi.Core.Playlists.SmartPlaylistRule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Field")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Operator")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SecondValue")
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("SmartPlaylistId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Value")
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SmartPlaylistId", "Order");
+
+                    b.ToTable("SmartPlaylistRules");
+                });
+
             modelBuilder.Entity("GenreSong", b =>
                 {
-                    b.HasOne("Nagi.Core.Models.Genre", null)
+                    b.HasOne("Nagi.Core.Library.Genre", null)
                         .WithMany()
                         .HasForeignKey("GenresId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Nagi.Core.Models.Song", null)
+                    b.HasOne("Nagi.Core.Library.Song", null)
                         .WithMany()
                         .HasForeignKey("SongsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Nagi.Core.Models.AlbumArtist", b =>
+            modelBuilder.Entity("Nagi.Core.Library.AlbumArtist", b =>
                 {
-                    b.HasOne("Nagi.Core.Models.Album", "Album")
+                    b.HasOne("Nagi.Core.Library.Album", "Album")
                         .WithMany("AlbumArtists")
                         .HasForeignKey("AlbumId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Nagi.Core.Models.Artist", "Artist")
+                    b.HasOne("Nagi.Core.Library.Artist", "Artist")
                         .WithMany("AlbumArtists")
                         .HasForeignKey("ArtistId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -714,9 +721,9 @@ namespace Nagi.Core.Data.Migrations
                     b.Navigation("Artist");
                 });
 
-            modelBuilder.Entity("Nagi.Core.Models.Folder", b =>
+            modelBuilder.Entity("Nagi.Core.Library.Folder", b =>
                 {
-                    b.HasOne("Nagi.Core.Models.Folder", "ParentFolder")
+                    b.HasOne("Nagi.Core.Library.Folder", "ParentFolder")
                         .WithMany("SubFolders")
                         .HasForeignKey("ParentFolderId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -724,75 +731,13 @@ namespace Nagi.Core.Data.Migrations
                     b.Navigation("ParentFolder");
                 });
 
-            modelBuilder.Entity("Nagi.Core.Models.ListenHistory", b =>
+            modelBuilder.Entity("Nagi.Core.Library.Song", b =>
                 {
-                    b.HasOne("Nagi.Core.Models.Song", "Song")
-                        .WithMany("ListenHistory")
-                        .HasForeignKey("SongId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Song");
-                });
-
-            modelBuilder.Entity("Nagi.Core.Models.MusicServer", b =>
-                {
-                    b.HasOne("Nagi.Core.Models.Folder", "Folder")
-                        .WithOne("MusicServer")
-                        .HasForeignKey("Nagi.Core.Models.MusicServer", "FolderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Folder");
-                });
-
-            modelBuilder.Entity("Nagi.Core.Models.Playlist", b =>
-                {
-                    b.HasOne("Nagi.Core.Models.Folder", "ServerFolder")
-                        .WithMany()
-                        .HasForeignKey("ServerFolderId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("ServerFolder");
-                });
-
-            modelBuilder.Entity("Nagi.Core.Models.PlaylistSong", b =>
-                {
-                    b.HasOne("Nagi.Core.Models.Playlist", "Playlist")
-                        .WithMany("PlaylistSongs")
-                        .HasForeignKey("PlaylistId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Nagi.Core.Models.Song", "Song")
-                        .WithMany("PlaylistSongs")
-                        .HasForeignKey("SongId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Playlist");
-
-                    b.Navigation("Song");
-                });
-
-            modelBuilder.Entity("Nagi.Core.Models.SmartPlaylistRule", b =>
-                {
-                    b.HasOne("Nagi.Core.Models.SmartPlaylist", "SmartPlaylist")
-                        .WithMany("Rules")
-                        .HasForeignKey("SmartPlaylistId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("SmartPlaylist");
-                });
-
-            modelBuilder.Entity("Nagi.Core.Models.Song", b =>
-                {
-                    b.HasOne("Nagi.Core.Models.Album", "Album")
+                    b.HasOne("Nagi.Core.Library.Album", "Album")
                         .WithMany("Songs")
                         .HasForeignKey("AlbumId");
 
-                    b.HasOne("Nagi.Core.Models.Folder", "Folder")
+                    b.HasOne("Nagi.Core.Library.Folder", "Folder")
                         .WithMany("Songs")
                         .HasForeignKey("FolderId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -803,15 +748,15 @@ namespace Nagi.Core.Data.Migrations
                     b.Navigation("Folder");
                 });
 
-            modelBuilder.Entity("Nagi.Core.Models.SongArtist", b =>
+            modelBuilder.Entity("Nagi.Core.Library.SongArtist", b =>
                 {
-                    b.HasOne("Nagi.Core.Models.Artist", "Artist")
+                    b.HasOne("Nagi.Core.Library.Artist", "Artist")
                         .WithMany("SongArtists")
                         .HasForeignKey("ArtistId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Nagi.Core.Models.Song", "Song")
+                    b.HasOne("Nagi.Core.Library.Song", "Song")
                         .WithMany("SongArtists")
                         .HasForeignKey("SongId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -822,21 +767,83 @@ namespace Nagi.Core.Data.Migrations
                     b.Navigation("Song");
                 });
 
-            modelBuilder.Entity("Nagi.Core.Models.Album", b =>
+            modelBuilder.Entity("Nagi.Core.Listening.ListenHistory", b =>
+                {
+                    b.HasOne("Nagi.Core.Library.Song", "Song")
+                        .WithMany("ListenHistory")
+                        .HasForeignKey("SongId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Song");
+                });
+
+            modelBuilder.Entity("Nagi.Core.MusicServers.MusicServer", b =>
+                {
+                    b.HasOne("Nagi.Core.Library.Folder", "Folder")
+                        .WithOne("MusicServer")
+                        .HasForeignKey("Nagi.Core.MusicServers.MusicServer", "FolderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Folder");
+                });
+
+            modelBuilder.Entity("Nagi.Core.Playlists.Playlist", b =>
+                {
+                    b.HasOne("Nagi.Core.Library.Folder", "ServerFolder")
+                        .WithMany()
+                        .HasForeignKey("ServerFolderId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("ServerFolder");
+                });
+
+            modelBuilder.Entity("Nagi.Core.Playlists.PlaylistSong", b =>
+                {
+                    b.HasOne("Nagi.Core.Playlists.Playlist", "Playlist")
+                        .WithMany("PlaylistSongs")
+                        .HasForeignKey("PlaylistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Nagi.Core.Library.Song", "Song")
+                        .WithMany("PlaylistSongs")
+                        .HasForeignKey("SongId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Playlist");
+
+                    b.Navigation("Song");
+                });
+
+            modelBuilder.Entity("Nagi.Core.Playlists.SmartPlaylistRule", b =>
+                {
+                    b.HasOne("Nagi.Core.Playlists.SmartPlaylist", "SmartPlaylist")
+                        .WithMany("Rules")
+                        .HasForeignKey("SmartPlaylistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SmartPlaylist");
+                });
+
+            modelBuilder.Entity("Nagi.Core.Library.Album", b =>
                 {
                     b.Navigation("AlbumArtists");
 
                     b.Navigation("Songs");
                 });
 
-            modelBuilder.Entity("Nagi.Core.Models.Artist", b =>
+            modelBuilder.Entity("Nagi.Core.Library.Artist", b =>
                 {
                     b.Navigation("AlbumArtists");
 
                     b.Navigation("SongArtists");
                 });
 
-            modelBuilder.Entity("Nagi.Core.Models.Folder", b =>
+            modelBuilder.Entity("Nagi.Core.Library.Folder", b =>
                 {
                     b.Navigation("MusicServer");
 
@@ -845,23 +852,23 @@ namespace Nagi.Core.Data.Migrations
                     b.Navigation("SubFolders");
                 });
 
-            modelBuilder.Entity("Nagi.Core.Models.Playlist", b =>
-                {
-                    b.Navigation("PlaylistSongs");
-                });
-
-            modelBuilder.Entity("Nagi.Core.Models.SmartPlaylist", b =>
-                {
-                    b.Navigation("Rules");
-                });
-
-            modelBuilder.Entity("Nagi.Core.Models.Song", b =>
+            modelBuilder.Entity("Nagi.Core.Library.Song", b =>
                 {
                     b.Navigation("ListenHistory");
 
                     b.Navigation("PlaylistSongs");
 
                     b.Navigation("SongArtists");
+                });
+
+            modelBuilder.Entity("Nagi.Core.Playlists.Playlist", b =>
+                {
+                    b.Navigation("PlaylistSongs");
+                });
+
+            modelBuilder.Entity("Nagi.Core.Playlists.SmartPlaylist", b =>
+                {
+                    b.Navigation("Rules");
                 });
 #pragma warning restore 612, 618
         }

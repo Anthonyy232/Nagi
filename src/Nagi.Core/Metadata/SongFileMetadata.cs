@@ -1,0 +1,88 @@
+using Nagi.Core.Library;
+using Nagi.Core.Platform;
+
+namespace Nagi.Core.Metadata;
+
+public class SongFileMetadata
+{
+    public string FilePath { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
+    public List<string> Artists { get; set; } = new();
+    public string? Album { get; set; } = string.Empty;
+    public List<string> AlbumArtists { get; set; } = new();
+    public TimeSpan Duration { get; set; }
+    public string? CoverArtUri { get; set; }
+    public string? LightSwatchId { get; set; }
+    public string? DarkSwatchId { get; set; }
+    public int? Year { get; set; }
+    public List<string> Genres { get; set; } = new();
+    public int? TrackNumber { get; set; }
+    public int? TrackCount { get; set; }
+    public int? DiscNumber { get; set; }
+    public int? DiscCount { get; set; }
+    public int? SampleRate { get; set; }
+    public int? Bitrate { get; set; }
+    public int? Channels { get; set; }
+    public DateTime? FileCreatedDate { get; set; }
+    public DateTime? FileModifiedDate { get; set; }
+    public string? Lyrics { get; set; }
+    public string? LrcFilePath { get; set; }
+    public double? Bpm { get; set; }
+    public double? ReplayGainTrackGain { get; set; }
+    public double? ReplayGainTrackPeak { get; set; }
+    public string? Composer { get; set; }
+    /// <summary>Why the file couldn't be read, or null when it was.</summary>
+    public ExtractionFailure? Failure { get; set; }
+    public string? Grouping { get; set; }
+    public string? Copyright { get; set; }
+    public string? Comment { get; set; }
+    public string? Conductor { get; set; }
+    public string? MusicBrainzTrackId { get; set; }
+    public string? MusicBrainzReleaseId { get; set; }
+    public string? MusicBrainzReleaseGroupId { get; set; }
+
+    /// <summary>Artist IDs in tag order; they pair with <see cref="Artists"/> only when the counts match.</summary>
+    public List<string> MusicBrainzArtistIds { get; set; } = new();
+
+    /// <summary>Album artist IDs in tag order; they pair with <see cref="AlbumArtists"/> only when the counts match.</summary>
+    public List<string> MusicBrainzAlbumArtistIds { get; set; } = new();
+
+    /// <summary>
+    ///     Cleans up the tags the way the library stores them, whether they came from a file or a music server: NFC
+    ///     and trimmed, names split on the user's split characters without repeats, Unknown for a missing title,
+    ///     artist or album, and the artists for missing album artists. Running it again changes nothing.
+    /// </summary>
+    internal void NormalizeTags(string artistSplitCharacters, string genreSplitCharacters)
+    {
+        Title = TextNormalizer.Normalize(Title) ?? Song.UnknownTitle;
+        Artists = SplitNames(Artists, artistSplitCharacters);
+        if (Artists.Count == 0) Artists = [Artist.UnknownArtistName];
+        AlbumArtists = SplitNames(AlbumArtists, artistSplitCharacters);
+        if (AlbumArtists.Count == 0) AlbumArtists = [.. Artists];
+        Album = TextNormalizer.Normalize(Album) ?? Library.Album.UnknownAlbumName;
+        Genres = SplitNames(Genres, genreSplitCharacters);
+    }
+
+    // Without split characters the names are only cleaned up.
+    private static List<string> SplitNames(IEnumerable<string> names, string splitCharacters) =>
+        // Split with no separators would split on whitespace.
+        names.SelectMany(name => splitCharacters.Length > 0 ? name.Split([.. splitCharacters]) : [name])
+            .Select(TextNormalizer.Normalize)
+            .OfType<string>()
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+}
+
+public enum ExtractionFailure
+{
+    UnsupportedFormat,
+
+    /// <summary>Reading took too long, which a brief network storage stall can cause.</summary>
+    Timeout,
+
+    /// <summary>The file couldn't be opened or read, which a brief network storage stall can cause.</summary>
+    FileAccess,
+
+    AccessDenied,
+    Unexpected
+}

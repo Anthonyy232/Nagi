@@ -4,26 +4,23 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
-using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Data;
-using Nagi.Presentation.Helpers;
+using Nagi.Core.Platform;
+using Nagi.Core.Playback;
+using Nagi.Presentation.Common;
+using Nagi.Presentation.Player;
 using Nagi.Presentation.Resources;
 using Windows.Foundation;
 using Windows.UI;
-using static Nagi.WinUI.Helpers.TaskbarNativeMethods;
+using WinRT.Interop;
+using Nagi.WinUI.Helpers;
+using static Nagi.WinUI.Helpers.NativeMethods;
+using Nagi.WinUI.Styles;
 
 namespace Nagi.WinUI.Services.Implementations;
 
 /// <summary>
-///     Provides Windows taskbar thumbnail toolbar integration for media playback controls.
-///     This service creates and manages the previous, play/pause, and next buttons that appear
-///     in the taskbar thumbnail preview when hovering over the application icon.
+///     The previous, play/pause and next buttons in the main window's taskbar thumbnail, drawn in the accent color.
 /// </summary>
-/// <remarks>
-///     This service uses native Win32 interop via ITaskbarList4 to register thumbnail buttons
-///     and handle button click events through window message processing. Icons are rendered
-///     using Win2D for reliable, GPU-accelerated rendering without visual tree dependencies.
-/// </remarks>
 public sealed class TaskbarService : IDisposable
 {
     private const int PreviousButtonId = 1;
@@ -31,7 +28,6 @@ public sealed class TaskbarService : IDisposable
     private const int NextButtonId = 3;
     private const int IconRefreshDebounceMs = 100;
     private const int DefaultIconSize = 16;
-    private const double BaseDpi = 96.0;
     // Windows 11+ uses Segoe Fluent Icons (filled/bolder variants).
     // Windows 10 falls back to Segoe MDL2 Assets.
     private const string PreviousGlyphFluent = "\uF8AC";
@@ -46,10 +42,11 @@ public sealed class TaskbarService : IDisposable
     private const string FluentIconFontFamily = "Segoe Fluent Icons";
     private const string Mdl2IconFontFamily = "Segoe MDL2 Assets";
 
+    private readonly MainWindow _window;
     private readonly ILogger<TaskbarService> _logger;
     private readonly IMusicPlaybackService _playbackService;
+    private readonly PlayerViewModel _player;
     private readonly IDispatcherService _dispatcherService;
-    private readonly Win32InteropService _win32InteropService;
 
     private readonly object _iconLock = new();
 
@@ -65,30 +62,40 @@ public sealed class TaskbarService : IDisposable
     private nint _playIcon;
     private nint _pauseIcon;
 
+    private WindowProc? _wndProcDelegate;
+    private nint _oldWndProc;
+    private long _accentColorCallbackToken;
+
     private readonly Debouncer _iconRefreshDebouncer = new(TimeSpan.FromMilliseconds(IconRefreshDebounceMs));
 
     public TaskbarService(
+        MainWindow window,
         ILogger<TaskbarService> logger,
         IMusicPlaybackService playbackService,
-        IDispatcherService dispatcherService,
-        Win32InteropService win32InteropService)
+        PlayerViewModel player,
+        IDispatcherService dispatcherService)
     {
+        _window = window;
         _logger = logger;
         _playbackService = playbackService;
+        _player = player;
         _dispatcherService = dispatcherService;
-        _win32InteropService = win32InteropService;
     }
 
-    /// <summary>Call once the window has a native handle.</summary>
-    public void Initialize(nint windowHandle)
-    {
-        if (_isInitialized)
-        {
-            _logger.LogWarning("TaskbarService is already initialized");
-            return;
-        }
+    // The accent brush is a top-level app resource, so it is always there.
+    private static SolidColorBrush AccentBrush => (SolidColorBrush)Application.Current.Resources[AppResourceKeys.AppPrimaryColorBrush];
 
-        _windowHandle = windowHandle;
+    /// <summary>
+    ///     Adds the buttons once the main window is first activated.
+    /// </summary>
+    public void Start() => _window.Activated += OnWindowActivated;
+
+    private void OnWindowActivated(object sender, WindowActivatedEventArgs args)
+    {
+        _window.Activated -= OnWindowActivated;
+        if (_isDisposed) return;
+
+        _windowHandle = WindowNative.GetWindowHandle(_window);
 
         try
         {
@@ -110,42 +117,50 @@ public sealed class TaskbarService : IDisposable
         _playbackService.QueueChanged += OnPlaybackChanged;
         _playbackService.ShuffleModeChanged += OnPlaybackChanged;
         _playbackService.RepeatModeChanged += OnPlaybackChanged;
+        _accentColorCallbackToken = AccentBrush.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty,
+            (_, _) => _ = RefreshIconsAsync());
+
+        // The thumbnail button clicks arrive as window messages.
+        _wndProcDelegate = WndProc;
+        _oldWndProc = SetWindowLongPtr(_windowHandle, GWLP_WNDPROC, Marshal.GetFunctionPointerForDelegate(_wndProcDelegate));
 
         _isInitialized = true;
         _ = RefreshIconsAsync();
     }
 
-    /// <summary>Call from the window's message handler, which receives the thumbnail button clicks.</summary>
-    public void HandleWindowMessage(int msg, nint wParam, nint lParam)
+    private nint WndProc(nint hWnd, int msg, nint wParam, nint lParam)
     {
-        if (!_isInitialized || _isDisposed) return;
+        HandleWindowMessage(msg, wParam);
+        return CallWindowProc(_oldWndProc, hWnd, msg, wParam, lParam);
+    }
+
+    private void HandleWindowMessage(int msg, nint wParam)
+    {
+        if (_isDisposed) return;
 
         // Handle the TaskbarButtonCreated message to re-add buttons after explorer restarts
         if ((uint)msg == _wmTaskbarButtonCreated)
         {
             _logger.LogDebug("TaskbarButtonCreated received, reinitializing buttons");
-            _buttons = null; // Force re-creation
+            _buttons = null;
             _ = RefreshIconsAsync();
             return;
         }
         if (_taskbarList is null || msg != WM_COMMAND || HIWORD(wParam) != THBN_CLICKED) return;
 
-        switch (LOWORD(wParam))
+        // The same commands as the player's own buttons, so failures are handled the same way.
+        var command = LOWORD(wParam) switch
         {
-            case PreviousButtonId:
-                _ = _playbackService.PreviousAsync();
-                break;
-            case PlayPauseButtonId:
-                _ = _playbackService.PlayPauseAsync();
-                break;
-            case NextButtonId:
-                _ = _playbackService.NextAsync();
-                break;
-        }
+            PreviousButtonId => _player.PreviousCommand,
+            PlayPauseButtonId => _player.PlayPauseCommand,
+            NextButtonId => _player.NextCommand,
+            _ => null
+        };
+        if (command?.CanExecute(null) == true) command.Execute(null);
     }
 
     /// <summary>Redraws the button icons in the current accent color; rapid calls are debounced.</summary>
-    public Task RefreshIconsAsync()
+    private Task RefreshIconsAsync()
     {
         if (!_isInitialized || _isDisposed) return Task.CompletedTask;
 
@@ -154,7 +169,7 @@ public sealed class TaskbarService : IDisposable
             try
             {
                 var foregroundColor = await _dispatcherService.EnqueueAsync(() =>
-                    token.IsCancellationRequested || _isDisposed ? default : GetAccentColor()).ConfigureAwait(false);
+                    token.IsCancellationRequested || _isDisposed ? default : AccentBrush.Color).ConfigureAwait(false);
 
                 // Win2D icon generation can run off the UI thread.
                 await Task.Run(() =>
@@ -186,7 +201,7 @@ public sealed class TaskbarService : IDisposable
         try
         {
             var iconSize = GetIconSizeForDpi();
-            var isWin11 = _win32InteropService.IsWindows11OrNewer;
+            var isWin11 = IsWindows11OrNewer;
             var fontFamily = isWin11 ? FluentIconFontFamily : Mdl2IconFontFamily;
             var prevGlyph = isWin11 ? PreviousGlyphFluent : PreviousGlyphMdl2;
             var playGlyph = isWin11 ? PlayGlyphFluent : PlayGlyphMdl2;
@@ -247,12 +262,9 @@ public sealed class TaskbarService : IDisposable
 
     private int GetIconSizeForDpi()
     {
-        var dpi = _win32InteropService.GetDpiForWindow(_windowHandle);
-        return Math.Max(DefaultIconSize, (int)(DefaultIconSize * dpi / BaseDpi));
+        var scale = GetDpiScale(_windowHandle);
+        return Math.Max(DefaultIconSize, (int)(DefaultIconSize * scale));
     }
-
-    // The accent brush is a top-level app resource, so it is always there. Read it on the UI thread.
-    private static Color GetAccentColor() => ((SolidColorBrush)Application.Current.Resources["AppPrimaryColorBrush"]).Color;
 
     /// <summary>
     ///     Renders a glyph to an HICON using Win2D.
@@ -263,7 +275,6 @@ public sealed class TaskbarService : IDisposable
     {
         try
         {
-            // Get shared GPU device (thread-safe, automatically handles device loss)
             var device = CanvasDevice.GetSharedDevice();
             using var renderTarget = new CanvasRenderTarget(device, size, size, 96f);
             using var textFormat = new CanvasTextFormat
@@ -279,7 +290,6 @@ public sealed class TaskbarService : IDisposable
                 ds.DrawText(glyph, new Rect(0, 0, size, size), foreground, textFormat);
             }
 
-            // Extract pixel data (BGRA8 format, same as RenderTargetBitmap)
             var pixels = renderTarget.GetPixelBytes();
             return CreateIconFromPixels(pixels, size, size);
         }
@@ -360,15 +370,15 @@ public sealed class TaskbarService : IDisposable
                     iId = PreviousButtonId,
                     dwMask = THB.ICON | THB.TOOLTIP | THB.FLAGS,
                     hIcon = _prevIcon,
-                    szTip = Strings.Taskbar_Tooltip_Previous,
-                    dwFlags = CanGoPrevious() ? THBF.ENABLED : THBF.DISABLED
+                    szTip = Strings.Player_PreviousButton_ToolTip,
+                    dwFlags = _playbackService.CanGoPrevious ? THBF.ENABLED : THBF.DISABLED
                 },
                 new THUMBBUTTON
                 {
                     iId = PlayPauseButtonId,
                     dwMask = THB.ICON | THB.TOOLTIP | THB.FLAGS,
                     hIcon = _playbackService.IsPlaying ? _pauseIcon : _playIcon,
-                    szTip = _playbackService.IsPlaying ? Strings.Taskbar_Tooltip_Pause : Strings.Taskbar_Tooltip_Play,
+                    szTip = _playbackService.IsPlaying ? Strings.Tooltip_Pause : Strings.Generic_Play,
                     dwFlags = THBF.ENABLED
                 },
                 new THUMBBUTTON
@@ -376,8 +386,8 @@ public sealed class TaskbarService : IDisposable
                     iId = NextButtonId,
                     dwMask = THB.ICON | THB.TOOLTIP | THB.FLAGS,
                     hIcon = _nextIcon,
-                    szTip = Strings.Taskbar_Tooltip_Next,
-                    dwFlags = CanGoNext() ? THBF.ENABLED : THBF.DISABLED
+                    szTip = Strings.Player_NextButton_ToolTip,
+                    dwFlags = _playbackService.CanGoNext ? THBF.ENABLED : THBF.DISABLED
                 }
             ];
             var hResult = _taskbarList.ThumbBarAddButtons(_windowHandle, (uint)_buttons.Length, _buttons);
@@ -395,20 +405,20 @@ public sealed class TaskbarService : IDisposable
         lock (_iconLock)
         {
             _buttons[0].hIcon = _prevIcon;
-            _buttons[0].dwFlags = CanGoPrevious() ? THBF.ENABLED : THBF.DISABLED;
+            _buttons[0].dwFlags = _playbackService.CanGoPrevious ? THBF.ENABLED : THBF.DISABLED;
             if (_playbackService.IsPlaying)
             {
                 _buttons[1].hIcon = _pauseIcon;
-                _buttons[1].szTip = Strings.Taskbar_Tooltip_Pause;
+                _buttons[1].szTip = Strings.Tooltip_Pause;
             }
             else
             {
                 _buttons[1].hIcon = _playIcon;
-                _buttons[1].szTip = Strings.Taskbar_Tooltip_Play;
+                _buttons[1].szTip = Strings.Generic_Play;
             }
             _buttons[1].dwFlags = THBF.ENABLED;
             _buttons[2].hIcon = _nextIcon;
-            _buttons[2].dwFlags = CanGoNext() ? THBF.ENABLED : THBF.DISABLED;
+            _buttons[2].dwFlags = _playbackService.CanGoNext ? THBF.ENABLED : THBF.DISABLED;
             var hResult = _taskbarList.ThumbBarUpdateButtons(_windowHandle, (uint)_buttons.Length, _buttons);
             if (hResult < 0)
             {
@@ -417,34 +427,17 @@ public sealed class TaskbarService : IDisposable
         }
     }
 
-    private bool CanGoPrevious()
-    {
-        var index = _playbackService.IsShuffleEnabled
-            ? _playbackService.CurrentShuffledIndex
-            : _playbackService.CurrentQueueIndex;
-        return _playbackService.PlaybackQueue.Count > 0 &&
-               (_playbackService.CurrentTrack != null || index > 0 ||
-                _playbackService.CurrentRepeatMode != RepeatMode.Off);
-    }
-
-    private bool CanGoNext()
-    {
-        var queue = _playbackService.IsShuffleEnabled
-            ? _playbackService.ShuffledQueue
-            : _playbackService.PlaybackQueue;
-        var index = _playbackService.IsShuffleEnabled
-            ? _playbackService.CurrentShuffledIndex
-            : _playbackService.CurrentQueueIndex;
-        return queue.Count > 0 &&
-               (index < queue.Count - 1 || _playbackService.CurrentRepeatMode != RepeatMode.Off);
-    }
-
     public void Dispose()
     {
         if (_isDisposed) return;
         _isDisposed = true;
+        _window.Activated -= OnWindowActivated;
         if (_isInitialized)
         {
+            // Put the window's own procedure back before the delegate it calls can be collected.
+            SetWindowLongPtr(_windowHandle, GWLP_WNDPROC, _oldWndProc);
+            _wndProcDelegate = null;
+            AccentBrush.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _accentColorCallbackToken);
             _playbackService.PlaybackStateChanged -= OnPlaybackChanged;
             _playbackService.TrackChanged -= OnPlaybackChanged;
             _playbackService.QueueChanged -= OnPlaybackChanged;
@@ -472,6 +465,5 @@ public sealed class TaskbarService : IDisposable
             }
             _taskbarList = null;
         }
-
     }
 }

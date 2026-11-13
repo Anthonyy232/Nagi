@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="Nagi.WinUI.Controls.SongListPlayButtons"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:resources="using:Nagi.Presentation.Resources">
+
+    <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Command="{x:Bind ViewModel.PlayAllSongsCommand, Mode=OneWay}"
+                ToolTipService.ToolTip="{x:Bind resources:Strings.SongList_PlayAll, Mode=OneTime}"
+                AutomationProperties.Name="{x:Bind resources:Strings.SongList_PlayAll, Mode=OneTime}"
+                Style="{StaticResource SongListViewPageIconButton}">
+            <FontIcon FontSize="16" Glyph="&#xE768;" />
+        </Button>
+
+        <SplitButton Style="{StaticResource SongListViewPageShuffleButton}" Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand, Mode=OneWay}"
+                ToolTipService.ToolTip="{x:Bind resources:Strings.SongList_ShuffleAll, Mode=OneTime}"
+                AutomationProperties.Name="{x:Bind resources:Strings.SongList_ShuffleAll, Mode=OneTime}">
+            <SplitButton.Flyout><MenuFlyout Opening="MixMenu_Opening" /></SplitButton.Flyout>
+            <FontIcon FontSize="16" Glyph="&#xE8B1;" />
+        </SplitButton>
+    </StackPanel>
+</UserControl>

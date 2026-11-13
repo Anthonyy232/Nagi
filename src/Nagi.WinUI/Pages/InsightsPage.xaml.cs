@@ -1,20 +1,16 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.UI.Xaml;
+﻿
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using Nagi.Core.Services.Abstractions;
-using Nagi.Presentation.ViewModels;
+using Nagi.Presentation.Insights;
 
 namespace Nagi.WinUI.Pages;
 
-public sealed partial class InsightsPage : Page
+public sealed partial class InsightsPage : ViewModelPage
 {
     public InsightsPage()
     {
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<InsightsViewModel>();
-        DataContext = ViewModel;
+        ViewModel = GetViewModel<InsightsViewModel>();
     }
 
     public InsightsViewModel ViewModel { get; }
@@ -28,30 +24,6 @@ public sealed partial class InsightsPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        ViewModel.CloseSeeAllCommand.Execute(null);
+        ViewModel.SeeAll.CloseCommand.Execute(null);
     }
-
-    private void OnSongsSortByPlayCountClick(object sender, RoutedEventArgs e) =>
-        ViewModel.SongsSortMetric = SortMetric.PlayCount;
-
-    private void OnSongsSortByDurationClick(object sender, RoutedEventArgs e) =>
-        ViewModel.SongsSortMetric = SortMetric.Duration;
-
-    private void OnArtistsSortByPlayCountClick(object sender, RoutedEventArgs e) =>
-        ViewModel.ArtistsSortMetric = SortMetric.PlayCount;
-
-    private void OnArtistsSortByDurationClick(object sender, RoutedEventArgs e) =>
-        ViewModel.ArtistsSortMetric = SortMetric.Duration;
-
-    private void OnAlbumsSortByPlayCountClick(object sender, RoutedEventArgs e) =>
-        ViewModel.AlbumsSortMetric = SortMetric.PlayCount;
-
-    private void OnAlbumsSortByDurationClick(object sender, RoutedEventArgs e) =>
-        ViewModel.AlbumsSortMetric = SortMetric.Duration;
-
-    private void OnGenresSortByPlayCountClick(object sender, RoutedEventArgs e) =>
-        ViewModel.GenresSortMetric = SortMetric.PlayCount;
-
-    private void OnGenresSortByDurationClick(object sender, RoutedEventArgs e) =>
-        ViewModel.GenresSortMetric = SortMetric.Duration;
 }

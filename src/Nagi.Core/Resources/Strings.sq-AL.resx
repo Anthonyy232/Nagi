@@ -71,96 +71,15 @@
   <data name="Label_Title" xml:space="preserve">
     <value>Titull</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>Listë luajtjeje</value>
-  </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>Skedar</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>Vit</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>Data e shtimit</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>Data e krijimit</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>Data e modifikimit</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>Luajtur së fundi</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>Kohëzgjatja</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>Numri i këngës</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>Dëgjimet</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>Këngët</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Dosje</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>Renditje manuale</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>Rastësor</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>{0} i panjohur</value>
   </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>{0} e re</value>
-  </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} nuk u gjet.</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (A në Z)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (Z në A)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Më e reja)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Më e vjetra)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Rritës)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Zbritës)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>Më e shkurtra fillimisht</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>Më e gjata fillimisht</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>Më e ngadalta fillimisht ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>Më e shpejta fillimisht ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>Më shumë {0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>Më pak {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Po skanohet dosja {0} nga {1}: {2} - {3}</value>
@@ -224,9 +143,6 @@
     <value>Rifreskimi i bibliotekës u përfundua.</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Nuk u mundësua shtimi i dosjes.</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Emri i listës së luajtjes nuk mund të jetë bosh.</value>
   </data>
@@ -236,9 +152,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> &amp; </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>Rendit sipas: </value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Nuk ka lista luajtjeje për t'u eksportuar.</value>
@@ -306,23 +219,11 @@
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>Nuk u mundësua lidhja me ListenBrainz. Kontrolloni lidhjen dhe URL-në e serverit tuaj.</value>
   </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi nuk mund ta gjente dosjen e të dhënave të bibliotekës së tij.</value>
-  </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Rikthimi dështoi dhe të dhënat tuaja të mëparshme nuk mund të riktheheshin plotësisht. Skedarët e rimëkëmbjes u ruajtën në &apos;{0}&apos;.</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Skedari i zgjedhur nuk është një kopje rezervë e vlefshme e Nagi.</value>
-  </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC ndeshi një gabim të papërcaktuar.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Gabim LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Dështoi ngarkimi i '{0}'.</value>
   </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>Po shfleton bibliotekën muzikore</value>

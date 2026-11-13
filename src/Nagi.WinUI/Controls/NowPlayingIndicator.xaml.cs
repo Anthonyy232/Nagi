@@ -2,7 +2,6 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Nagi.WinUI.Helpers;
-using Windows.UI.ViewManagement;
 
 namespace Nagi.WinUI.Controls;
 
@@ -54,18 +53,17 @@ public sealed partial class NowPlayingIndicator : UserControl
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        CompositionAnimationHelper.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
+        SystemVisualSettings.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
         ApplyState();
     }
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
-        CompositionAnimationHelper.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
+        SystemVisualSettings.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
         EqualizerStoryboard.Stop();
     }
 
-    private void OnAnimationsEnabledChanged(UISettings sender, UISettingsAnimationsEnabledChangedEventArgs args) =>
-        DispatcherQueue.TryEnqueue(ApplyState);
+    private void OnAnimationsEnabledChanged(bool isEnabled) => ApplyState();
 
     private static void OnPlaybackStateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -84,7 +82,7 @@ public sealed partial class NowPlayingIndicator : UserControl
         }
 
         RootGrid.Visibility = Visibility.Visible;
-        if (!CompositionAnimationHelper.AreAnimationsEnabled)
+        if (!SystemVisualSettings.AnimationsEnabled)
         {
             EqualizerStoryboard.Stop();
         }

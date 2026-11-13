@@ -71,96 +71,15 @@
   <data name="Label_Title" xml:space="preserve">
     <value>標題</value>
   </data>
-  <data name="Label_Playlist" xml:space="preserve">
-    <value>播放清單</value>
-  </data>
-  <data name="Label_File" xml:space="preserve">
-    <value>檔案</value>
-  </data>
-  <data name="Label_Year" xml:space="preserve">
-    <value>年份</value>
-  </data>
-  <data name="Label_DateAdded" xml:space="preserve">
-    <value>新增日期</value>
-  </data>
-  <data name="Label_DateCreated" xml:space="preserve">
-    <value>建立日期</value>
-  </data>
-  <data name="Label_DateModified" xml:space="preserve">
-    <value>修改日期</value>
-  </data>
-  <data name="Label_LastPlayed" xml:space="preserve">
-    <value>上次播放</value>
-  </data>
-  <data name="Label_Duration" xml:space="preserve">
-    <value>持續時間</value>
-  </data>
-  <data name="Label_Bpm" xml:space="preserve">
-    <value>BPM</value>
-  </data>
-  <data name="Label_TrackNumber" xml:space="preserve">
-    <value>音軌編號</value>
-  </data>
-  <data name="Label_PlayCount" xml:space="preserve">
-    <value>播放次數</value>
-  </data>
-  <data name="Label_Songs" xml:space="preserve">
-    <value>歌曲</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>資料夾</value>
-  </data>
-  <data name="Label_ManualOrder" xml:space="preserve">
-    <value>手動排序</value>
-  </data>
-  <data name="Label_Random" xml:space="preserve">
-    <value>隨機</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
     <value>未知 {0}</value>
   </data>
-  <data name="Format_New" xml:space="preserve">
-    <value>新 {0}</value>
-  </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>找不到 {0}。</value>
-  </data>
-  <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (A 到 Z)</value>
-  </data>
-  <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (Z 到 A)</value>
-  </data>
-  <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (最新)</value>
-  </data>
-  <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (最舊)</value>
-  </data>
-  <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (遞增)</value>
-  </data>
-  <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (遞減)</value>
-  </data>
-  <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>最短優先</value>
-  </data>
-  <data name="Format_LongestFirst" xml:space="preserve">
-    <value>最長優先</value>
-  </data>
-  <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>最慢優先 ({0})</value>
-  </data>
-  <data name="Format_FastestFirst" xml:space="preserve">
-    <value>最快優先 ({0})</value>
-  </data>
-  <data name="Format_Most" xml:space="preserve">
-    <value>最多 {0}</value>
-  </data>
-  <data name="Format_Least" xml:space="preserve">
-    <value>最少{0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>正在掃描資料夾 {0}/{1}：{2} - {3}</value>
@@ -224,9 +143,6 @@
     <value>媒體庫重新整理完成。</value>
   </data>
   <!-- Error Mssages -->
-  <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>無法新增資料夾。</value>
-  </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>播放清單名稱不能為空。</value>
   </data>
@@ -236,9 +152,6 @@
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> &amp; </value>
-  </data>
-  <data name="SortByPrefix" xml:space="preserve">
-    <value>排序依據：</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>沒有可匯出的播放清單。</value>
@@ -306,23 +219,11 @@
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
     <value>無法連線至 ListenBrainz。請檢查您的連線與伺服器 URL。</value>
   </data>
-  <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi 找不到其媒體庫資料資料夾。</value>
-  </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>還原失敗，且無法完整還原您的先前資料。復原檔案已儲存於 &apos;{0}&apos;。</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>所選檔案不是有效的 Nagi 備份。</value>
-  </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC 遇到未指定的錯誤。</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC 錯誤：{0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>載入「{0}」失敗。</value>
   </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>正在瀏覽音樂庫</value>
