@@ -25,4 +25,26 @@ public class LyricLine
     public string? TranslatedText { get; set; }
 
     public bool HasTranslatedText => !string.IsNullOrWhiteSpace(TranslatedText);
+
+    /// <summary>
+    ///     The words of <see cref="Text" /> in order, which join back into it, when the source times each word; empty
+    ///     otherwise.
+    /// </summary>
+    public IReadOnlyList<LyricWord> Words { get; init; } = [];
+
+    /// <summary>
+    ///     How many characters of <see cref="Text" /> have been sung at <paramref name="position" />, and when the next
+    ///     word starts, which is null once the last one has.
+    /// </summary>
+    public (int SungLength, TimeSpan? NextWordStart) GetSungText(TimeSpan position)
+    {
+        var sungLength = 0;
+        foreach (var word in Words)
+        {
+            if (word.StartTime > position) return (sungLength, word.StartTime);
+            sungLength += word.Text.Length;
+        }
+
+        return (sungLength, null);
+    }
 }

@@ -311,6 +311,17 @@ public class LyricsPageViewModelTests
         viewModel.GetCurrentLineProgress().Should().Be((fraction, TimeSpan.FromSeconds(remainingSeconds)));
     }
 
+    [Fact]
+    public void CurrentLineSungText_GivesTheWaitForTheNextWordAtThePlaybackRate()
+    {
+        _playback.PlaybackRate.Returns(2);
+        using var viewModel = CreateViewModel();
+        viewModel.CurrentLine = LyricsParser.Parse("[00:10.00]<00:10.00>Hello <00:13.00>world")!.Lines[0];
+        viewModel.CurrentPosition = TimeSpan.FromSeconds(11);
+
+        viewModel.GetCurrentLineSungText().Should().Be((6, TimeSpan.FromSeconds(1)));
+    }
+
     private LyricsPageViewModel CreateViewModel(IDispatcherService? dispatcher = null) => new(
         _playback, dispatcher ?? new ImmediateDispatcher(), _lyrics, _library, _romanization,
         Substitute.For<ISettingsService>(), Substitute.For<IRomanizationPackManager>(), _ui,

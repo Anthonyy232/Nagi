@@ -73,6 +73,40 @@ public class LyricsParserTests
             (9, "Chorus", "Chorus translation"));
     }
 
+    [Fact]
+    public void ParseLyrics_WithWordTimestamps_KeepsWordsOfTheOriginalLineWithOffsetApplied()
+    {
+        var content = string.Join('\n',
+            "[offset:500]",
+            "[00:10.00]<00:10.00>Hello <00:10.50>big <00:11.00>world",
+            "[00:10.00]Translation",
+            "[00:12.00]Untimed words");
+
+        var result = LyricsParser.Parse(content)!;
+
+        result.Lines[0].Text.Should().Be("Hello big world");
+        result.Lines[0].TranslatedText.Should().Be("Translation");
+        result.Lines[0].Words.Should().Equal(
+            new LyricWord(TimeSpan.FromSeconds(9.5), "Hello "),
+            new LyricWord(TimeSpan.FromSeconds(10), "big "),
+            new LyricWord(TimeSpan.FromSeconds(10.5), "world"));
+        result.Lines[1].Words.Should().BeEmpty();
+    }
+
+    [Theory]
+    [InlineData(9.9, 0, 10.0)]
+    [InlineData(10, 6, 10.5)]
+    [InlineData(11, 15, null)]
+    public void GetSungText_CountsWordsThatHaveStarted(double positionSec, int expectedLength, double? expectedNextSec)
+    {
+        var line = LyricsParser.Parse("[00:10.00]<00:10.00>Hello <00:10.50>big <00:11.00>world")!.Lines[0];
+
+        var (sungLength, nextWordStart) = line.GetSungText(TimeSpan.FromSeconds(positionSec));
+
+        sungLength.Should().Be(expectedLength);
+        nextWordStart.Should().Be(expectedNextSec is { } seconds ? TimeSpan.FromSeconds(seconds) : null);
+    }
+
     private static List<LyricLine> CreateTestLines() =>
     [
         new(TimeSpan.FromSeconds(10), "Line 1"),

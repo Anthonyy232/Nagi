@@ -15,7 +15,7 @@ public static partial class LyricsParser
         // LRC has no translation syntax, so files commonly repeat the original line's timestamp for it.
         var timedLines = document.Lines
             .GroupBy(line => document.GetEffectiveTime(line.Timestamp))
-            .Select(group => CreateLine(group.Key, group.Select(line => line.GetText())))
+            .Select(group => CreateLine(document, group.Key, group))
             .OrderBy(line => line.StartTime)
             .ToList();
         if (timedLines.Count > 0) return new SongLyrics(rawLyrics, timedLines, IsSynced: true);
@@ -54,12 +54,16 @@ public static partial class LyricsParser
         return bestMatchIndex != -1 ? lines[bestMatchIndex] : null;
     }
 
-    private static LyricLine CreateLine(TimeSpan startTime, IEnumerable<string> texts)
+    private static LyricLine CreateLine(LrcDocument document, TimeSpan startTime, IEnumerable<LrcLine> sourceLines)
     {
-        var nonEmpty = texts.Where(text => !string.IsNullOrWhiteSpace(text)).ToList();
-        return new LyricLine(startTime, nonEmpty.FirstOrDefault() ?? string.Empty)
+        var nonEmpty = sourceLines.Where(line => !string.IsNullOrWhiteSpace(line.GetText())).ToList();
+        var original = nonEmpty.FirstOrDefault();
+        return new LyricLine(startTime, original?.GetText() ?? string.Empty)
         {
-            TranslatedText = nonEmpty.Count > 1 ? string.Join('\n', nonEmpty.Skip(1)) : null
+            TranslatedText = nonEmpty.Count > 1 ? string.Join('\n', nonEmpty.Skip(1).Select(line => line.GetText())) : null,
+            Words = original is LrcEnhancedLine enhanced
+                ? enhanced.Words.Select(word => new LyricWord(document.GetEffectiveTime(word.Timestamp), word.Text)).ToList()
+                : []
         };
     }
 
