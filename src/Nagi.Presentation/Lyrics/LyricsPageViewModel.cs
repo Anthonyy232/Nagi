@@ -34,6 +34,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
     private LyricLine? _optimisticallySetLine;
     private long _optimisticSetTimestamp;
+    private long _positionTimestamp;
     private IReadOnlyList<LyricLine>? _syncedLines;
     private Song? _currentSong;
     private bool _canRemoveLyrics;
@@ -134,6 +135,23 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         return (Math.Clamp(positionInLine / lineDuration, 0, 1), lineDuration - positionInLine);
     }
 
+    /// <summary>
+    ///     How many characters of <see cref="CurrentLine" />'s text have been sung, and how long until its next word
+    ///     starts, which is null when no further word will. Playback is assumed to have carried on since the last
+    ///     reported position, so this is accurate between position updates.
+    /// </summary>
+    public (int SungLength, TimeSpan? NextWordIn) GetCurrentLineSungText()
+    {
+        if (CurrentLine is not { } line) return (0, null);
+
+        var rate = _playbackService.PlaybackRate;
+        var position = CurrentPosition;
+        if (IsPlaying) position += Stopwatch.GetElapsedTime(_positionTimestamp) * rate;
+
+        var (sungLength, nextWordStart) = line.GetSungText(position);
+        return (sungLength, nextWordStart is { } start ? (start - position) / rate : null);
+    }
+
     public void Dispose()
     {
         lock (_lyricsFetchLock)
@@ -232,6 +250,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         _dispatcherService.TryEnqueue(() =>
         {
             if (_isDisposed || !ReferenceEquals(syncedLines, _syncedLines)) return;
+            _positionTimestamp = Stopwatch.GetTimestamp();
             CurrentPosition = position;
             var newCurrentLine = LyricsParser.GetCurrentLine(syncedLines, position, ref _lrcSearchHint);
 

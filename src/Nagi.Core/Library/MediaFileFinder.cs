@@ -62,7 +62,7 @@ internal sealed class MediaFileFinder(IFileSystemService fileSystem, ILogger log
     }
 
     /// <summary>
-    ///     The .lrc file, else the .txt file, beside the song with the song's file name.
+    ///     The .lrc file, else the .ttml file, else the .txt file, beside the song with the song's file name.
     /// </summary>
     public string? FindSidecarLyrics(string songFilePath)
     {
@@ -70,7 +70,9 @@ internal sealed class MediaFileFinder(IFileSystemService fileSystem, ILogger log
         if (string.IsNullOrEmpty(directory)) return null;
 
         var name = Path.GetFileNameWithoutExtension(songFilePath);
-        return FilesByName(directory, "*.lrc").GetValueOrDefault(name) ?? FilesByName(directory, "*.txt").GetValueOrDefault(name);
+        return FilesByName(directory, "*.lrc").GetValueOrDefault(name)
+               ?? FilesByName(directory, "*.ttml").GetValueOrDefault(name)
+               ?? FilesByName(directory, "*.txt").GetValueOrDefault(name);
     }
 
     /// <summary>The image named "artist" in the directory, if it has one.</summary>

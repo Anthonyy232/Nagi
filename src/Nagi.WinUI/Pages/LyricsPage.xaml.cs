@@ -1,9 +1,13 @@
 using System.ComponentModel;
 using System.Numerics;
+using Microsoft.UI;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Nagi.Core.Lyrics;
 using Nagi.Presentation.Lyrics;
@@ -26,6 +30,8 @@ public sealed partial class LyricsPage : ViewModelPage
     private const string HoverBackgroundName = "HoverBackground";
     private readonly Storyboard _progressBarStoryboard = new();
     private readonly DoubleAnimation _progressBarAnimation = new() { To = 100, EnableDependentAnimation = true };
+    private readonly SolidColorBrush _unsungWordBrush = new(Colors.Transparent);
+    private readonly DispatcherQueueTimer _nextWordTimer;
     private bool _isUnloaded;
 
     // The first current line of newly loaded lyrics is jumped to rather than animated to.
@@ -40,6 +46,9 @@ public sealed partial class LyricsPage : ViewModelPage
         Storyboard.SetTarget(_progressBarAnimation, LyricsProgressBar);
         Storyboard.SetTargetProperty(_progressBarAnimation, nameof(ProgressBar.Value));
         _progressBarStoryboard.Children.Add(_progressBarAnimation);
+        _nextWordTimer = DispatcherQueue.CreateTimer();
+        _nextWordTimer.IsRepeating = false;
+        _nextWordTimer.Tick += (_, _) => UpdateSungWords();
 
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
         ViewModel.LyricsReplaced += OnLyricsReplaced;
@@ -56,7 +65,7 @@ public sealed partial class LyricsPage : ViewModelPage
             storyboard.Begin();
             if (!SystemVisualSettings.AnimationsEnabled) storyboard.SkipToFill();
         }
-        UpdateProgressBarForCurrentLine();
+        UpdateCurrentLineProgress();
 
         // If lyrics are already loaded (navigated mid-song), snap to current line
         if (ViewModel.CurrentLine != null)
@@ -67,6 +76,7 @@ public sealed partial class LyricsPage : ViewModelPage
                 if (_isUnloaded) return;
                 ApplyAllLineVisuals();
                 ScrollToCurrentLine(disableAnimation: true);
+                UpdateSungWords();
             });
         }
     }
@@ -79,13 +89,14 @@ public sealed partial class LyricsPage : ViewModelPage
         ViewModel.LyricsReplaced -= OnLyricsReplaced;
         Unloaded -= OnPageUnloaded;
         _progressBarStoryboard.Stop();
+        _nextWordTimer.Stop();
     }
 
     private void OnAnimationsEnabledChanged(bool isEnabled)
     {
         ApplyAllLineVisuals();
         ScrollToCurrentLine(disableAnimation: true);
-        UpdateProgressBarForCurrentLine();
+        UpdateCurrentLineProgress();
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -109,7 +120,7 @@ public sealed partial class LyricsPage : ViewModelPage
                         ScrollToCurrentLine(disableAnimation: false);
                     }
 
-                    UpdateProgressBarForCurrentLine();
+                    UpdateCurrentLineProgress();
                 });
                 break;
 
@@ -119,7 +130,7 @@ public sealed partial class LyricsPage : ViewModelPage
                 DispatcherQueue.TryEnqueue(() =>
                 {
                     if (_isUnloaded) return;
-                    UpdateProgressBarForCurrentLine();
+                    UpdateCurrentLineProgress();
                 });
                 break;
         }
@@ -271,8 +282,9 @@ public sealed partial class LyricsPage : ViewModelPage
         }
     }
 
-    private void UpdateProgressBarForCurrentLine()
+    private void UpdateCurrentLineProgress()
     {
+        UpdateSungWords();
         _progressBarStoryboard.Stop();
 
         var (fraction, remaining) = ViewModel.GetCurrentLineProgress();
@@ -282,5 +294,28 @@ public sealed partial class LyricsPage : ViewModelPage
         _progressBarAnimation.Duration = remaining;
         _progressBarStoryboard.Begin();
         if (!ViewModel.IsPlaying) _progressBarStoryboard.Pause();
+    }
+
+    // Colours the words sung so far in a current line that times its words, and comes back when the next one starts.
+    private void UpdateSungWords()
+    {
+        _nextWordTimer.Stop();
+        if (ViewModel.CurrentLine is not { Words.Count: > 0 } line ||
+            LyricsRepeater.TryGetElement(ViewModel.CurrentLineIndex) is not Grid grid) return;
+
+        var (sungLength, nextWordIn) = ViewModel.GetCurrentLineSungText();
+
+        // The words still to come are see-through, so they show the base layer's colour.
+        var text = (TextBlock)Layer(grid, ActiveLayerName).Children[0];
+        if (text.Inlines is not [Run sung, Run] || sung.Text.Length != sungLength)
+        {
+            text.Inlines.Clear();
+            text.Inlines.Add(new Run { Text = line.Text[..sungLength] });
+            text.Inlines.Add(new Run { Text = line.Text[sungLength..], Foreground = _unsungWordBrush });
+        }
+
+        if (!ViewModel.IsPlaying || nextWordIn is not { } delay) return;
+        _nextWordTimer.Interval = delay;
+        _nextWordTimer.Start();
     }
 }

@@ -54,7 +54,7 @@ Windows 10 (1809 or later) or Windows 11, on x64 or ARM64. The Store version upd
 
 **Lyrics and appearance**
 
-- Lyrics from embedded tags, `.lrc` files, or optional online providers. Click a synced line to seek to it.
+- Lyrics from embedded tags, `.lrc` and `.ttml` files, or optional online providers, highlighted word by word when the lyrics time each word. Click a synced line to seek to it.
 - Local romanization for Japanese, Korean and Hindi lyrics via downloadable packs.
 - Mica, Mica Alt and Acrylic backdrops, with colors taken from the current album art.
 - Resizable always-on-top mini-player.
