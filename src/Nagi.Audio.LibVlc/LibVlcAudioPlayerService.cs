@@ -247,6 +247,9 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
                 var extension = song.FileExtension;
                 _currentMedia = streamUri is null ? new Media(song.FilePath, FromType.FromPath) : new Media(streamUri);
 
+                // VLC would otherwise open a .ttml lyrics file beside the song as its subtitles, which fails with an error.
+                _currentMedia.AddOption(":no-sub-autodetect-file");
+
                 // Native Ogg and Matroska demuxers integrate more safely with VLC's player clock.
                 // FFmpeg remains preferred for the other formats: it handles edge-case MP3s better than
                 // VLC's native elementary-stream demuxer, and reads MP4 over HTTP, where VLC's own stalls.
