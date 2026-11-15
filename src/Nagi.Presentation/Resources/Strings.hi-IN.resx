@@ -299,16 +299,16 @@
     <value>फ़ोल्डर को पुन: स्कैन करने में त्रुटि: {0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0} फ़ोल्डर</value>
+    <value>{0, plural, other {# फ़ोल्डर}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
     <value>{0, plural, one {# गाना} other {# गाने}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
-    <value>{0} एल्बम</value>
+    <value>{0, plural, other {# एल्बम}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
-    <value>{0} कलाकार</value>
+    <value>{0, plural, other {# कलाकार}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>कोई आइटम नहीं</value>
@@ -447,13 +447,13 @@
     <value>कोई नियम परिभाषित नहीं • सभी गाने मेल खाते हैं</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>मिलान {0} में से सभी नियम</value>
+    <value>{0, plural, other {मिलान # में से सभी नियम}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>मिलान {0} में से कोई भी नियम</value>
+    <value>{0, plural, other {मिलान # में से कोई भी नियम}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
-    <value>{0} आइटम</value>
+    <value>{0, plural, other {# आइटम}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} चयनित</value>

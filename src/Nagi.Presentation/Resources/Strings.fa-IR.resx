@@ -299,16 +299,16 @@
     <value>خطا در اسکن مجدد پوشه: {0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0} پوشه</value>
+    <value>{0, plural, other {# پوشه}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
-    <value>{0} آهنگ</value>
+    <value>{0, plural, other {# آهنگ}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
-    <value>{0} آلبوم</value>
+    <value>{0, plural, other {# آلبوم}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
-    <value>{0} هنرمند</value>
+    <value>{0, plural, other {# هنرمند}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>هیچ موردی</value>
@@ -335,7 +335,7 @@
     <value>کتابخانه شما آماده است.</value>
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
-    <value>هوشمند • {0} آهنگ</value>
+    <value>{0, plural, other {هوشمند • # آهنگ}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>هیچ آهنگی با قوانین این لیست پخش هوشمند مطابقت ندارد.</value>
@@ -453,7 +453,7 @@
     <value>مطابقت هر کدام از {0, plural, one {# قانون} other {# قوانین}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
-    <value>{0} مورد</value>
+    <value>{0, plural, other {# مورد}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} انتخاب شده</value>

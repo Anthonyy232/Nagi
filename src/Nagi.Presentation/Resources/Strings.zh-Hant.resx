@@ -299,16 +299,16 @@
     <value>重新掃描資料夾錯誤：{0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0} 個資料夾</value>
+    <value>{0, plural, other {# 個資料夾}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
-    <value>{0} 首歌曲</value>
+    <value>{0, plural, other {# 首歌曲}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
-    <value>{0} 張專輯</value>
+    <value>{0, plural, other {# 張專輯}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
-    <value>{0} 位藝人</value>
+    <value>{0, plural, other {# 位藝人}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>無項目</value>
@@ -335,7 +335,7 @@
     <value>您的媒體庫已準備就緒。</value>
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
-    <value>智慧 • {0} 首歌曲</value>
+    <value>{0, plural, other {智慧 • # 首歌曲}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>沒有歌曲符合此智慧播放清單的規則。</value>
@@ -447,13 +447,13 @@
     <value>未定義規則 • 所有歌曲均符合</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>符合 {0} 條規則中的所有</value>
+    <value>{0, plural, other {符合 # 條規則中的所有}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>符合 {0} 條規則中的任何</value>
+    <value>{0, plural, other {符合 # 條規則中的任何}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
-    <value>{0} 個項目</value>
+    <value>{0, plural, other {# 個項目}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>已選取 {0} 個</value>

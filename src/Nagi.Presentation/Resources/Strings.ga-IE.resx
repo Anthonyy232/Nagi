@@ -299,16 +299,16 @@
     <value>Earráid ag athscanadh fillteáin: {0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0} fillteán</value>
+    <value>{0, plural, other {# fillteán}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
-    <value>{0} amhrán</value>
+    <value>{0, plural, other {# amhrán}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
-    <value>{0} albam</value>
+    <value>{0, plural, other {# albam}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
-    <value>{0} ealaíontóir</value>
+    <value>{0, plural, other {# ealaíontóir}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Níl aon mhíreanna</value>
@@ -335,7 +335,7 @@
     <value>Tá do leabharlann réidh.</value>
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
-    <value>Cliste • {0} amhrán</value>
+    <value>{0, plural, other {Cliste • # amhrán}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Níl aon amhráin ag teacht le rialacha an tseinmliosta chliste seo.</value>
@@ -453,7 +453,7 @@ Comhaid nárbh fhéidir a iompórtáil: {0}.</value>
     <value>Meaitseáil ar bith de {0, plural, one {# riail} other {# rialacha}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
-    <value>{0} mír</value>
+    <value>{0, plural, other {# mír}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} roghnaithe</value>

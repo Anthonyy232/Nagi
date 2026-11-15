@@ -299,16 +299,16 @@
     <value>Klasör yeniden taranırken hata oluştu: {0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0} klasör</value>
+    <value>{0, plural, other {# klasör}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
-    <value>{0} şarkı</value>
+    <value>{0, plural, other {# şarkı}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
-    <value>{0} albüm</value>
+    <value>{0, plural, other {# albüm}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
-    <value>{0} sanatçı</value>
+    <value>{0, plural, other {# sanatçı}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Öğe yok</value>
@@ -335,7 +335,7 @@
     <value>Kitaplığınız hazır.</value>
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
-    <value>Akıllı • {0} şarkı</value>
+    <value>{0, plural, other {Akıllı • # şarkı}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Bu akıllı çalma listesinin kurallarıyla eşleşen şarkı yok.</value>
@@ -453,7 +453,7 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
     <value>{0, plural, one {# kural} other {# kurallar}} arasından herhangi biri eşleştir</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
-    <value>{0} öğe</value>
+    <value>{0, plural, other {# öğe}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} seçili</value>

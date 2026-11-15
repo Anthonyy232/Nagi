@@ -305,7 +305,7 @@
     <value>{0, plural, one {# låt} other {# låtar}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
-    <value>{0} album</value>
+    <value>{0, plural, other {# album}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
     <value>{0, plural, one {# artist} other {# artister}}</value>
@@ -453,7 +453,7 @@ Filer som inte kunde importeras: {0}.</value>
     <value>Matcha någon av {0, plural, one {# regel} other {# regler}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
-    <value>{0} objekt</value>
+    <value>{0, plural, other {# objekt}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} valda</value>

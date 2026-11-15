@@ -299,16 +299,16 @@
     <value>ফোল্ডার পুনরায় স্ক্যান করতে ত্রুটি: {0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0} ফোল্ডার</value>
+    <value>{0, plural, other {# ফোল্ডার}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
-    <value>{0} গান</value>
+    <value>{0, plural, other {# গান}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
-    <value>{0} অ্যালবাম</value>
+    <value>{0, plural, other {# অ্যালবাম}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
-    <value>{0} শিল্পী</value>
+    <value>{0, plural, other {# শিল্পী}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>কোনো আইটেম নেই</value>
@@ -335,7 +335,7 @@
     <value>আপনার লাইব্রেরি প্রস্তুত।</value>
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
-    <value>স্মার্ট • {0} গান</value>
+    <value>{0, plural, other {স্মার্ট • # গান}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>এই স্মার্ট প্লেলিস্টের নিয়মের সাথে কোনো গান মিলছে না।</value>
@@ -447,13 +447,13 @@
     <value>কোনো নিয়ম সংজ্ঞায়িত করা হয়নি • সব গান মিলেছে</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>{0}টি নিয়ম এর মধ্যে সবটি মিলছে</value>
+    <value>{0, plural, other {#টি নিয়ম এর মধ্যে সবটি মিলছে}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>{0}টি নিয়ম এর মধ্যে কোনোটি মিলছে</value>
+    <value>{0, plural, other {#টি নিয়ম এর মধ্যে কোনোটি মিলছে}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
-    <value>{0}টি আইটেম</value>
+    <value>{0, plural, other {#টি আইটেম}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0}টি নির্বাচিত</value>

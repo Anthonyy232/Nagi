@@ -299,7 +299,7 @@
     <value>Fehler beim Neu-Scannen des Ordners: {0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0} Ordner</value>
+    <value>{0, plural, other {# Ordner}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
     <value>{0, plural, one {# Lied} other {# Lieder}}</value>
@@ -308,7 +308,7 @@
     <value>{0, plural, one {# Album} other {# Alben}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
-    <value>{0} Künstler</value>
+    <value>{0, plural, other {# Künstler}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Keine Elemente</value>

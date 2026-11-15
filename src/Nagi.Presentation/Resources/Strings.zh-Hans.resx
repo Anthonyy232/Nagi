@@ -299,16 +299,16 @@
     <value>重新扫描文件夹出错：{0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0} 个文件夹</value>
+    <value>{0, plural, other {# 个文件夹}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
-    <value>{0} 首歌曲</value>
+    <value>{0, plural, other {# 首歌曲}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
-    <value>{0} 张专辑</value>
+    <value>{0, plural, other {# 张专辑}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
-    <value>{0} 位艺术家</value>
+    <value>{0, plural, other {# 位艺术家}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>无项目</value>
@@ -335,7 +335,7 @@
     <value>音乐库已就绪。</value>
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
-    <value>智能 • {0} 首歌曲</value>
+    <value>{0, plural, other {智能 • # 首歌曲}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>没有歌曲符合此智能播放列表的规则。</value>
@@ -447,13 +447,13 @@
     <value>未定义规则 • 所有歌曲均匹配</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>匹配 {0} 条规则中的所有</value>
+    <value>{0, plural, other {匹配 # 条规则中的所有}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>匹配 {0} 条规则中的任意</value>
+    <value>{0, plural, other {匹配 # 条规则中的任意}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
-    <value>{0} 个项目</value>
+    <value>{0, plural, other {# 个项目}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>已选择 {0} 个</value>

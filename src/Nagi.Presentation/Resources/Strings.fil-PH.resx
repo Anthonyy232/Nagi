@@ -299,16 +299,16 @@
     <value>Error sa muling pag-scan ng folder: {0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0} folder</value>
+    <value>{0, plural, other {# folder}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
-    <value>{0} kanta</value>
+    <value>{0, plural, other {# kanta}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
-    <value>{0} album</value>
+    <value>{0, plural, other {# album}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
-    <value>{0} artista</value>
+    <value>{0, plural, other {# artista}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Walang item</value>
@@ -335,7 +335,7 @@
     <value>Handa na ang iyong library.</value>
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
-    <value>Smart • {0} kanta</value>
+    <value>{0, plural, other {Smart • # kanta}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Walang kantang tumutugma sa mga panuntunan ng smart playlist na ito.</value>
@@ -453,7 +453,7 @@ Mga file na hindi ma-import: {0}.</value>
     <value>Itugma ang anuman sa {0, plural, one {# panuntunan} other {# mga panuntunan}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
-    <value>{0} item</value>
+    <value>{0, plural, other {# item}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} napili</value>

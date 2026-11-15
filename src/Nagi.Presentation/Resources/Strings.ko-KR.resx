@@ -299,16 +299,16 @@
     <value>폴더 재스캔 오류: {0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0}개 폴더</value>
+    <value>{0, plural, other {#개 폴더}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
-    <value>{0}곡</value>
+    <value>{0, plural, other {#곡}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
-    <value>{0}개 앨범</value>
+    <value>{0, plural, other {#개 앨범}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
-    <value>아티스트 {0}명</value>
+    <value>{0, plural, other {아티스트 #명}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>항목 없음</value>
@@ -335,7 +335,7 @@
     <value>라이브러리가 준비되었습니다.</value>
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
-    <value>스마트 • {0}곡</value>
+    <value>{0, plural, other {스마트 • #곡}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>이 스마트 재생 목록의 규칙과 일치하는 곡이 없습니다.</value>
@@ -447,13 +447,13 @@
     <value>정의된 규칙 없음 • 모든 곡 일치</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>{0} 규칙 중 모두 일치</value>
+    <value>{0, plural, other {# 규칙 중 모두 일치}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>{0} 규칙 중 어느 하나 일치</value>
+    <value>{0, plural, other {# 규칙 중 어느 하나 일치}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
-    <value>{0}개 항목</value>
+    <value>{0, plural, other {#개 항목}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0}개 선택됨</value>

@@ -299,16 +299,16 @@
     <value>خطأ في إعادة فحص المجلد: {0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0} مجلد</value>
+    <value>{0, plural, other {# مجلد}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
-    <value>{0} أغنية</value>
+    <value>{0, plural, other {# أغنية}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
-    <value>{0} ألبوم</value>
+    <value>{0, plural, other {# ألبوم}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
-    <value>{0} فنان</value>
+    <value>{0, plural, other {# فنان}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>لا توجد عناصر</value>
@@ -335,7 +335,7 @@
     <value>مكتبتك جاهزة.</value>
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
-    <value>ذكي • {0} أغنية</value>
+    <value>{0, plural, other {ذكي • # أغنية}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>لا توجد أغاني تطابق قواعد قائمة التشغيل الذكية هذه.</value>
@@ -453,7 +453,7 @@
     <value>مطابقة أي من {0, plural, one {# قاعدة} other {# قواعد}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
-    <value>{0} عنصر</value>
+    <value>{0, plural, other {# عنصر}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} محددة</value>

@@ -299,16 +299,16 @@
     <value>ข้อผิดพลาดในการสแกนโฟลเดอร์ซ้ำ: {0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0} โฟลเดอร์</value>
+    <value>{0, plural, other {# โฟลเดอร์}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
-    <value>{0} เพลง</value>
+    <value>{0, plural, other {# เพลง}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
-    <value>{0} อัลบั้ม</value>
+    <value>{0, plural, other {# อัลบั้ม}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
-    <value>{0} ศิลปิน</value>
+    <value>{0, plural, other {# ศิลปิน}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>ไม่มีรายการ</value>
@@ -335,7 +335,7 @@
     <value>คลังเพลงของคุณพร้อมแล้ว</value>
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
-    <value>อัจฉริยะ • {0} เพลง</value>
+    <value>{0, plural, other {อัจฉริยะ • # เพลง}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>ไม่มีเพลงใดตรงตามกฎของเพลย์ลิสต์อัจฉริยะนี้</value>
@@ -447,13 +447,13 @@
     <value>ไม่ได้กำหนดกฎ • ทุกเพลงตรงกัน</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>ตรงตาม ทั้งหมด จาก {0} กฎ</value>
+    <value>{0, plural, other {ตรงตาม ทั้งหมด จาก # กฎ}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>ตรงตาม ใดๆ จาก {0} กฎ</value>
+    <value>{0, plural, other {ตรงตาม ใดๆ จาก # กฎ}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
-    <value>{0} รายการ</value>
+    <value>{0, plural, other {# รายการ}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>เลือกแล้ว {0}</value>

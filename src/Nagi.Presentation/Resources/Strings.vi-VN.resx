@@ -299,16 +299,16 @@
     <value>Lỗi khi quét lại thư mục: {0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0} thư mục</value>
+    <value>{0, plural, other {# thư mục}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
-    <value>{0} bài hát</value>
+    <value>{0, plural, other {# bài hát}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
-    <value>{0} album</value>
+    <value>{0, plural, other {# album}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
-    <value>{0} nghệ sĩ</value>
+    <value>{0, plural, other {# nghệ sĩ}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Không có mục nào</value>
@@ -335,7 +335,7 @@
     <value>Thư viện của bạn đã sẵn sàng.</value>
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
-    <value>Thông minh • {0} bài hát</value>
+    <value>{0, plural, other {Thông minh • # bài hát}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Không có bài hát nào khớp với quy tắc của danh sách phát thông minh này.</value>
@@ -447,13 +447,13 @@ Các tệp không thể nhập: {0}.</value>
     <value>Không có quy tắc nào được định nghĩa • Tất cả bài hát khớp</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>Khớp tất cả trong {0} quy tắc</value>
+    <value>{0, plural, other {Khớp tất cả trong # quy tắc}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>Khớp bất kỳ trong {0} quy tắc</value>
+    <value>{0, plural, other {Khớp bất kỳ trong # quy tắc}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
-    <value>{0} mục</value>
+    <value>{0, plural, other {# mục}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} đã chọn</value>

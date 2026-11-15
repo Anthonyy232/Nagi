@@ -299,16 +299,16 @@
     <value>フォルダーの再スキャンエラー: {0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0}フォルダー</value>
+    <value>{0, plural, other {#フォルダー}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
-    <value>{0}曲</value>
+    <value>{0, plural, other {#曲}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
-    <value>{0}アルバム</value>
+    <value>{0, plural, other {#アルバム}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
-    <value>{0}アーティスト</value>
+    <value>{0, plural, other {#アーティスト}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>アイテムなし</value>
@@ -335,7 +335,7 @@
     <value>ライブラリの準備が完了しました。</value>
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
-    <value>スマート • {0}曲</value>
+    <value>{0, plural, other {スマート • #曲}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>このスマートプレイリストのルールに一致する曲はありません。</value>
@@ -447,13 +447,13 @@
     <value>ルールが定義されていません • すべての曲が一致</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>{0}ルールのうちすべてに一致</value>
+    <value>{0, plural, other {#ルールのうちすべてに一致}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>{0}ルールのうちいずれかに一致</value>
+    <value>{0, plural, other {#ルールのうちいずれかに一致}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
-    <value>{0}アイテム</value>
+    <value>{0, plural, other {#アイテム}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0}選択済み</value>

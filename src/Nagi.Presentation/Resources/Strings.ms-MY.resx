@@ -299,16 +299,16 @@
     <value>Ralat mengimbas semula folder: {0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0} folder</value>
+    <value>{0, plural, other {# folder}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
-    <value>{0} lagu</value>
+    <value>{0, plural, other {# lagu}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
-    <value>{0} album</value>
+    <value>{0, plural, other {# album}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
-    <value>{0} artis</value>
+    <value>{0, plural, other {# artis}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Tiada item</value>
@@ -335,7 +335,7 @@
     <value>Pustaka anda telah sedia.</value>
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
-    <value>Pintar • {0} lagu</value>
+    <value>{0, plural, other {Pintar • # lagu}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Tiada lagu sepadan dengan peraturan senarai main pintar ini.</value>
@@ -447,13 +447,13 @@ Fail yang tidak dapat diimport: {0}.</value>
     <value>Tiada peraturan ditakrifkan • Semua lagu sepadan</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>Padankan semua daripada {0} peraturan</value>
+    <value>{0, plural, other {Padankan semua daripada # peraturan}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>Padankan mana-mana daripada {0} peraturan</value>
+    <value>{0, plural, other {Padankan mana-mana daripada # peraturan}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
-    <value>{0} item</value>
+    <value>{0, plural, other {# item}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} dipilih</value>
