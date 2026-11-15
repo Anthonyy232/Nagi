@@ -41,7 +41,7 @@ jobs:
         run: echo "sha=$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)" >> "$GITHUB_OUTPUT"
 
       - name: Crowdin Action
-        uses: crowdin/github-action@v3.3.0
+        uses: crowdin/github-action@v3.6.0
         with:
           upload_sources: true
           upload_translations: ${{ inputs.upload_translations || false }}
