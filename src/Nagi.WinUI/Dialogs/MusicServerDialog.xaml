@@ -24,7 +24,7 @@
         <RadioButtons
             Header="{x:Bind resources:Strings.MusicServerDialog_Kind_Header, Mode=OneTime}"
             SelectedIndex="{x:Bind ViewModel.KindIndex, Mode=TwoWay}"
-            Visibility="{x:Bind ViewModel.IsAdding, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.IsAdding, Mode=OneTime}">
             <RadioButton Content="{x:Bind resources:Strings.MusicServerDialog_Kind_OpenSubsonic, Mode=OneTime}" />
             <RadioButton Content="{x:Bind resources:Strings.MusicServerDialog_Kind_Jellyfin, Mode=OneTime}" />
         </RadioButtons>
@@ -35,13 +35,13 @@
             Text="{x:Bind ViewModel.Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             InputScope="Url"
             IsSpellCheckEnabled="False"
-            Visibility="{x:Bind ViewModel.IsAdding, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            Visibility="{x:Bind ViewModel.IsAdding, Mode=OneTime}" />
 
         <RadioButtons
             Header="{x:Bind resources:Strings.MusicServerDialog_SignInMethod_Header, Mode=OneTime}"
             MaxColumns="2"
             SelectedIndex="{x:Bind ViewModel.SignInMethodIndex, Mode=TwoWay}"
-            Visibility="{x:Bind ViewModel.CanChooseSignInMethod, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.CanChooseSignInMethod, Mode=OneWay}">
             <RadioButton Content="{x:Bind resources:Strings.MusicServerDialog_Password_Header, Mode=OneTime}" />
             <RadioButton Content="{x:Bind resources:Strings.MusicServerDialog_ApiKey_Header, Mode=OneTime}" />
         </RadioButtons>
@@ -50,7 +50,7 @@
             Header="{x:Bind resources:Strings.MusicServerDialog_UserName_Header, Mode=OneTime}"
             Text="{x:Bind ViewModel.UserName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             IsSpellCheckEnabled="False"
-            Visibility="{x:Bind ViewModel.AsksForUserName, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            Visibility="{x:Bind ViewModel.AsksForUserName, Mode=OneWay}" />
 
         <PasswordBox
             Header="{x:Bind resources:Strings.MusicServerDialog_Password_Header, Mode=OneTime}"
@@ -60,7 +60,7 @@
         <PasswordBox
             Header="{x:Bind resources:Strings.MusicServerDialog_ApiKey_Header, Mode=OneTime}"
             Password="{x:Bind ViewModel.ApiKey, Mode=TwoWay}"
-            Visibility="{x:Bind ViewModel.UsesApiKey, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            Visibility="{x:Bind ViewModel.UsesApiKey, Mode=OneWay}" />
 
         <InfoBar
             IsClosable="False"
@@ -70,6 +70,6 @@
 
         <ProgressBar
             IsIndeterminate="True"
-            Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay}" />
     </StackPanel>
 </ContentDialog>

@@ -126,13 +126,13 @@
                                                       HorizontalAlignment="Stretch" />
 
                                             <StackPanel Grid.Column="2" Spacing="8"
-                                                        Visibility="{x:Bind RequiresValue, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                        Visibility="{x:Bind RequiresValue, Mode=OneWay}">
                                                 <TextBox Text="{x:Bind Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                          PlaceholderText="{x:Bind resources:Strings.SmartPlaylist_RuleValueTextBox_Placeholder, Mode=OneTime}"
                                                          HorizontalAlignment="Stretch" />
                                                 <TextBox Text="{x:Bind SecondValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                          PlaceholderText="{x:Bind resources:Strings.SmartPlaylist_UpperBound_Placeholder, Mode=OneTime}"
-                                                         Visibility="{x:Bind IsRange, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                         Visibility="{x:Bind IsRange, Mode=OneWay}"
                                                          HorizontalAlignment="Stretch" />
                                             </StackPanel>
 
@@ -150,7 +150,7 @@
                         </ListView>
 
                         <StackPanel
-                                   Visibility="{x:Bind ViewModel.HasNoRules, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   Visibility="{x:Bind ViewModel.HasNoRules, Mode=OneWay}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
                                    Spacing="16"
