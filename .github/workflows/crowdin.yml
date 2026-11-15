@@ -48,7 +48,8 @@ jobs:
           import_eq_suggestions: true
           download_translations: true
           create_pull_request: true
-          pull_request_title: 'New Crowdin translations'
+          pull_request_title: 'chore: update translations'
+          commit_message: 'chore: update translations'
           pull_request_base_branch_name: 'master'
           localization_branch_name: ${{ env.BRANCH }}
         env:

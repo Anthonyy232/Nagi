@@ -1,6 +1,6 @@
 # Working on Nagi
 
-A local-first music player for Windows: C#, .NET 10, WinUI 3, packaged as MSIX. Published on the Microsoft Store and GitHub; it has real users.
+A local-first music player for Windows: C#, .NET, WinUI 3, packaged as MSIX. Published on the Microsoft Store and GitHub; it has real users.
 
 ## Code
 
@@ -29,7 +29,7 @@ A local-first music player for Windows: C#, .NET 10, WinUI 3, packaged as MSIX. 
 ## Nagi
 
 - Core and view-model code is platform-neutral: no Windows types there, and logic another UI head would need stays out of the WinUI project.
-- Every UI string is localised. Add it in English only; translations come through Crowdin, which opens its own pull request. Leave its branch and the locale files to it, except to remove a deleted string from every locale.
+- Every UI string is localised. Add it in English only; translations come through Crowdin, which opens its own pull request. A locale file fixed by hand must also be sent to Crowdin with the sync workflow's upload option, or the next sync removes the fix. Leave its branch and the locale files to it otherwise, except to remove a deleted string from every locale.
 - Whole strings with ICU plurals, never sentences built from fragments.
 - Theme resources and shared styles, never hard-coded colours, sizes or radii; every icon-only button has an accessible name. See UI changes on each backdrop as well as in light and dark.
 - A dev build has the same package identity as the owner's Store install and would share its data. Never deploy over that install or touch its data or the owner's music library: run under a different, uncommitted identity with an invented library, and remove both afterwards.
