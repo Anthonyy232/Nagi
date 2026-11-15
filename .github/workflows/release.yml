@@ -120,10 +120,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_TAG: ${{ github.event.inputs.tag }}
           RELEASE_REPO: ${{ github.repository }}
+        # Notes written ahead of the build wait on a draft; the signed files join it.
         run: |
-          gh release create "$RELEASE_TAG" \
-            --repo "$RELEASE_REPO" \
-            --title "Nagi $RELEASE_TAG" \
-            --draft \
-            signed/Nagi.msixbundle \
-            signed/Nagi.appinstaller
+          if [ "$(gh release view "$RELEASE_TAG" --repo "$RELEASE_REPO" --json isDraft --jq .isDraft 2>/dev/null)" = "true" ]; then
+            gh release upload "$RELEASE_TAG" --repo "$RELEASE_REPO" signed/Nagi.msixbundle signed/Nagi.appinstaller
+          else
+            gh release create "$RELEASE_TAG" \
+              --repo "$RELEASE_REPO" \
+              --title "Nagi $RELEASE_TAG" \
+              --draft \
+              signed/Nagi.msixbundle \
+              signed/Nagi.appinstaller
+          fi
