@@ -29,7 +29,7 @@ public class DiscordPresenceService : IDisposable
     private readonly IAlbumCoverService _albumCoverService;
     private readonly ISettingsService _settingsService;
     private readonly Func<string, DiscordRpcClient> _createClient;
-    private readonly object _clientLock = new();
+    private readonly Lock _clientLock = new();
     private DiscordRpcClient? _client;
     private TimeSpan _currentProgress;
     private Song? _currentSong;

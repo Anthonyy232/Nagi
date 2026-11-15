@@ -48,7 +48,7 @@ public sealed class TaskbarService : IDisposable
     private readonly PlayerViewModel _player;
     private readonly IDispatcherService _dispatcherService;
 
-    private readonly object _iconLock = new();
+    private readonly Lock _iconLock = new();
 
     private ITaskbarList4? _taskbarList;
     private nint _windowHandle;

@@ -37,7 +37,7 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
     private readonly IAppInfoService _appInfo;
     private RomanizationPackCatalog? _cachedCatalog;
     // Lyrics ask for the installed packs on every load, so the list is read from disk only after a change.
-    private readonly object _installedLock = new();
+    private readonly Lock _installedLock = new();
     private IReadOnlyList<InstalledRomanizationPack>? _installedPacks;
     private int _installedVersion;
 

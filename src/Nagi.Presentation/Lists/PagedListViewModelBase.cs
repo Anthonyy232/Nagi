@@ -21,7 +21,7 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     protected readonly ILibraryNotifier _libraryNotifier;
     protected readonly ISettingsService _settingsService;
 
-    private readonly object _loadLock = new();
+    private readonly Lock _loadLock = new();
     private readonly Debouncer _libraryChangeDebouncer = new(TimeSpan.FromSeconds(1));
 
     private bool _pendingReload;

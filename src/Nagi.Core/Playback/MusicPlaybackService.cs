@@ -23,7 +23,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     private readonly ISettingsService _settingsService;
     private readonly IPlaybackStateStore _playbackStateStore;
     private readonly TimeProvider _timeProvider;
-    private readonly object _pendingOperationsLock = new();
+    private readonly Lock _pendingOperationsLock = new();
 
     // Each playback request cancels the one before it; replacing the queue cancels adds still resolving files.
     private CancellationTokenSource _requestCts = new();

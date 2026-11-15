@@ -8,7 +8,7 @@ namespace Nagi.Core.OnlineProviders;
 /// </summary>
 internal sealed class OnlineLookupGate : IDisposable
 {
-    private readonly object _lock = new();
+    private readonly Lock _lock = new();
     private readonly ISettingsService _settingsService;
     private readonly Setting<bool> _enabled;
     private readonly Setting<List<ServiceProviderSetting>> _providers;

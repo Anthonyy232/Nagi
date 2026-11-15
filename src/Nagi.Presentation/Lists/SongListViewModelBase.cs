@@ -29,7 +29,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     public bool HasLoadedPlaylists { get; private set; }
 
     // Loaded on demand unless a view requires it for editing.
-    private readonly object _fullSongIdsLock = new();
+    private readonly Lock _fullSongIdsLock = new();
     private List<Guid> _fullSongIdList = new();
     private Task<List<Guid>>? _fullSongIdLoadTask;
     private int _fullSongIdGeneration;

@@ -20,7 +20,7 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
     private readonly IDispatcherService _dispatcherService;
     private readonly ILogger<SmtcMediaControls> _logger;
     private readonly CancellationTokenSource _disposeCts = new();
-    private readonly object _lifetimeLock = new();
+    private readonly Lock _lifetimeLock = new();
     private WinMediaPlayback.MediaPlayer? _ownerPlayer;
     private SystemMediaTransportControls? _smtc;
     private int _displayVersion;

@@ -26,7 +26,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     private readonly ISettingsService _settingsService;
     private readonly IUIService _uiService;
     private static readonly TimeSpan _seekTimeOffset = TimeSpan.FromSeconds(0.2);
-    private readonly object _lyricsFetchLock = new();
+    private readonly Lock _lyricsFetchLock = new();
 
     private CancellationTokenSource? _lyricsFetchCts;
     private bool _isDisposed;

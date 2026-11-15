@@ -14,7 +14,7 @@ public class ReplayGainService : IReplayGainService
     private readonly ILoudnessAnalyzer _loudnessAnalyzer;
     private readonly IMetadataService _metadataService;
     private readonly SemaphoreSlim _dbLock = new(1, 1);
-    private readonly object _passLock = new();
+    private readonly Lock _passLock = new();
     private bool _isPassRunning;
     private bool _isAnotherRoundRequested;
     private bool _disposed;
