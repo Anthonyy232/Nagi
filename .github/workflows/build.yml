@@ -1,13 +1,9 @@
 name: Nagi CI/CD
 
 on:
+  # Every pull request runs the tests: they are the ruleset's required check.
   pull_request:
     branches: [master]
-    paths-ignore:
-      - site/**
-      - '**.md'
-      - .github/readme/**
-      - .github/ISSUE_TEMPLATE/**
   push:
     branches: [master]
     tags: ['*.*.*']
