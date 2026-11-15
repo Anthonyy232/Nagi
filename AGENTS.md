@@ -33,7 +33,7 @@ A local-first music player for Windows: C#, .NET, WinUI 3, packaged as MSIX. Pub
 - The Crowdin sync must never delete a translation from the repo: changed English keeps its translations as unapproved, unapproved translations are exported, and untranslated strings are left out so English shows instead.
 - Whole strings with ICU plurals, never sentences built from fragments.
 - Theme resources and shared styles, never hard-coded colours, sizes or radii; every icon-only button has an accessible name. See UI changes on each backdrop as well as in light and dark.
-- A dev build has the same package identity as the owner's Store install and would share its data. Never deploy over that install or touch its data or the owner's music library: run under a different, uncommitted identity with an invented library, and remove both afterwards.
+- A dev build has the same package identity as the owner's Store install and would share its data. Never deploy over that install or touch its data or the owner's music library: run it in Windows Sandbox with `sandbox/run.ps1` from the `media` branch, which installs the build on an invented library and saves screenshots.
 - Anything new sent online goes in `PRIVACY.md`.
 
 ## Done means
