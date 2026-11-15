@@ -95,7 +95,7 @@ footer .brand { font-size: 1.05rem; color: var(--ink); }
 footer p { margin: 0 0 0 auto; }
 
 @media (max-width: 900px) {
-  .feature { grid-template-columns: 1fr; }
+  .feature, .feature:nth-child(even) { grid-template-columns: 1fr; }
   .feature:nth-child(even) > div { order: 0; }
   .columns { grid-template-columns: repeat(2, 1fr); }
   footer p { margin-left: 0; }
