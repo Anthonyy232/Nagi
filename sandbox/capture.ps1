@@ -24,7 +24,7 @@ function Shot([string] $Name, [int] $X, [int] $Y, [int] $Width, [int] $Height) {
     $f = Get-Frame $w
     Save-Shot "$shots\$Name.png" ($f.L + $X) ($f.T + $Y) $Width $Height
 }
-# Right of the navigation pane, below the title bar, down to the top of the player bar's seek line.
+# Right of the navigation pane and short of the window border, below the title bar, down to the top of the player bar's seek line.
 function Shot-Page([string] $Name) { Shot $Name 321 41 1023 751 }
 function Shot-Player([string] $Name) {
     $top = [int](Find-El $w -Name 'Go to Album' -Type Button).Current.BoundingRectangle.Top - (Get-Frame $w).T
@@ -47,7 +47,7 @@ foreach ($theme in 'Light', 'Dark') {
     $combo.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern).Expand()
     (Find-El $w -Name $theme -Type ListItem).GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
     Start-Sleep 2
-    Size 1344 827
+    Size 1345 827
 
     Open-Album 'Still Water Sessions'
     Press 'Play all'
@@ -59,7 +59,7 @@ foreach ($theme in 'Light', 'Dark') {
     Size 1440 906
     Shot "library-$t" 0 0 1440 876
     Press 'Up Next'
-    Size 1344 827
+    Size 1345 827
     Shot-Player "player-1-$t"
     Go 'Albums'
     Shot-Page "albums-$t"
