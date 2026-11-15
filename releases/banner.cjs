@@ -1,4 +1,4 @@
-// node banner.cjs [<tag> "<highlight, *accent* in asterisks>" [scene]] : 1280x640 release banners beside this file.
+// node banner.cjs [<tag> "<highlight, *accent* in asterisks>" [scene]] : 1280x640 release banners beside this file. Steps in the README.
 // With arguments it records the banner in banners.json and draws it; without, it redraws them all.
 // Run from a worktree of the Nagi repo: the logo and screenshots are read from master.
 // Needs Playwright with Chromium (NODE_PATH) and network access for the headline font.
@@ -18,21 +18,26 @@ if (tag) {
 const asset = (name, type) => `data:${type};base64,${execFileSync('git', ['show', `master:${name}`], { cwd: __dirname, maxBuffer: 1 << 26 }).toString('base64')}`;
 const logo = asset('media/AppLogo.svg', 'image/svg+xml');
 
-// README image, the scale to draw it at, and the point of it that sits at the stage's top-left corner.
+// Cards cut from the README images: [image, x, y, width, height] in image pixels, inside the window so no backdrop comes along.
+const page = image => [[image, 924, 102, 1017, 614]];
 const scenes = {
-  library: ['hero-light', 0.625, 168, 706],
-  queue: ['hero-light', 1.1, 1284, 716],
-  albums: ['feature-library-light', 0.7, 870, 50],
-  lyrics: ['feature-lyrics-light', 0.7, 870, 50],
-  insights: ['feature-insights-light', 0.7, 870, 50],
-  player: ['feature-color-light', 0.7, 870, 50],
+  library: [['hero-light', 307, 773, 1433, 710]],
+  queue: [['hero-light', 1326, 831, 399, 643]],
+  albums: page('feature-library-light'),
+  lyrics: page('feature-lyrics-light'),
+  insights: page('feature-insights-light'),
+  player: [149, 371, 594].map(y => ['feature-color-light', 924, y, 1018, 153]),
 };
 const shots = {};
 const stage = name => {
-  if (name === 'mark') return `<div class="stage mark"><img src="${logo}" alt=""></div>`;
-  const [image, scale, x, y] = scenes[name];
-  shots[image] ??= asset(`.github/readme/${image}.png`, 'image/png');
-  return `<div class="stage" style="background: url(${shots[image]}) ${-x * scale}px ${-y * scale}px / ${2048 * scale}px auto no-repeat"></div>`;
+  if (name === 'mark') return `<div class="stage"><img class="mark" src="${logo}" alt=""></div>`;
+  const cards = scenes[name];
+  const height = cards.reduce((sum, c) => sum + c[4], 0);
+  const scale = Math.min(564 / cards[0][3], (504 - 28 * (cards.length - 1)) / height);
+  return `<div class="stage">${cards.map(([image, x, y, w, h]) => {
+    shots[image] ??= asset(`.github/readme/${image}.png`, 'image/png');
+    return `<div class="card" style="width: ${w * scale}px; height: ${h * scale}px; background: url(${shots[image]}) ${-x * scale}px ${-y * scale}px / ${2048 * scale}px auto no-repeat"></div>`;
+  }).join('')}</div>`;
 };
 
 const html = (label, text, scene) => `<!doctype html><meta charset="utf-8">
@@ -46,9 +51,9 @@ const html = (label, text, scene) => `<!doctype html><meta charset="utf-8">
   .label { margin-top: auto; font: 500 18px ui-monospace, 'Cascadia Code', Consolas, monospace; color: #5b625c; }
   h1 { margin-top: 14px; font: 400 92px/1 'Instrument Serif', Georgia, serif; letter-spacing: -0.01em; text-wrap: balance; }
   h1 em { color: #26854d; }
-  .stage { position: absolute; left: 620px; top: 40px; width: 620px; height: 560px; border-radius: 28px; }
-  .mark { display: grid; place-items: center; background: radial-gradient(80% 90% at 8% 0%, #c9efd6 0%, transparent 70%), linear-gradient(135deg, #aee2c1, #6fc592); }
-  .mark img { width: 280px; height: 280px; filter: drop-shadow(0 18px 30px rgb(20 70 40 / .14)); }
+  .stage { position: absolute; left: 620px; top: 40px; width: 620px; height: 560px; border-radius: 28px; background: #a9dfbd; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; }
+  .card { border-radius: 10px; outline: 1px solid rgb(20 70 40 / .16); }
+  .mark { width: 280px; height: 280px; }
 </style>
 <div class="copy">
   <div class="brand"><img src="${logo}" alt="">Nagi</div>

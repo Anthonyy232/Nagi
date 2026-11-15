@@ -15,7 +15,7 @@
   "2.0.0": { "headline": "ListenBrainz and *romanized* lyrics", "scene": "lyrics" },
   "2.0.1": { "headline": "Steadier with *large* libraries", "scene": "mark" },
   "2.0.2": { "headline": "Closing on launch, *fixed*", "scene": "mark" },
-  "2.1.0": { "headline": "WASAPI *exclusive* playback", "scene": "player" },
+  "2.1.0": { "headline": "WASAPI *exclusive* playback", "scene": "mark" },
   "2.1.1": { "headline": "Player controls, *back in step*", "scene": "player" },
   "2.2.0": { "headline": "Drop files onto *the queue*", "scene": "mark" },
   "2.3.0": { "headline": "Browse without *pages*", "scene": "library" },
