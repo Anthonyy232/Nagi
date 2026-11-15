@@ -101,11 +101,11 @@ Settings is grouped into:
 
 ## Built with
 
-[.NET 10](https://dotnet.microsoft.com/), [WinUI 3](https://learn.microsoft.com/windows/apps/winui/winui3/), [LibVLCSharp](https://github.com/videolan/libvlcsharp), [EF Core](https://learn.microsoft.com/ef/core/) with SQLite, [ATL](https://github.com/Zeugma440/atldotnet), [libebur128](https://github.com/jiixyj/libebur128), [ModernLrc](https://github.com/Anthonyy232/ModernLrcParser), [ImageSharp](https://github.com/SixLabors/ImageSharp), [Material Color Utilities](https://github.com/albi005/MaterialColorUtilities), [Windows Community Toolkit](https://github.com/CommunityToolkit/Windows), [H.NotifyIcon](https://github.com/HavenDV/H.NotifyIcon) and [Serilog](https://serilog.net/).
+[.NET 11](https://dotnet.microsoft.com/), [WinUI 3](https://learn.microsoft.com/windows/apps/winui/winui3/), [LibVLCSharp](https://github.com/videolan/libvlcsharp), [EF Core](https://learn.microsoft.com/ef/core/) with SQLite, [ATL](https://github.com/Zeugma440/atldotnet), [libebur128](https://github.com/jiixyj/libebur128), [ModernLrc](https://github.com/Anthonyy232/ModernLrcParser), [ImageSharp](https://github.com/SixLabors/ImageSharp), [Material Color Utilities](https://github.com/albi005/MaterialColorUtilities), [Windows Community Toolkit](https://github.com/CommunityToolkit/Windows), [H.NotifyIcon](https://github.com/HavenDV/H.NotifyIcon) and [Serilog](https://serilog.net/).
 
 ## Build from source
 
-You need Visual Studio 2026 or later with the **.NET Desktop Development** and **Universal Windows Platform development** workloads, and the .NET 10 SDK.
+You need Visual Studio 2026 or later with the **.NET Desktop Development** and **Universal Windows Platform development** workloads, and the .NET 11 SDK.
 
 ```bash
 git clone https://github.com/Anthonyy232/Nagi.git

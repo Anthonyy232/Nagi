@@ -76,9 +76,8 @@ public sealed class LibraryReset : ILibraryReset
                 // Every table of the model, so a new one can't be left behind. With the foreign keys checked at commit,
                 // when every table is empty, the order doesn't matter.
                 var tables = context.Model.GetEntityTypes().Select(entity => entity.GetTableName()).OfType<string>().Distinct();
-                await context.Database.ExecuteSqlRawAsync(string.Concat(
-                        ["PRAGMA defer_foreign_keys = ON;", .. tables.Select(table => $"DELETE FROM \"{table}\";")]))
-                    .ConfigureAwait(false);
+                var sql = string.Concat(["PRAGMA defer_foreign_keys = ON;", .. tables.Select(table => $"DELETE FROM \"{table}\";")]);
+                await context.Database.ExecuteSqlRawAsync(sql).ConfigureAwait(false);
                 await transaction.CommitAsync().ConfigureAwait(false);
                 _logger.LogInformation("Successfully deleted all data from the database.");
             }
