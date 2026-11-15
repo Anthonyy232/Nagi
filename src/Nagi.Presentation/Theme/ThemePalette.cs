@@ -20,7 +20,7 @@ public readonly record struct ThemePalette(
     /// <summary>
     ///     Nagi's brand accent colour, derived from the app logo. Used while no custom accent is set.
     /// </summary>
-    public static ArgbColor BrandAccentColor { get; } = ArgbColor.FromRgb(0x21, 0x94, 0x4B);
+    public static ArgbColor BrandAccentColor { get; } = ArgbColor.FromRgb(0x26, 0x85, 0x4D);
 
     /// <summary>
     ///     The palette for the playing track's album colors, or for <paramref name="accent" /> when dynamic theming is
