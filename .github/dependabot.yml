@@ -1,0 +1,57 @@
+version: 2
+# LibVLC's 4.0 previews come from VideoLAN's public feed (NuGet.config); Dependabot needs it declared.
+registries:
+  nuget-org:
+    type: nuget-feed
+    url: https://api.nuget.org/v3/index.json
+  videolan-preview:
+    type: nuget-feed
+    url: https://f.feedz.io/videolan/preview/nuget/index.json
+updates:
+  - package-ecosystem: nuget
+    directory: /
+    registries: "*"
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 5
+    # Not auto-merged: these need the app run in Windows Sandbox (media branch, sandbox/).
+    groups:
+      app-runtime:
+        patterns: [Microsoft.WindowsAppSDK*, LibVLCSharp, VideoLAN.LibVLC.Windows]
+      minor-patch:
+        patterns: ["*"]
+        update-types: [minor, patch]
+      major:
+        patterns: ["*"]
+        update-types: [major]
+    commit-message:
+      prefix: chore(deps)
+
+  - package-ecosystem: dotnet-sdk
+    directory: /
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 5
+    groups:
+      minor-patch:
+        update-types: [minor, patch]
+      major:
+        update-types: [major]
+    commit-message:
+      prefix: chore(deps)
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 5
+    groups:
+      minor-patch:
+        update-types: [minor, patch]
+      major:
+        update-types: [major]
+    commit-message:
+      prefix: chore(deps)
