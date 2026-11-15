@@ -13,7 +13,7 @@ public sealed partial class MiniPlayerView : UserControl
 {
     private readonly Window _parentWindow;
     // The whole view drags the window, except these, which must still take clicks and wheel input.
-    private readonly IReadOnlyList<FrameworkElement> _interactiveElements;
+    private readonly FrameworkElement[] _interactiveElements;
     private bool _isUnloaded;
 
     public MiniPlayerView(Window parentWindow, PlayerViewModel viewModel)

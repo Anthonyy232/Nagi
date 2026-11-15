@@ -9,9 +9,8 @@
     <PackageVersion Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.3.260402-preview2" />
     <PackageVersion Include="CommunityToolkit.WinUI.Media" Version="8.3.260402-preview2" />
     <!-- WinAppSDK -->
-    <PackageVersion Include="Microsoft.WindowsAppSDK.Runtime" Version="2.5.1" />
-    <PackageVersion Include="Microsoft.WindowsAppSDK.WinUI" Version="2.3.9" />
-    <PackageVersion Include="Microsoft.WindowsAppSDK.InteractiveExperiences" Version="2.1.9" />
+    <PackageVersion Include="Microsoft.WindowsAppSDK.Runtime" Version="2.6.5" />
+    <PackageVersion Include="Microsoft.WindowsAppSDK.WinUI" Version="2.6.5" />
     <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2957" />
     <!-- UI Controls -->
     <PackageVersion Include="H.NotifyIcon.WinUI" Version="2.5.0-dev.2" />

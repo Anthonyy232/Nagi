@@ -61,7 +61,7 @@ public sealed partial class CompactPlayerView : UserControl
     }
 
     /// <summary>The parts that take pointer input, for a host that drags its window by the rest.</summary>
-    public IReadOnlyList<FrameworkElement> InteractiveElements =>
+    public FrameworkElement[] InteractiveElements =>
         [MediaSeekerSlider, MediaControlsPanel, BackButton, QueueListView, Artists];
 
     /// <summary>Raised after the view switched between the player and the queue.</summary>
