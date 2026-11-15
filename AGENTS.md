@@ -86,7 +86,8 @@ A local-first music player for Windows: C#, .NET 10, WinUI 3, packaged as MSIX. 
 - Then run the `Create Release` workflow with the tag: SignPath signs the bundle after the owner approves, and a draft release gets `Nagi.msixbundle` and `Nagi.appinstaller`. Installed copies update from `releases/latest/download/Nagi.appinstaller`, so never rename those assets or a tag.
 - Title `Nagi X.Y.Z`.
 - Notes: banner image first, then `### New`, `### Improved`, `### Fixed` (only those that apply). One line per change, written for users; no internals, dependency lists or test counts. End with the install link(s) and the full changelog link.
-- Banner: the art at the top of the previous release, reused. Banners made for releases without it live on the orphan `media` branch as `releases/<tag>.png`, beside the script that draws them.
+- Banner: `git worktree add <dir> media`, then `node <dir>/releases/banner.cjs X.Y.Z "Short *highlight*" [scene]` (Playwright on `NODE_PATH`; scenes are listed in the script) records it in `banners.json` and draws `releases/X.Y.Z.png`. Commit and push `media`, and open the notes with `![Nagi X.Y.Z](https://raw.githubusercontent.com/Anthonyy232/Nagi/media/releases/X.Y.Z.png)`.
+- Install links: the Store button, then the GitHub button pointing at that release's own `Nagi.msixbundle`, not `releases/latest`.
 - The `romanization-packs` release is the feed the app downloads lyrics packs from: keep its tag and asset names.
 - The Microsoft Store submission is the owner's, by hand.
 
