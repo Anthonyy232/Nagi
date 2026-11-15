@@ -8,6 +8,8 @@ on:
         required: true
         type: string
 
+permissions: {}
+
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -121,7 +123,7 @@ jobs:
         run: |
           gh release create "$RELEASE_TAG" \
             --repo "$RELEASE_REPO" \
-            --title "Version $RELEASE_TAG" \
+            --title "Nagi $RELEASE_TAG" \
             --draft \
             signed/Nagi.msixbundle \
             signed/Nagi.appinstaller

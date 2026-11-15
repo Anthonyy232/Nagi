@@ -3,9 +3,20 @@ name: Nagi CI/CD
 on:
   pull_request:
     branches: [master]
+    paths-ignore:
+      - site/**
+      - '**.md'
+      - .github/readme/**
+      - .github/ISSUE_TEMPLATE/**
   push:
     branches: [master]
     tags: ['*.*.*']
+    # Docs and the site need no build, Azure deploy or signing request.
+    paths-ignore:
+      - site/**
+      - '**.md'
+      - .github/readme/**
+      - .github/ISSUE_TEMPLATE/**
   workflow_dispatch:
 
 # A newer push supersedes older runs: branch runs are cancelled, while master and tag runs finish
@@ -13,6 +24,9 @@ on:
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/master' && !startsWith(github.ref, 'refs/tags/') }}
+
+permissions:
+  contents: read
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
