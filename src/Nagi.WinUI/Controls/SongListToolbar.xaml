@@ -29,12 +29,11 @@
         <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
             <TextBlock x:Name="TitleText"
                        Style="{StaticResource SectionHeaderTextBlockStyle}"
-                       Foreground="{StaticResource AppPrimaryColorBrush}"
                        Text="{x:Bind Title, Mode=OneWay}" />
             <TextBlock x:Name="SelectedCountText"
                        VerticalAlignment="Center"
                        FontSize="13"
-                       Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                       Foreground="{StaticResource AccentTextBrush}"
                        Text="{x:Bind ViewModel.SelectedItemsCountText, Mode=OneWay}"
                        Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay}" />
             <TextBlock x:Name="TotalCountText"

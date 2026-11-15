@@ -10,21 +10,16 @@
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
 
-    <Style x:Key="InsightsCardStyle" TargetType="Grid">
-        <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-        <Setter Property="CornerRadius" Value="{ThemeResource OverlayCornerRadius}" />
-        <Setter Property="Padding" Value="{StaticResource SurfaceContentPadding}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-    </Style>
-
-    <Style x:Key="InsightsHeroCardStyle" TargetType="Grid" BasedOn="{StaticResource InsightsCardStyle}">
-        <Setter Property="MinHeight" Value="120" />
+    <!--  A section of the page, set off from the one above by a hairline rather than a card.  -->
+    <Style x:Key="InsightsSectionStyle" TargetType="Grid">
+        <Setter Property="BorderBrush" Value="{ThemeResource DividerStrokeColorDefaultBrush}" />
+        <Setter Property="BorderThickness" Value="0,1,0,0" />
+        <Setter Property="Padding" Value="0,16,0,0" />
     </Style>
 
     <Style x:Key="InsightsHeroValueStyle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="22" />
-        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontSize" Value="28" />
+        <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
 
     <Style x:Key="InsightsHeroCaptionStyle" TargetType="TextBlock">

@@ -16,7 +16,7 @@
             Visibility="{x:Bind ViewModel.HasLibrarySource, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
             <FontIcon
                 FontSize="96"
-                Foreground="{ThemeResource AppPrimaryColorBrush}"
+                Foreground="{StaticResource AccentTextBrush}"
                 Glyph="&#xE8B7;" />
             <StackPanel Spacing="8">
                 <Button
@@ -24,7 +24,7 @@
                     HorizontalAlignment="Center"
                     AutomationProperties.Name="{x:Bind resources:Strings.OnboardingPage_AddFolderButton_Content, Mode=OneTime}"
                     Command="{x:Bind ViewModel.ChooseFolderCommand, Mode=OneWay}"
-                    Style="{StaticResource AnimatedAccentButtonStyle}">
+                    Style="{StaticResource AccentButtonStyle}">
                     <StackPanel Orientation="Horizontal" Spacing="10">
                         <FontIcon FontSize="16" Glyph="&#xE8F4;" />
                         <TextBlock
@@ -65,14 +65,14 @@
                 Grid.RowSpan="3"
                 VerticalAlignment="Center"
                 FontSize="24"
-                Foreground="{ThemeResource AppPrimaryColorBrush}"
+                Foreground="{StaticResource AccentTextBrush}"
                 Glyph="&#xE8B7;"
                 Visibility="{x:Bind ViewModel.IsLibraryReady, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
             <FontIcon
                 Grid.RowSpan="3"
                 VerticalAlignment="Center"
                 FontSize="24"
-                Foreground="{ThemeResource AppPrimaryColorBrush}"
+                Foreground="{StaticResource AccentTextBrush}"
                 Glyph="&#xE930;"
                 Visibility="{x:Bind ViewModel.IsLibraryReady, Mode=OneWay}" />
 

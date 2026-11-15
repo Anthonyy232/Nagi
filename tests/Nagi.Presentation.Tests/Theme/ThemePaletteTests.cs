@@ -34,7 +34,7 @@ public class ThemePaletteTests
         var palette = ThemePalette.Create(ArgbColor.FromRgb(120, 200, 90), isLightTheme, tintIntensity: 1);
 
         Tone(palette.PlayerBackground).Should().BeInRange(minBackground - 0.5, maxBackground + 0.5);
-        Tone(palette.PlayerAccent).Should().BeInRange(minAccent - 0.5, maxAccent + 0.5);
+        Tone(palette.AccentText).Should().BeInRange(minAccent - 0.5, maxAccent + 0.5);
     }
 
     [Theory]

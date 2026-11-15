@@ -116,7 +116,7 @@
                     <TextBlock Text="{x:Bind resources:Strings.SplashPage_Tagline, Mode=OneTime}"
                                Style="{ThemeResource BodyTextBlockStyle}"
                                HorizontalAlignment="Center"
-                               Opacity="0.6"/>
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                 </StackPanel>
 
                 <StackPanel x:Name="StatusPanel"
@@ -129,7 +129,7 @@
                     <TextBlock Text="{x:Bind resources:Strings.SplashPage_Status, Mode=OneTime}"
                                Style="{ThemeResource BodyTextBlockStyle}"
                                VerticalAlignment="Center"
-                               Opacity="0.5"/>
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                 </StackPanel>
 
             </StackPanel>

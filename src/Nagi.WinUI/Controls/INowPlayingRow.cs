@@ -15,7 +15,7 @@ public interface INowPlayingRow
 
     static void HighlightTitle(TextBlock title, bool isCurrent)
     {
-        if (isCurrent) title.Foreground = (Brush)Application.Current.Resources[AppResourceKeys.AppPrimaryColorBrush];
+        if (isCurrent) title.Foreground = (Brush)Application.Current.Resources[AppResourceKeys.AccentTextBrush];
         else title.ClearValue(TextBlock.ForegroundProperty);
     }
 }

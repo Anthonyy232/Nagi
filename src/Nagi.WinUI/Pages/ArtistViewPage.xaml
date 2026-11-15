@@ -155,7 +155,7 @@
                       Visibility="{x:Bind ViewModel.HasAlbums, Mode=OneWay}">
                     <ScrollViewer VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden">
                         <StackPanel x:Name="AlbumsContent" VerticalAlignment="Top" SizeChanged="OnAlbumsContentSizeChanged">
-                        <TextBlock Text="{x:Bind resources:Strings.ArtistViewPage_Albums_Title, Mode=OneTime}" Style="{StaticResource SectionHeaderTextBlockStyle}" Foreground="{StaticResource AppPrimaryColorBrush}" />
+                        <TextBlock Text="{x:Bind resources:Strings.ArtistViewPage_Albums_Title, Mode=OneTime}" Style="{StaticResource SectionHeaderTextBlockStyle}" />
                         <GridView
                             Padding="0"
                             IsItemClickEnabled="True"

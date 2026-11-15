@@ -53,7 +53,7 @@
                     Grid.Column="1"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Foreground="{ThemeResource AppPrimaryColorBrush}"
+                    Foreground="{StaticResource AccentTextBrush}"
                     Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(Icon)}" />
 
                 <TextBlock
@@ -75,12 +75,8 @@
             <Setter Property="Width" Value="350" />
             <Setter Property="HorizontalAlignment" Value="Right" />
             <Setter Property="AllowDrop" Value="True" />
-            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-            <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CanDragItems" Value="True" />
             <Setter Property="CanReorderItems" Value="True" />
-            <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
             <Setter Property="ItemContainerStyle" Value="{StaticResource NavigationListViewItemStyle}" />
             <Setter Property="ItemTemplate" Value="{StaticResource ToggleItemTemplate}" />
             <Setter Property="SelectionMode" Value="Single" />
@@ -183,7 +179,7 @@
             Grid.Row="0"
             MaxWidth="1200"
             Margin="{StaticResource PageHeaderMarginIndented}"
-            Style="{StaticResource SettingsPageTitleTextStyle}"
+            Style="{StaticResource TitleTextBlockStyle}"
             Text="{x:Bind resources:Strings.SettingsPage_Title, Mode=OneTime}" />
 
         <ScrollViewer uihelpers:ScrollEdgeFade.IsEnabled="True"
@@ -974,7 +970,7 @@
                         HorizontalAlignment="Right"
                         Command="{x:Bind ViewModel.DataManagement.ResetApplicationDataCommand}"
                         Content="{x:Bind resources:Strings.SettingsPage_ResetButton_Content, Mode=OneTime}"
-                        Style="{StaticResource AnimatedAccentButtonStyle}" />
+                        Style="{StaticResource AccentButtonStyle}" />
                 </controls:SettingsCard>
 
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{x:Bind resources:Strings.SettingsPage_Section_Integrations, Mode=OneTime}" />

@@ -11,10 +11,6 @@
         <Setter Property="Margin" Value="0,24,0,8" />
     </Style>
 
-    <Style x:Key="SettingsPageTitleTextStyle" TargetType="TextBlock" BasedOn="{StaticResource TitleTextBlockStyle}">
-        <Setter Property="Foreground" Value="{ThemeResource AppPrimaryColorBrush}" />
-    </Style>
-
     <Style x:Key="NavigationListViewItemStyle" TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="Padding" Value="0" />

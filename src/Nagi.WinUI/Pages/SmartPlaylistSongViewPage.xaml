@@ -80,7 +80,7 @@
                                HasLoadError="{x:Bind ViewModel.HasLoadError, Mode=OneWay}">
             <uicontrols:EmptyState.Action>
                 <Button
-                    Style="{StaticResource AnimatedAccentButtonStyle}"
+                    Style="{StaticResource AccentButtonStyle}"
                     Content="{x:Bind resources:Strings.SmartPlaylistSongViewPage_EmptyState_Button_Content, Mode=OneTime}"
                     Command="{x:Bind ViewModel.EditRulesCommand}"
                     HorizontalAlignment="Center" />

@@ -41,7 +41,7 @@
             <TextBlock
                 Style="{StaticResource TitleTextBlockStyle}"
                 Text="{x:Bind ViewModel.SongTitle, Mode=OneWay}"
-                Foreground="{StaticResource AppPrimaryColorBrush}"
+                Foreground="{StaticResource AccentTextBrush}"
                 FontWeight="SemiBold"
                 HorizontalAlignment="Center"
                 TextTrimming="CharacterEllipsis"
@@ -115,16 +115,16 @@
                                     <TextBlock
                                         Text="{x:Bind Text}"
                                         Style="{StaticResource LyricLineTextBlockStyle}"
-                                        Foreground="{StaticResource AppPrimaryColorBrush}" />
+                                        Foreground="{StaticResource AccentTextBrush}" />
                                     <TextBlock
                                         Text="{x:Bind RomanizedText}"
                                         Style="{StaticResource SecondaryLyricLineTextBlockStyle}"
-                                        Foreground="{StaticResource AppPrimaryColorBrush}"
+                                        Foreground="{StaticResource AccentTextBrush}"
                                         Visibility="{x:Bind HasRomanizedText, Mode=OneTime}" />
                                     <TextBlock
                                         Text="{x:Bind TranslatedText}"
                                         Style="{StaticResource SecondaryLyricLineTextBlockStyle}"
-                                        Foreground="{StaticResource AppPrimaryColorBrush}"
+                                        Foreground="{StaticResource AccentTextBrush}"
                                         Visibility="{x:Bind HasTranslatedText, Mode=OneTime}" />
                                 </StackPanel>
                                 <!-- Drawn beneath the text, out over the padding. -->

@@ -11,7 +11,7 @@ public readonly record struct ThemePalette(
     ArgbColor MediaOnImageAccent,
     ArgbColor PlayerTint,
     ArgbColor PlayerBackground,
-    ArgbColor PlayerAccent)
+    ArgbColor AccentText)
 {
     // Roughly 4.5:1 contrast against the dark media overlay surface (#303030).
     private const double MinimumMediaOnImageLuminance = 0.31;

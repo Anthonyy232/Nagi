@@ -22,7 +22,7 @@
                 <Button
                     Command="{x:Bind Command}"
                     Style="{StaticResource MediaControlButtonStyle}"
-                    Foreground="{StaticResource PlayerAccentBrush}"
+                    Foreground="{StaticResource AccentTextBrush}"
                     ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneWay}"
                     AutomationProperties.Name="{x:Bind DynamicToolTip, Mode=OneWay}">
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -35,7 +35,7 @@
                 <Button
                     Command="{x:Bind Command}"
                     Style="{StaticResource MediaControlButtonStyle}"
-                    Foreground="{StaticResource PlayerAccentBrush}"
+                    Foreground="{StaticResource AccentTextBrush}"
                     ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneWay}"
                     AutomationProperties.Name="{x:Bind DynamicToolTip, Mode=OneWay}">
                     <Grid>
@@ -47,7 +47,7 @@
                         <ProgressRing
                             Width="20"
                             Height="20"
-                            Foreground="{StaticResource PlayerAccentBrush}"
+                            Foreground="{StaticResource AccentTextBrush}"
                             IsActive="{x:Bind IsLoading, Mode=OneWay}" />
                     </Grid>
                 </Button>
@@ -58,7 +58,7 @@
                     ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneTime}"
                     AutomationProperties.Name="{x:Bind DynamicToolTip, Mode=OneTime}"
                     Style="{StaticResource MediaControlButtonStyle}"
-                    Foreground="{StaticResource PlayerAccentBrush}"
+                    Foreground="{StaticResource AccentTextBrush}"
                     Click="LyricsButton_Click">
                     <Grid Width="40" Height="40" Margin="-8">
                         <Border
@@ -83,7 +83,7 @@
                         AutomationProperties.Name="{x:Bind DynamicToolTip, Mode=OneTime}"
                         ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneTime}"
                         Style="{StaticResource MediaControlButtonStyle}"
-                        Foreground="{StaticResource PlayerAccentBrush}">
+                        Foreground="{StaticResource AccentTextBrush}">
                     <Grid Width="40" Height="40" Margin="-8">
                         <Border Background="{ThemeResource ControlFillColorSecondaryBrush}"
                                 CornerRadius="{ThemeResource ControlCornerRadius}"
@@ -302,7 +302,7 @@
                                             </Grid.ColumnDefinitions>
                                             <StackPanel VerticalAlignment="Center" Spacing="4">
                                                 <TextBlock Text="{x:Bind ViewModel.ListeningPaneTitle, Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}"
-                                                           Foreground="{StaticResource PlayerAccentBrush}" />
+                                                           Foreground="{StaticResource AccentTextBrush}" />
                                                 <TextBlock Text="{x:Bind ViewModel.SidebarQueue.TrackCountText, Mode=OneWay}"
                                                            Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                            Visibility="{x:Bind GetQueueDetailVisibility(ViewModel.IsHistoryVisible, ViewModel.QueueDisplaySettings.ShowTrackCount), Mode=OneWay}" />
@@ -312,14 +312,14 @@
                                                            Visibility="{x:Bind GetQueueDetailVisibility(ViewModel.IsHistoryVisible, ViewModel.QueueDisplaySettings.ShowTotalDuration), Mode=OneWay}" />
                                             </StackPanel>
                                             <Button Grid.Column="1" VerticalAlignment="Top" Style="{StaticResource CompactMediaControlButtonStyle}"
-                                                    Foreground="{StaticResource PlayerAccentBrush}"
+                                                    Foreground="{StaticResource AccentTextBrush}"
                                                     Command="{x:Bind ViewModel.ClearQueueCommand}"
                                                     Visibility="{x:Bind ViewModel.IsHistoryVisible, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
                                                     ToolTipService.ToolTip="{x:Bind resources:Strings.QueueFlyout_ClearQueue}"
                                                     AutomationProperties.Name="{x:Bind resources:Strings.QueueFlyout_ClearQueue}"
                                                     ContentTemplate="{StaticResource ClearQueueIconTemplate}" />
                                             <Button Visibility="{x:Bind ViewModel.IsHistoryVisible, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Grid.Column="2" VerticalAlignment="Top" Style="{StaticResource CompactMediaControlButtonStyle}"
-                                                    Foreground="{StaticResource PlayerAccentBrush}"
+                                                    Foreground="{StaticResource AccentTextBrush}"
                                                     ToolTipService.ToolTip="{x:Bind resources:Strings.QueuePanel_DisplayOptions}"
                                                     AutomationProperties.Name="{x:Bind resources:Strings.QueuePanel_DisplayOptions}">
                                                 <FontIcon Glyph="&#xE713;" FontSize="16" />
@@ -341,13 +341,13 @@
                                                 </Button.Flyout>
                                             </Button>
                                             <Button Grid.Column="3" VerticalAlignment="Top" Style="{StaticResource CompactMediaControlButtonStyle}"
-                                                    Foreground="{StaticResource PlayerAccentBrush}" Click="ToggleListeningPane_Click"
+                                                    Foreground="{StaticResource AccentTextBrush}" Click="ToggleListeningPane_Click"
                                                     ToolTipService.ToolTip="{x:Bind ViewModel.ListeningPaneToggleText, Mode=OneWay}"
                                                     AutomationProperties.Name="{x:Bind ViewModel.ListeningPaneToggleText, Mode=OneWay}">
                                                 <FontIcon Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.ListeningPaneToggleIcon), Mode=OneWay}" FontSize="16" />
                                             </Button>
                                             <Button Grid.Column="4" VerticalAlignment="Top" Style="{StaticResource CompactMediaControlButtonStyle}"
-                                                    Foreground="{StaticResource PlayerAccentBrush}"
+                                                    Foreground="{StaticResource AccentTextBrush}"
                                                     Command="{x:Bind ViewModel.ToggleQueuePanelCommand}"
                                                     ToolTipService.ToolTip="{x:Bind resources:Strings.QueuePanel_Close}"
                                                     AutomationProperties.Name="{x:Bind resources:Strings.QueuePanel_Close}">
@@ -484,7 +484,7 @@
                                         </Grid>
                                     </Grid>
                                 </Border>
-                                <Border x:Name="QueueDropHighlight" BorderBrush="{ThemeResource AccentFillColorDefaultBrush}"
+                                <Border x:Name="QueueDropHighlight" BorderBrush="{StaticResource AppPrimaryColorBrush}"
                                         BorderThickness="2" CornerRadius="{ThemeResource OverlayCornerRadius}" IsHitTestVisible="False" Visibility="Collapsed" />
                             </Grid>
                         </SplitView.Pane>
@@ -503,12 +503,12 @@
                         PointerEntered="FloatingPlayerContainer_PointerEntered"
                         PointerExited="FloatingPlayerContainer_PointerExited">
                         <Grid.Resources>
-                            <StaticResource x:Key="SliderThumbBackground" ResourceKey="PlayerAccentBrush" />
-                            <StaticResource x:Key="SliderThumbBackgroundPointerOver" ResourceKey="PlayerAccentBrush" />
-                            <StaticResource x:Key="SliderThumbBackgroundPressed" ResourceKey="PlayerAccentBrush" />
-                            <StaticResource x:Key="SliderTrackValueFill" ResourceKey="PlayerAccentBrush" />
-                            <StaticResource x:Key="SliderTrackValueFillPointerOver" ResourceKey="PlayerAccentBrush" />
-                            <StaticResource x:Key="SliderTrackValueFillPressed" ResourceKey="PlayerAccentBrush" />
+                            <StaticResource x:Key="SliderThumbBackground" ResourceKey="AccentTextBrush" />
+                            <StaticResource x:Key="SliderThumbBackgroundPointerOver" ResourceKey="AccentTextBrush" />
+                            <StaticResource x:Key="SliderThumbBackgroundPressed" ResourceKey="AccentTextBrush" />
+                            <StaticResource x:Key="SliderTrackValueFill" ResourceKey="AccentTextBrush" />
+                            <StaticResource x:Key="SliderTrackValueFillPointerOver" ResourceKey="AccentTextBrush" />
+                            <StaticResource x:Key="SliderTrackValueFillPressed" ResourceKey="AccentTextBrush" />
                         </Grid.Resources>
                         <Grid.RenderTransform>
                             <CompositeTransform />
@@ -564,7 +564,7 @@
                                                 TextWrapping="NoWrap" />
                                             <Button Grid.Column="1" VerticalAlignment="Center" Visibility="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay, Converter={StaticResource ObjectToVisibilityConverter}}" Style="{StaticResource CompactMediaControlButtonStyle}" ToolTipService.ToolTip="{x:Bind resources:Strings.Listening_PlayerOptions}" AutomationProperties.Name="{x:Bind resources:Strings.Listening_PlayerOptions}">
                                                 <Button.Flyout><MenuFlyout Opening="PlayerOptions_Opening" /></Button.Flyout>
-                                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="16" Glyph="&#xE712;" Foreground="{StaticResource PlayerAccentBrush}" />
+                                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="16" Glyph="&#xE712;" Foreground="{StaticResource AccentTextBrush}" />
                                             </Button>
                                         </Grid>
                                         <localControls:ArtistLinks
@@ -635,7 +635,7 @@
                                             VerticalAlignment="Center"
                                             Style="{StaticResource VolumeSliderStyle}"
                                             AutomationProperties.Name="{x:Bind resources:Strings.Settings_Button_Volume, Mode=OneTime}"
-                                            Foreground="{StaticResource PlayerAccentBrush}"
+                                            Foreground="{StaticResource AccentTextBrush}"
                                             Value="{x:Bind ViewModel.CurrentVolume, Mode=TwoWay}"
                                             Visibility="{x:Bind ViewModel.IsVolumeControlVisible, Mode=OneWay}">
                                             <Slider.Resources>
@@ -668,7 +668,7 @@
                                     IsThumbToolTipEnabled="True"
                                     Maximum="{x:Bind ViewModel.TotalDuration, Mode=OneWay, Converter={StaticResource SliderMaximumConverter}}"
                                     Style="{StaticResource MediaSeekerSliderStyle}"
-                                    Foreground="{StaticResource PlayerAccentBrush}"
+                                    Foreground="{StaticResource AccentTextBrush}"
                                     ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"
                                     Value="{x:Bind ViewModel.CurrentPosition, Mode=TwoWay}" />
                                 <Grid Grid.Row="1" Margin="2,0,2,0">

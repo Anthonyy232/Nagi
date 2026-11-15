@@ -215,7 +215,7 @@
                             <FontIcon x:Name="VolumeLevelIcon"
                                       FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                       FontSize="20"
-                                      Foreground="{StaticResource AppPrimaryColorBrush}"
+                                      Foreground="{StaticResource AccentTextBrush}"
                                       Clip="{x:Bind ViewModel.CurrentVolume, Mode=OneWay, Converter={StaticResource VolumeToClipRectConverter}, ConverterParameter='20'}"
                                       Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.VolumeIcon), Mode=OneWay}" />
                         </Grid>

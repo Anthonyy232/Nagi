@@ -25,7 +25,7 @@
             <uicontrols:CollectionPageHeader.ExtraContent>
                 <DropDownButton
                     IsEnabled="{x:Bind ViewModel.IsAnyOperationInProgress, Converter={StaticResource BooleanToInverseBooleanConverter}, Mode=OneWay}"
-                    Style="{StaticResource AnimatedAccentButtonStyle}"
+                    Style="{StaticResource AccentButtonStyle}"
                     ToolTipService.ToolTip="{x:Bind resources:Strings.FolderPage_AddButton_ToolTip, Mode=OneTime}"
                     AutomationProperties.Name="{x:Bind resources:Strings.FolderPage_AddButton_ToolTip, Mode=OneTime}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
