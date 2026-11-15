@@ -23,9 +23,22 @@
 
 <br>
 
-Windows 10 (1809 or later) or Windows 11, on x64 or ARM64. The Store version updates through the Store. From GitHub, install `Nagi.appinstaller` from the latest release so it updates itself.
+Windows 10 (1809 or later) or Windows 11, on x64 or ARM64. The Store version updates through the Store. From GitHub, install `Nagi.appinstaller` from the latest release so it updates itself. More on the [website](https://anthonyy232.github.io/Nagi/).
 
 Nagi plays the music already on your computer, and can stream from your own Navidrome or Jellyfin server. Point it at your folders and it builds and maintains the library, plays almost any format through LibVLC, and stays offline unless you add a server or turn on an online service. The [privacy policy](PRIVACY.md) lists what each service sends.
+
+## Using Nagi
+
+On first launch Nagi asks where your music is: add one or more folders and it scans them into the library. Add or remove folders later, or add a Navidrome or Jellyfin server, on the Folders page.
+
+Browse by songs, folders, playlists, artists, albums or genres, and open Up Next from the player to see and reorder the queue. Right-click a song for more actions.
+
+Settings is grouped into:
+
+- **Appearance**: theme, language, window backdrop, colors from album art, song list columns, and which pages the navigation shows.
+- **Player Management**: volume normalization, WASAPI exclusive output and the output device, fades, and how Nagi starts, minimizes and hides to the tray.
+- **Data Management**: how artist and genre tags are split, online metadata and lyrics sources, romanization packs, playlist import and export, and backup and restore.
+- **Integrations**: Last.fm, ListenBrainz and Discord Rich Presence.
 
 ## Features
 
@@ -90,12 +103,29 @@ Nagi plays the music already on your computer, and can stream from your own Navi
 
 [.NET 10](https://dotnet.microsoft.com/), [WinUI 3](https://learn.microsoft.com/windows/apps/winui/winui3/), [LibVLCSharp](https://github.com/videolan/libvlcsharp), [EF Core](https://learn.microsoft.com/ef/core/) with SQLite, [ATL](https://github.com/Zeugma440/atldotnet), [libebur128](https://github.com/jiixyj/libebur128), [ModernLrc](https://github.com/Anthonyy232/ModernLrcParser), [ImageSharp](https://github.com/SixLabors/ImageSharp), [Material Color Utilities](https://github.com/albi005/MaterialColorUtilities), [Windows Community Toolkit](https://github.com/CommunityToolkit/Windows), [H.NotifyIcon](https://github.com/HavenDV/H.NotifyIcon) and [Serilog](https://serilog.net/).
 
+## Build from source
+
+You need Visual Studio 2026 or later with the **.NET Desktop Development** and **Universal Windows Platform development** workloads, and the .NET 10 SDK.
+
+```bash
+git clone https://github.com/Anthonyy232/Nagi.git
+```
+
+Open `Nagi.sln`, set the platform to `x64` or `ARM64`, and run **Nagi (Package)**. To build and test from a terminal:
+
+```bash
+dotnet build Nagi.sln -c Debug -p:Platform=x64
+dotnet test --solution Nagi.sln -p:Platform=x64 --no-build
+```
+
+Some tests need `ffmpeg` on `PATH`.
+
 ## Contributing
 
-Issues and pull requests are welcome. Code changes are made with coding agents; point yours at [AGENTS.md](AGENTS.md). Translations are handled on [Crowdin](https://crowdin.com/project/nagi) and need no code changes.
+Issues and pull requests are welcome. Read [AGENTS.md](AGENTS.md) before opening a pull request. Translations are handled on [Crowdin](https://crowdin.com/project/nagi) and need no code changes.
 
 If you'd like to support development, you can [sponsor on GitHub](https://github.com/sponsors/Anthonyy232).
 
 ## License
 
-[GPL-3.0](LICENSE)
+Copyright (c) 2025-2026 Anthony La. Released under the [GNU General Public License v3.0](LICENSE).
