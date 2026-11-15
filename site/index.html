@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Nagi: a calm home for your music</title>
+  <meta name="description" content="A fast, private music player for your local library on Windows, with Navidrome and Jellyfin streaming.">
+  <meta property="og:title" content="Nagi: a calm home for your music">
+  <meta property="og:description" content="A fast, private music player for your local library on Windows, with Navidrome and Jellyfin streaming.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://anthonyy232.github.io/Nagi/">
+  <meta property="og:image" content="https://anthonyy232.github.io/Nagi/img/social.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://anthonyy232.github.io/Nagi/">
+  <link rel="icon" href="AppLogo-small.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/InstrumentSerif-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="top">
+    <a class="brand" href="./"><img src="AppLogo.svg" alt="" width="32" height="32">Nagi</a>
+    <nav aria-label="Site">
+      <a href="#features">Features</a>
+      <a href="#install">Install</a>
+      <a href="https://github.com/Anthonyy232/Nagi/blob/master/PRIVACY.md">Privacy</a>
+      <a href="https://github.com/Anthonyy232/Nagi">GitHub</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <h1>a <em>calm</em> home for&nbsp;your&nbsp;music</h1>
+      <p class="lede">A fast, private music player for your local library on Windows.</p>
+      <div class="buttons">
+        <a class="button primary" href="https://apps.microsoft.com/detail/9P1V1PPML3QT">Get it from Microsoft Store</a>
+        <a class="button" href="https://github.com/Anthonyy232/Nagi/releases/latest">Download from GitHub</a>
+      </div>
+      <p class="note">Free and open source. Windows 10 (1809 or later) and Windows 11, x64 and ARM64.</p>
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="img/hero-dark.webp">
+        <img class="stage wide" src="img/hero-light.webp" width="1728" height="947" fetchpriority="high"
+          alt="Nagi's library page with a list of songs, the Up Next pane on the right and the player along the bottom.">
+      </picture>
+    </section>
+
+    <section id="features" aria-label="Features">
+      <article class="feature">
+        <div>
+          <p class="num">01</p>
+          <h2>Your folders, <em>your</em>&nbsp;library</h2>
+          <p>Point Nagi at your music and it builds the library, watches for changes and plays almost any format. Your own Navidrome or Jellyfin server sits alongside.</p>
+        </div>
+        <picture>
+          <source media="(prefers-color-scheme: dark)" srcset="img/library-dark.webp">
+          <img class="stage" src="img/library-light.webp" width="1139" height="807" loading="lazy" alt="The Albums page showing a grid of album covers.">
+        </picture>
+      </article>
+
+      <article class="feature">
+        <div>
+          <p class="num">02</p>
+          <h2>Lyrics, <em>in&nbsp;time</em></h2>
+          <p>Synced lyrics from tags, .lrc and .ttml files or optional online providers, highlighted as they are sung. Click a line to jump to it.</p>
+        </div>
+        <picture>
+          <source media="(prefers-color-scheme: dark)" srcset="img/lyrics-dark.webp">
+          <img class="stage" src="img/lyrics-light.webp" width="1139" height="807" loading="lazy" alt="The lyrics page with the current line highlighted.">
+        </picture>
+      </article>
+
+      <article class="feature">
+        <div>
+          <p class="num">03</p>
+          <h2>Color from <em>the&nbsp;cover</em></h2>
+          <p>The player and accents follow the album that is playing, on Mica, Mica Alt or Acrylic, in light and dark.</p>
+        </div>
+        <picture>
+          <source media="(prefers-color-scheme: dark)" srcset="img/color-dark.webp">
+          <img class="stage" src="img/color-light.webp" width="1139" height="807" loading="lazy" alt="Three player bars, each tinted by the album art of its song.">
+        </picture>
+      </article>
+
+      <article class="feature">
+        <div>
+          <p class="num">04</p>
+          <h2>Every play, <em>remembered</em></h2>
+          <p>Listening history and Insights are kept on your PC. Nagi stays offline unless you add a server or turn on an online service.</p>
+        </div>
+        <picture>
+          <source media="(prefers-color-scheme: dark)" srcset="img/insights-dark.webp">
+          <img class="stage" src="img/insights-light.webp" width="1139" height="807" loading="lazy" alt="The Insights page with listening time, top songs and top artists.">
+        </picture>
+      </article>
+    </section>
+
+    <section class="more" aria-labelledby="more-title">
+      <h2 id="more-title">And the <em>rest</em></h2>
+      <div class="columns">
+        <div>
+          <h3>Library</h3>
+          <ul>
+            <li>MP3, FLAC, AAC, OGG, WAV, AIFF, APE, DSD, M4A, WMA, WavPack and more</li>
+            <li>Playlists, rule-based smart playlists, M3U import and export</li>
+            <li>Favorites kept in Nagi, without touching your files</li>
+            <li>Favorites, play counts and playlists in step with your Navidrome, OpenSubsonic or Jellyfin server</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Playback</h3>
+          <ul>
+            <li>Up Next pane with reordering, shuffle and repeat</li>
+            <li>Mixes: More Variety, Rediscover and Unheard</li>
+            <li>Play for… builds a queue that fits a chosen time</li>
+            <li>Sleep timer, 10-band equalizer, ReplayGain, and 0.5× to 2× speed without pitch change</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Windows</h3>
+          <ul>
+            <li>Tray popup, media keys and system media controls</li>
+            <li>Taskbar buttons and jump list entries</li>
+            <li>Resizable always-on-top mini-player</li>
+            <li>Romanized Japanese, Korean and Hindi lyrics, done on your PC</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Online, if you want it</h3>
+          <ul>
+            <li>Last.fm and ListenBrainz scrobbling with an offline queue</li>
+            <li>Discord Rich Presence</li>
+            <li>Artist images, biographies, album covers and lyrics from online sources</li>
+            <li>All off by default; the <a href="https://github.com/Anthonyy232/Nagi/blob/master/PRIVACY.md">privacy policy</a> lists what each one sends</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="install" id="install" aria-labelledby="install-title">
+      <h2 id="install-title">Get <em>Nagi</em></h2>
+      <div class="buttons">
+        <a class="button primary" href="https://apps.microsoft.com/detail/9P1V1PPML3QT">Get it from Microsoft Store</a>
+        <a class="button" href="https://github.com/Anthonyy232/Nagi/releases/latest">Download from GitHub</a>
+      </div>
+      <p class="note">The Store version updates through the Store. From GitHub, install <code>Nagi.appinstaller</code> from the latest release so it updates itself.</p>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand" href="./"><img src="AppLogo.svg" alt="" width="24" height="24">Nagi</a>
+    <nav aria-label="Links">
+      <a href="https://github.com/Anthonyy232/Nagi/blob/master/PRIVACY.md">Privacy policy</a>
+      <a href="https://github.com/Anthonyy232/Nagi">Source</a>
+      <a href="https://github.com/Anthonyy232/Nagi/releases">Releases</a>
+      <a href="https://github.com/Anthonyy232/Nagi/issues">Report a bug</a>
+      <a href="https://crowdin.com/project/nagi">Translate</a>
+      <a href="https://github.com/sponsors/Anthonyy232">Sponsor</a>
+    </nav>
+    <p>Free software under the <a href="https://github.com/Anthonyy232/Nagi/blob/master/LICENSE">GPL-3.0</a>.</p>
+  </footer>
+</body>
+</html>

@@ -1,98 +1,98 @@
 # Working on Nagi
 
-Guidance for anyone changing this codebase, human or AI. These are defaults, not laws: follow them unless you have a good reason not to, and say what the reason was.
+A local-first music player for Windows: C#, .NET 10, WinUI 3, packaged as MSIX. Run the `Nagi (Package)` profile of `Nagi.WinUI` to see it, after reading Testing below.
 
-Nagi is a local-first music player for Windows built with C#, .NET 10 and WinUI 3. See the [README](README.md) for features.
+## Code
 
-## Architecture
-
-The solution is layered so that everything except the Windows shell is platform-neutral and could back another UI (for example a macOS or Linux head).
-
-| Project | Owns | May reference |
-| --- | --- | --- |
-| `Nagi.Core` | Library, database (EF Core + SQLite), playback queue, playlists, metadata, lyrics, scrobbling, music servers, file system access | Nothing UI |
-| `Nagi.Presentation` | View models, app services (settings, navigation), the abstractions a UI head implements, localized UI strings | `Nagi.Core` |
-| `Nagi.Audio.LibVlc` | The LibVLC audio player behind `IAudioPlayer` | `Nagi.Core` |
-| `Nagi.WinUI` | XAML pages, windows, tray, taskbar, system media controls, Win32 interop, DI composition, MSIX | Everything above |
-
-- **Code is grouped by feature, not by kind.** Each project's folders are features (`Playback`, `Library`, `Lists`, `Settings`), namespaces follow the folders, and the test projects mirror them.
-- **Put logic in the lowest layer that can own it.** If another head would need it too, it belongs in Core or Presentation, not in a WinUI page or service. WinUI code should be about Windows: XAML, windowing, interop.
-- **No Windows types in Core or Presentation.** Small, guarded OS specifics are fine in shared code (`OperatingSystem.IsWindows()`).
-- **View models don't choose platform assets.** They expose neutral values such as `AppIcon`, and each UI head maps them to its own icons (WinUI: `AppIconGlyphs`).
-- **Services are interfaces registered in DI**, one registration entry point per layer (`AddNagiCore`, `AddNagiPresentation`, `AddNagiApp` for WinUI). Code that a test or another platform needs to replace goes behind an interface; other code doesn't need one.
-- **MVVM with the CommunityToolkit** (`[ObservableProperty]`, `[RelayCommand]`). Pages hold view-only code; workflows and decisions live in view models.
-- **View models own their errors.** Commands and methods that views call log and handle their own failures, so pages bind or call them without try/catch. `IUIService` never throws: a dialog or picker the platform can't show returns what a cancel would.
-- **Pages share behaviour through base classes and helpers** (`ViewModelPage`, `SongListPage`, `CollectionPage`, `SongListToolbar`, `SearchToggle`, `EmptyState`). Similar pages should look and behave the same; when you change one, check its siblings.
-- **Prefer what the platform gives you.** Built-in control behaviour (for example list selection and Ctrl+A), toolkit features and existing helpers come before custom code.
-
-## How we write code
-
-- **Simple beats clever.** Write the most direct code that solves today's problem. No speculative abstractions, options or extension points for needs that don't exist yet.
-- **Stay in scope.** Build what was asked; suggest extras instead of adding them.
-- **Don't hand-roll what already exists**, in the framework, a dependency, or this repo. Search before you write a helper.
-- **Not overly defensive.** Validate at boundaries (user input, files, network, public service entry points) and trust internal callers. Don't wrap everything in try/catch or null checks that can't fail.
-- **One source of truth.** Avoid state that duplicates something the framework or another component already tracks.
-- **Delete dead code** you come across or create: unused members, commands, strings, resources, usings and packages.
-- **Match the surrounding code**: naming, structure, comment density and idioms. Consistency across files matters more than personal preference.
-- **Fix root causes.** If a fix needs a workaround, explain why in a comment.
-- **Fix it everywhere.** After fixing a bug or a convention slip, look for the same pattern elsewhere.
+- Simple and direct. No speculative abstractions, options or extension points.
+- Stay in scope; suggest extras instead of adding them.
+- Use what the platform, framework, dependencies and this repo already provide before writing a helper.
+- Validate only at real boundaries (user input, storage, network, other processes). No checks, fallbacks or try/catch for cases that can't happen.
+- One source of truth for each value or rule.
+- Delete dead code you find or create.
+- Match the surrounding code.
+- Fix root causes, and fix the same pattern everywhere it occurs.
 
 ## Comments
 
-- Explain **why**, not **what**: a constraint, a platform quirk, a non-obvious decision, a race being prevented.
-- Don't restate names or code, narrate the next line, or label sections (`#region`, `// ── Section ──` banners).
-- XML docs on public APIs only when they add something the signature doesn't: units, ranges, what `null` means, threading or ordering guarantees.
-- Remove comments that no longer match the code.
+- Only where the reason isn't clear from the code: a quirk, a race, a non-obvious decision.
+- Short fragments, not sentences. Never restate code, narrate, or label sections.
+- Delete comments that no longer match.
 
 ## Tests
 
-- Test **behaviour and the edges that can break**: ordering, cancellation, races, error paths, migrations, parsing.
-- Skip trivial, duplicate or obvious tests: constructors, default values, property getters, or "calls the dependency it obviously calls". One meaningful test beats several that restate each other.
-- Keep tests deterministic. Prefer fakes, `TimeProvider` and explicit synchronization over sleeps; if timing is unavoidable, keep it short and run the test repeatedly to prove it is stable.
-- Loudness tests need `ffmpeg` on `PATH`.
+- Behaviour and the edges that can break. No trivial, duplicate, obvious or low-signal tests.
+- A regression test fails without its fix.
+- Deterministic: fake time and observable events, no sleeps.
+- A failing test is a bug until shown otherwise.
 
-```powershell
-dotnet build Nagi.sln -c Debug -p:Platform=x64
-dotnet test --solution Nagi.sln -p:Platform=x64 --no-build
-```
+## Layers
 
-## Before you call something done
+- `Nagi.Core` and `Nagi.Presentation` are platform-neutral: no Windows types, and logic another UI head would need goes there, not in `Nagi.WinUI`.
+- View models expose neutral values (`AppIcon`); the WinUI head maps them to its own assets (`AppIconGlyphs`).
+- View models own their errors, so pages bind and call without try/catch. `IUIService` never throws: a dialog it can't show returns what a cancel would.
+- Sibling pages share base classes and helpers (`SongListPage`, `CollectionPage`, `SongListToolbar`); change one, check the others.
 
-- You have **reviewed your own diff against this file**: over-engineering, over-abstraction, defensive code, hand-rolled or duplicated code, low-signal tests, restating comments.
-- It builds with **zero warnings** and **all tests pass**.
-- **UI changes are checked in the running app**, in both light and dark themes and with each backdrop (Mica, Mica Alt, Acrylic) where it matters. A green build does not prove the UI works.
-- Behaviour changes are deliberate and called out, not side effects of a refactor.
-- The README lists new features, and `PRIVACY.md` covers anything new sent online.
+## UI and strings
 
-## UI conventions
-
-- **Use theme resources** (`ThemeResource` brushes, `ControlCornerRadius`, `OverlayCornerRadius`, the shared styles in `Styles/`) instead of hard-coded colors, sizes or radii.
-- **Accessibility:** every icon-only button gets an `AutomationProperties.Name`, normally the same string as its tooltip. Respect reduced motion and high contrast.
-- Labels and commands use Title Case. Rarely changed options belong in Settings, not page headers.
-- **Strings are always localized.** Add new UI strings to `src/Nagi.Presentation/Resources/Strings.resx` (Core messages go in `src/Nagi.Core/Resources/Strings.resx`) in English only; [Crowdin](https://crowdin.com/project/nagi) handles translations. Reuse an existing string when the meaning is the same, and when you remove a key, remove it from every locale file.
-- Don't build sentences from fragments; use whole strings with ICU plurals (`ResourceFormatter`). Renaming a key or moving a `.resx` loses its translations.
-- **Logging:** pages log errors and warnings only; navigation is logged centrally. Services log what helps diagnose a bug report, since recent log lines are attached to crash reports.
+- Theme resources and the shared styles in `Styles/`, never hard-coded colours, sizes or radii.
+- Every icon-only button gets an `AutomationProperties.Name`, normally its tooltip string.
+- See UI changes in light and dark and on each backdrop (Mica, Mica Alt, Acrylic).
+- Every UI string is localised. Add it in English only to `src/Nagi.Presentation/Resources/Strings.resx` (Core messages: `src/Nagi.Core/Resources/Strings.resx`); Crowdin translates and opens its own PR from `crowdin-translations`. Leave that branch and the locale files to it.
+- Removing a key: remove it from every locale file. Renaming a key or moving a `.resx` loses its translations.
+- Whole strings with ICU plurals (`ResourceFormatter`), never sentences built from fragments.
 
 ## Dependencies and data
 
-- Package versions live in `Directory.Packages.props` (central package management). For a major version bump, read the release notes and check every breaking change against how Nagi uses the package.
-- Changing the EF Core model needs a migration: `dotnet ef migrations add <Name> --project src\Nagi.Core --startup-project src\Nagi.Core --context MusicDbContext --no-build`.
+- Package versions live in `Directory.Packages.props` (central package management), not in project files.
+- An EF Core model change needs a migration: `dotnet ef migrations add <Name> --project src\Nagi.Core --startup-project src\Nagi.Core --context MusicDbContext --no-build`.
+- Anything new sent online goes in `PRIVACY.md`.
+
+## Testing
+
+- A dev build registers as package `48743Nagi.Nagi`, the same identity as the owner's Store install, and would share its data. Never deploy it over that install, and never touch `%LOCALAPPDATA%\Nagi` or the owner's music library: use a different package identity (uncommitted) and an invented library, and remove both afterwards.
+- Loudness tests need `ffmpeg` on `PATH`.
+
+## Done means
+
+- Diff reviewed against this file.
+- `dotnet build Nagi.sln -c Debug -p:Platform=x64` then `dotnet test --solution Nagi.sln -p:Platform=x64 --no-build` pass with zero warnings.
+- UI changes seen in the running app, light and dark. Docs and metadata changes need no end-to-end run.
+- README updated for anything users will notice; behaviour changes called out.
+
+## Docs
+
+- README is for users: what it does, how to get it, how to use it. No internals, no agent instructions.
+- This file is for agents: only what can't be found quickly in the code.
+- No meta docs in the repo (notes, audits, plans, reports).
 
 ## Git
 
-- **Commit messages:** `type: summary` in lowercase imperative, describing the outcome, e.g. `fix: keep a maximized window maximized when activating it`. Types: `feat`, `fix`, `refactor`, `perf`, `test`, `docs`, `chore`, `style`, `ci`. Keep messages short; use a brief body (bullets if needed) only to explain why, and add `Fixes #123` when closing an issue.
-- **No AI attribution in history:** no `Co-Authored-By` trailers or mentions of AI assistants in commits, branch names or PRs.
-- **One logical change per commit.** A refactor, a fix and a feature are separate commits, even when made together. A commit that changes behaviour isn't a `refactor`.
-- **Work on a branch off `master`** and merge with a merge commit. Before merging, tidy the branch: squash fix-ups into the commits they fix, and drop commits whose work was later undone.
-- Fix bugs that predate your branch on their own branch, and merge that first.
-- When reworking a contributor's commits, keep them as the author.
-- Don't commit unrelated changes, generated output or secrets. Never force-push `master`.
+- `type: summary` or `type(scope): summary`: lowercase, imperative, no full stop, about 70 characters at most. Types: `feat` `fix` `refactor` `perf` `test` `docs` `style` `build` `ci` `chore`.
+- Body only to say why. `Fixes #123` closes an issue.
+- One logical change per commit. Squash fix-ups before merging.
+- Branch off `master`. A single commit fast-forwards; several merge with `merge: <summary>`.
+- No AI attribution in commits, branches, PRs or releases.
+- One maintainer: amending and force-pushing to tidy history is fine. Keep contributors as authors. Delete stale branches.
+- Old history stays as it is: forks, the Crowdin branch and its PR pin those commits.
 
-## For AI agents
+## Pull requests
 
-- Ask before anything hard to undo or visible to others: pushing (approval to merge isn't approval to push), opening PRs, deleting remote branches, rewriting published history.
-- Leave changes you didn't make alone, and clean up your scratch files, branches and processes when done.
-- Test the app without touching the developer's own install or library.
-- Report results honestly: what was verified and how, what wasn't, and anything you changed on the machine while testing.
-- Keep replies and PR descriptions short; use bullet points when they help.
-- Prefer one clear recommendation over a list of options; ask only when the decision is genuinely the user's.
+- Title in commit format. Body: what changed, why, how it was checked. Short.
+
+## Releases
+
+- Bump commit `chore: release X.Y.Z`: the version in `Directory.Build.props` and `Package.appxmanifest`. Tag `X.Y.Z`, no `v`; the tag push builds the MSIX.
+- Then run the `Create Release` workflow with the tag: SignPath signs the bundle after the owner approves, and a draft release gets `Nagi.msixbundle` and `Nagi.appinstaller`. Installed copies update from `releases/latest/download/Nagi.appinstaller`, so never rename those assets or a tag.
+- Title `Nagi X.Y.Z`.
+- Notes: banner image first, then `### New`, `### Improved`, `### Fixed` (only those that apply). One line per change, written for users; no internals, dependency lists or test counts. End with the install link(s) and the full changelog link.
+- Banner: the art at the top of the previous release, reused. Banners made for releases without it live on the orphan `media` branch as `releases/<tag>.png`, beside the script that draws them.
+- The `romanization-packs` release is the feed the app downloads lyrics packs from: keep its tag and asset names.
+- The Microsoft Store submission is the owner's, by hand.
+
+## Agents
+
+- Pushing, amending and force-pushing are allowed. Ask before publishing a release or submitting to a store.
+- Leave changes you didn't make alone. Clean up scratch files, processes and emulators.
+- Say what was checked and how, and what wasn't.
+- Short replies; one recommendation, not a list of options.
