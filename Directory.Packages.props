@@ -12,25 +12,25 @@
     <PackageVersion Include="Microsoft.WindowsAppSDK.Runtime" Version="2.5.1" />
     <PackageVersion Include="Microsoft.WindowsAppSDK.WinUI" Version="2.3.9" />
     <PackageVersion Include="Microsoft.WindowsAppSDK.InteractiveExperiences" Version="2.1.9" />
-    <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2705" />
+    <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2957" />
     <!-- UI Controls -->
     <PackageVersion Include="H.NotifyIcon.WinUI" Version="2.5.0-dev.2" />
     <PackageVersion Include="ImageEx.WinUI" Version="5.0.0" />
     <PackageVersion Include="MessageFormat" Version="8.0.0" />
     <!-- Entity Framework Core -->
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.12" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.12" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.15" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.15" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.15" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.15" />
     <!-- Microsoft Extensions -->
-    <PackageVersion Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.12" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.12" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
-    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.12" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.15" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.15" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.15" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.15" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.15" />
     <!-- Resilience (rate limiting, retry, circuit breaker) -->
-    <PackageVersion Include="Polly" Version="8.8.0" />
-    <PackageVersion Include="Polly.RateLimiting" Version="8.8.0" />
+    <PackageVersion Include="Polly" Version="8.9.1" />
+    <PackageVersion Include="Polly.RateLimiting" Version="8.9.1" />
     <!-- Media Playback -->
     <PackageVersion Include="LibVLCSharp" Version="4.0.0-alpha-20261009-10406" />
     <PackageVersion Include="VideoLAN.LibVLC.Windows" Version="4.0.0-alpha-20261010" />
@@ -41,15 +41,15 @@
     <PackageVersion Include="Serilog.Sinks.File" Version="8.0.0-nblumhardt-02322" />
     <!-- Audio & Metadata -->
     <PackageVersion Include="ModernLrc" Version="2.0.2" />
-    <PackageVersion Include="z440.atl.core" Version="7.18.0" />
+    <PackageVersion Include="z440.atl.core" Version="7.20.1" />
     <!-- Image Processing -->
     <PackageVersion Include="MaterialColorUtilities" Version="0.3.0" />
-    <PackageVersion Include="SixLabors.ImageSharp" Version="4.1.2" />
+    <PackageVersion Include="SixLabors.ImageSharp" Version="4.1.3" />
     <PackageVersion Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.5" />
     <!-- Presence -->
     <PackageVersion Include="DiscordRichPresence" Version="1.6.1.70" />
     <!-- Azure Functions -->
-    <PackageVersion Include="Microsoft.ApplicationInsights.WorkerService" Version="3.1.2" />
+    <PackageVersion Include="Microsoft.ApplicationInsights.WorkerService" Version="3.2.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker" Version="2.52.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.OpenTelemetry" Version="1.2.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" Version="2.1.1" />
@@ -58,11 +58,11 @@
     <!-- Benchmarks -->
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
     <!-- Testing -->
-    <PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="10.10.0" />
+    <PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="10.11.0" />
     <PackageVersion Include="coverlet.MTP" Version="10.1.0" />
     <PackageVersion Include="FluentAssertions" Version="8.11.0" />
     <PackageVersion Include="NSubstitute" Version="6.2.0" />
     <PackageVersion Include="NSubstitute.Analyzers.CSharp" Version="1.0.17" />
-    <PackageVersion Include="xunit.v3" Version="4.0.1" />
+    <PackageVersion Include="xunit.v3" Version="4.0.3" />
   </ItemGroup>
 </Project>
