@@ -1,6 +1,6 @@
 # Working on Nagi
 
-A local-first music player for Windows: C#, .NET 10, WinUI 3, packaged as MSIX. Run the `Nagi (Package)` profile of `Nagi.WinUI` to see it, after reading Testing below.
+A local-first music player for Windows: C#, .NET 10, WinUI 3, packaged as MSIX. Published on the Microsoft Store and GitHub; it has real users.
 
 ## Code
 
@@ -26,32 +26,14 @@ A local-first music player for Windows: C#, .NET 10, WinUI 3, packaged as MSIX. 
 - Deterministic: fake time and observable events, no sleeps.
 - A failing test is a bug until shown otherwise.
 
-## Layers
+## Nagi
 
-- `Nagi.Core` and `Nagi.Presentation` are platform-neutral: no Windows types, and logic another UI head would need goes there, not in `Nagi.WinUI`.
-- View models expose neutral values (`AppIcon`); the WinUI head maps them to its own assets (`AppIconGlyphs`).
-- View models own their errors, so pages bind and call without try/catch. `IUIService` never throws: a dialog it can't show returns what a cancel would.
-- Sibling pages share base classes and helpers (`SongListPage`, `CollectionPage`, `SongListToolbar`); change one, check the others.
-
-## UI and strings
-
-- Theme resources and the shared styles in `Styles/`, never hard-coded colours, sizes or radii.
-- Every icon-only button gets an `AutomationProperties.Name`, normally its tooltip string.
-- See UI changes in light and dark and on each backdrop (Mica, Mica Alt, Acrylic).
-- Every UI string is localised. Add it in English only to `src/Nagi.Presentation/Resources/Strings.resx` (Core messages: `src/Nagi.Core/Resources/Strings.resx`); Crowdin translates and opens its own PR from `crowdin-translations`. Leave that branch and the locale files to it.
-- Removing a key: remove it from every locale file. Renaming a key or moving a `.resx` loses its translations.
-- Whole strings with ICU plurals (`ResourceFormatter`), never sentences built from fragments.
-
-## Dependencies and data
-
-- Package versions live in `Directory.Packages.props` (central package management), not in project files.
-- An EF Core model change needs a migration: `dotnet ef migrations add <Name> --project src\Nagi.Core --startup-project src\Nagi.Core --context MusicDbContext --no-build`.
+- Core and view-model code is platform-neutral: no Windows types there, and logic another UI head would need stays out of the WinUI project.
+- Every UI string is localised. Add it in English only; translations come through Crowdin, which opens its own pull request. Leave its branch and the locale files to it, except to remove a deleted string from every locale.
+- Whole strings with ICU plurals, never sentences built from fragments.
+- Theme resources and shared styles, never hard-coded colours, sizes or radii; every icon-only button has an accessible name. See UI changes on each backdrop as well as in light and dark.
+- A dev build has the same package identity as the owner's Store install and would share its data. Never deploy over that install or touch its data or the owner's music library: run under a different, uncommitted identity with an invented library, and remove both afterwards.
 - Anything new sent online goes in `PRIVACY.md`.
-
-## Testing
-
-- A dev build registers as package `48743Nagi.Nagi`, the same identity as the owner's Store install, and would share its data. Never deploy it over that install, and never touch `%LOCALAPPDATA%\Nagi` or the owner's music library: use a different package identity (uncommitted) and an invented library, and remove both afterwards.
-- Loudness tests need `ffmpeg` on `PATH`.
 
 ## Done means
 
@@ -74,7 +56,7 @@ A local-first music player for Windows: C#, .NET 10, WinUI 3, packaged as MSIX. 
 - Branch off `master`. A single commit fast-forwards; several merge with `merge: <summary>`.
 - No AI attribution in commits, branches, PRs or releases.
 - One maintainer: amending and force-pushing to tidy history is fine. Keep contributors as authors. Delete stale branches.
-- Old history stays as it is: forks, the Crowdin branch and its PR pin those commits.
+- Old history is not rewritten.
 
 ## Pull requests
 
@@ -82,14 +64,13 @@ A local-first music player for Windows: C#, .NET 10, WinUI 3, packaged as MSIX. 
 
 ## Releases
 
-- Bump commit `chore: release X.Y.Z`: the version in `Directory.Build.props` and `Package.appxmanifest`. Tag `X.Y.Z`, no `v`; the tag push builds the MSIX.
-- Then run the `Create Release` workflow with the tag: SignPath signs the bundle after the owner approves, and a draft release gets `Nagi.msixbundle` and `Nagi.appinstaller`. Installed copies update from `releases/latest/download/Nagi.appinstaller`, so never rename those assets or a tag.
+- Bump commit `chore: release vX.Y.Z`; tag `X.Y.Z`, no `v`.
 - Title `Nagi X.Y.Z`.
 - Notes: banner image first, then `### New`, `### Improved`, `### Fixed` (only those that apply). One line per change, written for users; no internals, dependency lists or test counts. End with the install link(s) and the full changelog link.
-- Banner: `git worktree add <dir> media`, then `node <dir>/releases/banner.cjs X.Y.Z "Short *highlight*" [scene]` (Playwright on `NODE_PATH`; scenes are listed in the script) records it in `banners.json` and draws `releases/X.Y.Z.png`. Commit and push `media`, and open the notes with `![Nagi X.Y.Z](https://raw.githubusercontent.com/Anthonyy232/Nagi/media/releases/X.Y.Z.png)`.
-- Install links: the Store button, then the GitHub button pointing at that release's own `Nagi.msixbundle`, not `releases/latest`.
-- The `romanization-packs` release is the feed the app downloads lyrics packs from: keep its tag and asset names.
-- The Microsoft Store submission is the owner's, by hand.
+- Banner: generated and hosted on the orphan `media` branch; its README has the steps.
+- Install links: the Store button, then, from 2.0.0 on, the GitHub button pointing at that release's own `Nagi.msixbundle`.
+- The tag push builds the bundle; the `Create Release` workflow has it signed, once the owner approves, and puts it on a draft release. The Microsoft Store submission is the owner's, by hand.
+- Installed copies update from the latest release's assets by name, and the app downloads lyrics packs from the `romanization-packs` release: never rename a tag or a release asset.
 
 ## Agents
 
