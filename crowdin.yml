@@ -6,10 +6,14 @@ preserve_hierarchy: true
 
 # Untranslated strings are left out of the exported files so .NET and MRT fall back to the
 # English source, instead of Crowdin copying English text into every locale.
+# A changed English string keeps its translations, marked unapproved for review, and every
+# translation is exported approved or not, so a sync never drops a translation from the repo.
 files:
   - source: /src/Nagi.Core/Resources/Strings.resx
     translation: /src/Nagi.Core/Resources/Strings.%locale%.resx
     skip_untranslated_strings: true
+    export_only_approved: false
+    update_option: update_as_unapproved
     languages_mapping:
       locale:
         ar-SA: ar
@@ -20,6 +24,8 @@ files:
   - source: /src/Nagi.Presentation/Resources/Strings.resx
     translation: /src/Nagi.Presentation/Resources/Strings.%locale%.resx
     skip_untranslated_strings: true
+    export_only_approved: false
+    update_option: update_as_unapproved
     languages_mapping:
       locale:
         ar-SA: ar
@@ -30,6 +36,8 @@ files:
   - source: /src/Nagi.WinUI/Strings/en-US/Resources.resw
     translation: /src/Nagi.WinUI/Strings/%locale%/Resources.resw
     skip_untranslated_strings: true
+    export_only_approved: false
+    update_option: update_as_unapproved
     languages_mapping:
       locale:
         ar-SA: ar
