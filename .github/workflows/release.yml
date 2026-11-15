@@ -10,6 +10,10 @@ on:
 
 permissions: {}
 
+concurrency:
+  group: release-${{ inputs.tag }}
+  cancel-in-progress: false
+
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -122,13 +126,17 @@ jobs:
           RELEASE_REPO: ${{ github.repository }}
         # Notes written ahead of the build wait on a draft; the signed files join it.
         run: |
-          if [ "$(gh release view "$RELEASE_TAG" --repo "$RELEASE_REPO" --json isDraft --jq .isDraft 2>/dev/null)" = "true" ]; then
-            gh release upload "$RELEASE_TAG" --repo "$RELEASE_REPO" signed/Nagi.msixbundle signed/Nagi.appinstaller
-          else
+          if draft=$(gh release view "$RELEASE_TAG" --repo "$RELEASE_REPO" --json isDraft --jq .isDraft 2>&1); then
+            [ "$draft" = "true" ] || { echo "Release $RELEASE_TAG is already published"; exit 1; }
+            gh release upload "$RELEASE_TAG" --repo "$RELEASE_REPO" --clobber signed/Nagi.msixbundle signed/Nagi.appinstaller
+          elif echo "$draft" | grep -q "release not found"; then
             gh release create "$RELEASE_TAG" \
               --repo "$RELEASE_REPO" \
               --title "Nagi $RELEASE_TAG" \
               --draft \
               signed/Nagi.msixbundle \
               signed/Nagi.appinstaller
+          else
+            echo "$draft"
+            exit 1
           fi
