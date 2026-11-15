@@ -24,7 +24,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="{x:Bind Rank.ToString()}" VerticalAlignment="Center"
-                       HorizontalAlignment="Center" Foreground="{ThemeResource AppPrimaryColorBrush}"
+                       HorizontalAlignment="Center" Foreground="{StaticResource AccentTextBrush}"
                        FontWeight="Bold" FontSize="14" />
             <localControls:ArtworkImage Grid.Column="1" HorizontalAlignment="Center" Size="40" Source="{x:Bind ArtworkUri}"
                                      PlaceholderGlyph="&#xE8D6;" PlaceholderGlyphSize="16" Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
@@ -48,7 +48,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="{x:Bind Rank.ToString()}" VerticalAlignment="Center"
-                       HorizontalAlignment="Center" Foreground="{ThemeResource AppPrimaryColorBrush}"
+                       HorizontalAlignment="Center" Foreground="{StaticResource AccentTextBrush}"
                        FontWeight="Bold" FontSize="14" />
             <localControls:ArtworkImage Grid.Column="1" HorizontalAlignment="Center" Size="40" IsCircular="True" Source="{x:Bind ImageUri}"
                                      PlaceholderGlyph="&#xE77B;" PlaceholderGlyphSize="16" Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
@@ -72,7 +72,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="{x:Bind Rank.ToString()}" VerticalAlignment="Center"
-                       HorizontalAlignment="Center" Foreground="{ThemeResource AppPrimaryColorBrush}"
+                       HorizontalAlignment="Center" Foreground="{StaticResource AccentTextBrush}"
                        FontWeight="Bold" FontSize="14" />
             <localControls:ArtworkImage Grid.Column="1" HorizontalAlignment="Center" Size="40" Source="{x:Bind ArtworkUri}"
                                      PlaceholderGlyph="&#xE93C;" PlaceholderGlyphSize="16" Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
@@ -99,7 +99,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="{x:Bind Rank.ToString()}" VerticalAlignment="Center"
-                       HorizontalAlignment="Center" Foreground="{ThemeResource AppPrimaryColorBrush}"
+                       HorizontalAlignment="Center" Foreground="{StaticResource AccentTextBrush}"
                        FontWeight="Bold" FontSize="14" />
             <HyperlinkButton Grid.Column="1" Content="{x:Bind Name}"
                              Command="{x:Bind Command}"

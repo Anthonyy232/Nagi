@@ -6,7 +6,7 @@
     xmlns:controls="using:Microsoft.UI.Xaml.Controls">
 
     <Style x:Key="MediaControlButtonStyle" TargetType="Button" BasedOn="{StaticResource AnimatedIconButtonStyle}">
-        <Setter Property="Foreground" Value="{StaticResource AppPrimaryColorBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource AccentTextBrush}" />
     </Style>
 
     <Style x:Key="CompactMediaControlButtonStyle" TargetType="Button" BasedOn="{StaticResource MediaControlButtonStyle}">

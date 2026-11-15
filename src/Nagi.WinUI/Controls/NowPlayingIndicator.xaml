@@ -23,7 +23,7 @@
                        Height="14"
                        RadiusX="1"
                        RadiusY="1"
-                       Fill="{StaticResource AppPrimaryColorBrush}"
+                       Fill="{StaticResource AccentTextBrush}"
                        RenderTransformOrigin="0.5,1">
                 <Rectangle.RenderTransform>
                     <ScaleTransform x:Name="Bar1Scale" ScaleY="0.4" />
@@ -34,7 +34,7 @@
                        Height="14"
                        RadiusX="1"
                        RadiusY="1"
-                       Fill="{StaticResource AppPrimaryColorBrush}"
+                       Fill="{StaticResource AccentTextBrush}"
                        RenderTransformOrigin="0.5,1">
                 <Rectangle.RenderTransform>
                     <ScaleTransform x:Name="Bar2Scale" ScaleY="0.7" />
@@ -45,7 +45,7 @@
                        Height="14"
                        RadiusX="1"
                        RadiusY="1"
-                       Fill="{StaticResource AppPrimaryColorBrush}"
+                       Fill="{StaticResource AccentTextBrush}"
                        RenderTransformOrigin="0.5,1">
                 <Rectangle.RenderTransform>
                     <ScaleTransform x:Name="Bar3Scale" ScaleY="0.5" />

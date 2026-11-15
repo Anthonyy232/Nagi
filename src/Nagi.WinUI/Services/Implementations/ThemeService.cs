@@ -39,7 +39,7 @@ public sealed class ThemeService : IThemeService
         SetBrushColor(AppResourceKeys.MediaOnImageAccentBrush, palette.MediaOnImageAccent);
         SetBrushColor(AppResourceKeys.PlayerTintColorBrush, palette.PlayerTint);
         SetBrushColor(AppResourceKeys.PlayerBackgroundBrush, palette.PlayerBackground);
-        SetBrushColor(AppResourceKeys.PlayerAccentBrush, palette.PlayerAccent);
+        SetBrushColor(AppResourceKeys.AccentTextBrush, palette.AccentText);
     }
 
     // Each new root takes the current theme, and the theme shown can change with it.

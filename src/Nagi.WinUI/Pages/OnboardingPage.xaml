@@ -241,7 +241,6 @@
                 <TextBlock
                     AutomationProperties.HeadingLevel="Level1"
                     FontSize="52"
-                    Foreground="{ThemeResource AppPrimaryColorBrush}"
                     Style="{StaticResource TitleLargeTextBlockStyle}"
                     Text="{x:Bind resources:Strings.OnboardingPage_Welcome_Title, Mode=OneTime}"
                     TextAlignment="Center"
@@ -265,7 +264,7 @@
                     Content="{x:Bind resources:Strings.OnboardingPage_GetStarted, Mode=OneTime}"
                     FontSize="16"
                     FontWeight="SemiBold"
-                    Style="{StaticResource AnimatedAccentButtonStyle}" />
+                    Style="{StaticResource AccentButtonStyle}" />
                 <StackPanel
                     Margin="0,40,0,0"
                     HorizontalAlignment="Center"
@@ -330,7 +329,7 @@
                         Visibility="{x:Bind ViewModel.IsScanning, Mode=OneWay}" />
                     <FontIcon
                         FontSize="16"
-                        Foreground="{ThemeResource AppPrimaryColorBrush}"
+                        Foreground="{StaticResource AccentTextBrush}"
                         Glyph="&#xE930;"
                         Visibility="{x:Bind ViewModel.IsLibraryReady, Mode=OneWay}" />
                     <FontIcon

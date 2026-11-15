@@ -1,10 +1,9 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/readme/hero-dark.png">
+  <img src=".github/readme/hero-light.png" alt="Nagi: a calm home for your music. A fast, private music player for your local library on Windows, shown with the library, the Up Next pane and the player.">
+</picture>
+
 <div align="center">
-
-<img src="media/AppLogo.png" alt="Nagi icon" width="120">
-
-# Nagi
-
-A fast, private music player for your local library on Windows.
 
 <p>
   <a href="https://github.com/Anthonyy232/Nagi/releases/latest"><img src="https://img.shields.io/github/v/release/Anthonyy232/Nagi?style=flat-square" alt="Latest Release"></a>
@@ -14,13 +13,7 @@ A fast, private music player for your local library on Windows.
   <a href="https://github.com/Anthonyy232/Nagi/blob/master/LICENSE"><img src="https://img.shields.io/github/license/Anthonyy232/Nagi?style=flat-square" alt="License"></a>
 </p>
 
-<img src="https://github.com/user-attachments/assets/58f7a205-113d-463e-a2f3-d9979b935da1" alt="Nagi" width="100%">
-
 </div>
-
-Nagi plays the music already on your computer, and can stream from your own Navidrome or Jellyfin server. Point it at your folders and it builds and maintains the library, plays almost any format through LibVLC, and stays offline unless you add a server or turn on an online service. The [privacy policy](PRIVACY.md) lists what each service sends.
-
-## Download
 
 <div align="center">
   <a href="https://apps.microsoft.com/detail/9P1V1PPML3QT?referrer=appbadge&launch=true&mode=full"><img src="https://get.microsoft.com/images/en-us%20dark.svg" alt="Download from Microsoft Store" width="205"></a>
@@ -32,7 +25,14 @@ Nagi plays the music already on your computer, and can stream from your own Navi
 
 Windows 10 (1809 or later) or Windows 11, on x64 or ARM64. The Store version updates through the Store. From GitHub, install `Nagi.appinstaller` from the latest release so it updates itself.
 
+Nagi plays the music already on your computer, and can stream from your own Navidrome or Jellyfin server. Point it at your folders and it builds and maintains the library, plays almost any format through LibVLC, and stays offline unless you add a server or turn on an online service. The [privacy policy](PRIVACY.md) lists what each service sends.
+
 ## Features
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/readme/feature-library-dark.png">
+  <img src=".github/readme/feature-library-light.png" alt="01. Your folders, your library. The Albums page with twelve albums.">
+</picture>
 
 **Library**
 
@@ -52,6 +52,16 @@ Windows 10 (1809 or later) or Windows 11, on x64 or ARM64. The Store version upd
 - Sleep timer: after the current song, at the end of the queue, or after a set time.
 - 10-band equalizer with preamp, ReplayGain normalization measured locally, and 0.5× to 2× speed without pitch change.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/readme/feature-lyrics-dark.png">
+  <img src=".github/readme/feature-lyrics-light.png" alt="02. Lyrics, in time. Synced lyrics with the current line highlighted.">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/readme/feature-color-dark.png">
+  <img src=".github/readme/feature-color-light.png" alt="03. Color from the cover. Three player bars, each tinted by its album art.">
+</picture>
+
 **Lyrics and appearance**
 
 - Lyrics from embedded tags, `.lrc` and `.ttml` files, or optional online providers, highlighted word by word when the lyrics time each word. Click a synced line to seek to it.
@@ -64,41 +74,17 @@ Windows 10 (1809 or later) or Windows 11, on x64 or ARM64. The Store version upd
 - Tray popup, media keys, system media controls and taskbar thumbnail buttons.
 - Jump list entries to shuffle the library or open the mini-player.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/readme/feature-insights-dark.png">
+  <img src=".github/readme/feature-insights-light.png" alt="04. Every play, remembered. The Insights page with listening time, top songs and top artists.">
+</picture>
+
 **Optional online services** (off by default)
 
 - Last.fm and ListenBrainz scrobbling, with an offline queue.
 - Discord Rich Presence.
 - Artist images, biographies and album covers from MusicBrainz, Wikipedia, Cover Art Archive, fanart.tv, TheAudioDB, Deezer, Apple Music and Last.fm.
 - Lyrics from LRCLIB and NetEase.
-
-## Screenshots
-
-<div align="center">
-<table>
-  <tr>
-    <td align="center" colspan="2">
-      <img src="media/screenshot-library.png" alt="Library" width="100%"><br>
-      <sub>Library</sub>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="50%">
-      <img src="media/screenshot-albums.png" alt="Albums" width="100%"><br>
-      <sub>Albums</sub>
-    </td>
-    <td align="center" width="50%">
-      <img src="media/screenshot-artists.png" alt="Artists" width="100%"><br>
-      <sub>Artists</sub>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" colspan="2">
-      <img src="media/screenshot-tray.png" alt="Tray popup" width="420"><br>
-      <sub>Tray popup</sub>
-    </td>
-  </tr>
-</table>
-</div>
 
 ## Built with
 

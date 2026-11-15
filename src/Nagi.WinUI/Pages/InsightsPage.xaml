@@ -14,7 +14,7 @@
 
     <Page.Resources>
         <DataTemplate x:Key="InsightsCategoryCardTemplate" x:DataType="insights:InsightsCategoryViewModel">
-            <Grid Style="{StaticResource InsightsCardStyle}">
+            <Grid Style="{StaticResource InsightsSectionStyle}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -93,12 +93,12 @@
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="Row2Grid.RowSpacing" Value="16" />
+                        <Setter Target="Row2Grid.RowSpacing" Value="24" />
                         <Setter Target="TopSongsCard.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="TopArtistsCard.(Grid.Column)" Value="0" />
                         <Setter Target="TopArtistsCard.(Grid.Row)" Value="1" />
                         <Setter Target="TopArtistsCard.(Grid.ColumnSpan)" Value="2" />
-                        <Setter Target="Row3Grid.RowSpacing" Value="16" />
+                        <Setter Target="Row3Grid.RowSpacing" Value="24" />
                         <Setter Target="TopAlbumsCard.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="TopGenresCard.(Grid.Column)" Value="0" />
                         <Setter Target="TopGenresCard.(Grid.Row)" Value="1" />
@@ -152,7 +152,7 @@
                       Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
 
             <Grid Visibility="{x:Bind ViewModel.HasData, Mode=OneWay}">
-                <StackPanel Padding="{StaticResource PageContentPadding}" Spacing="16">
+                <StackPanel Padding="{StaticResource PageContentPadding}" Spacing="24">
                     <StackPanel.ChildrenTransitions>
                         <TransitionCollection>
                             <EntranceThemeTransition FromVerticalOffset="40" />
@@ -171,14 +171,14 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <Grid x:Name="HeroCard1" Grid.Column="0" Grid.Row="0" Style="{StaticResource InsightsHeroCardStyle}">
-                            <Grid ColumnSpacing="16" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Grid x:Name="HeroCard1" Grid.Column="0" Grid.Row="0">
+                            <Grid ColumnSpacing="16">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <FontIcon Grid.Column="0" Glyph="&#xE7F6;" FontSize="32"
-                                          Foreground="{ThemeResource AppPrimaryColorBrush}"
+                                          Foreground="{StaticResource AccentTextBrush}"
                                           VerticalAlignment="Center" />
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                                     <TextBlock Text="{x:Bind ViewModel.TotalListenTimeText, Mode=OneWay}"
@@ -189,14 +189,14 @@
                             </Grid>
                         </Grid>
 
-                        <Grid x:Name="HeroCard2" Grid.Column="1" Grid.Row="0" Style="{StaticResource InsightsHeroCardStyle}">
-                            <Grid ColumnSpacing="16" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Grid x:Name="HeroCard2" Grid.Column="1" Grid.Row="0">
+                            <Grid ColumnSpacing="16">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <FontIcon Grid.Column="0" Glyph="&#xE8D6;" FontSize="32"
-                                          Foreground="{ThemeResource AppPrimaryColorBrush}"
+                                          Foreground="{StaticResource AccentTextBrush}"
                                           VerticalAlignment="Center" />
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                                     <TextBlock Text="{x:Bind ViewModel.UniqueSongsPlayed.ToString(), Mode=OneWay}"
@@ -207,14 +207,14 @@
                             </Grid>
                         </Grid>
 
-                        <Grid x:Name="HeroCard3" Grid.Column="2" Grid.Row="0" Style="{StaticResource InsightsHeroCardStyle}">
-                            <Grid ColumnSpacing="16" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Grid x:Name="HeroCard3" Grid.Column="2" Grid.Row="0">
+                            <Grid ColumnSpacing="16">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <FontIcon Grid.Column="0" Glyph="&#xE823;" FontSize="32"
-                                          Foreground="{ThemeResource AppPrimaryColorBrush}"
+                                          Foreground="{StaticResource AccentTextBrush}"
                                           VerticalAlignment="Center" />
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                                     <TextBlock Text="{x:Bind ViewModel.PeakHourText, Mode=OneWay}"
@@ -225,14 +225,14 @@
                             </Grid>
                         </Grid>
 
-                        <Grid x:Name="HeroCard4" Grid.Column="3" Grid.Row="0" Style="{StaticResource InsightsHeroCardStyle}">
-                            <Grid ColumnSpacing="16" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Grid x:Name="HeroCard4" Grid.Column="3" Grid.Row="0">
+                            <Grid ColumnSpacing="16">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <FontIcon Grid.Column="0" Glyph="&#xE787;" FontSize="32"
-                                          Foreground="{ThemeResource AppPrimaryColorBrush}"
+                                          Foreground="{StaticResource AccentTextBrush}"
                                           VerticalAlignment="Center" />
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                                     <TextBlock Text="{x:Bind ViewModel.MostActiveDayText, Mode=OneWay}"
@@ -244,7 +244,7 @@
                         </Grid>
                     </Grid>
 
-                    <Grid x:Name="Row2Grid" ColumnSpacing="16">
+                    <Grid x:Name="Row2Grid" ColumnSpacing="32">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
@@ -267,7 +267,7 @@
                                           VerticalContentAlignment="Stretch" />
                     </Grid>
 
-                    <Grid x:Name="Row3Grid" ColumnSpacing="16">
+                    <Grid x:Name="Row3Grid" ColumnSpacing="32">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
@@ -290,7 +290,7 @@
                                           VerticalContentAlignment="Stretch" />
                     </Grid>
 
-                    <Grid Style="{StaticResource InsightsCardStyle}">
+                    <Grid Style="{StaticResource InsightsSectionStyle}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />

@@ -39,7 +39,6 @@
                 x:Name="TitleText"
                 AutomationProperties.HeadingLevel="Level1"
                 FontSize="40"
-                Foreground="{ThemeResource AppPrimaryColorBrush}"
                 Style="{StaticResource TitleTextBlockStyle}"
                 Text="{x:Bind Title, Mode=OneWay}"
                 TextWrapping="WrapWholeWords" />
