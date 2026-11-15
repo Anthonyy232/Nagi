@@ -12,6 +12,11 @@ on:
   schedule:
     - cron: '0 8 * * 1'
   workflow_dispatch:
+    inputs:
+      upload_translations:
+        description: Send the translations in the repository to Crowdin first
+        type: boolean
+        default: false
 
 concurrency:
   group: crowdin-sync
@@ -39,7 +44,8 @@ jobs:
         uses: crowdin/github-action@v3.3.0
         with:
           upload_sources: true
-          upload_translations: false
+          upload_translations: ${{ inputs.upload_translations || false }}
+          import_eq_suggestions: true
           download_translations: true
           create_pull_request: true
           pull_request_title: 'New Crowdin translations'
