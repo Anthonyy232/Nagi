@@ -299,13 +299,13 @@
     <value>Hitilafu wakati wa kuchanganua upya folda: {0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0, plural, other {folda #}}</value>
+    <value>{0, plural, one {folda #} other {folda #}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
     <value>{0, plural, one {wimbo #} other {nyimbo #}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
-    <value>{0, plural, other {albamu #}}</value>
+    <value>{0, plural, one {albamu #} other {albamu #}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
     <value>{0, plural, one {msanii #} other {wasanii #}}</value>
@@ -447,10 +447,10 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
     <value>Hakuna sheria zilizofafanuliwa • Nyimbo zote zinalingana</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>{0, plural, other {Linganisha zote ya # sheria}}</value>
+    <value>{0, plural, one {Linganisha zote ya # sheria} other {Linganisha zote ya # sheria}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>{0, plural, other {Linganisha yoyote ya # sheria}}</value>
+    <value>{0, plural, one {Linganisha yoyote ya # sheria} other {Linganisha yoyote ya # sheria}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {kitu #} other {vitu #}}</value>

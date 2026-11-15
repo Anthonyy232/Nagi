@@ -299,10 +299,10 @@
     <value>Gabim në riskanimin e dosjes: {0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0, plural, other {# dosje}}</value>
+    <value>{0, plural, one {# dosje} other {# dosje}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
-    <value>{0, plural, other {# këngë}}</value>
+    <value>{0, plural, one {# këngë} other {# këngë}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
     <value>{0, plural, one {# album} other {# albume}}</value>
@@ -335,7 +335,7 @@
     <value>Biblioteka juaj është gati.</value>
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
-    <value>{0, plural, other {Inteligjente • # këngë}}</value>
+    <value>{0, plural, one {Inteligjente • # këngë} other {Inteligjente • # këngë}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Asnjë këngë nuk përputhet me rregullat e kësaj liste luajtjeje inteligjente.</value>

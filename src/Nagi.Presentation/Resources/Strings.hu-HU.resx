@@ -299,16 +299,16 @@
     <value>Hiba a mappa újraolvasásakor: {0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0, plural, other {# mappa}}</value>
+    <value>{0, plural, one {# mappa} other {# mappa}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
-    <value>{0, plural, other {# dal}}</value>
+    <value>{0, plural, one {# dal} other {# dal}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
-    <value>{0, plural, other {# album}}</value>
+    <value>{0, plural, one {# album} other {# album}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
-    <value>{0, plural, other {# előadó}}</value>
+    <value>{0, plural, one {# előadó} other {# előadó}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Nincsenek elemek</value>
@@ -335,7 +335,7 @@
     <value>A könyvtár készen áll.</value>
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
-    <value>{0, plural, other {Intelligens • # dal}}</value>
+    <value>{0, plural, one {Intelligens • # dal} other {Intelligens • # dal}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Egy dal sem egyezik ezzel az intelligens lejátszási lista szabályaival.</value>
@@ -447,13 +447,13 @@ Nem importálható fájlok: {0}.</value>
     <value>Nincsenek definiált szabályok • Az összes dal egyezik</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>{0, plural, other {# szabály közül mind teljesül}}</value>
+    <value>{0, plural, one {# szabály közül mind teljesül} other {# szabály közül mind teljesül}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>{0, plural, other {# szabály közül bármelyik teljesül}}</value>
+    <value>{0, plural, one {# szabály közül bármelyik teljesül} other {# szabály közül bármelyik teljesül}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
-    <value>{0, plural, other {# elem}}</value>
+    <value>{0, plural, one {# elem} other {# elem}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} kiválasztva</value>

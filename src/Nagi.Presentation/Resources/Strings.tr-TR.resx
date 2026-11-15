@@ -299,16 +299,16 @@
     <value>Klasör yeniden taranırken hata oluştu: {0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0, plural, other {# klasör}}</value>
+    <value>{0, plural, one {# klasör} other {# klasör}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
-    <value>{0, plural, other {# şarkı}}</value>
+    <value>{0, plural, one {# şarkı} other {# şarkı}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
-    <value>{0, plural, other {# albüm}}</value>
+    <value>{0, plural, one {# albüm} other {# albüm}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
-    <value>{0, plural, other {# sanatçı}}</value>
+    <value>{0, plural, one {# sanatçı} other {# sanatçı}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Öğe yok</value>
@@ -335,7 +335,7 @@
     <value>Kitaplığınız hazır.</value>
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
-    <value>{0, plural, other {Akıllı • # şarkı}}</value>
+    <value>{0, plural, one {Akıllı • # şarkı} other {Akıllı • # şarkı}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Bu akıllı çalma listesinin kurallarıyla eşleşen şarkı yok.</value>
@@ -447,13 +447,13 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
     <value>Kural tanımlanmamış • Tüm şarkılar eşleşiyor</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>{0, plural, one {# kural} other {# kurallar}} arasından tümü eşleştir</value>
+    <value>{0, plural, one {# kural} other {# kural}} arasından tümü eşleştir</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>{0, plural, one {# kural} other {# kurallar}} arasından herhangi biri eşleştir</value>
+    <value>{0, plural, one {# kural} other {# kural}} arasından herhangi biri eşleştir</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
-    <value>{0, plural, other {# öğe}}</value>
+    <value>{0, plural, one {# öğe} other {# öğe}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} seçili</value>

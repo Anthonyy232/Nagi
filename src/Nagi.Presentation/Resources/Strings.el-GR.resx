@@ -305,7 +305,7 @@
     <value>{0, plural, one {# τραγούδι} other {# τραγούδια}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
-    <value>{0, plural, other {# άλμπουμ}}</value>
+    <value>{0, plural, one {# άλμπουμ} other {# άλμπουμ}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
     <value>{0, plural, one {# καλλιτέχνης} other {# καλλιτέχνες}}</value>

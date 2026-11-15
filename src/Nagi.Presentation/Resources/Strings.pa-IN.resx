@@ -302,13 +302,13 @@
     <value>{0, plural, other {# ਫੋਲਡਰ}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
-    <value>{0, plural, other {# ਗੀਤ}}</value>
+    <value>{0, plural, one {# ਗੀਤ} other {# ਗੀਤ}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
     <value>{0, plural, one {# ਐਲਬਮ} other {# ਐਲਬਮਾਂ}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
-    <value>{0, plural, other {# ਕਲਾਕਾਰ}}</value>
+    <value>{0, plural, one {# ਕਲਾਕਾਰ} other {# ਕਲਾਕਾਰ}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>ਕੋਈ ਆਈਟਮ ਨਹੀਂ</value>
@@ -335,7 +335,7 @@
     <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਤਿਆਰ ਹੈ।</value>
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
-    <value>{0, plural, other {ਸਮਾਰਟ • # ਗੀਤ}}</value>
+    <value>{0, plural, one {ਸਮਾਰਟ • # ਗੀਤ} other {ਸਮਾਰਟ • # ਗੀਤ}}</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>ਇਸ ਸਮਾਰਟ ਪਲੇਲਿਸਟ ਦੇ ਨਿਯਮਾਂ ਨਾਲ ਕੋਈ ਗੀਤ ਮੇਲ ਨਹੀਂ ਖਾਂਦੇ।</value>
@@ -447,10 +447,10 @@
     <value>ਕੋਈ ਨਿਯਮ ਪਰਿਭਾਸ਼ਿਤ ਨਹੀਂ • ਸਾਰੇ ਗੀਤ ਮੇਲ ਖਾਂਦੇ ਹਨ</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>{0, plural, other {# ਨਿਯਮ ਵਿੱਚੋਂ ਸਾਰੇ ਮੇਲ ਖਾਂਦਾ ਹੈ}}</value>
+    <value>{0, plural, one {# ਨਿਯਮ ਵਿੱਚੋਂ ਸਾਰੇ ਮੇਲ ਖਾਂਦਾ ਹੈ} other {# ਨਿਯਮ ਵਿੱਚੋਂ ਸਾਰੇ ਮੇਲ ਖਾਂਦਾ ਹੈ}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>{0, plural, other {# ਨਿਯਮ ਵਿੱਚੋਂ ਕੋਈ ਵੀ ਮੇਲ ਖਾਂਦਾ ਹੈ}}</value>
+    <value>{0, plural, one {# ਨਿਯਮ ਵਿੱਚੋਂ ਕੋਈ ਵੀ ਮੇਲ ਖਾਂਦਾ ਹੈ} other {# ਨਿਯਮ ਵਿੱਚੋਂ ਕੋਈ ਵੀ ਮੇਲ ਖਾਂਦਾ ਹੈ}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# ਆਈਟਮ} other {# ਆਈਟਮਾਂ}}</value>
