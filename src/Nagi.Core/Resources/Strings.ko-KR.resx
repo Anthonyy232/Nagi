@@ -250,6 +250,6 @@
   </data>
   <data name="Biography_WikipediaAttribution" xml:space="preserve">
     <value>출처: 위키백과, CC BY-SA 라이선스에 따라 이용됩니다.</value>
-    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
+    <comment>Shown below an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

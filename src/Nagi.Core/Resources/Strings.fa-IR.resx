@@ -250,6 +250,6 @@
   </data>
   <data name="Biography_WikipediaAttribution" xml:space="preserve">
     <value>برگرفته از ویکی‌پدیا، تحت مجوز CC BY-SA.</value>
-    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
+    <comment>Shown below an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

@@ -250,6 +250,6 @@
   </data>
   <data name="Biography_WikipediaAttribution" xml:space="preserve">
     <value>内容来自维基百科，依据 CC BY-SA 许可协议使用。</value>
-    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
+    <comment>Shown below an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>
