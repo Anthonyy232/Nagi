@@ -1,0 +1,30 @@
+name: Bug report
+description: Something in Nagi doesn't work as it should
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what you got. Screenshots help.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Nagi version
+      description: Settings > About, and whether it came from the Microsoft Store or GitHub.
+      placeholder: 2.7.0, Microsoft Store
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      placeholder: Windows 11 24H2
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: The log Nagi offers to copy after a crash, if there was one.
+      render: text
