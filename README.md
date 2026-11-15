@@ -10,6 +10,7 @@ The images Nagi's README, website, app package and releases use, and the scripts
 | `common.cjs` | Fonts, colours and page helpers both scripts share. |
 | `fonts/` | Instrument Serif, the headline font, under the SIL Open Font License (`fonts/OFL.txt`). |
 | `issues/` | Evidence images linked from bug reports. |
+| `sandbox/` | Runs a development build in Windows Sandbox and captures `readme/inputs/`. |
 
 ## Setup
 
@@ -60,18 +61,13 @@ The words between asterisks take the accent colour. Scenes: `mark` (the logo, th
 | `albums-{theme}.png` | 1023x751 | The page area right of the navigation pane, Albums page, with the top of the player bar. |
 | `lyrics-{theme}.png` | 1023x751 | The same area on the lyrics page of *Marigold Static*, *Sunlight folded in the wire* current. |
 | `insights-{theme}.png` | 1023x751 | The same area on Insights, Last 30 Days. |
-| `player-{1,2,3}-{theme}.png` | 1023x157 or 158 | The player bar alone, playing *Harbour at Six*, *Token Machine* and *Marigold Static*. |
+| `player-{1,2,3}-{theme}.png` | 1023x157 | The player bar alone, paused on *Harbour at Six*, *Token Machine* and *Marigold Static*. |
 
-The originals were lost, so these were cut from the README panels on `master` at 11086409 at their native resolution, inside the window edge so none of the old gradient stage came along: the window at (304, 772) in `hero-*.png`, the pages at (922, 100) and the player bars at (922, 148), (922, 370) and (922, 592) in `feature-*.png`.
+They are captured from a Release build running in Windows Sandbox on an invented library, by the script in `sandbox/`; its README has the details.
 
-Known difference: the app now draws the Up Next title in the normal text colour, but these screenshots predate that and show it in the accent green (`library-*`, and the `library` and `queue` banner scenes). Fix it at the next capture.
+```powershell
+powershell -ExecutionPolicy Bypass -File sandbox\run.ps1 <nagi> -Inputs
+node readme/build.cjs <nagi>
+```
 
-### Capturing them again (manual)
-
-The app can't be driven from a script here, so this is done by hand. Replace a file with one of the same size and name, run both scripts, and look at every image.
-
-1. **Never use the Store install** (package `48743Nagi.Nagi`) or its data. A development build has the same identity and would replace it and share its data. In an uncommitted change to `src/Nagi.WinUI/Package.appxmanifest`, give the `Identity` another `Name` (for example `Nagi.Capture`) and delete the `windows.fileTypeAssociation`, `windows.startupTask` and `windows.appExecutionAlias` extensions, so it claims neither the `nagi.exe` alias nor the file types. Build it with `dotnet build Nagi.sln -c Debug -p:Platform=x64` and register the build output's `AppxManifest.xml` with `Add-AppxPackage -Register`. Revert the manifest afterwards.
-2. **An invented library, never a real one.** A folder of short generated audio files (any tone or silence) tagged with invented artists, albums and titles, each album with generated flat cover art (dots, rings, waves, a sunset, overlapping squares; no real brands or artwork). The current shots use: Ilse Varga Trio (*Still Water Sessions*, *After Hours at the Juniper*; songs *Harbour at Six* 2:30, *Slow Ferry*, *Last Tram Home*, *Still Water*, *A Room Facing North*, *Blue Kettle*, *Paper Boats*), The Glasswing Hours (*Marigold Static*, 4:59, with a synced `.lrc`: *Every signal is a gift*, *Sunlight folded in the wire*, *Soft as breath and twice as high*, *Stay a little, stay a while*), Northfield Static (*Afterimage*, *Signal Garden*, *Carrier Wave*), Mira Okonjo-Hale (*Paper Weather*, *Barometer*), Low Tide Arcade (*Token Machine*), Tomasz Belrose (*Letters to a Lighthouse*), and a few more to make 80 songs on 12 albums. Play songs for a few minutes each so Insights has history.
-3. **Window and display.** Display scale 125% (what the current shots measure as), Mica backdrop, colours from the album art on. Size the window to 1440 physical pixels wide for `library-*`; the page and player shots are 1023 pixels wide. Capture light and dark with the app's theme setting, same state in both.
-4. **Crop** each capture to the sizes above with no desktop or shadow around it, save over the old file, and run the scripts.
-5. **Clean up**: `Get-AppxPackage Nagi.Capture | Remove-AppxPackage`, delete the invented library, and revert the manifest.
+Look at every input and every rebuilt image, then commit the inputs here and the images on `master`. The sizes above assume the host display is at 125%.
