@@ -47,6 +47,7 @@ A local-first music player for Windows: C#, .NET, WinUI 3, packaged as MSIX. Pub
 - README is for users: what it does, how to get it, how to use it. No internals, no agent instructions.
 - This file is for agents: only what can't be found quickly in the code.
 - No meta docs in the repo (notes, audits, plans, reports).
+- Generated images (README panels, `site/img`, the app icon set, release banners) are built from the `media` branch; its README has the steps.
 
 ## Git
 
