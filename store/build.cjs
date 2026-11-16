@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
-const { checkout, themes, input } = require('../common.cjs');
+const { checkout, themes, dataUrl } = require('../common.cjs');
 
 const logo = fs.readFileSync(path.join(checkout(), 'media', 'AppLogo.svg'), 'utf8').replace(/<title>.*?<\/title>/, '');
 const t = themes.dark;
@@ -12,8 +12,8 @@ const page = (w, h, share) => `<!doctype html><meta charset="utf-8"><style>
   body { margin: 0; width: ${w}px; height: ${h}px; display: grid; place-items: center; background: radial-gradient(70% 55% at 50% 45%, ${t.stage} 0%, ${t.bg} 100%); }
   svg { width: ${Math.round(Math.min(w, h) * share)}px; }
 </style>${logo}`;
-// Real captures of the app on its demo library. The Store wants at least 1366x768, so a smaller window sits on a stage.
-const shots = ['library-dark', 'albums-light', 'lyrics-dark', 'insights-light', 'library-light'];
+// The README panels on a 16:9 page of their own background, so the listing matches the README and the site.
+const shots = ['hero-dark', 'feature-library-dark', 'feature-lyrics-light', 'feature-color-dark', 'feature-insights-light'];
 
 (async () => {
   const browser = await chromium.launch();
@@ -24,10 +24,9 @@ const shots = ['library-dark', 'albums-light', 'lyrics-dark', 'insights-light', 
     await p.close();
   }
   for (const [i, name] of shots.entries()) {
-    const shot = input(name);
-    const stage = themes[name.endsWith('dark') ? 'dark' : 'light'].stage;
-    const p = await browser.newPage({ viewport: { width: 1440, height: 876 } });
-    await p.setContent(`<!doctype html><style>body { margin: 0; height: 876px; display: grid; place-items: center; background: ${stage}; } img { border-radius: ${shot.width < 1366 ? 8 : 0}px; box-shadow: 0 30px 80px -30px #0008; }</style><img src="${shot.src}">`);
+    const p = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
+    const panel = dataUrl(path.join(checkout(), '.github', 'readme', `${name}.png`), 'image/png');
+    await p.setContent(`<!doctype html><style>body { margin: 0; height: 1080px; display: grid; place-items: center; background: ${themes[name.split('-').pop()].bg}; } img { max-width: 1800px; max-height: 1040px; }</style><img src="${panel}">`);
     await p.screenshot({ path: path.join(__dirname, `screenshot-${i + 1}.png`) });
     await p.close();
   }
