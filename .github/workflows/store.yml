@@ -1,0 +1,84 @@
+name: Store Submission
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'The released tag to submit (e.g., 1.0.0)'
+        required: true
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: store-${{ inputs.tag || github.event.release.tag_name }}
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  submit:
+    name: Submit to Microsoft Store
+    runs-on: windows-latest
+    permissions:
+      contents: read
+      actions: read
+    env:
+      TAG: ${{ inputs.tag || github.event.release.tag_name }}
+      STORE_TENANT_ID: ${{ secrets.STORE_TENANT_ID }}
+      STORE_SELLER_ID: ${{ secrets.STORE_SELLER_ID }}
+      STORE_CLIENT_ID: ${{ secrets.STORE_CLIENT_ID }}
+      STORE_CLIENT_SECRET: ${{ secrets.STORE_CLIENT_SECRET }}
+    steps:
+      # Other releases, such as romanization-packs, have no Store package.
+      - name: Check tag and credentials
+        id: gate
+        shell: pwsh
+        run: |
+          if ($env:TAG -notmatch '^\d+\.\d+\.\d+$') {
+            echo "::notice::$env:TAG is not an app release; nothing to submit."
+          } elseif (-not ($env:STORE_TENANT_ID -and $env:STORE_SELLER_ID -and $env:STORE_CLIENT_ID -and $env:STORE_CLIENT_SECRET)) {
+            echo "::notice::Store credentials are not set; skipping the Store submission."
+          } else {
+            echo "submit=true" >> $env:GITHUB_OUTPUT
+          }
+
+      - uses: actions/checkout@v7.0.1
+        if: steps.gate.outputs.submit
+        with:
+          ref: refs/tags/${{ env.TAG }}
+
+      - name: Resolve release commit
+        if: steps.gate.outputs.submit
+        id: tag
+        shell: pwsh
+        run: echo "commit=$(git rev-parse HEAD)" >> $env:GITHUB_OUTPUT
+
+      - name: Download Store package from build workflow
+        if: steps.gate.outputs.submit
+        uses: dawidd6/action-download-artifact@v28
+        with:
+          workflow: build.yml
+          workflow_conclusion: success
+          commit: ${{ steps.tag.outputs.commit }}
+          event: push
+          name: Store-MSIX-${{ env.TAG }}
+          search_artifacts: true
+
+      - uses: microsoft/microsoft-store-apppublisher@v1.4
+        if: steps.gate.outputs.submit
+        with:
+          version: v0.4.4
+
+      - name: Configure Store credentials
+        if: steps.gate.outputs.submit
+        run: msstore reconfigure --tenantId $env:STORE_TENANT_ID --sellerId $env:STORE_SELLER_ID --clientId $env:STORE_CLIENT_ID --clientSecret $env:STORE_CLIENT_SECRET
+
+      # Replaces the previous .msixupload in a new submission cloned from the live one, then commits it.
+      # Any pending draft submission is deleted.
+      - name: Submit package
+        if: steps.gate.outputs.submit
+        run: msstore publish "$env:GITHUB_WORKSPACE/Nagi.msixupload" -id 9P1V1PPML3QT --uploadTimeout 3600
