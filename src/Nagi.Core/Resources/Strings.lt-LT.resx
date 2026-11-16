@@ -125,7 +125,7 @@
     <value>Ruošiamasi bibliotekos nuskaitymui…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Nuskaitoma dainų informacija…</value>
+    <value>Nuskaitoma kūrinių informacija…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
     <value>Tvarkoma biblioteka…</value>
@@ -193,16 +193,16 @@
     <value>Vokalinis</value>
   </data>
   <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
-    <value>Visos dainos jau turi garso duomenis.</value>
+    <value>Visi kūriniai jau turi garso duomenis.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Analizuojamas garsumas… Dainų: {0}</value>
+    <value>Analizuojamas garsumas… Kūrinių: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
     <value>Skaičiuojamas garso normalizavimas ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Garso normalizavimas baigtas. Apdorota dainų: {0}.</value>
+    <value>Garso normalizavimas baigtas. Apdorota kūrinių: {0}.</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
     <value>Įveskite savo ListenBrainz naudotojo prieigos raktą.</value>

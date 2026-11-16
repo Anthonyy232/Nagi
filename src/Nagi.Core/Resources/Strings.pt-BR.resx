@@ -169,10 +169,10 @@
     <value>Dance</value>
   </data>
   <data name="EqPreset_FullBass" xml:space="preserve">
-    <value>Graves Completos</value>
+    <value>Graves completos</value>
   </data>
   <data name="EqPreset_FullTreble" xml:space="preserve">
-    <value>Agudos Completos</value>
+    <value>Agudos completos</value>
   </data>
   <data name="EqPreset_Jazz" xml:space="preserve">
     <value>Jazz</value>

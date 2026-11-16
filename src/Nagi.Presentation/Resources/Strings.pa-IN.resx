@@ -200,7 +200,7 @@
     <value>ਨਵੀਂ ਸਮਾਰਟ ਪਲੇਲਿਸਟ</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>ਸਮਾਰਟ ਪਲੇਅਲਿਸਟ ਸੰਪਾਦਿਤ ਕਰੋ: {0}</value>
+    <value>ਸਮਾਰਟ ਪਲੇਲਿਸਟ ਸੰਪਾਦਿਤ ਕਰੋ: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>ਇੱਕ ਪਲੇਲਿਸਟ ਨਾਮ ਦਰਜ ਕਰੋ</value>
@@ -215,10 +215,10 @@
     <value>ਗਣਨਾ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>ਇਸ ਨਾਂ ਦੀ ਇੱਕ ਪਲੇਅਲਿਸਟ ਪਹਿਲਾਂ ਹੀ ਮੌਜੂਦ ਹੈ।</value>
+    <value>ਇਸ ਨਾਂ ਦੀ ਇੱਕ ਪਲੇਲਿਸਟ ਪਹਿਲਾਂ ਹੀ ਮੌਜੂਦ ਹੈ।</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>ਪਲੇਅਲਿਸਟ ਦਾ ਨਾਂ ਦਰਜ ਕਰੋ।</value>
+    <value>ਪਲੇਲਿਸਟ ਦਾ ਨਾਂ ਦਰਜ ਕਰੋ।</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
     <value>ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ…</value>
@@ -417,7 +417,7 @@
     <value>ਨਿਰਯਾਤ ਸਫਲ</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>ਐਕਸਪੋਰਟ ਕੀਤੀਆਂ ਪਲੇਅਲਿਸਟਾਂ: {0}
+    <value>ਐਕਸਪੋਰਟ ਕੀਤੀਆਂ ਪਲੇਲਿਸਟਾਂ: {0}
 ਗੀਤ: {1}
 ਇੱਥੇ ਸੰਭਾਲਿਆ ਗਿਆ: {2}</value>
   </data>
@@ -428,7 +428,7 @@
     <value>ਆਯਾਤ ਸਫਲ</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>ਇੰਪੋਰਟ ਕੀਤੀਆਂ ਪਲੇਅਲਿਸਟਾਂ: {0}
+    <value>ਇੰਪੋਰਟ ਕੀਤੀਆਂ ਪਲੇਲਿਸਟਾਂ: {0}
 ਗੀਤ: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
@@ -604,7 +604,7 @@
     <value>ਪਲੇਲਿਸਟਾਂ ਖੋਜੋ</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>ਪਲੇਅਲਿਸਟ ਦਾ ਨਾਂ ਦਰਜ ਕਰੋ</value>
+    <value>ਪਲੇਲਿਸਟ ਦਾ ਨਾਂ ਦਰਜ ਕਰੋ</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
     <value>ਕਵਰ ਚੁਣੋ</value>
@@ -779,7 +779,7 @@
     <value>ਕੋਈ ਨਿਯਮ ਪਰਿਭਾਸ਼ਿਤ ਨਹੀਂ</value>
   </data>
   <data name="SmartPlaylist_NoRulesMessage" xml:space="preserve">
-    <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਦੇ ਸਾਰੇ ਗਾਣੇ ਇਸ ਪਲੇਲਿਸਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕੀਤੇ ਜਾਣਗੇ।</value>
+    <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਦੇ ਸਾਰੇ ਗੀਤ ਇਸ ਪਲੇਲਿਸਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕੀਤੇ ਜਾਣਗੇ।</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
     <value>ਆਪਣਾ ਪਹਿਲਾ ਨਿਯਮ ਜੋੜੋ</value>
@@ -872,7 +872,7 @@
     <value>ਐਲਬਮ ਵਿੱਚ ਖੋਜੋ…</value>
   </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
-    <value>ਇਸ ਐਲਬਮ ਵਿੱਚ ਕੋਈ ਗਾਣਾ ਨਹੀਂ ਮਿਲਿਆ</value>
+    <value>ਇਸ ਐਲਬਮ ਵਿੱਚ ਕੋਈ ਗੀਤ ਨਹੀਂ ਮਿਲਿਆ</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
     <value>ਕਲਾਕਾਰ</value>
@@ -905,7 +905,7 @@
     <value>ਕਲਾਕਾਰ ਵਿੱਚ ਖੋਜੋ…</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
-    <value>ਇਸ ਕਲਾਕਾਰ ਲਈ ਕੋਈ ਗਾਣੇ ਨਹੀਂ ਮਿਲੇ</value>
+    <value>ਇਸ ਕਲਾਕਾਰ ਲਈ ਕੋਈ ਗੀਤ ਨਹੀਂ ਮਿਲੇ</value>
   </data>
   <data name="FolderPage_Title" xml:space="preserve">
     <value>ਫੋਲਡਰ</value>
@@ -935,7 +935,7 @@
     <value>ਇਹ ਫੋਲਡਰ ਖਾਲੀ ਹੈ</value>
   </data>
   <data name="FolderSongViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>ਕੋਈ ਗਾਣੇ ਜਾਂ ਸਬਫੋਲਡਰ ਨਹੀਂ ਮਿਲੇ</value>
+    <value>ਕੋਈ ਗੀਤ ਜਾਂ ਸਬਫੋਲਡਰ ਨਹੀਂ ਮਿਲੇ</value>
   </data>
   <data name="GenrePage_Title" xml:space="preserve">
     <value>ਸ਼ੈਲੀਆਂ</value>
@@ -998,7 +998,7 @@
     <value>ਇਸ ਗੀਤ ਲਈ ਕੋਈ ਬੋਲ ਨਹੀਂ ਮਿਲੇ</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
-    <value>ਕੋਈ ਹੋਰ ਗਾਣਾ ਅਜ਼ਮਾਓ</value>
+    <value>ਕੋਈ ਹੋਰ ਗੀਤ ਅਜ਼ਮਾਓ</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
     <value>ਬੋਲ ਸੰਪਾਦਿਤ ਕਰੋ ਜਾਂ ਬਦਲੋ</value>
@@ -1094,7 +1094,7 @@
     <value>ਪਲੇਲਿਸਟਾਂ</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>ਪਲੇਅਲਿਸਟਾਂ ਖੋਜੋ…</value>
+    <value>ਪਲੇਲਿਸਟਾਂ ਖੋਜੋ…</value>
   </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
     <value>ਇੱਕ ਨਵੀਂ ਪਲੇਲਿਸਟ ਬਣਾਓ</value>
@@ -1124,7 +1124,7 @@
     <value>ਪਲੇਲਿਸਟ</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>ਪਲੇਅਲਿਸਟ ਵਿੱਚ ਖੋਜੋ…</value>
+    <value>ਪਲੇਲਿਸਟ ਵਿੱਚ ਖੋਜੋ…</value>
   </data>
   <data name="SongList_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟ ਵਿੱਚੋਂ ਹਟਾਓ</value>
@@ -1133,7 +1133,7 @@
     <value>ਇਹ ਪਲੇਲਿਸਟ ਖਾਲੀ ਹੈ</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>ਆਪਣੀ ਲਾਇਬ੍ਰੇਰੀ ਤੋਂ ਗਾਣੇ ਜੋੜੋ</value>
+    <value>ਆਪਣੀ ਲਾਇਬ੍ਰੇਰੀ ਤੋਂ ਗੀਤ ਜੋੜੋ</value>
   </data>
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>ਸ਼ੈਲੀ</value>
@@ -1142,7 +1142,7 @@
     <value>ਸ਼ੈਲੀ ਵਿੱਚ ਖੋਜੋ…</value>
   </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
-    <value>ਇਸ ਸ਼ੈਲੀ ਲਈ ਕੋਈ ਗਾਣੇ ਨਹੀਂ ਮਿਲੇ</value>
+    <value>ਇਸ ਸ਼ੈਲੀ ਲਈ ਕੋਈ ਗੀਤ ਨਹੀਂ ਮਿਲੇ</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>ਸੈਟਿੰਗਾਂ</value>
@@ -1394,7 +1394,7 @@
     <value>{0} ਲਾਇਸੈਂਸ</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>ਪਲੇਅਲਿਸਟਾਂ ਇੰਪੋਰਟ ਅਤੇ ਐਕਸਪੋਰਟ ਕਰੋ</value>
+    <value>ਪਲੇਲਿਸਟਾਂ ਇੰਪੋਰਟ ਅਤੇ ਐਕਸਪੋਰਟ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
     <value>ਦੂਜੇ ਪਲੇਅਰਾਂ ਵਿੱਚ ਵਰਤੋਂ ਲਈ ਪਲੇਲਿਸਟਾਂ ਨੂੰ M3U ਫਾਈਲਾਂ ਵਿੱਚ ਐਕਸਪੋਰਟ ਕਰੋ, ਜਾਂ M3U ਪਲੇਲਿਸਟਾਂ ਨੂੰ Nagi ਵਿੱਚ ਇੰਪੋਰਟ ਕਰੋ।</value>
@@ -1502,13 +1502,13 @@
     <value>ਸਮਾਰਟ ਪਲੇਲਿਸਟ</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>ਸਮਾਰਟ ਪਲੇਅਲਿਸਟ ਵਿੱਚ ਖੋਜੋ…</value>
+    <value>ਸਮਾਰਟ ਪਲੇਲਿਸਟ ਵਿੱਚ ਖੋਜੋ…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>ਨਿਯਮ ਸੰਪਾਦਿਤ ਕਰੋ</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>ਕੋਈ ਗਾਣੇ ਮੌਜੂਦਾ ਨਿਯਮਾਂ ਨਾਲ ਮੇਲ ਨਹੀਂ ਖਾਂਦੇ</value>
+    <value>ਕੋਈ ਗੀਤ ਮੌਜੂਦਾ ਨਿਯਮਾਂ ਨਾਲ ਮੇਲ ਨਹੀਂ ਖਾਂਦੇ</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
     <value>ਨਿਯਮਾਂ ਨੂੰ ਸੰਪਾਦਿਤ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ</value>
@@ -1799,7 +1799,7 @@
     <value>ਮੁੜ-ਕੋਸ਼ਿਸ਼ ਕਰੋ</value>
   </data>
   <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
-    <value>ਨਵਾਂ ਪਲੇਅਲਿਸਟ ਕ੍ਰਮ ਸੰਭਾਲਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
+    <value>ਨਵਾਂ ਪਲੇਲਿਸਟ ਕ੍ਰਮ ਸੰਭਾਲਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
   </data>
   <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
     <value>ਆਡੀਓ ਆਊਟਪੁੱਟ ਡਿਵਾਈਸ</value>

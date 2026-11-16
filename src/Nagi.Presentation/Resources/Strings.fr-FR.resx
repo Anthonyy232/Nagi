@@ -779,7 +779,7 @@ Voulez-vous continuer ?</value>
     <value>Aucune règle définie</value>
   </data>
   <data name="SmartPlaylist_NoRulesMessage" xml:space="preserve">
-    <value>Toutes les chansons de votre bibliothèque seront incluses dans cette liste de lecture.</value>
+    <value>Tous les morceaux de votre bibliothèque seront inclus dans cette liste de lecture.</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
     <value>Ajouter votre première règle</value>
@@ -872,7 +872,7 @@ Voulez-vous continuer ?</value>
     <value>Rechercher dans l'album…</value>
   </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
-    <value>Aucune chanson trouvée dans cet album</value>
+    <value>Aucun morceau trouvé dans cet album</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
     <value>Artistes</value>
@@ -905,7 +905,7 @@ Voulez-vous continuer ?</value>
     <value>Rechercher chez l'artiste…</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
-    <value>Aucune chanson trouvée pour cet artiste</value>
+    <value>Aucun morceau trouvé pour cet artiste</value>
   </data>
   <data name="FolderPage_Title" xml:space="preserve">
     <value>Dossiers</value>
@@ -935,7 +935,7 @@ Voulez-vous continuer ?</value>
     <value>Ce dossier est vide</value>
   </data>
   <data name="FolderSongViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Aucune chanson ou sous-dossier trouvé</value>
+    <value>Aucun morceau ou sous-dossier trouvé</value>
   </data>
   <data name="GenrePage_Title" xml:space="preserve">
     <value>Genres</value>
@@ -998,7 +998,7 @@ Voulez-vous continuer ?</value>
     <value>Aucune parole trouvée pour ce morceau</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
-    <value>Essayez une autre chanson</value>
+    <value>Essayez un autre morceau</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
     <value>Modifier ou remplacer les paroles</value>
@@ -1133,7 +1133,7 @@ Voulez-vous continuer ?</value>
     <value>Cette liste de lecture est vide</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Ajoutez des chansons de votre bibliothèque</value>
+    <value>Ajoutez des morceaux de votre bibliothèque</value>
   </data>
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>Genre</value>
@@ -1142,7 +1142,7 @@ Voulez-vous continuer ?</value>
     <value>Rechercher dans le genre…</value>
   </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
-    <value>Aucune chanson trouvée pour ce genre</value>
+    <value>Aucun morceau trouvé pour ce genre</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Paramètres</value>
@@ -1298,7 +1298,7 @@ Voulez-vous continuer ?</value>
     <value>Ignorer les articles lors du tri</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Trier les albums, artistes et chansons par leur premier mot significatif (par exemple, "The Beatles" est trié sous B).</value>
+    <value>Trier les albums, artistes et morceaux par leur premier mot significatif (par exemple, "The Beatles" est trié sous B).</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Gestion des données</value>
@@ -1427,7 +1427,7 @@ Voulez-vous continuer ?</value>
     <value>Last.fm</value>
   </data>
   <data name="SettingsPage_LastFm_Description" xml:space="preserve">
-    <value>Connectez votre compte Last.fm pour scrobbler les pistes et afficher votre chanson en cours de lecture.</value>
+    <value>Connectez votre compte Last.fm pour scrobbler les pistes et afficher votre morceau en cours de lecture.</value>
   </data>
   <data name="SettingsPage_LastFm_Connect_Content" xml:space="preserve">
     <value>Connecter</value>
@@ -1508,7 +1508,7 @@ Voulez-vous continuer ?</value>
     <value>Modifier les règles</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>Aucune chanson ne correspond aux règles actuelles</value>
+    <value>Aucun morceau ne correspond aux règles actuelles</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
     <value>Essayez de modifier les règles</value>
@@ -1652,7 +1652,7 @@ Voulez-vous continuer ?</value>
     <value>Jour le plus actif</value>
   </data>
   <data name="InsightsPage_TopSongs" xml:space="preserve">
-    <value>Meilleures chansons</value>
+    <value>Meilleurs morceaux</value>
   </data>
   <data name="InsightsPage_TopArtists" xml:space="preserve">
     <value>Meilleurs artistes</value>

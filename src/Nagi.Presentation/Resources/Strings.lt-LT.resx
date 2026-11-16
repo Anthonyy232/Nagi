@@ -779,7 +779,7 @@ Ar norite tęsti?</value>
     <value>Taisyklės neapibrėžtos</value>
   </data>
   <data name="SmartPlaylist_NoRulesMessage" xml:space="preserve">
-    <value>Visos dainos jūsų bibliotekoje bus įtrauktos į šį grojaraštį.</value>
+    <value>Visi kūriniai jūsų bibliotekoje bus įtraukti į šį grojaraštį.</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
     <value>Pridėti pirmą taisyklę</value>
@@ -827,7 +827,7 @@ Ar norite tęsti?</value>
     <value>Kūrinių skaičius</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Takeliai: {0:N0}</value>
+    <value>Kūriniai: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
     <value>Vieta eilėje</value>
@@ -872,7 +872,7 @@ Ar norite tęsti?</value>
     <value>Ieškoti albume…</value>
   </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
-    <value>Šiame albume dainų nerasta</value>
+    <value>Šiame albume kūrinių nerasta</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
     <value>Atlikėjai</value>
@@ -905,7 +905,7 @@ Ar norite tęsti?</value>
     <value>Ieškoti atlikėjo kūriniuose…</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
-    <value>Šiam atlikėjui dainų nerasta</value>
+    <value>Šiam atlikėjui kūrinių nerasta</value>
   </data>
   <data name="FolderPage_Title" xml:space="preserve">
     <value>Aplankai</value>
@@ -935,7 +935,7 @@ Ar norite tęsti?</value>
     <value>Šis aplankas tuščias</value>
   </data>
   <data name="FolderSongViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Dainų ar poaplankių nerasta</value>
+    <value>Kūrinių ar poaplankių nerasta</value>
   </data>
   <data name="GenrePage_Title" xml:space="preserve">
     <value>Žanrai</value>
@@ -998,7 +998,7 @@ Ar norite tęsti?</value>
     <value>Šio kūrinio žodžių nerasta</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
-    <value>Pabandykite kitą dainą</value>
+    <value>Pabandykite kitą kūrinį</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
     <value>Redaguoti arba pakeisti dainų tekstus</value>
@@ -1133,7 +1133,7 @@ Ar norite tęsti?</value>
     <value>Šis grojaraštis tuščias</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Pridėkite dainų iš savo bibliotekos</value>
+    <value>Pridėkite kūrinių iš savo bibliotekos</value>
   </data>
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>Žanras</value>
@@ -1142,7 +1142,7 @@ Ar norite tęsti?</value>
     <value>Ieškoti žanre…</value>
   </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
-    <value>Šiam žanrui dainų nerasta</value>
+    <value>Šiam žanrui kūrinių nerasta</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Nustatymai</value>
@@ -1298,7 +1298,7 @@ Ar norite tęsti?</value>
     <value>Rūšiuojant nepaisyti artikelių</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Rūšiuoti albumus, atlikėjus ir dainas pagal jų pirmą reikšmingą žodį (pvz., "The Beatles" rūšiuojami po B).</value>
+    <value>Rūšiuoti albumus, atlikėjus ir kūrinius pagal jų pirmą reikšmingą žodį (pvz., "The Beatles" rūšiuojami po B).</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Duomenų valdymas</value>
@@ -1427,7 +1427,7 @@ Ar norite tęsti?</value>
     <value>Last.fm</value>
   </data>
   <data name="SettingsPage_LastFm_Description" xml:space="preserve">
-    <value>Prijunkite savo Last.fm paskyrą, kad įrašytumėte kūrinius ir rodytumėte šiuo metu grojančią dainą.</value>
+    <value>Prijunkite savo Last.fm paskyrą, kad įrašytumėte kūrinius ir rodytumėte šiuo metu grojantį kūrinį.</value>
   </data>
   <data name="SettingsPage_LastFm_Connect_Content" xml:space="preserve">
     <value>Prisijungti</value>
@@ -1508,7 +1508,7 @@ Ar norite tęsti?</value>
     <value>Redaguoti taisykles</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>Nėra dainų, atitinkančių dabartines taisykles</value>
+    <value>Nėra kūrinių, atitinkančių dabartines taisykles</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
     <value>Pabandykite redaguoti taisykles</value>
@@ -1877,7 +1877,7 @@ Ar norite tęsti?</value>
     <value>Sustabdyti grojimą</value>
   </data>
   <data name="JumpList_ShuffleAll" xml:space="preserve">
-    <value>Maišyti visas dainas</value>
+    <value>Maišyti visus kūrinius</value>
     <comment>Task in the taskbar icon's right-click menu.</comment>
   </data>
   <data name="JumpList_MiniPlayer" xml:space="preserve">
@@ -1973,7 +1973,7 @@ Ar norite tęsti?</value>
     <value>Nėra galimų grojaraščių</value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Norint analizuoti dainas garsumo normalizavimui, reikalingas FFmpeg, bet Nagi jo nerado.
+    <value>Norint analizuoti kūrinius garsumo normalizavimui, reikalingas FFmpeg, bet Nagi jo nerado.
 
 1. Atsisiųskite „Windows“ versiją iš https://ffmpeg.org/download.html.
 2. Išpakuokite archyvą ir jo aplanke „bin“ suraskite ffmpeg.exe.
@@ -1981,7 +1981,7 @@ Ar norite tęsti?</value>
 4. Paleiskite Nagi iš naujo, tada vėl įjunkite garsumo normalizavimą.</value>
   </data>
   <data name="SongList_Context_SongInfo" xml:space="preserve">
-    <value>Dainos informacija</value>
+    <value>Kūrinio informacija</value>
   </data>
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>Žymės</value>
@@ -2033,16 +2033,16 @@ Ar norite tęsti?</value>
     <value>{0:+0.00;-0.00} dB</value>
   </data>
   <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
-    <value>Dainų sąrašų stulpeliai</value>
+    <value>Kūrinių sąrašų stulpeliai</value>
   </data>
   <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
-    <value>Pasirinkite, kokią informaciją rodyti dainų sąrašuose.</value>
+    <value>Pasirinkite, kokią informaciją rodyti kūrinių sąrašuose.</value>
   </data>
   <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
     <value>Stulpelių antraštės</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
-    <value>Rodyti antraštę virš kiekvieno dainų sąrašo stulpelio.</value>
+    <value>Rodyti antraštę virš kiekvieno kūrinių sąrašo stulpelio.</value>
   </data>
   <data name="Generic_Add" xml:space="preserve">
     <value>Pridėti</value>

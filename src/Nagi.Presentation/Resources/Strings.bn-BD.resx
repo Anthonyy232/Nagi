@@ -281,7 +281,7 @@
     <value>'{0}' পুনরায় স্ক্যান করা হচ্ছে…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
-    <value>সঙ্গীত সহ কোনো ফোল্ডার পাওয়া যায়নি।</value>
+    <value>মিউজিক সহ কোনো ফোল্ডার পাওয়া যায়নি।</value>
   </data>
   <data name="Folders_Error_Playback" xml:space="preserve">
     <value>এই ফোল্ডারের জন্য প্লেব্যাক শুরু করতে ত্রুটি।</value>
@@ -544,7 +544,7 @@
     <value>কমিউনিটি-কিউরেটেড গানের কথা ডেটাবেস</value>
   </data>
   <data name="Settings_Provider_NetEase_Desc" xml:space="preserve">
-    <value>চীনা সঙ্গীত পরিষেবা, এশীয় সঙ্গীতের জন্য দুর্দান্ত</value>
+    <value>চীনা মিউজিক পরিষেবা, এশীয় মিউজিকের জন্য দুর্দান্ত</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
     <value>আপনার ট্যাগে না থাকা শিল্পী ও অ্যালবামের আইডি খুঁজে বের করে</value>
@@ -670,9 +670,9 @@
     <value>ভলিউম স্বাভাবিককরণ সক্ষম করুন</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>ভলিউম স্বাভাবিককরণ (ReplayGain) আপনার সমস্ত সঙ্গীতের একটি ধারাবাহিক ভলিউম স্তর নিশ্চিত করে।
+    <value>ভলিউম স্বাভাবিককরণ (ReplayGain) আপনার সমস্ত মিউজিকের একটি ধারাবাহিক ভলিউম স্তর নিশ্চিত করে।
 
-এটি আপনার সঙ্গীত লাইব্রেরি বিশ্লেষণ করবে এবং ReplayGain ট্যাগ লিখে আপনার অডিও ফাইলগুলি সরাসরি সংশোধন করবে। শুধুমাত্র বিদ্যমান ট্যাগ ছাড়া ফাইলগুলি প্রক্রিয়াজাত করা হবে। আপনার লাইব্রেরির আকারের উপর নির্ভর করে এটি কিছুটা সময় নিতে পারে।
+এটি আপনার মিউজিক লাইব্রেরি বিশ্লেষণ করবে এবং ReplayGain ট্যাগ লিখে আপনার অডিও ফাইলগুলি সরাসরি সংশোধন করবে। শুধুমাত্র বিদ্যমান ট্যাগ ছাড়া ফাইলগুলি প্রক্রিয়াজাত করা হবে। আপনার লাইব্রেরির আকারের উপর নির্ভর করে এটি কিছুটা সময় নিতে পারে।
 
 আপনি কি চালিয়ে যেতে চান?</value>
   </data>
@@ -860,7 +860,7 @@
     <value>কোনো অ্যালবাম পাওয়া যায়নি</value>
   </data>
   <data name="AlbumPage_Empty_Subtitle" xml:space="preserve">
-    <value>অ্যালবাম পূরণ করতে আপনার সঙ্গীত লাইব্রেরি স্ক্যান করুন</value>
+    <value>অ্যালবাম পূরণ করতে আপনার মিউজিক লাইব্রেরি স্ক্যান করুন</value>
   </data>
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>অ্যালবাম</value>
@@ -890,7 +890,7 @@
     <value>কোনো শিল্পী পাওয়া যায়নি</value>
   </data>
   <data name="ArtistPage_Empty_Subtitle" xml:space="preserve">
-    <value>শিল্পী পূরণ করতে আপনার সঙ্গীত লাইব্রেরি স্ক্যান করুন</value>
+    <value>শিল্পী পূরণ করতে আপনার মিউজিক লাইব্রেরি স্ক্যান করুন</value>
   </data>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
     <value>শিল্পীর ছবি পরিবর্তন করুন</value>
@@ -947,7 +947,7 @@
     <value>কোনো জেনার পাওয়া যায়নি</value>
   </data>
   <data name="GenrePage_Empty_Subtitle" xml:space="preserve">
-    <value>জেনার পূরণ করতে আপনার সঙ্গীত লাইব্রেরি স্ক্যান করুন</value>
+    <value>জেনার পূরণ করতে আপনার মিউজিক লাইব্রেরি স্ক্যান করুন</value>
   </data>
   <data name="LibraryPage_Title" xml:space="preserve">
     <value>লাইব্রেরি</value>
@@ -1025,7 +1025,7 @@
     <value>Nagi-তে স্বাগতম</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
-    <value>সঙ্গীত ফোল্ডার যোগ করুন</value>
+    <value>মিউজিক ফোল্ডার যোগ করুন</value>
   </data>
   <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
     <value>আপনার মিউজিকের জন্য এক শান্ত, লোকাল-ফার্স্ট ঠিকানা। সেট আপ করতে প্রায় এক মিনিট সময় লাগবে।</value>
@@ -1523,7 +1523,7 @@
     <value>Nagi সম্পর্কে</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
-    <value>Nagi-এর মাধ্যমে আপনার স্থানীয় সঙ্গীত সংগ্রহ পুনরায় আবিষ্কার করুন, এটি গতি, সরলতা এবং গোপনীয়তার উপর কেন্দ্রিত একটি সঙ্গীত প্লেয়ার।</value>
+    <value>Nagi-এর মাধ্যমে আপনার স্থানীয় মিউজিক সংগ্রহ পুনরায় আবিষ্কার করুন, এটি গতি, সরলতা এবং গোপনীয়তার উপর কেন্দ্রিত একটি মিউজিক প্লেয়ার।</value>
   </data>
   <data name="SettingsPage_About_Version_Format" xml:space="preserve">
     <value>সংস্করণ {0}</value>
@@ -1718,7 +1718,7 @@
     <value>Nagi</value>
   </data>
   <data name="SplashPage_Tagline" xml:space="preserve">
-    <value>আপনার সঙ্গীত, সুন্দরভাবে সংগঠিত</value>
+    <value>আপনার মিউজিক, সুন্দরভাবে সংগঠিত</value>
   </data>
   <data name="SplashPage_Status" xml:space="preserve">
     <value>Nagi চালু হচ্ছে...</value>

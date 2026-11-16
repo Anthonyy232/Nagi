@@ -193,7 +193,7 @@
     <value>Vocale</value>
   </data>
   <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
-    <value>Toutes les chansons ont déjà des données de volume.</value>
+    <value>Tous les morceaux ont déjà des données de volume.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
     <value>Analyse du volume… Morceaux : {0}</value>

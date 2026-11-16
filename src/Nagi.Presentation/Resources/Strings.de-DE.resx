@@ -323,7 +323,7 @@
     <value>Genre</value>
   </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
-    <value>Kein Lied ausgewählt</value>
+    <value>Kein Titel ausgewählt</value>
   </data>
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
     <value>{0} von {1}</value>
@@ -345,7 +345,7 @@
     <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
-    <value>Keine Lieder stimmen mit den Regeln dieser intelligenten Wiedergabeliste überein.</value>
+    <value>Keine Titel stimmen mit den Regeln dieser intelligenten Wiedergabeliste überein.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>Fehler beim Starten der Wiedergabe für diese Wiedergabeliste.</value>
@@ -451,7 +451,7 @@ Dateien, die nicht importiert werden konnten: {0}.</value>
     <value>Fehler beim Laden der intelligenten Wiedergabeliste</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
-    <value>Keine Regeln definiert • Alle Lieder stimmen überein</value>
+    <value>Keine Regeln definiert • Alle Titel stimmen überein</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
     <value>Erfüllt alle Regeln ({0, plural, one {# Regel} other {# Regeln}})</value>
@@ -1298,7 +1298,7 @@ Möchten Sie fortfahren?</value>
     <value>Artikel beim Sortieren ignorieren</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Alben, Künstler und Lieder nach ihrem ersten signifikanten Wort sortieren (z.B. werden "The Beatles" unter B sortiert).</value>
+    <value>Alben, Künstler und Titel nach ihrem ersten signifikanten Wort sortieren (z.B. werden "The Beatles" unter B sortiert).</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Datenverwaltung</value>

@@ -125,7 +125,7 @@
     <value>ਲਾਇਬ੍ਰੇਰੀ ਸਕੈਨ ਦੀ ਤਿਆਰੀ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>ਗਾਣੇ ਦੇ ਵੇਰਵੇ ਪੜ੍ਹੇ ਜਾ ਰਹੇ ਹਨ…</value>
+    <value>ਗੀਤ ਦੇ ਵੇਰਵੇ ਪੜ੍ਹੇ ਜਾ ਰਹੇ ਹਨ…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
     <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਸਾਫ਼ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ…</value>
@@ -196,13 +196,13 @@
     <value>ਸਾਰੇ ਗੀਤਾਂ ਵਿੱਚ ਪਹਿਲਾਂ ਹੀ ਵਾਲੀਅਮ ਡੇਟਾ ਹੈ।</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>ਆਵਾਜ਼ ਦੀ ਜਾਂਚ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ… ਗਾਣੇ: {0}</value>
+    <value>ਆਵਾਜ਼ ਦੀ ਜਾਂਚ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ… ਗੀਤ: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
     <value>ਵਾਲੀਅਮ ਨਾਰਮਲਾਈਜ਼ੇਸ਼ਨ ਦੀ ਗਣਨਾ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>ਵਾਲੀਅਮ ਨਾਰਮਲਾਈਜ਼ੇਸ਼ਨ ਪੂਰਾ ਹੋਇਆ। ਪ੍ਰੋਸੈਸ ਕੀਤੇ ਗਾਣੇ: {0}।</value>
+    <value>ਵਾਲੀਅਮ ਨਾਰਮਲਾਈਜ਼ੇਸ਼ਨ ਪੂਰਾ ਹੋਇਆ। ਪ੍ਰੋਸੈਸ ਕੀਤੇ ਗੀਤ: {0}।</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
     <value>ਆਪਣਾ ListenBrainz ਵਰਤੋਂਕਾਰ ਟੋਕਨ ਦਰਜ ਕਰੋ।</value>

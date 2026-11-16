@@ -302,7 +302,7 @@
     <value>{0, plural, one {# kaust} other {# kausta}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
-    <value>{0, plural, one {# laul} other {# laulu}}</value>
+    <value>{0, plural, one {# lugu} other {# lugu}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
     <value>{0, plural, one {# album} other {# albumit}}</value>
@@ -326,7 +326,7 @@
     <value>Ühtegi lugu pole valitud</value>
   </data>
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
-    <value>{0} esitaja: {1}</value>
+    <value>{0} artist: {1}</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
     <value>Teegi loomine…</value>
@@ -338,7 +338,7 @@
     <value>Sinu muusikakogu on valmis.</value>
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
-    <value>Nutikas • {0, plural, one {# laul} other {# laulu}}</value>
+    <value>Nutikas • {0, plural, one {# lugu} other {# lugu}}</value>
   </data>
   <data name="Playlist_FromServer_Format" xml:space="preserve">
     <value>{0} • {1}</value>
@@ -451,7 +451,7 @@ Failid, mida ei õnnestunud importida: {0}.</value>
     <value>Nutika esitusloendi laadimise viga</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
-    <value>Reegleid pole määratud • Kõik laulud sobivad</value>
+    <value>Reegleid pole määratud • Kõik lood sobivad</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
     <value>Sobita: kõik ({0, plural, one {# reegel} other {# reeglit}})</value>
@@ -550,19 +550,19 @@ Failid, mida ei õnnestunud importida: {0}.</value>
     <value>Otsib artisti ja albumi ID-sid, mida sinu siltides pole</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Esitajate pildid ja biograafiad (vajab MusicBrainzi ID-d sinu siltidest või MusicBrainzist)</value>
+    <value>Artistide pildid ja biograafiad (vajab MusicBrainzi ID-d sinu siltidest või MusicBrainzist)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Kvaliteetsed esitajate pildid (vajab MusicBrainzi ID-d sinu siltidest või MusicBrainzist)</value>
+    <value>Kvaliteetsed artistide pildid (vajab MusicBrainzi ID-d sinu siltidest või MusicBrainzist)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Esitajate biograafiad ja albumite kaanepildid (varuvariant)</value>
+    <value>Artistide biograafiad ja albumite kaanepildid (varuvariant)</value>
   </data>
   <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
-    <value>Esitajate pildid ja albumite kaanepildid, leitud nime järgi</value>
+    <value>Artistide pildid ja albumite kaanepildid, leitud nime järgi</value>
   </data>
   <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
-    <value>Esitajate biograafiad sinu keeles (vajab MusicBrainzi ID-d sinu siltidest või MusicBrainzist)</value>
+    <value>Artistide biograafiad sinu keeles (vajab MusicBrainzi ID-d sinu siltidest või MusicBrainzist)</value>
   </data>
   <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
     <value>Albumite kaanepildid MusicBrainzi väljalasetele (kasutab ID-sid sinu siltidest või MusicBrainzist)</value>
@@ -643,7 +643,7 @@ Failid, mida ei õnnestunud importida: {0}.</value>
     <value>Skaneeri metaandmed uuesti</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Skannige oma kogu uuesti, et rakendada metaandmete seadeid, näiteks esitajate eraldamist. Suurte kogude puhul võib see aega võtta. Kas jätkata?</value>
+    <value>Skannige oma kogu uuesti, et rakendada metaandmete seadeid, näiteks artistide eraldamist. Suurte kogude puhul võib see aega võtta. Kas jätkata?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Skaneeri uuesti</value>
@@ -779,7 +779,7 @@ Kas soovite jätkata?</value>
     <value>Reegleid pole määratud</value>
   </data>
   <data name="SmartPlaylist_NoRulesMessage" xml:space="preserve">
-    <value>Kõik teie teegis olevad laulud lisatakse sellesse esitusloendisse.</value>
+    <value>Kõik teie teegis olevad lood lisatakse sellesse esitusloendisse.</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
     <value>Lisa oma esimene reegel</value>
@@ -818,7 +818,7 @@ Kas soovite jätkata?</value>
     <value>Sulge esitusjärjekord</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Esitaja</value>
+    <value>Artist</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
     <value>Kestus</value>
@@ -866,19 +866,19 @@ Kas soovite jätkata?</value>
     <value>Album</value>
   </data>
   <data name="SongList_Songs" xml:space="preserve">
-    <value>Laulud</value>
+    <value>Lood</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Otsi albumist…</value>
   </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
-    <value>Sellest albumist laule ei leitud</value>
+    <value>Sellest albumist lugusid ei leitud</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
     <value>Artistid</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Otsi esitajaid…</value>
+    <value>Otsi artiste…</value>
   </data>
   <data name="Generic_ChangeImage" xml:space="preserve">
     <value>Muuda pilti</value>
@@ -902,10 +902,10 @@ Kas soovite jätkata?</value>
     <value>Parimad albumid</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Otsi esitajalt…</value>
+    <value>Otsi artistist…</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
-    <value>Selle artisti laule ei leitud</value>
+    <value>Selle artisti lugusid ei leitud</value>
   </data>
   <data name="FolderPage_Title" xml:space="preserve">
     <value>Kaustad</value>
@@ -935,7 +935,7 @@ Kas soovite jätkata?</value>
     <value>See kaust on tühi</value>
   </data>
   <data name="FolderSongViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Laule ega alamkaustu ei leitud</value>
+    <value>Lugusid ega alamkaustu ei leitud</value>
   </data>
   <data name="GenrePage_Title" xml:space="preserve">
     <value>Žanrid</value>
@@ -1058,7 +1058,7 @@ Kas soovite jätkata?</value>
     <value>Ärata oma muusikakogu ellu</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi töötab täielikult võrguühenduseta. Lülita need sisse, et lisada esitajate fotosid, biograafiaid, albumite kaanepilte ja laulusõnu, mida sinu failides pole.</value>
+    <value>Nagi töötab täielikult võrguühenduseta. Lülita need sisse, et lisada artistide fotosid, biograafiaid, albumite kaanepilte ja laulusõnu, mida sinu failides pole.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Sobita oma töölauaga</value>
@@ -1133,7 +1133,7 @@ Kas soovite jätkata?</value>
     <value>See esitusloend on tühi</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Lisa laule oma teegist</value>
+    <value>Lisa lugusid oma teegist</value>
   </data>
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>Žanr</value>
@@ -1142,7 +1142,7 @@ Kas soovite jätkata?</value>
     <value>Otsi žanrist…</value>
   </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
-    <value>Selle žanri laule ei leitud</value>
+    <value>Selle žanri lugusid ei leitud</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Seaded</value>
@@ -1298,7 +1298,7 @@ Kas soovite jätkata?</value>
     <value>Eira sortimisel artikleid</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Sordi albumeid, artiste ja laule nende esimese olulise sõna järgi (nt "The Beatles" sorteeritakse tähe B alla).</value>
+    <value>Sordi albumeid, artiste ja lugusid nende esimese olulise sõna järgi (nt "The Beatles" sorteeritakse tähe B alla).</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Andmehaldus</value>
@@ -1325,7 +1325,7 @@ Kas soovite jätkata?</value>
     <value>Hangi metaandmed internetist</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Laadi esitajate pildid, biograafiad ja albumite kaanepildid veebiallikatest.</value>
+    <value>Laadi artistide pildid, biograafiad ja albumite kaanepildid veebiallikatest.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Allikad</value>
@@ -1508,7 +1508,7 @@ Kas soovite jätkata?</value>
     <value>Muuda reegleid</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>Ükski laul ei vasta praegustele reeglitele</value>
+    <value>Ükski lugu ei vasta praegustele reeglitele</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
     <value>Proovi reegleid muuta</value>
@@ -1655,7 +1655,7 @@ Kas soovite jätkata?</value>
     <value>Parimad lood</value>
   </data>
   <data name="InsightsPage_TopArtists" xml:space="preserve">
-    <value>Parimad esitajad</value>
+    <value>Parimad artistid</value>
   </data>
   <data name="InsightsPage_TopAlbums" xml:space="preserve">
     <value>Parimad albumid</value>
@@ -1952,7 +1952,7 @@ Kas soovite jätkata?</value>
     <value>Märgi lugu lemmikuks selle menüüst või vali see ja vajuta Ctrl+D.</value>
   </data>
   <data name="Listening_VarietyDescription" xml:space="preserve">
-    <value>Valik „Rohkem vaheldust” väldib hiljuti esitatud lugusid ning paigutab võimalusel sama esitaja lood üksteisest eemale.</value>
+    <value>Valik „Rohkem vaheldust” väldib hiljuti esitatud lugusid ning paigutab võimalusel sama artisti lood üksteisest eemale.</value>
   </data>
   <data name="Listening_RediscoverDescription" xml:space="preserve">
     <value>Valik „Taasavasta” kasutab Nagis esitatud lugusid, mida mängiti viimati rohkem kui 30 päeva tagasi.</value>
@@ -2069,7 +2069,7 @@ Kas soovite jätkata?</value>
     <value>Kas eemaldada „{0}” sinu muusikakogust? Selle muusika jääb serverisse.</value>
   </data>
   <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
-    <value>Laule veel pole</value>
+    <value>Lugusid veel pole</value>
   </data>
   <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
     <value>Muusika toomiseks sünkrooni server lehel Kaustad</value>
@@ -2191,7 +2191,7 @@ Kas soovite jätkata?</value>
     <comment>{0} is the name of a music server.</comment>
   </data>
   <data name="Player_ServerSongFailed_Format" xml:space="preserve">
-    <value>Laulu „{0}” ei õnnestunud serverist „{1}” esitada.</value>
+    <value>Lugu „{0}” ei õnnestunud serverist „{1}” esitada.</value>
     <comment>{0} is a song title, {1} the name of a music server.</comment>
   </data>
   <data name="Player_ServerSongGone_Format" xml:space="preserve">
@@ -2268,7 +2268,7 @@ Kas soovite jätkata?</value>
     <value>Esituskorrad</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
-    <value>Laulud</value>
+    <value>Lood</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Käsitsi järjestus</value>

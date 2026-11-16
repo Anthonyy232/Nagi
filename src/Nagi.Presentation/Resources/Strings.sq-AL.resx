@@ -782,10 +782,10 @@ Dëshironi të vazhdoni?</value>
     <value>Të gjitha këngët në bibliotekën tuaj do të përfshihen në këtë listë luajtjeje.</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
-    <value>Shto rregullin tënd të parë</value>
+    <value>Shtoni rregullin tuaj të parë</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_ToolTip" xml:space="preserve">
-    <value>Shto rregullin tënd të parë</value>
+    <value>Shtoni rregullin tuaj të parë</value>
   </data>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Ruaj</value>
@@ -860,7 +860,7 @@ Dëshironi të vazhdoni?</value>
     <value>Asnjë album nuk u gjet</value>
   </data>
   <data name="AlbumPage_Empty_Subtitle" xml:space="preserve">
-    <value>Skano bibliotekën tuaj të muzikës për të mbushur albumet</value>
+    <value>Skanoni bibliotekën tuaj të muzikës për të mbushur albumet</value>
   </data>
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>Album</value>
@@ -890,7 +890,7 @@ Dëshironi të vazhdoni?</value>
     <value>Asnjë artist nuk u gjet</value>
   </data>
   <data name="ArtistPage_Empty_Subtitle" xml:space="preserve">
-    <value>Skano bibliotekën tuaj të muzikës për të mbushur artistët</value>
+    <value>Skanoni bibliotekën tuaj të muzikës për të mbushur artistët</value>
   </data>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
     <value>Ndrysho imazhin e artistit</value>
@@ -947,7 +947,7 @@ Dëshironi të vazhdoni?</value>
     <value>Asnjë zhanër nuk u gjet</value>
   </data>
   <data name="GenrePage_Empty_Subtitle" xml:space="preserve">
-    <value>Skano bibliotekën tuaj të muzikës për të mbushur zhanret</value>
+    <value>Skanoni bibliotekën tuaj të muzikës për të mbushur zhanret</value>
   </data>
   <data name="LibraryPage_Title" xml:space="preserve">
     <value>Biblioteka</value>
@@ -986,7 +986,7 @@ Dëshironi të vazhdoni?</value>
     <value>Nuk u gjet asnjë këngë</value>
   </data>
   <data name="Generic_TrySearchingElse" xml:space="preserve">
-    <value>Provo të kërkosh për diçka tjetër</value>
+    <value>Provoni të kërkoni për diçka tjetër</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>Biblioteka juaj është bosh</value>
@@ -998,7 +998,7 @@ Dëshironi të vazhdoni?</value>
     <value>Nuk u gjetën tekste për këtë këngë</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
-    <value>Provo një këngë tjetër</value>
+    <value>Provoni një këngë tjetër</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
     <value>Ndrysho ose zëvendëso tekstin e këngës</value>
@@ -1028,55 +1028,55 @@ Dëshironi të vazhdoni?</value>
     <value>Shto Dosje Muzike</value>
   </data>
   <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
-    <value>Një shtëpi e qetë, së pari lokale, për muzikën tënde. Konfigurimi merr rreth një minutë.</value>
+    <value>Një shtëpi e qetë, së pari lokale, për muzikën tuaj. Konfigurimi merr rreth një minutë.</value>
   </data>
   <data name="OnboardingPage_GetStarted" xml:space="preserve">
     <value>Fillo</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
-    <value>Ku është muzika jote?</value>
+    <value>Ku është muzika juaj?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
     <value>Zgjidhni dosjen ku mbani muzikën tuaj ose shtoni një server muzike. Nagi ndërton bibliotekën tuaj ndërsa përfundoni konfigurimin dhe mund të shtoni më shumë më vonë.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
-    <value>Përshtate sipas dëshirës</value>
+    <value>Përshtateni sipas dëshirës</value>
   </data>
   <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
-    <value>Zgjidh se si duket Nagi. Ndryshimet zbatohen menjëherë.</value>
+    <value>Zgjidhni se si duket Nagi. Ndryshimet zbatohen menjëherë.</value>
   </data>
   <data name="OnboardingPage_Listening_Title" xml:space="preserve">
-    <value>Përshtat se si tingëllon</value>
+    <value>Përshtatni se si tingëllon</value>
   </data>
   <data name="OnboardingPage_Listening_Description" xml:space="preserve">
-    <value>Jepi formë mënyrës se si luhet muzika jote.</value>
+    <value>Jepini formë mënyrës se si luhet muzika juaj.</value>
   </data>
   <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
-    <value>Fillo nga një paracaktim. Mund të rregullosh çdo brez te Cilësimet.</value>
+    <value>Filloni nga një paracaktim. Mund të rregulloni çdo brez te Cilësimet.</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
-    <value>Jepi jetë bibliotekës tënde</value>
+    <value>Jepini jetë bibliotekës suaj</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi funksionon plotësisht pa internet. Aktivizoji këto për të plotësuar fotot e artistëve, biografitë, kopertinat e albumeve dhe tekstet që skedarët tuaj nuk i përmbajnë.</value>
+    <value>Nagi funksionon plotësisht pa internet. Aktivizojini këto për të plotësuar fotot e artistëve, biografitë, kopertinat e albumeve dhe tekstet që skedarët tuaj nuk i përmbajnë.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
-    <value>Përshtatu plotësisht në desktopin tënd</value>
+    <value>Përshtatuni plotësisht në desktopin tuaj</value>
   </data>
   <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
-    <value>Zgjidh se si nis Nagi dhe çfarë ndodh kur e mbyll ose e minimizon.</value>
+    <value>Zgjidhni se si nis Nagi dhe çfarë ndodh kur e mbyllni ose e minimizoni.</value>
   </data>
   <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
-    <value>Shpërndaj atë që po dëgjon</value>
+    <value>Shpërndani atë që po dëgjoni</value>
   </data>
   <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
-    <value>Regjistro dëgjimet e tua në Last.fm dhe tregoju miqve se çfarë po dëgjon në Discord. ListenBrainz është i disponueshëm te Cilësimet.</value>
+    <value>Regjistroni dëgjimet tuaja në Last.fm dhe tregojuni miqve se çfarë po dëgjoni në Discord. ListenBrainz është i disponueshëm te Cilësimet.</value>
   </data>
   <data name="OnboardingPage_Finish_Title" xml:space="preserve">
     <value>Çdo gjë është gati</value>
   </data>
   <data name="OnboardingPage_Finish_Description" xml:space="preserve">
-    <value>Mund të ndryshosh cilëndo nga këto në çdo kohë te Cilësimet.</value>
+    <value>Mund të ndryshoni cilëndo nga këto në çdo kohë te Cilësimet.</value>
   </data>
   <data name="OnboardingPage_SkipSetup" xml:space="preserve">
     <value>Kalo konfigurimin</value>
@@ -1178,7 +1178,7 @@ Dëshironi të vazhdoni?</value>
     <value>Tematizimi dinamik</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Përshtat ngjyrat e aplikacionit me pamjen e albumit aktual.</value>
+    <value>Përshtatni ngjyrat e aplikacionit me pamjen e albumit aktual.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
     <value>Mbaj mend madhësinë e dritares</value>
@@ -1223,7 +1223,7 @@ Dëshironi të vazhdoni?</value>
     <value>Zbehje në Luaj / Ndalo</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Rrit gradualisht volumin kur rifillon luajtja dhe ule gradualisht kur ndalet, në vend që tingulli të ndërpritet menjëherë.</value>
+    <value>Rritni gradualisht volumin kur rifillon luajtja dhe uleni gradualisht kur ndalet, në vend që tingulli të ndërpritet menjëherë.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>Barazuesi i audios</value>
@@ -1256,25 +1256,25 @@ Dëshironi të vazhdoni?</value>
     <value>Luajtës i palosshëm</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Zgjero shiritin e luajtësit kur kaloni kursorin sipër.</value>
+    <value>Zgjeroni shiritin e luajtësit kur kaloni kursorin sipër.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
     <value>Rikthe gjendjen e dëgjimit</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Rikthe radhën e dëgjimit dhe pozicionin e luajtjes kur niset Nagi.</value>
+    <value>Riktheni radhën e dëgjimit dhe pozicionin e luajtjes kur niset Nagi.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
     <value>Nis automatikisht gjatë ndezjes</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
-    <value>Nis Nagi automatikisht kur hyni në kompjuterin tuaj.</value>
+    <value>Nisni Nagi automatikisht kur hyni në kompjuterin tuaj.</value>
   </data>
   <data name="SettingsPage_StartMinimized_Header" xml:space="preserve">
     <value>Nis i minimizuar</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>Nis Nagi-n me dritaren e minimizuar.</value>
+    <value>Nisni Nagi-n me dritaren e minimizuar.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
     <value>Minimizo në mini-luajtës</value>
@@ -1286,7 +1286,7 @@ Dëshironi të vazhdoni?</value>
     <value>Fshih në shiritin e sistemit</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>Mbaj Nagi-n në punë në shiritin e sistemit kur mbyllni dritaren e tij.</value>
+    <value>Mbani Nagi-n në punë në shiritin e sistemit kur mbyllni dritaren e tij.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
     <value>Shfaq kopertinën në dritaren kërcyese</value>
@@ -1313,7 +1313,7 @@ Dëshironi të vazhdoni?</value>
     <value>Ndarja e Zhanreve</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Përcakto karakteret e përdorura për të ndarë zhanre të shumta (p.sh. ';/'). Lëreni bosh për të çaktivizuar.</value>
+    <value>Përcaktoni karakteret e përdorura për të ndarë zhanre të shumta (p.sh. ';/'). Lëreni bosh për të çaktivizuar.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Riskano bibliotekën</value>
@@ -1325,7 +1325,7 @@ Dëshironi të vazhdoni?</value>
     <value>Merr metatëdhënat nga interneti</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Sill fotot e artistëve, biografitë dhe kopertinat e albumeve nga burimet në internet.</value>
+    <value>Sillni fotot e artistëve, biografitë dhe kopertinat e albumeve nga burimet në internet.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Burimet</value>
@@ -1337,7 +1337,7 @@ Dëshironi të vazhdoni?</value>
     <value>Sill tekstet e këngëve nga interneti</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Sill tekstet e munguara të këngëve nga burime në internet. Kjo dërgon metatëdhënat e këngës te shërbime të palëve të treta.</value>
+    <value>Sillni tekstet e munguara të këngëve nga burime në internet. Kjo dërgon metatëdhënat e këngës te shërbime të palëve të treta.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>Burimet</value>
@@ -1349,7 +1349,7 @@ Dëshironi të vazhdoni?</value>
     <value>Shfaq tekstet e romanizuara</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>Shfaq një rresht më të vogël të romanizuar nën tekstet e mbështetura kur një paketë e instaluar përputhet me shkrimin.</value>
+    <value>Shfaqni një rresht më të vogël të romanizuar nën tekstet e mbështetura kur një paketë e instaluar përputhet me shkrimin.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
     <value>Paketat e gjuhëve</value>
@@ -1448,13 +1448,13 @@ Dëshironi të vazhdoni?</value>
     <value>Përditëso «Po luhet tani»</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Shfaq këngën që po luhet aktualisht në profilin tuaj Last.fm.</value>
+    <value>Shfaqni këngën që po luhet aktualisht në profilin tuaj Last.fm.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
     <value>ListenBrainz</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
-    <value>Dorëzo dëgjimet tuaja te ListenBrainz (një alternativë e hapur ndaj Last.fm).</value>
+    <value>Dorëzoni dëgjimet tuaja te ListenBrainz (një alternativë e hapur ndaj Last.fm).</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenLabel" xml:space="preserve">
     <value>Tokeni i përdoruesit</value>
@@ -1511,7 +1511,7 @@ Dëshironi të vazhdoni?</value>
     <value>Asnjë këngë nuk përputhet me rregullat aktuale</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Provo të ndryshosh rregullat</value>
+    <value>Provoni të ndryshoni rregullat</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Ndrysho rregullat</value>
@@ -1670,7 +1670,7 @@ Dëshironi të vazhdoni?</value>
     <value>Ende nuk ka të dhëna dëgjimi</value>
   </data>
   <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
-    <value>Fillo të dëgjosh muzikë për të parë statistikat këtu</value>
+    <value>Filloni të dëgjoni muzikë për të parë statistikat këtu</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
     <value>Dëgjime: {0}</value>
@@ -1814,7 +1814,7 @@ Dëshironi të vazhdoni?</value>
     <value>Pajisja e ruajtur nuk është e disponueshme. Po përdoret parazgjedhja e sistemit.</value>
   </data>
   <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
-    <value>Nuk u mundësua azhornimi i daljes audio. Provo përsëri ose zgjidh një pajisje tjetër.</value>
+    <value>Nuk u mundësua azhornimi i daljes audio. Provoni përsëri ose zgjidhni një pajisje tjetër.</value>
   </data>
   <data name="Listening_Random" xml:space="preserve">
     <value>Përzieni</value>
@@ -1850,7 +1850,7 @@ Dëshironi të vazhdoni?</value>
     <value>Nuk ka këngë për këtë miksim</value>
   </data>
   <data name="Listening_NoMixDescription" xml:space="preserve">
-    <value>Asnjë këngë në këtë listë nuk plotëson këto kërkesa. Provo një miksim tjetër ose një listë tjetër këngësh.</value>
+    <value>Asnjë këngë në këtë listë nuk plotëson këto kërkesa. Provoni një miksim tjetër ose një listë tjetër këngësh.</value>
   </data>
   <data name="Listening_Favorites" xml:space="preserve">
     <value>Të preferuarat</value>
@@ -1964,7 +1964,7 @@ Dëshironi të vazhdoni?</value>
     <value>Asnjë dëgjim nuk përputhet me kërkimin tuaj</value>
   </data>
   <data name="Listening_NoTimedMixDescription" xml:space="preserve">
-    <value>Asnjë këngë në këtë listë nuk plotëson kërkesat e miksimit dhe nuk përshtatet me kohëzgjatjen e zgjedhur. Provo një kohëzgjatje më të gjatë, një miksim tjetër ose një listë tjetër këngësh.</value>
+    <value>Asnjë këngë në këtë listë nuk plotëson kërkesat e miksimit dhe nuk përshtatet me kohëzgjatjen e zgjedhur. Provoni një kohëzgjatje më të gjatë, një miksim tjetër ose një listë tjetër këngësh.</value>
   </data>
   <data name="Generic_CloseSearch" xml:space="preserve">
     <value>Mbyll kërkimin</value>
@@ -2042,7 +2042,7 @@ Dëshironi të vazhdoni?</value>
     <value>Titujt e kolonave</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
-    <value>Shfaq titullin e çdo kolone mbi listat e këngëve.</value>
+    <value>Shfaqni titullin e çdo kolone mbi listat e këngëve.</value>
   </data>
   <data name="Generic_Add" xml:space="preserve">
     <value>Shto</value>
