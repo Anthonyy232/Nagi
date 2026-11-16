@@ -125,7 +125,7 @@
     <value>Ruošiamasi bibliotekos nuskaitymui…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Nuskaitoma dainų informacija…</value>
+    <value>Nuskaitoma kūrinių informacija…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
     <value>Tvarkoma biblioteka…</value>
@@ -155,6 +155,9 @@
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Nėra grojaraščių eksportavimui.</value>
+  </data>
+  <data name="Error_PlaylistsExportFailed" xml:space="preserve">
+    <value>Nepavyko eksportuoti grojaraščių į tą aplanką.</value>
   </data>
   <data name="EqPreset_None" xml:space="preserve">
     <value>Nėra</value>
@@ -190,16 +193,16 @@
     <value>Vokalinis</value>
   </data>
   <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
-    <value>Visos dainos jau turi garso duomenis.</value>
+    <value>Visi kūriniai jau turi garso duomenis.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Analizuojamas garsumas… Dainų: {0}</value>
+    <value>Analizuojamas garsumas… Kūrinių: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
     <value>Skaičiuojamas garso normalizavimas ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Garso normalizavimas baigtas. Apdorota dainų: {0}.</value>
+    <value>Garso normalizavimas baigtas. Apdorota kūrinių: {0}.</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
     <value>Įveskite savo ListenBrainz naudotojo prieigos raktą.</value>
@@ -251,5 +254,21 @@
   <data name="Biography_WikipediaAttribution" xml:space="preserve">
     <value>Iš Vikipedijos, pagal CC BY-SA licenciją.</value>
     <comment>Shown below an artist biography taken from Wikipedia, as its license requires.</comment>
+  </data>
+  <data name="Format_FetchingServerSongs" xml:space="preserve">
+    <value>Gaunami kūriniai iš serverio ({0})…</value>
+    <comment>Shown while a music server is synced. {0} is the number of songs received so far.</comment>
+  </data>
+  <data name="Status_AddingServerSongs" xml:space="preserve">
+    <value>Kūriniai įtraukiami į jūsų biblioteką…</value>
+    <comment>Shown while songs from a music server are saved to the library.</comment>
+  </data>
+  <data name="Status_DownloadingServerCovers" xml:space="preserve">
+    <value>Atsisiunčiami albumų viršeliai…</value>
+    <comment>Shown while album covers are downloaded from a music server.</comment>
+  </data>
+  <data name="Status_SyncComplete" xml:space="preserve">
+    <value>Sinchronizavimas baigtas.</value>
+    <comment>Shown when a music server has finished syncing.</comment>
   </data>
 </root>

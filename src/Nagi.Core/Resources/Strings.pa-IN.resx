@@ -125,7 +125,7 @@
     <value>ਲਾਇਬ੍ਰੇਰੀ ਸਕੈਨ ਦੀ ਤਿਆਰੀ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>ਗਾਣੇ ਦੇ ਵੇਰਵੇ ਪੜ੍ਹੇ ਜਾ ਰਹੇ ਹਨ…</value>
+    <value>ਗੀਤ ਦੇ ਵੇਰਵੇ ਪੜ੍ਹੇ ਜਾ ਰਹੇ ਹਨ…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
     <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਸਾਫ਼ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ…</value>
@@ -155,6 +155,9 @@
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>ਨਿਰਯਾਤ ਕਰਨ ਲਈ ਕੋਈ ਪਲੇਲਿਸਟ ਨਹੀਂ।</value>
+  </data>
+  <data name="Error_PlaylistsExportFailed" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟਾਂ ਨੂੰ ਉਸ ਫੋਲਡਰ ਵਿੱਚ ਨਿਰਯਾਤ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ।</value>
   </data>
   <data name="EqPreset_None" xml:space="preserve">
     <value>ਕੋਈ ਨਹੀਂ</value>
@@ -193,13 +196,13 @@
     <value>ਸਾਰੇ ਗੀਤਾਂ ਵਿੱਚ ਪਹਿਲਾਂ ਹੀ ਵਾਲੀਅਮ ਡੇਟਾ ਹੈ।</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>ਆਵਾਜ਼ ਦੀ ਜਾਂਚ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ… ਗਾਣੇ: {0}</value>
+    <value>ਆਵਾਜ਼ ਦੀ ਜਾਂਚ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ… ਗੀਤ: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
     <value>ਵਾਲੀਅਮ ਨਾਰਮਲਾਈਜ਼ੇਸ਼ਨ ਦੀ ਗਣਨਾ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>ਵਾਲੀਅਮ ਨਾਰਮਲਾਈਜ਼ੇਸ਼ਨ ਪੂਰਾ ਹੋਇਆ। ਪ੍ਰੋਸੈਸ ਕੀਤੇ ਗਾਣੇ: {0}।</value>
+    <value>ਵਾਲੀਅਮ ਨਾਰਮਲਾਈਜ਼ੇਸ਼ਨ ਪੂਰਾ ਹੋਇਆ। ਪ੍ਰੋਸੈਸ ਕੀਤੇ ਗੀਤ: {0}।</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
     <value>ਆਪਣਾ ListenBrainz ਵਰਤੋਂਕਾਰ ਟੋਕਨ ਦਰਜ ਕਰੋ।</value>
@@ -251,5 +254,21 @@
   <data name="Biography_WikipediaAttribution" xml:space="preserve">
     <value>ਵਿਕੀਪੀਡੀਆ ਤੋਂ, CC BY-SA ਲਾਇਸੈਂਸ ਅਧੀਨ।</value>
     <comment>Shown below an artist biography taken from Wikipedia, as its license requires.</comment>
+  </data>
+  <data name="Format_FetchingServerSongs" xml:space="preserve">
+    <value>ਸਰਵਰ ਤੋਂ ਗੀਤ ਲਏ ਜਾ ਰਹੇ ਹਨ ({0})…</value>
+    <comment>Shown while a music server is synced. {0} is the number of songs received so far.</comment>
+  </data>
+  <data name="Status_AddingServerSongs" xml:space="preserve">
+    <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ ਗੀਤ ਜੋੜੇ ਜਾ ਰਹੇ ਹਨ…</value>
+    <comment>Shown while songs from a music server are saved to the library.</comment>
+  </data>
+  <data name="Status_DownloadingServerCovers" xml:space="preserve">
+    <value>ਐਲਬਮ ਕਵਰ ਡਾਊਨਲੋਡ ਕੀਤੇ ਜਾ ਰਹੇ ਹਨ…</value>
+    <comment>Shown while album covers are downloaded from a music server.</comment>
+  </data>
+  <data name="Status_SyncComplete" xml:space="preserve">
+    <value>ਸਿੰਕ ਪੂਰਾ ਹੋਇਆ।</value>
+    <comment>Shown when a music server has finished syncing.</comment>
   </data>
 </root>

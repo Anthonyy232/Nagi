@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Žádné položky</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>Tento seznam se nepodařilo načíst.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Chyba</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Chytrý • {0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Žádné skladby neodpovídají pravidlům tohoto chytrého seznamu skladeb.</value>
@@ -672,6 +679,9 @@ Chcete pokračovat?</value>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Povolit a skenovat</value>
   </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>Normalizace hlasitosti začíná skenem vaší knihovny, který nemůže běžet, dokud probíhá jiná operace s knihovnou. Zkuste to znovu po jejím dokončení.</value>
+  </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Příprava skenování pro normalizaci hlasitosti…</value>
   </data>
@@ -913,7 +923,7 @@ Chcete pokračovat?</value>
     <value>Zatím nebyly přidány žádné složky</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Pro začátek přidejte hudební složky</value>
+    <value>Pro začátek přidejte hudební složku nebo server</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Složka</value>
@@ -1027,7 +1037,7 @@ Chcete pokračovat?</value>
     <value>Kde máte hudbu?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Vyberte složku, ve které máte hudbu. Nagi vytvoří vaši knihovnu během dokončování nastavení. Další složky můžete přidat později.</value>
+    <value>Vyberte složku, ve které máte hudbu, nebo přidejte hudební server. Nagi vytvoří vaši knihovnu během dokončování nastavení. Další můžete přidat později.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Přizpůsobte si vzhled</value>
@@ -1362,6 +1372,9 @@ Chcete pokračovat?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Nejsou k dispozici žádné kompatibilní romanizační balíčky.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>Balíčky romanizace se nepodařilo načíst. Zkontrolujte připojení k internetu a stránku obnovte.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Instalace balíčku selhala.</value>
   </data>
@@ -1511,6 +1524,9 @@ Chcete pokračovat?</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Objevte znovu svou místní hudební sbírku s Nagi, hudebním přehrávačem zaměřeným na rychlost, jednoduchost a soukromí.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Verze {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Zobrazit licence</value>
@@ -1736,6 +1752,12 @@ Chcete pokračovat?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>např. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Poslední 1 den</value>
@@ -1982,6 +2004,10 @@ Chcete pokračovat?</value>
   <data name="Label_Path" xml:space="preserve">
     <value>Cesta</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Server</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Formát</value>
   </data>
@@ -2017,6 +2043,160 @@ Chcete pokračovat?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Zobrazovat název každého sloupce nad seznamy skladeb.</value>
+  </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Přidat</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Přidat hudební složku nebo server</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Hudební složka</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Hudební server</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>Synchronizovat</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Přihlásit se znovu</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Odebrat server</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>Odebrat '{0}' z vaší knihovny? Hudba zůstane na serveru.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>Zatím žádné skladby</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>Synchronizujte server na stránce Složky a načtěte jeho hudbu</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>Synchronizuji '{0}'…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>Nepodařilo se synchronizovat '{0}'. Zkuste to později.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Přidat hudební server</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>Přihlášení k {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Přihlásit se</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>Zadejte heslo pro uživatele {0} na serveru {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>Zadejte nový klíč API pro {0}.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Typ serveru</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome nebo jiný server OpenSubsonic</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Adresa serveru</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Přihlásit se pomocí</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>Uživatelské jméno</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Heslo</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>Klíč API</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Zadejte adresu serveru, například music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>Server není dostupný. Zkontrolujte adresu a zda server běží.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>Nelze se bezpečně připojit. Pokud server nepoužívá HTTPS, zadejte jeho adresu začínající http://.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>Na této adrese není žádný server Jellyfin.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>Na této adrese není žádný server OpenSubsonic. Servery, které podporují pouze původní rozhraní Subsonic API, nelze přidat.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi vyžaduje Jellyfin 10.11 nebo novější. Aktualizujte server a zkuste to znovu.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>Uživatelské jméno nebo heslo není správné.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>Server tento klíč API nepřijal.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>Tento server nepřijímá hesla z aplikací. Přihlaste se místo toho pomocí klíče API.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>Tento server nepodporuje klíče API. Přihlaste se místo toho heslem.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>Váš účet nemá na tomto serveru žádnou hudební knihovnu.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>Tento server už ve vaší knihovně je.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>Přihlášení se na tomto počítači nepodařilo uložit.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>Na serveru nastala chyba. Zkuste to později.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>Tento klíč API patří jinému účtu. Vytvořte ho po přihlášení jako {0}.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>Server '{0}' není dostupný. Zkontrolujte, zda běží a zda jste online.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>Nelze se bezpečně připojit k serveru '{0}'. Jeho certifikát se mohl změnit nebo vypršet.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>Server '{0}' už tento způsob přihlášení nepřijímá. Odeberte ho, znovu ho přidejte a zvolte jiný způsob přihlášení.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>Server '{0}' nepřijal uložené přihlášení. Přihlaste se znovu, abyste ho mohli dál používat.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>Skladbu '{0}' ze serveru '{1}' se nepodařilo přehrát.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>Skladba '{0}' už na serveru '{1}' není, takže při další synchronizaci zmizí z vaší knihovny.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
   </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A až Z)</value>

@@ -156,6 +156,9 @@
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>내보낼 재생 목록이 없습니다.</value>
   </data>
+  <data name="Error_PlaylistsExportFailed" xml:space="preserve">
+    <value>재생 목록을 해당 폴더로 내보내지 못했습니다.</value>
+  </data>
   <data name="EqPreset_None" xml:space="preserve">
     <value>없음</value>
   </data>
@@ -251,5 +254,21 @@
   <data name="Biography_WikipediaAttribution" xml:space="preserve">
     <value>출처: 위키백과, CC BY-SA 라이선스에 따라 이용됩니다.</value>
     <comment>Shown below an artist biography taken from Wikipedia, as its license requires.</comment>
+  </data>
+  <data name="Format_FetchingServerSongs" xml:space="preserve">
+    <value>서버에서 곡을 가져오는 중({0})…</value>
+    <comment>Shown while a music server is synced. {0} is the number of songs received so far.</comment>
+  </data>
+  <data name="Status_AddingServerSongs" xml:space="preserve">
+    <value>라이브러리에 곡을 추가하는 중…</value>
+    <comment>Shown while songs from a music server are saved to the library.</comment>
+  </data>
+  <data name="Status_DownloadingServerCovers" xml:space="preserve">
+    <value>앨범 커버를 다운로드하는 중…</value>
+    <comment>Shown while album covers are downloaded from a music server.</comment>
+  </data>
+  <data name="Status_SyncComplete" xml:space="preserve">
+    <value>동기화를 완료했습니다.</value>
+    <comment>Shown when a music server has finished syncing.</comment>
   </data>
 </root>

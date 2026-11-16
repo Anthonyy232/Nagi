@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Asnjë artikull</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>Kjo listë nuk u ngarkua dot.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Gabim</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>{0, plural, one {Inteligjente • # këngë} other {Inteligjente • # këngë}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Asnjë këngë nuk përputhet me rregullat e kësaj liste luajtjeje inteligjente.</value>
@@ -447,10 +454,10 @@ Skedarët që nuk u mundësuan të importohen: {0}.</value>
     <value>Asnjë rregull e përcaktuar • Të gjitha këngët përputhen</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>Përputh të gjitha nga {0, plural, one {# rregull} other {# rregulla}}</value>
+    <value>Përputhen të gjitha rregullat ({0, plural, one {# rregull} other {# rregulla}})</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>Përputh cilindo nga {0, plural, one {# rregull} other {# rregulla}}</value>
+    <value>Përputhet cilido rregull ({0, plural, one {# rregull} other {# rregulla}})</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# artikull} other {# artikuj}}</value>
@@ -672,6 +679,9 @@ Dëshironi të vazhdoni?</value>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Aktivizo &amp; Skano</value>
   </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>Normalizimi i volumit nis me një skanim të bibliotekës, i cili nuk mund të ekzekutohet ndërsa një operacion tjetër i bibliotekës është në vazhdim. Provoni përsëri kur të përfundojë.</value>
+  </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Po përgatitet skanimi i normalizimit të volumit…</value>
   </data>
@@ -772,10 +782,10 @@ Dëshironi të vazhdoni?</value>
     <value>Të gjitha këngët në bibliotekën tuaj do të përfshihen në këtë listë luajtjeje.</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
-    <value>Shto rregullin tënd të parë</value>
+    <value>Shtoni rregullin tuaj të parë</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_ToolTip" xml:space="preserve">
-    <value>Shto rregullin tënd të parë</value>
+    <value>Shtoni rregullin tuaj të parë</value>
   </data>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Ruaj</value>
@@ -850,7 +860,7 @@ Dëshironi të vazhdoni?</value>
     <value>Asnjë album nuk u gjet</value>
   </data>
   <data name="AlbumPage_Empty_Subtitle" xml:space="preserve">
-    <value>Skano bibliotekën tuaj të muzikës për të mbushur albumet</value>
+    <value>Skanoni bibliotekën tuaj të muzikës për të mbushur albumet</value>
   </data>
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>Album</value>
@@ -880,7 +890,7 @@ Dëshironi të vazhdoni?</value>
     <value>Asnjë artist nuk u gjet</value>
   </data>
   <data name="ArtistPage_Empty_Subtitle" xml:space="preserve">
-    <value>Skano bibliotekën tuaj të muzikës për të mbushur artistët</value>
+    <value>Skanoni bibliotekën tuaj të muzikës për të mbushur artistët</value>
   </data>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
     <value>Ndrysho imazhin e artistit</value>
@@ -913,7 +923,7 @@ Dëshironi të vazhdoni?</value>
     <value>Asnjë dosje nuk është shtuar ende</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Shtoni dosje muzike për të filluar</value>
+    <value>Shtoni një dosje muzike ose server për të filluar</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Dosje</value>
@@ -937,7 +947,7 @@ Dëshironi të vazhdoni?</value>
     <value>Asnjë zhanër nuk u gjet</value>
   </data>
   <data name="GenrePage_Empty_Subtitle" xml:space="preserve">
-    <value>Skano bibliotekën tuaj të muzikës për të mbushur zhanret</value>
+    <value>Skanoni bibliotekën tuaj të muzikës për të mbushur zhanret</value>
   </data>
   <data name="LibraryPage_Title" xml:space="preserve">
     <value>Biblioteka</value>
@@ -955,7 +965,7 @@ Dëshironi të vazhdoni?</value>
     <value>Luaj</value>
   </data>
   <data name="SongList_Context_PlayNext" xml:space="preserve">
-    <value>Luaj në vazhdim</value>
+    <value>Luaj më pas</value>
   </data>
   <data name="SongList_Context_AddToQueue" xml:space="preserve">
     <value>Shto në radhë</value>
@@ -976,7 +986,7 @@ Dëshironi të vazhdoni?</value>
     <value>Nuk u gjet asnjë këngë</value>
   </data>
   <data name="Generic_TrySearchingElse" xml:space="preserve">
-    <value>Provo të kërkosh për diçka tjetër</value>
+    <value>Provoni të kërkoni për diçka tjetër</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>Biblioteka juaj është bosh</value>
@@ -988,7 +998,7 @@ Dëshironi të vazhdoni?</value>
     <value>Nuk u gjetën tekste për këtë këngë</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
-    <value>Provo një këngë tjetër</value>
+    <value>Provoni një këngë tjetër</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
     <value>Ndrysho ose zëvendëso tekstin e këngës</value>
@@ -1018,55 +1028,55 @@ Dëshironi të vazhdoni?</value>
     <value>Shto Dosje Muzike</value>
   </data>
   <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
-    <value>Një shtëpi e qetë, së pari lokale, për muzikën tënde. Konfigurimi merr rreth një minutë.</value>
+    <value>Një shtëpi e qetë, së pari lokale, për muzikën tuaj. Konfigurimi merr rreth një minutë.</value>
   </data>
   <data name="OnboardingPage_GetStarted" xml:space="preserve">
     <value>Fillo</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
-    <value>Ku është muzika jote?</value>
+    <value>Ku është muzika juaj?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Zgjidh dosjen ku mban muzikën tënde. Nagi ndërton bibliotekën tënde ndërsa përfundon konfigurimin, dhe mund të shtosh më shumë dosje më vonë.</value>
+    <value>Zgjidhni dosjen ku mbani muzikën tuaj ose shtoni një server muzike. Nagi ndërton bibliotekën tuaj ndërsa përfundoni konfigurimin dhe mund të shtoni më shumë më vonë.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
-    <value>Përshtate sipas dëshirës</value>
+    <value>Përshtateni sipas dëshirës</value>
   </data>
   <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
-    <value>Zgjidh se si duket Nagi. Ndryshimet zbatohen menjëherë.</value>
+    <value>Zgjidhni se si duket Nagi. Ndryshimet zbatohen menjëherë.</value>
   </data>
   <data name="OnboardingPage_Listening_Title" xml:space="preserve">
-    <value>Përshtat se si tingëllon</value>
+    <value>Përshtatni se si tingëllon</value>
   </data>
   <data name="OnboardingPage_Listening_Description" xml:space="preserve">
-    <value>Jepi formë mënyrës se si luhet muzika jote.</value>
+    <value>Jepini formë mënyrës se si luhet muzika juaj.</value>
   </data>
   <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
-    <value>Fillo nga një paracaktim. Mund të rregullosh çdo brez te Cilësimet.</value>
+    <value>Filloni nga një paracaktim. Mund të rregulloni çdo brez te Cilësimet.</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
-    <value>Jepi jetë bibliotekës tënde</value>
+    <value>Jepini jetë bibliotekës suaj</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi funksionon plotësisht pa internet. Aktivizoji këto për të plotësuar fotot e artistëve, biografitë, kopertinat e albumeve dhe tekstet që skedarët tuaj nuk i përmbajnë.</value>
+    <value>Nagi funksionon plotësisht pa internet. Aktivizojini këto për të plotësuar fotot e artistëve, biografitë, kopertinat e albumeve dhe tekstet që skedarët tuaj nuk i përmbajnë.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
-    <value>Përshtatu plotësisht në desktopin tënd</value>
+    <value>Përshtatuni plotësisht në desktopin tuaj</value>
   </data>
   <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
-    <value>Zgjidh se si nis Nagi dhe çfarë ndodh kur e mbyll ose e minimizon.</value>
+    <value>Zgjidhni se si nis Nagi dhe çfarë ndodh kur e mbyllni ose e minimizoni.</value>
   </data>
   <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
-    <value>Shpërndaj atë që po dëgjon</value>
+    <value>Shpërndani atë që po dëgjoni</value>
   </data>
   <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
-    <value>Regjistro dëgjimet e tua në Last.fm dhe tregoju miqve se çfarë po dëgjon në Discord. ListenBrainz është i disponueshëm te Cilësimet.</value>
+    <value>Regjistroni dëgjimet tuaja në Last.fm dhe tregojuni miqve se çfarë po dëgjoni në Discord. ListenBrainz është i disponueshëm te Cilësimet.</value>
   </data>
   <data name="OnboardingPage_Finish_Title" xml:space="preserve">
     <value>Çdo gjë është gati</value>
   </data>
   <data name="OnboardingPage_Finish_Description" xml:space="preserve">
-    <value>Mund të ndryshosh cilëndo nga këto në çdo kohë te Cilësimet.</value>
+    <value>Mund të ndryshoni cilëndo nga këto në çdo kohë te Cilësimet.</value>
   </data>
   <data name="OnboardingPage_SkipSetup" xml:space="preserve">
     <value>Kalo konfigurimin</value>
@@ -1168,7 +1178,7 @@ Dëshironi të vazhdoni?</value>
     <value>Tematizimi dinamik</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Përshtat ngjyrat e aplikacionit me pamjen e albumit aktual.</value>
+    <value>Përshtatni ngjyrat e aplikacionit me pamjen e albumit aktual.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
     <value>Mbaj mend madhësinë e dritares</value>
@@ -1213,7 +1223,7 @@ Dëshironi të vazhdoni?</value>
     <value>Zbehje në Luaj / Ndalo</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Rrit gradualisht volumin kur rifillon luajtja dhe ule gradualisht kur ndalet, në vend që tingulli të ndërpritet menjëherë.</value>
+    <value>Rritni gradualisht volumin kur rifillon luajtja dhe uleni gradualisht kur ndalet, në vend që tingulli të ndërpritet menjëherë.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>Barazuesi i audios</value>
@@ -1246,25 +1256,25 @@ Dëshironi të vazhdoni?</value>
     <value>Luajtës i palosshëm</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Zgjero shiritin e luajtësit kur kaloni kursorin sipër.</value>
+    <value>Zgjeroni shiritin e luajtësit kur kaloni kursorin sipër.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
     <value>Rikthe gjendjen e dëgjimit</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Rikthe radhën e dëgjimit dhe pozicionin e luajtjes kur niset Nagi.</value>
+    <value>Riktheni radhën e dëgjimit dhe pozicionin e luajtjes kur niset Nagi.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
     <value>Nis automatikisht gjatë ndezjes</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
-    <value>Nis Nagi automatikisht kur hyni në kompjuterin tuaj.</value>
+    <value>Nisni Nagi automatikisht kur hyni në kompjuterin tuaj.</value>
   </data>
   <data name="SettingsPage_StartMinimized_Header" xml:space="preserve">
     <value>Nis i minimizuar</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>Nis Nagi-n me dritaren e minimizuar.</value>
+    <value>Nisni Nagi-n me dritaren e minimizuar.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
     <value>Minimizo në mini-luajtës</value>
@@ -1276,7 +1286,7 @@ Dëshironi të vazhdoni?</value>
     <value>Fshih në shiritin e sistemit</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>Mbaj Nagi-n në punë në shiritin e sistemit kur mbyllni dritaren e tij.</value>
+    <value>Mbani Nagi-n në punë në shiritin e sistemit kur mbyllni dritaren e tij.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
     <value>Shfaq kopertinën në dritaren kërcyese</value>
@@ -1303,7 +1313,7 @@ Dëshironi të vazhdoni?</value>
     <value>Ndarja e Zhanreve</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Përcakto karakteret e përdorura për të ndarë zhanre të shumta (p.sh. ';/'). Lëreni bosh për të çaktivizuar.</value>
+    <value>Përcaktoni karakteret e përdorura për të ndarë zhanre të shumta (p.sh. ';/'). Lëreni bosh për të çaktivizuar.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Riskano bibliotekën</value>
@@ -1315,7 +1325,7 @@ Dëshironi të vazhdoni?</value>
     <value>Merr metatëdhënat nga interneti</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Sill fotot e artistëve, biografitë dhe kopertinat e albumeve nga burimet në internet.</value>
+    <value>Sillni fotot e artistëve, biografitë dhe kopertinat e albumeve nga burimet në internet.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Burimet</value>
@@ -1327,7 +1337,7 @@ Dëshironi të vazhdoni?</value>
     <value>Sill tekstet e këngëve nga interneti</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Sill tekstet e munguara të këngëve nga burime në internet. Kjo dërgon metatëdhënat e këngës te shërbime të palëve të treta.</value>
+    <value>Sillni tekstet e munguara të këngëve nga burime në internet. Kjo dërgon metatëdhënat e këngës te shërbime të palëve të treta.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>Burimet</value>
@@ -1339,7 +1349,7 @@ Dëshironi të vazhdoni?</value>
     <value>Shfaq tekstet e romanizuara</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>Shfaq një rresht më të vogël të romanizuar nën tekstet e mbështetura kur një paketë e instaluar përputhet me shkrimin.</value>
+    <value>Shfaqni një rresht më të vogël të romanizuar nën tekstet e mbështetura kur një paketë e instaluar përputhet me shkrimin.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
     <value>Paketat e gjuhëve</value>
@@ -1361,6 +1371,9 @@ Dëshironi të vazhdoni?</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Nuk ka paketa romanizimi të përputhshme në dispozicion.</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>Paketat e romanizimit nuk u ngarkuan dot. Kontrolloni lidhjen me internetin, pastaj rifreskoni.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Instalimi i paketës dështoi.</value>
@@ -1435,13 +1448,13 @@ Dëshironi të vazhdoni?</value>
     <value>Përditëso «Po luhet tani»</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Shfaq këngën që po luhet aktualisht në profilin tuaj Last.fm.</value>
+    <value>Shfaqni këngën që po luhet aktualisht në profilin tuaj Last.fm.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
     <value>ListenBrainz</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
-    <value>Dorëzo dëgjimet tuaja te ListenBrainz (një alternativë e hapur ndaj Last.fm).</value>
+    <value>Dorëzoni dëgjimet tuaja te ListenBrainz (një alternativë e hapur ndaj Last.fm).</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenLabel" xml:space="preserve">
     <value>Tokeni i përdoruesit</value>
@@ -1498,7 +1511,7 @@ Dëshironi të vazhdoni?</value>
     <value>Asnjë këngë nuk përputhet me rregullat aktuale</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Provo të ndryshosh rregullat</value>
+    <value>Provoni të ndryshoni rregullat</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Ndrysho rregullat</value>
@@ -1511,6 +1524,9 @@ Dëshironi të vazhdoni?</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Rizbuloni koleksionin tuaj lokal të muzikës me Nagi, një luajtës muzike i fokusuar në shpejtësi, thjeshtësi dhe privatësi.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Versioni {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Shfaq Licencat</value>
@@ -1654,7 +1670,7 @@ Dëshironi të vazhdoni?</value>
     <value>Ende nuk ka të dhëna dëgjimi</value>
   </data>
   <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
-    <value>Fillo të dëgjosh muzikë për të parë statistikat këtu</value>
+    <value>Filloni të dëgjoni muzikë për të parë statistikat këtu</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
     <value>Dëgjime: {0}</value>
@@ -1737,6 +1753,12 @@ Dëshironi të vazhdoni?</value>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>p.sh. ;/\\</value>
   </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
+  </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>1 ditën e fundit</value>
   </data>
@@ -1792,7 +1814,7 @@ Dëshironi të vazhdoni?</value>
     <value>Pajisja e ruajtur nuk është e disponueshme. Po përdoret parazgjedhja e sistemit.</value>
   </data>
   <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
-    <value>Nuk u mundësua azhornimi i daljes audio. Provo përsëri ose zgjidh një pajisje tjetër.</value>
+    <value>Nuk u mundësua azhornimi i daljes audio. Provoni përsëri ose zgjidhni një pajisje tjetër.</value>
   </data>
   <data name="Listening_Random" xml:space="preserve">
     <value>Përzieni</value>
@@ -1828,7 +1850,7 @@ Dëshironi të vazhdoni?</value>
     <value>Nuk ka këngë për këtë miksim</value>
   </data>
   <data name="Listening_NoMixDescription" xml:space="preserve">
-    <value>Asnjë këngë në këtë listë nuk plotëson këto kërkesa. Provo një miksim tjetër ose një listë tjetër këngësh.</value>
+    <value>Asnjë këngë në këtë listë nuk plotëson këto kërkesa. Provoni një miksim tjetër ose një listë tjetër këngësh.</value>
   </data>
   <data name="Listening_Favorites" xml:space="preserve">
     <value>Të preferuarat</value>
@@ -1942,7 +1964,7 @@ Dëshironi të vazhdoni?</value>
     <value>Asnjë dëgjim nuk përputhet me kërkimin tuaj</value>
   </data>
   <data name="Listening_NoTimedMixDescription" xml:space="preserve">
-    <value>Asnjë këngë në këtë listë nuk plotëson kërkesat e miksimit dhe nuk përshtatet me kohëzgjatjen e zgjedhur. Provo një kohëzgjatje më të gjatë, një miksim tjetër ose një listë tjetër këngësh.</value>
+    <value>Asnjë këngë në këtë listë nuk plotëson kërkesat e miksimit dhe nuk përshtatet me kohëzgjatjen e zgjedhur. Provoni një kohëzgjatje më të gjatë, një miksim tjetër ose një listë tjetër këngësh.</value>
   </data>
   <data name="Generic_CloseSearch" xml:space="preserve">
     <value>Mbyll kërkimin</value>
@@ -1982,6 +2004,10 @@ Dëshironi të vazhdoni?</value>
   <data name="Label_Path" xml:space="preserve">
     <value>Shtegu</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Serveri</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Formati</value>
   </data>
@@ -2016,7 +2042,161 @@ Dëshironi të vazhdoni?</value>
     <value>Titujt e kolonave</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
-    <value>Shfaq titullin e çdo kolone mbi listat e këngëve.</value>
+    <value>Shfaqni titullin e çdo kolone mbi listat e këngëve.</value>
+  </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Shto</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Shto një dosje muzike ose server</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Dosje muzike</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Server muzike</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>Sinkronizo</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Hyr përsëri</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Hiq serverin</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>Të hiqet '{0}' nga biblioteka juaj? Muzika e tij mbetet në server.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>Ende pa këngë</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>Sinkronizoni serverin nga faqja Dosjet për të sjellë muzikën e tij</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>Po sinkronizohet '{0}'…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>S'u sinkronizua dot '{0}'. Provoni përsëri më vonë.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Shto server muzike</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>Hyni në {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Hyr</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>Shkruani fjalëkalimin për {0} në {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>Shkruani një çelës të ri API për {0}.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Lloji i serverit</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome ose një server tjetër OpenSubsonic</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Adresa e serverit</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Hyni me</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>Emri i përdoruesit</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Fjalëkalimi</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>Çelësi API</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Shkruani adresën e serverit, p.sh. music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>S'u arrit serveri. Kontrolloni adresën dhe që serveri po funksionon.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>S'u lidh dot në mënyrë të sigurt. Nëse serveri nuk përdor HTTPS, shkruani adresën e tij duke filluar me http://.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>Në këtë adresë nuk ka server Jellyfin.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>Në këtë adresë nuk ka server OpenSubsonic. Serverët që mbështesin vetëm API-n origjinale Subsonic nuk mund të shtohen.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi kërkon Jellyfin 10.11 ose më të ri. Përditësoni serverin dhe provoni përsëri.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>Emri i përdoruesit ose fjalëkalimi është i pasaktë.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>Serveri nuk e pranoi këtë çelës API.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>Ky server nuk pranon fjalëkalime nga aplikacionet. Hyni me një çelës API.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>Ky server nuk mbështet çelësa API. Hyni me fjalëkalimin tuaj.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>Llogaria juaj nuk ka bibliotekë muzike në këtë server.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>Ky server është tashmë në bibliotekën tuaj.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>Hyrja nuk u ruajt dot në këtë kompjuter.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>Serveri hasi një problem. Provoni përsëri më vonë.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>Ky çelës API i përket një llogarie tjetër. Krijoni një teksa jeni të identifikuar si {0}.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>S'u arrit '{0}'. Kontrolloni që serveri po funksionon dhe që jeni në internet.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>S'u lidh dot në mënyrë të sigurt me '{0}'. Certifikata e tij mund të ketë ndryshuar ose skaduar.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>'{0}' nuk e pranon më këtë mënyrë hyrjeje. Hiqeni, shtojeni përsëri dhe zgjidhni mënyrën tjetër të hyrjes.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>'{0}' nuk e pranoi hyrjen e ruajtur. Hyni përsëri për ta vazhduar përdorimin.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>S'u luajt dot '{0}' nga '{1}'.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>'{0}' nuk është më në '{1}', ndaj do të largohet nga biblioteka juaj në sinkronizimin e ardhshëm.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
   </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A në Z)</value>
@@ -2025,16 +2205,16 @@ Dëshironi të vazhdoni?</value>
     <value>{0} (Z në A)</value>
   </data>
   <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Më e reja)</value>
+    <value>{0} (më e reja)</value>
   </data>
   <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Më e vjetra)</value>
+    <value>{0} (më e vjetra)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Rritës)</value>
+    <value>{0} (rritës)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Zbritës)</value>
+    <value>{0} (zbritës)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Më e shkurtra fillimisht</value>

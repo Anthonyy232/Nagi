@@ -88,22 +88,22 @@
     <value>Skaneerimine lõpetatud.</value>
   </data>
   <data name="Format_ScanAddedSongs_Singular" xml:space="preserve">
-    <value>Skaneerimine lõpetatud. Lisati või uuendati {0} laul.</value>
+    <value>Skaneerimine lõpetatud. Lisati või uuendati {0} lugu.</value>
   </data>
   <data name="Format_ScanAddedSongs_Plural" xml:space="preserve">
-    <value>Skaneerimine lõpetatud. Lisati või uuendati {0} laulu.</value>
+    <value>Skaneerimine lõpetatud. Lisati või uuendati {0} lugu.</value>
   </data>
   <data name="Format_ScanFoundLyrics_Singular" xml:space="preserve">
-    <value>Leiti sõnad {0} laulule.</value>
+    <value>Leiti sõnad {0} loole.</value>
   </data>
   <data name="Format_ScanFoundLyrics_Plural" xml:space="preserve">
-    <value>Leiti sõnad {0} laulule.</value>
+    <value>Leiti sõnad {0} loole.</value>
   </data>
   <data name="Format_ScanFoundCoverArt_Singular" xml:space="preserve">
-    <value>Leiti kaanepilt {0} laulule.</value>
+    <value>Leiti kaanepilt {0} loole.</value>
   </data>
   <data name="Format_ScanFoundCoverArt_Plural" xml:space="preserve">
-    <value>Leiti kaanepildid {0} laulule.</value>
+    <value>Leiti kaanepildid {0} loole.</value>
   </data>
   <data name="Format_ScanFoundArtistImages_Singular" xml:space="preserve">
     <value>Leiti pilt {0} artistile.</value>
@@ -155,6 +155,9 @@
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Eksportimiseks pole ühtegi esitusloendit.</value>
+  </data>
+  <data name="Error_PlaylistsExportFailed" xml:space="preserve">
+    <value>Esitusloendeid ei õnnestunud sellesse kausta eksportida.</value>
   </data>
   <data name="EqPreset_None" xml:space="preserve">
     <value>Puudub</value>
@@ -232,7 +235,7 @@
     <value>Jõude</value>
   </data>
   <data name="Presence_ByArtist" xml:space="preserve">
-    <value>esitajalt {0}</value>
+    <value>artistilt {0}</value>
     <comment>{0} is the artist name.</comment>
   </data>
   <data name="Presence_PausedProgress" xml:space="preserve">
@@ -251,5 +254,21 @@
   <data name="Biography_WikipediaAttribution" xml:space="preserve">
     <value>Allikas: Vikipeedia, CC BY-SA litsentsi alusel.</value>
     <comment>Shown below an artist biography taken from Wikipedia, as its license requires.</comment>
+  </data>
+  <data name="Format_FetchingServerSongs" xml:space="preserve">
+    <value>Lugude toomine serverist ({0})…</value>
+    <comment>Shown while a music server is synced. {0} is the number of songs received so far.</comment>
+  </data>
+  <data name="Status_AddingServerSongs" xml:space="preserve">
+    <value>Lugude lisamine muusikakogusse…</value>
+    <comment>Shown while songs from a music server are saved to the library.</comment>
+  </data>
+  <data name="Status_DownloadingServerCovers" xml:space="preserve">
+    <value>Albumite kaanepiltide allalaadimine…</value>
+    <comment>Shown while album covers are downloaded from a music server.</comment>
+  </data>
+  <data name="Status_SyncComplete" xml:space="preserve">
+    <value>Sünkroonimine lõpetatud.</value>
+    <comment>Shown when a music server has finished syncing.</comment>
   </data>
 </root>

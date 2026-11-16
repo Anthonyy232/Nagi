@@ -156,6 +156,9 @@
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Aucune liste de lecture à exporter.</value>
   </data>
+  <data name="Error_PlaylistsExportFailed" xml:space="preserve">
+    <value>Impossible d'exporter les listes de lecture vers ce dossier.</value>
+  </data>
   <data name="EqPreset_None" xml:space="preserve">
     <value>Aucun</value>
   </data>
@@ -190,7 +193,7 @@
     <value>Vocale</value>
   </data>
   <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
-    <value>Toutes les chansons ont déjà des données de volume.</value>
+    <value>Tous les morceaux ont déjà des données de volume.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
     <value>Analyse du volume… Morceaux : {0}</value>
@@ -251,5 +254,21 @@
   <data name="Biography_WikipediaAttribution" xml:space="preserve">
     <value>Extrait de Wikipédia, sous licence CC BY-SA.</value>
     <comment>Shown below an artist biography taken from Wikipedia, as its license requires.</comment>
+  </data>
+  <data name="Format_FetchingServerSongs" xml:space="preserve">
+    <value>Récupération des morceaux depuis le serveur ({0})…</value>
+    <comment>Shown while a music server is synced. {0} is the number of songs received so far.</comment>
+  </data>
+  <data name="Status_AddingServerSongs" xml:space="preserve">
+    <value>Ajout des morceaux à votre bibliothèque…</value>
+    <comment>Shown while songs from a music server are saved to the library.</comment>
+  </data>
+  <data name="Status_DownloadingServerCovers" xml:space="preserve">
+    <value>Téléchargement des pochettes d'album…</value>
+    <comment>Shown while album covers are downloaded from a music server.</comment>
+  </data>
+  <data name="Status_SyncComplete" xml:space="preserve">
+    <value>Synchronisation terminée.</value>
+    <comment>Shown when a music server has finished syncing.</comment>
   </data>
 </root>

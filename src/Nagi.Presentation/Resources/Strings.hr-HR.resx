@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Nema stavki</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>Ovaj popis nije se mogao učitati.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Pogreška</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Pametno • {0, plural, one {# pjesma} few {# pjesme} other {# pjesama}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Nijedna pjesma ne odgovara pravilima ovog pametnog popisa pjesama.</value>
@@ -447,10 +454,10 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
     <value>Nema definiranih pravila • Sve pjesme odgovaraju</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>Podudaranje svi od {0, plural, one {# pravilo} other {# pravila}}</value>
+    <value>Odgovara svim pravilima ({0, plural, one {# pravilo} few {# pravila} other {# pravila}})</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>Podudaranje bilo koji od {0, plural, one {# pravilo} other {# pravila}}</value>
+    <value>Odgovara bilo kojem pravilu ({0, plural, one {# pravilo} few {# pravila} other {# pravila}})</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# stavka} few {# stavke} other {# stavki}}</value>
@@ -671,6 +678,9 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Omogući i skeniraj</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>Normalizacija glasnoće počinje skeniranjem biblioteke, koje se ne može pokrenuti dok traje druga radnja s bibliotekom. Pokušajte ponovno kad završi.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Priprema skeniranja za normalizaciju glasnoće…</value>
@@ -913,7 +923,7 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
     <value>Još nema dodanih mapa</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Dodajte glazbene mape za početak</value>
+    <value>Za početak dodajte glazbenu mapu ili poslužitelj</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Mapa</value>
@@ -1027,7 +1037,7 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
     <value>Gdje se nalazi vaša glazba?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Odaberite mapu u kojoj čuvate svoju glazbu. Nagi gradi vašu biblioteku dok završavate postavljanje, a kasnije možete dodati još mapa.</value>
+    <value>Odaberite mapu u kojoj čuvate glazbu ili dodajte glazbeni poslužitelj. Nagi gradi vašu biblioteku dok završavate postavljanje, a kasnije možete dodati još.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Prilagodite po svom ukusu</value>
@@ -1362,6 +1372,9 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Nema dostupnih kompatibilnih paketa za romanizaciju.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>Paketi za romanizaciju nisu se mogli učitati. Provjerite internetsku vezu, a zatim osvježite.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Instalacija paketa nije uspjela.</value>
   </data>
@@ -1511,6 +1524,9 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Ponovno otkrijte svoju lokalnu glazbenu kolekciju uz Nagi, glazbeni reproduktor fokusiran na brzinu, jednostavnost i privatnost.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Verzija {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Prikaži licence</value>
@@ -1736,6 +1752,12 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>npr. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Zadnji 1 dan</value>
@@ -1982,6 +2004,10 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   <data name="Label_Path" xml:space="preserve">
     <value>Putanja</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Poslužitelj</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Format</value>
   </data>
@@ -2018,6 +2044,160 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Prikaži naziv svakog stupca iznad popisa pjesama.</value>
   </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Dodaj</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Dodaj glazbenu mapu ili poslužitelj</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Glazbena mapa</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Glazbeni poslužitelj</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>Sinkroniziraj</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Prijavi se ponovno</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Ukloni poslužitelj</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>Ukloniti '{0}' iz biblioteke? Njegova glazba ostaje na poslužitelju.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>Još nema pjesama</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>Sinkronizirajte poslužitelj na stranici Mape kako biste dohvatili njegovu glazbu</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>Sinkronizacija '{0}'…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>Sinkronizacija '{0}' nije uspjela. Pokušajte ponovno kasnije.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Dodaj glazbeni poslužitelj</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>Prijava na {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Prijavi se</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>Unesite lozinku za korisnika {0} na poslužitelju {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>Unesite novi API ključ za {0}.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Vrsta poslužitelja</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome ili drugi OpenSubsonic poslužitelj</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Adresa poslužitelja</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Prijava putem</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>Korisničko ime</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Lozinka</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>API ključ</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Unesite adresu poslužitelja, na primjer music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>Poslužitelj nije dostupan. Provjerite adresu i radi li poslužitelj.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>Sigurno povezivanje nije uspjelo. Ako poslužitelj ne koristi HTTPS, unesite njegovu adresu koja počinje s http://.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>Na ovoj adresi nema Jellyfin poslužitelja.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>Na ovoj adresi nema OpenSubsonic poslužitelja. Poslužitelji koji podržavaju samo izvorni Subsonic API ne mogu se dodati.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi zahtijeva Jellyfin 10.11 ili noviji. Ažurirajte poslužitelj i pokušajte ponovno.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>Korisničko ime ili lozinka nisu ispravni.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>Poslužitelj nije prihvatio ovaj API ključ.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>Ovaj poslužitelj ne prihvaća lozinke iz aplikacija. Umjesto toga prijavite se API ključem.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>Ovaj poslužitelj ne podržava API ključeve. Umjesto toga prijavite se lozinkom.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>Vaš račun nema glazbenu biblioteku na ovom poslužitelju.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>Ovaj poslužitelj već je u vašoj biblioteci.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>Prijava se nije mogla spremiti na ovo računalo.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>Na poslužitelju je došlo do problema. Pokušajte ponovno kasnije.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>Ovaj API ključ pripada drugom računu. Izradite ga dok ste prijavljeni kao {0}.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>Poslužitelj '{0}' nije dostupan. Provjerite radi li poslužitelj i jeste li na mreži.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>Sigurno povezivanje s poslužiteljem '{0}' nije uspjelo. Njegov certifikat možda se promijenio ili je istekao.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>Poslužitelj '{0}' više ne prihvaća ovaj način prijave. Uklonite ga, zatim ga ponovno dodajte i odaberite drugi način prijave.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>Poslužitelj '{0}' nije prihvatio spremljenu prijavu. Prijavite se ponovno kako biste ga nastavili koristiti.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>Reprodukcija pjesme '{0}' s poslužitelja '{1}' nije uspjela.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>Pjesme '{0}' više nema na poslužitelju '{1}', pa će nestati iz vaše biblioteke pri sljedećoj sinkronizaciji.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A do Ž)</value>
   </data>
@@ -2025,10 +2205,10 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
     <value>{0} (Ž do A)</value>
   </data>
   <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Najnovije)</value>
+    <value>{0} (najnovije)</value>
   </data>
   <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Najstarije)</value>
+    <value>{0} (najstarije)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
     <value>{0} (uzlazno)</value>

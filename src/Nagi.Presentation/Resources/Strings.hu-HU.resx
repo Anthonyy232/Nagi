@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Nincsenek elemek</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>Ezt a listát nem sikerült betölteni.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Hiba</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>{0, plural, one {Intelligens • # dal} other {Intelligens • # dal}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Egy dal sem egyezik ezzel az intelligens lejátszási lista szabályaival.</value>
@@ -672,6 +679,9 @@ Szeretné folytatni?</value>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Engedélyezés és beolvasás</value>
   </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>A hangerő-normalizálás a könyvtár vizsgálatával kezdődik, amely nem futhat, amíg másik könyvtárművelet van folyamatban. Próbálja újra, ha az befejeződött.</value>
+  </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Hangerő-normalizálási vizsgálat előkészítése…</value>
   </data>
@@ -844,7 +854,7 @@ Szeretné folytatni?</value>
     <value>Albumok keresése…</value>
   </data>
   <data name="Generic_PickRandom" xml:space="preserve">
-    <value>Válasszon egyet véletlenszerűen</value>
+    <value>Véletlenszerű választás</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
     <value>Nem található album</value>
@@ -913,7 +923,7 @@ Szeretné folytatni?</value>
     <value>Még nem lett mappa hozzáadva</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Kezdéshez adjon hozzá zenei mappákat</value>
+    <value>A kezdéshez adjon hozzá egy zenei mappát vagy szervert</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Mappa</value>
@@ -949,7 +959,7 @@ Szeretné folytatni?</value>
     <value>Összes lejátszása</value>
   </data>
   <data name="SongList_ShuffleAll" xml:space="preserve">
-    <value>Összes véletlenszerű lejátszása</value>
+    <value>Összes lejátszása keverve</value>
   </data>
   <data name="Generic_Play" xml:space="preserve">
     <value>Lejátszás</value>
@@ -1027,7 +1037,7 @@ Szeretné folytatni?</value>
     <value>Hol van a zenéje?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Válassza ki a mappát, ahol a zenéit tárolja. A Nagi felépíti a könyvtárát, miközben befejezi a beállítást, és később további mappákat is hozzáadhat.</value>
+    <value>Válassza ki a mappát, ahol a zenéit tárolja, vagy adjon hozzá egy zeneszervert. A Nagi felépíti a könyvtárát, miközben befejezi a beállítást, és később továbbiakat is hozzáadhat.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Tegye egyedivé</value>
@@ -1362,6 +1372,9 @@ Szeretné folytatni?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Nincsenek kompatibilis romanizációs csomagok elérhetőek.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>Nem sikerült betölteni a romanizációs csomagokat. Ellenőrizze az internetkapcsolatot, majd frissítsen.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>A csomag telepítése sikertelen.</value>
   </data>
@@ -1511,6 +1524,9 @@ Szeretné folytatni?</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Fedezze fel újra helyi zenei gyűjteményét a Nagival, egy zenelejátszóval, amely a sebességre, az egyszerűségre és az adatvédelemre összpontosít.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Verzió {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Licencek megtekintése</value>
@@ -1736,6 +1752,12 @@ Szeretné folytatni?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>pl. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Elmúlt 1 nap</value>
@@ -1982,6 +2004,10 @@ Szeretné folytatni?</value>
   <data name="Label_Path" xml:space="preserve">
     <value>Elérési út</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Szerver</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Formátum</value>
   </data>
@@ -2018,6 +2044,160 @@ Szeretné folytatni?</value>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Az oszlopok nevének megjelenítése a dallisták felett.</value>
   </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Hozzáadás</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Zenei mappa vagy szerver hozzáadása</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Zenei mappa</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Zeneszerver</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>Szinkronizálás</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Újbóli bejelentkezés</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Szerver eltávolítása</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>Eltávolítja a(z) '{0}' szervert a könyvtárából? A zenék a szerveren maradnak.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>Még nincsenek dalok</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>A szerver zenéinek behozatalához szinkronizálja a szervert a Mappák oldalon</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>'{0}' szinkronizálása…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>Nem sikerült szinkronizálni: '{0}'. Próbálja újra később.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Zeneszerver hozzáadása</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>Bejelentkezés ide: {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Bejelentkezés</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>Adja meg {0} jelszavát itt: {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>Adjon meg új API-kulcsot ehhez: {0}.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Szerver típusa</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome vagy másik OpenSubsonic-szerver</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Szerver címe</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Bejelentkezési mód</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>Felhasználónév</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Jelszó</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>API-kulcs</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Adja meg a szerver címét, például music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>Nem sikerült elérni a szervert. Ellenőrizze a címet, és hogy a szerver fut-e.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>Nem sikerült biztonságos kapcsolatot létesíteni. Ha a szerver nem használ HTTPS-t, a címet http:// előtaggal adja meg.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>Ezen a címen nincs Jellyfin-szerver.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>Ezen a címen nincs OpenSubsonic-szerver. Azok a szerverek, amelyek csak az eredeti Subsonic API-t támogatják, nem adhatók hozzá.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>A Nagihoz Jellyfin 10.11 vagy újabb szükséges. Frissítse a szervert, majd próbálja újra.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>A felhasználónév vagy a jelszó helytelen.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>A szerver nem fogadta el ezt az API-kulcsot.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>Ez a szerver nem fogad el jelszavakat alkalmazásoktól. Jelentkezzen be inkább API-kulccsal.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>Ez a szerver nem támogatja az API-kulcsokat. Jelentkezzen be inkább a jelszavával.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>A fiókjához nem tartozik zenei könyvtár ezen a szerveren.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>Ez a szerver már szerepel a könyvtárában.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>Nem sikerült menteni a bejelentkezést ezen a számítógépen.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>A szerveren hiba történt. Próbálja újra később.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>Ez az API-kulcs másik fiókhoz tartozik. Hozzon létre egyet {0} fiókjával bejelentkezve.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>Nem sikerült elérni a(z) '{0}' szervert. Ellenőrizze, hogy a szerver fut-e, és hogy van-e internetkapcsolata.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>Nem sikerült biztonságos kapcsolatot létesíteni a(z) '{0}' szerverrel. A tanúsítványa megváltozhatott vagy lejárhatott.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>A(z) '{0}' már nem fogadja el ezt a bejelentkezési módot. Távolítsa el, majd adja hozzá újra, és válassza a másik bejelentkezési módot.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>A(z) '{0}' nem fogadta el a mentett bejelentkezést. Jelentkezzen be újra a használat folytatásához.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>Nem sikerült lejátszani a(z) '{0}' dalt innen: '{1}'.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>A(z) '{0}' már nincs a(z) '{1}' szerveren, ezért a következő szinkronizáláskor eltűnik a könyvtárából.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A-tól Z-ig)</value>
   </data>
@@ -2025,10 +2205,10 @@ Szeretné folytatni?</value>
     <value>{0} (Z-től A-ig)</value>
   </data>
   <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Legújabb)</value>
+    <value>{0} (legújabb)</value>
   </data>
   <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Legrégebbi)</value>
+    <value>{0} (legrégebbi)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
     <value>{0} (növekvő)</value>

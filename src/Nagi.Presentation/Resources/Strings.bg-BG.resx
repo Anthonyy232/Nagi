@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Няма елементи</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>Този списък не можа да се зареди.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Грешка</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Интелигентен • {0, plural, one {# песен} other {# песни}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Няма песни, които да съответстват на правилата на този интелигентен плейлист.</value>
@@ -672,6 +679,9 @@
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Активирай и сканирай</value>
   </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>Нормализирането на силата на звука започва със сканиране на библиотеката, което не може да се изпълни, докато върви друга операция с библиотеката. Опитайте отново, когато приключи.</value>
+  </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Подготовка за сканиране за нормализиране на силата на звука…</value>
   </data>
@@ -913,7 +923,7 @@
     <value>Все още няма добавени папки</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Добавете музикални папки, за да започнете</value>
+    <value>Добавете музикална папка или сървър, за да започнете</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Папка</value>
@@ -961,7 +971,7 @@
     <value>Добави към опашката</value>
   </data>
   <data name="SongList_Context_AddToPlaylist" xml:space="preserve">
-    <value>Добавяне към плейлист</value>
+    <value>Добави към плейлист</value>
   </data>
   <data name="SongList_Context_GoToAlbum" xml:space="preserve">
     <value>Към албума</value>
@@ -1027,7 +1037,7 @@
     <value>Къде е музиката ви?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Изберете папката, в която съхранявате музиката си. Nagi създава вашата библиотека, докато завършвате настройката, а по-късно можете да добавите още папки.</value>
+    <value>Изберете папката, в която съхранявате музиката си, или добавете музикален сървър. Nagi създава библиотеката ви, докато завършвате настройката, а по-късно можете да добавите още.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Персонализирайте по ваш вкус</value>
@@ -1117,7 +1127,7 @@
     <value>Търсене в плейлиста…</value>
   </data>
   <data name="SongList_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>Премахване от плейлиста</value>
+    <value>Премахни от плейлиста</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>Този плейлист е празен</value>
@@ -1362,6 +1372,9 @@
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Няма налични съвместими пакети за романизация.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>Пакетите за романизация не можаха да се заредят. Проверете интернет връзката си и обновете.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Инсталирането на пакета не бе успешно.</value>
   </data>
@@ -1511,6 +1524,9 @@
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Преоткрийте местната си музикална колекция с Nagi, музикален плейър, фокусиран върху скоростта, простотата и поверителността.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Версия {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Преглед на лицензи</value>
@@ -1736,6 +1752,12 @@
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>напр. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} мс</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} дБ</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Последният ден</value>
@@ -1982,6 +2004,10 @@
   <data name="Label_Path" xml:space="preserve">
     <value>Път</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Сървър</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Формат</value>
   </data>
@@ -2018,6 +2044,160 @@
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Показване на името на всяка колона над списъците с песни.</value>
   </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Добави</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Добавяне на музикална папка или сървър</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Музикална папка</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Музикален сървър</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>Синхронизиране</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Повторен вход</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Премахване на сървър</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>Да се премахне ли „{0}“ от библиотеката ви? Музиката остава на сървъра.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>Все още няма песни</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>Синхронизирайте сървъра от страницата „Папки“, за да добавите музиката му</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>Синхронизиране на „{0}“…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>„{0}“ не можа да се синхронизира. Опитайте отново по-късно.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Добавяне на музикален сървър</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>Вход в {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Вход</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>Въведете паролата за {0} в {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>Въведете нов API ключ за {0}.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Тип сървър</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome или друг сървър с OpenSubsonic</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Адрес на сървъра</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Вход чрез</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>Потребителско име</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Парола</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>API ключ</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Въведете адреса на сървъра, например music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>Връзката със сървъра не е възможна. Проверете адреса и дали сървърът работи.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>Не можа да се установи защитена връзка. Ако сървърът не използва HTTPS, въведете адреса му, започващ с http://.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>На този адрес няма сървър Jellyfin.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>На този адрес няма сървър с OpenSubsonic. Сървъри, които поддържат само оригиналния Subsonic API, не могат да бъдат добавени.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi изисква Jellyfin 10.11 или по-нов. Обновете сървъра и опитайте отново.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>Потребителското име или паролата са неверни.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>Сървърът не прие този API ключ.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>Този сървър не приема пароли от приложения. Влезте с API ключ.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>Този сървър не поддържа API ключове. Влезте с паролата си.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>Профилът ви няма музикална библиотека на този сървър.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>Този сървър вече е във вашата библиотека.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>Входът не можа да се запази на този компютър.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>Сървърът срещна проблем. Опитайте отново по-късно.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>Този API ключ принадлежи на друг профил. Създайте ключ, докато сте влезли като {0}.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>Връзката с „{0}“ не е възможна. Проверете дали сървърът работи и дали сте онлайн.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>Не можа да се установи защитена връзка с „{0}“. Сертификатът му може да е променен или изтекъл.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>„{0}“ вече не приема този начин на вход. Премахнете го, добавете го отново и изберете другия начин на вход.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>„{0}“ не прие запазения вход. Влезте отново, за да продължите да го ползвате.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>„{0}“ от „{1}“ не можа да се възпроизведе.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>„{0}“ вече не е в „{1}“ и ще бъде премахната от библиотеката ви при следващото синхронизиране.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (А до Я)</value>
   </data>
@@ -2025,16 +2205,16 @@
     <value>{0} (Я до А)</value>
   </data>
   <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Най-ново)</value>
+    <value>{0} (най-нови)</value>
   </data>
   <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Най-старо)</value>
+    <value>{0} (най-стари)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Възходящо)</value>
+    <value>{0} (възходящо)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Низходящо)</value>
+    <value>{0} (низходящо)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Най-кратките първи</value>

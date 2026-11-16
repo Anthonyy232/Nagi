@@ -281,7 +281,7 @@
     <value>'{0}' পুনরায় স্ক্যান করা হচ্ছে…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
-    <value>সঙ্গীত সহ কোনো ফোল্ডার পাওয়া যায়নি।</value>
+    <value>মিউজিক সহ কোনো ফোল্ডার পাওয়া যায়নি।</value>
   </data>
   <data name="Folders_Error_Playback" xml:space="preserve">
     <value>এই ফোল্ডারের জন্য প্লেব্যাক শুরু করতে ত্রুটি।</value>
@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>কোনো আইটেম নেই</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>এই তালিকা লোড করা যায়নি।</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>ত্রুটি</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>{0, plural, one {স্মার্ট • # গান} other {স্মার্ট • # গান}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>এই স্মার্ট প্লেলিস্টের নিয়মের সাথে কোনো গান মিলছে না।</value>
@@ -537,7 +544,7 @@
     <value>কমিউনিটি-কিউরেটেড গানের কথা ডেটাবেস</value>
   </data>
   <data name="Settings_Provider_NetEase_Desc" xml:space="preserve">
-    <value>চীনা সঙ্গীত পরিষেবা, এশীয় সঙ্গীতের জন্য দুর্দান্ত</value>
+    <value>চীনা মিউজিক পরিষেবা, এশীয় মিউজিকের জন্য দুর্দান্ত</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
     <value>আপনার ট্যাগে না থাকা শিল্পী ও অ্যালবামের আইডি খুঁজে বের করে</value>
@@ -663,14 +670,17 @@
     <value>ভলিউম স্বাভাবিককরণ সক্ষম করুন</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>ভলিউম স্বাভাবিককরণ (ReplayGain) আপনার সমস্ত সঙ্গীতের একটি ধারাবাহিক ভলিউম স্তর নিশ্চিত করে।
+    <value>ভলিউম স্বাভাবিককরণ (ReplayGain) আপনার সমস্ত মিউজিকের একটি ধারাবাহিক ভলিউম স্তর নিশ্চিত করে।
 
-এটি আপনার সঙ্গীত লাইব্রেরি বিশ্লেষণ করবে এবং ReplayGain ট্যাগ লিখে আপনার অডিও ফাইলগুলি সরাসরি সংশোধন করবে। শুধুমাত্র বিদ্যমান ট্যাগ ছাড়া ফাইলগুলি প্রক্রিয়াজাত করা হবে। আপনার লাইব্রেরির আকারের উপর নির্ভর করে এটি কিছুটা সময় নিতে পারে।
+এটি আপনার মিউজিক লাইব্রেরি বিশ্লেষণ করবে এবং ReplayGain ট্যাগ লিখে আপনার অডিও ফাইলগুলি সরাসরি সংশোধন করবে। শুধুমাত্র বিদ্যমান ট্যাগ ছাড়া ফাইলগুলি প্রক্রিয়াজাত করা হবে। আপনার লাইব্রেরির আকারের উপর নির্ভর করে এটি কিছুটা সময় নিতে পারে।
 
 আপনি কি চালিয়ে যেতে চান?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>সক্ষম করুন এবং স্ক্যান করুন</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>ভলিউম নরম্যালাইজেশন লাইব্রেরি স্ক্যান দিয়ে শুরু হয়, লাইব্রেরির অন্য কোনো কাজ চলাকালীন তা চালানো যায় না। কাজটি শেষ হলে আবার চেষ্টা করুন।</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>ভলিউম স্বাভাবিককরণ স্ক্যানের প্রস্তুতি নেওয়া হচ্ছে…</value>
@@ -850,7 +860,7 @@
     <value>কোনো অ্যালবাম পাওয়া যায়নি</value>
   </data>
   <data name="AlbumPage_Empty_Subtitle" xml:space="preserve">
-    <value>অ্যালবাম পূরণ করতে আপনার সঙ্গীত লাইব্রেরি স্ক্যান করুন</value>
+    <value>অ্যালবাম পূরণ করতে আপনার মিউজিক লাইব্রেরি স্ক্যান করুন</value>
   </data>
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>অ্যালবাম</value>
@@ -880,7 +890,7 @@
     <value>কোনো শিল্পী পাওয়া যায়নি</value>
   </data>
   <data name="ArtistPage_Empty_Subtitle" xml:space="preserve">
-    <value>শিল্পী পূরণ করতে আপনার সঙ্গীত লাইব্রেরি স্ক্যান করুন</value>
+    <value>শিল্পী পূরণ করতে আপনার মিউজিক লাইব্রেরি স্ক্যান করুন</value>
   </data>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
     <value>শিল্পীর ছবি পরিবর্তন করুন</value>
@@ -913,7 +923,7 @@
     <value>এখনো কোনো ফোল্ডার যোগ করা হয়নি</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>শুরু করতে সঙ্গীত ফোল্ডার যোগ করুন</value>
+    <value>শুরু করতে একটি মিউজিক ফোল্ডার বা সার্ভার যোগ করুন</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>ফোল্ডার</value>
@@ -937,7 +947,7 @@
     <value>কোনো জেনার পাওয়া যায়নি</value>
   </data>
   <data name="GenrePage_Empty_Subtitle" xml:space="preserve">
-    <value>জেনার পূরণ করতে আপনার সঙ্গীত লাইব্রেরি স্ক্যান করুন</value>
+    <value>জেনার পূরণ করতে আপনার মিউজিক লাইব্রেরি স্ক্যান করুন</value>
   </data>
   <data name="LibraryPage_Title" xml:space="preserve">
     <value>লাইব্রেরি</value>
@@ -1015,7 +1025,7 @@
     <value>Nagi-তে স্বাগতম</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
-    <value>সঙ্গীত ফোল্ডার যোগ করুন</value>
+    <value>মিউজিক ফোল্ডার যোগ করুন</value>
   </data>
   <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
     <value>আপনার মিউজিকের জন্য এক শান্ত, লোকাল-ফার্স্ট ঠিকানা। সেট আপ করতে প্রায় এক মিনিট সময় লাগবে।</value>
@@ -1027,7 +1037,7 @@
     <value>আপনার মিউজিক কোথায় আছে?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>আপনি যেখানে আপনার মিউজিক রাখেন সেই ফোল্ডারটি বেছে নিন। সেট আপ শেষ করার সময়ই Nagi আপনার লাইব্রেরি তৈরি করে ফেলবে, এবং আপনি পরেও ফোল্ডার যোগ করতে পারবেন।</value>
+    <value>যে ফোল্ডারে আপনি আপনার মিউজিক রাখেন সেটি বেছে নিন, অথবা একটি মিউজিক সার্ভার যোগ করুন। সেট আপ শেষ করার সময়ই Nagi আপনার লাইব্রেরি তৈরি করে ফেলবে, এবং আপনি পরে আরও যোগ করতে পারবেন।</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>নিজের মতো সাজিয়ে নিন</value>
@@ -1362,6 +1372,9 @@
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>কোনো সামঞ্জস্যপূর্ণ রোমানাইজেশন প্যাক উপলব্ধ নেই।</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>রোমানাইজেশন প্যাক লোড করা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে রিফ্রেশ করুন।</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>প্যাক ইনস্টল ব্যর্থ হয়েছে।</value>
   </data>
@@ -1510,7 +1523,10 @@
     <value>Nagi সম্পর্কে</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
-    <value>Nagi-এর মাধ্যমে আপনার স্থানীয় সঙ্গীত সংগ্রহ পুনরায় আবিষ্কার করুন, এটি গতি, সরলতা এবং গোপনীয়তার উপর কেন্দ্রিত একটি সঙ্গীত প্লেয়ার।</value>
+    <value>Nagi-এর মাধ্যমে আপনার স্থানীয় মিউজিক সংগ্রহ পুনরায় আবিষ্কার করুন, এটি গতি, সরলতা এবং গোপনীয়তার উপর কেন্দ্রিত একটি মিউজিক প্লেয়ার।</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>সংস্করণ {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>লাইসেন্স দেখুন</value>
@@ -1702,7 +1718,7 @@
     <value>Nagi</value>
   </data>
   <data name="SplashPage_Tagline" xml:space="preserve">
-    <value>আপনার সঙ্গীত, সুন্দরভাবে সংগঠিত</value>
+    <value>আপনার মিউজিক, সুন্দরভাবে সংগঠিত</value>
   </data>
   <data name="SplashPage_Status" xml:space="preserve">
     <value>Nagi চালু হচ্ছে...</value>
@@ -1736,6 +1752,12 @@
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>উদা. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>গত ১ দিন</value>
@@ -1982,6 +2004,10 @@
   <data name="Label_Path" xml:space="preserve">
     <value>পাথ</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>সার্ভার</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>ফরম্যাট</value>
   </data>
@@ -2017,6 +2043,160 @@
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>গানের তালিকার উপরে প্রতিটি কলামের নাম দেখান।</value>
+  </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>যোগ করুন</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>একটি মিউজিক ফোল্ডার বা সার্ভার যোগ করুন</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>মিউজিক ফোল্ডার</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>মিউজিক সার্ভার</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>সিঙ্ক করুন</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>আবার সাইন ইন করুন</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>সার্ভার সরান</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>আপনার লাইব্রেরি থেকে '{0}' সরাতে চান? এর মিউজিক সার্ভারেই থাকবে।</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>এখনও কোনো গান নেই</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>সার্ভারের মিউজিক আনতে ফোল্ডার পেজ থেকে সার্ভারটি সিঙ্ক করুন</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>'{0}' সিঙ্ক করা হচ্ছে…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>'{0}' সিঙ্ক করা যায়নি। পরে আবার চেষ্টা করুন।</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>মিউজিক সার্ভার যোগ করুন</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>{0}-এ সাইন ইন করুন</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>সাইন ইন করুন</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>{1}-এ {0}-এর পাসওয়ার্ড লিখুন।</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>{0}-এর জন্য একটি নতুন API কী লিখুন।</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>সার্ভারের ধরন</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome বা অন্য কোনো OpenSubsonic সার্ভার</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>সার্ভারের ঠিকানা</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>যেভাবে সাইন ইন করবেন</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>ইউজারনেম</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>পাসওয়ার্ড</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>API কী</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>সার্ভারের ঠিকানা লিখুন, যেমন music.example.com।</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>সার্ভারে পৌঁছানো যায়নি। ঠিকানা এবং সার্ভারটি চালু আছে কি না দেখে নিন।</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>নিরাপদ সংযোগ স্থাপন করা যায়নি। সার্ভার HTTPS ব্যবহার না করলে http:// দিয়ে শুরু হওয়া ঠিকানা লিখুন।</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>এই ঠিকানায় কোনো Jellyfin সার্ভার নেই।</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>এই ঠিকানায় কোনো OpenSubsonic সার্ভার নেই। শুধু মূল Subsonic API সমর্থন করে এমন সার্ভার যোগ করা যায় না।</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi-এর জন্য Jellyfin 10.11 বা তার পরবর্তী সংস্করণ প্রয়োজন। সার্ভার আপডেট করে আবার চেষ্টা করুন।</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>ইউজারনেম বা পাসওয়ার্ড ভুল।</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>সার্ভার এই API কী গ্রহণ করেনি।</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>এই সার্ভার অ্যাপ থেকে পাসওয়ার্ড গ্রহণ করে না। এর বদলে API কী দিয়ে সাইন ইন করুন।</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>এই সার্ভার API কী সমর্থন করে না। এর বদলে পাসওয়ার্ড দিয়ে সাইন ইন করুন।</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>এই সার্ভারে আপনার অ্যাকাউন্টে কোনো মিউজিক লাইব্রেরি নেই।</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>এই সার্ভারটি ইতিমধ্যে আপনার লাইব্রেরিতে আছে।</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>এই পিসিতে সাইন ইন সংরক্ষণ করা যায়নি।</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>সার্ভারে একটি সমস্যা হয়েছে। পরে আবার চেষ্টা করুন।</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>এই API কী অন্য একটি অ্যাকাউন্টের। {0} হিসেবে সাইন ইন থাকা অবস্থায় একটি তৈরি করুন।</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>'{0}'-এ পৌঁছানো যায়নি। সার্ভারটি চালু আছে এবং আপনি অনলাইনে আছেন কি না দেখে নিন।</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>'{0}'-এর সাথে নিরাপদ সংযোগ স্থাপন করা যায়নি। এর সার্টিফিকেট বদলে গেছে বা মেয়াদ শেষ হয়ে গেছে হতে পারে।</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>'{0}' আর সাইন ইনের এই পদ্ধতি গ্রহণ করে না। এটি সরিয়ে আবার যোগ করুন এবং সাইন ইনের অন্য পদ্ধতিটি বেছে নিন।</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>'{0}' সংরক্ষিত সাইন ইন গ্রহণ করেনি। ব্যবহার চালিয়ে যেতে আবার সাইন ইন করুন।</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>'{1}' থেকে '{0}' চালানো যায়নি।</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>'{0}' আর '{1}'-এ নেই, তাই পরবর্তী সিঙ্কে এটি আপনার লাইব্রেরি থেকে সরে যাবে।</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
   </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (এ থেকে জেড)</value>

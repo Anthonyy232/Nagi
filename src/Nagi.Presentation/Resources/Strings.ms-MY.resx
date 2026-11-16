@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Tiada item</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>Senarai ini tidak dapat dimuatkan.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Ralat</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>{0, plural, other {Pintar • # lagu}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Tiada lagu sepadan dengan peraturan senarai main pintar ini.</value>
@@ -672,6 +679,9 @@ Adakah anda ingin meneruskan?</value>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Dayakan &amp; Imbas</value>
   </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>Penormalan kelantangan bermula dengan imbasan pustaka anda, yang tidak boleh dijalankan semasa operasi pustaka lain sedang berjalan. Cuba lagi selepas ia selesai.</value>
+  </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Menyediakan imbasan penormalan kelantangan…</value>
   </data>
@@ -913,7 +923,7 @@ Adakah anda ingin meneruskan?</value>
     <value>Tiada folder ditambahkan lagi</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Tambah folder muzik untuk bermula</value>
+    <value>Tambah folder muzik atau pelayan untuk bermula</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Folder</value>
@@ -1027,7 +1037,7 @@ Adakah anda ingin meneruskan?</value>
     <value>Di manakah muzik anda?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Pilih folder tempat anda menyimpan muzik anda. Nagi membina pustaka anda sementara anda menyelesaikan persediaan, dan anda boleh menambah lebih banyak folder kemudian.</value>
+    <value>Pilih folder tempat anda menyimpan muzik anda, atau tambah pelayan muzik. Nagi membina pustaka anda sementara anda menyelesaikan persediaan, dan anda boleh menambah lebih banyak kemudian.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Jadikannya milik anda</value>
@@ -1362,6 +1372,9 @@ Adakah anda ingin meneruskan?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Tiada pek romanisasi yang serasi tersedia.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>Tidak dapat memuatkan pek romanisasi. Semak sambungan internet anda, kemudian muat semula.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Pemasangan pek gagal.</value>
   </data>
@@ -1511,6 +1524,9 @@ Adakah anda ingin meneruskan?</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Temukan semula koleksi muzik tempatan anda dengan Nagi, pemain muzik yang memberi tumpuan kepada kelajuan, kesederhanaan, dan privasi.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Versi {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Lihat Lesen</value>
@@ -1735,7 +1751,13 @@ Adakah anda ingin meneruskan?</value>
     <value>Halaman Seterusnya</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
-    <value>e.g. ;/\</value>
+    <value>cth. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>1 Hari Terakhir</value>
@@ -1982,6 +2004,10 @@ Adakah anda ingin meneruskan?</value>
   <data name="Label_Path" xml:space="preserve">
     <value>Laluan</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Pelayan</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Format</value>
   </data>
@@ -2017,6 +2043,160 @@ Adakah anda ingin meneruskan?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Paparkan label setiap lajur di atas senarai lagu.</value>
+  </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Tambah</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Tambah folder muzik atau pelayan</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Folder Muzik</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Pelayan Muzik</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>Segerakkan</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Log Masuk Semula</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Alih Keluar Pelayan</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>Alih keluar '{0}' daripada pustaka anda? Muziknya kekal di pelayan.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>Belum ada lagu</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>Segerakkan pelayan daripada halaman Folder untuk membawa masuk muziknya</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>Menyegerakkan '{0}'…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>Tidak dapat menyegerakkan '{0}'. Cuba lagi nanti.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Tambah Pelayan Muzik</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>Log Masuk ke {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Log Masuk</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>Masukkan kata laluan untuk {0} di {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>Masukkan kunci API baharu untuk {0}.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Jenis Pelayan</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome atau pelayan OpenSubsonic yang lain</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Alamat Pelayan</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Log Masuk Menggunakan</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>Nama Pengguna</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Kata Laluan</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>Kunci API</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Masukkan alamat pelayan, contohnya music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>Tidak dapat menghubungi pelayan. Semak alamat dan pastikan pelayan sedang berjalan.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>Tidak dapat menyambung dengan selamat. Jika pelayan tidak menggunakan HTTPS, masukkan alamatnya bermula dengan http://.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>Tiada pelayan Jellyfin pada alamat ini.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>Tiada pelayan OpenSubsonic pada alamat ini. Pelayan yang hanya menyokong API Subsonic asal tidak boleh ditambah.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi memerlukan Jellyfin 10.11 atau lebih baharu. Kemas kini pelayan, kemudian cuba lagi.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>Nama pengguna atau kata laluan tidak betul.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>Pelayan tidak menerima kunci API ini.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>Pelayan ini tidak menerima kata laluan daripada aplikasi. Sebaliknya, log masuk menggunakan kunci API.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>Pelayan ini tidak menyokong kunci API. Sebaliknya, log masuk menggunakan kata laluan anda.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>Akaun anda tidak mempunyai pustaka muzik pada pelayan ini.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>Pelayan ini sudah ada dalam pustaka anda.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>Tidak dapat menyimpan log masuk pada PC ini.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>Pelayan menghadapi masalah. Cuba lagi nanti.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>Kunci API ini milik akaun lain. Cipta kunci semasa log masuk sebagai {0}.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>Tidak dapat menghubungi '{0}'. Semak sama ada pelayan sedang berjalan dan anda berada dalam talian.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>Tidak dapat menyambung dengan selamat ke '{0}'. Sijilnya mungkin telah berubah atau tamat tempoh.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>'{0}' tidak lagi menerima cara log masuk ini. Alih keluarnya, kemudian tambahkannya semula dan pilih cara log masuk yang lain.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>'{0}' tidak menerima log masuk yang disimpan. Log masuk semula untuk terus menggunakannya.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>Tidak dapat memainkan '{0}' daripada '{1}'.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>'{0}' tidak lagi berada di '{1}', jadi ia akan dialih keluar daripada pustaka anda pada penyegerakan seterusnya.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
   </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A ke Z)</value>

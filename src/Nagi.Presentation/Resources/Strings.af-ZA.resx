@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Geen items</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>Hierdie lys kon nie gelaai word nie.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Fout</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Slim • {0, plural, one {# liedjie} other {# liedjies}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Geen liedjies pas by hierdie slim snitlys se reëls nie.</value>
@@ -447,10 +454,10 @@ Lêers wat nie ingevoer kon word nie: {0}.</value>
     <value>Geen reëls gedefinieer nie • Alle liedjies pas</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>Pas by alle van {0, plural, one {# reël} other {# reëls}}</value>
+    <value>Voldoen aan al {0, plural, one {# reël} other {# reëls}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>Pas by enige van {0, plural, one {# reël} other {# reëls}}</value>
+    <value>Voldoen aan enige van {0, plural, one {# reël} other {# reëls}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# item} other {# items}}</value>
@@ -671,6 +678,9 @@ Wil jy voortgaan?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Aktiveer &amp; Skandeer</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>Volumenormalisering begin met 'n skandering van jou biblioteek, wat nie kan loop terwyl 'n ander biblioteekbewerking aan die gang is nie. Probeer weer sodra dit klaar is.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Berei tans volumenormaliseringskandering voor…</value>
@@ -913,7 +923,7 @@ Wil jy voortgaan?</value>
     <value>Geen vouers is nog bygevoeg nie</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Voeg musiekvouers by om te begin</value>
+    <value>Voeg 'n musiekvouer of bediener by om te begin</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Vouer</value>
@@ -1027,7 +1037,7 @@ Wil jy voortgaan?</value>
     <value>Waar is jou musiek?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Kies die vouer waar jy jou musiek stoor. Nagi bou jou biblioteek terwyl jy die opstelling voltooi, en jy kan later nog vouers byvoeg.</value>
+    <value>Kies die vouer waar jy jou musiek stoor, of voeg 'n musiekbediener by. Nagi bou jou biblioteek terwyl jy die opstelling voltooi, en jy kan later nog byvoeg.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Maak dit joune</value>
@@ -1362,6 +1372,9 @@ Wil jy voortgaan?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Geen versoenbare romaniseringspakkette is beskikbaar nie.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>Kon nie die romaniseringspakkette laai nie. Kontroleer jou internetverbinding en herlaai dan.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Pakketinstallasie het misluk.</value>
   </data>
@@ -1511,6 +1524,9 @@ Wil jy voortgaan?</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Herontdek jou plaaslike musiekversameling met Nagi, 'n musiekspeler gefokus op spoed, eenvoud en privaatheid.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Weergawe {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Bekyk Lisensies</value>
@@ -1735,7 +1751,13 @@ Wil jy voortgaan?</value>
     <value>Volgende bladsy</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
-    <value>bv. ;/\</value>
+    <value>bv. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Afgelope 1 dag</value>
@@ -1982,6 +2004,10 @@ Wil jy voortgaan?</value>
   <data name="Label_Path" xml:space="preserve">
     <value>Pad</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Bediener</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Formaat</value>
   </data>
@@ -2017,6 +2043,160 @@ Wil jy voortgaan?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Wys 'n opskrif bo elke kolom in liedjielyste.</value>
+  </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Voeg by</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Voeg 'n musiekvouer of bediener by</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Musiekvouer</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Musiekbediener</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>Sinkroniseer</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Teken Weer In</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Verwyder Bediener</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>Verwyder '{0}' uit jou biblioteek? Sy musiek bly op die bediener.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>Nog geen liedjies nie</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>Sinkroniseer die bediener vanaf die Vouers-bladsy om sy musiek in te bring</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>Sinkroniseer tans '{0}'…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>Kon nie '{0}' sinkroniseer nie. Probeer later weer.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Voeg Musiekbediener By</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>Teken in by {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Teken In</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>Voer die wagwoord vir {0} op {1} in.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>Voer 'n nuwe API-sleutel vir {0} in.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Bedienertipe</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome of 'n ander OpenSubsonic-bediener</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Bedieneradres</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Teken in met</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>Gebruikersnaam</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Wagwoord</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>API-sleutel</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Voer die bediener se adres in, soos music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>Kon nie die bediener bereik nie. Kontroleer die adres en of die bediener loop.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>Kon nie veilig koppel nie. As die bediener nie HTTPS gebruik nie, voer sy adres in wat met http:// begin.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>Daar is geen Jellyfin-bediener by hierdie adres nie.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>Daar is geen OpenSubsonic-bediener by hierdie adres nie. Bedieners wat slegs die oorspronklike Subsonic-API ondersteun, kan nie bygevoeg word nie.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi benodig Jellyfin 10.11 of nuwer. Dateer die bediener op en probeer dan weer.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>Die gebruikersnaam of wagwoord is verkeerd.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>Die bediener het nie hierdie API-sleutel aanvaar nie.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>Hierdie bediener aanvaar nie wagwoorde van programme nie. Teken eerder met 'n API-sleutel in.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>Hierdie bediener ondersteun nie API-sleutels nie. Teken eerder met jou wagwoord in.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>Jou rekening het nie 'n musiekbiblioteek op hierdie bediener nie.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>Hierdie bediener is reeds in jou biblioteek.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>Kon nie die aanmelding op hierdie rekenaar stoor nie.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>Die bediener het 'n probleem teëgekom. Probeer later weer.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>Hierdie API-sleutel behoort aan 'n ander rekening. Skep een terwyl jy as {0} aangemeld is.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>Kon nie '{0}' bereik nie. Kontroleer dat die bediener loop en dat jy aanlyn is.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>Kon nie veilig met '{0}' koppel nie. Sy sertifikaat het dalk verander of verval.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>'{0}' aanvaar nie meer hierdie manier van inteken nie. Verwyder dit, voeg dit dan weer by en kies die ander manier om in te teken.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>'{0}' het nie die gestoorde aanmelding aanvaar nie. Teken weer in om dit te bly gebruik.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>Kon nie '{0}' vanaf '{1}' speel nie.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>'{0}' is nie meer op '{1}' nie, so dit sal met die volgende sinkronisering uit jou biblioteek verdwyn.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
   </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A tot Z)</value>

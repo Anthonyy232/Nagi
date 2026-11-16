@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Nėra elementų</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>Nepavyko įkelti šio sąrašo.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Klaida</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Išmanusis • {0, plural, one {# kūrinys} few {# kūriniai} many {# kūrinio} other {# kūrinių}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Nėra kūrinių, atitinkančių šio išmaniojo grojaraščio taisykles.</value>
@@ -447,10 +454,10 @@ Failai, kurių nepavyko importuoti: {0}.</value>
     <value>Nėra apibrėžtų taisyklių • Visi kūriniai atitinka</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>Atitinka visus iš {0, plural, one {# taisyklė} other {# taisyklės}}</value>
+    <value>Atitinka visas: {0, plural, one {# taisyklė} few {# taisyklės} many {# taisyklės} other {# taisyklių}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>Atitinka bet kuriuos iš {0, plural, one {# taisyklė} other {# taisyklės}}</value>
+    <value>Atitinka bet kurią iš: {0, plural, one {# taisyklė} few {# taisyklės} many {# taisyklės} other {# taisyklių}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# elementas} few {# elementai} many {# elemento} other {# elementų}}</value>
@@ -672,6 +679,9 @@ Ar norite tęsti?</value>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Įjungti ir nuskaityti</value>
   </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>Garso normalizavimas prasideda nuo bibliotekos nuskaitymo, kurio negalima vykdyti, kol vyksta kita bibliotekos operacija. Pabandykite dar kartą, kai ji baigsis.</value>
+  </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Ruošiamasi garso normalizavimo nuskaitymui…</value>
   </data>
@@ -769,7 +779,7 @@ Ar norite tęsti?</value>
     <value>Taisyklės neapibrėžtos</value>
   </data>
   <data name="SmartPlaylist_NoRulesMessage" xml:space="preserve">
-    <value>Visos dainos jūsų bibliotekoje bus įtrauktos į šį grojaraštį.</value>
+    <value>Visi kūriniai jūsų bibliotekoje bus įtraukti į šį grojaraštį.</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
     <value>Pridėti pirmą taisyklę</value>
@@ -817,7 +827,7 @@ Ar norite tęsti?</value>
     <value>Kūrinių skaičius</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Takeliai: {0:N0}</value>
+    <value>Kūriniai: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
     <value>Vieta eilėje</value>
@@ -856,13 +866,13 @@ Ar norite tęsti?</value>
     <value>Albumas</value>
   </data>
   <data name="SongList_Songs" xml:space="preserve">
-    <value>Dainos</value>
+    <value>Kūriniai</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Ieškoti albume…</value>
   </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
-    <value>Šiame albume dainų nerasta</value>
+    <value>Šiame albume kūrinių nerasta</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
     <value>Atlikėjai</value>
@@ -895,7 +905,7 @@ Ar norite tęsti?</value>
     <value>Ieškoti atlikėjo kūriniuose…</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
-    <value>Šiam atlikėjui dainų nerasta</value>
+    <value>Šiam atlikėjui kūrinių nerasta</value>
   </data>
   <data name="FolderPage_Title" xml:space="preserve">
     <value>Aplankai</value>
@@ -913,7 +923,7 @@ Ar norite tęsti?</value>
     <value>Dar nepridėta aplankų</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Pridėkite muzikos aplankus, kad pradėtumėte</value>
+    <value>Pridėkite muzikos aplanką arba serverį, kad pradėtumėte</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Aplankas</value>
@@ -925,7 +935,7 @@ Ar norite tęsti?</value>
     <value>Šis aplankas tuščias</value>
   </data>
   <data name="FolderSongViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Dainų ar poaplankių nerasta</value>
+    <value>Kūrinių ar poaplankių nerasta</value>
   </data>
   <data name="GenrePage_Title" xml:space="preserve">
     <value>Žanrai</value>
@@ -967,7 +977,7 @@ Ar norite tęsti?</value>
     <value>Eiti į albumą</value>
   </data>
   <data name="SongList_Context_GoToArtist" xml:space="preserve">
-    <value>Eiti pas atlikėją</value>
+    <value>Eiti į atlikėjo puslapį</value>
   </data>
   <data name="SongList_Context_ShowInExplorer" xml:space="preserve">
     <value>Rodyti failų naršyklėje</value>
@@ -988,7 +998,7 @@ Ar norite tęsti?</value>
     <value>Šio kūrinio žodžių nerasta</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
-    <value>Pabandykite kitą dainą</value>
+    <value>Pabandykite kitą kūrinį</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
     <value>Redaguoti arba pakeisti dainų tekstus</value>
@@ -1027,7 +1037,7 @@ Ar norite tęsti?</value>
     <value>Kur yra jūsų muzika?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Pasirinkite aplanką, kuriame laikote savo muziką. Nagi kurs jūsų biblioteką, kol baigsite sąranką, o vėliau galėsite pridėti daugiau aplankų.</value>
+    <value>Pasirinkite aplanką, kuriame laikote savo muziką, arba pridėkite muzikos serverį. Nagi kurs jūsų biblioteką, kol baigsite sąranką, o vėliau galėsite pridėti daugiau.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Pritaikykite sau</value>
@@ -1123,7 +1133,7 @@ Ar norite tęsti?</value>
     <value>Šis grojaraštis tuščias</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Pridėkite dainų iš savo bibliotekos</value>
+    <value>Pridėkite kūrinių iš savo bibliotekos</value>
   </data>
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>Žanras</value>
@@ -1132,7 +1142,7 @@ Ar norite tęsti?</value>
     <value>Ieškoti žanre…</value>
   </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
-    <value>Šiam žanrui dainų nerasta</value>
+    <value>Šiam žanrui kūrinių nerasta</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Nustatymai</value>
@@ -1288,7 +1298,7 @@ Ar norite tęsti?</value>
     <value>Rūšiuojant nepaisyti artikelių</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Rūšiuoti albumus, atlikėjus ir dainas pagal jų pirmą reikšmingą žodį (pvz., "The Beatles" rūšiuojami po B).</value>
+    <value>Rūšiuoti albumus, atlikėjus ir kūrinius pagal jų pirmą reikšmingą žodį (pvz., "The Beatles" rūšiuojami po B).</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Duomenų valdymas</value>
@@ -1362,6 +1372,9 @@ Ar norite tęsti?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Nėra suderinamų romanizavimo paketų.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>Nepavyko įkelti romanizavimo paketų. Patikrinkite interneto ryšį ir atnaujinkite.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Paketo diegimas nepavyko.</value>
   </data>
@@ -1414,7 +1427,7 @@ Ar norite tęsti?</value>
     <value>Last.fm</value>
   </data>
   <data name="SettingsPage_LastFm_Description" xml:space="preserve">
-    <value>Prijunkite savo Last.fm paskyrą, kad įrašytumėte kūrinius ir rodytumėte šiuo metu grojančią dainą.</value>
+    <value>Prijunkite savo Last.fm paskyrą, kad įrašytumėte kūrinius ir rodytumėte šiuo metu grojantį kūrinį.</value>
   </data>
   <data name="SettingsPage_LastFm_Connect_Content" xml:space="preserve">
     <value>Prisijungti</value>
@@ -1495,7 +1508,7 @@ Ar norite tęsti?</value>
     <value>Redaguoti taisykles</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>Nėra dainų, atitinkančių dabartines taisykles</value>
+    <value>Nėra kūrinių, atitinkančių dabartines taisykles</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
     <value>Pabandykite redaguoti taisykles</value>
@@ -1511,6 +1524,9 @@ Ar norite tęsti?</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Iš naujo atraskite savo vietinę muzikos kolekciją su Nagi – muzikos grotuvu, orientuotu į greitį, paprastumą ir privatumą.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Versija {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Peržiūrėti licencijas</value>
@@ -1737,6 +1753,12 @@ Ar norite tęsti?</value>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>pvz., ;/\\</value>
   </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
+  </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Pastaroji 1 diena</value>
   </data>
@@ -1855,7 +1877,7 @@ Ar norite tęsti?</value>
     <value>Sustabdyti grojimą</value>
   </data>
   <data name="JumpList_ShuffleAll" xml:space="preserve">
-    <value>Maišyti visas dainas</value>
+    <value>Maišyti visus kūrinius</value>
     <comment>Task in the taskbar icon's right-click menu.</comment>
   </data>
   <data name="JumpList_MiniPlayer" xml:space="preserve">
@@ -1951,7 +1973,7 @@ Ar norite tęsti?</value>
     <value>Nėra galimų grojaraščių</value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Norint analizuoti dainas garsumo normalizavimui, reikalingas FFmpeg, bet Nagi jo nerado.
+    <value>Norint analizuoti kūrinius garsumo normalizavimui, reikalingas FFmpeg, bet Nagi jo nerado.
 
 1. Atsisiųskite „Windows“ versiją iš https://ffmpeg.org/download.html.
 2. Išpakuokite archyvą ir jo aplanke „bin“ suraskite ffmpeg.exe.
@@ -1959,7 +1981,7 @@ Ar norite tęsti?</value>
 4. Paleiskite Nagi iš naujo, tada vėl įjunkite garsumo normalizavimą.</value>
   </data>
   <data name="SongList_Context_SongInfo" xml:space="preserve">
-    <value>Dainos informacija</value>
+    <value>Kūrinio informacija</value>
   </data>
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>Žymės</value>
@@ -1981,6 +2003,10 @@ Ar norite tęsti?</value>
   </data>
   <data name="Label_Path" xml:space="preserve">
     <value>Kelias</value>
+  </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Serveris</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
   </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Formatas</value>
@@ -2007,28 +2033,182 @@ Ar norite tęsti?</value>
     <value>{0:+0.00;-0.00} dB</value>
   </data>
   <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
-    <value>Dainų sąrašų stulpeliai</value>
+    <value>Kūrinių sąrašų stulpeliai</value>
   </data>
   <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
-    <value>Pasirinkite, kokią informaciją rodyti dainų sąrašuose.</value>
+    <value>Pasirinkite, kokią informaciją rodyti kūrinių sąrašuose.</value>
   </data>
   <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
     <value>Stulpelių antraštės</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
-    <value>Rodyti antraštę virš kiekvieno dainų sąrašo stulpelio.</value>
+    <value>Rodyti antraštę virš kiekvieno kūrinių sąrašo stulpelio.</value>
+  </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Pridėti</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Pridėti muzikos aplanką arba serverį</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Muzikos aplankas</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Muzikos serveris</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>Sinchronizuoti</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Prisijungti iš naujo</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Pašalinti serverį</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>Pašalinti '{0}' iš bibliotekos? Jo muzika liks serveryje.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>Kūrinių dar nėra</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>Sinchronizuokite serverį aplankų puslapyje, kad įtrauktumėte jo muziką</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>Sinchronizuojama '{0}'…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>Nepavyko sinchronizuoti '{0}'. Pabandykite vėliau.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Pridėti muzikos serverį</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>Prisijungimas prie {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Prisijungti</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>Įveskite {0} slaptažodį serveryje {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>Įveskite naują {0} API raktą.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Serverio tipas</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome arba kitas OpenSubsonic serveris</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Serverio adresas</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Prisijungti naudojant</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>Naudotojo vardas</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Slaptažodis</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>API raktas</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Įveskite serverio adresą, pvz., music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>Nepavyko pasiekti serverio. Patikrinkite adresą ir ar serveris veikia.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>Nepavyko užmegzti saugaus ryšio. Jei serveris nenaudoja HTTPS, įveskite jo adresą, prasidedantį http://.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>Šiuo adresu nėra Jellyfin serverio.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>Šiuo adresu nėra OpenSubsonic serverio. Serverių, palaikančių tik originalią Subsonic API, pridėti negalima.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi reikia Jellyfin 10.11 arba naujesnės versijos. Atnaujinkite serverį ir bandykite dar kartą.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>Naudotojo vardas arba slaptažodis neteisingas.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>Serveris nepriėmė šio API rakto.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>Šis serveris nepriima programų slaptažodžių. Vietoj to prisijunkite naudodami API raktą.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>Šis serveris nepalaiko API raktų. Vietoj to prisijunkite naudodami slaptažodį.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>Jūsų paskyra šiame serveryje neturi muzikos bibliotekos.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>Šis serveris jau yra jūsų bibliotekoje.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>Nepavyko išsaugoti prisijungimo duomenų šiame kompiuteryje.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>Serveryje įvyko klaida. Pabandykite vėliau.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>Šis API raktas priklauso kitai paskyrai. Sukurkite jį prisijungę kaip {0}.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>Nepavyko pasiekti '{0}'. Patikrinkite, ar serveris veikia ir ar esate prisijungę prie interneto.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>Nepavyko užmegzti saugaus ryšio su '{0}'. Jo sertifikatas galėjo pasikeisti arba nustoti galioti.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>'{0}' nebepriima šio prisijungimo būdo. Pašalinkite jį, tada pridėkite iš naujo ir pasirinkite kitą prisijungimo būdą.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>'{0}' nepriėmė išsaugotų prisijungimo duomenų. Prisijunkite iš naujo, kad galėtumėte toliau jį naudoti.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>Nepavyko groti '{0}' iš '{1}'.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>'{0}' nebėra serveryje '{1}', todėl per kitą sinchronizavimą dings iš jūsų bibliotekos.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
   </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (A iki Z)</value>
+    <value>{0} (A–Z)</value>
   </data>
   <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (Z iki A)</value>
+    <value>{0} (Z–A)</value>
   </data>
   <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Naujausia)</value>
+    <value>{0} (naujausi pirmiausia)</value>
   </data>
   <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Seniausia)</value>
+    <value>{0} (seniausi pirmiausia)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
     <value>{0} (didėjančia tvarka)</value>
@@ -2088,7 +2268,7 @@ Ar norite tęsti?</value>
     <value>Perklausos</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
-    <value>Dainos</value>
+    <value>Kūriniai</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Rankinė tvarka</value>

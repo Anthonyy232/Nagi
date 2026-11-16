@@ -88,22 +88,22 @@
     <value>Scan abgeschlossen.</value>
   </data>
   <data name="Format_ScanAddedSongs_Singular" xml:space="preserve">
-    <value>Scan abgeschlossen. {0} Lied hinzugefügt oder aktualisiert.</value>
+    <value>Scan abgeschlossen. {0} Titel hinzugefügt oder aktualisiert.</value>
   </data>
   <data name="Format_ScanAddedSongs_Plural" xml:space="preserve">
-    <value>Scan abgeschlossen. {0} Lieder hinzugefügt oder aktualisiert.</value>
+    <value>Scan abgeschlossen. {0} Titel hinzugefügt oder aktualisiert.</value>
   </data>
   <data name="Format_ScanFoundLyrics_Singular" xml:space="preserve">
-    <value>Liedtexte für {0} Lied gefunden.</value>
+    <value>Liedtexte für {0} Titel gefunden.</value>
   </data>
   <data name="Format_ScanFoundLyrics_Plural" xml:space="preserve">
-    <value>Liedtexte für {0} Lieder gefunden.</value>
+    <value>Liedtexte für {0} Titel gefunden.</value>
   </data>
   <data name="Format_ScanFoundCoverArt_Singular" xml:space="preserve">
-    <value>Cover-Art für {0} Lied gefunden.</value>
+    <value>Cover-Art für {0} Titel gefunden.</value>
   </data>
   <data name="Format_ScanFoundCoverArt_Plural" xml:space="preserve">
-    <value>Cover-Art für {0} Lieder gefunden.</value>
+    <value>Cover-Art für {0} Titel gefunden.</value>
   </data>
   <data name="Format_ScanFoundArtistImages_Singular" xml:space="preserve">
     <value>Bild für {0} Künstler gefunden.</value>
@@ -156,6 +156,9 @@
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Keine Wiedergabelisten zum Exportieren vorhanden.</value>
   </data>
+  <data name="Error_PlaylistsExportFailed" xml:space="preserve">
+    <value>Die Wiedergabelisten konnten nicht in diesen Ordner exportiert werden.</value>
+  </data>
   <data name="EqPreset_None" xml:space="preserve">
     <value>Keiner</value>
   </data>
@@ -190,7 +193,7 @@
     <value>Gesang</value>
   </data>
   <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
-    <value>Alle Lieder verfügen bereits über Lautstärkedaten.</value>
+    <value>Alle Titel verfügen bereits über Lautstärkedaten.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
     <value>Lautstärke wird analysiert… Titel: {0}</value>
@@ -251,5 +254,21 @@
   <data name="Biography_WikipediaAttribution" xml:space="preserve">
     <value>Aus Wikipedia, unter der Lizenz CC BY-SA.</value>
     <comment>Shown below an artist biography taken from Wikipedia, as its license requires.</comment>
+  </data>
+  <data name="Format_FetchingServerSongs" xml:space="preserve">
+    <value>Titel vom Server werden abgerufen ({0})…</value>
+    <comment>Shown while a music server is synced. {0} is the number of songs received so far.</comment>
+  </data>
+  <data name="Status_AddingServerSongs" xml:space="preserve">
+    <value>Titel werden zu Ihrer Bibliothek hinzugefügt…</value>
+    <comment>Shown while songs from a music server are saved to the library.</comment>
+  </data>
+  <data name="Status_DownloadingServerCovers" xml:space="preserve">
+    <value>Albumcover werden heruntergeladen…</value>
+    <comment>Shown while album covers are downloaded from a music server.</comment>
+  </data>
+  <data name="Status_SyncComplete" xml:space="preserve">
+    <value>Synchronisierung abgeschlossen.</value>
+    <comment>Shown when a music server has finished syncing.</comment>
   </data>
 </root>
