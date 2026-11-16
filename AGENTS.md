@@ -35,6 +35,7 @@ A local-first music player for Windows: C#, .NET, WinUI 3, packaged as MSIX. Pub
 - Theme resources and shared styles, never hard-coded colours, sizes or radii; every icon-only button has an accessible name. See UI changes on each backdrop as well as in light and dark.
 - A dev build has the same package identity as the owner's Store install and would share its data. Never deploy over that install or touch its data or the owner's music library: run it in Windows Sandbox with `sandbox/run.ps1` from the `media` branch, which installs the build on an invented library and saves screenshots.
 - Anything new sent online goes in `PRIVACY.md`.
+- Old history is not rewritten: commits from before the conventional format stay as they are.
 
 ## Done means
 
@@ -48,7 +49,6 @@ A local-first music player for Windows: C#, .NET, WinUI 3, packaged as MSIX. Pub
 - README is for users: what it does, how to get it, how to use it. No internals, no agent instructions.
 - This file is for agents: only what can't be found quickly in the code.
 - No meta docs in the repo (notes, audits, plans, reports).
-- Generated images (README panels, `site/img`, the app icon set, release banners) are built from the `media` branch; its README has the steps.
 
 ## Git
 
@@ -58,7 +58,6 @@ A local-first music player for Windows: C#, .NET, WinUI 3, packaged as MSIX. Pub
 - Branch off `master`. A single commit fast-forwards; several merge with `merge: <summary>`.
 - No AI attribution in commits, branches, PRs or releases.
 - One maintainer: amending and force-pushing to tidy history is fine. Keep contributors as authors. Delete stale branches.
-- Old history is not rewritten.
 
 ## Pull requests
 
@@ -70,6 +69,7 @@ A local-first music player for Windows: C#, .NET, WinUI 3, packaged as MSIX. Pub
 - Title `Nagi X.Y.Z`.
 - Notes: banner image first, then `### New`, `### Improved`, `### Fixed` (only those that apply). One line per change, written for users; no internals, dependency lists or test counts. End with the install link(s) and the full changelog link.
 - Banner: generated and hosted on the orphan `media` branch; its README has the steps.
+- Generated images (README panels, `site/img`, the app icon set, release banners) are built from the `media` branch; its README has the steps.
 - Install links: the Store button, then, from 2.0.0 on, the GitHub button pointing at that release's own `Nagi.msixbundle`.
 - The tag push builds the bundle; the `Create Release` workflow has it signed, once the owner approves, and puts it on a draft release. The Microsoft Store submission is the owner's, by hand.
 - Installed copies update from the latest release's assets by name, and the app downloads lyrics packs from the `romanization-packs` release: never rename a tag or a release asset.
