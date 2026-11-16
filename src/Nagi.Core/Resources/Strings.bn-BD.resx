@@ -156,6 +156,9 @@
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>এক্সপোর্ট করার জন্য কোনো প্লেলিস্ট নেই।</value>
   </data>
+  <data name="Error_PlaylistsExportFailed" xml:space="preserve">
+    <value>প্লেলিস্টগুলো ওই ফোল্ডারে এক্সপোর্ট করা যায়নি।</value>
+  </data>
   <data name="EqPreset_None" xml:space="preserve">
     <value>কোনোটিই নয়</value>
   </data>
@@ -251,5 +254,21 @@
   <data name="Biography_WikipediaAttribution" xml:space="preserve">
     <value>উইকিপিডিয়া থেকে, CC BY-SA লাইসেন্সের অধীনে।</value>
     <comment>Shown below an artist biography taken from Wikipedia, as its license requires.</comment>
+  </data>
+  <data name="Format_FetchingServerSongs" xml:space="preserve">
+    <value>সার্ভার থেকে গান আনা হচ্ছে ({0})…</value>
+    <comment>Shown while a music server is synced. {0} is the number of songs received so far.</comment>
+  </data>
+  <data name="Status_AddingServerSongs" xml:space="preserve">
+    <value>আপনার লাইব্রেরিতে গান যোগ করা হচ্ছে…</value>
+    <comment>Shown while songs from a music server are saved to the library.</comment>
+  </data>
+  <data name="Status_DownloadingServerCovers" xml:space="preserve">
+    <value>অ্যালবাম কভার ডাউনলোড করা হচ্ছে…</value>
+    <comment>Shown while album covers are downloaded from a music server.</comment>
+  </data>
+  <data name="Status_SyncComplete" xml:space="preserve">
+    <value>সিঙ্ক সম্পূর্ণ।</value>
+    <comment>Shown when a music server has finished syncing.</comment>
   </data>
 </root>

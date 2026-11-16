@@ -156,6 +156,9 @@
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Žiadne zoznamy skladieb na export.</value>
   </data>
+  <data name="Error_PlaylistsExportFailed" xml:space="preserve">
+    <value>Zoznamy skladieb sa nepodarilo exportovať do tohto priečinka.</value>
+  </data>
   <data name="EqPreset_None" xml:space="preserve">
     <value>Žiadne</value>
   </data>
@@ -251,5 +254,21 @@
   <data name="Biography_WikipediaAttribution" xml:space="preserve">
     <value>Z Wikipédie, pod licenciou CC BY-SA.</value>
     <comment>Shown below an artist biography taken from Wikipedia, as its license requires.</comment>
+  </data>
+  <data name="Format_FetchingServerSongs" xml:space="preserve">
+    <value>Získavajú sa skladby zo servera ({0})…</value>
+    <comment>Shown while a music server is synced. {0} is the number of songs received so far.</comment>
+  </data>
+  <data name="Status_AddingServerSongs" xml:space="preserve">
+    <value>Pridávanie skladieb do knižnice…</value>
+    <comment>Shown while songs from a music server are saved to the library.</comment>
+  </data>
+  <data name="Status_DownloadingServerCovers" xml:space="preserve">
+    <value>Sťahovanie obalov albumov…</value>
+    <comment>Shown while album covers are downloaded from a music server.</comment>
+  </data>
+  <data name="Status_SyncComplete" xml:space="preserve">
+    <value>Synchronizácia dokončená.</value>
+    <comment>Shown when a music server has finished syncing.</comment>
   </data>
 </root>

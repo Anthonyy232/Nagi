@@ -299,7 +299,7 @@
     <value>ਫੋਲਡਰ ਨੂੰ ਮੁੜ-ਸਕੈਨ ਕਰਨ ਵਿੱਚ ਗਲਤੀ: {0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0, plural, other {# ਫੋਲਡਰ}}</value>
+    <value>{0, plural, one {# ਫੋਲਡਰ} other {# ਫੋਲਡਰ}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
     <value>{0, plural, one {# ਗੀਤ} other {# ਗੀਤ}}</value>
@@ -312,6 +312,9 @@
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>ਕੋਈ ਆਈਟਮ ਨਹੀਂ</value>
+  </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>ਇਹ ਸੂਚੀ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕੀ।</value>
   </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>ਗਲਤੀ</value>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>{0, plural, one {ਸਮਾਰਟ • # ਗੀਤ} other {ਸਮਾਰਟ • # ਗੀਤ}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>ਇਸ ਸਮਾਰਟ ਪਲੇਲਿਸਟ ਦੇ ਨਿਯਮਾਂ ਨਾਲ ਕੋਈ ਗੀਤ ਮੇਲ ਨਹੀਂ ਖਾਂਦੇ।</value>
@@ -447,10 +454,10 @@
     <value>ਕੋਈ ਨਿਯਮ ਪਰਿਭਾਸ਼ਿਤ ਨਹੀਂ • ਸਾਰੇ ਗੀਤ ਮੇਲ ਖਾਂਦੇ ਹਨ</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>{0, plural, one {# ਨਿਯਮ ਵਿੱਚੋਂ ਸਾਰੇ ਮੇਲ ਖਾਂਦਾ ਹੈ} other {# ਨਿਯਮ ਵਿੱਚੋਂ ਸਾਰੇ ਮੇਲ ਖਾਂਦਾ ਹੈ}}</value>
+    <value>{0, plural, one {# ਨਿਯਮ ਨਾਲ ਮੇਲ ਖਾਂਦਾ ਹੈ} other {ਸਾਰੇ # ਨਿਯਮਾਂ ਨਾਲ ਮੇਲ ਖਾਂਦਾ ਹੈ}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>{0, plural, one {# ਨਿਯਮ ਵਿੱਚੋਂ ਕੋਈ ਵੀ ਮੇਲ ਖਾਂਦਾ ਹੈ} other {# ਨਿਯਮ ਵਿੱਚੋਂ ਕੋਈ ਵੀ ਮੇਲ ਖਾਂਦਾ ਹੈ}}</value>
+    <value>{0, plural, one {# ਨਿਯਮ ਨਾਲ ਮੇਲ ਖਾਂਦਾ ਹੈ} other {# ਨਿਯਮਾਂ ਵਿੱਚੋਂ ਕਿਸੇ ਵੀ ਨਾਲ ਮੇਲ ਖਾਂਦਾ ਹੈ}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# ਆਈਟਮ} other {# ਆਈਟਮਾਂ}}</value>
@@ -672,6 +679,9 @@
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>ਸਮਰੱਥ ਕਰੋ ਅਤੇ ਸਕੈਨ ਕਰੋ</value>
   </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>ਵੌਲਿਊਮ ਨੌਰਮਲਾਈਜ਼ੇਸ਼ਨ ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਦੀ ਸਕੈਨ ਨਾਲ ਸ਼ੁਰੂ ਹੁੰਦੀ ਹੈ, ਜੋ ਕਿਸੇ ਹੋਰ ਲਾਇਬ੍ਰੇਰੀ ਕਾਰਵਾਈ ਦੇ ਚੱਲਦਿਆਂ ਨਹੀਂ ਚੱਲ ਸਕਦੀ। ਇਸਦੇ ਮੁਕੰਮਲ ਹੋਣ 'ਤੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
+  </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>ਵਾਲੀਅਮ ਨਾਰਮਲਾਈਜ਼ੇਸ਼ਨ ਸਕੈਨ ਦੀ ਤਿਆਰੀ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ…</value>
   </data>
@@ -856,7 +866,7 @@
     <value>ਐਲਬਮ</value>
   </data>
   <data name="SongList_Songs" xml:space="preserve">
-    <value>ਗਾਣੇ</value>
+    <value>ਗੀਤ</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ਐਲਬਮ ਵਿੱਚ ਖੋਜੋ…</value>
@@ -913,7 +923,7 @@
     <value>ਹਾਲੇ ਕੋਈ ਫੋਲਡਰ ਨਹੀਂ ਜੋੜਿਆ ਗਿਆ</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਸੰਗੀਤ ਫੋਲਡਰ ਜੋੜੋ</value>
+    <value>ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਸੰਗੀਤ ਫੋਲਡਰ ਜਾਂ ਸਰਵਰ ਜੋੜੋ</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>ਫੋਲਡਰ</value>
@@ -961,7 +971,7 @@
     <value>ਕਤਾਰ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
   </data>
   <data name="SongList_Context_AddToPlaylist" xml:space="preserve">
-    <value>ਪਲੇਅਲਿਸਟ ਵਿੱਚ ਜੋੜੋ</value>
+    <value>ਪਲੇਲਿਸਟ ਵਿੱਚ ਜੋੜੋ</value>
   </data>
   <data name="SongList_Context_GoToAlbum" xml:space="preserve">
     <value>ਐਲਬਮ 'ਤੇ ਜਾਓ</value>
@@ -1027,7 +1037,7 @@
     <value>ਤੁਹਾਡਾ ਸੰਗੀਤ ਕਿੱਥੇ ਹੈ?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>ਉਹ ਫੋਲਡਰ ਚੁਣੋ ਜਿੱਥੇ ਤੁਸੀਂ ਆਪਣਾ ਸੰਗੀਤ ਰੱਖਦੇ ਹੋ। ਜਦੋਂ ਤੁਸੀਂ ਸੈੱਟਅੱਪ ਪੂਰਾ ਕਰਦੇ ਹੋ, Nagi ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਤਿਆਰ ਕਰਦਾ ਹੈ, ਅਤੇ ਤੁਸੀਂ ਬਾਅਦ ਵਿੱਚ ਹੋਰ ਫੋਲਡਰ ਜੋੜ ਸਕਦੇ ਹੋ।</value>
+    <value>ਉਹ ਫੋਲਡਰ ਚੁਣੋ ਜਿੱਥੇ ਤੁਸੀਂ ਆਪਣਾ ਸੰਗੀਤ ਰੱਖਦੇ ਹੋ, ਜਾਂ ਕੋਈ ਸੰਗੀਤ ਸਰਵਰ ਜੋੜੋ। ਜਦੋਂ ਤੁਸੀਂ ਸੈੱਟਅੱਪ ਪੂਰਾ ਕਰਦੇ ਹੋ, Nagi ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਤਿਆਰ ਕਰਦਾ ਹੈ, ਅਤੇ ਤੁਸੀਂ ਬਾਅਦ ਵਿੱਚ ਹੋਰ ਜੋੜ ਸਕਦੇ ਹੋ।</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>ਇਸਨੂੰ ਆਪਣੀ ਪਸੰਦ ਅਨੁਸਾਰ ਬਣਾਓ</value>
@@ -1117,7 +1127,7 @@
     <value>ਪਲੇਅਲਿਸਟ ਵਿੱਚ ਖੋਜੋ…</value>
   </data>
   <data name="SongList_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>ਪਲੇਅਲਿਸਟ ਵਿੱਚੋਂ ਹਟਾਓ</value>
+    <value>ਪਲੇਲਿਸਟ ਵਿੱਚੋਂ ਹਟਾਓ</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>ਇਹ ਪਲੇਲਿਸਟ ਖਾਲੀ ਹੈ</value>
@@ -1362,6 +1372,9 @@
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>ਕੋਈ ਅਨੁਕੂਲ ਰੋਮਨਾਈਜ਼ੇਸ਼ਨ ਪੈਕ ਉਪਲਬਧ ਨਹੀਂ ਹਨ।</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>ਰੋਮਨਾਈਜ਼ੇਸ਼ਨ ਪੈਕ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕੇ। ਆਪਣਾ ਇੰਟਰਨੈੱਟ ਕਨੈਕਸ਼ਨ ਜਾਂਚੋ, ਫਿਰ ਰਿਫ੍ਰੈਸ਼ ਕਰੋ।</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>ਪੈਕ ਸਥਾਪਨਾ ਅਸਫਲ ਰਹੀ।</value>
   </data>
@@ -1511,6 +1524,9 @@
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Nagi ਨਾਲ ਆਪਣੇ ਸਥਾਨਕ ਸੰਗੀਤ ਸੰਗ੍ਰਹਿ ਨੂੰ ਮੁੜ ਖੋਜੋ, ਇੱਕ ਸੰਗੀਤ ਪਲੇਅਰ ਜੋ ਗਤੀ, ਸਰਲਤਾ ਅਤੇ ਗੋਪਨੀਯਤਾ 'ਤੇ ਕੇਂਦਰਿਤ ਹੈ।</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>ਵਰਜ਼ਨ {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>ਲਾਇਸੈਂਸ ਦੇਖੋ</value>
@@ -1736,6 +1752,12 @@
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>ਉਦਾਹਰਨ ਲਈ ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>ਪਿਛਲਾ 1 ਦਿਨ</value>
@@ -1982,6 +2004,10 @@
   <data name="Label_Path" xml:space="preserve">
     <value>ਮਾਰਗ</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>ਸਰਵਰ</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>ਫਾਰਮੈਟ</value>
   </data>
@@ -2017,6 +2043,160 @@
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>ਗੀਤ ਸੂਚੀਆਂ ਦੇ ਉੱਪਰ ਹਰੇਕ ਕਾਲਮ ਦਾ ਲੇਬਲ ਦਿਖਾਓ।</value>
+  </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>ਜੋੜੋ</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>ਸੰਗੀਤ ਫੋਲਡਰ ਜਾਂ ਸਰਵਰ ਜੋੜੋ</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>ਸੰਗੀਤ ਫੋਲਡਰ</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>ਸੰਗੀਤ ਸਰਵਰ</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>ਸਿੰਕ ਕਰੋ</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>ਦੁਬਾਰਾ ਸਾਈਨ ਇਨ ਕਰੋ</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>ਸਰਵਰ ਹਟਾਓ</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>ਆਪਣੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚੋਂ '{0}' ਹਟਾਉਣਾ ਹੈ? ਇਸਦਾ ਸੰਗੀਤ ਸਰਵਰ 'ਤੇ ਹੀ ਰਹੇਗਾ।</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>ਅਜੇ ਕੋਈ ਗੀਤ ਨਹੀਂ</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>ਇਸਦਾ ਸੰਗੀਤ ਲਿਆਉਣ ਲਈ ਫੋਲਡਰ ਪੰਨੇ ਤੋਂ ਸਰਵਰ ਸਿੰਕ ਕਰੋ</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>'{0}' ਸਿੰਕ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>'{0}' ਸਿੰਕ ਨਹੀਂ ਹੋ ਸਕਿਆ। ਬਾਅਦ ਵਿੱਚ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>ਸੰਗੀਤ ਸਰਵਰ ਜੋੜੋ</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>{0} ਵਿੱਚ ਸਾਈਨ ਇਨ ਕਰੋ</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>ਸਾਈਨ ਇਨ ਕਰੋ</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>{1} 'ਤੇ {0} ਲਈ ਪਾਸਵਰਡ ਦਾਖ਼ਲ ਕਰੋ।</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>{0} ਲਈ ਨਵੀਂ API ਕੁੰਜੀ ਦਾਖ਼ਲ ਕਰੋ।</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>ਸਰਵਰ ਦੀ ਕਿਸਮ</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome ਜਾਂ ਕੋਈ ਹੋਰ OpenSubsonic ਸਰਵਰ</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>ਸਰਵਰ ਦਾ ਪਤਾ</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>ਸਾਈਨ ਇਨ ਕਰਨ ਦਾ ਤਰੀਕਾ</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>ਵਰਤੋਂਕਾਰ ਨਾਂ</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>ਪਾਸਵਰਡ</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>API ਕੁੰਜੀ</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>ਸਰਵਰ ਦਾ ਪਤਾ ਦਾਖ਼ਲ ਕਰੋ, ਜਿਵੇਂ ਕਿ music.example.com।</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>ਸਰਵਰ ਤੱਕ ਪਹੁੰਚ ਨਹੀਂ ਹੋ ਸਕੀ। ਪਤਾ ਜਾਂਚੋ ਅਤੇ ਦੇਖੋ ਕਿ ਸਰਵਰ ਚੱਲ ਰਿਹਾ ਹੈ।</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>ਸੁਰੱਖਿਅਤ ਕਨੈਕਸ਼ਨ ਨਹੀਂ ਬਣ ਸਕਿਆ। ਜੇ ਸਰਵਰ HTTPS ਨਹੀਂ ਵਰਤਦਾ, ਤਾਂ ਇਸਦਾ ਪਤਾ http:// ਨਾਲ ਸ਼ੁਰੂ ਕਰਕੇ ਦਾਖ਼ਲ ਕਰੋ।</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>ਇਸ ਪਤੇ 'ਤੇ ਕੋਈ Jellyfin ਸਰਵਰ ਨਹੀਂ ਹੈ।</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>ਇਸ ਪਤੇ 'ਤੇ ਕੋਈ OpenSubsonic ਸਰਵਰ ਨਹੀਂ ਹੈ। ਸਿਰਫ਼ ਮੂਲ Subsonic API ਨੂੰ ਸਹਿਯੋਗ ਦੇਣ ਵਾਲੇ ਸਰਵਰ ਨਹੀਂ ਜੋੜੇ ਜਾ ਸਕਦੇ।</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi ਨੂੰ Jellyfin 10.11 ਜਾਂ ਇਸ ਤੋਂ ਨਵੇਂ ਦੀ ਲੋੜ ਹੈ। ਸਰਵਰ ਅੱਪਡੇਟ ਕਰੋ, ਫਿਰ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>ਵਰਤੋਂਕਾਰ ਨਾਂ ਜਾਂ ਪਾਸਵਰਡ ਗ਼ਲਤ ਹੈ।</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>ਸਰਵਰ ਨੇ ਇਹ API ਕੁੰਜੀ ਸਵੀਕਾਰ ਨਹੀਂ ਕੀਤੀ।</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>ਇਹ ਸਰਵਰ ਐਪਾਂ ਤੋਂ ਪਾਸਵਰਡ ਸਵੀਕਾਰ ਨਹੀਂ ਕਰਦਾ। ਇਸਦੀ ਬਜਾਏ API ਕੁੰਜੀ ਨਾਲ ਸਾਈਨ ਇਨ ਕਰੋ।</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>ਇਹ ਸਰਵਰ API ਕੁੰਜੀਆਂ ਨੂੰ ਸਹਿਯੋਗ ਨਹੀਂ ਦਿੰਦਾ। ਇਸਦੀ ਬਜਾਏ ਆਪਣੇ ਪਾਸਵਰਡ ਨਾਲ ਸਾਈਨ ਇਨ ਕਰੋ।</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>ਇਸ ਸਰਵਰ 'ਤੇ ਤੁਹਾਡੇ ਖਾਤੇ ਵਿੱਚ ਕੋਈ ਸੰਗੀਤ ਲਾਇਬ੍ਰੇਰੀ ਨਹੀਂ ਹੈ।</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>ਇਹ ਸਰਵਰ ਪਹਿਲਾਂ ਹੀ ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ ਹੈ।</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>ਸਾਈਨ-ਇਨ ਇਸ ਪੀਸੀ 'ਤੇ ਸੰਭਾਲਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ।</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>ਸਰਵਰ ਵਿੱਚ ਸਮੱਸਿਆ ਆਈ। ਬਾਅਦ ਵਿੱਚ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>ਇਹ API ਕੁੰਜੀ ਕਿਸੇ ਹੋਰ ਖਾਤੇ ਦੀ ਹੈ। {0} ਵਜੋਂ ਸਾਈਨ ਇਨ ਹੋਣ ਦੌਰਾਨ ਇੱਕ ਬਣਾਓ।</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>'{0}' ਤੱਕ ਪਹੁੰਚ ਨਹੀਂ ਹੋ ਸਕੀ। ਜਾਂਚੋ ਕਿ ਸਰਵਰ ਚੱਲ ਰਿਹਾ ਹੈ ਅਤੇ ਤੁਸੀਂ ਔਨਲਾਈਨ ਹੋ।</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>'{0}' ਨਾਲ ਸੁਰੱਖਿਅਤ ਕਨੈਕਸ਼ਨ ਨਹੀਂ ਬਣ ਸਕਿਆ। ਹੋ ਸਕਦਾ ਹੈ ਇਸਦਾ ਸਰਟੀਫਿਕੇਟ ਬਦਲ ਗਿਆ ਹੋਵੇ ਜਾਂ ਮਿਆਦ ਪੁੱਗ ਗਈ ਹੋਵੇ।</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>'{0}' ਹੁਣ ਸਾਈਨ ਇਨ ਕਰਨ ਦਾ ਇਹ ਤਰੀਕਾ ਸਵੀਕਾਰ ਨਹੀਂ ਕਰਦਾ। ਇਸਨੂੰ ਹਟਾਓ, ਫਿਰ ਦੁਬਾਰਾ ਜੋੜੋ ਅਤੇ ਸਾਈਨ ਇਨ ਕਰਨ ਦਾ ਦੂਜਾ ਤਰੀਕਾ ਚੁਣੋ।</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>'{0}' ਨੇ ਸੰਭਾਲਿਆ ਸਾਈਨ-ਇਨ ਸਵੀਕਾਰ ਨਹੀਂ ਕੀਤਾ। ਇਸਨੂੰ ਵਰਤਦੇ ਰਹਿਣ ਲਈ ਦੁਬਾਰਾ ਸਾਈਨ ਇਨ ਕਰੋ।</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>'{1}' ਤੋਂ '{0}' ਚਲਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ।</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>'{0}' ਹੁਣ '{1}' 'ਤੇ ਨਹੀਂ ਹੈ, ਇਸ ਲਈ ਅਗਲੇ ਸਿੰਕ ਵੇਲੇ ਇਹ ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚੋਂ ਹਟ ਜਾਵੇਗਾ।</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
   </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A ਤੋਂ Z)</value>
@@ -2085,10 +2265,10 @@
     <value>ਟਰੈਕ ਨੰਬਰ</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>ਚਲਾਏ ਗਏ</value>
+    <value>ਚਲਾਉਣ ਦੀ ਗਿਣਤੀ</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
-    <value>ਗਾਣੇ</value>
+    <value>ਗੀਤ</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>ਮੈਨੂਅਲ ਆਰਡਰ</value>

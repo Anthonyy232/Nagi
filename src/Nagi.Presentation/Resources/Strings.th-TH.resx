@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>ไม่มีรายการ</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>ไม่สามารถโหลดรายการนี้ได้</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>ข้อผิดพลาด</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>{0, plural, other {อัจฉริยะ • # เพลง}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>ไม่มีเพลงใดตรงตามกฎของเพลย์ลิสต์อัจฉริยะนี้</value>
@@ -447,10 +454,10 @@
     <value>ไม่ได้กำหนดกฎ • ทุกเพลงตรงกัน</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>{0, plural, other {ตรงตาม ทั้งหมด จาก # กฎ}}</value>
+    <value>{0, plural, other {ตรงตามกฎทั้งหมด # ข้อ}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>{0, plural, other {ตรงตาม ใดๆ จาก # กฎ}}</value>
+    <value>{0, plural, other {ตรงตามกฎข้อใดข้อหนึ่งจาก # ข้อ}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, other {# รายการ}}</value>
@@ -671,6 +678,9 @@
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>เปิดใช้งานและสแกน</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>การปรับระดับเสียงให้เป็นมาตรฐานเริ่มจากการสแกนคลังเพลงของคุณ ซึ่งไม่สามารถทำงานได้ขณะที่การดำเนินการอื่นของคลังเพลงกำลังดำเนินอยู่ โปรดลองอีกครั้งเมื่อดำเนินการนั้นเสร็จสิ้น</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>กำลังเตรียมการสแกนการปรับระดับเสียงให้เป็นมาตรฐาน…</value>
@@ -913,7 +923,7 @@
     <value>ยังไม่ได้เพิ่มโฟลเดอร์</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>เพิ่มโฟลเดอร์เพลงเพื่อเริ่มต้น</value>
+    <value>เพิ่มโฟลเดอร์เพลงหรือเซิร์ฟเวอร์เพื่อเริ่มต้น</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>โฟลเดอร์</value>
@@ -1027,7 +1037,7 @@
     <value>เพลงของคุณอยู่ที่ไหน?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>เลือกโฟลเดอร์ที่คุณเก็บเพลงไว้ Nagi จะสร้างคลังเพลงของคุณในขณะที่คุณตั้งค่า และคุณสามารถเพิ่มโฟลเดอร์เพิ่มเติมได้ในภายหลัง</value>
+    <value>เลือกโฟลเดอร์ที่คุณเก็บเพลงไว้ หรือเพิ่มเซิร์ฟเวอร์เพลง Nagi จะสร้างคลังเพลงของคุณในขณะที่คุณตั้งค่าให้เสร็จ และคุณสามารถเพิ่มเติมได้ในภายหลัง</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>ปรับแต่งในแบบคุณ</value>
@@ -1362,6 +1372,9 @@
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>ไม่มีชุดภาษาโรมาไนซ์ที่เข้ากันได้</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>ไม่สามารถโหลดชุดภาษาโรมาไนซ์ได้ ตรวจสอบการเชื่อมต่ออินเทอร์เน็ตของคุณ แล้วรีเฟรช</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>การติดตั้งชุดภาษาล้มเหลว</value>
   </data>
@@ -1511,6 +1524,9 @@
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>ค้นพบชุดเพลงในเครื่องของคุณอีกครั้งด้วย Nagi เครื่องเล่นเพลงที่เน้นความเร็ว ความเรียบง่าย และความเป็นส่วนตัว</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>เวอร์ชัน {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>ดูใบอนุญาต</value>
@@ -1735,7 +1751,13 @@
     <value>หน้าถัดไป</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
-    <value>e.g. ;/\\</value>
+    <value>เช่น ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>1 วันที่ผ่านมา</value>
@@ -1982,6 +2004,10 @@
   <data name="Label_Path" xml:space="preserve">
     <value>ตำแหน่งไฟล์</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>เซิร์ฟเวอร์</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>รูปแบบ</value>
   </data>
@@ -2017,6 +2043,160 @@
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>แสดงชื่อของแต่ละคอลัมน์เหนือรายการเพลง</value>
+  </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>เพิ่ม</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>เพิ่มโฟลเดอร์เพลงหรือเซิร์ฟเวอร์</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>โฟลเดอร์เพลง</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>เซิร์ฟเวอร์เพลง</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>ซิงค์</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>ลงชื่อเข้าใช้อีกครั้ง</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>ลบเซิร์ฟเวอร์</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>ลบ '{0}' ออกจากคลังเพลงของคุณหรือไม่ เพลงจะยังคงอยู่บนเซิร์ฟเวอร์</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>ยังไม่มีเพลง</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>ซิงค์เซิร์ฟเวอร์จากหน้าโฟลเดอร์เพื่อนำเพลงเข้ามา</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>กำลังซิงค์ '{0}'…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>ไม่สามารถซิงค์ '{0}' ได้ โปรดลองอีกครั้งในภายหลัง</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>เพิ่มเซิร์ฟเวอร์เพลง</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>ลงชื่อเข้าใช้ {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>ลงชื่อเข้าใช้</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>ป้อนรหัสผ่านของ {0} บน {1}</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>ป้อนคีย์ API ใหม่สำหรับ {0}</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>ประเภทเซิร์ฟเวอร์</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome หรือเซิร์ฟเวอร์ OpenSubsonic อื่น</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>ที่อยู่เซิร์ฟเวอร์</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>ลงชื่อเข้าใช้ด้วย</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>ชื่อผู้ใช้</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>รหัสผ่าน</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>คีย์ API</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>ป้อนที่อยู่ของเซิร์ฟเวอร์ เช่น music.example.com</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ ตรวจสอบที่อยู่และตรวจสอบว่าเซิร์ฟเวอร์กำลังทำงานอยู่</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>ไม่สามารถเชื่อมต่อแบบปลอดภัยได้ หากเซิร์ฟเวอร์ไม่ใช้ HTTPS ให้ป้อนที่อยู่ที่ขึ้นต้นด้วย http://</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>ไม่มีเซิร์ฟเวอร์ Jellyfin ที่ที่อยู่นี้</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>ไม่มีเซิร์ฟเวอร์ OpenSubsonic ที่ที่อยู่นี้ ไม่สามารถเพิ่มเซิร์ฟเวอร์ที่รองรับเฉพาะ Subsonic API ดั้งเดิมได้</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi ต้องใช้ Jellyfin 10.11 ขึ้นไป อัปเดตเซิร์ฟเวอร์แล้วลองอีกครั้ง</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>เซิร์ฟเวอร์ไม่ยอมรับคีย์ API นี้</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>เซิร์ฟเวอร์นี้ไม่ยอมรับรหัสผ่านจากแอป ให้ลงชื่อเข้าใช้ด้วยคีย์ API แทน</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>เซิร์ฟเวอร์นี้ไม่รองรับคีย์ API ให้ลงชื่อเข้าใช้ด้วยรหัสผ่านของคุณแทน</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>บัญชีของคุณไม่มีคลังเพลงบนเซิร์ฟเวอร์นี้</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>เซิร์ฟเวอร์นี้อยู่ในคลังเพลงของคุณแล้ว</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>ไม่สามารถบันทึกข้อมูลลงชื่อเข้าใช้บนพีซีเครื่องนี้ได้</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>เซิร์ฟเวอร์เกิดปัญหา โปรดลองอีกครั้งในภายหลัง</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>คีย์ API นี้เป็นของบัญชีอื่น สร้างคีย์ขณะที่ลงชื่อเข้าใช้ในฐานะ {0}</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>ไม่สามารถเชื่อมต่อกับ '{0}' ได้ ตรวจสอบว่าเซิร์ฟเวอร์กำลังทำงานอยู่และคุณออนไลน์อยู่</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>ไม่สามารถเชื่อมต่อกับ '{0}' แบบปลอดภัยได้ ใบรับรองอาจมีการเปลี่ยนแปลงหรือหมดอายุ</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>'{0}' ไม่รองรับวิธีลงชื่อเข้าใช้นี้อีกต่อไป ให้ลบเซิร์ฟเวอร์ แล้วเพิ่มใหม่และเลือกวิธีลงชื่อเข้าใช้อีกแบบ</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>'{0}' ไม่ยอมรับข้อมูลลงชื่อเข้าใช้ที่บันทึกไว้ ลงชื่อเข้าใช้อีกครั้งเพื่อใช้งานต่อ</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>ไม่สามารถเล่น '{0}' จาก '{1}' ได้</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>'{0}' ไม่อยู่บน '{1}' อีกต่อไป จึงจะหายไปจากคลังเพลงของคุณในการซิงค์ครั้งถัดไป</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
   </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A ถึง Z)</value>
@@ -2091,7 +2271,7 @@
     <value>เพลง</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
-    <value>ลำดับเอง</value>
+    <value>เรียงลำดับเอง</value>
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>สุ่ม</value>

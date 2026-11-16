@@ -299,19 +299,22 @@
     <value>Eroare la re-scanarea dosarului: {0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0, plural, one {# dosar} other {# dosare}}</value>
+    <value>{0, plural, one {# dosar} few {# dosare} other {# de dosare}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
-    <value>{0, plural, one {# piesă} other {# piese}}</value>
+    <value>{0, plural, one {# piesă} few {# piese} other {# de piese}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
-    <value>{0, plural, one {# album} other {# albume}}</value>
+    <value>{0, plural, one {# album} few {# albume} other {# de albume}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
-    <value>{0, plural, one {# artist} other {# artiști}}</value>
+    <value>{0, plural, one {# artist} few {# artiști} other {# de artiști}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Niciun element</value>
+  </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>Această listă nu a putut fi încărcată.</value>
   </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Eroare</value>
@@ -335,7 +338,11 @@
     <value>Biblioteca ta este gata.</value>
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
-    <value>Inteligent • {0, plural, one {# piesă} other {# piese}}</value>
+    <value>Inteligentă • {0, plural, one {# piesă} few {# piese} other {# de piese}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Nicio piesă nu se potrivește cu regulile acestei liste de redare inteligente.</value>
@@ -447,13 +454,13 @@ Fișiere care nu au putut fi importate: {0}.</value>
     <value>Nicio regulă definită • Toate piesele se potrivesc</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>Potrivește toate din {0, plural, one {# regulă} other {# reguli}}</value>
+    <value>Toate regulile ({0, plural, one {# regulă} few {# reguli} other {# de reguli}})</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>Potrivește oricare din {0, plural, one {# regulă} other {# reguli}}</value>
+    <value>Oricare regulă ({0, plural, one {# regulă} few {# reguli} other {# de reguli}})</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
-    <value>{0, plural, one {# element} other {# elemente}}</value>
+    <value>{0, plural, one {# element} few {# elemente} other {# de elemente}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0, plural, one {# selectat} few {# selectate} other {# selectate}}</value>
@@ -672,6 +679,9 @@ Vrei să continui?</value>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Activează și scanează</value>
   </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>Normalizarea volumului începe cu o scanare a bibliotecii, care nu poate rula cât timp este în curs altă operațiune asupra bibliotecii. Încearcă din nou după ce se termină.</value>
+  </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Se pregătește scanarea pentru normalizarea volumului…</value>
   </data>
@@ -691,7 +701,7 @@ Vrei să continui?</value>
     <value>Ieșire</value>
   </data>
   <data name="Player_BackButton_ToolTip" xml:space="preserve">
-    <value>Înapoi la Player</value>
+    <value>Înapoi la player</value>
   </data>
   <data name="Player_UpNextHeader" xml:space="preserve">
     <value>Urmează</value>
@@ -856,7 +866,7 @@ Vrei să continui?</value>
     <value>Album</value>
   </data>
   <data name="SongList_Songs" xml:space="preserve">
-    <value>Melodii</value>
+    <value>Piese</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Căutare în album…</value>
@@ -913,7 +923,7 @@ Vrei să continui?</value>
     <value>Nu s-au adăugat dosare încă</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Adaugă dosare de muzică pentru a începe</value>
+    <value>Adaugă un dosar de muzică sau un server pentru a începe</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Dosar</value>
@@ -1027,7 +1037,7 @@ Vrei să continui?</value>
     <value>Unde se află muzica ta?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Alege dosarul în care îți păstrezi muzica. Nagi îți creează biblioteca în timp ce finalizezi configurarea, iar ulterior poți adăuga mai multe dosare.</value>
+    <value>Alege dosarul în care îți păstrezi muzica sau adaugă un server de muzică. Nagi îți creează biblioteca în timp ce finalizezi configurarea, iar ulterior poți adăuga mai multe.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Personalizează aplicația</value>
@@ -1362,6 +1372,9 @@ Vrei să continui?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Nu sunt disponibile pachete de romanizare compatibile.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>Pachetele de romanizare nu au putut fi încărcate. Verifică conexiunea la internet, apoi reîmprospătează.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Instalarea pachetului a eșuat.</value>
   </data>
@@ -1511,6 +1524,9 @@ Vrei să continui?</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Redescoperă colecția ta de muzică locală cu Nagi, un player de muzică axat pe viteză, simplitate și confidențialitate.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Versiunea {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Vezi Licențele</value>
@@ -1735,7 +1751,13 @@ Vrei să continui?</value>
     <value>Pagina următoare</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
-    <value>ex. ;/\</value>
+    <value>ex. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Ultima 1 zi</value>
@@ -1982,6 +2004,10 @@ Vrei să continui?</value>
   <data name="Label_Path" xml:space="preserve">
     <value>Cale</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Server</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Format</value>
   </data>
@@ -2018,6 +2044,160 @@ Vrei să continui?</value>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Afișează o etichetă deasupra fiecărei coloane din listele de melodii.</value>
   </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Adaugă</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Adaugă un dosar de muzică sau un server</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Dosar de muzică</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Server de muzică</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>Sincronizează</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Conectează-te din nou</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Elimină serverul</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>Elimini '{0}' din bibliotecă? Muzica sa rămâne pe server.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>Încă nu există piese</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>Sincronizează serverul din pagina Dosare pentru a aduce muzica lui</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>Se sincronizează '{0}'…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>Nu s-a putut sincroniza '{0}'. Încearcă din nou mai târziu.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Adaugă server de muzică</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>Conectează-te la {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Conectează-te</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>Introdu parola pentru {0} pe {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>Introdu o nouă cheie API pentru {0}.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Tip de server</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome sau alt server OpenSubsonic</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Adresa serverului</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Conectează-te cu</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>Nume de utilizator</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Parolă</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>Cheie API</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Introdu adresa serverului, de exemplu music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>Nu s-a putut ajunge la server. Verifică adresa și dacă serverul rulează.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>Nu s-a putut stabili o conexiune securizată. Dacă serverul nu folosește HTTPS, introdu adresa lui începând cu http://.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>Nu există niciun server Jellyfin la această adresă.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>Nu există niciun server OpenSubsonic la această adresă. Serverele care acceptă doar API-ul Subsonic original nu pot fi adăugate.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi necesită Jellyfin 10.11 sau o versiune ulterioară. Actualizează serverul, apoi încearcă din nou.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>Numele de utilizator sau parola este incorectă.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>Serverul nu a acceptat această cheie API.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>Acest server nu acceptă parole din aplicații. Conectează-te în schimb cu o cheie API.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>Acest server nu acceptă chei API. Conectează-te în schimb cu parola.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>Contul tău nu are o bibliotecă de muzică pe acest server.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>Acest server este deja în biblioteca ta.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>Datele de conectare nu au putut fi salvate pe acest calculator.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>Serverul a întâmpinat o problemă. Încearcă din nou mai târziu.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>Această cheie API aparține altui cont. Creează una în timp ce ești conectat ca {0}.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>Nu s-a putut ajunge la '{0}'. Verifică dacă serverul rulează și dacă ești online.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>Nu s-a putut stabili o conexiune securizată cu '{0}'. Certificatul său poate să se fi schimbat sau să fi expirat.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>'{0}' nu mai acceptă această metodă de conectare. Elimină-l, apoi adaugă-l din nou și alege cealaltă metodă de conectare.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>'{0}' nu a acceptat datele de conectare salvate. Conectează-te din nou pentru a-l folosi în continuare.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>Nu s-a putut reda '{0}' de pe '{1}'.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>'{0}' nu mai este pe '{1}', așa că va dispărea din biblioteca ta la următoarea sincronizare.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A la Z)</value>
   </data>
@@ -2025,16 +2205,16 @@ Vrei să continui?</value>
     <value>{0} (Z la A)</value>
   </data>
   <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Cel mai nou)</value>
+    <value>{0} (cel mai nou)</value>
   </data>
   <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Cel mai vechi)</value>
+    <value>{0} (cel mai vechi)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Crescător)</value>
+    <value>{0} (crescător)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Descrescător)</value>
+    <value>{0} (descrescător)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Cel mai scurt, primul</value>
@@ -2088,7 +2268,7 @@ Vrei să continui?</value>
     <value>Redări</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
-    <value>Melodii</value>
+    <value>Piese</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Ordine manuală</value>

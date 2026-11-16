@@ -156,6 +156,9 @@
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>ஏற்றுமதி செய்ய பிளேலிஸ்ட்கள் இல்லை.</value>
   </data>
+  <data name="Error_PlaylistsExportFailed" xml:space="preserve">
+    <value>பிளேலிஸ்ட்களை அந்தக் கோப்புறைக்கு ஏற்றுமதி செய்ய முடியவில்லை.</value>
+  </data>
   <data name="EqPreset_None" xml:space="preserve">
     <value>எதுவுமில்லை</value>
   </data>
@@ -251,5 +254,21 @@
   <data name="Biography_WikipediaAttribution" xml:space="preserve">
     <value>விக்கிப்பீடியாவிலிருந்து, CC BY-SA உரிமத்தின் கீழ்.</value>
     <comment>Shown below an artist biography taken from Wikipedia, as its license requires.</comment>
+  </data>
+  <data name="Format_FetchingServerSongs" xml:space="preserve">
+    <value>சேவையகத்திலிருந்து பாடல்களைப் பெறுகிறது ({0})…</value>
+    <comment>Shown while a music server is synced. {0} is the number of songs received so far.</comment>
+  </data>
+  <data name="Status_AddingServerSongs" xml:space="preserve">
+    <value>உங்கள் நூலகத்தில் பாடல்களைச் சேர்க்கிறது…</value>
+    <comment>Shown while songs from a music server are saved to the library.</comment>
+  </data>
+  <data name="Status_DownloadingServerCovers" xml:space="preserve">
+    <value>ஆல்பம் அட்டைகளைப் பதிவிறக்குகிறது…</value>
+    <comment>Shown while album covers are downloaded from a music server.</comment>
+  </data>
+  <data name="Status_SyncComplete" xml:space="preserve">
+    <value>ஒத்திசைவு முடிந்தது.</value>
+    <comment>Shown when a music server has finished syncing.</comment>
   </data>
 </root>

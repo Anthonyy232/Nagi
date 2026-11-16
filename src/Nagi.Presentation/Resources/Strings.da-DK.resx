@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Ingen elementer</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>Denne liste kunne ikke indlæses.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Fejl</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Smart • {0, plural, one {# sang} other {# sange}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Ingen sange matcher denne smarte afspilningslistes regler.</value>
@@ -447,10 +454,10 @@ Filer, der ikke kunne importeres: {0}.</value>
     <value>Ingen regler defineret • Alle sange matcher</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>Match alle af {0, plural, one {# regel} other {# regler}}</value>
+    <value>Matcher alle {0, plural, one {# regel} other {# regler}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>Match enhver af {0, plural, one {# regel} other {# regler}}</value>
+    <value>Matcher mindst én af {0, plural, one {# regel} other {# regler}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# element} other {# elementer}}</value>
@@ -671,6 +678,9 @@ Vil du fortsætte?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Aktiver &amp; scan</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>Lydstyrkenormalisering starter med en scanning af dit bibliotek, som ikke kan køre, mens en anden biblioteksoperation er i gang. Prøv igen, når den er færdig.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Forbereder scanning til lydstyrkenormalisering…</value>
@@ -913,7 +923,7 @@ Vil du fortsætte?</value>
     <value>Ingen mapper tilføjet endnu</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Tilføj musikmapper for at komme i gang</value>
+    <value>Tilføj en musikmappe eller server for at komme i gang</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Mappe</value>
@@ -1027,7 +1037,7 @@ Vil du fortsætte?</value>
     <value>Hvor er din musik?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Vælg mappen, hvor du har din musik. Nagi opbygger dit bibliotek, mens du gør opsætningen færdig, og du kan tilføje flere mapper senere.</value>
+    <value>Vælg mappen, hvor du har din musik, eller tilføj en musikserver. Nagi opbygger dit bibliotek, mens du gør opsætningen færdig, og du kan tilføje flere senere.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Gør den til din egen</value>
@@ -1362,6 +1372,9 @@ Vil du fortsætte?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Ingen kompatible romaniseringspakker er tilgængelige.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>Kunne ikke indlæse romaniseringspakker. Kontroller din internetforbindelse, og opdater derefter.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Pakkeinstallation mislykkedes.</value>
   </data>
@@ -1511,6 +1524,9 @@ Vil du fortsætte?</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Genopdag din lokale musiksamling med Nagi, en musikafspiller fokuseret på hastighed, enkelhed og privatliv.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Version {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Se licenser</value>
@@ -1735,7 +1751,13 @@ Vil du fortsætte?</value>
     <value>Næste side</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
-    <value>f.eks. ;/\</value>
+    <value>f.eks. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Seneste 1 dag</value>
@@ -1982,6 +2004,10 @@ Vil du fortsætte?</value>
   <data name="Label_Path" xml:space="preserve">
     <value>Sti</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Server</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Format</value>
   </data>
@@ -2018,6 +2044,160 @@ Vil du fortsætte?</value>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Vis en overskrift over hver kolonne i sanglister.</value>
   </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Tilføj</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Tilføj en musikmappe eller server</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Musikmappe</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Musikserver</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>Synkroniser</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Log ind igen</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Fjern server</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>Fjern '{0}' fra dit bibliotek? Musikken bliver liggende på serveren.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>Ingen sange endnu</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>Synkroniser serveren fra siden Mapper for at hente dens musik</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>Synkroniserer '{0}'…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>Kunne ikke synkronisere '{0}'. Prøv igen senere.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Tilføj musikserver</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>Log ind på {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Log ind</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>Indtast adgangskoden til {0} på {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>Indtast en ny API-nøgle til {0}.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Servertype</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome eller en anden OpenSubsonic-server</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Serveradresse</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Log ind med</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>Brugernavn</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Adgangskode</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>API-nøgle</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Indtast serverens adresse, f.eks. music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>Kunne ikke nå serveren. Kontroller adressen, og at serveren kører.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>Kunne ikke oprette en sikker forbindelse. Hvis serveren ikke bruger HTTPS, skal du indtaste adressen med http:// foran.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>Der er ingen Jellyfin-server på denne adresse.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>Der er ingen OpenSubsonic-server på denne adresse. Servere, der kun understøtter den oprindelige Subsonic-API, kan ikke tilføjes.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi kræver Jellyfin 10.11 eller nyere. Opdater serveren, og prøv igen.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>Brugernavnet eller adgangskoden er forkert.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>Serveren accepterede ikke denne API-nøgle.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>Denne server accepterer ikke adgangskoder fra apps. Log ind med en API-nøgle i stedet.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>Denne server understøtter ikke API-nøgler. Log ind med din adgangskode i stedet.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>Din konto har intet musikbibliotek på denne server.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>Denne server er allerede i dit bibliotek.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>Kunne ikke gemme login på denne pc.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>Serveren stødte på et problem. Prøv igen senere.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>Denne API-nøgle tilhører en anden konto. Opret en, mens du er logget ind som {0}.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>Kunne ikke nå '{0}'. Kontroller, at serveren kører, og at du er online.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>Kunne ikke oprette en sikker forbindelse til '{0}'. Dens certifikat er muligvis ændret eller udløbet.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>'{0}' accepterer ikke længere denne loginmetode. Fjern den, tilføj den igen, og vælg den anden loginmetode.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>'{0}' accepterede ikke det gemte login. Log ind igen for at fortsætte med at bruge den.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>Kunne ikke afspille '{0}' fra '{1}'.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>'{0}' findes ikke længere på '{1}' og forsvinder fra dit bibliotek ved næste synkronisering.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A til Z)</value>
   </data>
@@ -2025,10 +2205,10 @@ Vil du fortsætte?</value>
     <value>{0} (Z til A)</value>
   </data>
   <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Nyeste)</value>
+    <value>{0} (nyeste)</value>
   </data>
   <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Ældste)</value>
+    <value>{0} (ældste)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
     <value>{0} (stigende)</value>
@@ -2049,7 +2229,7 @@ Vil du fortsætte?</value>
     <value>Hurtigste først ({0})</value>
   </data>
   <data name="Format_Most" xml:space="preserve">
-    <value>Mest {0}</value>
+    <value>Flest {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
     <value>Færrest {0}</value>

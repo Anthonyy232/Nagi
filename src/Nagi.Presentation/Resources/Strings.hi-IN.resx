@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>कोई आइटम नहीं</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>यह सूची लोड नहीं हो सकी।</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>त्रुटि</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>स्मार्ट • {0, plural, one {# गाना} other {# गाने}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>इस स्मार्ट प्लेलिस्ट के नियमों से कोई गाना मेल नहीं खाता।</value>
@@ -672,6 +679,9 @@
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>सक्षम करें और स्कैन करें</value>
   </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>वॉल्यूम नॉर्मलाइज़ेशन आपकी लाइब्रेरी के स्कैन से शुरू होता है, जो किसी दूसरे लाइब्रेरी ऑपरेशन के चलते समय नहीं चल सकता। वह पूरा होने के बाद फिर से प्रयास करें।</value>
+  </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>वॉल्यूम सामान्यीकरण स्कैन की तैयारी की जा रही है…</value>
   </data>
@@ -913,7 +923,7 @@
     <value>अभी तक कोई फ़ोल्डर जोड़ा नहीं गया है</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>शुरू करने के लिए संगीत फ़ोल्डर जोड़ें</value>
+    <value>शुरू करने के लिए संगीत फ़ोल्डर या सर्वर जोड़ें</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>फ़ोल्डर</value>
@@ -1027,7 +1037,7 @@
     <value>आपका संगीत कहाँ है?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>वह फ़ोल्डर चुनें जहाँ आप अपना संगीत रखते हैं। जब तक आप सेटअप पूरा करते हैं, Nagi आपकी लाइब्रेरी तैयार करता है, और आप बाद में और फ़ोल्डर जोड़ सकते हैं।</value>
+    <value>वह फ़ोल्डर चुनें जहाँ आप अपना संगीत रखते हैं, या कोई संगीत सर्वर जोड़ें। जब तक आप सेटअप पूरा करते हैं, Nagi आपकी लाइब्रेरी तैयार करता है, और आप बाद में और भी जोड़ सकते हैं।</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>इसे अपना बनाएं</value>
@@ -1362,6 +1372,9 @@
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>कोई संगत रोमानाइजेशन पैक उपलब्ध नहीं हैं।</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>रोमनाइज़ेशन पैक लोड नहीं हो सके। अपना इंटरनेट कनेक्शन जाँचें, फिर रिफ़्रेश करें।</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>पैक इंस्टॉल विफल रहा।</value>
   </data>
@@ -1511,6 +1524,9 @@
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Nagi के साथ अपने स्थानीय संगीत संग्रह को फिर से खोजें, एक संगीत प्लेयर जो गति, सरलता और गोपनीयता पर केंद्रित है।</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>वर्ज़न {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>लाइसेंस देखें</value>
@@ -1736,6 +1752,12 @@
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>उदा. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} मिलीसेकंड</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>पिछला 1 दिन</value>
@@ -1982,6 +2004,10 @@
   <data name="Label_Path" xml:space="preserve">
     <value>पथ</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>सर्वर</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>फ़ॉर्मेट</value>
   </data>
@@ -2017,6 +2043,160 @@
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>गीत सूचियों के ऊपर प्रत्येक कॉलम का लेबल दिखाएँ।</value>
+  </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>जोड़ें</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>संगीत फ़ोल्डर या सर्वर जोड़ें</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>संगीत फ़ोल्डर</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>संगीत सर्वर</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>सिंक करें</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>दोबारा साइन इन करें</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>सर्वर हटाएँ</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>क्या आपकी लाइब्रेरी से ‘{0}’ हटाना है? इसका संगीत सर्वर पर बना रहता है।</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>अभी तक कोई गाना नहीं</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>सर्वर का संगीत लाने के लिए फ़ोल्डर पेज से सर्वर सिंक करें</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>‘{0}’ सिंक हो रहा है…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>‘{0}’ सिंक नहीं हो सका। बाद में फिर से प्रयास करें।</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>संगीत सर्वर जोड़ें</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>{0} में साइन इन करें</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>साइन इन करें</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>{1} पर {0} का पासवर्ड दर्ज करें।</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>{0} के लिए नई API कुंजी दर्ज करें।</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>सर्वर का प्रकार</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome या कोई अन्य OpenSubsonic सर्वर</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>सर्वर का पता</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>साइन इन का तरीका</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>यूज़र नाम</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>पासवर्ड</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>API कुंजी</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>सर्वर का पता दर्ज करें, जैसे music.example.com।</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>सर्वर से कनेक्ट नहीं हो सका। पता और सर्वर चालू होने की जाँच करें।</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>सुरक्षित कनेक्शन नहीं बन सका। यदि सर्वर HTTPS का उपयोग नहीं करता, तो उसका पता http:// से शुरू करके दर्ज करें।</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>इस पते पर कोई Jellyfin सर्वर नहीं है।</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>इस पते पर कोई OpenSubsonic सर्वर नहीं है। जो सर्वर केवल मूल Subsonic API को सपोर्ट करते हैं, उन्हें जोड़ा नहीं जा सकता।</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi के लिए Jellyfin 10.11 या उससे नया वर्ज़न चाहिए। सर्वर अपडेट करें, फिर दोबारा प्रयास करें।</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>यूज़र नाम या पासवर्ड गलत है।</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>सर्वर ने इस API कुंजी को स्वीकार नहीं किया।</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>यह सर्वर ऐप्स से पासवर्ड स्वीकार नहीं करता। इसके बजाय API कुंजी से साइन इन करें।</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>यह सर्वर API कुंजियाँ सपोर्ट नहीं करता। इसके बजाय अपने पासवर्ड से साइन इन करें।</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>इस सर्वर पर आपके खाते में कोई संगीत लाइब्रेरी नहीं है।</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>यह सर्वर पहले से आपकी लाइब्रेरी में है।</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>इस पीसी पर साइन इन सेव नहीं हो सका।</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>सर्वर में कोई समस्या आई। बाद में फिर से प्रयास करें।</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>यह API कुंजी किसी दूसरे खाते की है। {0} के रूप में साइन इन रहते हुए कुंजी बनाएँ।</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>‘{0}’ से कनेक्ट नहीं हो सका। जाँचें कि सर्वर चालू है और आप ऑनलाइन हैं।</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>‘{0}’ से सुरक्षित कनेक्शन नहीं बन सका। हो सकता है इसका सर्टिफ़िकेट बदल गया हो या उसकी अवधि समाप्त हो गई हो।</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>‘{0}’ अब साइन इन का यह तरीका स्वीकार नहीं करता। इसे हटाएँ, फिर दोबारा जोड़ें और साइन इन का दूसरा तरीका चुनें।</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>‘{0}’ ने सेव किए गए साइन इन को स्वीकार नहीं किया। इसे इस्तेमाल करते रहने के लिए दोबारा साइन इन करें।</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>‘{1}’ से ‘{0}’ नहीं चलाया जा सका।</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>‘{0}’ अब ‘{1}’ पर नहीं है, इसलिए अगले सिंक में यह आपकी लाइब्रेरी से हट जाएगा।</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
   </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (ए से ज़ेड तक)</value>

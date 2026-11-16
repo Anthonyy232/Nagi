@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>பொருட்கள் இல்லை</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>இந்தப் பட்டியலை ஏற்ற முடியவில்லை.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>பிழை</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>ஸ்மார்ட் • {0, plural, one {# பாடல்} other {# பாடல்கள்}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>இந்த ஸ்மார்ட் பிளேலிஸ்ட்டின் விதிகளுடன் எந்த பாடல்களும் பொருந்தவில்லை.</value>
@@ -447,10 +454,10 @@
     <value>விதிகள் எதுவும் வரையறுக்கப்படவில்லை • அனைத்து பாடல்களும் பொருந்துகின்றன</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>{0, plural, one {# விதி} other {# விதிகள்}} இல் அனைத்து பொருந்தும்</value>
+    <value>எல்லா விதிகளும் பொருந்த வேண்டும்: {0, plural, one {# விதி} other {# விதிகள்}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>{0, plural, one {# விதி} other {# விதிகள்}} இல் ஏதாவது பொருந்தும்</value>
+    <value>ஏதேனும் ஒரு விதி பொருந்த வேண்டும்: {0, plural, one {# விதி} other {# விதிகள்}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# பொருள்} other {# பொருட்கள்}}</value>
@@ -671,6 +678,9 @@
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>இயக்கு &amp; ஸ்கேன் செய்</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>ஒலி அளவு இயல்பாக்கம் உங்கள் நூலகத்தை ஸ்கேன் செய்வதில் தொடங்குகிறது; மற்றொரு நூலகச் செயல்பாடு நடந்துகொண்டிருக்கும்போது அதை இயக்க முடியாது. அது முடிந்ததும் மீண்டும் முயலவும்.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>ஒலி அளவு இயல்பாக்க ஸ்கேன் தயார் செய்யப்படுகிறது…</value>
@@ -913,7 +923,7 @@
     <value>கோப்புறைகள் எதுவும் இன்னும் சேர்க்கப்படவில்லை</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>தொடங்குவதற்கு இசை கோப்புறைகளைச் சேர்க்கவும்</value>
+    <value>தொடங்குவதற்கு இசை கோப்புறை அல்லது சேவையகத்தைச் சேர்க்கவும்</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>கோப்புறை</value>
@@ -961,7 +971,7 @@
     <value>வரிசையில் சேர்</value>
   </data>
   <data name="SongList_Context_AddToPlaylist" xml:space="preserve">
-    <value>பாடல் பட்டியலில் சேர்</value>
+    <value>பிளேலிஸ்ட்டில் சேர்</value>
   </data>
   <data name="SongList_Context_GoToAlbum" xml:space="preserve">
     <value>ஆல்பத்திற்குச் செல்</value>
@@ -1027,7 +1037,7 @@
     <value>உங்கள் இசை எங்கே உள்ளது?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>உங்கள் இசையை வைத்திருக்கும் கோப்புறையைத் தேர்ந்தெடுக்கவும். நீங்கள் அமைவை முடிக்கும் நேரத்தில் Nagi உங்கள் லைப்ரரியை உருவாக்கும், மேலும் கோப்புறைகளை நீங்கள் பின்னர் சேர்க்கலாம்.</value>
+    <value>உங்கள் இசையை வைத்திருக்கும் கோப்புறையைத் தேர்ந்தெடுக்கவும் அல்லது இசை சேவையகத்தைச் சேர்க்கவும். நீங்கள் அமைவை முடிக்கும் நேரத்தில் Nagi உங்கள் நூலகத்தை உருவாக்கும், மேலும் நீங்கள் பின்னர் கூடுதலாகச் சேர்க்கலாம்.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>உங்கள் விருப்பப்படி மாற்றவும்</value>
@@ -1117,7 +1127,7 @@
     <value>பாடல் பட்டியலில் தேடு…</value>
   </data>
   <data name="SongList_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>பாடல் பட்டியலிருந்து அகற்று</value>
+    <value>பிளேலிஸ்ட்டிலிருந்து அகற்று</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>இந்தப் பிளேலிஸ்ட் காலியாக உள்ளது</value>
@@ -1362,6 +1372,9 @@
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>இணக்கமான ரோமனியப்படுத்தல் தொகுப்புகள் எதுவும் இல்லை.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>ரோமானிய வடிவத் தொகுப்புகளை ஏற்ற முடியவில்லை. உங்கள் இணைய இணைப்பைச் சரிபார்த்து, புதுப்பிக்கவும்.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>தொகுப்பு நிறுவல் தோல்வியடைந்தது.</value>
   </data>
@@ -1511,6 +1524,9 @@
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Nagi மூலம் உங்கள் உள்ளூர் இசைத் தொகுப்பை மீண்டும் கண்டறியுங்கள், இது வேகம், எளிமை மற்றும் தனியுரிமை ஆகியவற்றில் கவனம் செலுத்தும் ஒரு இசை பிளேயர்.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>பதிப்பு {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>உரிமங்களைப் பார்</value>
@@ -1736,6 +1752,12 @@
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>எ.கா. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>கடந்த 1 நாள்</value>
@@ -1982,6 +2004,10 @@
   <data name="Label_Path" xml:space="preserve">
     <value>பாதை</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>சேவையகம்</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>வடிவம்</value>
   </data>
@@ -2017,6 +2043,160 @@
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>பாடல் பட்டியல்களுக்கு மேலே ஒவ்வொரு நெடுவரிசையின் தலைப்பையும் காட்டவும்.</value>
+  </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>சேர்</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>இசை கோப்புறை அல்லது சேவையகத்தைச் சேர்</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>இசை கோப்புறை</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>இசை சேவையகம்</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>ஒத்திசை</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>மீண்டும் உள்நுழை</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>சேவையகத்தை அகற்று</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>உங்கள் நூலகத்திலிருந்து '{0}'-ஐ அகற்றவா? அதன் இசை சேவையகத்திலேயே இருக்கும்.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>இன்னும் பாடல்கள் இல்லை</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>சேவையகத்தின் இசையைக் கொண்டுவர, கோப்புறைகள் பக்கத்திலிருந்து அதை ஒத்திசைக்கவும்</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>'{0}'-ஐ ஒத்திசைக்கிறது…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>'{0}'-ஐ ஒத்திசைக்க முடியவில்லை. பின்னர் மீண்டும் முயலவும்.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>இசை சேவையகத்தைச் சேர்</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>{0} இல் உள்நுழை</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>உள்நுழை</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>{1} இல் {0} க்கான கடவுச்சொல்லை உள்ளிடவும்.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>{0} க்கான புதிய API விசையை உள்ளிடவும்.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>சேவையக வகை</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome அல்லது வேறொரு OpenSubsonic சேவையகம்</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>சேவையக முகவரி</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>இதன் மூலம் உள்நுழை</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>பயனர் பெயர்</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>கடவுச்சொல்</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>API விசை</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>சேவையகத்தின் முகவரியை உள்ளிடவும், எடுத்துக்காட்டாக music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>சேவையகத்தை அடைய முடியவில்லை. முகவரியையும், சேவையகம் இயங்குகிறதா என்பதையும் சரிபார்க்கவும்.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>பாதுகாப்பாக இணைக்க முடியவில்லை. சேவையகம் HTTPS ஐப் பயன்படுத்தவில்லை எனில், அதன் முகவரியை http:// உடன் தொடங்கி உள்ளிடவும்.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>இந்த முகவரியில் Jellyfin சேவையகம் இல்லை.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>இந்த முகவரியில் OpenSubsonic சேவையகம் இல்லை. அசல் Subsonic API ஐ மட்டுமே ஆதரிக்கும் சேவையகங்களைச் சேர்க்க முடியாது.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi க்கு Jellyfin 10.11 அல்லது அதற்குப் பிந்தைய பதிப்பு தேவை. சேவையகத்தைப் புதுப்பித்து, மீண்டும் முயலவும்.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>பயனர் பெயர் அல்லது கடவுச்சொல் தவறானது.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>இந்த API விசையை சேவையகம் ஏற்கவில்லை.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>இந்தச் சேவையகம் பயன்பாடுகளிலிருந்து கடவுச்சொற்களை ஏற்காது. அதற்குப் பதிலாக API விசையுடன் உள்நுழையவும்.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>இந்தச் சேவையகம் API விசைகளை ஆதரிக்காது. அதற்குப் பதிலாக உங்கள் கடவுச்சொல்லுடன் உள்நுழையவும்.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>இந்தச் சேவையகத்தில் உங்கள் கணக்கிற்கு இசை நூலகம் இல்லை.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>இந்தச் சேவையகம் ஏற்கனவே உங்கள் நூலகத்தில் உள்ளது.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>இந்தக் கணினியில் உள்நுழைவைச் சேமிக்க முடியவில்லை.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>சேவையகத்தில் சிக்கல் ஏற்பட்டது. பின்னர் மீண்டும் முயலவும்.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>இந்த API விசை வேறொரு கணக்கிற்கு உரியது. {0} ஆக உள்நுழைந்திருக்கும்போது ஒன்றை உருவாக்கவும்.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>'{0}'-ஐ அடைய முடியவில்லை. சேவையகம் இயங்குகிறதா என்பதையும், நீங்கள் இணையத்தில் இணைந்துள்ளீர்களா என்பதையும் சரிபார்க்கவும்.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>'{0}'-உடன் பாதுகாப்பாக இணைக்க முடியவில்லை. அதன் சான்றிதழ் மாறியிருக்கலாம் அல்லது காலாவதியாகியிருக்கலாம்.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>இந்த உள்நுழைவு முறையை '{0}' இனி ஏற்காது. அதை அகற்றி, மீண்டும் சேர்த்து, மற்றொரு உள்நுழைவு முறையைத் தேர்ந்தெடுக்கவும்.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>சேமிக்கப்பட்ட உள்நுழைவை '{0}' ஏற்கவில்லை. தொடர்ந்து பயன்படுத்த மீண்டும் உள்நுழையவும்.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>'{1}' இலிருந்து '{0}' ஐ இயக்க முடியவில்லை.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>'{0}' இனி '{1}' இல் இல்லை, எனவே அடுத்த ஒத்திசைவில் அது உங்கள் நூலகத்திலிருந்து நீக்கப்படும்.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
   </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (அ முதல் ஃ வரை)</value>
@@ -2094,6 +2274,6 @@
     <value>கைமுறை வரிசை</value>
   </data>
   <data name="Label_Random" xml:space="preserve">
-    <value>சீரற்ற</value>
+    <value>சீரற்ற வரிசை</value>
   </data>
 </root>

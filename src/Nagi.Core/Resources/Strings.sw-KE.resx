@@ -156,6 +156,9 @@
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Hakuna orodha za kucheza za kusafirisha.</value>
   </data>
+  <data name="Error_PlaylistsExportFailed" xml:space="preserve">
+    <value>Orodha za kucheza hazikuweza kuhamishwa hadi kwenye folda hiyo.</value>
+  </data>
   <data name="EqPreset_None" xml:space="preserve">
     <value>Hakuna</value>
   </data>
@@ -251,5 +254,21 @@
   <data name="Biography_WikipediaAttribution" xml:space="preserve">
     <value>Kutoka Wikipedia, chini ya leseni ya CC BY-SA.</value>
     <comment>Shown below an artist biography taken from Wikipedia, as its license requires.</comment>
+  </data>
+  <data name="Format_FetchingServerSongs" xml:space="preserve">
+    <value>Inapakua nyimbo kutoka kwenye seva ({0})…</value>
+    <comment>Shown while a music server is synced. {0} is the number of songs received so far.</comment>
+  </data>
+  <data name="Status_AddingServerSongs" xml:space="preserve">
+    <value>Inaongeza nyimbo kwenye maktaba yako…</value>
+    <comment>Shown while songs from a music server are saved to the library.</comment>
+  </data>
+  <data name="Status_DownloadingServerCovers" xml:space="preserve">
+    <value>Inapakua picha za jalada za albamu…</value>
+    <comment>Shown while album covers are downloaded from a music server.</comment>
+  </data>
+  <data name="Status_SyncComplete" xml:space="preserve">
+    <value>Usawazishaji umekamilika.</value>
+    <comment>Shown when a music server has finished syncing.</comment>
   </data>
 </root>

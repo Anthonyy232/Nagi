@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Không có mục nào</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>Không thể tải danh sách này.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Lỗi</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>{0, plural, other {Thông minh • # bài hát}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Không có bài hát nào khớp với quy tắc của danh sách phát thông minh này.</value>
@@ -672,6 +679,9 @@ Bạn có muốn tiếp tục không?</value>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Bật &amp; Quét</value>
   </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>Chuẩn hóa âm lượng bắt đầu bằng việc quét thư viện của bạn, và không thể chạy khi một thao tác thư viện khác đang diễn ra. Hãy thử lại sau khi thao tác đó hoàn tất.</value>
+  </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Đang chuẩn bị quét chuẩn hóa âm lượng…</value>
   </data>
@@ -913,7 +923,7 @@ Bạn có muốn tiếp tục không?</value>
     <value>Chưa có thư mục nào được thêm</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Thêm thư mục nhạc để bắt đầu</value>
+    <value>Thêm thư mục nhạc hoặc máy chủ để bắt đầu</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Thư mục</value>
@@ -1027,7 +1037,7 @@ Bạn có muốn tiếp tục không?</value>
     <value>Nhạc của bạn ở đâu?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Chọn thư mục chứa nhạc của bạn. Nagi sẽ xây dựng thư viện trong khi bạn hoàn tất thiết lập, và bạn có thể thêm các thư mục khác sau.</value>
+    <value>Chọn thư mục chứa nhạc của bạn hoặc thêm máy chủ nhạc. Nagi sẽ xây dựng thư viện trong khi bạn hoàn tất thiết lập, và bạn có thể thêm sau.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Tùy biến theo ý bạn</value>
@@ -1362,6 +1372,9 @@ Bạn có muốn tiếp tục không?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Không có gói phiên âm Latinh tương thích nào khả dụng.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>Không thể tải các gói La-tinh hóa. Hãy kiểm tra kết nối Internet rồi làm mới.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Cài đặt gói thất bại.</value>
   </data>
@@ -1511,6 +1524,9 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Tái khám phá bộ sưu tập nhạc cục bộ của bạn với Nagi, một trình phát nhạc tập trung vào tốc độ, sự đơn giản và quyền riêng tư.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Phiên bản {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Xem Giấy phép</value>
@@ -1736,6 +1752,12 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>ví dụ: ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>1 ngày qua</value>
@@ -1982,6 +2004,10 @@ Bạn có muốn tiếp tục không?</value>
   <data name="Label_Path" xml:space="preserve">
     <value>Đường dẫn</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Máy chủ</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Định dạng</value>
   </data>
@@ -2018,6 +2044,160 @@ Bạn có muốn tiếp tục không?</value>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Hiển thị nhãn của từng cột phía trên danh sách bài hát.</value>
   </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Thêm</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Thêm thư mục nhạc hoặc máy chủ</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Thư mục nhạc</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Máy chủ nhạc</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>Đồng bộ</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Đăng nhập lại</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Xóa máy chủ</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>Xóa '{0}' khỏi thư viện của bạn? Nhạc vẫn được giữ trên máy chủ.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>Chưa có bài hát nào</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>Đồng bộ máy chủ từ trang Thư mục để đưa nhạc của máy chủ vào</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>Đang đồng bộ '{0}'…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>Không thể đồng bộ '{0}'. Hãy thử lại sau.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Thêm máy chủ nhạc</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>Đăng nhập vào {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Đăng nhập</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>Nhập mật khẩu của {0} trên {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>Nhập khóa API mới cho {0}.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Loại máy chủ</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome hoặc máy chủ OpenSubsonic khác</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Địa chỉ máy chủ</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Đăng nhập bằng</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>Tên người dùng</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Mật khẩu</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>Khóa API</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Nhập địa chỉ máy chủ, chẳng hạn music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>Không thể kết nối đến máy chủ. Hãy kiểm tra địa chỉ và đảm bảo máy chủ đang chạy.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>Không thể kết nối an toàn. Nếu máy chủ không dùng HTTPS, hãy nhập địa chỉ bắt đầu bằng http://.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>Không có máy chủ Jellyfin tại địa chỉ này.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>Không có máy chủ OpenSubsonic tại địa chỉ này. Không thể thêm các máy chủ chỉ hỗ trợ API Subsonic gốc.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi cần Jellyfin 10.11 trở lên. Hãy cập nhật máy chủ rồi thử lại.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>Tên người dùng hoặc mật khẩu không đúng.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>Máy chủ không chấp nhận khóa API này.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>Máy chủ này không chấp nhận mật khẩu từ ứng dụng. Hãy đăng nhập bằng khóa API.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>Máy chủ này không hỗ trợ khóa API. Hãy đăng nhập bằng mật khẩu của bạn.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>Tài khoản của bạn không có thư viện nhạc trên máy chủ này.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>Máy chủ này đã có trong thư viện của bạn.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>Không thể lưu thông tin đăng nhập trên PC này.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>Máy chủ gặp sự cố. Hãy thử lại sau.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>Khóa API này thuộc về tài khoản khác. Hãy tạo khóa khi đã đăng nhập bằng {0}.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>Không thể kết nối đến '{0}'. Hãy kiểm tra máy chủ đang chạy và bạn đang trực tuyến.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>Không thể kết nối an toàn đến '{0}'. Chứng chỉ của máy chủ có thể đã thay đổi hoặc hết hạn.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>'{0}' không còn chấp nhận cách đăng nhập này. Hãy xóa rồi thêm lại và chọn cách đăng nhập khác.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>'{0}' không chấp nhận thông tin đăng nhập đã lưu. Hãy đăng nhập lại để tiếp tục sử dụng.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>Không thể phát '{0}' từ '{1}'.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>'{0}' không còn trên '{1}', nên sẽ biến mất khỏi thư viện của bạn ở lần đồng bộ tiếp theo.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A đến Z)</value>
   </data>
@@ -2052,7 +2232,7 @@ Bạn có muốn tiếp tục không?</value>
     <value>Nhiều {0} nhất</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>{0} ít nhất</value>
+    <value>Ít {0} nhất</value>
   </data>
   <data name="SortBy_Format" xml:space="preserve">
     <value>Sắp xếp theo: {0}</value>

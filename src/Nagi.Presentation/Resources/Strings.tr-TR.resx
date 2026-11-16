@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Öğe yok</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>Bu liste yüklenemedi.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Hata</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>{0, plural, one {Akıllı • # şarkı} other {Akıllı • # şarkı}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Bu akıllı çalma listesinin kurallarıyla eşleşen şarkı yok.</value>
@@ -672,6 +679,9 @@ Devam etmek ister misiniz?</value>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Etkinleştir ve Tara</value>
   </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>Ses düzeyi normalleştirme, kitaplığınızın taranmasıyla başlar; bu tarama başka bir kitaplık işlemi sürerken çalıştırılamaz. İşlem bittikten sonra tekrar deneyin.</value>
+  </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Ses düzeyi normalleştirme taraması hazırlanıyor…</value>
   </data>
@@ -913,7 +923,7 @@ Devam etmek ister misiniz?</value>
     <value>Henüz klasör eklenmedi</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Başlamak için müzik klasörleri ekleyin</value>
+    <value>Başlamak için müzik klasörü veya sunucu ekleyin</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Klasör</value>
@@ -964,7 +974,7 @@ Devam etmek ister misiniz?</value>
     <value>Çalma Listesine Ekle</value>
   </data>
   <data name="SongList_Context_GoToAlbum" xml:space="preserve">
-    <value>Albümüne Git</value>
+    <value>Albüme Git</value>
   </data>
   <data name="SongList_Context_GoToArtist" xml:space="preserve">
     <value>Sanatçıya Git</value>
@@ -1027,7 +1037,7 @@ Devam etmek ister misiniz?</value>
     <value>Müziğiniz nerede?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Müziğinizi sakladığınız klasörü seçin. Siz kurulumu tamamlarken Nagi kitaplığınızı oluşturur; daha sonra daha fazla klasör ekleyebilirsiniz.</value>
+    <value>Müziğinizi sakladığınız klasörü seçin veya bir müzik sunucusu ekleyin. Siz kurulumu tamamlarken Nagi kitaplığınızı oluşturur; daha sonra daha fazlasını ekleyebilirsiniz.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Kişiselleştirin</value>
@@ -1362,6 +1372,9 @@ Devam etmek ister misiniz?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Uyumlu latinize etme paketi bulunmamaktadır.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>Romanizasyon paketleri yüklenemedi. İnternet bağlantınızı kontrol edin, ardından yenileyin.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Paket yüklemesi başarısız oldu.</value>
   </data>
@@ -1511,6 +1524,9 @@ Devam etmek ister misiniz?</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Hız, basitlik ve gizliliğe odaklanan bir müzik çalar olan Nagi ile yerel müzik koleksiyonunuzu yeniden keşfedin.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Sürüm {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Lisansları Görüntüle</value>
@@ -1736,6 +1752,12 @@ Devam etmek ister misiniz?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>örn. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Son 1 Gün</value>
@@ -1982,6 +2004,10 @@ Devam etmek ister misiniz?</value>
   <data name="Label_Path" xml:space="preserve">
     <value>Yol</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Sunucu</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Biçim</value>
   </data>
@@ -2018,6 +2044,160 @@ Devam etmek ister misiniz?</value>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Şarkı listelerinin üstünde her sütunun başlığını gösterin.</value>
   </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Ekle</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Müzik klasörü veya sunucu ekle</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Müzik Klasörü</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Müzik Sunucusu</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>Eşitle</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Yeniden Oturum Aç</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Sunucuyu Kaldır</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>'{0}' kitaplığınızdan kaldırılsın mı? Müziği sunucuda kalır.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>Henüz şarkı yok</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>Müziğini getirmek için sunucuyu Klasörler sayfasından eşitleyin</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>'{0}' eşitleniyor…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>'{0}' eşitlenemedi. Daha sonra tekrar deneyin.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Müzik Sunucusu Ekle</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>{0} için Oturum Aç</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Oturum Aç</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>{1} üzerindeki {0} için parolayı girin.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>{0} için yeni bir API anahtarı girin.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Sunucu Türü</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome veya başka bir OpenSubsonic sunucusu</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Sunucu Adresi</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Oturum Açma Yöntemi</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>Kullanıcı Adı</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Parola</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>API Anahtarı</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Sunucunun adresini girin, örneğin music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>Sunucuya ulaşılamadı. Adresi ve sunucunun çalışıp çalışmadığını kontrol edin.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>Güvenli bağlantı kurulamadı. Sunucu HTTPS kullanmıyorsa adresini http:// ile başlayarak girin.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>Bu adreste bir Jellyfin sunucusu yok.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>Bu adreste bir OpenSubsonic sunucusu yok. Yalnızca orijinal Subsonic API'sini destekleyen sunucular eklenemez.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi, Jellyfin 10.11 veya üzeri gerektirir. Sunucuyu güncelleyin, ardından tekrar deneyin.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>Kullanıcı adı veya parola hatalı.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>Sunucu bu API anahtarını kabul etmedi.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>Bu sunucu uygulamalardan parola kabul etmiyor. Bunun yerine bir API anahtarıyla oturum açın.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>Bu sunucu API anahtarlarını desteklemiyor. Bunun yerine parolanızla oturum açın.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>Hesabınızın bu sunucuda bir müzik kitaplığı yok.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>Bu sunucu zaten kitaplığınızda.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>Oturum açma bilgileri bu bilgisayara kaydedilemedi.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>Sunucuda bir sorun oluştu. Daha sonra tekrar deneyin.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>Bu API anahtarı başka bir hesaba ait. {0} olarak oturum açıkken bir anahtar oluşturun.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>'{0}' sunucusuna ulaşılamadı. Sunucunun çalıştığını ve çevrimiçi olduğunuzu kontrol edin.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>'{0}' ile güvenli bağlantı kurulamadı. Sertifikası değişmiş veya süresi dolmuş olabilir.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>'{0}' artık bu oturum açma yöntemini kabul etmiyor. Sunucuyu kaldırın, ardından yeniden ekleyip diğer oturum açma yöntemini seçin.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>'{0}' kayıtlı oturum açma bilgilerini kabul etmedi. Kullanmaya devam etmek için yeniden oturum açın.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>'{1}' sunucusundaki '{0}' çalınamadı.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>'{0}' artık '{1}' sunucusunda yok, bu yüzden bir sonraki eşitlemede kitaplığınızdan kaldırılacak.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A'dan Z'ye)</value>
   </data>
@@ -2037,22 +2217,22 @@ Devam etmek ister misiniz?</value>
     <value>{0} (Azalan)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>En Kısa Önce</value>
+    <value>Önce En Kısa</value>
   </data>
   <data name="Format_LongestFirst" xml:space="preserve">
-    <value>En Uzun Önce</value>
+    <value>Önce En Uzun</value>
   </data>
   <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>En Yavaş Önce ({0})</value>
+    <value>Önce En Yavaş ({0})</value>
   </data>
   <data name="Format_FastestFirst" xml:space="preserve">
-    <value>En Hızlı Önce ({0})</value>
+    <value>Önce En Hızlı ({0})</value>
   </data>
   <data name="Format_Most" xml:space="preserve">
     <value>En Çok {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>En az {0}</value>
+    <value>En Az {0}</value>
   </data>
   <data name="SortBy_Format" xml:space="preserve">
     <value>Sırala: {0}</value>

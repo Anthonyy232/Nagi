@@ -299,7 +299,7 @@
     <value>שגיאה בסריקה מחדש של תיקיה: {0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0, plural, one {# תיקיה} other {# תיקיות}}</value>
+    <value>{0, plural, one {# תיקייה} other {# תיקיות}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
     <value>{0, plural, one {# שיר} other {# שירים}}</value>
@@ -312,6 +312,9 @@
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>אין פריטים</value>
+  </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>לא ניתן היה לטעון את הרשימה הזו.</value>
   </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>שגיאה</value>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>חכם • {0, plural, one {# שיר} other {# שירים}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>אין שירים התואמים את כללי רשימת השמעה חכמה זו.</value>
@@ -447,10 +454,10 @@
     <value>לא הוגדרו כללים • כל השירים תואמים</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>התאם כל מתוך {0, plural, one {# כלל} other {# כללים}}</value>
+    <value>התאמה לכל הכללים ({0, plural, one {# כלל} other {# כללים}})</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>התאם כלשהו מתוך {0, plural, one {# כלל} other {# כללים}}</value>
+    <value>התאמה לכלל כלשהו ({0, plural, one {# כלל} other {# כללים}})</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# פריט} other {# פריטים}}</value>
@@ -672,6 +679,9 @@
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>אפשר וסרוק</value>
   </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>נרמול עוצמת הקול מתחיל בסריקת הספרייה, שאינה יכולה לפעול בזמן שפעולה אחרת בספרייה מתבצעת. נסה שוב לאחר שהיא תסתיים.</value>
+  </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>מכין סריקת נרמול עוצמת קול…</value>
   </data>
@@ -844,7 +854,7 @@
     <value>חיפוש אלבומים…</value>
   </data>
   <data name="Generic_PickRandom" xml:space="preserve">
-    <value>בחר אחד אקראי</value>
+    <value>בחירה אקראית</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
     <value>לא נמצאו אלבומים</value>
@@ -913,7 +923,7 @@
     <value>לא נוספו תיקיות עדיין</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>הוסף תיקיות מוזיקה כדי להתחיל</value>
+    <value>הוסף תיקיית מוזיקה או שרת כדי להתחיל</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>תיקייה</value>
@@ -955,7 +965,7 @@
     <value>נגן</value>
   </data>
   <data name="SongList_Context_PlayNext" xml:space="preserve">
-    <value>נגן הבא</value>
+    <value>נגן בהמשך</value>
   </data>
   <data name="SongList_Context_AddToQueue" xml:space="preserve">
     <value>הוסף לתור</value>
@@ -1027,7 +1037,7 @@
     <value>איפה נמצאת המוזיקה שלך?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>יש לבחור את התיקייה שבה שמורה המוזיקה שלך. Nagi תבנה את הספרייה שלך בזמן השלמת ההגדרה, וניתן להוסיף תיקיות נוספות מאוחר יותר.</value>
+    <value>יש לבחור את התיקייה שבה שמורה המוזיקה שלך, או להוסיף שרת מוזיקה. Nagi תבנה את הספרייה שלך בזמן השלמת ההגדרה, וניתן להוסיף עוד מאוחר יותר.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>התאמה אישית</value>
@@ -1362,6 +1372,9 @@
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>אין חבילות רומניזציה תואמות זמינות.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>לא ניתן היה לטעון את חבילות הרומניזציה. בדוק את חיבור האינטרנט שלך ורענן.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>התקנת החבילה נכשלה.</value>
   </data>
@@ -1511,6 +1524,9 @@
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>גלה מחדש את אוסף המוזיקה המקומי שלך עם Nagi, נגן מוזיקה המתמקד במהירות, בפשטות ובפרטיות.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>גרסה {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>הצג רישיונות</value>
@@ -1736,6 +1752,12 @@
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>לדוגמה ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} מ״ש</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} ד״ב</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>ביום האחרון</value>
@@ -1982,6 +2004,10 @@
   <data name="Label_Path" xml:space="preserve">
     <value>נתיב</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>שרת</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>פורמט</value>
   </data>
@@ -2017,6 +2043,160 @@
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>הצג כותרת לכל עמודה מעל רשימות השירים.</value>
+  </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>הוסף</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>הוסף תיקיית מוזיקה או שרת</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>תיקיית מוזיקה</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>שרת מוזיקה</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>סנכרן</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>היכנס שוב</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>הסרת שרת</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>להסיר את '{0}' מהספרייה שלך? המוזיקה שלו תישאר בשרת.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>אין שירים עדיין</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>סנכרן את השרת מדף התיקיות כדי להביא את המוזיקה שלו</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>מסנכרן את '{0}'…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>לא ניתן היה לסנכרן את '{0}'. נסה שוב מאוחר יותר.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>הוספת שרת מוזיקה</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>כניסה ל-{0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>היכנס</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>הזן את הסיסמה של {0} בשרת {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>הזן מפתח API חדש עבור {0}.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>סוג שרת</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome או שרת OpenSubsonic אחר</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>כתובת השרת</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>היכנס באמצעות</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>שם משתמש</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>סיסמה</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>מפתח API</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>הזן את כתובת השרת, למשל music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>לא ניתן היה להתחבר לשרת. בדוק את הכתובת וודא שהשרת פועל.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>לא ניתן היה ליצור חיבור מאובטח. אם השרת אינו משתמש ב-HTTPS, הזן את הכתובת שלו החל ב-http://.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>אין שרת Jellyfin בכתובת זו.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>אין שרת OpenSubsonic בכתובת זו. לא ניתן להוסיף שרתים שתומכים רק ב-API המקורי של Subsonic.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi דורש Jellyfin 10.11 ומעלה. עדכן את השרת ונסה שוב.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>שם המשתמש או הסיסמה שגויים.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>השרת לא קיבל את מפתח ה-API הזה.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>שרת זה אינו מקבל סיסמאות מאפליקציות. היכנס באמצעות מפתח API במקום זאת.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>שרת זה אינו תומך במפתחות API. היכנס באמצעות הסיסמה שלך במקום זאת.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>לחשבון שלך אין ספריית מוזיקה בשרת זה.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>השרת הזה כבר נמצא בספרייה שלך.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>לא ניתן היה לשמור את פרטי הכניסה במחשב זה.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>אירעה תקלה בשרת. נסה שוב מאוחר יותר.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>מפתח ה-API הזה שייך לחשבון אחר. צור מפתח בזמן שאתה מחובר בתור {0}.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>לא ניתן היה להתחבר אל '{0}'. ודא שהשרת פועל ושאתה מחובר לאינטרנט.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>לא ניתן היה ליצור חיבור מאובטח אל '{0}'. ייתכן שהאישור שלו השתנה או פג תוקפו.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>'{0}' כבר לא מקבל את שיטת הכניסה הזו. הסר אותו, הוסף אותו שוב ובחר בשיטת הכניסה האחרת.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>'{0}' לא קיבל את פרטי הכניסה שנשמרו. היכנס שוב כדי להמשיך להשתמש בו.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>לא ניתן היה לנגן את '{0}' מ-'{1}'.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>'{0}' כבר לא נמצא ב-'{1}', ולכן יוסר מהספרייה שלך בסנכרון הבא.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
   </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (א' עד ת')</value>
