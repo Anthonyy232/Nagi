@@ -156,6 +156,9 @@
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>No hi ha llistes de reproducció per exportar.</value>
   </data>
+  <data name="Error_PlaylistsExportFailed" xml:space="preserve">
+    <value>No s'han pogut exportar les llistes de reproducció a aquesta carpeta.</value>
+  </data>
   <data name="EqPreset_None" xml:space="preserve">
     <value>Cap</value>
   </data>
@@ -251,5 +254,21 @@
   <data name="Biography_WikipediaAttribution" xml:space="preserve">
     <value>De la Viquipèdia, amb llicència CC BY-SA.</value>
     <comment>Shown below an artist biography taken from Wikipedia, as its license requires.</comment>
+  </data>
+  <data name="Format_FetchingServerSongs" xml:space="preserve">
+    <value>S'estan obtenint cançons del servidor ({0})…</value>
+    <comment>Shown while a music server is synced. {0} is the number of songs received so far.</comment>
+  </data>
+  <data name="Status_AddingServerSongs" xml:space="preserve">
+    <value>S'estan afegint cançons a la biblioteca…</value>
+    <comment>Shown while songs from a music server are saved to the library.</comment>
+  </data>
+  <data name="Status_DownloadingServerCovers" xml:space="preserve">
+    <value>S'estan baixant les portades dels àlbums…</value>
+    <comment>Shown while album covers are downloaded from a music server.</comment>
+  </data>
+  <data name="Status_SyncComplete" xml:space="preserve">
+    <value>Sincronització completada.</value>
+    <comment>Shown when a music server has finished syncing.</comment>
   </data>
 </root>

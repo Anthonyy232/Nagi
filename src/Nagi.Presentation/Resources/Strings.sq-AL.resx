@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Asnjë artikull</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>Kjo listë nuk u ngarkua dot.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Gabim</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>{0, plural, one {Inteligjente • # këngë} other {Inteligjente • # këngë}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Asnjë këngë nuk përputhet me rregullat e kësaj liste luajtjeje inteligjente.</value>
@@ -447,10 +454,10 @@ Skedarët që nuk u mundësuan të importohen: {0}.</value>
     <value>Asnjë rregull e përcaktuar • Të gjitha këngët përputhen</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>Përputh të gjitha nga {0, plural, one {# rregull} other {# rregulla}}</value>
+    <value>Përputhen të gjitha rregullat ({0, plural, one {# rregull} other {# rregulla}})</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>Përputh cilindo nga {0, plural, one {# rregull} other {# rregulla}}</value>
+    <value>Përputhet cilido rregull ({0, plural, one {# rregull} other {# rregulla}})</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# artikull} other {# artikuj}}</value>
@@ -671,6 +678,9 @@ Dëshironi të vazhdoni?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Aktivizo &amp; Skano</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>Normalizimi i volumit nis me një skanim të bibliotekës, i cili nuk mund të ekzekutohet ndërsa një operacion tjetër i bibliotekës është në vazhdim. Provoni përsëri kur të përfundojë.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Po përgatitet skanimi i normalizimit të volumit…</value>
@@ -913,7 +923,7 @@ Dëshironi të vazhdoni?</value>
     <value>Asnjë dosje nuk është shtuar ende</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Shtoni dosje muzike për të filluar</value>
+    <value>Shtoni një dosje muzike ose server për të filluar</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Dosje</value>
@@ -955,7 +965,7 @@ Dëshironi të vazhdoni?</value>
     <value>Luaj</value>
   </data>
   <data name="SongList_Context_PlayNext" xml:space="preserve">
-    <value>Luaj në vazhdim</value>
+    <value>Luaj më pas</value>
   </data>
   <data name="SongList_Context_AddToQueue" xml:space="preserve">
     <value>Shto në radhë</value>
@@ -1027,7 +1037,7 @@ Dëshironi të vazhdoni?</value>
     <value>Ku është muzika jote?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Zgjidh dosjen ku mban muzikën tënde. Nagi ndërton bibliotekën tënde ndërsa përfundon konfigurimin, dhe mund të shtosh më shumë dosje më vonë.</value>
+    <value>Zgjidhni dosjen ku mbani muzikën tuaj ose shtoni një server muzike. Nagi ndërton bibliotekën tuaj ndërsa përfundoni konfigurimin dhe mund të shtoni më shumë më vonë.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Përshtate sipas dëshirës</value>
@@ -1362,6 +1372,9 @@ Dëshironi të vazhdoni?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Nuk ka paketa romanizimi të përputhshme në dispozicion.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>Paketat e romanizimit nuk u ngarkuan dot. Kontrolloni lidhjen me internetin, pastaj rifreskoni.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Instalimi i paketës dështoi.</value>
   </data>
@@ -1511,6 +1524,9 @@ Dëshironi të vazhdoni?</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Rizbuloni koleksionin tuaj lokal të muzikës me Nagi, një luajtës muzike i fokusuar në shpejtësi, thjeshtësi dhe privatësi.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Versioni {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Shfaq Licencat</value>
@@ -1736,6 +1752,12 @@ Dëshironi të vazhdoni?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>p.sh. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>1 ditën e fundit</value>
@@ -1982,6 +2004,10 @@ Dëshironi të vazhdoni?</value>
   <data name="Label_Path" xml:space="preserve">
     <value>Shtegu</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Serveri</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Formati</value>
   </data>
@@ -2018,6 +2044,160 @@ Dëshironi të vazhdoni?</value>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Shfaq titullin e çdo kolone mbi listat e këngëve.</value>
   </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Shto</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Shto një dosje muzike ose server</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Dosje muzike</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Server muzike</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>Sinkronizo</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Hyr përsëri</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Hiq serverin</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>Të hiqet '{0}' nga biblioteka juaj? Muzika e tij mbetet në server.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>Ende pa këngë</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>Sinkronizoni serverin nga faqja Dosjet për të sjellë muzikën e tij</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>Po sinkronizohet '{0}'…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>S'u sinkronizua dot '{0}'. Provoni përsëri më vonë.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Shto server muzike</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>Hyni në {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Hyr</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>Shkruani fjalëkalimin për {0} në {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>Shkruani një çelës të ri API për {0}.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Lloji i serverit</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome ose një server tjetër OpenSubsonic</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Adresa e serverit</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Hyni me</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>Emri i përdoruesit</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Fjalëkalimi</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>Çelësi API</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Shkruani adresën e serverit, p.sh. music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>S'u arrit serveri. Kontrolloni adresën dhe që serveri po funksionon.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>S'u lidh dot në mënyrë të sigurt. Nëse serveri nuk përdor HTTPS, shkruani adresën e tij duke filluar me http://.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>Në këtë adresë nuk ka server Jellyfin.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>Në këtë adresë nuk ka server OpenSubsonic. Serverët që mbështesin vetëm API-n origjinale Subsonic nuk mund të shtohen.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi kërkon Jellyfin 10.11 ose më të ri. Përditësoni serverin dhe provoni përsëri.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>Emri i përdoruesit ose fjalëkalimi është i pasaktë.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>Serveri nuk e pranoi këtë çelës API.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>Ky server nuk pranon fjalëkalime nga aplikacionet. Hyni me një çelës API.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>Ky server nuk mbështet çelësa API. Hyni me fjalëkalimin tuaj.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>Llogaria juaj nuk ka bibliotekë muzike në këtë server.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>Ky server është tashmë në bibliotekën tuaj.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>Hyrja nuk u ruajt dot në këtë kompjuter.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>Serveri hasi një problem. Provoni përsëri më vonë.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>Ky çelës API i përket një llogarie tjetër. Krijoni një teksa jeni të identifikuar si {0}.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>S'u arrit '{0}'. Kontrolloni që serveri po funksionon dhe që jeni në internet.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>S'u lidh dot në mënyrë të sigurt me '{0}'. Certifikata e tij mund të ketë ndryshuar ose skaduar.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>'{0}' nuk e pranon më këtë mënyrë hyrjeje. Hiqeni, shtojeni përsëri dhe zgjidhni mënyrën tjetër të hyrjes.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>'{0}' nuk e pranoi hyrjen e ruajtur. Hyni përsëri për ta vazhduar përdorimin.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>S'u luajt dot '{0}' nga '{1}'.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>'{0}' nuk është më në '{1}', ndaj do të largohet nga biblioteka juaj në sinkronizimin e ardhshëm.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A në Z)</value>
   </data>
@@ -2025,16 +2205,16 @@ Dëshironi të vazhdoni?</value>
     <value>{0} (Z në A)</value>
   </data>
   <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Më e reja)</value>
+    <value>{0} (më e reja)</value>
   </data>
   <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Më e vjetra)</value>
+    <value>{0} (më e vjetra)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Rritës)</value>
+    <value>{0} (rritës)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Zbritës)</value>
+    <value>{0} (zbritës)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Më e shkurtra fillimisht</value>

@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Walang item</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>Hindi ma-load ang listahang ito.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Error</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>{0, plural, one {Smart • # kanta} other {Smart • # kanta}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Walang kantang tumutugma sa mga panuntunan ng smart playlist na ito.</value>
@@ -447,10 +454,10 @@ Mga file na hindi ma-import: {0}.</value>
     <value>Walang tinukoy na panuntunan • Tumutugma ang lahat ng kanta</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>Itugma ang lahat sa {0, plural, one {# panuntunan} other {# mga panuntunan}}</value>
+    <value>Itugma ang lahat ng {0, plural, one {# panuntunan} other {# panuntunan}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>Itugma ang anuman sa {0, plural, one {# panuntunan} other {# mga panuntunan}}</value>
+    <value>Itugma ang alinman sa {0, plural, one {# panuntunan} other {# panuntunan}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# item} other {# item}}</value>
@@ -671,6 +678,9 @@ Gusto mo bang magpatuloy?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Paganahin at I-scan</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>Nagsisimula ang volume normalization sa pag-scan ng iyong library, na hindi maaaring tumakbo habang may ibang operasyon sa library. Subukan muli kapag tapos na ito.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Inihahanda ang pag-scan para sa volume normalization…</value>
@@ -913,7 +923,7 @@ Gusto mo bang magpatuloy?</value>
     <value>Wala pang folder na idinagdag</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Magdagdag ng mga music folder upang makapagsimula</value>
+    <value>Magdagdag ng music folder o server para makapagsimula</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Folder</value>
@@ -1027,7 +1037,7 @@ Gusto mo bang magpatuloy?</value>
     <value>Nasaan ang iyong musika?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Piliin ang folder kung saan mo itinatabi ang iyong musika. Bubuo ang Nagi ng iyong library habang tinatapos mo ang pag-set up, at maaari kang magdagdag ng higit pang mga folder mamaya.</value>
+    <value>Piliin ang folder kung saan mo itinatabi ang iyong musika, o magdagdag ng music server. Bubuo ang Nagi ng iyong library habang tinatapos mo ang pag-set up, at maaari kang magdagdag ng higit pa mamaya.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Ibagay sa iyong kagustuhan</value>
@@ -1362,6 +1372,9 @@ Gusto mo bang magpatuloy?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Walang magagamit na compatible na romanization pack.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>Hindi ma-load ang mga romanization pack. Tingnan ang iyong koneksyon sa internet, saka mag-refresh.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Nabigo ang pag-install ng pack.</value>
   </data>
@@ -1511,6 +1524,9 @@ Gusto mo bang magpatuloy?</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Tuklasin muli ang iyong lokal na koleksyon ng musika gamit ang Nagi, isang music player na nakatuon sa bilis, pagiging simple, at privacy.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Bersyon {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Tingnan ang Mga Lisensya</value>
@@ -1735,7 +1751,13 @@ Gusto mo bang magpatuloy?</value>
     <value>Susunod na Pahina</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
-    <value>hal. ;/\</value>
+    <value>hal. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Huling 1 Araw</value>
@@ -1982,6 +2004,10 @@ Gusto mo bang magpatuloy?</value>
   <data name="Label_Path" xml:space="preserve">
     <value>Lokasyon</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Server</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Format</value>
   </data>
@@ -2017,6 +2043,160 @@ Gusto mo bang magpatuloy?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Lagyan ng label ang bawat column sa itaas ng mga listahan ng kanta.</value>
+  </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Idagdag</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Magdagdag ng music folder o server</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Music Folder</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Music Server</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>I-sync</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Mag-sign In Muli</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Alisin ang Server</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>Alisin ang '{0}' sa iyong library? Mananatili ang musika nito sa server.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>Wala pang kanta</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>I-sync ang server mula sa pahina ng Mga Folder para makuha ang musika nito</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>Sini-sync ang '{0}'…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>Hindi ma-sync ang '{0}'. Pakisubukan muli mamaya.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Magdagdag ng Music Server</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>Mag-sign In sa {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Mag-sign In</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>Ilagay ang password para kay {0} sa {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>Maglagay ng bagong API key para sa {0}.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Uri ng Server</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome o iba pang OpenSubsonic server</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Address ng Server</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Paraan ng Pag-sign In</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>API Key</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Ilagay ang address ng server, gaya ng music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>Hindi maabot ang server. Tingnan ang address at kung tumatakbo ang server.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>Hindi makakonekta nang secure. Kung hindi gumagamit ng HTTPS ang server, ilagay ang address nito na nagsisimula sa http://.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>Walang Jellyfin server sa address na ito.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>Walang OpenSubsonic server sa address na ito. Hindi maidaragdag ang mga server na sumusuporta lang sa orihinal na Subsonic API.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Kailangan ng Nagi ang Jellyfin 10.11 o mas bago. I-update ang server, saka subukan muli.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>Mali ang username o password.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>Hindi tinanggap ng server ang API key na ito.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>Hindi tumatanggap ng password mula sa mga app ang server na ito. Mag-sign in gamit ang API key.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>Hindi sumusuporta sa mga API key ang server na ito. Mag-sign in gamit ang iyong password.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>Walang music library ang iyong account sa server na ito.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>Nasa iyong library na ang server na ito.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>Hindi na-save ang sign-in sa PC na ito.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>May naging problema sa server. Pakisubukan muli mamaya.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>Sa ibang account ang API key na ito. Gumawa ng isa habang naka-sign in bilang {0}.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>Hindi maabot ang '{0}'. Tiyaking tumatakbo ang server at online ka.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>Hindi makakonekta nang secure sa '{0}'. Maaaring nagbago o nag-expire na ang certificate nito.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>Hindi na tinatanggap ng '{0}' ang paraang ito ng pag-sign in. Alisin ito, idagdag muli, at piliin ang ibang paraan ng pag-sign in.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>Hindi tinanggap ng '{0}' ang naka-save na sign-in. Mag-sign in muli para magamit pa ito.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>Hindi mapatugtog ang '{0}' mula sa '{1}'.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>Wala na ang '{0}' sa '{1}', kaya aalisin ito sa iyong library sa susunod na pag-sync.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
   </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A hanggang Z)</value>

@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Sense elements</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>No s'ha pogut carregar aquesta llista.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Error</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Intel·ligent • {0, plural, one {# cançó} other {# cançons}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Cap cançó coincideix amb les regles d'aquesta llista de reproducció intel·ligent.</value>
@@ -447,10 +454,10 @@ Fitxers que no s'han pogut importar: {0}.</value>
     <value>No hi ha regles definides • Totes les cançons coincideixen</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>Coincideix totes de {0, plural, one {# regla} other {# regles}}</value>
+    <value>Compleix totes les regles: {0, plural, one {# regla} other {# regles}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>Coincideix qualsevol de {0, plural, one {# regla} other {# regles}}</value>
+    <value>Compleix qualsevol regla: {0, plural, one {# regla} other {# regles}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# element} other {# elements}}</value>
@@ -672,6 +679,9 @@ Vols continuar?</value>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Activar i escanejar</value>
   </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>La normalització del volum comença amb una anàlisi de la biblioteca, que no es pot executar mentre hi ha una altra operació de biblioteca en curs. Torna-ho a provar quan hagi acabat.</value>
+  </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>S'està preparant l'escaneig de normalització del volum…</value>
   </data>
@@ -691,7 +701,7 @@ Vols continuar?</value>
     <value>Sortir</value>
   </data>
   <data name="Player_BackButton_ToolTip" xml:space="preserve">
-    <value>Tornar al reproductor</value>
+    <value>Torna al reproductor</value>
   </data>
   <data name="Player_UpNextHeader" xml:space="preserve">
     <value>A continuació</value>
@@ -844,7 +854,7 @@ Vols continuar?</value>
     <value>Cerca àlbums…</value>
   </data>
   <data name="Generic_PickRandom" xml:space="preserve">
-    <value>Triar un a l'atzar</value>
+    <value>Tria'n un a l'atzar</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
     <value>No s'han trobat àlbums</value>
@@ -871,10 +881,10 @@ Vols continuar?</value>
     <value>Cerca artistes…</value>
   </data>
   <data name="Generic_ChangeImage" xml:space="preserve">
-    <value>Canviar imatge</value>
+    <value>Canvia la imatge</value>
   </data>
   <data name="Generic_RemoveImage" xml:space="preserve">
-    <value>Eliminar imatge</value>
+    <value>Elimina la imatge</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
     <value>No s'han trobat artistes</value>
@@ -913,7 +923,7 @@ Vols continuar?</value>
     <value>Encara no s'han afegit carpetes</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Afegeix carpetes de música per començar</value>
+    <value>Afegeix una carpeta de música o un servidor per començar</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Carpeta</value>
@@ -955,7 +965,7 @@ Vols continuar?</value>
     <value>Reprodueix</value>
   </data>
   <data name="SongList_Context_PlayNext" xml:space="preserve">
-    <value>Reprodueix següent</value>
+    <value>Reprodueix a continuació</value>
   </data>
   <data name="SongList_Context_AddToQueue" xml:space="preserve">
     <value>Afegeix a la cua</value>
@@ -1027,7 +1037,7 @@ Vols continuar?</value>
     <value>On és la teva música?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Tria la carpeta on guardes la música. Nagi crearà la biblioteca mentre acabes de configurar-ho, i podràs afegir més carpetes més endavant.</value>
+    <value>Tria la carpeta on guardes la música o afegeix un servidor de música. Nagi crearà la biblioteca mentre acabes de configurar-ho, i més endavant en podràs afegir més.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Personalitza'l</value>
@@ -1362,6 +1372,9 @@ Vols continuar?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>No hi ha paquets de romanització compatibles disponibles.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>No s'han pogut carregar els paquets de romanització. Comprova la connexió a Internet i actualitza.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>La instal·lació del paquet ha fallat.</value>
   </data>
@@ -1423,7 +1436,7 @@ Vols continuar?</value>
     <value>Completar</value>
   </data>
   <data name="Generic_Disconnect" xml:space="preserve">
-    <value>Desconnectar</value>
+    <value>Desconnecta</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
     <value>Habilita l'scrobbling</value>
@@ -1511,6 +1524,9 @@ Vols continuar?</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Redescobreix la teva col·lecció de música local amb Nagi, un reproductor de música centrat en la velocitat, la simplicitat i la privadesa.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Versió {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Veure llicències</value>
@@ -1736,6 +1752,12 @@ Vols continuar?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>p. ex. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Últim 1 dia</value>
@@ -1982,6 +2004,10 @@ Vols continuar?</value>
   <data name="Label_Path" xml:space="preserve">
     <value>Camí</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Servidor</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Format</value>
   </data>
@@ -2018,6 +2044,160 @@ Vols continuar?</value>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Mostra una etiqueta a sobre de cada columna de les llistes de cançons.</value>
   </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Afegeix</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Afegeix una carpeta de música o un servidor</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Carpeta de música</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Servidor de música</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>Sincronitza</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Torna a iniciar la sessió</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Elimina el servidor</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>Vols eliminar '{0}' de la biblioteca? La seva música es manté al servidor.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>Encara no hi ha cançons</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>Sincronitza el servidor des de la pàgina Carpetes per importar-ne la música</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>S'està sincronitzant '{0}'…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>No s'ha pogut sincronitzar '{0}'. Torna-ho a provar més tard.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Afegeix un servidor de música</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>Inicia la sessió a {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Inicia la sessió</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>Introdueix la contrasenya de {0} a {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>Introdueix una clau d'API nova per a {0}.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Tipus de servidor</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome o un altre servidor OpenSubsonic</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Adreça del servidor</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Inicia la sessió amb</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>Nom d'usuari</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Contrasenya</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>Clau d'API</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Introdueix l'adreça del servidor, per exemple music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>No s'ha pogut accedir al servidor. Comprova l'adreça i que el servidor estigui en funcionament.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>No s'ha pogut establir una connexió segura. Si el servidor no utilitza HTTPS, introdueix-ne l'adreça començant per http://.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>No hi ha cap servidor Jellyfin en aquesta adreça.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>No hi ha cap servidor OpenSubsonic en aquesta adreça. Els servidors que només admeten l'API Subsonic original no es poden afegir.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi necessita Jellyfin 10.11 o posterior. Actualitza el servidor i torna-ho a provar.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>El nom d'usuari o la contrasenya no són correctes.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>El servidor no ha acceptat aquesta clau d'API.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>Aquest servidor no accepta contrasenyes d'aplicacions. Inicia la sessió amb una clau d'API.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>Aquest servidor no admet claus d'API. Inicia la sessió amb la contrasenya.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>El teu compte no té cap biblioteca de música en aquest servidor.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>Aquest servidor ja és a la biblioteca.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>No s'ha pogut desar l'inici de sessió en aquest PC.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>El servidor ha tingut un problema. Torna-ho a provar més tard.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>Aquesta clau d'API pertany a un altre compte. Crea'n una amb la sessió iniciada com a {0}.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>No s'ha pogut accedir a '{0}'. Comprova que el servidor estigui en funcionament i que tinguis connexió.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>No s'ha pogut establir una connexió segura amb '{0}'. Pot ser que el certificat hagi canviat o hagi caducat.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>'{0}' ja no accepta aquesta manera d'iniciar la sessió. Elimina'l, torna a afegir-lo i tria l'altra manera d'iniciar la sessió.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>'{0}' no ha acceptat l'inici de sessió desat. Torna a iniciar la sessió per continuar utilitzant-lo.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>No s'ha pogut reproduir '{0}' des de '{1}'.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>'{0}' ja no és a '{1}', així que sortirà de la biblioteca en la propera sincronització.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A a Z)</value>
   </data>
@@ -2025,10 +2205,10 @@ Vols continuar?</value>
     <value>{0} (Z a A)</value>
   </data>
   <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Més recent)</value>
+    <value>{0} (més recent)</value>
   </data>
   <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Més antic)</value>
+    <value>{0} (més antic)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
     <value>{0} (ascendent)</value>
@@ -2055,7 +2235,7 @@ Vols continuar?</value>
     <value>Menys {0}</value>
   </data>
   <data name="SortBy_Format" xml:space="preserve">
-    <value>Ordenar per: {0}</value>
+    <value>Ordena per: {0}</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Fitxer</value>

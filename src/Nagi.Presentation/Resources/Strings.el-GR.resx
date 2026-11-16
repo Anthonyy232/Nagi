@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Κανένα αντικείμενο</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η φόρτωση αυτής της λίστας.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Σφάλμα</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Έξυπνη • {0, plural, one {# τραγούδι} other {# τραγούδια}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Κανένα τραγούδι δεν ταιριάζει με τους κανόνες αυτής της έξυπνης λίστας αναπαραγωγής.</value>
@@ -447,10 +454,10 @@
     <value>Δεν ορίστηκαν κανόνες • Όλα τα τραγούδια ταιριάζουν</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>Ταιριάζει με όλους από {0, plural, one {# κανόνας} other {# κανόνες}}</value>
+    <value>Ταιριάζει με {0, plural, one {τον # κανόνα} other {όλους τους # κανόνες}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>Ταιριάζει με οποιονδήποτε από {0, plural, one {# κανόνας} other {# κανόνες}}</value>
+    <value>Ταιριάζει με {0, plural, one {τον # κανόνα} other {οποιονδήποτε από τους # κανόνες}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# αντικείμενο} other {# αντικείμενα}}</value>
@@ -672,6 +679,9 @@
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Ενεργοποίηση &amp; Σάρωση</value>
   </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>Η κανονικοποίηση έντασης ξεκινά με σάρωση της βιβλιοθήκης σας, η οποία δεν μπορεί να εκτελεστεί ενώ βρίσκεται σε εξέλιξη άλλη λειτουργία βιβλιοθήκης. Δοκιμάστε ξανά όταν ολοκληρωθεί.</value>
+  </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Προετοιμασία σάρωσης κανονικοποίησης έντασης…</value>
   </data>
@@ -844,7 +854,7 @@
     <value>Αναζήτηση άλμπουμ…</value>
   </data>
   <data name="Generic_PickRandom" xml:space="preserve">
-    <value>Επιλέξτε ένα τυχαία</value>
+    <value>Τυχαία επιλογή</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
     <value>Δεν βρέθηκαν άλμπουμ</value>
@@ -913,7 +923,7 @@
     <value>Δεν έχουν προστεθεί φάκελοι ακόμα</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Προσθέστε φακέλους μουσικής για να ξεκινήσετε</value>
+    <value>Προσθέστε έναν φάκελο μουσικής ή διακομιστή για να ξεκινήσετε</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Φάκελος</value>
@@ -1027,7 +1037,7 @@
     <value>Πού βρίσκεται η μουσική σας;</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Επιλέξτε τον φάκελο στον οποίο διατηρείτε τη μουσική σας. Το Nagi δημιουργεί τη βιβλιοθήκη σας ενώ ολοκληρώνετε τη ρύθμιση, και μπορείτε να προσθέσετε περισσότερους φακέλους αργότερα.</value>
+    <value>Επιλέξτε τον φάκελο όπου διατηρείτε τη μουσική σας ή προσθέστε έναν διακομιστή μουσικής. Το Nagi δημιουργεί τη βιβλιοθήκη σας ενώ ολοκληρώνετε τη ρύθμιση, και μπορείτε να προσθέσετε περισσότερα αργότερα.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Προσαρμόστε το στα μέτρα σας</value>
@@ -1362,6 +1372,9 @@
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Δεν υπάρχουν διαθέσιμα συμβατά πακέτα λατινοποίησης.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η φόρτωση των πακέτων λατινοποίησης. Ελέγξτε τη σύνδεσή σας στο διαδίκτυο και κάντε ανανέωση.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Η εγκατάσταση πακέτου απέτυχε.</value>
   </data>
@@ -1511,6 +1524,9 @@
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Ανακαλύψτε ξανά την τοπική συλλογή μουσικής σας με το Nagi, ένα πρόγραμμα αναπαραγωγής μουσικής που εστιάζει στην ταχύτητα, την απλότητα και το απόρρητο.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Έκδοση {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Προβολή αδειών</value>
@@ -1735,7 +1751,13 @@
     <value>Επόμενη Σελίδα</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
-    <value>π.χ. ;/\</value>
+    <value>π.χ. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Τελευταία 1 ημέρα</value>
@@ -1982,6 +2004,10 @@
   <data name="Label_Path" xml:space="preserve">
     <value>Διαδρομή</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Διακομιστής</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Μορφή</value>
   </data>
@@ -2018,6 +2044,160 @@
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Εμφάνιση του ονόματος κάθε στήλης πάνω από τις λίστες τραγουδιών.</value>
   </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Προσθήκη</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Προσθήκη φακέλου μουσικής ή διακομιστή</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Φάκελος μουσικής</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Διακομιστής μουσικής</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>Συγχρονισμός</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Νέα σύνδεση</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Αφαίρεση διακομιστή</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>Αφαίρεση του «{0}» από τη βιβλιοθήκη σας; Η μουσική του παραμένει στον διακομιστή.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμα τραγούδια</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>Συγχρονίστε τον διακομιστή από τη σελίδα Φάκελοι για να φέρετε τη μουσική του</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>Συγχρονισμός του «{0}»…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>Δεν ήταν δυνατός ο συγχρονισμός του «{0}». Δοκιμάστε ξανά αργότερα.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Προσθήκη διακομιστή μουσικής</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>Σύνδεση στο {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Σύνδεση</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>Εισαγάγετε τον κωδικό πρόσβασης για τον χρήστη {0} στο {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>Εισαγάγετε ένα νέο κλειδί API για το {0}.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Τύπος διακομιστή</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome ή άλλος διακομιστής OpenSubsonic</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Διεύθυνση διακομιστή</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Σύνδεση με</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>Όνομα χρήστη</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Κωδικός πρόσβασης</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>Κλειδί API</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Εισαγάγετε τη διεύθυνση του διακομιστή, όπως music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η σύνδεση με τον διακομιστή. Ελέγξτε τη διεύθυνση και ότι ο διακομιστής λειτουργεί.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η ασφαλής σύνδεση. Αν ο διακομιστής δεν χρησιμοποιεί HTTPS, εισαγάγετε τη διεύθυνσή του ξεκινώντας με http://.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>Δεν υπάρχει διακομιστής Jellyfin σε αυτή τη διεύθυνση.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>Δεν υπάρχει διακομιστής OpenSubsonic σε αυτή τη διεύθυνση. Δεν είναι δυνατή η προσθήκη διακομιστών που υποστηρίζουν μόνο το αρχικό Subsonic API.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Το Nagi απαιτεί Jellyfin 10.11 ή νεότερο. Ενημερώστε τον διακομιστή και δοκιμάστε ξανά.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>Το όνομα χρήστη ή ο κωδικός πρόσβασης είναι λανθασμένο.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>Ο διακομιστής δεν αποδέχτηκε αυτό το κλειδί API.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>Αυτός ο διακομιστής δεν δέχεται κωδικούς πρόσβασης από εφαρμογές. Συνδεθείτε με κλειδί API.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>Αυτός ο διακομιστής δεν υποστηρίζει κλειδιά API. Συνδεθείτε με τον κωδικό πρόσβασής σας.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>Ο λογαριασμός σας δεν διαθέτει βιβλιοθήκη μουσικής σε αυτόν τον διακομιστή.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>Αυτός ο διακομιστής υπάρχει ήδη στη βιβλιοθήκη σας.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση των στοιχείων σύνδεσης σε αυτόν τον υπολογιστή.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>Ο διακομιστής αντιμετώπισε πρόβλημα. Δοκιμάστε ξανά αργότερα.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>Αυτό το κλειδί API ανήκει σε διαφορετικό λογαριασμό. Δημιουργήστε ένα ενώ είστε συνδεδεμένοι ως {0}.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η σύνδεση με το «{0}». Ελέγξτε ότι ο διακομιστής λειτουργεί και ότι είστε συνδεδεμένοι στο διαδίκτυο.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η ασφαλής σύνδεση με το «{0}». Το πιστοποιητικό του ενδέχεται να έχει αλλάξει ή να έχει λήξει.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>Το «{0}» δεν δέχεται πλέον αυτόν τον τρόπο σύνδεσης. Αφαιρέστε το, προσθέστε το ξανά και επιλέξτε τον άλλον τρόπο σύνδεσης.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>Το «{0}» δεν αποδέχτηκε την αποθηκευμένη σύνδεση. Συνδεθείτε ξανά για να συνεχίσετε να το χρησιμοποιείτε.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αναπαραγωγή του «{0}» από το «{1}».</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>Το «{0}» δεν υπάρχει πλέον στο «{1}», οπότε θα αφαιρεθεί από τη βιβλιοθήκη σας στον επόμενο συγχρονισμό.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (Α προς Ω)</value>
   </data>
@@ -2049,7 +2229,7 @@
     <value>Πρώτα τα πιο γρήγορα ({0})</value>
   </data>
   <data name="Format_Most" xml:space="preserve">
-    <value>Πιο πολλά {0}</value>
+    <value>Περισσότερα {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
     <value>Λιγότερα {0}</value>

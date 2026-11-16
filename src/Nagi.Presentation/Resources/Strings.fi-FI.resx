@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Ei kohteita</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>Tätä luetteloa ei voitu ladata.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Virhe</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Älykäs • {0, plural, one {# kappale} other {# kappaletta}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Yksikään kappale ei vastaa tämän älykkään soittolistan sääntöjä.</value>
@@ -672,6 +679,9 @@ Haluatko jatkaa?</value>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Ota käyttöön ja skannaa</value>
   </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>Äänenvoimakkuuden normalisointi alkaa kirjaston skannauksella, jota ei voi suorittaa, kun toinen kirjastotoiminto on käynnissä. Yritä uudelleen, kun se on valmis.</value>
+  </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Valmistellaan äänenvoimakkuuden normalisoinnin skannausta…</value>
   </data>
@@ -913,7 +923,7 @@ Haluatko jatkaa?</value>
     <value>Kansioita ei ole vielä lisätty</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Aloita lisäämällä musiikkikansioita</value>
+    <value>Aloita lisäämällä musiikkikansio tai palvelin</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Kansio</value>
@@ -1027,7 +1037,7 @@ Haluatko jatkaa?</value>
     <value>Missä musiikkisi on?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Valitse kansio, jossa säilytät musiikkiasi. Nagi rakentaa kirjastoasi sillä aikaa kun viimeistelet käyttöönottoa, ja voit lisätä kansioita myöhemmin.</value>
+    <value>Valitse kansio, jossa säilytät musiikkiasi, tai lisää musiikkipalvelin. Nagi rakentaa kirjastoasi sillä aikaa, kun viimeistelet käyttöönottoa, ja voit lisätä lisää myöhemmin.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Tee siitä omannäköisesi</value>
@@ -1362,6 +1372,9 @@ Haluatko jatkaa?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Yhteensopivia romanisointipaketteja ei ole saatavilla.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>Romanisointipaketteja ei voitu ladata. Tarkista internetyhteytesi ja päivitä sivu.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Paketin asennus epäonnistui.</value>
   </data>
@@ -1511,6 +1524,9 @@ Haluatko jatkaa?</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Löydä paikallinen musiikkikokoelmasi uudelleen Nagin avulla. Nagi on musiikkisoitin, joka keskittyy nopeuteen, yksinkertaisuuteen ja yksityisyyteen.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Versio {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Näytä lisenssit</value>
@@ -1736,6 +1752,12 @@ Haluatko jatkaa?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>esim. ;/\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Viimeisin 1 päivä</value>
@@ -1982,6 +2004,10 @@ Haluatko jatkaa?</value>
   <data name="Label_Path" xml:space="preserve">
     <value>Polku</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Palvelin</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Muoto</value>
   </data>
@@ -2018,6 +2044,160 @@ Haluatko jatkaa?</value>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Näytä otsikko kappaleluettelon jokaisen sarakkeen yläpuolella.</value>
   </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Lisää</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Lisää musiikkikansio tai palvelin</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Musiikkikansio</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Musiikkipalvelin</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>Synkronoi</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Kirjaudu uudelleen</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Poista palvelin</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>Poistetaanko '{0}' kirjastostasi? Sen musiikki säilyy palvelimella.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>Ei vielä kappaleita</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>Synkronoi palvelin Kansiot-sivulta tuodaksesi sen musiikin</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>Synkronoidaan '{0}'…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>Palvelinta '{0}' ei voitu synkronoida. Yritä myöhemmin uudelleen.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Lisää musiikkipalvelin</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>Kirjaudu sisään: {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Kirjaudu sisään</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>Anna käyttäjän {0} salasana palvelimelle {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>Anna uusi API-avain palvelimelle {0}.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Palvelimen tyyppi</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome tai muu OpenSubsonic-palvelin</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Palvelimen osoite</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Kirjautumistapa</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>Käyttäjänimi</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Salasana</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>API-avain</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Anna palvelimen osoite, esimerkiksi music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>Palvelimeen ei saatu yhteyttä. Tarkista osoite ja että palvelin on käynnissä.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>Suojattua yhteyttä ei voitu muodostaa. Jos palvelin ei käytä HTTPS:ää, kirjoita osoite siten, että se alkaa merkkijonolla http://.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>Tässä osoitteessa ei ole Jellyfin-palvelinta.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>Tässä osoitteessa ei ole OpenSubsonic-palvelinta. Palvelimia, jotka tukevat vain alkuperäistä Subsonic-rajapintaa, ei voi lisätä.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi vaatii Jellyfinin version 10.11 tai uudemman. Päivitä palvelin ja yritä uudelleen.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>Käyttäjänimi tai salasana on väärä.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>Palvelin ei hyväksynyt tätä API-avainta.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>Tämä palvelin ei hyväksy salasanoja sovelluksilta. Kirjaudu sen sijaan API-avaimella.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>Tämä palvelin ei tue API-avaimia. Kirjaudu sen sijaan salasanalla.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>Tililläsi ei ole musiikkikirjastoa tällä palvelimella.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>Tämä palvelin on jo kirjastossasi.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>Kirjautumista ei voitu tallentaa tälle tietokoneelle.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>Palvelimella tapahtui virhe. Yritä myöhemmin uudelleen.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>Tämä API-avain kuuluu toiselle tilille. Luo avain kirjautuneena käyttäjänä {0}.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>Palvelimeen '{0}' ei saatu yhteyttä. Tarkista, että palvelin on käynnissä ja että olet verkossa.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>Palvelimeen '{0}' ei voitu muodostaa suojattua yhteyttä. Sen varmenne on voinut muuttua tai vanhentua.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>Palvelin '{0}' ei enää hyväksy tätä kirjautumistapaa. Poista se, lisää se uudelleen ja valitse toinen kirjautumistapa.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>Palvelin '{0}' ei hyväksynyt tallennettua kirjautumista. Kirjaudu uudelleen jatkaaksesi sen käyttöä.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>Kappaletta '{0}' ei voitu toistaa palvelimelta '{1}'.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>Kappale '{0}' ei ole enää palvelimella '{1}', joten se poistuu kirjastostasi seuraavassa synkronoinnissa.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A–Z)</value>
   </data>
@@ -2025,10 +2205,10 @@ Haluatko jatkaa?</value>
     <value>{0} (Z–A)</value>
   </data>
   <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Uusin)</value>
+    <value>{0} (uusin ensin)</value>
   </data>
   <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Vanhin)</value>
+    <value>{0} (vanhin ensin)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
     <value>{0} (nouseva)</value>

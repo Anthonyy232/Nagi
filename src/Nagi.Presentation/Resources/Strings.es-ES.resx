@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>No hay elementos</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>No se pudo cargar esta lista.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Error</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Inteligente • {0, plural, one {# canción} other {# canciones}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Ninguna canción coincide con las reglas de esta lista de reproducción inteligente.</value>
@@ -447,10 +454,10 @@ Archivos que no se pudieron importar: {0}.</value>
     <value>No hay reglas definidas • Todas las canciones coinciden</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>Coinciden todas de {0, plural, one {# regla} other {# reglas}}</value>
+    <value>Coincidir con todas ({0, plural, one {# regla} other {# reglas}})</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>Coinciden cualquiera de {0, plural, one {# regla} other {# reglas}}</value>
+    <value>Coincidir con cualquiera ({0, plural, one {# regla} other {# reglas}})</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, one {# elemento} other {# elementos}}</value>
@@ -671,6 +678,9 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Habilitar y escanear</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>La normalización de volumen empieza con un escaneo de tu biblioteca, que no puede ejecutarse mientras hay otra operación de la biblioteca en curso. Inténtalo de nuevo cuando haya terminado.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Preparando el examen de normalización de volumen…</value>
@@ -913,7 +923,7 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
     <value>Aún no se han añadido carpetas</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Añade carpetas de música para empezar</value>
+    <value>Añade una carpeta de música o un servidor para empezar</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Carpeta</value>
@@ -1027,7 +1037,7 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
     <value>¿Dónde está tu música?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Elige la carpeta donde guardas tu música. Nagi creará tu biblioteca mientras terminas la configuración, y podrás añadir más carpetas más tarde.</value>
+    <value>Elige la carpeta donde guardas tu música o añade un servidor de música. Nagi creará tu biblioteca mientras terminas la configuración, y podrás añadir más después.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Personalízalo</value>
@@ -1362,6 +1372,9 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>No hay paquetes de romanización compatibles disponibles.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>No se pudieron cargar los paquetes de romanización. Comprueba tu conexión a internet y actualiza.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Error al instalar el paquete.</value>
   </data>
@@ -1511,6 +1524,9 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Redescubre tu colección de música local con Nagi, un reproductor de música centrado en la velocidad, la simplicidad y la privacidad.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Versión {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Ver licencias</value>
@@ -1736,6 +1752,12 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>p. ej. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Último 1 día</value>
@@ -1982,6 +2004,10 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="Label_Path" xml:space="preserve">
     <value>Ruta</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Servidor</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Formato</value>
   </data>
@@ -2018,6 +2044,160 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Muestra una etiqueta sobre cada columna de las listas de canciones.</value>
   </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Añadir</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Añadir una carpeta de música o un servidor</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Carpeta de música</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Servidor de música</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>Sincronizar</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Volver a iniciar sesión</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Eliminar servidor</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>¿Eliminar '{0}' de la biblioteca? Su música seguirá en el servidor.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>Aún no hay canciones</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>Sincroniza el servidor desde la página Carpetas para importar su música</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>Sincronizando '{0}'…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>No se pudo sincronizar '{0}'. Inténtalo de nuevo más tarde.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Añadir servidor de música</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>Iniciar sesión en {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Iniciar sesión</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>Introduce la contraseña de {0} en {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>Introduce una nueva clave de API para {0}.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Tipo de servidor</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome u otro servidor OpenSubsonic</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Dirección del servidor</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Iniciar sesión con</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>Nombre de usuario</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Contraseña</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>Clave de API</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Introduce la dirección del servidor, como music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>No se pudo conectar con el servidor. Comprueba la dirección y que el servidor esté en funcionamiento.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>No se pudo establecer una conexión segura. Si el servidor no usa HTTPS, introduce su dirección empezando por http://.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>No hay ningún servidor Jellyfin en esta dirección.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>No hay ningún servidor OpenSubsonic en esta dirección. No se pueden añadir servidores que solo admiten la API original de Subsonic.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi necesita Jellyfin 10.11 o posterior. Actualiza el servidor e inténtalo de nuevo.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>El nombre de usuario o la contraseña no son correctos.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>El servidor no aceptó esta clave de API.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>Este servidor no acepta contraseñas de aplicaciones. Inicia sesión con una clave de API.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>Este servidor no admite claves de API. Inicia sesión con tu contraseña.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>Tu cuenta no tiene una biblioteca de música en este servidor.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>Este servidor ya está en tu biblioteca.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>No se pudo guardar el inicio de sesión en este equipo.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>El servidor ha tenido un problema. Inténtalo de nuevo más tarde.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>Esta clave de API pertenece a otra cuenta. Crea una con la sesión iniciada como {0}.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>No se pudo conectar con '{0}'. Comprueba que el servidor esté en funcionamiento y que tengas conexión.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>No se pudo establecer una conexión segura con '{0}'. Es posible que su certificado haya cambiado o caducado.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>'{0}' ya no admite esta forma de iniciar sesión. Elimínalo, vuelve a añadirlo y elige la otra forma de iniciar sesión.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>'{0}' no aceptó el inicio de sesión guardado. Vuelve a iniciar sesión para seguir usándolo.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>No se pudo reproducir '{0}' desde '{1}'.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>'{0}' ya no está en '{1}', así que saldrá de tu biblioteca en la próxima sincronización.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A a Z)</value>
   </data>
@@ -2025,10 +2205,10 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
     <value>{0} (Z a A)</value>
   </data>
   <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Más reciente)</value>
+    <value>{0} (más reciente)</value>
   </data>
   <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Más antiguo)</value>
+    <value>{0} (más antiguo)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
     <value>{0} (ascendente)</value>

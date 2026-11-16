@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>アイテムなし</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>このリストを読み込めませんでした。</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>エラー</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>{0, plural, other {スマート • #曲}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>このスマートプレイリストのルールに一致する曲はありません。</value>
@@ -447,13 +454,13 @@
     <value>ルールが定義されていません • すべての曲が一致</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>{0, plural, other {#ルールのうちすべてに一致}}</value>
+    <value>{0, plural, other {#件のルールすべてに一致}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>{0, plural, other {#ルールのうちいずれかに一致}}</value>
+    <value>{0, plural, other {#件のルールのいずれかに一致}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
-    <value>{0, plural, other {#アイテム}}</value>
+    <value>{0, plural, other {#件}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0}選択済み</value>
@@ -672,6 +679,9 @@
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>有効にしてスキャン</value>
   </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>音量の平準化はライブラリのスキャンから始まりますが、別のライブラリ操作の実行中は実行できません。完了してからもう一度お試しください。</value>
+  </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>音量正規化スキャンを準備中…</value>
   </data>
@@ -871,7 +881,7 @@
     <value>アーティストを検索…</value>
   </data>
   <data name="Generic_ChangeImage" xml:space="preserve">
-    <value>画像を編集</value>
+    <value>画像を変更</value>
   </data>
   <data name="Generic_RemoveImage" xml:space="preserve">
     <value>画像を削除</value>
@@ -913,7 +923,7 @@
     <value>フォルダーがまだ追加されていません</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>開始するには音楽フォルダーを追加してください</value>
+    <value>開始するには音楽フォルダーまたはサーバーを追加してください</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>フォルダー</value>
@@ -1027,7 +1037,7 @@
     <value>音楽の保存場所はどこですか？</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>音楽を保存しているフォルダを選択してください。セットアップの完了中に Nagi がライブラリを構築します。フォルダは後から追加することもできます。</value>
+    <value>音楽を保存しているフォルダーを選択するか、音楽サーバーを追加してください。セットアップの完了中に Nagi がライブラリを構築します。後から追加することもできます。</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>自分好みにカスタマイズ</value>
@@ -1362,6 +1372,9 @@
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>互換性のあるローマ字化パックはありません。</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>ローマ字化パックを読み込めませんでした。インターネット接続を確認してから、更新してください。</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>パックのインストールに失敗しました。</value>
   </data>
@@ -1511,6 +1524,9 @@
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Nagiは、速度、シンプルさ、プライバシーに焦点を当てた音楽プレイヤーで、ローカルの音楽コレクションを再発見できます。</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>バージョン {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>ライセンスを表示</value>
@@ -1736,6 +1752,12 @@
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>例: ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>過去 1 日</value>
@@ -1982,6 +2004,10 @@
   <data name="Label_Path" xml:space="preserve">
     <value>パス</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>サーバー</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>形式</value>
   </data>
@@ -2018,6 +2044,160 @@
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>曲リストの上に各列の見出しを表示します。</value>
   </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>追加</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>音楽フォルダーまたはサーバーを追加</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>音楽フォルダー</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>音楽サーバー</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>同期</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>再度サインイン</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>サーバーを削除</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>'{0}' をライブラリから削除しますか？ 音楽はサーバーに残ります。</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>まだ曲がありません</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>フォルダーページでサーバーを同期すると、音楽が取り込まれます</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>'{0}' を同期しています…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>'{0}' を同期できませんでした。後でもう一度お試しください。</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>音楽サーバーを追加</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>{0} にサインイン</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>サインイン</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>{1} の {0} のパスワードを入力してください。</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>{0} の新しい API キーを入力してください。</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>サーバーの種類</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome またはその他の OpenSubsonic サーバー</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>サーバーアドレス</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>サインイン方法</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>ユーザー名</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>パスワード</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>API キー</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>サーバーのアドレスを入力してください (例: music.example.com)。</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>サーバーに接続できませんでした。アドレスが正しいか、サーバーが動作しているか確認してください。</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>安全な接続を確立できませんでした。サーバーが HTTPS を使用していない場合は、http:// で始まるアドレスを入力してください。</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>このアドレスに Jellyfin サーバーはありません。</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>このアドレスに OpenSubsonic サーバーはありません。元の Subsonic API にのみ対応するサーバーは追加できません。</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi には Jellyfin 10.11 以降が必要です。サーバーを更新してから、もう一度お試しください。</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>ユーザー名またはパスワードが正しくありません。</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>サーバーがこの API キーを受け付けませんでした。</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>このサーバーはアプリからのパスワードを受け付けません。代わりに API キーでサインインしてください。</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>このサーバーは API キーに対応していません。代わりにパスワードでサインインしてください。</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>お使いのアカウントには、このサーバー上の音楽ライブラリがありません。</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>このサーバーはすでにライブラリに追加されています。</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>このPCにサインイン情報を保存できませんでした。</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>サーバーで問題が発生しました。後でもう一度お試しください。</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>この API キーは別のアカウントのものです。{0} としてサインインした状態で作成してください。</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>'{0}' に接続できませんでした。サーバーが動作しているか、インターネットに接続されているか確認してください。</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>'{0}' に安全に接続できませんでした。証明書が変更または期限切れになった可能性があります。</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>'{0}' はこのサインイン方法を受け付けなくなりました。サーバーを削除してから再度追加し、もう一方のサインイン方法を選択してください。</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>'{0}' が保存されたサインイン情報を受け付けませんでした。引き続き使用するには、もう一度サインインしてください。</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>'{1}' の '{0}' を再生できませんでした。</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>'{0}' は '{1}' からなくなったため、次回の同期でライブラリから削除されます。</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A-Z順)</value>
   </data>
@@ -2031,28 +2211,28 @@
     <value>{0} (古い順)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0}（昇順）</value>
+    <value>{0} (昇順)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0}（降順）</value>
+    <value>{0} (降順)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>最短から</value>
+    <value>短い順</value>
   </data>
   <data name="Format_LongestFirst" xml:space="preserve">
-    <value>最長から</value>
+    <value>長い順</value>
   </data>
   <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>最も遅い順 ({0})</value>
+    <value>遅い順 ({0})</value>
   </data>
   <data name="Format_FastestFirst" xml:space="preserve">
-    <value>最も速い順 ({0})</value>
+    <value>速い順 ({0})</value>
   </data>
   <data name="Format_Most" xml:space="preserve">
-    <value>最も多い{0}</value>
+    <value>{0}が多い順</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>{0}が最も少ない</value>
+    <value>{0}が少ない順</value>
   </data>
   <data name="SortBy_Format" xml:space="preserve">
     <value>並べ替え: {0}</value>

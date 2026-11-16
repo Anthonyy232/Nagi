@@ -299,19 +299,22 @@
     <value>خطأ في إعادة فحص المجلد: {0}</value>
   </data>
   <data name="Folders_Count" xml:space="preserve">
-    <value>{0, plural, one {# مجلد} other {# مجلدات}}</value>
+    <value>{0, plural, zero {لا مجلدات} one {مجلد واحد} two {مجلدان} few {# مجلدات} many {# مجلدًا} other {# مجلد}}</value>
   </data>
   <data name="Songs_Count" xml:space="preserve">
-    <value>{0, plural, one {# أغنية} other {# أغاني}}</value>
+    <value>{0, plural, zero {لا أغاني} one {أغنية واحدة} two {أغنيتان} few {# أغانٍ} many {# أغنية} other {# أغنية}}</value>
   </data>
   <data name="Albums_Count" xml:space="preserve">
-    <value>{0, plural, one {# ألبوم} other {# ألبومات}}</value>
+    <value>{0, plural, zero {لا ألبومات} one {ألبوم واحد} two {ألبومان} few {# ألبومات} many {# ألبومًا} other {# ألبوم}}</value>
   </data>
   <data name="Artists_Count" xml:space="preserve">
-    <value>{0, plural, one {# فنان} other {# فنانين}}</value>
+    <value>{0, plural, zero {لا فنانين} one {فنان واحد} two {فنانان} few {# فنانين} many {# فنانًا} other {# فنان}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>لا توجد عناصر</value>
+  </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>تعذر تحميل هذه القائمة.</value>
   </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>خطأ</value>
@@ -335,7 +338,11 @@
     <value>مكتبتك جاهزة.</value>
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
-    <value>ذكي • {0, plural, one {# أغنية} other {# أغاني}}</value>
+    <value>ذكية • {0, plural, zero {لا أغاني} one {أغنية واحدة} two {أغنيتان} few {# أغانٍ} many {# أغنية} other {# أغنية}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>لا توجد أغاني تطابق قواعد قائمة التشغيل الذكية هذه.</value>
@@ -447,13 +454,13 @@
     <value>لم يتم تحديد قواعد • جميع الأغاني متطابقة</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>مطابقة كل من {0, plural, one {# قاعدة} other {# قواعد}}</value>
+    <value>مطابقة جميع القواعد ({0, plural, zero {لا قواعد} one {قاعدة واحدة} two {قاعدتان} few {# قواعد} many {# قاعدة} other {# قاعدة}})</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>مطابقة أي من {0, plural, one {# قاعدة} other {# قواعد}}</value>
+    <value>مطابقة أيٍّ من القواعد ({0, plural, zero {لا قواعد} one {قاعدة واحدة} two {قاعدتان} few {# قواعد} many {# قاعدة} other {# قاعدة}})</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
-    <value>{0, plural, one {# عنصر} other {# عناصر}}</value>
+    <value>{0, plural, zero {لا عناصر} one {عنصر واحد} two {عنصران} few {# عناصر} many {# عنصرًا} other {# عنصر}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} محدد</value>
@@ -671,6 +678,9 @@
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>تمكين وفحص</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>تبدأ تسوية مستوى الصوت بفحص مكتبتك، ولا يمكن إجراؤه أثناء تنفيذ عملية أخرى على المكتبة. حاول مرة أخرى بعد انتهائها.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>جاري تحضير فحص تسوية مستوى الصوت…</value>
@@ -913,7 +923,7 @@
     <value>لم تتم إضافة مجلدات بعد</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>أضف مجلدات الموسيقى للبدء</value>
+    <value>أضف مجلد موسيقى أو خادمًا للبدء</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>مجلد</value>
@@ -1027,7 +1037,7 @@
     <value>أين موسيقاك؟</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>اختر المجلد الذي تحفظ فيه موسيقاك. سيبني Nagi مكتبتك أثناء إنهاء الإعداد، ويمكنك إضافة المزيد من المجلدات لاحقًا.</value>
+    <value>اختر المجلد الذي تحفظ فيه موسيقاك، أو أضف خادم موسيقى. سيبني Nagi مكتبتك أثناء إنهاء الإعداد، ويمكنك إضافة المزيد لاحقًا.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>اجعله يناسبك</value>
@@ -1362,6 +1372,9 @@
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>لا توجد حزم تحويل إلى الأحرف اللاتينية متوافقة متاحة.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>تعذر تحميل حزم الكتابة بالأحرف اللاتينية. تحقق من اتصالك بالإنترنت ثم حدّث الصفحة.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>فشل تثبيت الحزمة.</value>
   </data>
@@ -1511,6 +1524,9 @@
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>أعد اكتشاف مجموعتك الموسيقية المحلية مع Nagi، مشغل موسيقى يركز على السرعة والبساطة والخصوصية.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>الإصدار {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>عرض التراخيص</value>
@@ -1736,6 +1752,12 @@
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>مثال: ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} مللي ثانية</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} ديسيبل</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>آخر يوم</value>
@@ -1982,6 +2004,10 @@
   <data name="Label_Path" xml:space="preserve">
     <value>المسار</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>الخادم</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>الصيغة</value>
   </data>
@@ -2018,6 +2044,160 @@
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>إظهار عنوان لكل عمود فوق قوائم الأغاني.</value>
   </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>إضافة</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>إضافة مجلد موسيقى أو خادم</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>مجلد موسيقى</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>خادم موسيقى</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>مزامنة</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>تسجيل الدخول مرة أخرى</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>إزالة الخادم</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>هل تريد إزالة '{0}' من مكتبتك؟ ستظل موسيقاه على الخادم.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>لا توجد أغانٍ بعد</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>زامن الخادم من صفحة المجلدات لجلب موسيقاه</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>جاري مزامنة '{0}'…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>تعذرت مزامنة '{0}'. حاول مرة أخرى لاحقًا.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>إضافة خادم موسيقى</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>تسجيل الدخول إلى {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>تسجيل الدخول</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>أدخل كلمة المرور الخاصة بـ {0} على {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>أدخل مفتاح API جديدًا لـ {0}.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>نوع الخادم</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome أو خادم OpenSubsonic آخر</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>عنوان الخادم</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>تسجيل الدخول باستخدام</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>اسم المستخدم</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>كلمة المرور</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>مفتاح API</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>أدخل عنوان الخادم، مثل music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>تعذر الوصول إلى الخادم. تحقق من العنوان ومن أن الخادم قيد التشغيل.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>تعذر الاتصال بشكل آمن. إذا كان الخادم لا يستخدم HTTPS، فأدخل عنوانه بحيث يبدأ بـ http://.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>لا يوجد خادم Jellyfin على هذا العنوان.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>لا يوجد خادم OpenSubsonic على هذا العنوان. لا يمكن إضافة الخوادم التي تدعم واجهة Subsonic API الأصلية فقط.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>يتطلب Nagi الإصدار 10.11 من Jellyfin أو أحدث. حدّث الخادم ثم حاول مرة أخرى.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>اسم المستخدم أو كلمة المرور غير صحيحة.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>لم يقبل الخادم مفتاح API هذا.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>لا يقبل هذا الخادم كلمات المرور من التطبيقات. سجّل الدخول باستخدام مفتاح API بدلًا من ذلك.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>لا يدعم هذا الخادم مفاتيح API. سجّل الدخول باستخدام كلمة المرور بدلًا من ذلك.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>ليس لدى حسابك مكتبة موسيقى على هذا الخادم.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>هذا الخادم موجود بالفعل في مكتبتك.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>تعذر حفظ بيانات تسجيل الدخول على هذا الكمبيوتر.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>واجه الخادم مشكلة. حاول مرة أخرى لاحقًا.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>مفتاح API هذا يخص حسابًا آخر. أنشئ مفتاحًا أثناء تسجيل الدخول باسم {0}.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>تعذر الوصول إلى '{0}'. تحقق من أن الخادم قيد التشغيل وأنك متصل بالإنترنت.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>تعذر الاتصال بشكل آمن بـ '{0}'. ربما تغيرت شهادته أو انتهت صلاحيتها.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>لم يعد '{0}' يقبل طريقة تسجيل الدخول هذه. أزله ثم أضفه مرة أخرى واختر طريقة تسجيل الدخول الأخرى.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>لم يقبل '{0}' بيانات تسجيل الدخول المحفوظة. سجّل الدخول مرة أخرى لمواصلة استخدامه.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>تعذر تشغيل '{0}' من '{1}'.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>لم يعد '{0}' موجودًا على '{1}'، لذا ستتم إزالته من مكتبتك عند المزامنة التالية.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (من أ إلى ي)</value>
   </data>
@@ -2049,10 +2229,10 @@
     <value>الأسرع أولاً ({0})</value>
   </data>
   <data name="Format_Most" xml:space="preserve">
-    <value>الأكثر {0}</value>
+    <value>{0} (الأكثر)</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>أقل {0}</value>
+    <value>{0} (الأقل)</value>
   </data>
   <data name="SortBy_Format" xml:space="preserve">
     <value>ترتيب حسب: {0}</value>

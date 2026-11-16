@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Ühtegi objekti pole</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>Seda loendit ei õnnestunud laadida.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Viga</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Nutikas • {0, plural, one {# laul} other {# laulu}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Ükski lugu ei vasta selle nutika esitusloendi reeglitele.</value>
@@ -453,7 +460,7 @@ Failid, mida ei õnnestunud importida: {0}.</value>
     <value>Sobita: mis tahes ({0, plural, one {# reegel} other {# reeglit}})</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
-    <value>{0, plural, one {# objekt} other {# objekti}}</value>
+    <value>{0, plural, one {# üksus} other {# üksust}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} valitud</value>
@@ -671,6 +678,9 @@ Kas soovite jätkata?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Luba ja skaneeri</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>Helitugevuse normaliseerimine algab muusikakogu skaneerimisega, mis ei saa käia, kui mõni muu kogutoiming on pooleli. Proovi uuesti, kui see on lõppenud.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Helitugevuse normaliseerimise skannimise ettevalmistamine…</value>
@@ -913,7 +923,7 @@ Kas soovite jätkata?</value>
     <value>Ühtegi kausta pole veel lisatud</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Alustamiseks lisa muusikakaustad</value>
+    <value>Alustamiseks lisa muusikakaust või server</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Kaust</value>
@@ -964,10 +974,10 @@ Kas soovite jätkata?</value>
     <value>Lisa esitusloendisse</value>
   </data>
   <data name="SongList_Context_GoToAlbum" xml:space="preserve">
-    <value>Mine albumile</value>
+    <value>Mine albumi juurde</value>
   </data>
   <data name="SongList_Context_GoToArtist" xml:space="preserve">
-    <value>Mine esitaja juurde</value>
+    <value>Mine artisti juurde</value>
   </data>
   <data name="SongList_Context_ShowInExplorer" xml:space="preserve">
     <value>Näita failihalduris</value>
@@ -1027,7 +1037,7 @@ Kas soovite jätkata?</value>
     <value>Kus asub sinu muusika?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Vali kaust, kus oma muusikat hoiad. Nagi loob sinu muusikakogu seadistamise lõpuleviimise ajal ning saad hiljem kaustu juurde lisada.</value>
+    <value>Vali kaust, kus oma muusikat hoiad, või lisa muusikaserver. Nagi loob sinu muusikakogu seadistamise lõpuleviimise ajal ning hiljem saad lisada veel.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Kohanda enda järgi</value>
@@ -1362,6 +1372,9 @@ Kas soovite jätkata?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Ühilduvaid romaniseerimise pakette pole saadaval.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>Romaniseerimispakette ei õnnestunud laadida. Kontrolli internetiühendust ja värskenda.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Paketi installimine ebaõnnestus.</value>
   </data>
@@ -1511,6 +1524,9 @@ Kas soovite jätkata?</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Avasta oma kohalik muusikakogu uuesti Nagiga – muusikapleieriga, mis keskendub kiirusele, lihtsusele ja privaatsusele.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Versioon {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Vaata litsentse</value>
@@ -1736,6 +1752,12 @@ Kas soovite jätkata?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>nt. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Viimane 1 päev</value>
@@ -1982,6 +2004,10 @@ Kas soovite jätkata?</value>
   <data name="Label_Path" xml:space="preserve">
     <value>Asukoht</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Server</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Vorming</value>
   </data>
@@ -2018,6 +2044,160 @@ Kas soovite jätkata?</value>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Kuva loendites iga veeru kohal päis.</value>
   </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Lisa</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Lisa muusikakaust või server</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Muusikakaust</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Muusikaserver</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>Sünkrooni</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Logi uuesti sisse</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Eemalda server</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>Kas eemaldada „{0}” sinu muusikakogust? Selle muusika jääb serverisse.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>Laule veel pole</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>Muusika toomiseks sünkrooni server lehel Kaustad</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>„{0}” sünkroonimine…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>Serverit „{0}” ei õnnestunud sünkroonida. Proovi hiljem uuesti.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Lisa muusikaserver</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>Logi sisse: {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Logi sisse</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>Sisesta kasutaja {0} parool serveris {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>Sisesta serveri {0} jaoks uus API võti.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Serveri tüüp</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome või muu OpenSubsonic-server</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Serveri aadress</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Sisselogimise viis</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>Kasutajanimi</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Parool</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>API võti</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Sisesta serveri aadress, näiteks music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>Serveriga ei õnnestunud ühendust luua. Kontrolli aadressi ja seda, et server töötab.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>Turvalist ühendust ei õnnestunud luua. Kui server ei kasuta HTTPS-i, sisesta selle aadress, mis algab eesliitega http://.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>Sellel aadressil pole Jellyfini serverit.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>Sellel aadressil pole OpenSubsonic-serverit. Servereid, mis toetavad ainult algset Subsonicu API-t, ei saa lisada.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi vajab Jellyfini versiooni 10.11 või uuemat. Uuenda serverit ja proovi uuesti.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>Kasutajanimi või parool on vale.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>Server ei võtnud seda API võtit vastu.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>See server ei võta rakendustelt paroole vastu. Logi selle asemel sisse API võtmega.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>See server ei toeta API võtmeid. Logi selle asemel sisse parooliga.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>Sinu kontol pole selles serveris muusikakogu.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>See server on juba sinu muusikakogus.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>Sisselogimist ei õnnestunud sellesse arvutisse salvestada.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>Serveris tekkis probleem. Proovi hiljem uuesti.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>See API võti kuulub teisele kontole. Loo uus, olles sisse logitud kasutajana {0}.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>Serveriga „{0}” ei õnnestunud ühendust luua. Kontrolli, et server töötab ja et oled võrgus.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>Serveriga „{0}” ei õnnestunud turvalist ühendust luua. Selle sertifikaat võib olla muutunud või aegunud.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>Server „{0}” ei võta seda sisselogimisviisi enam vastu. Eemalda see, lisa uuesti ja vali teine sisselogimisviis.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>Server „{0}” ei võtnud salvestatud sisselogimist vastu. Jätkamiseks logi uuesti sisse.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>Laulu „{0}” ei õnnestunud serverist „{1}” esitada.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>„{0}” pole enam serveris „{1}” ja eemaldatakse järgmisel sünkroonimisel sinu muusikakogust.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A-Z)</value>
   </data>
@@ -2025,10 +2205,10 @@ Kas soovite jätkata?</value>
     <value>{0} (Z-A)</value>
   </data>
   <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Uusim)</value>
+    <value>{0} (uusimad)</value>
   </data>
   <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Vanim)</value>
+    <value>{0} (vanimad)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
     <value>{0} (kasvavalt)</value>

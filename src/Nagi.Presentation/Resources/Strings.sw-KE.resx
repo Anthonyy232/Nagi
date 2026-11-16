@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Hakuna vitu</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>Orodha hii haikuweza kupakiwa.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Hitilafu</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>Nadhifu • {0, plural, one {wimbo #} other {nyimbo #}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Hakuna nyimbo zinazolingana na sheria za orodha hii ya kucheza nadhifu.</value>
@@ -672,6 +679,9 @@ Je, unataka kuendelea?</value>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Washa &amp; Changanua</value>
   </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>Usawazishaji wa sauti huanza kwa kuchanganua maktaba yako, jambo ambalo haliwezi kufanyika wakati operesheni nyingine ya maktaba inaendelea. Jaribu tena ikishakamilika.</value>
+  </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Inatayarisha uchanganuzi wa usawazishaji wa sauti…</value>
   </data>
@@ -913,7 +923,7 @@ Je, unataka kuendelea?</value>
     <value>Hakuna folda zilizoongezwa bado</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Ongeza folda za muziki ili kuanza</value>
+    <value>Ongeza folda ya muziki au seva ili kuanza</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Folda</value>
@@ -1027,7 +1037,7 @@ Je, unataka kuendelea?</value>
     <value>Muziki wako uko wapi?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Chagua folda unapohifadhi muziki wako. Nagi inatengeneza maktaba yako unapomalizia kuweka mipangilio, na unaweza kuongeza folda zaidi baadaye.</value>
+    <value>Chagua folda unapohifadhi muziki wako, au ongeza seva ya muziki. Nagi inatengeneza maktaba yako unapomalizia kuweka mipangilio, na unaweza kuongeza zaidi baadaye.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Ibinafsishe</value>
@@ -1362,6 +1372,9 @@ Je, unataka kuendelea?</value>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Hakuna vifurushi vya Kilatini vinavyoendana vinavyopatikana.</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>Vifurushi vya herufi za Kirumi havikuweza kupakiwa. Angalia muunganisho wako wa intaneti, kisha uonyeshe upya.</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Usakinishaji wa kifurushi umeshindwa.</value>
   </data>
@@ -1511,6 +1524,9 @@ Je, unataka kuendelea?</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Gundua tena mkusanyiko wako wa muziki wa ndani ukitumia Nagi, kichezaji cha muziki kinacholenga kasi, urahisi, na faragha.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Toleo {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Tazama Leseni</value>
@@ -1736,6 +1752,12 @@ Je, unataka kuendelea?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>k.m. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>Siku 1 Iliyopita</value>
@@ -1982,6 +2004,10 @@ Je, unataka kuendelea?</value>
   <data name="Label_Path" xml:space="preserve">
     <value>Njia</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Seva</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Umbizo</value>
   </data>
@@ -2017,6 +2043,160 @@ Je, unataka kuendelea?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Onyesha kichwa cha kila safu juu ya orodha za nyimbo.</value>
+  </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Ongeza</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Ongeza folda ya muziki au seva</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Folda ya Muziki</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Seva ya Muziki</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>Sawazisha</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Ingia Tena</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Ondoa Seva</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>Ondoa '{0}' kwenye maktaba yako? Muziki wake unabaki kwenye seva.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>Bado hakuna nyimbo</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>Sawazisha seva kutoka ukurasa wa Folda ili kuleta muziki wake</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>Inasawazisha '{0}'…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>Imeshindwa kusawazisha '{0}'. Jaribu tena baadaye.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Ongeza Seva ya Muziki</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>Ingia kwenye {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Ingia</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>Weka nenosiri la {0} kwenye {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>Weka ufunguo mpya wa API wa {0}.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Aina ya Seva</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome au seva nyingine ya OpenSubsonic</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Anwani ya Seva</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Ingia kwa kutumia</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>Jina la Mtumiaji</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Nenosiri</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>Ufunguo wa API</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Weka anwani ya seva, kama vile music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>Imeshindwa kufikia seva. Angalia anwani na kwamba seva inafanya kazi.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>Imeshindwa kuunganisha kwa usalama. Ikiwa seva haitumii HTTPS, weka anwani yake inayoanza na http://.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>Hakuna seva ya Jellyfin kwenye anwani hii.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>Hakuna seva ya OpenSubsonic kwenye anwani hii. Seva zinazounga mkono API ya awali ya Subsonic pekee haziwezi kuongezwa.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi inahitaji Jellyfin 10.11 au toleo jipya zaidi. Sasisha seva, kisha jaribu tena.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>Jina la mtumiaji au nenosiri si sahihi.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>Seva haikukubali ufunguo huu wa API.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>Seva hii haikubali nenosiri kutoka kwa programu. Ingia kwa kutumia ufunguo wa API badala yake.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>Seva hii haiungi mkono funguo za API. Ingia kwa kutumia nenosiri lako badala yake.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>Akaunti yako haina maktaba ya muziki kwenye seva hii.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>Seva hii tayari iko kwenye maktaba yako.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>Imeshindwa kuhifadhi taarifa za kuingia kwenye Kompyuta hii.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>Seva imekumbwa na tatizo. Jaribu tena baadaye.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>Ufunguo huu wa API ni wa akaunti nyingine. Uunde ukiwa umeingia kama {0}.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>Imeshindwa kufikia '{0}'. Hakikisha seva inafanya kazi na kwamba uko mtandaoni.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>Imeshindwa kuunganisha kwa usalama na '{0}'. Cheti chake huenda kimebadilika au kuisha muda.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>'{0}' haikubali tena njia hii ya kuingia. Iondoe, kisha iongeze tena na uchague njia nyingine ya kuingia.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>'{0}' haikukubali taarifa za kuingia zilizohifadhiwa. Ingia tena ili uendelee kuitumia.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>Imeshindwa kucheza '{0}' kutoka '{1}'.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>'{0}' haipo tena kwenye '{1}', kwa hivyo itaondoka kwenye maktaba yako wakati wa usawazishaji ujao.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
   </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A hadi Z)</value>

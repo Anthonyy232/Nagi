@@ -313,6 +313,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>无项目</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>无法加载此列表。</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>错误</value>
   </data>
@@ -336,6 +339,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>{0, plural, other {智能 • # 首歌曲}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>没有歌曲符合此智能播放列表的规则。</value>
@@ -447,10 +454,10 @@
     <value>未定义规则 • 所有歌曲均匹配</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_All_Format" xml:space="preserve">
-    <value>{0, plural, other {匹配 # 条规则中的所有}}</value>
+    <value>{0, plural, other {匹配全部 # 条规则}}</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Any_Format" xml:space="preserve">
-    <value>{0, plural, other {匹配 # 条规则中的任意}}</value>
+    <value>{0, plural, other {匹配 # 条规则中的任意一条}}</value>
   </data>
   <data name="SongList_TotalItems_Format" xml:space="preserve">
     <value>{0, plural, other {# 个项目}}</value>
@@ -671,6 +678,9 @@
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>启用并扫描</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>音量标准化会先扫描您的音乐库，而其他音乐库操作进行期间无法运行扫描。请在其完成后重试。</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>正在准备音量标准化扫描……</value>
@@ -913,7 +923,7 @@
     <value>尚未添加文件夹</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>添加音乐文件夹以开始使用</value>
+    <value>添加音乐文件夹或服务器以开始使用</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>文件夹</value>
@@ -1027,7 +1037,7 @@
     <value>您的音乐存放在哪里？</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>选择存放音乐的文件夹。在您完成设置的过程中，Nagi 会建立您的音乐库，您也可以稍后再添加更多文件夹。</value>
+    <value>选择存放音乐的文件夹，或添加音乐服务器。在您完成设置的过程中，Nagi 会建立您的音乐库，您也可以稍后再添加更多。</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>打造专属外观</value>
@@ -1362,6 +1372,9 @@
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>没有可用的兼容罗马化语言包。</value>
   </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>无法加载罗马化包。请检查网络连接，然后刷新。</value>
+  </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>语言包安装失败。</value>
   </data>
@@ -1511,6 +1524,9 @@
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>使用 Nagi 重新发现您的本地音乐收藏，这是一款注重速度、简洁和隐私的音乐播放器。</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>版本 {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>查看许可证</value>
@@ -1736,6 +1752,12 @@
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>例如：;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} 毫秒</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>过去 1 天</value>
@@ -1982,6 +2004,10 @@
   <data name="Label_Path" xml:space="preserve">
     <value>路径</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>服务器</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>格式</value>
   </data>
@@ -2018,6 +2044,160 @@
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>在歌曲列表上方显示各列的标题。</value>
   </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>添加</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>添加音乐文件夹或服务器</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>音乐文件夹</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>音乐服务器</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>同步</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>重新登录</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>移除服务器</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>要从您的音乐库中移除 '{0}' 吗？其音乐仍会保留在服务器上。</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>还没有歌曲</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>在“文件夹”页面同步服务器，即可导入其音乐</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>正在同步 '{0}'…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>无法同步 '{0}'。请稍后重试。</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>添加音乐服务器</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>登录 {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>登录</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>请输入 {0} 在 {1} 上的密码。</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>请输入 {0} 的新 API 密钥。</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>服务器类型</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome 或其他 OpenSubsonic 服务器</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>服务器地址</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>登录方式</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>用户名</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>密码</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>API 密钥</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>请输入服务器地址，例如 music.example.com。</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>无法连接到服务器。请检查地址，并确认服务器正在运行。</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>无法建立安全连接。如果服务器不使用 HTTPS，请输入以 http:// 开头的地址。</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>此地址上没有 Jellyfin 服务器。</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>此地址上没有 OpenSubsonic 服务器。仅支持原版 Subsonic API 的服务器无法添加。</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi 需要 Jellyfin 10.11 或更高版本。请更新服务器，然后重试。</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>用户名或密码不正确。</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>服务器不接受此 API 密钥。</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>此服务器不接受来自应用的密码。请改用 API 密钥登录。</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>此服务器不支持 API 密钥。请改用密码登录。</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>您的账户在此服务器上没有音乐库。</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>此服务器已在您的音乐库中。</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>无法在此电脑上保存登录信息。</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>服务器出现问题。请稍后重试。</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>此 API 密钥属于其他账户。请以 {0} 的身份登录后创建。</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>无法连接到 '{0}'。请确认服务器正在运行，并且您已联网。</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>无法与 '{0}' 建立安全连接。其证书可能已更改或已过期。</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>'{0}' 不再接受这种登录方式。请将其移除，然后重新添加，并选择另一种登录方式。</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>'{0}' 不接受已保存的登录信息。请重新登录以继续使用。</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>无法播放来自 '{1}' 的 '{0}'。</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>'{0}' 已不在 '{1}' 上，因此将在下次同步时从您的音乐库中移除。</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0}（A 到 Z）</value>
   </data>
@@ -2043,10 +2223,10 @@
     <value>最长优先</value>
   </data>
   <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>最慢优先 ({0})</value>
+    <value>最慢优先（{0}）</value>
   </data>
   <data name="Format_FastestFirst" xml:space="preserve">
-    <value>最快优先 ({0})</value>
+    <value>最快优先（{0}）</value>
   </data>
   <data name="Format_Most" xml:space="preserve">
     <value>最多 {0}</value>
