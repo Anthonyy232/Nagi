@@ -269,6 +269,113 @@ jobs:
           path: ${{ github.workspace }}/bundle-output/Nagi.msixbundle
           if-no-files-found: error
 
+  # Own job: the sideload build patches the manifest Publisher, and the Store needs the original identity.
+  build-store:
+    name: Build Store Package
+    runs-on: windows-latest
+    needs: [test, verify-api-connectivity]
+    if: >-
+      always() &&
+      needs.test.result == 'success' &&
+      needs.verify-api-connectivity.result == 'success' &&
+      startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: actions/setup-dotnet@v6.1.0
+        with:
+          dotnet-version: 11.0.x
+          cache: true
+          cache-dependency-path: |
+            **/*.csproj
+            **/Directory.Build.props
+            **/Directory.Packages.props
+            **/NuGet.config
+
+      - name: Create appsettings.json
+        shell: pwsh
+        env:
+          DISCORD_APP_ID: ${{ secrets.NAGI_DISCORD_KEY }}
+          API_KEY: ${{ secrets.NAGI_API_KEY }}
+        run: |
+          @{ Discord = @{ AppId = $env:DISCORD_APP_ID }; NagiApiServer = @{ Url = 'https://nagiflexapiserver.azurewebsites.net'; ApiKey = $env:API_KEY } } |
+            ConvertTo-Json -Depth 3 | Out-File src/Nagi.WinUI/appsettings.json -Encoding UTF8
+
+      - run: dotnet restore src/Nagi.WinUI/Nagi.WinUI.csproj
+
+      - name: Pre-build x64 binaries
+        run: >
+          dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj
+          -c Release -r win-x64
+          -p:Platform=x64
+          -p:PublishReadyToRun=true
+          -p:TieredPGO=true
+          -p:GenerateAppxPackageOnBuild=false
+          -p:AppxPackageSigningEnabled=False
+          -p:PackageCertificateThumbprint=""
+          -p:GenerateTemporaryStoreCertificate=False
+
+      - name: Pre-build ARM64 binaries
+        run: >
+          dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj
+          -c Release -r win-arm64
+          -p:Platform=ARM64
+          -p:PublishReadyToRun=true
+          -p:TieredPGO=true
+          -p:GenerateAppxPackageOnBuild=false
+          -p:AppxPackageSigningEnabled=False
+          -p:PackageCertificateThumbprint=""
+          -p:GenerateTemporaryStoreCertificate=False
+
+      # Symbol packages need mspdbcmf for every platform pass, or the .appxsym files are left out.
+      - name: Locate mspdbcmf
+        id: mspdbcmf
+        shell: pwsh
+        run: |
+          $vs = & "${env:ProgramFiles(x86)}/Microsoft Visual Studio/Installer/vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          $msvc = Get-ChildItem "$vs/VC/Tools/MSVC" | Sort-Object { [version]$_.Name } -Descending | Select-Object -First 1
+          $x64 = Join-Path $msvc.FullName 'bin/Hostx64/x64/mspdbcmf.exe'
+          $x86 = Join-Path $msvc.FullName 'bin/Hostx64/x86/mspdbcmf.exe'
+          if (-not (Test-Path $x64) -or -not (Test-Path $x86)) { throw "mspdbcmf.exe not found under $($msvc.FullName)" }
+          echo "x64=$x64" >> $env:GITHUB_OUTPUT
+          echo "x86=$x86" >> $env:GITHUB_OUTPUT
+
+      - name: Build Store upload package
+        run: >
+          dotnet msbuild src/Nagi.WinUI/Nagi.WinUI.csproj
+          /p:Configuration=Release /p:Platform=x64
+          /p:GenerateAppxPackageOnBuild=true
+          /p:AppxBundle=Always /p:AppxBundlePlatforms="x64|ARM64"
+          /p:AppxPackageSigningEnabled=False
+          /p:PackageCertificateThumbprint=""
+          /p:GenerateTemporaryStoreCertificate=False
+          /p:UapAppxPackageBuildMode=StoreUpload
+          "/p:MsPdbCmfExeFullpath=${{ steps.mspdbcmf.outputs.x64 }}"
+          "/p:PdbCmfx64ExeFullPath=${{ steps.mspdbcmf.outputs.x64 }}"
+          "/p:PdbCmfx86ExeFullPath=${{ steps.mspdbcmf.outputs.x86 }}"
+          /p:AppxPackageDir=${{ github.workspace }}/store-output/
+
+      - name: Locate msixupload
+        shell: pwsh
+        run: |
+          $upload = Get-ChildItem "${{ github.workspace }}/store-output" -Recurse -Filter *.msixupload | Select-Object -First 1
+          if (-not $upload) { throw "msixupload not found in store-output" }
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $zip = [IO.Compression.ZipFile]::OpenRead($upload.FullName)
+          $entries = $zip.Entries.Name
+          $zip.Dispose()
+          $entries | ForEach-Object { echo $_ }
+          if (-not ($entries -like '*.appxsym')) { throw "msixupload has no symbol packages" }
+          Copy-Item $upload.FullName "${{ github.workspace }}/store-output/Nagi.msixupload"
+
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: Store-MSIX-${{ github.ref_name }}
+          path: ${{ github.workspace }}/store-output/Nagi.msixupload
+          if-no-files-found: error
+
   sign-msix:
     name: Sign MSIX (SignPath)
     runs-on: ubuntu-latest
