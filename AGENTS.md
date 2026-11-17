@@ -71,7 +71,7 @@ A local-first music player for Windows: C#, .NET, WinUI 3, packaged as MSIX. Pub
 - Banner: generated and hosted on the orphan `media` branch; its README has the steps.
 - Generated images (README panels, `site/img`, the app icon set, release banners) are built from the `media` branch; its README has the steps.
 - Install links: the Store button, then, from 2.0.0 on, the GitHub button pointing at that release's own `Nagi.msixbundle`.
-- The tag push builds the bundle and the Store `.msixupload`; the `Create Release` workflow has the bundle signed, once the owner approves, and puts it on a draft release. Publishing the release runs `Store Submission`, which submits that tag's Store package with the `STORE_TENANT_ID`, `STORE_SELLER_ID`, `STORE_CLIENT_ID` and `STORE_CLIENT_SECRET` secrets, replacing any pending draft submission; the listing is left as it is.
+- The tag push builds the bundle and the Store `.msixupload`; the `Create Release` workflow has the bundle signed, once the owner approves, and puts it on a draft release. Publishing the release runs `Store Submission`, which submits that tag's Store package with the `STORE_TENANT_ID`, `STORE_SELLER_ID`, `STORE_CLIENT_ID` and `STORE_CLIENT_SECRET` secrets, replacing any pending draft submission; the listing is left as it is. Re-run for a tag from the Actions tab.
 - Installed copies update from the latest release's assets by name, and the app downloads lyrics packs from the `romanization-packs` release: never rename a tag or a release asset.
 
 ## Agents
