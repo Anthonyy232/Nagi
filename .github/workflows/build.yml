@@ -187,27 +187,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.1
 
-      - uses: actions/setup-dotnet@v6.1.0
-        with:
-          dotnet-version: 11.0.x
-          cache: true
-          cache-dependency-path: |
-            **/*.csproj
-            **/Directory.Build.props
-            **/Directory.Packages.props
-            **/NuGet.config
-
-      - name: Create appsettings.json
-        shell: pwsh
-        env:
-          DISCORD_APP_ID: ${{ secrets.NAGI_DISCORD_KEY }}
-          API_KEY: ${{ secrets.NAGI_API_KEY }}
-        run: |
-          @{ Discord = @{ AppId = $env:DISCORD_APP_ID }; NagiApiServer = @{ Url = 'https://nagiflexapiserver.azurewebsites.net'; ApiKey = $env:API_KEY } } |
-            ConvertTo-Json -Depth 3 | Out-File src/Nagi.WinUI/appsettings.json -Encoding UTF8
-
-      - run: dotnet restore src/Nagi.WinUI/Nagi.WinUI.csproj
-
       - name: Patch manifest Publisher for sideload signing
         shell: pwsh
         env:
@@ -218,29 +197,10 @@ jobs:
           $xml.Package.Identity.Publisher = $env:CERT_SUBJECT
           $xml.Save((Join-Path $PWD $manifest))
 
-      - name: Pre-build x64 binaries
-        run: >
-          dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj
-          -c Release -r win-x64
-          -p:Platform=x64
-          -p:PublishReadyToRun=true
-          -p:TieredPGO=true
-          -p:GenerateAppxPackageOnBuild=false
-          -p:AppxPackageSigningEnabled=False
-          -p:PackageCertificateThumbprint=""
-          -p:GenerateTemporaryStoreCertificate=False
-
-      - name: Pre-build ARM64 binaries
-        run: >
-          dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj
-          -c Release -r win-arm64
-          -p:Platform=ARM64
-          -p:PublishReadyToRun=true
-          -p:TieredPGO=true
-          -p:GenerateAppxPackageOnBuild=false
-          -p:AppxPackageSigningEnabled=False
-          -p:PackageCertificateThumbprint=""
-          -p:GenerateTemporaryStoreCertificate=False
+      - uses: ./.github/actions/prebuild-winui
+        with:
+          discord-app-id: ${{ secrets.NAGI_DISCORD_KEY }}
+          api-key: ${{ secrets.NAGI_API_KEY }}
 
       - name: Build MSIX bundle
         run: >
@@ -284,50 +244,10 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.1
 
-      - uses: actions/setup-dotnet@v6.1.0
+      - uses: ./.github/actions/prebuild-winui
         with:
-          dotnet-version: 11.0.x
-          cache: true
-          cache-dependency-path: |
-            **/*.csproj
-            **/Directory.Build.props
-            **/Directory.Packages.props
-            **/NuGet.config
-
-      - name: Create appsettings.json
-        shell: pwsh
-        env:
-          DISCORD_APP_ID: ${{ secrets.NAGI_DISCORD_KEY }}
-          API_KEY: ${{ secrets.NAGI_API_KEY }}
-        run: |
-          @{ Discord = @{ AppId = $env:DISCORD_APP_ID }; NagiApiServer = @{ Url = 'https://nagiflexapiserver.azurewebsites.net'; ApiKey = $env:API_KEY } } |
-            ConvertTo-Json -Depth 3 | Out-File src/Nagi.WinUI/appsettings.json -Encoding UTF8
-
-      - run: dotnet restore src/Nagi.WinUI/Nagi.WinUI.csproj
-
-      - name: Pre-build x64 binaries
-        run: >
-          dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj
-          -c Release -r win-x64
-          -p:Platform=x64
-          -p:PublishReadyToRun=true
-          -p:TieredPGO=true
-          -p:GenerateAppxPackageOnBuild=false
-          -p:AppxPackageSigningEnabled=False
-          -p:PackageCertificateThumbprint=""
-          -p:GenerateTemporaryStoreCertificate=False
-
-      - name: Pre-build ARM64 binaries
-        run: >
-          dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj
-          -c Release -r win-arm64
-          -p:Platform=ARM64
-          -p:PublishReadyToRun=true
-          -p:TieredPGO=true
-          -p:GenerateAppxPackageOnBuild=false
-          -p:AppxPackageSigningEnabled=False
-          -p:PackageCertificateThumbprint=""
-          -p:GenerateTemporaryStoreCertificate=False
+          discord-app-id: ${{ secrets.NAGI_DISCORD_KEY }}
+          api-key: ${{ secrets.NAGI_API_KEY }}
 
       # Symbol packages need mspdbcmf for every platform pass, or the .appxsym files are left out.
       - name: Locate mspdbcmf

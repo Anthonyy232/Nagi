@@ -43,7 +43,7 @@ updates:
       prefix: chore(deps)
 
   - package-ecosystem: github-actions
-    directory: /
+    directories: ["/", "/.github/actions/*"]
     schedule:
       interval: monthly
     cooldown:
