@@ -552,11 +552,65 @@ public class LibraryFolderServiceTests : LibraryTestBase
             .Returns(new[] { (songPath, lastWriteTime) });
         const string sidecarPath = @"C:\Music\Scan\song.ttml";
         _fileSystem.GetFiles(folder.Path, "*.ttml").Returns([sidecarPath]);
+        _fileSystem.FileExists(lrcPath).Returns(true);
 
         await _library.Folders.RescanFolderForMusicAsync(folder.Id);
 
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         (await assertContext.Songs.FindAsync(song.Id))!.LrcFilePath.Should().Be(isOverride ? lrcPath : sidecarPath);
+        _fileSystem.Received(isOverride ? 0 : 1).DeleteFile(lrcPath);
+    }
+
+    [Theory]
+    [InlineData(false, false, true)]
+    [InlineData(true, false, false)]
+    [InlineData(false, true, false)]
+    public async Task RescanFolderForMusicAsync_ChangedSongDeletesCachedLyricsItStopsUsingButNotTheUsersEdit(
+        bool isOverride, bool readsThePathInOtherCase, bool deleted)
+    {
+        const string cacheRoot = @"C:\cache\lrc";
+        _pathConfig.LrcCachePath.Returns(cacheRoot);
+        var folder = new Folder { Id = Guid.NewGuid(), Path = @"C:\Music\Scan", Name = "Scan" };
+        const string songPath = @"C:\Music\Scan\song.mp3";
+        var lrcPath = isOverride
+            ? LrcCache.OverridePath(cacheRoot, songPath)
+            : LrcCache.CachedPath(cacheRoot, songPath, "Artist", "Album", "Song");
+        var song = new Song
+        {
+            Id = Guid.NewGuid(),
+            FilePath = songPath,
+            FolderId = folder.Id,
+            FileModifiedDate = DateTime.UtcNow.AddDays(-1),
+            LrcFilePath = lrcPath
+        };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Songs.Add(song);
+            await context.SaveChangesAsync();
+        }
+
+        var lastWriteTime = DateTime.UtcNow;
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(new[] { (songPath, lastWriteTime) });
+        _fileSystem.FileExists(lrcPath).Returns(true);
+        _metadataService.ExtractMetadataAsync(songPath, folder.Path).Returns(new SongFileMetadata
+        {
+            FilePath = songPath,
+            FileModifiedDate = lastWriteTime,
+            Title = "Song",
+            Artists = ["Artist"],
+            AlbumArtists = ["Artist"],
+            LrcFilePath = readsThePathInOtherCase ? lrcPath.ToLowerInvariant() : null
+        });
+
+        await _library.Folders.RescanFolderForMusicAsync(folder.Id);
+
+        _fileSystem.Received(deleted ? 1 : 0).DeleteFile(lrcPath);
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        (await assertContext.Songs.SingleAsync()).LrcFilePath.Should()
+            .Be(isOverride ? lrcPath : readsThePathInOtherCase ? lrcPath.ToLowerInvariant() : null);
     }
 
     [Theory]

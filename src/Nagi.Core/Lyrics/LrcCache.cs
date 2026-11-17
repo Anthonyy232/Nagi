@@ -30,8 +30,12 @@ internal static class LrcCache
         return Path.Combine(cacheRoot, $"{descriptivePrefix} - {IdentityHash(audioIdentity)}.lrc");
     }
 
+    private const string OverrideSuffix = ".override.lrc";
+
     public static string OverridePath(string cacheRoot, string audioIdentity) =>
-        Path.Combine(cacheRoot, $"{IdentityHash(audioIdentity)}.override.lrc");
+        Path.Combine(cacheRoot, IdentityHash(audioIdentity) + OverrideSuffix);
+
+    public static bool IsOverride(string path) => path.EndsWith(OverrideSuffix, StringComparison.OrdinalIgnoreCase);
 
     public static bool Contains(string cacheRoot, string? path)
     {
@@ -52,7 +56,7 @@ internal static class LrcCache
         var hash = IdentityHash(audioIdentity);
         var fileName = Path.GetFileName(path);
         return !fileName.EndsWith($" - {hash}.lrc", StringComparison.OrdinalIgnoreCase)
-               && !fileName.Equals($"{hash}.override.lrc", StringComparison.OrdinalIgnoreCase);
+               && !fileName.Equals(hash + OverrideSuffix, StringComparison.OrdinalIgnoreCase);
     }
 
     private static string IdentityHash(string audioIdentity)
