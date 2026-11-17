@@ -466,6 +466,8 @@ public sealed class LibraryFolderService : ILibraryFolderService
                         !_fileSystem.FileExists(lrcPath))
             .Select(s => s.FilePath)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        if (missingLyricsFiles.Count > 0)
+            _logger.LogInformation("Re-reading songs for {Count} missing lyrics files.", missingLyricsFiles.Count);
 
         var diskFileMap = _fileSystem.EnumerateFilesWithLastWriteTime(folderPath, "*.*", SearchOption.AllDirectories)
             .Where(x => FileExtensions.MusicFileExtensions.Contains(Path.GetExtension(x.Path)))
