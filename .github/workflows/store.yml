@@ -34,16 +34,14 @@ jobs:
       STORE_CLIENT_SECRET: ${{ secrets.STORE_CLIENT_SECRET }}
     steps:
       # Other releases, such as romanization-packs, have no Store package.
-      - name: Check tag and credentials
+      - name: Check tag
         id: gate
         shell: pwsh
         run: |
-          if ($env:TAG -notmatch '^\d+\.\d+\.\d+$') {
-            echo "::notice::$env:TAG is not an app release; nothing to submit."
-          } elseif (-not ($env:STORE_TENANT_ID -and $env:STORE_SELLER_ID -and $env:STORE_CLIENT_ID -and $env:STORE_CLIENT_SECRET)) {
-            echo "::notice::Store credentials are not set; skipping the Store submission."
-          } else {
+          if ($env:TAG -match '^\d+\.\d+\.\d+$') {
             echo "submit=true" >> $env:GITHUB_OUTPUT
+          } else {
+            echo "::notice::$env:TAG is not an app release; nothing to submit."
           }
 
       - uses: actions/checkout@v7.0.1
