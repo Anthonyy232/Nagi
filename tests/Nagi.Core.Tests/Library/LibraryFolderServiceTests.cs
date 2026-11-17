@@ -519,19 +519,19 @@ public class LibraryFolderServiceTests : LibraryTestBase
     }
 
     [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
     public async Task RescanFolderForMusicAsync_SidecarAddedBesideAnUnchangedSongReplacesCachedLyricsButNotTheUsersEdit(
-        bool isOverride)
+        bool isOverride, bool editSavedDuringScan)
     {
         const string cacheRoot = @"C:\cache\lrc";
         _pathConfig.LrcCachePath.Returns(cacheRoot);
         var lastWriteTime = DateTime.UtcNow;
         var folder = new Folder { Id = Guid.NewGuid(), Path = @"C:\Music\Scan", Name = "Scan" };
         const string songPath = @"C:\Music\Scan\song.mp3";
-        var lrcPath = isOverride
-            ? LrcCache.OverridePath(cacheRoot, songPath)
-            : LrcCache.CachedPath(cacheRoot, songPath, "Artist", "Album", "Song");
+        var overridePath = LrcCache.OverridePath(cacheRoot, songPath);
+        var lrcPath = isOverride ? overridePath : LrcCache.CachedPath(cacheRoot, songPath, "Artist", "Album", "Song");
         var song = new Song
         {
             Id = Guid.NewGuid(),
@@ -551,14 +551,26 @@ public class LibraryFolderServiceTests : LibraryTestBase
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
             .Returns(new[] { (songPath, lastWriteTime) });
         const string sidecarPath = @"C:\Music\Scan\song.ttml";
-        _fileSystem.GetFiles(folder.Path, "*.ttml").Returns([sidecarPath]);
-        _fileSystem.FileExists(lrcPath).Returns(true);
+        _fileSystem.GetFiles(folder.Path, "*.ttml").Returns(_ =>
+        {
+            if (editSavedDuringScan)
+            {
+                using var context = _dbHelper.ContextFactory.CreateDbContext();
+                context.Songs.Find(song.Id)!.LrcFilePath = overridePath;
+                context.SaveChanges();
+            }
+
+            return [sidecarPath];
+        });
+        _fileSystem.FileExists(Arg.Any<string>()).Returns(true);
 
         await _library.Folders.RescanFolderForMusicAsync(folder.Id);
 
+        var keepsEdit = isOverride || editSavedDuringScan;
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
-        (await assertContext.Songs.FindAsync(song.Id))!.LrcFilePath.Should().Be(isOverride ? lrcPath : sidecarPath);
-        _fileSystem.Received(isOverride ? 0 : 1).DeleteFile(lrcPath);
+        (await assertContext.Songs.FindAsync(song.Id))!.LrcFilePath.Should().Be(keepsEdit ? overridePath : sidecarPath);
+        _fileSystem.Received(keepsEdit ? 0 : 1).DeleteFile(lrcPath);
+        _fileSystem.DidNotReceive().DeleteFile(overridePath);
     }
 
     [Theory]

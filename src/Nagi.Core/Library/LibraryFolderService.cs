@@ -908,6 +908,8 @@ public sealed class LibraryFolderService : ILibraryFolderService
         var replacedLyrics = new List<string>();
         var updated = await UpdateSongsAsync(context, lrcPaths, (song, lrcPath) =>
         {
+            // Saving an edit doesn't wait for scans.
+            if (song.LrcFilePath is { } current && LrcCache.IsOverride(current)) return;
             if (song.LrcFilePath is not null) replacedLyrics.Add(song.LrcFilePath);
             song.LrcFilePath = lrcPath;
         }, cancellationToken).ConfigureAwait(false);
