@@ -251,7 +251,7 @@ public class LrcService : ILrcService, IDisposable
         await LyricsStorageHelper.SaveAsync(_fileSystemService, cachedLrcPath, lrcContent).ConfigureAwait(false);
         _logger.LogDebug("Cached lyrics for song {SongId} to {Path}", song.Id, cachedLrcPath);
 
-        if (previousPath == cachedLrcPath) return;
+        if (string.Equals(previousPath, cachedLrcPath, StringComparison.OrdinalIgnoreCase)) return;
         await UpdateSongAsync(song.Id, s => s.LrcFilePath = cachedLrcPath).ConfigureAwait(false);
         song.LrcFilePath = cachedLrcPath;
 

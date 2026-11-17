@@ -413,6 +413,24 @@ public class LrcServiceTests : IDisposable
         await _lrcLib.DidNotReceive().GetLyricsAsync(Arg.Any<Song>(), Arg.Any<CancellationToken>());
     }
 
+    [Fact]
+    public async Task GetLyricsAsync_CachingUnderThePreviousPathInOtherCase_KeepsTheFileItWrote()
+    {
+        const string cacheRoot = @"C:\cache\lrc";
+        var song = await SeedAsync(new Song { Id = Guid.NewGuid(), Title = "Song" });
+        var cachedPath = LrcCache.CachedPath(cacheRoot, song.FilePath, song.PrimaryArtistName, song.Album?.Title, song.Title);
+        song.LrcFilePath = cachedPath.ToUpperInvariant();
+        _pathConfig.LrcCachePath.Returns(cacheRoot);
+        // Missing until written, then found under either case, as on NTFS.
+        _fileSystem.FileExists(song.LrcFilePath).Returns(false, true);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
+        _lrcLib.GetLyricsAsync(Arg.Any<Song>(), Arg.Any<CancellationToken>()).Returns(Found("[00:01.00]From online"));
+
+        await _lrcService.GetLyricsAsync(song);
+
+        _fileSystem.DidNotReceive().DeleteFile(Arg.Any<string>());
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
