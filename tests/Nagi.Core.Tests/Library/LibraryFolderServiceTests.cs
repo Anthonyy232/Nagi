@@ -1160,9 +1160,8 @@ public class LibraryFolderServiceTests : LibraryTestBase
 
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
         _fileSystem.FileExists("cached-cover.jpg").Returns(true);
-        _fileSystem.FileExists("cached-lyrics.lrc").Returns(true);
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
-            .Returns(new[] { (filePath, modified) });
+            .Returns(new[] { (filePath, modified), ("cached-lyrics.lrc", modified) });
         _metadataService.ExtractMetadataAsync(filePath, folder.Path, false)
             .Returns(new SongFileMetadata
             {

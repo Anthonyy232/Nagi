@@ -460,18 +460,21 @@ public sealed class LibraryFolderService : ILibraryFolderService
         if (missingCovers.Count > 0)
             _logger.LogInformation("Re-reading songs for {Count} missing cached covers.", missingCovers.Count);
 
-        // A lyrics file beside a song hides the lyrics in its tags, so they're read again once it's gone.
+        var filesOnDisk = _fileSystem.EnumerateFilesWithLastWriteTime(folderPath, "*.*", SearchOption.AllDirectories).ToList();
+        var diskFileMap = filesOnDisk
+            .Where(x => FileExtensions.MusicFileExtensions.Contains(Path.GetExtension(x.Path)))
+            .ToDictionary(x => x.Path, x => x.LastWriteTimeUtc, StringComparer.OrdinalIgnoreCase);
+
+        // A lyrics file beside a song hides the lyrics in its tags, so they're read again once it's gone. Looked up in
+        // the listing: a check per file costs a round trip each on a network share.
+        var pathsOnDisk = filesOnDisk.Select(x => x.Path).ToHashSet(StringComparer.OrdinalIgnoreCase);
         var missingLyricsFiles = dbFiles
             .Where(s => s.LrcFilePath is { } lrcPath && !LrcCache.Contains(_pathConfig.LrcCachePath, lrcPath) &&
-                        !_fileSystem.FileExists(lrcPath))
+                        !pathsOnDisk.Contains(lrcPath))
             .Select(s => s.FilePath)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
         if (missingLyricsFiles.Count > 0)
             _logger.LogInformation("Re-reading songs for {Count} missing lyrics files.", missingLyricsFiles.Count);
-
-        var diskFileMap = _fileSystem.EnumerateFilesWithLastWriteTime(folderPath, "*.*", SearchOption.AllDirectories)
-            .Where(x => FileExtensions.MusicFileExtensions.Contains(Path.GetExtension(x.Path)))
-            .ToDictionary(x => x.Path, x => x.LastWriteTimeUtc, StringComparer.OrdinalIgnoreCase);
 
         cancellationToken.ThrowIfCancellationRequested();
 
