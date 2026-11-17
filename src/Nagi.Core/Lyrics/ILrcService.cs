@@ -15,7 +15,10 @@ public interface ILrcService
     /// <summary>Saves a lyrics override in Nagi's cache.</summary>
     Task SaveLyricsAsync(Song song, string lrcContent);
 
-    /// <summary>Removes cached lyrics without deleting external sidecars.</summary>
+    /// <summary>
+    ///     Removes the lyrics Nagi saved, never a file beside the song. Without the user's edit, the song has its own
+    ///     lyrics again.
+    /// </summary>
     Task<bool> RemoveCachedLyricsAsync(Song song);
 
     /// <summary>Whether Nagi manages the song's lyrics file.</summary>

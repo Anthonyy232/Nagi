@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
 using Nagi.Core.Library;
+using Nagi.Core.Metadata;
 using Nagi.Core.MusicServers;
 using Nagi.Core.OnlineProviders;
 using Nagi.Core.Platform;
@@ -18,6 +19,7 @@ public class LrcService : ILrcService, IDisposable
     private readonly IPathConfiguration _pathConfig;
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly IMusicServerService _musicServers;
+    private readonly IMetadataService _metadataService;
 
     private readonly OnlineLookupGate _onlineLookups;
 
@@ -32,6 +34,7 @@ public class LrcService : ILrcService, IDisposable
         IPathConfiguration pathConfig,
         IDbContextFactory<MusicDbContext> contextFactory,
         IMusicServerService musicServers,
+        IMetadataService metadataService,
         ILogger<LrcService> logger)
     {
         _fileSystemService = fileSystemService;
@@ -39,6 +42,7 @@ public class LrcService : ILrcService, IDisposable
         _pathConfig = pathConfig;
         _contextFactory = contextFactory;
         _musicServers = musicServers;
+        _metadataService = metadataService;
         _logger = logger;
         _onlineLookups = new OnlineLookupGate(settingsService, CoreSettings.FetchOnlineLyrics, CoreSettings.LyricsProviders);
     }
@@ -167,16 +171,21 @@ public class LrcService : ILrcService, IDisposable
         ArgumentNullException.ThrowIfNull(song);
         if (!HasCachedLyrics(song)) return false;
 
-        var cachedPath = song.LrcFilePath!;
-        // A server song has no folder of its own to hold an .lrc file.
-        var sidecarPath = song.IsFromServer ? null : new MediaFileFinder(_fileSystemService, _logger).FindSidecarLyrics(song.FilePath);
-        if (_fileSystemService.FileExists(cachedPath)) _fileSystemService.DeleteFile(cachedPath);
+        var removedPath = song.LrcFilePath!;
+        if (_fileSystemService.FileExists(removedPath)) _fileSystemService.DeleteFile(removedPath);
 
-        song.LrcFilePath = sidecarPath;
-        song.LyricsLastCheckedUtc = DateTime.UtcNow;
+        // Saving the edit deleted the lyrics it replaced, so they're found again: in the file, or else looked up again.
+        // Other lyrics Nagi saved are unwanted, so only a file the user put beside the song takes their place.
+        var isEdit = LrcCache.IsOverride(removedPath);
+        var lrcPath = song.IsFromServer ? null
+            : isEdit ? await _metadataService.GetLyricsPathAsync(song.FilePath).ConfigureAwait(false)
+            : new MediaFileFinder(_fileSystemService, _logger).FindSidecarLyrics(song.FilePath);
+
+        song.LrcFilePath = lrcPath;
+        song.LyricsLastCheckedUtc = isEdit && lrcPath is null ? null : DateTime.UtcNow;
         await UpdateSongAsync(song.Id, s =>
         {
-            s.LrcFilePath = sidecarPath;
+            s.LrcFilePath = lrcPath;
             s.LyricsLastCheckedUtc = song.LyricsLastCheckedUtc;
         }).ConfigureAwait(false);
         return true;
@@ -242,7 +251,7 @@ public class LrcService : ILrcService, IDisposable
         await LyricsStorageHelper.SaveAsync(_fileSystemService, cachedLrcPath, lrcContent).ConfigureAwait(false);
         _logger.LogDebug("Cached lyrics for song {SongId} to {Path}", song.Id, cachedLrcPath);
 
-        if (previousPath == cachedLrcPath) return;
+        if (string.Equals(previousPath, cachedLrcPath, StringComparison.OrdinalIgnoreCase)) return;
         await UpdateSongAsync(song.Id, s => s.LrcFilePath = cachedLrcPath).ConfigureAwait(false);
         song.LrcFilePath = cachedLrcPath;
 

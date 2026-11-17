@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using System.Net;
 using Nagi.Core.Library;
 using Nagi.Core.Lyrics;
+using Nagi.Core.Metadata;
 using Nagi.Core.MusicServers;
 using Nagi.Core.OnlineProviders;
 using Nagi.Core.Platform;
@@ -25,6 +26,7 @@ public class LrcServiceTests : IDisposable
     private readonly ILogger<LrcService> _logger;
     private readonly ILyricsProvider _netEase = LyricsProvider(ServiceProviderIds.NetEase);
     private readonly IMusicServerService _musicServers = Substitute.For<IMusicServerService>();
+    private readonly IMetadataService _metadataService = Substitute.For<IMetadataService>();
     private readonly LrcService _lrcService;
 
     public LrcServiceTests()
@@ -41,6 +43,7 @@ public class LrcServiceTests : IDisposable
             _pathConfig,
             _db.ContextFactory,
             _musicServers,
+            _metadataService,
             _logger);
     }
 
@@ -243,7 +246,7 @@ public class LrcServiceTests : IDisposable
         var onlineService = new LrcLibService(factory, pipeline, Substitute.For<ILogger<LrcLibService>>());
         var netEaseService = new NetEaseLyricsService(factory, pipeline, Substitute.For<ILogger<NetEaseLyricsService>>());
         using var service = new LrcService(_fileSystem, [onlineService, netEaseService], _settingsService,
-            _pathConfig, _db.ContextFactory, _musicServers, _logger);
+            _pathConfig, _db.ContextFactory, _musicServers, _metadataService, _logger);
         var song = await SeedAsync(new Song { Id = Guid.NewGuid(), Title = "Song", DurationTicks = TimeSpan.FromSeconds(180).Ticks });
         _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
         _settingsService.EnableOnly(CoreSettings.LyricsProviders, providerId);
@@ -337,37 +340,59 @@ public class LrcServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task SaveAndRemoveLyrics_WithExternalSidecar_RestoresSidecar()
+    public async Task SaveAndRemoveLyrics_RestoresTheSongsOwnLyrics()
     {
         const string cacheRoot = @"C:\cache\lrc";
-        const string externalPath = @"C:\Music\Song.lrc";
-        const string content = "[00:01.00]Correct lyrics";
+        const string ownLyricsPath = @"C:\Music\Song.ttml";
         var song = await SeedAsync(new Song
         {
             Id = Guid.NewGuid(),
             FilePath = @"C:\Music\Song.flac",
-            Title = "Song",
-            PrimaryArtistName = "Artist",
-            LrcFilePath = externalPath,
-            Album = new Album { Title = "Album" }
+            LrcFilePath = ownLyricsPath
         });
-        var expectedPath = LrcCache.OverridePath(cacheRoot, song.FilePath);
+        var overridePath = LrcCache.OverridePath(cacheRoot, song.FilePath);
         _pathConfig.LrcCachePath.Returns(cacheRoot);
-        _fileSystem.GetFiles(@"C:\Music", "*.lrc").Returns([externalPath]);
-        _fileSystem.FileExists(expectedPath).Returns(true);
+        _fileSystem.FileExists(overridePath).Returns(true);
+        _metadataService.GetLyricsPathAsync(song.FilePath).Returns(ownLyricsPath);
 
-        await _lrcService.SaveLyricsAsync(song, content);
+        await _lrcService.SaveLyricsAsync(song, "[00:01.00]My edit");
         var removed = await _lrcService.RemoveCachedLyricsAsync(song);
 
         removed.Should().BeTrue();
-        await _fileSystem.Received(1).WriteAllTextAsync(
-            Arg.Is<string>(path => path.StartsWith(expectedPath + ".") && path.EndsWith(".tmp")), content);
-        _fileSystem.Received(1).MoveFile(Arg.Any<string>(), expectedPath, true);
-        await _fileSystem.DidNotReceive().WriteAllTextAsync(externalPath, Arg.Any<string>());
-        _fileSystem.Received(1).DeleteFile(expectedPath);
-        _fileSystem.DidNotReceive().DeleteFile(externalPath);
-        (await StoredAsync(song)).LrcFilePath.Should().Be(externalPath);
-        song.LrcFilePath.Should().Be(externalPath);
+        _fileSystem.Received(1).DeleteFile(overridePath);
+        (await StoredAsync(song)).LrcFilePath.Should().Be(ownLyricsPath);
+        song.LrcFilePath.Should().Be(ownLyricsPath);
+    }
+
+    [Fact]
+    public async Task RemoveCachedLyricsAsync_GivesWayToAFileBesideTheSongButNotToItsTags()
+    {
+        const string cacheRoot = @"C:\cache\lrc";
+        var song = await SeedAsync(new Song { Id = Guid.NewGuid(), LrcFilePath = Path.Combine(cacheRoot, "song.lrc") });
+        var sidecarPath = Path.ChangeExtension(song.FilePath, ".lrc");
+        _pathConfig.LrcCachePath.Returns(cacheRoot);
+        _fileSystem.GetFiles(Path.GetDirectoryName(song.FilePath)!, "*.lrc").Returns([sidecarPath]);
+
+        await _lrcService.RemoveCachedLyricsAsync(song);
+
+        (await StoredAsync(song)).LrcFilePath.Should().Be(sidecarPath);
+        await _metadataService.DidNotReceive().GetLyricsPathAsync(Arg.Any<string>());
+    }
+
+    [Fact]
+    public async Task SaveAndRemoveLyrics_WithNoLyricsOfItsOwn_LooksThemUpAgain()
+    {
+        _pathConfig.LrcCachePath.Returns(@"C:\cache\lrc");
+        var song = await SeedAsync(new Song { Id = Guid.NewGuid(), Title = "Song", FilePath = @"C:\Music\Song.flac" });
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
+        _lrcLib.GetLyricsAsync(Arg.Any<Song>(), Arg.Any<CancellationToken>()).Returns(Found("[00:01.00]From online"));
+        _metadataService.GetLyricsPathAsync(song.FilePath).Returns((string?)null);
+
+        await _lrcService.SaveLyricsAsync(song, "[00:01.00]My edit");
+        await _lrcService.RemoveCachedLyricsAsync(song);
+        var result = await _lrcService.GetLyricsAsync(song);
+
+        result!.Lines.Should().ContainSingle().Which.Text.Should().Be("From online");
     }
 
     [Fact]
@@ -386,6 +411,24 @@ public class LrcServiceTests : IDisposable
 
         result!.Lines.Should().ContainSingle().Which.Text.Should().Be("My edit");
         await _lrcLib.DidNotReceive().GetLyricsAsync(Arg.Any<Song>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task GetLyricsAsync_CachingUnderThePreviousPathInOtherCase_KeepsTheFileItWrote()
+    {
+        const string cacheRoot = @"C:\cache\lrc";
+        var song = await SeedAsync(new Song { Id = Guid.NewGuid(), Title = "Song" });
+        var cachedPath = LrcCache.CachedPath(cacheRoot, song.FilePath, song.PrimaryArtistName, song.Album?.Title, song.Title);
+        song.LrcFilePath = cachedPath.ToUpperInvariant();
+        _pathConfig.LrcCachePath.Returns(cacheRoot);
+        // Missing until written, then found under either case, as on NTFS.
+        _fileSystem.FileExists(song.LrcFilePath).Returns(false, true);
+        _settingsService.Set(CoreSettings.FetchOnlineLyrics, true);
+        _lrcLib.GetLyricsAsync(Arg.Any<Song>(), Arg.Any<CancellationToken>()).Returns(Found("[00:01.00]From online"));
+
+        await _lrcService.GetLyricsAsync(song);
+
+        _fileSystem.DidNotReceive().DeleteFile(Arg.Any<string>());
     }
 
     [Theory]

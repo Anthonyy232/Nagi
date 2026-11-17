@@ -324,8 +324,9 @@ public sealed class LibraryFolderService : ILibraryFolderService
         var filesToRead = changes.Added.Concat(changes.Updated).ToList();
         var import = filesToRead.Count > 0
             ? await ImportFilesAsync(folderId, folder.Path, filesToRead, changes, progress, token).ConfigureAwait(false)
-            : new FileImport(0, [], []);
+            : new FileImport(0, [], [], []);
         token.ThrowIfCancellationRequested();
+        _importer.DeleteCachedLyrics(import.ReplacedLyrics);
 
         // Reading a file looks for its lyrics and folder art, so only songs that weren't read need a look for files
         // the user put beside them since.
@@ -459,16 +460,21 @@ public sealed class LibraryFolderService : ILibraryFolderService
         if (missingCovers.Count > 0)
             _logger.LogInformation("Re-reading songs for {Count} missing cached covers.", missingCovers.Count);
 
-        // A lyrics file beside a song hides the lyrics in its tags, so they're read again once it's gone.
-        var missingLyricsFiles = dbFiles
-            .Where(s => s.LrcFilePath is { } lrcPath && !LrcCache.Contains(_pathConfig.LrcCachePath, lrcPath) &&
-                        !_fileSystem.FileExists(lrcPath))
-            .Select(s => s.FilePath)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-        var diskFileMap = _fileSystem.EnumerateFilesWithLastWriteTime(folderPath, "*.*", SearchOption.AllDirectories)
+        var filesOnDisk = _fileSystem.EnumerateFilesWithLastWriteTime(folderPath, "*.*", SearchOption.AllDirectories).ToList();
+        var diskFileMap = filesOnDisk
             .Where(x => FileExtensions.MusicFileExtensions.Contains(Path.GetExtension(x.Path)))
             .ToDictionary(x => x.Path, x => x.LastWriteTimeUtc, StringComparer.OrdinalIgnoreCase);
+
+        // A lyrics file beside a song hides the lyrics in its tags, so they're read again once it's gone. Looked up in
+        // the listing: a check per file costs a round trip each on a network share.
+        var pathsOnDisk = filesOnDisk.Select(x => x.Path).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var missingLyricsFiles = dbFiles
+            .Where(s => s.LrcFilePath is { } lrcPath && !LrcCache.Contains(_pathConfig.LrcCachePath, lrcPath) &&
+                        !pathsOnDisk.Contains(lrcPath))
+            .Select(s => s.FilePath)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        if (missingLyricsFiles.Count > 0)
+            _logger.LogInformation("Re-reading songs for {Count} missing lyrics files.", missingLyricsFiles.Count);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -508,7 +514,9 @@ public sealed class LibraryFolderService : ILibraryFolderService
     /// <param name="SongCount">The number of songs added or updated.</param>
     /// <param name="Directories">The directories the songs are in.</param>
     /// <param name="ReplacedCovers">Covers the updated songs used before, to delete once unused.</param>
-    private sealed record FileImport(int SongCount, HashSet<string> Directories, IReadOnlyCollection<string> ReplacedCovers);
+    /// <param name="ReplacedLyrics">Lyrics files the updated songs used before, to delete if Nagi cached them.</param>
+    private sealed record FileImport(int SongCount, HashSet<string> Directories, IReadOnlyCollection<string> ReplacedCovers,
+        IReadOnlyCollection<string> ReplacedLyrics);
 
     /// <summary>
     ///     Reads the files in parallel and writes their songs in batches as they come, so writing starts at once and
@@ -648,7 +656,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
                 failureSummary.Values.Sum(), breakdown);
         }
 
-        return new FileImport(totalSaved, discoveredDirectories, import.ReplacedCovers);
+        return new FileImport(totalSaved, discoveredDirectories, import.ReplacedCovers, import.ReplacedLyrics);
     }
 
     public async Task RefreshOnStartupAsync()
@@ -890,19 +898,25 @@ public sealed class LibraryFolderService : ILibraryFolderService
             .Select(s => new { s.Id, s.FilePath, s.LrcFilePath })
             .ToListAsync(cancellationToken).ConfigureAwait(false);
 
-        var cacheRoot = _pathConfig.LrcCachePath;
         var finder = new MediaFileFinder(_fileSystem, _logger);
         var lrcPaths = new Dictionary<Guid, string>();
         foreach (var song in songs.Where(s => s.LrcFilePath == null ||
-                                              (LrcCache.Contains(cacheRoot, s.LrcFilePath) &&
-                                               s.LrcFilePath != LrcCache.OverridePath(cacheRoot, s.FilePath))))
+                                              (LrcCache.Contains(_pathConfig.LrcCachePath, s.LrcFilePath) &&
+                                               !LrcCache.IsOverride(s.LrcFilePath))))
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (finder.FindSidecarLyrics(song.FilePath) is { } lrcPath) lrcPaths[song.Id] = lrcPath;
         }
 
-        var updated = await UpdateSongsAsync(context, lrcPaths, (song, lrcPath) => song.LrcFilePath = lrcPath, cancellationToken)
-            .ConfigureAwait(false);
+        var replacedLyrics = new List<string>();
+        var updated = await UpdateSongsAsync(context, lrcPaths, (song, lrcPath) =>
+        {
+            // Saving an edit doesn't wait for scans.
+            if (song.LrcFilePath is { } current && LrcCache.IsOverride(current)) return;
+            if (song.LrcFilePath is not null) replacedLyrics.Add(song.LrcFilePath);
+            song.LrcFilePath = lrcPath;
+        }, cancellationToken).ConfigureAwait(false);
+        _importer.DeleteCachedLyrics(replacedLyrics);
         if (updated > 0) _logger.LogInformation("Updated {Count} songs with newly discovered LRC files.", updated);
         return updated;
     }

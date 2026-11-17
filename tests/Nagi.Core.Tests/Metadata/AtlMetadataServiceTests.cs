@@ -355,6 +355,24 @@ public class AtlMetadataServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task GetLyricsPathAsync_CachesEmbeddedSyncedLyricsUnderTheNameAScanGivesThem()
+    {
+        var audioPath = CreateTestAudioFile("own.mp3", track =>
+        {
+            track.Title = "Own Song";
+            track.Artist = "Own Artist";
+            track.Album = "Own Album";
+            track.Lyrics.Add(new LyricsInfo { SynchronizedLyrics = [new LyricsInfo.LyricsPhrase(1000, "Embedded line")] });
+            track.EmbeddedPictures.Add(PictureInfo.fromBinaryData([0x89, 0x50, 0x4E, 0x47]));
+        });
+
+        var result = await _metadataService.GetLyricsPathAsync(audioPath);
+
+        result.Should().Be(LrcCache.CachedPath(LrcCachePath, audioPath, "Own Artist", "Own Album", "Own Song"));
+        await _imageProcessor.DidNotReceive().SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>());
+    }
+
+    [Fact]
     public async Task ExtractMetadataAsync_EmbeddedSyncedLyrics_KeepLongTimestampsAndReplaceTheCacheAfterWriting()
     {
         var audioPath = CreateTestAudioFile("synced.mp3", track =>

@@ -209,8 +209,14 @@ public sealed class LibraryImporter
 
     private async Task DeleteSongFilesAsync(SongFiles files, CancellationToken cancellationToken)
     {
+        DeleteCachedLyrics(files.LrcPaths);
+        await _artwork.DeleteUnreferencedCoverArtAsync(files.CoverPaths, cancellationToken).ConfigureAwait(false);
+    }
+
+    internal void DeleteCachedLyrics(IEnumerable<string> lrcPaths)
+    {
         // Only files in Nagi's own cache: an LRC that sits next to the song belongs to the user.
-        foreach (var lrcPath in files.LrcPaths.Where(path => LrcCache.Contains(_pathConfig.LrcCachePath, path) && _fileSystem.FileExists(path)))
+        foreach (var lrcPath in lrcPaths.Where(path => LrcCache.Contains(_pathConfig.LrcCachePath, path) && _fileSystem.FileExists(path)))
             try
             {
                 _fileSystem.DeleteFile(lrcPath);
@@ -219,8 +225,6 @@ public sealed class LibraryImporter
             {
                 _logger.LogWarning(ex, "Failed to delete cached LRC file {LrcPath}.", lrcPath);
             }
-
-        await _artwork.DeleteUnreferencedCoverArtAsync(files.CoverPaths, cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<ImportCaches> LoadCachesAsync(MusicDbContext context, CancellationToken cancellationToken)
@@ -287,6 +291,9 @@ internal sealed class SongImport(
     /// </summary>
     public HashSet<string> ReplacedCovers { get; } = new(StringComparer.OrdinalIgnoreCase);
 
+    /// <summary>The lyrics files songs used before they were read again.</summary>
+    public HashSet<string> ReplacedLyrics { get; } = new(StringComparer.OrdinalIgnoreCase);
+
     public ValueTask DisposeAsync() => context.DisposeAsync();
 
     /// <param name="apply">Fills in what <typeparamref name="TMetadata" /> knows beyond the tags; isNew is true for an added song.</param>
@@ -319,10 +326,13 @@ internal sealed class SongImport(
         {
             existingSongs.TryGetValue(metadata.FilePath, out var existingSong);
             var previousArt = existingSong?.AlbumArtUriFromTrack;
+            var previousLyrics = existingSong?.LrcFilePath;
             var song = MapSong(metadata, artistLookup, albumLookup, genreLookup, existingSong);
             apply?.Invoke(song, metadata, existingSong is null);
             if (previousArt is not null && previousArt != song.AlbumArtUriFromTrack)
                 ReplacedCovers.Add(previousArt);
+            if (previousLyrics is not null && !string.Equals(previousLyrics, song.LrcFilePath, StringComparison.OrdinalIgnoreCase))
+                ReplacedLyrics.Add(previousLyrics);
         }
 
         // With AutoDetectChangesEnabled=false, collection operations (Clear/Add on navigation properties)
@@ -549,7 +559,8 @@ internal sealed class SongImport(
             song.AlbumArtUriFromTrack = metadata.CoverArtUri;
             song.LightSwatchId = metadata.LightSwatchId;
             song.DarkSwatchId = metadata.DarkSwatchId;
-            song.LrcFilePath = metadata.LrcFilePath;
+            // An edit stays: a read can time out before finding it, or start before it's saved.
+            if (song.LrcFilePath is not { } lrcPath || !LrcCache.IsOverride(lrcPath)) song.LrcFilePath = metadata.LrcFilePath;
         }
         song.Year = metadata.Year;
         song.TrackNumber = metadata.TrackNumber;
