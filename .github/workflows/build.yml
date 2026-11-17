@@ -366,7 +366,6 @@ jobs:
           $zip = [IO.Compression.ZipFile]::OpenRead($upload.FullName)
           $entries = $zip.Entries.Name
           $zip.Dispose()
-          $entries | ForEach-Object { echo $_ }
           if (-not ($entries -like '*.appxsym')) { throw "msixupload has no symbol packages" }
           Copy-Item $upload.FullName "${{ github.workspace }}/store-output/Nagi.msixupload"
 
