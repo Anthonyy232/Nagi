@@ -52,8 +52,7 @@ public partial class AtlMetadataService : IMetadataService
             metadata.FileModifiedDate = fileInfo.LastWriteTimeUtc;
             metadata.Title = Path.GetFileNameWithoutExtension(filePath);
 
-            // ATL parsing is synchronous, so enforce the timeout while awaiting it.
-            var track = await Task.Run(() => new Track(filePath)).WaitAsync(TimeSpan.FromSeconds(30)).ConfigureAwait(false);
+            var track = await ReadTrackAsync(filePath).ConfigureAwait(false);
 
             // Readable is a property of the format, not the file; ATL reports a damaged file as an unknown format.
             if (!track.AudioFormat.Readable || track.AudioFormat.ID == -1 ||
@@ -224,6 +223,29 @@ public partial class AtlMetadataService : IMetadataService
             ? await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData).ConfigureAwait(false)
             : default;
     }
+
+    public async Task<string?> GetLyricsPathAsync(string filePath)
+    {
+        // The tags name the cached lyrics, so they're read as a scan reads them.
+        var metadata = await ExtractMetadataAsync(filePath, includeMediaAssets: false).ConfigureAwait(false);
+        if (metadata.Failure is not null) return null;
+
+        try
+        {
+            var track = await ReadTrackAsync(filePath).ConfigureAwait(false);
+            return await GetLrcPathAsync(filePath, metadata.FileModifiedDate!.Value, metadata.Artists[0], metadata.Album,
+                metadata.Title, track).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to read the lyrics of {FilePath}.", filePath);
+            return null;
+        }
+    }
+
+    // ATL parsing is synchronous, so the timeout is enforced while awaiting it.
+    private static Task<Track> ReadTrackAsync(string filePath) =>
+        Task.Run(() => new Track(filePath)).WaitAsync(TimeSpan.FromSeconds(30));
 
     // The user's override wins; lyrics extracted from the tags are reused until the audio file changes.
     private async Task<string?> GetLrcPathAsync(string audioFilePath, DateTime audioFileLastWriteTime, string? artist, string? album, string? title, Track track)

@@ -14,6 +14,9 @@ public interface IMetadataService
     Task<SongFileMetadata> ExtractMetadataAsync(string filePath, string? baseFolderPath = null,
         bool includeMediaAssets = true);
 
+    /// <summary>The lyrics file <see cref="ExtractMetadataAsync" /> gives the song, without processing its cover art.</summary>
+    Task<string?> GetLyricsPathAsync(string filePath);
+
     /// <summary>
     ///     Writes ReplayGain track tags that <see cref="ExtractMetadataAsync" /> reads back. Logs, rather than throws,
     ///     when the file can't be written.
