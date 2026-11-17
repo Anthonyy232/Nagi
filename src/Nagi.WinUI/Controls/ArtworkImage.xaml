@@ -8,7 +8,6 @@
     <Grid Width="{x:Bind Size, Mode=OneWay}" Height="{x:Bind Size, Mode=OneWay}">
         <imageex:ImageEx x:Name="Image"
                          CornerRadius="{StaticResource ArtworkCornerRadius}"
-                         IsCacheEnabled="True"
                          Source="{x:Bind Decode(Source, Size), Mode=OneWay}"
                          Stretch="UniformToFill"
                          Visibility="{x:Bind ImageVisibility(Source), Mode=OneWay}" />
