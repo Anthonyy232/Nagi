@@ -42,7 +42,7 @@ public sealed class TestLibrary : IDisposable
             NullLogger<ArtworkService>.Instance);
         Importer = new LibraryImporter(contextFactory, fileSystem, pathConfig, libraryArtwork, Notifier, settingsService,
             NullLogger<LibraryImporter>.Instance);
-        Folders = new LibraryFolderService(contextFactory, fileSystem, metadataService, imageProcessor, replayGainService,
+        Folders = new LibraryFolderService(contextFactory, fileSystem, metadataService, imageProcessor, pathConfig, replayGainService,
             settingsService, Importer, Artwork, libraryArtwork, Notifier, WriteLock, NullLogger<LibraryFolderService>.Instance);
         Listening = new ListeningService(contextFactory, Notifier, NullLogger<ListeningService>.Instance);
         Playlists = new PlaylistService(contextFactory, fileSystem, imageProcessor, pathConfig, Notifier,

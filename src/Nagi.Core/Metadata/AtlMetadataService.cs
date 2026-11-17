@@ -79,8 +79,6 @@ public partial class AtlMetadataService : IMetadataService
                         _logger.LogWarning("LRC extraction timed out for file: {FilePath}", filePath);
                     }
 
-                    if (string.IsNullOrWhiteSpace(metadata.LrcFilePath))
-                        metadata.LrcFilePath = new MediaFileFinder(_fileSystem, _logger).FindSidecarLyrics(filePath);
                     try
                     {
                         (metadata.CoverArtUri, metadata.LightSwatchId, metadata.DarkSwatchId) =
@@ -232,6 +230,8 @@ public partial class AtlMetadataService : IMetadataService
     {
         var overridePath = LrcCache.OverridePath(_pathConfig.LrcCachePath, audioFilePath);
         if (_fileSystem.FileExists(overridePath)) return overridePath;
+
+        if (new MediaFileFinder(_fileSystem, _logger).FindSidecarLyrics(audioFilePath) is { } sidecarPath) return sidecarPath;
 
         var cachedLrcPath = LrcCache.CachedPath(_pathConfig.LrcCachePath, audioFilePath, artist, album, title);
 

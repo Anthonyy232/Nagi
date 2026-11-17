@@ -77,7 +77,7 @@ Settings is grouped into:
 
 **Lyrics and appearance**
 
-- Lyrics from embedded tags, `.lrc` and `.ttml` files, or optional online providers, highlighted word by word when the lyrics time each word. Click a synced line to seek to it.
+- Lyrics from `.lrc` and `.ttml` files beside the song, which take precedence, then embedded tags or optional online providers, highlighted word by word when the lyrics time each word. Click a synced line to seek to it.
 - Local romanization for Japanese, Korean and Hindi lyrics via downloadable packs.
 - Mica, Mica Alt and Acrylic backdrops, with colors taken from the current album art.
 - Resizable always-on-top mini-player.

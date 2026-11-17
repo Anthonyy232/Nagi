@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Artwork;
 using Nagi.Core.Data;
+using Nagi.Core.Lyrics;
 using Nagi.Core.Metadata;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
@@ -18,6 +19,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
     private readonly IFileSystemService _fileSystem;
     private readonly IMetadataService _metadataService;
     private readonly IImageProcessor _imageProcessor;
+    private readonly IPathConfiguration _pathConfig;
     private readonly IReplayGainService _replayGainService;
     private readonly ISettingsService _settingsService;
     private readonly LibraryImporter _importer;
@@ -32,6 +34,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
         IFileSystemService fileSystem,
         IMetadataService metadataService,
         IImageProcessor imageProcessor,
+        IPathConfiguration pathConfig,
         IReplayGainService replayGainService,
         ISettingsService settingsService,
         LibraryImporter importer,
@@ -45,6 +48,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
         _fileSystem = fileSystem;
         _metadataService = metadataService;
         _imageProcessor = imageProcessor;
+        _pathConfig = pathConfig;
         _replayGainService = replayGainService;
         _settingsService = settingsService;
         _importer = importer;
@@ -326,7 +330,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
         // Reading a file looks for its lyrics and folder art, so only songs that weren't read need a look for files
         // the user put beside them since.
         var lookForMediaFiles = changes.Untouched > 0 || changes.KeepMediaAssets.Count > 0;
-        var lrcTask = lookForMediaFiles ? UpdateMissingLrcPathsAsync(folderId, token) : Task.FromResult(0);
+        var lrcTask = lookForMediaFiles ? UpdateSidecarLrcPathsAsync(folderId, token) : Task.FromResult(0);
         var coverArtTask = lookForMediaFiles ? UpdateMissingCoverArtAsync(folderId, folder.Path, token) : Task.FromResult(0);
         var artistImageTask = _libraryArtwork.UpdateMissingArtistImagesFromFoldersAsync(folderId, token);
         await Task.WhenAll(lrcTask, coverArtTask, artistImageTask,
@@ -425,7 +429,8 @@ public sealed class LibraryFolderService : ILibraryFolderService
 
     /// <param name="Added">Files on disk that aren't in the library.</param>
     /// <param name="Updated">
-    ///     Songs to read again: their file changed or their cached cover is missing, or a forced scan reads them all.
+    ///     Songs to read again: their file changed, or their cached cover or the lyrics file beside them is missing, or a
+    ///     forced scan reads them all.
     /// </param>
     /// <param name="KeepMediaAssets">
     ///     The updates a forced scan reads although they didn't change on disk, so they keep their art and lyrics.
@@ -444,7 +449,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
         var dbFiles = await analysisContext.Songs
             .AsNoTracking()
             .Where(s => s.FolderId == folderId)
-            .Select(s => new { s.FilePath, s.FileModifiedDate, s.AlbumArtUriFromTrack })
+            .Select(s => new { s.FilePath, s.FileModifiedDate, s.AlbumArtUriFromTrack, s.LrcFilePath })
             .ToListAsync(cancellationToken).ConfigureAwait(false);
 
         // Covers are named by their content, so re-reading a song recreates a deleted cover at its old path.
@@ -453,6 +458,13 @@ public sealed class LibraryFolderService : ILibraryFolderService
         missingCovers.RemoveWhere(_fileSystem.FileExists);
         if (missingCovers.Count > 0)
             _logger.LogInformation("Re-reading songs for {Count} missing cached covers.", missingCovers.Count);
+
+        // A lyrics file beside a song hides the lyrics in its tags, so they're read again once it's gone.
+        var missingLyricsFiles = dbFiles
+            .Where(s => s.LrcFilePath is { } lrcPath && !LrcCache.Contains(_pathConfig.LrcCachePath, lrcPath) &&
+                        !_fileSystem.FileExists(lrcPath))
+            .Select(s => s.FilePath)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         var diskFileMap = _fileSystem.EnumerateFilesWithLastWriteTime(folderPath, "*.*", SearchOption.AllDirectories)
             .Where(x => FileExtensions.MusicFileExtensions.Contains(Path.GetExtension(x.Path)))
@@ -473,7 +485,8 @@ public sealed class LibraryFolderService : ILibraryFolderService
                 added.Add(path);
             }
             else if (diskModTime != dbFile.FileModifiedDate ||
-                     (dbFile.AlbumArtUriFromTrack is { } cover && missingCovers.Contains(cover)))
+                     (dbFile.AlbumArtUriFromTrack is { } cover && missingCovers.Contains(cover)) ||
+                     missingLyricsFiles.Contains(path))
             {
                 updated.Add(path);
             }
@@ -865,20 +878,24 @@ public sealed class LibraryFolderService : ILibraryFolderService
     }
 
     /// <summary>
-    ///     Gives songs without lyrics the .lrc, .ttml or .txt file the user put beside them since the song was read.
+    ///     Gives songs the .lrc, .ttml or .txt file the user put beside them since the song was read, in place of lyrics
+    ///     Nagi cached from the tags or online. The user's own edit is kept.
     /// </summary>
     /// <returns>The number of songs updated.</returns>
-    private async Task<int> UpdateMissingLrcPathsAsync(Guid folderId, CancellationToken cancellationToken)
+    private async Task<int> UpdateSidecarLrcPathsAsync(Guid folderId, CancellationToken cancellationToken)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
-        var songsWithoutLrc = await context.Songs
-            .Where(s => s.FolderId == folderId && s.LrcFilePath == null)
-            .Select(s => new { s.Id, s.FilePath })
+        var songs = await context.Songs
+            .Where(s => s.FolderId == folderId)
+            .Select(s => new { s.Id, s.FilePath, s.LrcFilePath })
             .ToListAsync(cancellationToken).ConfigureAwait(false);
 
+        var cacheRoot = _pathConfig.LrcCachePath;
         var finder = new MediaFileFinder(_fileSystem, _logger);
         var lrcPaths = new Dictionary<Guid, string>();
-        foreach (var song in songsWithoutLrc)
+        foreach (var song in songs.Where(s => s.LrcFilePath == null ||
+                                              (LrcCache.Contains(cacheRoot, s.LrcFilePath) &&
+                                               s.LrcFilePath != LrcCache.OverridePath(cacheRoot, s.FilePath))))
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (finder.FindSidecarLyrics(song.FilePath) is { } lrcPath) lrcPaths[song.Id] = lrcPath;

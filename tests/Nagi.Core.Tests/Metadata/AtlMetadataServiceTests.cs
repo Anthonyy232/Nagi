@@ -242,7 +242,7 @@ public class AtlMetadataServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task ExtractMetadataAsync_LrcOverrideWinsOverAFreshCache()
+    public async Task ExtractMetadataAsync_LrcOverrideWinsOverASidecarAndAFreshCache()
     {
         var audioFilePath = CreateTestAudioFile("override.mp3", track =>
         {
@@ -254,6 +254,7 @@ public class AtlMetadataServiceTests : IDisposable
         _fileSystem.FileExists(overridePath).Returns(true);
         _fileSystem.FileExists(cachePath).Returns(true);
         _fileSystem.GetLastWriteTimeUtc(cachePath).Returns(DateTime.UtcNow.AddDays(1));
+        _fileSystem.GetFiles(_tempDirectory, "*.lrc").Returns([Path.Combine(_tempDirectory, "override.lrc")]);
 
         var result = await _metadataService.ExtractMetadataAsync(audioFilePath);
 
@@ -262,19 +263,18 @@ public class AtlMetadataServiceTests : IDisposable
 
     [Theory]
     [InlineData("lrc")]
+    [InlineData("ttml")]
     [InlineData("txt")]
-    public async Task ExtractMetadataAsync_WithLyricsSidecar_ReturnsItsPath(string extension)
+    public async Task ExtractMetadataAsync_LyricsSidecarWinsOverEmbeddedSyncedLyrics(string extension)
     {
-        var audioFilePath = CreateTestAudioFile("external.mp3", _ => { });
-        var expectedPath = Path.Combine(_tempDirectory, "external." + extension);
-
-        _fileSystem.FileExists(Arg.Is<string>(s => s.Contains(LrcCachePath))).Returns(false);
-        _fileSystem.GetFiles(_tempDirectory, "*.lrc").Returns(Array.Empty<string>());
-        _fileSystem.GetFiles(_tempDirectory, "*." + extension).Returns(new[] { expectedPath });
+        var audioFilePath = CreateTestAudioFile("external.mp3", track =>
+            track.Lyrics.Add(new LyricsInfo { SynchronizedLyrics = [new LyricsInfo.LyricsPhrase(1000, "Embedded line")] }));
+        var sidecarPath = Path.Combine(_tempDirectory, "external." + extension);
+        _fileSystem.GetFiles(_tempDirectory, "*." + extension).Returns([sidecarPath]);
 
         var result = await _metadataService.ExtractMetadataAsync(audioFilePath);
 
-        result.LrcFilePath.Should().Be(expectedPath);
+        result.LrcFilePath.Should().Be(sidecarPath);
     }
 
     [Fact]
