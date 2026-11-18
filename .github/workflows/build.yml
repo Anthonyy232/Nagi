@@ -197,7 +197,7 @@ jobs:
           $xml.Package.Identity.Publisher = $env:CERT_SUBJECT
           $xml.Save((Join-Path $PWD $manifest))
 
-      - uses: ./.github/actions/prebuild-winui
+      - uses: ./.github/actions/prepare-winui
         with:
           discord-app-id: ${{ secrets.NAGI_DISCORD_KEY }}
           api-key: ${{ secrets.NAGI_API_KEY }}
@@ -244,7 +244,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.1
 
-      - uses: ./.github/actions/prebuild-winui
+      - uses: ./.github/actions/prepare-winui
         with:
           discord-app-id: ${{ secrets.NAGI_DISCORD_KEY }}
           api-key: ${{ secrets.NAGI_API_KEY }}

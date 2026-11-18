@@ -1,0 +1,34 @@
+name: Prepare Nagi
+description: Restores the app with its appsettings.json for packaging.
+
+inputs:
+  discord-app-id:
+    required: true
+  api-key:
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-dotnet@v6.1.0
+      with:
+        dotnet-version: 11.0.x
+        cache: true
+        cache-dependency-path: |
+          **/*.csproj
+          **/Directory.Build.props
+          **/Directory.Packages.props
+          **/NuGet.config
+
+    - name: Create appsettings.json
+      shell: pwsh
+      env:
+        DISCORD_APP_ID: ${{ inputs.discord-app-id }}
+        API_KEY: ${{ inputs.api-key }}
+      run: |
+        @{ Discord = @{ AppId = $env:DISCORD_APP_ID }; NagiApiServer = @{ Url = 'https://nagiflexapiserver.azurewebsites.net'; ApiKey = $env:API_KEY } } |
+          ConvertTo-Json -Depth 3 | Out-File src/Nagi.WinUI/appsettings.json -Encoding UTF8
+
+    # Release, so the ReadyToRun compiler is restored too.
+    - shell: pwsh
+      run: dotnet restore src/Nagi.WinUI/Nagi.WinUI.csproj -p:Configuration=Release

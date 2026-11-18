@@ -49,12 +49,18 @@
     </PropertyGroup>
 
     <!-- =============================================================== -->
-    <!-- == Build Configuration: Release (AOT/Trimming)                 == -->
+    <!-- == Build Configuration: Release                                == -->
     <!-- =============================================================== -->
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
         <Optimize>true</Optimize>
+        <PublishReadyToRun>true</PublishReadyToRun>
         <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
     </PropertyGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Release'">
+        <!-- Precompiled, its generics add ~180 MB per platform for no startup gain. -->
+        <PublishReadyToRunExclude Include="SixLabors.ImageSharp.dll" />
+    </ItemGroup>
 
     <!-- =============================================================== -->
     <!-- == MSIX Publishing Properties                                  == -->
