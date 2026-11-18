@@ -2,7 +2,7 @@ using System.Collections;
 using System.Globalization;
 using System.Resources;
 using System.Text.RegularExpressions;
-using FluentAssertions;
+using AwesomeAssertions;
 using Jeffijoe.MessageFormat;
 using Nagi.Presentation.Common;
 using Xunit;

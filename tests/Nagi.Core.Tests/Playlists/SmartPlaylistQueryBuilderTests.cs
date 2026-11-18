@@ -1,4 +1,4 @@
-using FluentAssertions;
+using AwesomeAssertions;
 using System.Globalization;
 using Nagi.Core.Library;
 using Nagi.Core.Playlists;

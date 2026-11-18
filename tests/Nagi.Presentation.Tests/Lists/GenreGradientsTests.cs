@@ -1,4 +1,4 @@
-using FluentAssertions;
+using AwesomeAssertions;
 using Nagi.Presentation.Lists;
 using Nagi.Presentation.Theme;
 using Xunit;

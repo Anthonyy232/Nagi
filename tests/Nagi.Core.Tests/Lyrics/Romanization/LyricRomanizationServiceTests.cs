@@ -1,4 +1,4 @@
-using FluentAssertions;
+using AwesomeAssertions;
 using Nagi.Core.Lyrics;
 using Nagi.Core.Lyrics.Romanization;
 using Nagi.Core.Platform;

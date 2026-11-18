@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using System.Web;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.OnlineProviders;
 using Nagi.Core.OnlineProviders.Pipelines;

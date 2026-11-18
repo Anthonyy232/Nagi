@@ -1,4 +1,4 @@
-using FluentAssertions;
+using AwesomeAssertions;
 using Nagi.Core.Library;
 using Nagi.Core.Metadata;
 using Nagi.Core.Tests.Utils;

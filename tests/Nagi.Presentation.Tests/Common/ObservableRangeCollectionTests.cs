@@ -1,5 +1,5 @@
 using System.Collections.Specialized;
-using FluentAssertions;
+using AwesomeAssertions;
 using Nagi.Presentation.Common;
 using Xunit;
 

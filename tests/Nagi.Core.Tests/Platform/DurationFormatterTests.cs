@@ -1,4 +1,4 @@
-using FluentAssertions;
+using AwesomeAssertions;
 using Nagi.Core.Platform;
 using Xunit;
 

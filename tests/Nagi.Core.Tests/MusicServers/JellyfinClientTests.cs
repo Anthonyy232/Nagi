@@ -2,7 +2,7 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Web;
-using FluentAssertions;
+using AwesomeAssertions;
 using Nagi.Core.MusicServers;
 using Nagi.Core.Tests.Utils;
 using Xunit;

@@ -1,4 +1,4 @@
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
 using Nagi.Core.Playlists;

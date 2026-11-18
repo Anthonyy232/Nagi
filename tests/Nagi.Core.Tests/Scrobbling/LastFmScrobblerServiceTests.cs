@@ -1,7 +1,7 @@
 using System.Net;
 using System.Web;
 using System.Text;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;

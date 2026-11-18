@@ -1,5 +1,5 @@
 using System.Text.Json;
-using FluentAssertions;
+using AwesomeAssertions;
 using Nagi.Core.OnlineProviders;
 using Nagi.Core.Playback;
 using Nagi.Core.Settings;

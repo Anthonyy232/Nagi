@@ -1,4 +1,4 @@
-using FluentAssertions;
+using AwesomeAssertions;
 using Nagi.Presentation.Logging;
 using Serilog.Events;
 using Serilog.Parsing;

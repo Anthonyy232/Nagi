@@ -1,6 +1,6 @@
 using System.IO.Pipes;
 using DiscordRPC.IO;
-using FluentAssertions;
+using AwesomeAssertions;
 using Nagi.Core.Presence;
 using Xunit;
 

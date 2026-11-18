@@ -1,6 +1,6 @@
 using System.Net;
 using System.Text.Json;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.OnlineProviders;

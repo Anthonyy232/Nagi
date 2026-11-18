@@ -1,5 +1,5 @@
 using System.Collections.Specialized;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Library;
 using Nagi.Core.Playback;
