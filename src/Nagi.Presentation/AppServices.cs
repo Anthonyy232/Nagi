@@ -89,7 +89,9 @@ public static class AppServices
         {
             var dbContextFactory = services.GetRequiredService<IDbContextFactory<MusicDbContext>>();
             await using var dbContext = await dbContextFactory.CreateDbContextAsync().ConfigureAwait(false);
-            await dbContext.Database.MigrateAsync().ConfigureAwait(false);
+            // Migrating takes a lock and a transaction even when there is nothing to apply.
+            var pending = await dbContext.Database.GetPendingMigrationsAsync().ConfigureAwait(false);
+            if (pending.Any()) await dbContext.Database.MigrateAsync().ConfigureAwait(false);
             await dbContext.BackfillSortKeysAsync().ConfigureAwait(false);
         });
 }
