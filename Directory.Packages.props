@@ -37,7 +37,7 @@
     <PackageVersion Include="Serilog.Enrichers.Thread" Version="4.0.0" />
     <PackageVersion Include="Serilog.Extensions.Logging" Version="10.0.0" />
     <PackageVersion Include="Serilog.Sinks.Debug" Version="3.0.0" />
-    <PackageVersion Include="Serilog.Sinks.File" Version="8.0.0-nblumhardt-02322" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
     <!-- Audio & Metadata -->
     <PackageVersion Include="ModernLrc" Version="3.0.0" />
     <PackageVersion Include="z440.atl.core" Version="7.20.1" />
