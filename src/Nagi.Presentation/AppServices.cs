@@ -35,7 +35,8 @@ public static class AppServices
         // added by recent migrations, so start it only after database migration/backfill has completed.
         await databaseReady;
         services.GetRequiredService<ScrobbleCoordinator>().Start();
-        services.GetRequiredService<LibraryFolderWatcher>().Start();
+        // Off this thread: each one's first query builds its plan before it first yields.
+        _ = Task.Run(services.GetRequiredService<LibraryFolderWatcher>().Start);
         _ = Task.Run(services.GetRequiredService<ILibraryFolderService>().RefreshOnStartupAsync);
         var playbackTask = services.GetRequiredService<IMusicPlaybackService>().InitializeAsync(restoreSession);
         var settingsTask = services.GetRequiredService<SettingsViewModel>().LoadSettingsAsync();
