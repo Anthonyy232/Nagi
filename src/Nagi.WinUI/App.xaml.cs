@@ -55,6 +55,7 @@ public partial class App : Application
                 .AddJsonFile("appsettings.json", optional: true)
                 .Build();
             Services = new ServiceCollection().AddNagiApp(configuration).BuildServiceProvider();
+            var databaseReady = AppServices.StartDatabase(Services);
             ViewModelPage.Initialize(Services.GetRequiredService<IServiceScopeFactory>());
             Services.GetRequiredService<ILogger<App>>().LogInformation("Application starting up.");
 
@@ -68,7 +69,7 @@ public partial class App : Application
             if (filePath is not null || command != LaunchCommand.None) launch.Activate(filePath, command);
             _singleInstanceManager.StartListening(launch.Activate);
 
-            await launch.StartAsync();
+            await launch.StartAsync(databaseReady);
             Services.GetRequiredService<JumpListService>().Start();
         }
         catch (Exception ex) when (IsExiting)

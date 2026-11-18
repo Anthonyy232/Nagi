@@ -79,12 +79,12 @@ public sealed class LaunchCoordinator
     /// <summary>
     ///     Call once on the UI thread, after this launch's own request went to <see cref="Activate" />.
     /// </summary>
-    public async Task StartAsync()
+    public async Task StartAsync(Task databaseReady)
     {
         _windowBehavior.ShowWhileLoading();
 
         // A launch that opens a file plays it instead of the last session.
-        await AppServices.StartAsync(_services, restoreSession: _queuedFiles.IsEmpty, _logger);
+        await AppServices.StartAsync(_services, databaseReady, restoreSession: _queuedFiles.IsEmpty, _logger);
         if (_windowService.IsExiting) return;
         _isReady = true;
 

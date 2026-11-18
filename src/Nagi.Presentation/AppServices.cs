@@ -20,11 +20,10 @@ namespace Nagi.Presentation;
 /// </summary>
 public static class AppServices
 {
-    public static async Task StartAsync(IServiceProvider services, bool restoreSession, ILogger logger)
+    public static async Task StartAsync(IServiceProvider services, Task databaseReady, bool restoreSession,
+        ILogger logger)
     {
         logger.LogDebug("Starting core services initialization.");
-
-        var dbTask = InitializeDatabaseAsync(services);
 
         // Start non-EF services while database migration is still running.
         services.GetRequiredService<DiscordPresenceService>().Start();
@@ -34,7 +33,7 @@ public static class AppServices
 
         // Playback and settings both need EF ready. Scrobbling queries ListenHistory, including columns
         // added by recent migrations, so start it only after database migration/backfill has completed.
-        await dbTask;
+        await databaseReady;
         services.GetRequiredService<ScrobbleCoordinator>().Start();
         services.GetRequiredService<LibraryFolderWatcher>().Start();
         _ = Task.Run(services.GetRequiredService<ILibraryFolderService>().RefreshOnStartupAsync);
@@ -81,7 +80,11 @@ public static class AppServices
         }
     }
 
-    private static Task InitializeDatabaseAsync(IServiceProvider services) =>
+    /// <summary>
+    ///     Migrates the database in the background. A head starts this as soon as its provider is built, so the
+    ///     migration runs while it creates its window.
+    /// </summary>
+    public static Task StartDatabase(IServiceProvider services) =>
         Task.Run(async () =>
         {
             var dbContextFactory = services.GetRequiredService<IDbContextFactory<MusicDbContext>>();
