@@ -78,7 +78,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private bool _pendingPointerOverPlayer;
 
     private bool _isUnloaded;
-    private readonly TrayIconUserControl _trayIcon;
+    private readonly TrayIconViewModel _trayIconViewModel;
+    private TrayIconUserControl? _trayIcon;
 
     public MainPage(PlayerViewModel viewModel,
         GlobalOperationViewModel globalOperation, ISettingsService settingsService,
@@ -95,8 +96,10 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
         InitializeComponent();
         PlayerInputHelper.AttachSeekSlider(MediaSeekerSlider, ViewModel);
-        _trayIcon = new TrayIconUserControl(trayIcon);
-        RootGrid.Children.Insert(0, _trayIcon);
+        _trayIconViewModel = trayIcon;
+        // Created when first shown: it takes about 70 ms, and a launch into a visible window doesn't need it.
+        if (trayIcon.IsTrayIconVisible) AddTrayIcon();
+        else trayIcon.PropertyChanged += OnTrayIconPropertyChanged;
         // Last, so it covers the whole window, player included.
         RootGrid.Children.Add(new InsightsSeeAllOverlay(insights));
 
@@ -276,6 +279,19 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         UpdatePlayerVisualState(false);
     }
 
+    private void OnTrayIconPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (!_trayIconViewModel.IsTrayIconVisible) return;
+        _trayIconViewModel.PropertyChanged -= OnTrayIconPropertyChanged;
+        AddTrayIcon();
+    }
+
+    private void AddTrayIcon()
+    {
+        _trayIcon = new TrayIconUserControl(_trayIconViewModel);
+        RootGrid.Children.Insert(0, _trayIcon);
+    }
+
     private void OnMainPageUnloaded(object sender, RoutedEventArgs e)
     {
         _queuePlayingBinder?.Dispose();
@@ -292,7 +308,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         SystemVisualSettings.TransparencyEffectsEnabledChanged -= OnTransparencyEffectsChanged;
 
         // Dispose the tray icon control to prevent "Exception Processing Message 0xc0000005" errors on exit.
-        _trayIcon.Dispose();
+        _trayIconViewModel.PropertyChanged -= OnTrayIconPropertyChanged;
+        _trayIcon?.Dispose();
 
         RemoveHandler(PointerPressedEvent, (PointerEventHandler)OnGlobalPointerPressed);
         KeyDown -= OnSelectionKeyDown;

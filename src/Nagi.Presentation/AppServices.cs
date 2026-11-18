@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
 using Nagi.Core.Library;
-using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Presence;
 using Nagi.Core.Scrobbling;
@@ -20,28 +19,27 @@ namespace Nagi.Presentation;
 /// </summary>
 public static class AppServices
 {
-    public static async Task StartAsync(IServiceProvider services, bool restoreSession, ILogger logger)
+    public static async Task StartAsync(IServiceProvider services, Task databaseReady, bool restoreSession,
+        ILogger logger)
     {
         logger.LogDebug("Starting core services initialization.");
-
-        var dbTask = InitializeDatabaseAsync(services);
 
         // Start non-EF services while database migration is still running.
         services.GetRequiredService<DiscordPresenceService>().Start();
         services.GetRequiredService<TrayIconViewModel>().Initialize();
-        var appInfoTask = services.GetRequiredService<IAppInfoService>().GetAvailableLanguagesAsync();
         var equalizerTask = services.GetRequiredService<IEqualizerService>().InitializeAsync();
 
         // Playback and settings both need EF ready. Scrobbling queries ListenHistory, including columns
         // added by recent migrations, so start it only after database migration/backfill has completed.
-        await dbTask;
+        await databaseReady;
         services.GetRequiredService<ScrobbleCoordinator>().Start();
-        services.GetRequiredService<LibraryFolderWatcher>().Start();
+        // Off this thread: each one's first query builds its plan before it first yields.
+        _ = Task.Run(services.GetRequiredService<LibraryFolderWatcher>().Start);
         _ = Task.Run(services.GetRequiredService<ILibraryFolderService>().RefreshOnStartupAsync);
         var playbackTask = services.GetRequiredService<IMusicPlaybackService>().InitializeAsync(restoreSession);
         var settingsTask = services.GetRequiredService<SettingsViewModel>().LoadSettingsAsync();
 
-        await Task.WhenAll(appInfoTask, equalizerTask, playbackTask, settingsTask);
+        await Task.WhenAll(equalizerTask, playbackTask, settingsTask);
 
         logger.LogInformation("Core services initialized successfully.");
     }
@@ -81,12 +79,18 @@ public static class AppServices
         }
     }
 
-    private static Task InitializeDatabaseAsync(IServiceProvider services) =>
+    /// <summary>
+    ///     Migrates the database in the background. A head starts this as soon as its provider is built, so the
+    ///     migration runs while it creates its window.
+    /// </summary>
+    public static Task StartDatabase(IServiceProvider services) =>
         Task.Run(async () =>
         {
             var dbContextFactory = services.GetRequiredService<IDbContextFactory<MusicDbContext>>();
             await using var dbContext = await dbContextFactory.CreateDbContextAsync().ConfigureAwait(false);
-            await dbContext.Database.MigrateAsync().ConfigureAwait(false);
+            // Migrating takes a lock and a transaction even when there is nothing to apply.
+            var pending = await dbContext.Database.GetPendingMigrationsAsync().ConfigureAwait(false);
+            if (pending.Any()) await dbContext.Database.MigrateAsync().ConfigureAwait(false);
             await dbContext.BackfillSortKeysAsync().ConfigureAwait(false);
         });
 }
