@@ -1,5 +1,3 @@
-using DiscordRPC;
-using DiscordRPC.IO;
 using AwesomeAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -24,32 +22,33 @@ public class DiscordPresenceServiceTests
     public DiscordPresenceServiceTests() => _playback.PlaybackRate.Returns(1.0);
 
     [Fact]
-    public void TurningRichPresenceOffAndOn_ReconnectsWithANewClient()
+    public async Task TurningRichPresenceOffAndOn_ReconnectsWithANewClient()
     {
         var configuration = Substitute.For<IConfiguration>();
         configuration["Discord:AppId"].Returns("123456789");
-        var clients = new List<DiscordRpcClient>();
+        await using var discord = new FakeDiscord();
+        var clients = 0;
         using var service = new DiscordPresenceService(configuration,
             NullLogger<DiscordPresenceService>.Instance, _playback, _albumCovers, _settings, appId =>
             {
-                var client = new DiscordRpcClient(appId, client: Substitute.For<INamedPipeClient>());
-                clients.Add(client);
-                return client;
+                clients++;
+                return new DiscordIpcClient(appId, NullLogger.Instance, () => [discord.PipeName]);
             });
 
         service.Start();
-        clients.Should().BeEmpty();
+        clients.Should().Be(0);
+        var first = discord.AcceptAsync();
         _settings.Set(CoreSettings.DiscordRichPresence, true);
-        _playback.CurrentTrack.Returns(new Song { Title = "First activation" });
-        _playback.TrackChanged += Raise.Event<Action>();
+        await first;
         _settings.Set(CoreSettings.DiscordRichPresence, false);
+        await discord.WaitForCloseAsync();
+        var second = discord.AcceptAsync();
         _settings.Set(CoreSettings.DiscordRichPresence, true);
+        await second;
 
-        clients.Should().HaveCount(2);
-        clients[0].IsDisposed.Should().BeTrue();
-        clients[1].IsInitialized.Should().BeTrue();
+        clients.Should().Be(2);
         service.Stop();
-        clients[1].IsDisposed.Should().BeTrue();
+        await discord.WaitForCloseAsync();
     }
 
     [Theory]
@@ -60,7 +59,7 @@ public class DiscordPresenceServiceTests
     {
         var configuration = Substitute.For<IConfiguration>();
         configuration["Discord:AppId"].Returns(appId);
-        var createClient = Substitute.For<Func<string, DiscordRpcClient>>();
+        var createClient = Substitute.For<Func<string, DiscordIpcClient>>();
         _settings.Set(CoreSettings.DiscordRichPresence, true);
         using var service = new DiscordPresenceService(configuration,
             NullLogger<DiscordPresenceService>.Instance, _playback, _albumCovers, _settings, createClient);
@@ -78,8 +77,8 @@ public class DiscordPresenceServiceTests
     public void IsOutOfSync_DetectsSeeksButNotReportingLagOrPlaybackSpeed(double playbackRate,
         int secondsFromExpected, bool expected)
     {
-        var now = DateTime.UtcNow;
-        var timestamps = new Timestamps { Start = now - TimeSpan.FromMinutes(1) };
+        var now = DateTimeOffset.UtcNow;
+        var timestamps = new DiscordTimestamps((now - TimeSpan.FromMinutes(1)).ToUnixTimeMilliseconds(), null);
         var progress = TimeSpan.FromMinutes(1) * playbackRate + TimeSpan.FromSeconds(secondsFromExpected);
 
         DiscordPresenceService.IsOutOfSync(timestamps, progress, playbackRate, now).Should().Be(expected);
@@ -99,7 +98,7 @@ public class DiscordPresenceServiceTests
         var album = new Album { Title = "Album" };
         using var service = new DiscordPresenceService(Substitute.For<IConfiguration>(),
             NullLogger<DiscordPresenceService>.Instance, _playback, _albumCovers, Substitute.For<ISettingsService>(),
-            Substitute.For<Func<string, DiscordRpcClient>>());
+            Substitute.For<Func<string, DiscordIpcClient>>());
 
         var first = await service.FindCoverUrlAsync(new Song { Title = "One", Album = album, MusicBrainzReleaseId = "release" });
         var second = await service.FindCoverUrlAsync(new Song { Title = "Two", Album = album });

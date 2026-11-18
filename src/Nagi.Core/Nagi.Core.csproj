@@ -52,7 +52,6 @@
         <PackageReference Include="z440.atl.core" />
 
         <PackageReference Include="MaterialColorUtilities" />
-        <PackageReference Include="DiscordRichPresence" />
 
         <!-- HTTP -->
         <PackageReference Include="Microsoft.Extensions.Http" />

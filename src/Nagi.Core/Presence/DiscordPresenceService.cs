@@ -1,7 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
-using DiscordRPC;
-using DiscordRPC.Message;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Artwork;
@@ -28,12 +26,12 @@ public class DiscordPresenceService : IDisposable
     private readonly IMusicPlaybackService _playbackService;
     private readonly IAlbumCoverService _albumCoverService;
     private readonly ISettingsService _settingsService;
-    private readonly Func<string, DiscordRpcClient> _createClient;
+    private readonly Func<string, DiscordIpcClient> _createClient;
     private readonly Lock _clientLock = new();
-    private DiscordRpcClient? _client;
+    private DiscordIpcClient? _client;
     private TimeSpan _currentProgress;
     private Song? _currentSong;
-    private Timestamps? _timestamps;
+    private DiscordTimestamps? _timestamps;
 
     // Discord can only show images by URL, so a local cover can't be sent; remember each album's online one.
     private readonly ConcurrentDictionary<Guid, string?> _coverUrls = new();
@@ -49,15 +47,14 @@ public class DiscordPresenceService : IDisposable
 
     public DiscordPresenceService(IConfiguration configuration, ILogger<DiscordPresenceService> logger,
         IMusicPlaybackService playbackService, IAlbumCoverService albumCoverService, ISettingsService settingsService)
-        : this(configuration, logger, playbackService, albumCoverService, settingsService, appId => new DiscordRpcClient(appId,
-            pipe: -1, logger: new DiscordLoggerAdapter(logger), autoEvents: true,
-            client: new SandboxAwareDiscordPipeClient { Logger = new DiscordLoggerAdapter(logger) }))
+        : this(configuration, logger, playbackService, albumCoverService, settingsService,
+            appId => new DiscordIpcClient(appId, logger))
     {
     }
 
     internal DiscordPresenceService(IConfiguration configuration, ILogger<DiscordPresenceService> logger,
         IMusicPlaybackService playbackService, IAlbumCoverService albumCoverService, ISettingsService settingsService,
-        Func<string, DiscordRpcClient> createClient)
+        Func<string, DiscordIpcClient> createClient)
     {
         _logger = logger;
         _playbackService = playbackService;
@@ -112,49 +109,32 @@ public class DiscordPresenceService : IDisposable
 
         lock (_clientLock)
         {
-            try
-            {
-                if (_client == null || _client.IsDisposed)
-                {
-                    _logger.LogDebug("Initializing new Discord RPC client.");
-                    _isReady = false;
-                    var client = _createClient(_discordAppId);
-                    client.SkipIdenticalPresence = true;
-                    _client = client;
-
-                    client.OnError += OnRpcError;
-                    client.OnReady += async (_, _) =>
-                    {
-                        _logger.LogInformation("Discord Rich Presence is Ready. Waiting for warm-up...");
-
-                        // Let Discord finish initializing before sending presence, and ignore an old connection's callback.
-                        await Task.Delay(2000).ConfigureAwait(false);
-                        lock (_clientLock)
-                        {
-                            if (!ReferenceEquals(_client, client) || client.IsDisposed) return;
-                            _isReady = true;
-                            _logger.LogInformation("Discord warm-up complete. Syncing state.");
-                            RequestUpdate();
-                        }
-
-                        // A track that started before Discord connected skipped its cover lookup.
-                        if (_currentSong is { } song) _ = ShowAlbumCoverAsync(song);
-                    };
-
-                    client.OnConnectionFailed += (_, e) => _logger.LogWarning("Discord connection failed: {Pipe}", e.FailedPipe);
-                    client.Initialize();
-                }
-                else if (!_client.IsInitialized)
-                {
-                    _logger.LogDebug("Re-initializing existing Discord RPC client.");
-                    _client.Initialize();
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to initialize Discord RPC client.");
-            }
+            if (_client != null) return;
+            _logger.LogDebug("Starting the Discord client.");
+            _isReady = false;
+            var client = _createClient(_discordAppId);
+            _client = client;
+            client.Ready += () => _ = OnReadyAsync(client);
+            client.Start();
         }
+    }
+
+    private async Task OnReadyAsync(DiscordIpcClient client)
+    {
+        _logger.LogInformation("Discord Rich Presence is Ready. Waiting for warm-up...");
+
+        // Let Discord finish initializing before sending presence, and ignore an old connection's callback.
+        await Task.Delay(2000).ConfigureAwait(false);
+        lock (_clientLock)
+        {
+            if (!ReferenceEquals(_client, client)) return;
+            _isReady = true;
+            _logger.LogInformation("Discord warm-up complete. Syncing state.");
+            RequestUpdate();
+        }
+
+        // A track that started before Discord connected skipped its cover lookup.
+        if (_currentSong is { } song) _ = ShowAlbumCoverAsync(song);
     }
 
     private void OnTrackChanged()
@@ -226,7 +206,7 @@ public class DiscordPresenceService : IDisposable
 
     private void RequestUpdate()
     {
-        // Discord's rate limit is 1 update per 15s, but the library specifically crashes if updates are sent within ~200ms of each other.
+        // Coalesces bursts of changes, such as skipping through tracks, into one update.
         lock (_clientLock)
         {
             if (_client == null) return;
@@ -240,13 +220,12 @@ public class DiscordPresenceService : IDisposable
         try
         {
             var client = _client;
-            if (client == null || !client.IsInitialized || !_isReady) return;
+            if (client == null || !_isReady) return;
 
             if (_currentSong == null)
             {
-                client.SetPresence(new RichPresence
+                _ = client.SetActivityAsync(new DiscordActivity
                 {
-                    Type = ActivityType.Listening,
                     Details = Resources.Strings.Presence_BrowsingLibrary,
                     State = Resources.Strings.Presence_Idling
                 });
@@ -260,29 +239,22 @@ public class DiscordPresenceService : IDisposable
                 : string.Format(Resources.Strings.Presence_PausedProgress,
                     DurationFormatter.Format(_currentProgress), DurationFormatter.Format(_currentSong.Duration));
 
-            var presence = new RichPresence
+            var activity = new DiscordActivity
             {
-                Type = ActivityType.Listening,
                 Details = _currentSong.Title.Truncate(128),
                 State = stateText.Truncate(128),
-                StatusDisplay = StatusDisplayType.Details,
+                StatusDisplayType = DiscordStatusDisplay.Details,
                 Timestamps = _timestamps,
-                Assets = new Assets
-                {
+                Assets = new DiscordAssets(
                     // A lookup for the previous track can finish after the switch; never show its cover.
-                    LargeImageKey = _cover is { } cover && ReferenceEquals(cover.Song, _currentSong) ? cover.Url : "logo",
-                    LargeImageText = (_currentSong.Album?.Title ?? Resources.Strings.Presence_AppName).Truncate(128),
-                    SmallImageKey = _isPlaying ? "play_icon" : "pause_icon",
-                    SmallImageText = _isPlaying ? Resources.Strings.Presence_Playing : Resources.Strings.Presence_Paused
-                }
+                    _cover is { } cover && ReferenceEquals(cover.Song, _currentSong) ? cover.Url : "logo",
+                    (_currentSong.Album?.Title ?? Resources.Strings.Presence_AppName).Truncate(128),
+                    _isPlaying ? "play_icon" : "pause_icon",
+                    _isPlaying ? Resources.Strings.Presence_Playing : Resources.Strings.Presence_Paused)
             };
 
-            _logger.LogDebug("Sending Discord Presence Update: {Details}", presence.Details);
-            client.SetPresence(presence);
-        }
-        catch (ObjectDisposedException)
-        {
-            // Expected if the timer callback fires while disconnecting — safe to ignore.
+            _logger.LogDebug("Sending Discord Presence Update: {Details}", activity.Details);
+            _ = client.SetActivityAsync(activity);
         }
         catch (Exception ex)
         {
@@ -307,7 +279,7 @@ public class DiscordPresenceService : IDisposable
         {
             // After a seek or a speed change the timestamps no longer match playback, so Discord's
             // clock would stay wrong until the next pause or track change.
-            if (IsOutOfSync(_timestamps, progress, _playbackService.PlaybackRate, DateTime.UtcNow))
+            if (IsOutOfSync(_timestamps, progress, _playbackService.PlaybackRate, DateTimeOffset.UtcNow))
             {
                 _timestamps = BuildTimestamps(progress);
                 RequestUpdate();
@@ -321,24 +293,25 @@ public class DiscordPresenceService : IDisposable
     }
 
     // Discord's clock runs in real time, so scale by the playback speed to keep it in step with playback.
-    private Timestamps BuildTimestamps(TimeSpan progress)
+    private DiscordTimestamps BuildTimestamps(TimeSpan progress)
     {
         var rate = _playbackService.PlaybackRate;
-        var start = DateTime.UtcNow - progress / rate;
+        var start = DateTimeOffset.UtcNow - progress / rate;
         var duration = _currentSong?.Duration ?? TimeSpan.Zero;
 
         // Discord shows elapsed and remaining time together when both ends are known.
-        return duration > TimeSpan.Zero
-            ? new Timestamps { Start = start, End = start + duration / rate }
-            : new Timestamps { Start = start };
+        return new DiscordTimestamps(start.ToUnixTimeMilliseconds(),
+            duration > TimeSpan.Zero ? (start + duration / rate).ToUnixTimeMilliseconds() : null);
     }
 
-    internal static bool IsOutOfSync(Timestamps? timestamps, TimeSpan progress, double playbackRate, DateTime utcNow) =>
-        timestamps?.Start is { } start && ((utcNow - start) * playbackRate - progress).Duration() > SyncTolerance;
+    internal static bool IsOutOfSync(DiscordTimestamps? timestamps, TimeSpan progress, double playbackRate,
+        DateTimeOffset utcNow) =>
+        timestamps is { } t &&
+        ((utcNow - DateTimeOffset.FromUnixTimeMilliseconds(t.Start)) * playbackRate - progress).Duration() > SyncTolerance;
 
     private void Disconnect()
     {
-        DiscordRpcClient? client;
+        DiscordIpcClient? client;
         lock (_clientLock)
         {
             _isReady = false;
@@ -348,18 +321,9 @@ public class DiscordPresenceService : IDisposable
             _client = null;
         }
 
-        if (client != null)
-        {
-            _logger.LogDebug("Disposing Discord RPC client.");
-            client.OnError -= OnRpcError;
-            // Dispose outside the lock so RPC callbacks can finish while the client shuts down.
-            client.Dispose();
-        }
-    }
-
-    private void OnRpcError(object sender, ErrorMessage e)
-    {
-        _logger.LogError("An error occurred in the Discord RPC client. Code: {ErrorCode}, Message: {ErrorMessage}", e.Code, e.Message);
+        if (client == null) return;
+        _logger.LogDebug("Stopping the Discord client.");
+        client.Dispose();
     }
 
     private sealed record SongCover(Song Song, string Url);
