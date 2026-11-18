@@ -14,7 +14,7 @@
         <PackageReference Include="coverlet.MTP">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="FluentAssertions" />
+        <PackageReference Include="AwesomeAssertions" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" />
         <PackageReference Include="NSubstitute" />
         <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />

@@ -1,4 +1,4 @@
-using FluentAssertions;
+using AwesomeAssertions;
 using MaterialColorUtilities.ColorAppearance;
 using MaterialColorUtilities.Utils;
 using Nagi.Presentation.Theme;

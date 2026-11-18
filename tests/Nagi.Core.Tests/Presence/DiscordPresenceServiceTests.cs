@@ -1,6 +1,6 @@
 using DiscordRPC;
 using DiscordRPC.IO;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Artwork;

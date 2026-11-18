@@ -1,6 +1,6 @@
 using System.IO.Compression;
 using System.Text.Json;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Data.Sqlite;
 using Nagi.Core.Backup;

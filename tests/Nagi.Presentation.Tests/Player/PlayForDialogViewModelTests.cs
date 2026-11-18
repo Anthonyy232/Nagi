@@ -1,4 +1,4 @@
-using FluentAssertions;
+using AwesomeAssertions;
 using Nagi.Core.Playback;
 using Nagi.Presentation.Player;
 using Xunit;

@@ -1,4 +1,4 @@
-using FluentAssertions;
+using AwesomeAssertions;
 using System.Globalization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Library;

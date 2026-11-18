@@ -1,5 +1,5 @@
 using System.Net;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.OnlineProviders;
 using Nagi.Core.Tests.Utils;

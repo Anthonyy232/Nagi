@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using FluentAssertions;
+using AwesomeAssertions;
 using Nagi.Presentation.Common;
 using Nagi.WinUI.Helpers;
 using Xunit;

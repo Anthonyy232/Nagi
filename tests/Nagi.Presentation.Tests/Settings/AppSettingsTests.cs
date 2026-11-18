@@ -1,5 +1,5 @@
 using System.Text.Json;
-using FluentAssertions;
+using AwesomeAssertions;
 using Nagi.Core.Library;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Common;

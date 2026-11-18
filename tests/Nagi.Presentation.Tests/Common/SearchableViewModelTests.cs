@@ -1,5 +1,5 @@
 using System.Threading.Channels;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Tests.Utils;
