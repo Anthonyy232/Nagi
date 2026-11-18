@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
 using Nagi.Core.Library;
-using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Presence;
 using Nagi.Core.Scrobbling;
@@ -28,7 +27,6 @@ public static class AppServices
         // Start non-EF services while database migration is still running.
         services.GetRequiredService<DiscordPresenceService>().Start();
         services.GetRequiredService<TrayIconViewModel>().Initialize();
-        var appInfoTask = services.GetRequiredService<IAppInfoService>().GetAvailableLanguagesAsync();
         var equalizerTask = services.GetRequiredService<IEqualizerService>().InitializeAsync();
 
         // Playback and settings both need EF ready. Scrobbling queries ListenHistory, including columns
@@ -41,7 +39,7 @@ public static class AppServices
         var playbackTask = services.GetRequiredService<IMusicPlaybackService>().InitializeAsync(restoreSession);
         var settingsTask = services.GetRequiredService<SettingsViewModel>().LoadSettingsAsync();
 
-        await Task.WhenAll(appInfoTask, equalizerTask, playbackTask, settingsTask);
+        await Task.WhenAll(equalizerTask, playbackTask, settingsTask);
 
         logger.LogInformation("Core services initialized successfully.");
     }
