@@ -6,7 +6,7 @@ The images Nagi's README, website, app package and releases use, and the scripts
 | --- | --- |
 | `readme/build.cjs` | Draws the README panels, the site images and the app icon set into a Nagi checkout. |
 | `readme/inputs/` | The app screenshots the panels and banners are made from. |
-| `releases/banner.cjs`, `releases/banners.json` | Draws the 1280x640 release banners, `releases/<tag>.png`. |
+| `releases/banner.cjs`, `releases/banners.json` | Draws the release banners, 1280x640 at 2x, `releases/<tag>.png`. |
 | `store/build.cjs` | Draws the Microsoft Store logos and the five listing screenshots into `store/`: `node store/build.cjs <nagi>`. They are uploaded to Partner Center by hand. |
 | `common.cjs` | Fonts, colours and page helpers both scripts share. |
 | `fonts/` | Instrument Serif, the headline font, under the SIL Open Font License (`fonts/OFL.txt`). |

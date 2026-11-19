@@ -39,8 +39,8 @@ exports.checkout = () => {
 
 // Opens a page with fonts and images loaded; the caller screenshots it.
 exports.browser = () => chromium.launch();
-exports.open = async (browser, html, width, height) => {
-  const page = await browser.newPage({ viewport: { width, height } });
+exports.open = async (browser, html, width, height, scale = 1) => {
+  const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: scale });
   await page.setContent(html, { waitUntil: 'load' });
   await page.evaluate(() => Promise.all([...document.fonts].map(f => f.load())));
   return page;

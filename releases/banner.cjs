@@ -1,4 +1,4 @@
-// node releases/banner.cjs <nagi-checkout> [<tag> "<highlight, *accent* in asterisks>" [scene]] : 1280x640 release banners beside this file. Steps in the README.
+// node releases/banner.cjs <nagi-checkout> [<tag> "<highlight, *accent* in asterisks>" [scene]] : release banners, 1280x640 at 2x, beside this file. Steps in the README.
 // With a tag it records the banner in banners.json and draws it; without, it redraws them all.
 const fs = require('fs');
 const path = require('path');
@@ -56,7 +56,7 @@ ${stage(scene)}`;
 (async () => {
   const b = await browser();
   for (const [t, banner] of tag ? [[tag, banners[tag]]] : Object.entries(banners)) {
-    const p = await open(b, html(banner.label || `Release ${t}`, banner.headline, banner.scene), 1280, 640);
+    const p = await open(b, html(banner.label || `Release ${t}`, banner.headline, banner.scene), 1280, 640, 2);
     // a long highlight shrinks until it fits three lines' worth of space
     await p.evaluate(() => {
       const h1 = document.querySelector('h1');
