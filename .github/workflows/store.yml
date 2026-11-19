@@ -44,7 +44,7 @@ jobs:
             echo "::notice::$env:TAG is not an app release; nothing to submit."
           }
 
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: steps.gate.outputs.submit
         with:
           ref: refs/tags/${{ env.TAG }}
@@ -57,7 +57,7 @@ jobs:
 
       - name: Download Store package from build workflow
         if: steps.gate.outputs.submit
-        uses: dawidd6/action-download-artifact@v28
+        uses: dawidd6/action-download-artifact@a92c7ae74cf1df8810783758581e485ac3aaa309 # v28
         with:
           workflow: build.yml
           workflow_conclusion: success
@@ -66,7 +66,7 @@ jobs:
           name: Store-MSIX-${{ env.TAG }}
           search_artifacts: true
 
-      - uses: microsoft/microsoft-store-apppublisher@v1.4
+      - uses: microsoft/microsoft-store-apppublisher@cc9910a8d59f2eb55cbb83df0a3800cf3b5300e0 # v1.4
         if: steps.gate.outputs.submit
         with:
           version: v0.4.4

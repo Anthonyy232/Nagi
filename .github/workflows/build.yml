@@ -35,9 +35,9 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: actions/setup-dotnet@v6.1.0
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           dotnet-version: 11.0.x
           cache: true
@@ -47,7 +47,7 @@ jobs:
             **/Directory.Packages.props
             **/NuGet.config
 
-      - uses: FedericoCarboni/setup-ffmpeg@v3.1
+      - uses: FedericoCarboni/setup-ffmpeg@37062fbf7149fc5578d6c57e08aed62458b375d6 # v3.1
 
       - name: Run tests
         run: dotnet test --project tests/Nagi.Core.Tests/Nagi.Core.Tests.csproj -c Release --report-xunit-trx --report-xunit-trx-filename test-results.trx
@@ -60,7 +60,7 @@ jobs:
 
       - name: Upload test results
         if: failure()
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: test-results
           path: '**/*test-results.trx'
@@ -74,9 +74,9 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: actions/setup-dotnet@v6.1.0
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           dotnet-version: |
             10.0.x
@@ -103,13 +103,13 @@ jobs:
           }
           exit 0
 
-      - uses: azure/login@v3.1.0
+      - uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906 # v3.1.0
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - uses: Azure/functions-action@v1.5.7
+      - uses: Azure/functions-action@c5060b3b8bb1ebbcb531abd00c822ecbaa8ea656 # v1.5.7
         with:
           app-name: nagiflexapiserver
           package: ./functions-output
@@ -122,9 +122,9 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: actions/setup-dotnet@v6.1.0
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           dotnet-version: 11.0.x
           cache: true
@@ -134,12 +134,12 @@ jobs:
             **/Directory.Packages.props
             **/NuGet.config
 
-      - uses: FedericoCarboni/setup-ffmpeg@v3.1
+      - uses: FedericoCarboni/setup-ffmpeg@37062fbf7149fc5578d6c57e08aed62458b375d6 # v3.1
 
       # A short job catches large regressions and failed scans; the default job took over an hour on the 10,000-song case.
       - run: dotnet run -c Release --project benchmarks/Nagi.Benchmarks/Nagi.Benchmarks.csproj -- --filter *LibraryScanBenchmarks* --job Short --iterationCount 7 --warmupCount 2 --launchCount 1
 
-      - uses: actions/upload-artifact@v7.0.2
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: Benchmark-Results
           path: BenchmarkDotNet.Artifacts/results/
@@ -185,7 +185,7 @@ jobs:
     outputs:
       artifact-id: ${{ steps.upload.outputs.artifact-id }}
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Patch manifest Publisher for sideload signing
         shell: pwsh
@@ -223,7 +223,7 @@ jobs:
 
       - name: Upload artifact
         id: upload
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: Unsigned-MSIX-${{ github.ref_name }}
           path: ${{ github.workspace }}/bundle-output/Nagi.msixbundle
@@ -242,7 +242,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - uses: ./.github/actions/prepare-winui
         with:
@@ -289,7 +289,7 @@ jobs:
           if (-not ($entries -like '*.appxsym')) { throw "msixupload has no symbol packages" }
           Copy-Item $upload.FullName "${{ github.workspace }}/store-output/Nagi.msixupload"
 
-      - uses: actions/upload-artifact@v7.0.2
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: Store-MSIX-${{ github.ref_name }}
           path: ${{ github.workspace }}/store-output/Nagi.msixupload
@@ -304,7 +304,7 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - uses: signpath/github-action-submit-signing-request@v3.0
+      - uses: signpath/github-action-submit-signing-request@f6d04783b4569d051e0c80105fe66e82819d0092 # v3.0
         with:
           api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
           organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
@@ -317,7 +317,7 @@ jobs:
           output-artifact-directory: ./signed
           github-token: '${{ secrets.GITHUB_TOKEN }}'
 
-      - uses: actions/upload-artifact@v7.0.2
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: Signed-MSIX
           path: ./signed/
