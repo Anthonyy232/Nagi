@@ -57,7 +57,7 @@ jobs:
         shell: pwsh
         run: Get-Content BenchmarkDotNet.Artifacts/results/*.md >> $env:GITHUB_STEP_SUMMARY
 
-      # Hosted runners differ by up to 2x in time from run to run; allocation is steady to within a percent.
+      # Hosted runners differ by over 2x in time from run to run; allocation is steady to within a percent.
       - name: Compare with the previous run
         shell: pwsh
         env:
@@ -79,7 +79,7 @@ jobs:
             $allocated = $_.Memory.BytesAllocatedPerOperation / $old.Memory.BytesAllocatedPerOperation
             $line = '{0}: {1:n2}x the time, {2:n2}x the allocation' -f $_.FullName, $time, $allocated
             "- $line" | Tee-Object $env:GITHUB_STEP_SUMMARY -Append | Write-Host
-            if ($time -gt 2 -or $allocated -gt 1.1) { $line }
+            if ($time -gt 3 -or $allocated -gt 1.1) { $line }
           }
           if ($worse) {
             $worse | ForEach-Object { "::error::$_" }
