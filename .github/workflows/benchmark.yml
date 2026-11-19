@@ -77,7 +77,9 @@ jobs:
             if (-not $old) { return }
             $time = $_.Statistics.Mean / $old.Statistics.Mean
             $allocated = $_.Memory.BytesAllocatedPerOperation / $old.Memory.BytesAllocatedPerOperation
-            if ($time -gt 2 -or $allocated -gt 1.1) { '{0}: {1:n2}x the time, {2:n2}x the allocation' -f $_.FullName, $time, $allocated }
+            $line = '{0}: {1:n2}x the time, {2:n2}x the allocation' -f $_.FullName, $time, $allocated
+            "- $line" | Tee-Object $env:GITHUB_STEP_SUMMARY -Append | Write-Host
+            if ($time -gt 2 -or $allocated -gt 1.1) { $line }
           }
           if ($worse) {
             $worse | ForEach-Object { "::error::$_" }
