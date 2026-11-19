@@ -1,0 +1,86 @@
+name: Benchmarks
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - src/Nagi.Core/**
+      - benchmarks/**
+      - Directory.Build.props
+      - Directory.Packages.props
+      - global.json
+      - .github/workflows/benchmark.yml
+  schedule:
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: benchmark-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  SixLaborsLicenseKey: ${{ secrets.SIXLABORS_LICENSE_KEY }}
+
+jobs:
+  library-scan:
+    name: Library scan
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          dotnet-version: 11.0.x
+          cache: true
+          cache-dependency-path: |
+            **/*.csproj
+            **/Directory.Build.props
+            **/Directory.Packages.props
+            **/NuGet.config
+
+      - uses: FedericoCarboni/setup-ffmpeg@37062fbf7149fc5578d6c57e08aed62458b375d6 # v3.1
+
+      # A short job catches large regressions and failed scans; the default job took over an hour on the 10,000-song case.
+      - run: dotnet run -c Release --project benchmarks/Nagi.Benchmarks/Nagi.Benchmarks.csproj -- --filter *LibraryScanBenchmarks* --job Short --iterationCount 7 --warmupCount 2 --launchCount 1 --exporters json
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: Benchmark-Results
+          path: BenchmarkDotNet.Artifacts/results/
+
+      - name: Write benchmark summary
+        shell: pwsh
+        run: Get-Content BenchmarkDotNet.Artifacts/results/*.md >> $env:GITHUB_STEP_SUMMARY
+
+      # Hosted runners differ by up to 2x in time from run to run; allocation is steady to within a percent.
+      - name: Compare with the previous run
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # cancelled and failed runs may have no results
+          foreach ($run in gh run list --workflow benchmark.yml --branch master --status completed --limit 10 --json databaseId --jq '.[].databaseId') {
+            gh run download $run --name Benchmark-Results --dir previous 2>$null
+            if ($LASTEXITCODE -eq 0) { break }
+          }
+          if (-not (Test-Path previous/*.json)) { exit 0 }
+
+          $before = @{}
+          (Get-Content previous/*.json -Raw | ConvertFrom-Json).Benchmarks | ForEach-Object { $before[$_.FullName] = $_ }
+          $worse = (Get-Content BenchmarkDotNet.Artifacts/results/*.json -Raw | ConvertFrom-Json).Benchmarks | ForEach-Object {
+            $old = $before[$_.FullName]
+            if (-not $old) { return }
+            $time = $_.Statistics.Mean / $old.Statistics.Mean
+            $allocated = $_.Memory.BytesAllocatedPerOperation / $old.Memory.BytesAllocatedPerOperation
+            if ($time -gt 2 -or $allocated -gt 1.1) { '{0}: {1:n2}x the time, {2:n2}x the allocation' -f $_.FullName, $time, $allocated }
+          }
+          if ($worse) {
+            $worse | ForEach-Object { "::error::$_" }
+            exit 1
+          }
+          exit 0
