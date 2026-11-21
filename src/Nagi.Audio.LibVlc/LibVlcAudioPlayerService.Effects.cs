@@ -77,7 +77,7 @@ public sealed partial class LibVlcAudioPlayerService
         {
             if (_isDisposed || _mediaPlayer is null) return;
             _userVolume = Math.Clamp(volume, 0.0, 1.0);
-            _mediaPlayer.SetVolume(ToVlcVolume(_userVolume));
+            SetVlcVolume(ToVlcVolume(_userVolume));
         }
         finally
         {
@@ -201,6 +201,26 @@ public sealed partial class LibVlcAudioPlayerService
 
     private static double FromVlcVolume(int vlcVolume) => Math.Pow(vlcVolume / 100.0, 3);
 
+    // LibVLC applies each volume on its audio thread and reports it later, in order, skipping ones it fell behind on.
+    // A fade's last steps therefore report after the fade has ended.
+    private void SetVlcVolume(int volume)
+    {
+        lock (_unreportedVlcVolumes) _unreportedVlcVolumes.Add(volume);
+        _mediaPlayer!.SetVolume(volume);
+    }
+
+    /// <summary>Whether a reported volume is one Nagi asked for, rather than a change made outside it.</summary>
+    private bool IsOwnVlcVolume(int reported)
+    {
+        lock (_unreportedVlcVolumes)
+        {
+            var index = _unreportedVlcVolumes.IndexOf(reported);
+            if (index < 0) return false;
+            _unreportedVlcVolumes.RemoveRange(0, index + 1);
+            return true;
+        }
+    }
+
     /// <summary>
     ///     Ramps the VLC player volume from <paramref name="fromVolume"/> to <paramref name="toVolume"/>, on
     ///     LibVLC's own scale, over <paramref name="duration"/>, suppressing <see cref="VolumeChanged"/> events
@@ -221,7 +241,7 @@ public sealed partial class LibVlcAudioPlayerService
                 try
                 {
                     if (_isDisposed || _mediaPlayer is null) return;
-                    _mediaPlayer.SetVolume((int)Math.Round(volume));
+                    SetVlcVolume((int)Math.Round(volume));
                 }
                 finally
                 {

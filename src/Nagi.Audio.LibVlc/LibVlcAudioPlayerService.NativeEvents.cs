@@ -122,15 +122,17 @@ public sealed partial class LibVlcAudioPlayerService
 
     private void OnMediaPlayerVolumeChanged(object? sender, MediaPlayerVolumeChangedEventArgs e)
     {
-        if (_isDisposed || _isFading) return;
+        if (_isDisposed) return;
 
         // LibVLC 4 uses the Windows audio-session volume. A change made in Windows Settings
         // therefore arrives here just like a change made through Nagi. Keep our user-volume
         // snapshot in sync so the next track does not restore a stale value over the user's
         // Windows mixer adjustment.
         var reportedVolume = ReadNative(() => _mediaPlayer?.Volume ?? -1, -1);
-        // LibVLC reports whole steps of its own scale, so Nagi's own change comes back slightly off.
-        if (reportedVolume >= 0 && reportedVolume != ToVlcVolume(_userVolume))
+        // Matched even mid-fade, so the fade's own reports are cleared.
+        var isExternal = reportedVolume >= 0 && !IsOwnVlcVolume(reportedVolume);
+        if (_isFading) return;
+        if (isExternal)
             Interlocked.Exchange(ref _userVolume, Math.Clamp(FromVlcVolume(reportedVolume), 0.0, 1.0));
 
         _dispatcherService.TryEnqueue(() =>

@@ -40,6 +40,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     // fade animations do not propagate to the UI or persist to settings.
     private double _userVolume = CoreSettings.Volume.Default;
     private volatile bool _isFading;
+    private readonly List<int> _unreportedVlcVolumes = [];
     private CancellationTokenSource? _fadeCts;
 
     private float _playbackRate = 1f;
@@ -330,12 +331,12 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
                 {
                     // Silence before playing so fade-in starts from zero.
                     _isFading = true;
-                    _mediaPlayer.SetVolume(0);
+                    SetVlcVolume(0);
                 }
                 else
                 {
                     // Ensure VLC volume matches user volume; a prior fade-out could have left it at 0.
-                    _mediaPlayer.SetVolume(ToVlcVolume(_userVolume));
+                    SetVlcVolume(ToVlcVolume(_userVolume));
                 }
 
                 // LibVLC 4 queues the start command and returns immediately.
@@ -352,7 +353,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
                     SetOpening(false);
                     _isExplicitStop = true;
                     _isFading = false;
-                    _mediaPlayer.SetVolume(ToVlcVolume(_userVolume));
+                    SetVlcVolume(ToVlcVolume(_userVolume));
                     _logger.LogWarning("LibVLC rejected the play command. Last error: {LastError}",
                         UrlRedaction.RemoveQueries(_libVlc?.LastLibVLCError));
                 }
