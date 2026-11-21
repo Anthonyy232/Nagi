@@ -99,5 +99,9 @@
   "2.8.0": {
     "headline": "Lyrics, *word by word*",
     "scene": "lyrics"
+  },
+  "2.9.0": {
+    "headline": "Volume that *matches* Windows",
+    "scene": "player"
   }
 }
