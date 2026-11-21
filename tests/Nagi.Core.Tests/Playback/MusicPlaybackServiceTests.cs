@@ -603,6 +603,18 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task InitializeAsync_MovesAVolumeSavedOnLibVlcsScaleToTheMixersAtTheSameLoudness()
+    {
+        _settingsService.Set(CoreSettings.LegacyVolume, 0.5);
+
+        await _service.InitializeAsync();
+
+        await _audioPlayer.Received(1).SetVolumeAsync(0.125);
+        _settingsService.Get(CoreSettings.Volume).Should().Be(0.125);
+        _settingsService.Get(CoreSettings.LegacyVolume).Should().BeNull();
+    }
+
+    [Fact]
     public async Task InitializeAsync_WhenTheAudioPlayerFailsToStart_StillRestoresTheSession()
     {
         _audioPlayer.SetVolumeAsync(Arg.Any<double>()).ThrowsAsync(new InvalidOperationException("No audio output"));

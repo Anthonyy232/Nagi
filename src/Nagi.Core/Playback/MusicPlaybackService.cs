@@ -126,6 +126,12 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         var savedState = await _playbackStateStore.LoadAsync();
         if (_isDisposed) return;
 
+        if (_settingsService.Get(CoreSettings.LegacyVolume) is { } legacyVolume)
+        {
+            _settingsService.Set(CoreSettings.Volume, Math.Pow(legacyVolume, 3));
+            _settingsService.Set(CoreSettings.LegacyVolume, null);
+        }
+
         try
         {
             await _audioPlayer.SetVolumeAsync(_settingsService.Get(CoreSettings.Volume));

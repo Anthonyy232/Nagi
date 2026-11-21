@@ -44,7 +44,8 @@ public interface IAudioPlayer : IDisposable
     TimeSpan Duration { get; }
 
     /// <summary>
-    ///     Gets the current volume level, from 0.0 (silent) to 1.0 (maximum).
+    ///     Gets the current volume level, from 0.0 (silent) to 1.0 (maximum): the level the system's volume mixer
+    ///     shows for Nagi.
     /// </summary>
     double Volume { get; }
 

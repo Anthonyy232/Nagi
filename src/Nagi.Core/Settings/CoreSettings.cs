@@ -9,7 +9,11 @@ namespace Nagi.Core.Settings;
 public static class CoreSettings
 {
     /// <summary>From 0.0 to 1.0.</summary>
-    public static readonly Setting<double> Volume = Setting.Value("AppVolume", 0.5, volume => Math.Clamp(volume, 0.0, 1.0));
+    public static readonly Setting<double> Volume = Setting.Value("PlaybackVolume", 1.0, volume => Math.Clamp(volume, 0.0, 1.0));
+
+    // The volume as saved up to 2.8.0, on LibVLC's scale: the cube root of the mixer's. Internal, so not backed up.
+    internal static readonly Setting<double?> LegacyVolume = Setting.Value<double?>("AppVolume", null);
+
     public static readonly Setting<bool> IsMuted = Setting.Value("AppMuteState", false);
     public static readonly Setting<bool> IsShuffleEnabled = Setting.Value("MusicShuffleState", false);
     public static readonly Setting<RepeatMode> RepeatMode = Setting.EnumName("MusicRepeatMode", Playback.RepeatMode.Off);

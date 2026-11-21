@@ -129,8 +129,9 @@ public sealed partial class LibVlcAudioPlayerService
         // snapshot in sync so the next track does not restore a stale value over the user's
         // Windows mixer adjustment.
         var reportedVolume = ReadNative(() => _mediaPlayer?.Volume ?? -1, -1);
-        if (reportedVolume >= 0)
-            Interlocked.Exchange(ref _userVolume, Math.Clamp(reportedVolume / 100.0, 0.0, 1.0));
+        // LibVLC reports whole steps of its own scale, so Nagi's own change comes back slightly off.
+        if (reportedVolume >= 0 && reportedVolume != ToVlcVolume(_userVolume))
+            Interlocked.Exchange(ref _userVolume, Math.Clamp(FromVlcVolume(reportedVolume), 0.0, 1.0));
 
         _dispatcherService.TryEnqueue(() =>
         {

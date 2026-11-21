@@ -335,7 +335,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
                 else
                 {
                     // Ensure VLC volume matches user volume; a prior fade-out could have left it at 0.
-                    _mediaPlayer.SetVolume((int)Math.Clamp(_userVolume * 100, 0, 100));
+                    _mediaPlayer.SetVolume(ToVlcVolume(_userVolume));
                 }
 
                 // LibVLC 4 queues the start command and returns immediately.
@@ -352,7 +352,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
                     SetOpening(false);
                     _isExplicitStop = true;
                     _isFading = false;
-                    _mediaPlayer.SetVolume((int)Math.Clamp(_userVolume * 100, 0, 100));
+                    _mediaPlayer.SetVolume(ToVlcVolume(_userVolume));
                     _logger.LogWarning("LibVLC rejected the play command. Last error: {LastError}",
                         UrlRedaction.RemoveQueries(_libVlc?.LastLibVLCError));
                 }
@@ -368,7 +368,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         }
 
         if (startFadeIn)
-            _ = FadeAsync(0.0, _userVolume, TimeSpan.FromMilliseconds(_settingsService.Get(CoreSettings.FadeInDurationMs)), fadeCt);
+            _ = FadeAsync(0, ToVlcVolume(_userVolume), TimeSpan.FromMilliseconds(_settingsService.Get(CoreSettings.FadeInDurationMs)), fadeCt);
     }
 
     public async Task PauseAsync()

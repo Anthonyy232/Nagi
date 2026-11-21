@@ -22,18 +22,18 @@ public sealed partial class LibVlcAudioPlayerService
             // Read the actual VLC volume as the starting point rather than _userVolume.
             // If a fade-in was canceled mid-way (rapid play→pause), starting from _userVolume
             // would cause VLC to briefly ramp up before fading out — an audible blip.
-            double fromVolume;
+            int fromVolume;
             await _vlcOperationLock.WaitAsync(fadeCt).ConfigureAwait(false);
             try
             {
                 if (_isDisposed || _mediaPlayer is null) return;
-                fromVolume = Math.Clamp(_mediaPlayer.Volume / 100.0, 0.0, targetUserVolume);
+                fromVolume = Math.Clamp(_mediaPlayer.Volume, 0, ToVlcVolume(targetUserVolume));
             }
             finally
             {
                 _vlcOperationLock.Release();
             }
-            await FadeAsync(fromVolume, 0.0, TimeSpan.FromMilliseconds(_settingsService.Get(CoreSettings.FadeOutDurationMs)), fadeCt).ConfigureAwait(false);
+            await FadeAsync(fromVolume, 0, TimeSpan.FromMilliseconds(_settingsService.Get(CoreSettings.FadeOutDurationMs)), fadeCt).ConfigureAwait(false);
 
             if (_isDisposed || _mediaPlayer is null || fadeCt.IsCancellationRequested) return;
 
@@ -77,7 +77,7 @@ public sealed partial class LibVlcAudioPlayerService
         {
             if (_isDisposed || _mediaPlayer is null) return;
             _userVolume = Math.Clamp(volume, 0.0, 1.0);
-            _mediaPlayer.SetVolume((int)(_userVolume * 100));
+            _mediaPlayer.SetVolume(ToVlcVolume(_userVolume));
         }
         finally
         {
@@ -195,12 +195,18 @@ public sealed partial class LibVlcAudioPlayerService
         _mediaPlayer.SetEqualizer(_equalizer);
     }
 
+    // LibVLC's Windows output cubes its volume into the audio-session volume, the one the Windows mixer shows.
+    // Nagi's volume is that session volume, so both show the same level.
+    private static int ToVlcVolume(double volume) => (int)Math.Round(Math.Cbrt(volume) * 100);
+
+    private static double FromVlcVolume(int vlcVolume) => Math.Pow(vlcVolume / 100.0, 3);
+
     /// <summary>
-    ///     Ramps the VLC player volume from <paramref name="fromVolume"/> to <paramref name="toVolume"/>
-    ///     over <paramref name="duration"/>, suppressing <see cref="VolumeChanged"/> events throughout.
-    ///     Cancelling <paramref name="ct"/> aborts the ramp immediately.
+    ///     Ramps the VLC player volume from <paramref name="fromVolume"/> to <paramref name="toVolume"/>, on
+    ///     LibVLC's own scale, over <paramref name="duration"/>, suppressing <see cref="VolumeChanged"/> events
+    ///     throughout. Cancelling <paramref name="ct"/> aborts the ramp immediately.
     /// </summary>
-    private async Task FadeAsync(double fromVolume, double toVolume, TimeSpan duration, CancellationToken ct)
+    private async Task FadeAsync(int fromVolume, int toVolume, TimeSpan duration, CancellationToken ct)
     {
         var stopwatch = Stopwatch.StartNew();
         using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(10));
@@ -215,7 +221,7 @@ public sealed partial class LibVlcAudioPlayerService
                 try
                 {
                     if (_isDisposed || _mediaPlayer is null) return;
-                    _mediaPlayer.SetVolume((int)Math.Clamp(volume * 100, 0, 100));
+                    _mediaPlayer.SetVolume((int)Math.Round(volume));
                 }
                 finally
                 {

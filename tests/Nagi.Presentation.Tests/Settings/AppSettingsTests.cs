@@ -22,7 +22,7 @@ public class AppSettingsTests
             .Select(setting => setting.Key).ToList();
 
         keys.Should().OnlyHaveUniqueItems().And.BeEquivalentTo(
-            "AppVolume", "AppMuteState", "MusicShuffleState", "MusicRepeatMode", "RestorePlaybackStateEnabled",
+            "PlaybackVolume", "AppMuteState", "MusicShuffleState", "MusicRepeatMode", "RestorePlaybackStateEnabled",
             "EqualizerSettings", "VolumeNormalizationEnabled", "WasapiExclusiveModeEnabled", "AudioOutputDeviceId",
             "FadeOnPlayPauseEnabled", "FadeInDurationMs", "FadeOutDurationMs", "FetchOnlineMetadataEnabled",
             "FetchOnlineLyricsEnabled", "LyricsRomanizationEnabled", "IgnoreLeadingArticlesOnSort",

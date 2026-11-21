@@ -17,14 +17,14 @@ public class SettingsServiceTests
         var changes = new List<Setting>();
         settings.SettingChanged += changes.Add;
 
-        settings.Set(CoreSettings.Volume, 1.5);
-        settings.Set(CoreSettings.Volume, 1.0);
+        settings.Set(CoreSettings.Volume, -0.5);
+        settings.Set(CoreSettings.Volume, 0.0);
         settings.Set(CoreSettings.IsMuted, false);
         settings.Set(CoreSettings.LyricsProviders, settings.Get(CoreSettings.LyricsProviders));
         settings.Set(CoreSettings.RepeatMode, RepeatMode.RepeatAll);
 
         changes.Should().Equal(CoreSettings.Volume, CoreSettings.RepeatMode);
-        settings.Get(CoreSettings.Volume).Should().Be(1.0);
+        settings.Get(CoreSettings.Volume).Should().Be(0.0);
     }
 
     [Fact]
@@ -120,7 +120,7 @@ public class SettingsServiceTests
         {
             ["MusicRepeatMode"] = "999",
             ["LyricsServiceProviders"] = "{broken",
-            ["AppVolume"] = "loud",
+            ["PlaybackVolume"] = "loud",
             ["EqualizerSettings"] = "{broken"
         });
 
@@ -155,7 +155,7 @@ public class SettingsServiceTests
             ["AppMuteState"] = true,
             ["FadeInDurationMs"] = 3,
             ["ListenBrainzEnabledSinceUtcTicks"] = 638_000_000_000_000_000L,
-            ["AppVolume"] = 1.0,
+            ["PlaybackVolume"] = 1.0,
             ["MusicRepeatMode"] = "RepeatAll",
             ["LastFmAuthToken"] = "temporary"
         };
@@ -170,15 +170,15 @@ public class SettingsServiceTests
     }
 
     [Theory]
-    [InlineData("{\"AppVolume\":0.5}")]
-    [InlineData("{\"AppVolume\":{\"Type\":\"Double\",\"Value\":\"loud\"}}")]
+    [InlineData("{\"PlaybackVolume\":0.5}")]
+    [InlineData("{\"PlaybackVolume\":{\"Type\":\"Double\",\"Value\":\"loud\"}}")]
     [InlineData("{\"When\":{\"Type\":\"DateTimeOffset\",\"Value\":\"2026-01-01\"}}")]
     public async Task Import_WithAnInvalidSnapshot_ThrowsAndKeepsCurrentSettings(string snapshot)
     {
-        var values = new Dictionary<string, object> { ["AppVolume"] = 0.8 };
+        var values = new Dictionary<string, object> { ["PlaybackVolume"] = 0.8 };
 
         await TestSettings.Create(values).Invoking(settings => settings.ImportAsync(snapshot)).Should().ThrowAsync<JsonException>();
 
-        values.Should().Equal(new Dictionary<string, object> { ["AppVolume"] = 0.8 });
+        values.Should().Equal(new Dictionary<string, object> { ["PlaybackVolume"] = 0.8 });
     }
 }
