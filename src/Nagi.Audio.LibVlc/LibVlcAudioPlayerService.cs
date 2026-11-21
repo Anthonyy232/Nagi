@@ -515,8 +515,9 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         try
         {
             if (_isDisposed || _mediaPlayer is null) return;
+            // Precise: a fast seek plays from wherever the demuxer landed, which can be before the position.
             if (_mediaPlayer.IsSeekable)
-                _mediaPlayer.SeekTo(position, true);
+                _mediaPlayer.SeekTo(position, false);
             else
                 _logger.LogWarning("Seek command received, but media is not seekable.");
         }
