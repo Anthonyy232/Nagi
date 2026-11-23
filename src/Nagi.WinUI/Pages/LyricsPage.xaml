@@ -1,139 +1,125 @@
-<pages:ViewModelPage
-    xmlns:pages="using:Nagi.WinUI.Pages"
-    x:Class="Nagi.WinUI.Pages.LyricsPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:lyrics="using:Nagi.Core.Lyrics"
-    xmlns:resources="using:Nagi.Presentation.Resources"
-    xmlns:helpers="using:Nagi.WinUI.Helpers"
-    xmlns:uicontrols="using:Nagi.WinUI.Controls"
-    mc:Ignorable="d"
-    Background="Transparent"
-    Loaded="OnPageLoaded">
+﻿<pages:ViewModelPage x:Class="Nagi.WinUI.Pages.LyricsPage"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:helpers="using:Nagi.WinUI.Helpers"
+                     xmlns:lyrics="using:Nagi.Core.Lyrics"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:pages="using:Nagi.WinUI.Pages"
+                     xmlns:resources="using:Nagi.Presentation.Resources"
+                     xmlns:uicontrols="using:Nagi.WinUI.Controls"
+                     Background="Transparent"
+                     Loaded="OnPageLoaded"
+                     mc:Ignorable="d">
 
     <Page.Resources>
         <ResourceDictionary>
             <Storyboard x:Key="PageLoadStoryboard">
-                <DoubleAnimation
-                    Storyboard.TargetName="LyricsContainer"
-                    Storyboard.TargetProperty="Opacity"
-                    From="0" To="1" Duration="0:0:0.5">
+                <DoubleAnimation Storyboard.TargetName="LyricsContainer"
+                                 Storyboard.TargetProperty="Opacity"
+                                 From="0"
+                                 To="1"
+                                 Duration="0:0:0.5">
                     <DoubleAnimation.EasingFunction>
-                        <ExponentialEase EasingMode="EaseOut" Exponent="3"/>
+                        <ExponentialEase EasingMode="EaseOut" Exponent="3" />
                     </DoubleAnimation.EasingFunction>
                 </DoubleAnimation>
             </Storyboard>
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid x:Name="LyricsContainer" Opacity="0" Padding="{StaticResource PageContainerPaddingVertical}">
+    <Grid x:Name="LyricsContainer"
+          Padding="{StaticResource PageContainerPaddingVertical}"
+          Opacity="0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid
-            Grid.Row="0"
-            Margin="{StaticResource PageHeaderMarginIndented}">
-            <TextBlock
-                Style="{StaticResource TitleTextBlockStyle}"
-                Text="{x:Bind ViewModel.SongTitle, Mode=OneWay}"
-                Foreground="{StaticResource AccentTextBrush}"
-                HorizontalAlignment="Center"
-                TextWrapping="NoWrap"
-                MaxLines="1"
-                MaxWidth="1200" />
-            <Button
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                Style="{StaticResource SongListViewPageIconButton}"
-                IsEnabled="{x:Bind ViewModel.CanEditLyrics, Mode=OneWay}"
-                Command="{x:Bind ViewModel.EditLyricsCommand}"
-                AutomationProperties.Name="{x:Bind resources:Strings.LyricsPage_EditLyrics_ToolTip, Mode=OneTime}"
-                ToolTipService.ToolTip="{x:Bind resources:Strings.LyricsPage_EditLyrics_ToolTip, Mode=OneTime}">
-                <FontIcon Glyph="&#xE70F;" FontSize="16" />
+        <Grid Grid.Row="0" Margin="{StaticResource PageHeaderMarginIndented}">
+            <TextBlock MaxWidth="1200"
+                       HorizontalAlignment="Center"
+                       Foreground="{StaticResource AccentTextBrush}"
+                       MaxLines="1"
+                       Style="{StaticResource TitleTextBlockStyle}"
+                       Text="{x:Bind ViewModel.SongTitle, Mode=OneWay}"
+                       TextWrapping="NoWrap" />
+            <Button HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    AutomationProperties.Name="{x:Bind resources:Strings.LyricsPage_EditLyrics_ToolTip, Mode=OneTime}"
+                    Command="{x:Bind ViewModel.EditLyricsCommand}"
+                    IsEnabled="{x:Bind ViewModel.CanEditLyrics, Mode=OneWay}"
+                    Style="{StaticResource SongListViewPageIconButton}"
+                    ToolTipService.ToolTip="{x:Bind resources:Strings.LyricsPage_EditLyrics_ToolTip, Mode=OneTime}">
+                <FontIcon FontSize="16" Glyph="&#xE70F;" />
             </Button>
         </Grid>
 
-        <ProgressBar
-            x:Name="LyricsProgressBar"
-            Maximum="100"
-            Grid.Row="1"
-            Style="{StaticResource LyricsProgressBarStyle}"
-            Margin="{StaticResource PageHeaderMarginIndented}"
-            Visibility="{x:Bind ViewModel.HasLyrics, Mode=OneWay}"
-            MaxWidth="600" />
+        <ProgressBar x:Name="LyricsProgressBar"
+                     Grid.Row="1"
+                     MaxWidth="600"
+                     Margin="{StaticResource PageHeaderMarginIndented}"
+                     Maximum="100"
+                     Style="{StaticResource LyricsProgressBarStyle}"
+                     Visibility="{x:Bind ViewModel.HasLyrics, Mode=OneWay}" />
 
-        <ScrollViewer
-            x:Name="LyricsScrollViewer"
-            Grid.Row="2"
-            HorizontalScrollBarVisibility="Disabled"
-            VerticalScrollBarVisibility="Auto"
-            Background="Transparent"
-            SizeChanged="LyricsScrollViewer_SizeChanged"
-            Visibility="{x:Bind ViewModel.HasLyrics, Mode=OneWay}">
+        <ScrollViewer x:Name="LyricsScrollViewer"
+                      Grid.Row="2"
+                      Background="Transparent"
+                      HorizontalScrollBarVisibility="Disabled"
+                      SizeChanged="LyricsScrollViewer_SizeChanged"
+                      VerticalScrollBarVisibility="Auto"
+                      Visibility="{x:Bind ViewModel.HasLyrics, Mode=OneWay}">
             <StackPanel>
                 <Border x:Name="TopSpacer" />
-                <ItemsRepeater
-                    x:Name="LyricsRepeater"
-                    ItemsSource="{x:Bind ViewModel.LyricLines, Mode=OneWay}"
-                    ElementPrepared="LyricsRepeater_ElementPrepared"
-                    ElementClearing="LyricsRepeater_ElementClearing">
+                <ItemsRepeater x:Name="LyricsRepeater"
+                               ElementClearing="LyricsRepeater_ElementClearing"
+                               ElementPrepared="LyricsRepeater_ElementPrepared"
+                               ItemsSource="{x:Bind ViewModel.LyricLines, Mode=OneWay}">
                     <ItemsRepeater.Layout>
                         <helpers:NonVirtualizingStackLayout />
                     </ItemsRepeater.Layout>
                     <ItemsRepeater.ItemTemplate>
                         <DataTemplate x:DataType="lyrics:LyricLine">
-                            <Grid
-                                Padding="32,28"
-                                Background="Transparent"
-                                CornerRadius="{ThemeResource ControlCornerRadius}"
-                                Tag="{x:Bind}"
-                                PointerEntered="LyricItem_PointerEntered"
-                                PointerExited="LyricItem_PointerExited"
-                                Tapped="LyricItem_Tapped">
+                            <Grid Padding="32,28"
+                                  Background="Transparent"
+                                  CornerRadius="{ThemeResource ControlCornerRadius}"
+                                  PointerEntered="LyricItem_PointerEntered"
+                                  PointerExited="LyricItem_PointerExited"
+                                  Tag="{x:Bind}"
+                                  Tapped="LyricItem_Tapped">
                                 <StackPanel x:Name="BaseLayer" Spacing="8">
-                                    <TextBlock
-                                        Text="{x:Bind Text}"
-                                        Style="{StaticResource LyricLineTextBlockStyle}" />
-                                    <TextBlock
-                                        Text="{x:Bind RomanizedText}"
-                                        Style="{StaticResource SecondaryLyricLineTextBlockStyle}"
-                                        Visibility="{x:Bind HasRomanizedText, Mode=OneTime}" />
-                                    <TextBlock
-                                        Text="{x:Bind TranslatedText}"
-                                        Style="{StaticResource SecondaryLyricLineTextBlockStyle}"
-                                        Visibility="{x:Bind HasTranslatedText, Mode=OneTime}" />
+                                    <TextBlock Style="{StaticResource LyricLineTextBlockStyle}" Text="{x:Bind Text}" />
+                                    <TextBlock Style="{StaticResource SecondaryLyricLineTextBlockStyle}"
+                                               Text="{x:Bind RomanizedText}"
+                                               Visibility="{x:Bind HasRomanizedText, Mode=OneTime}" />
+                                    <TextBlock Style="{StaticResource SecondaryLyricLineTextBlockStyle}"
+                                               Text="{x:Bind TranslatedText}"
+                                               Visibility="{x:Bind HasTranslatedText, Mode=OneTime}" />
                                 </StackPanel>
-                                <!-- Opacity is set through Composition. -->
+                                <!--  Opacity is set through Composition.  -->
                                 <StackPanel x:Name="ActiveLayer" Spacing="8">
-                                    <TextBlock
-                                        Text="{x:Bind Text}"
-                                        Style="{StaticResource LyricLineTextBlockStyle}"
-                                        Foreground="{StaticResource AccentTextBrush}" />
-                                    <TextBlock
-                                        Text="{x:Bind RomanizedText}"
-                                        Style="{StaticResource SecondaryLyricLineTextBlockStyle}"
-                                        Foreground="{StaticResource AccentTextBrush}"
-                                        Visibility="{x:Bind HasRomanizedText, Mode=OneTime}" />
-                                    <TextBlock
-                                        Text="{x:Bind TranslatedText}"
-                                        Style="{StaticResource SecondaryLyricLineTextBlockStyle}"
-                                        Foreground="{StaticResource AccentTextBrush}"
-                                        Visibility="{x:Bind HasTranslatedText, Mode=OneTime}" />
+                                    <TextBlock Foreground="{StaticResource AccentTextBrush}"
+                                               Style="{StaticResource LyricLineTextBlockStyle}"
+                                               Text="{x:Bind Text}" />
+                                    <TextBlock Foreground="{StaticResource AccentTextBrush}"
+                                               Style="{StaticResource SecondaryLyricLineTextBlockStyle}"
+                                               Text="{x:Bind RomanizedText}"
+                                               Visibility="{x:Bind HasRomanizedText, Mode=OneTime}" />
+                                    <TextBlock Foreground="{StaticResource AccentTextBrush}"
+                                               Style="{StaticResource SecondaryLyricLineTextBlockStyle}"
+                                               Text="{x:Bind TranslatedText}"
+                                               Visibility="{x:Bind HasTranslatedText, Mode=OneTime}" />
                                 </StackPanel>
-                                <!-- Drawn beneath the text, out over the padding. -->
-                                <Border
-                                    x:Name="HoverBackground"
-                                    Margin="-32,-28"
-                                    Canvas.ZIndex="-1"
-                                    Background="{ThemeResource SubtleFillColorSecondaryBrush}"
-                                    CornerRadius="{ThemeResource ControlCornerRadius}"
-                                    IsHitTestVisible="False"
-                                    Visibility="Collapsed" />
+                                <!--  Drawn beneath the text, out over the padding.  -->
+                                <Border x:Name="HoverBackground"
+                                        Margin="-32,-28"
+                                        Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                        Canvas.ZIndex="-1"
+                                        CornerRadius="{ThemeResource ControlCornerRadius}"
+                                        IsHitTestVisible="False"
+                                        Visibility="Collapsed" />
                             </Grid>
                         </DataTemplate>
                     </ItemsRepeater.ItemTemplate>
@@ -142,45 +128,40 @@
             </StackPanel>
         </ScrollViewer>
 
-        <ListView
-            Grid.Row="2"
-            Padding="{StaticResource PageContentPadding}"
-            ItemsSource="{x:Bind ViewModel.UnsyncedLyricLines, Mode=OneWay}"
-            Background="Transparent"
-            SelectionMode="None"
-            IsItemClickEnabled="False"
-            HorizontalContentAlignment="Stretch"
-            ItemContainerStyle="{StaticResource PaddedListViewItemStyle}"
-            Visibility="{x:Bind ViewModel.HasUnsyncedLyrics, Mode=OneWay}">
+        <ListView Grid.Row="2"
+                  Padding="{StaticResource PageContentPadding}"
+                  HorizontalContentAlignment="Stretch"
+                  Background="Transparent"
+                  IsItemClickEnabled="False"
+                  ItemContainerStyle="{StaticResource PaddedListViewItemStyle}"
+                  ItemsSource="{x:Bind ViewModel.UnsyncedLyricLines, Mode=OneWay}"
+                  SelectionMode="None"
+                  Visibility="{x:Bind ViewModel.HasUnsyncedLyrics, Mode=OneWay}">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="lyrics:LyricLine">
                     <StackPanel>
-                        <TextBlock
-                            Text="{x:Bind Text}"
-                            Style="{StaticResource InactiveLyricLineStyle}"
-                            Opacity="1.0" />
-                        <TextBlock
-                            Text="{x:Bind RomanizedText}"
-                            Style="{StaticResource SecondaryInactiveLyricLineStyle}"
-                            Visibility="{x:Bind HasRomanizedText, Mode=OneTime}" />
+                        <TextBlock Opacity="1.0"
+                                   Style="{StaticResource InactiveLyricLineStyle}"
+                                   Text="{x:Bind Text}" />
+                        <TextBlock Style="{StaticResource SecondaryInactiveLyricLineStyle}"
+                                   Text="{x:Bind RomanizedText}"
+                                   Visibility="{x:Bind HasRomanizedText, Mode=OneTime}" />
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
 
-        <uicontrols:EmptyState
-            Grid.Row="2"
-            Glyph="&#xED1E;"
-            Title="{x:Bind resources:Strings.LyricsPage_NoLyrics_Title, Mode=OneTime}"
-            Subtitle="{x:Bind resources:Strings.LyricsPage_NoLyrics_Subtitle, Mode=OneTime}"
-            IsShown="{x:Bind ViewModel.ShowNoLyricsMessage, Mode=OneWay}" />
+        <uicontrols:EmptyState Title="{x:Bind resources:Strings.LyricsPage_NoLyrics_Title, Mode=OneTime}"
+                               Grid.Row="2"
+                               Glyph="&#xED1E;"
+                               IsShown="{x:Bind ViewModel.ShowNoLyricsMessage, Mode=OneWay}"
+                               Subtitle="{x:Bind resources:Strings.LyricsPage_NoLyrics_Subtitle, Mode=OneTime}" />
 
-        <ProgressRing
-            Grid.Row="2"
-            Width="48"
-            Height="48"
-            IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center" />
+        <ProgressRing Grid.Row="2"
+                      Width="48"
+                      Height="48"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
     </Grid>
 </pages:ViewModelPage>

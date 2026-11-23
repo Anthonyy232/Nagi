@@ -1,38 +1,36 @@
-<UserControl
-    x:Class="Nagi.WinUI.Controls.TrayIconUserControl"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:tb="using:H.NotifyIcon"
-    xmlns:resources="using:Nagi.Presentation.Resources"
-    mc:Ignorable="d"
-    VerticalAlignment="Top" HorizontalAlignment="Left"
-    Width="1" Height="1" Opacity="0" IsTabStop="False">
+﻿<UserControl x:Class="Nagi.WinUI.Controls.TrayIconUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:resources="using:Nagi.Presentation.Resources"
+             xmlns:tb="using:H.NotifyIcon"
+             Width="1"
+             Height="1"
+             HorizontalAlignment="Left"
+             VerticalAlignment="Top"
+             IsTabStop="False"
+             Opacity="0"
+             mc:Ignorable="d">
 
-    <tb:TaskbarIcon
-        x:Name="AppTrayIcon"
-        Visibility="{x:Bind ViewModel.IsTrayIconVisible, Mode=OneWay}"
-        IconSource="ms-appx:///Assets/AppLogo.ico"
-        LeftClickCommand="{x:Bind ViewModel.ShowPopupCommand}"
-        NoLeftClickDelay="True"
-        DoubleClickCommand="{x:Bind ViewModel.RestoreWindowCommand}"
-        ToolTipText="{x:Bind ViewModel.ToolTipText, Mode=OneWay}"
-        ContextMenuMode="SecondWindow">
+    <tb:TaskbarIcon x:Name="AppTrayIcon"
+                    ContextMenuMode="SecondWindow"
+                    DoubleClickCommand="{x:Bind ViewModel.RestoreWindowCommand}"
+                    IconSource="ms-appx:///Assets/AppLogo.ico"
+                    LeftClickCommand="{x:Bind ViewModel.ShowPopupCommand}"
+                    NoLeftClickDelay="True"
+                    ToolTipText="{x:Bind ViewModel.ToolTipText, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.IsTrayIconVisible, Mode=OneWay}">
 
         <tb:TaskbarIcon.ContextFlyout>
             <MenuFlyout AreOpenCloseAnimationsEnabled="True">
-                <MenuFlyoutItem
-                    Text="{x:Bind resources:Strings.TrayIcon_ShowWindow, Mode=OneTime}"
-                    Command="{x:Bind ViewModel.RestoreWindowCommand}">
+                <MenuFlyoutItem Command="{x:Bind ViewModel.RestoreWindowCommand}" Text="{x:Bind resources:Strings.TrayIcon_ShowWindow, Mode=OneTime}">
                     <MenuFlyoutItem.Icon>
                         <FontIcon Glyph="&#xE73F;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
                 <MenuFlyoutSeparator />
-                <MenuFlyoutItem
-                    Text="{x:Bind resources:Strings.TrayIcon_Exit, Mode=OneTime}"
-                    Command="{x:Bind ViewModel.ExitApplicationCommand}">
+                <MenuFlyoutItem Command="{x:Bind ViewModel.ExitApplicationCommand}" Text="{x:Bind resources:Strings.TrayIcon_Exit, Mode=OneTime}">
                     <MenuFlyoutItem.Icon>
                         <FontIcon Glyph="&#xE7E8;" />
                     </MenuFlyoutItem.Icon>

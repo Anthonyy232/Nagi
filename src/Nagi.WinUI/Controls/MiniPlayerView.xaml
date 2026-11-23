@@ -1,11 +1,10 @@
-<UserControl
-    x:Class="Nagi.WinUI.Controls.MiniPlayerView"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:media="using:CommunityToolkit.WinUI.Media"
-    xmlns:local="using:Nagi.WinUI.Controls"
-    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
-    xmlns:resources="using:Nagi.Presentation.Resources">
+﻿<UserControl x:Class="Nagi.WinUI.Controls.MiniPlayerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Nagi.WinUI.Controls"
+             xmlns:media="using:CommunityToolkit.WinUI.Media"
+             xmlns:resources="using:Nagi.Presentation.Resources"
+             xmlns:uihelpers="using:Nagi.WinUI.Helpers">
 
     <!--  The root grid handles pointer enter/exit events to show or hide the controls.  -->
     <Grid x:Name="HoverDetector" Background="Transparent">
@@ -13,10 +12,9 @@
         <!--  Blends album art with the theme colors  -->
         <Border Opacity="1.0">
             <Border.Background>
-                <media:ImageBlendBrush
-                    Mode="Multiply"
-                    Source="{x:Bind uihelpers:BitmapImageFactory.CreateDecoded(ViewModel.AlbumArtUri, 400), Mode=OneWay}"
-                    Stretch="UniformToFill" />
+                <media:ImageBlendBrush Mode="Multiply"
+                                       Source="{x:Bind uihelpers:BitmapImageFactory.CreateDecoded(ViewModel.AlbumArtUri, 400), Mode=OneWay}"
+                                       Stretch="UniformToFill" />
             </Border.Background>
         </Border>
 
@@ -29,14 +27,15 @@
             <!--  Overlay for control readability  -->
             <Border Background="{StaticResource MediaOnImageControlsScrimBrush}" IsHitTestVisible="False" />
 
-            <local:CompactPlayerView x:Name="Player" ViewModel="{x:Bind ViewModel}" IsOnImage="True">
+            <local:CompactPlayerView x:Name="Player"
+                                     IsOnImage="True"
+                                     ViewModel="{x:Bind ViewModel}">
                 <local:CompactPlayerView.HeaderTrailingContent>
-                    <Button
-                        x:Name="RestoreButton"
-                        Style="{StaticResource MediaOnImageControlButtonStyle}"
-                        Click="RestoreButton_Click"
-                        ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_RestoreButton_ToolTip}"
-                        AutomationProperties.Name="{x:Bind resources:Strings.MiniPlayer_RestoreButton_ToolTip}">
+                    <Button x:Name="RestoreButton"
+                            AutomationProperties.Name="{x:Bind resources:Strings.MiniPlayer_RestoreButton_ToolTip}"
+                            Click="RestoreButton_Click"
+                            Style="{StaticResource MediaOnImageControlButtonStyle}"
+                            ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_RestoreButton_ToolTip}">
                         <FontIcon FontSize="20" Glyph="&#xE73F;" />
                     </Button>
                 </local:CompactPlayerView.HeaderTrailingContent>

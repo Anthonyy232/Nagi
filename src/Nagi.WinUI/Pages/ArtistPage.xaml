@@ -1,17 +1,16 @@
-<pages:CollectionPage
-    xmlns:pages="using:Nagi.WinUI.Pages"
-    x:Class="Nagi.WinUI.Pages.ArtistPage"
-    NavigationCacheMode="Enabled"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:lists="using:Nagi.Presentation.Lists"
-    xmlns:resources="using:Nagi.Presentation.Resources"
-    xmlns:uicontrols="using:Nagi.WinUI.Controls"
-    x:Name="Root"
-    Background="Transparent"
-    mc:Ignorable="d">
+﻿<pages:CollectionPage x:Class="Nagi.WinUI.Pages.ArtistPage"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:lists="using:Nagi.Presentation.Lists"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:pages="using:Nagi.WinUI.Pages"
+                      xmlns:resources="using:Nagi.Presentation.Resources"
+                      xmlns:uicontrols="using:Nagi.WinUI.Controls"
+                      x:Name="Root"
+                      Background="Transparent"
+                      NavigationCacheMode="Enabled"
+                      mc:Ignorable="d">
 
     <Grid Padding="{StaticResource PageContainerPaddingVertical}">
 
@@ -21,16 +20,18 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <uicontrols:CollectionPageHeader Grid.Row="0" Margin="{StaticResource CollectionPageHeaderMargin}"
-                                         ViewModel="{x:Bind ViewModel}"
-                                         Title="{x:Bind resources:Strings.ArtistPage_Title}"
+        <uicontrols:CollectionPageHeader Title="{x:Bind resources:Strings.ArtistPage_Title}"
+                                         Grid.Row="0"
+                                         Margin="{StaticResource CollectionPageHeaderMargin}"
                                          CountText="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}"
                                          SearchPlaceholder="{x:Bind resources:Strings.ArtistPage_SearchBox_Placeholder}"
-                                         SearchToolTip="{x:Bind resources:Strings.ArtistPage_SearchButton_Search_ToolTip}" />
+                                         SearchToolTip="{x:Bind resources:Strings.ArtistPage_SearchButton_Search_ToolTip}"
+                                         ViewModel="{x:Bind ViewModel}" />
 
         <Grid Grid.Row="1">
-            <GridView x:Name="CollectionGrid" Style="{StaticResource CollectionGridViewStyle}"
-                ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}">
+            <GridView x:Name="CollectionGrid"
+                      ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
+                      Style="{StaticResource CollectionGridViewStyle}">
                 <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsWrapGrid ItemWidth="{StaticResource CollectionGridItemWidth}" Orientation="Horizontal" />
@@ -38,27 +39,23 @@
                 </GridView.ItemsPanel>
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="lists:ArtistViewModelItem">
-                        <Grid
-                            Width="{StaticResource CollectionCardWidth}"
-                            Height="{StaticResource CollectionCardHeight}"
-                            Margin="{StaticResource CollectionCardMargin}"
-                            Background="Transparent">
+                        <Grid Width="{StaticResource CollectionCardWidth}"
+                              Height="{StaticResource CollectionCardHeight}"
+                              Margin="{StaticResource CollectionCardMargin}"
+                              Background="Transparent">
                             <Grid.ContextFlyout>
                                 <MenuFlyout>
-                                    <MenuFlyoutItem
-                                        Text="{x:Bind resources:Strings.Generic_Play, Mode=OneTime}"
-                                        Command="{Binding ViewModel.PlayArtistCommand, ElementName=Root}"
-                                        CommandParameter="{x:Bind Id}" />
+                                    <MenuFlyoutItem Command="{Binding ViewModel.PlayArtistCommand, ElementName=Root}"
+                                                    CommandParameter="{x:Bind Id}"
+                                                    Text="{x:Bind resources:Strings.Generic_Play, Mode=OneTime}" />
                                     <MenuFlyoutSeparator />
-                                    <MenuFlyoutItem
-                                        Text="{x:Bind resources:Strings.Generic_ChangeImage, Mode=OneTime}"
-                                        Command="{Binding ViewModel.ChangeArtistImageCommand, ElementName=Root}"
-                                        CommandParameter="{x:Bind Id}" />
-                                    <MenuFlyoutItem
-                                        Text="{x:Bind resources:Strings.Generic_RemoveImage, Mode=OneTime}"
-                                        Command="{Binding ViewModel.RemoveArtistImageCommand, ElementName=Root}"
-                                        CommandParameter="{x:Bind Id}"
-                                        Visibility="{x:Bind IsCustomImage, Mode=OneWay}" />
+                                    <MenuFlyoutItem Command="{Binding ViewModel.ChangeArtistImageCommand, ElementName=Root}"
+                                                    CommandParameter="{x:Bind Id}"
+                                                    Text="{x:Bind resources:Strings.Generic_ChangeImage, Mode=OneTime}" />
+                                    <MenuFlyoutItem Command="{Binding ViewModel.RemoveArtistImageCommand, ElementName=Root}"
+                                                    CommandParameter="{x:Bind Id}"
+                                                    Text="{x:Bind resources:Strings.Generic_RemoveImage, Mode=OneTime}"
+                                                    Visibility="{x:Bind IsCustomImage, Mode=OneWay}" />
                                 </MenuFlyout>
                             </Grid.ContextFlyout>
                             <Grid.RowDefinitions>
@@ -66,28 +63,28 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <uicontrols:ArtworkImage Grid.Row="0" HorizontalAlignment="Center" Size="{StaticResource CollectionCardImageSize}" IsCircular="True"
-                                                         Source="{x:Bind ImageUri, Mode=OneWay}"
-                                                         PlaceholderGlyph="&#xE77B;" />
+                            <uicontrols:ArtworkImage Grid.Row="0"
+                                                     HorizontalAlignment="Center"
+                                                     IsCircular="True"
+                                                     PlaceholderGlyph="&#xE77B;"
+                                                     Size="{StaticResource CollectionCardImageSize}"
+                                                     Source="{x:Bind ImageUri, Mode=OneWay}" />
 
-                            <TextBlock
-                                Grid.Row="1"
-                                Style="{StaticResource CollectionCardTitleTextBlockStyle}"
-                                Text="{x:Bind Name, Mode=OneWay}" />
+                            <TextBlock Grid.Row="1"
+                                       Style="{StaticResource CollectionCardTitleTextBlockStyle}"
+                                       Text="{x:Bind Name, Mode=OneWay}" />
                         </Grid>
                     </DataTemplate>
                 </GridView.ItemTemplate>
             </GridView>
 
-            <uicontrols:EmptyState Glyph="&#xE77B;"
-                                   Title="{x:Bind resources:Strings.ArtistPage_Empty_Title, Mode=OneTime}"
-                                   Subtitle="{x:Bind resources:Strings.ArtistPage_Empty_Subtitle, Mode=OneTime}"
+            <uicontrols:EmptyState Title="{x:Bind resources:Strings.ArtistPage_Empty_Title, Mode=OneTime}"
+                                   Glyph="&#xE77B;"
+                                   HasLoadError="{x:Bind ViewModel.HasLoadError, Mode=OneWay}"
                                    IsShown="{x:Bind ViewModel.ShowEmptyState, Mode=OneWay}"
-                                   HasLoadError="{x:Bind ViewModel.HasLoadError, Mode=OneWay}" />
+                                   Subtitle="{x:Bind resources:Strings.ArtistPage_Empty_Subtitle, Mode=OneTime}" />
         </Grid>
 
-        <uicontrols:PaginationControl
-            Grid.Row="2"
-            ViewModel="{x:Bind ViewModel}" />
+        <uicontrols:PaginationControl Grid.Row="2" ViewModel="{x:Bind ViewModel}" />
     </Grid>
 </pages:CollectionPage>
