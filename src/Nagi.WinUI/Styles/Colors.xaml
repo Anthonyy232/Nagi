@@ -1,8 +1,7 @@
-<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:media="using:Microsoft.UI.Xaml.Media"
-    xmlns:animation="using:Microsoft.UI.Xaml.Media.Animation">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:animation="using:Microsoft.UI.Xaml.Media.Animation"
+                    xmlns:media="using:Microsoft.UI.Xaml.Media">
 
     <!--  ThemePalette.BrandAccentColor, which XAML can't read. It shows until the saved theme is applied.  -->
     <Color x:Key="BrandAccentColor">#FF26854D</Color>
@@ -16,7 +15,9 @@
         <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
     </Style>
 
-    <Style x:Key="PaddedListViewItemStyle" TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+    <Style x:Key="PaddedListViewItemStyle"
+           BasedOn="{StaticResource DefaultListViewItemStyle}"
+           TargetType="ListViewItem">
         <Setter Property="Padding" Value="12,8" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
     </Style>
@@ -76,17 +77,15 @@
     <SolidColorBrush x:Key="PlayerTintColorBrush" Color="{StaticResource BrandAccentColor}" />
     <SolidColorBrush x:Key="PlayerBackgroundBrush" Color="#FF242424" />
 
-    <media:AcrylicBrush
-        x:Key="Win11AcrylicBrush"
-        FallbackColor="{Binding Color, Source={StaticResource PlayerBackgroundBrush}}"
-        TintColor="{Binding Color, Source={StaticResource PlayerTintColorBrush}}"
-        TintLuminosityOpacity="0.15"
-        TintOpacity="0.15" />
+    <media:AcrylicBrush x:Key="Win11AcrylicBrush"
+                        FallbackColor="{Binding Color, Source={StaticResource PlayerBackgroundBrush}}"
+                        TintColor="{Binding Color, Source={StaticResource PlayerTintColorBrush}}"
+                        TintLuminosityOpacity="0.15"
+                        TintOpacity="0.15" />
 
-    <SolidColorBrush
-        x:Key="Win10AcrylicBrush"
-        Opacity="0.98"
-        Color="{Binding Color, Source={StaticResource PlayerBackgroundBrush}}" />
+    <SolidColorBrush x:Key="Win10AcrylicBrush"
+                     Opacity="0.98"
+                     Color="{Binding Color, Source={StaticResource PlayerBackgroundBrush}}" />
 
     <Style x:Key="AnimatedIconButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="Transparent" />
@@ -108,61 +107,77 @@
                         <Grid.RenderTransform>
                             <ScaleTransform x:Name="ScaleTrans" />
                         </Grid.RenderTransform>
+                        <ContentPresenter x:Name="ContentPresenter"
+                                          Padding="{TemplateBinding Padding}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          AutomationProperties.AccessibilityView="Raw"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                          Foreground="{TemplateBinding Foreground}" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
                                     <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="ScaleTrans" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.2" EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="ScaleTrans" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.2" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation EasingFunction="{StaticResource CubicEaseOut}"
+                                                         Storyboard.TargetName="ScaleTrans"
+                                                         Storyboard.TargetProperty="ScaleX"
+                                                         To="1.0"
+                                                         Duration="0:0:0.2" />
+                                        <DoubleAnimation EasingFunction="{StaticResource CubicEaseOut}"
+                                                         Storyboard.TargetName="ScaleTrans"
+                                                         Storyboard.TargetProperty="ScaleY"
+                                                         To="1.0"
+                                                         Duration="0:0:0.2" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
-                                                                       Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource ControlFillColorSecondaryBrush}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ControlFillColorSecondaryBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <DoubleAnimation Storyboard.TargetName="ScaleTrans" Storyboard.TargetProperty="ScaleX" To="1.05" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="ScaleTrans" Storyboard.TargetProperty="ScaleY" To="1.05" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation EasingFunction="{StaticResource CubicEaseOut}"
+                                                         Storyboard.TargetName="ScaleTrans"
+                                                         Storyboard.TargetProperty="ScaleX"
+                                                         To="1.05"
+                                                         Duration="0:0:0.3" />
+                                        <DoubleAnimation EasingFunction="{StaticResource CubicEaseOut}"
+                                                         Storyboard.TargetName="ScaleTrans"
+                                                         Storyboard.TargetProperty="ScaleY"
+                                                         To="1.05"
+                                                         Duration="0:0:0.3" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
-                                                                       Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource ControlFillColorTertiaryBrush}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ControlFillColorTertiaryBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <DoubleAnimation Storyboard.TargetName="ScaleTrans" Storyboard.TargetProperty="ScaleX" To="0.95" Duration="0:0:0.1" EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="ScaleTrans" Storyboard.TargetProperty="ScaleY" To="0.95" Duration="0:0:0.1" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation EasingFunction="{StaticResource CubicEaseOut}"
+                                                         Storyboard.TargetName="ScaleTrans"
+                                                         Storyboard.TargetProperty="ScaleX"
+                                                         To="0.95"
+                                                         Duration="0:0:0.1" />
+                                        <DoubleAnimation EasingFunction="{StaticResource CubicEaseOut}"
+                                                         Storyboard.TargetName="ScaleTrans"
+                                                         Storyboard.TargetProperty="ScaleY"
+                                                         To="0.95"
+                                                         Duration="0:0:0.1" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
-                                                                       Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="Transparent" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Transparent" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
-                                                                       Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource TextFillColorDisabledBrush}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextFillColorDisabledBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <ContentPresenter x:Name="ContentPresenter"
-                                          AutomationProperties.AccessibilityView="Raw"
-                                          Content="{TemplateBinding Content}"
-                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                          Foreground="{TemplateBinding Foreground}"
-                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                          Padding="{TemplateBinding Padding}" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -174,23 +189,33 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="HyperlinkButton">
-                    <Grid x:Name="RootGrid" Background="Transparent" RenderTransformOrigin="0.5,0.5">
+                    <Grid x:Name="RootGrid"
+                          Background="Transparent"
+                          RenderTransformOrigin="0.5,0.5">
                         <Grid.RenderTransform>
                             <ScaleTransform x:Name="LinkScale" />
                         </Grid.RenderTransform>
                         <ContentPresenter x:Name="ContentPresenter"
+                                          Padding="{TemplateBinding Padding}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalAlignment}"
                                           Content="{TemplateBinding Content}"
                                           ContentTemplate="{TemplateBinding ContentTemplate}"
-                                          Padding="{TemplateBinding Padding}"
-                                          Foreground="{TemplateBinding Foreground}"
-                                          HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                                          VerticalAlignment="{TemplateBinding VerticalAlignment}" />
+                                          Foreground="{TemplateBinding Foreground}" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
                                     <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="LinkScale" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.2" EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="LinkScale" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.2" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation EasingFunction="{StaticResource CubicEaseOut}"
+                                                         Storyboard.TargetName="LinkScale"
+                                                         Storyboard.TargetProperty="ScaleX"
+                                                         To="1.0"
+                                                         Duration="0:0:0.2" />
+                                        <DoubleAnimation EasingFunction="{StaticResource CubicEaseOut}"
+                                                         Storyboard.TargetName="LinkScale"
+                                                         Storyboard.TargetProperty="ScaleY"
+                                                         To="1.0"
+                                                         Duration="0:0:0.2" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="PointerOver">
@@ -198,8 +223,16 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AccentTextBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <DoubleAnimation Storyboard.TargetName="LinkScale" Storyboard.TargetProperty="ScaleX" To="1.05" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="LinkScale" Storyboard.TargetProperty="ScaleY" To="1.05" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation EasingFunction="{StaticResource CubicEaseOut}"
+                                                         Storyboard.TargetName="LinkScale"
+                                                         Storyboard.TargetProperty="ScaleX"
+                                                         To="1.05"
+                                                         Duration="0:0:0.3" />
+                                        <DoubleAnimation EasingFunction="{StaticResource CubicEaseOut}"
+                                                         Storyboard.TargetName="LinkScale"
+                                                         Storyboard.TargetProperty="ScaleY"
+                                                         To="1.05"
+                                                         Duration="0:0:0.3" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
@@ -207,8 +240,16 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AccentTextBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <DoubleAnimation Storyboard.TargetName="LinkScale" Storyboard.TargetProperty="ScaleX" To="0.95" Duration="0:0:0.1" EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="LinkScale" Storyboard.TargetProperty="ScaleY" To="0.95" Duration="0:0:0.1" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation EasingFunction="{StaticResource CubicEaseOut}"
+                                                         Storyboard.TargetName="LinkScale"
+                                                         Storyboard.TargetProperty="ScaleX"
+                                                         To="0.95"
+                                                         Duration="0:0:0.1" />
+                                        <DoubleAnimation EasingFunction="{StaticResource CubicEaseOut}"
+                                                         Storyboard.TargetName="LinkScale"
+                                                         Storyboard.TargetProperty="ScaleY"
+                                                         To="0.95"
+                                                         Duration="0:0:0.1" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
@@ -226,7 +267,9 @@
         </Setter>
     </Style>
 
-    <Style x:Key="SettingsResetHyperlinkButtonStyle" TargetType="HyperlinkButton" BasedOn="{StaticResource AnimatedHyperlinkButtonStyle}">
+    <Style x:Key="SettingsResetHyperlinkButtonStyle"
+           BasedOn="{StaticResource AnimatedHyperlinkButtonStyle}"
+           TargetType="HyperlinkButton">
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="FontSize" Value="{StaticResource CaptionTextBlockFontSize}" />
         <Setter Property="Padding" Value="4,2" />
@@ -250,32 +293,68 @@
                         <Grid.RenderTransform>
                             <ScaleTransform x:Name="ItemScale" />
                         </Grid.RenderTransform>
+
+                        <Border x:Name="SelectionBorder"
+                                Background="Transparent"
+                                CornerRadius="{TemplateBinding CornerRadius}" />
+                        <Border x:Name="HoverOverlay"
+                                Background="Transparent"
+                                CornerRadius="{TemplateBinding CornerRadius}" />
+                        <ContentPresenter x:Name="ContentPresenter"
+                                          Margin="{TemplateBinding Padding}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          ContentTransitions="{TemplateBinding ContentTransitions}" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
                                     <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.2" EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.2" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation EasingFunction="{StaticResource CubicEaseOut}"
+                                                         Storyboard.TargetName="ItemScale"
+                                                         Storyboard.TargetProperty="ScaleX"
+                                                         To="1.0"
+                                                         Duration="0:0:0.2" />
+                                        <DoubleAnimation EasingFunction="{StaticResource CubicEaseOut}"
+                                                         Storyboard.TargetName="ItemScale"
+                                                         Storyboard.TargetProperty="ScaleY"
+                                                         To="1.0"
+                                                         Duration="0:0:0.2" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HoverOverlay"
-                                                                       Storyboard.TargetProperty="Background">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SubtleFillColorSecondaryBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleX" To="1.02" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleY" To="1.02" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation EasingFunction="{StaticResource CubicEaseOut}"
+                                                         Storyboard.TargetName="ItemScale"
+                                                         Storyboard.TargetProperty="ScaleX"
+                                                         To="1.02"
+                                                         Duration="0:0:0.3" />
+                                        <DoubleAnimation EasingFunction="{StaticResource CubicEaseOut}"
+                                                         Storyboard.TargetName="ItemScale"
+                                                         Storyboard.TargetProperty="ScaleY"
+                                                         To="1.02"
+                                                         Duration="0:0:0.3" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HoverOverlay"
-                                                                       Storyboard.TargetProperty="Background">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SubtleFillColorTertiaryBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleX" To="0.98" Duration="0:0:0.1" EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleY" To="0.98" Duration="0:0:0.1" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation EasingFunction="{StaticResource CubicEaseOut}"
+                                                         Storyboard.TargetName="ItemScale"
+                                                         Storyboard.TargetProperty="ScaleX"
+                                                         To="0.98"
+                                                         Duration="0:0:0.1" />
+                                        <DoubleAnimation EasingFunction="{StaticResource CubicEaseOut}"
+                                                         Storyboard.TargetName="ItemScale"
+                                                         Storyboard.TargetProperty="ScaleY"
+                                                         To="0.98"
+                                                         Duration="0:0:0.1" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled" />
@@ -284,25 +363,13 @@
                                 <VisualState x:Name="Unselected" />
                                 <VisualState x:Name="Selected">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectionBorder"
-                                                                       Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource GridViewItemBackgroundSelected}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectionBorder" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource GridViewItemBackgroundSelected}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-
-                        <Border x:Name="SelectionBorder" Background="Transparent" CornerRadius="{TemplateBinding CornerRadius}" />
-                        <Border x:Name="HoverOverlay" Background="Transparent" CornerRadius="{TemplateBinding CornerRadius}" />
-                        <ContentPresenter x:Name="ContentPresenter"
-                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                          Content="{TemplateBinding Content}"
-                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                          Margin="{TemplateBinding Padding}" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -312,7 +379,7 @@
     <animation:CubicEase x:Key="CubicEaseOut" EasingMode="EaseOut" />
 
     <ResourceDictionary.ThemeDictionaries>
-        <!-- Default serves the light theme too; the colors are the same in both. -->
+        <!--  Default serves the light theme too; the colors are the same in both.  -->
         <ResourceDictionary x:Key="Default">
             <StaticResource x:Key="SliderThumbBackground" ResourceKey="AppPrimaryColorBrush" />
             <StaticResource x:Key="SliderThumbBackgroundPointerOver" ResourceKey="AppPrimaryColorBrush" />
@@ -330,7 +397,7 @@
 
             <LinearGradientBrush x:Key="TextControlElevationBorderFocusedBrush" MappingMode="Absolute" StartPoint="0,0" EndPoint="0,2">
                 <LinearGradientBrush.RelativeTransform>
-                    <ScaleTransform ScaleY="-1" CenterY="0.5" />
+                    <ScaleTransform CenterY="0.5" ScaleY="-1" />
                 </LinearGradientBrush.RelativeTransform>
                 <GradientStop Offset="0.0" Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}" />
                 <GradientStop Offset="1.0" Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}" />
@@ -361,16 +428,19 @@
             <StaticResource x:Key="TextControlSelectionHighlightColor" ResourceKey="AppPrimaryColorBrush" />
 
             <StaticResource x:Key="AccentButtonBackground" ResourceKey="AppPrimaryColorBrush" />
-            <SolidColorBrush x:Key="AccentButtonBackgroundPointerOver" Opacity="0.9" Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}" />
-            <SolidColorBrush x:Key="AccentButtonBackgroundPressed" Opacity="0.8" Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}" />
+            <SolidColorBrush x:Key="AccentButtonBackgroundPointerOver"
+                             Opacity="0.9"
+                             Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}" />
+            <SolidColorBrush x:Key="AccentButtonBackgroundPressed"
+                             Opacity="0.8"
+                             Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}" />
 
             <StaticResource x:Key="HyperlinkForeground" ResourceKey="AccentTextBrush" />
             <StaticResource x:Key="HyperlinkForegroundPointerOver" ResourceKey="AccentTextBrush" />
             <StaticResource x:Key="HyperlinkForegroundPressed" ResourceKey="AccentTextBrush" />
         </ResourceDictionary>
-        <!-- Empty on purpose: high contrast uses the system colors instead of falling back to Default. -->
-        <ResourceDictionary x:Key="HighContrast">
-        </ResourceDictionary>
+        <!--  Empty on purpose: high contrast uses the system colors instead of falling back to Default.  -->
+        <ResourceDictionary x:Key="HighContrast" />
     </ResourceDictionary.ThemeDictionaries>
 
 </ResourceDictionary>

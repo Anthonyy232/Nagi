@@ -1,9 +1,8 @@
-<UserControl
-    x:Class="Nagi.WinUI.Controls.EmptyState"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    HorizontalAlignment="Center"
-    VerticalAlignment="Center">
+﻿<UserControl x:Class="Nagi.WinUI.Controls.EmptyState"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             HorizontalAlignment="Center"
+             VerticalAlignment="Center">
 
     <StackPanel Spacing="16">
         <StackPanel.ChildrenTransitions>
@@ -13,17 +12,17 @@
         </StackPanel.ChildrenTransitions>
 
         <FontIcon x:Name="Icon"
-                  FontSize="48"
                   Margin="0,0,0,12"
                   HorizontalAlignment="Center"
+                  FontSize="48"
                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
         <TextBlock x:Name="TitleText"
                    HorizontalAlignment="Center"
                    Style="{StaticResource TitleTextBlockStyle}" />
         <TextBlock x:Name="SubtitleText"
                    HorizontalAlignment="Center"
-                   Style="{StaticResource SubtitleTextBlockStyle}"
-                   Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+                   Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                   Style="{StaticResource SubtitleTextBlockStyle}" />
         <ContentPresenter x:Name="ActionHost" HorizontalAlignment="Center" />
     </StackPanel>
 </UserControl>

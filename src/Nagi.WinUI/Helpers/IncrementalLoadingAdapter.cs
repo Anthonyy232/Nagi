@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Collections;
 using System.Collections.Specialized;
 using Microsoft.UI.Xaml.Data;
@@ -10,6 +11,7 @@ namespace Nagi.WinUI.Helpers;
 ///     Presents an <see cref="IIncrementalItemSource" /> collection to a WinUI list as
 ///     <see cref="ISupportIncrementalLoading" />. List edits such as drag reordering go straight to the source.
 /// </summary>
+[SuppressMessage("Design", "CA1010", Justification = "WinUI binds to the non-generic IList.")]
 public sealed partial class IncrementalLoadingAdapter : IList, INotifyCollectionChanged, ISupportIncrementalLoading
 {
     private readonly IList _items;

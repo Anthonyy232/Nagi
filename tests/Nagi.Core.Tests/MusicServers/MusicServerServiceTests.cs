@@ -348,11 +348,11 @@ public class MusicServerServiceTests : IDisposable
     public async Task FavoriteChangedAgainWhileItWasSent_StaysPending()
     {
         var (server, _) = await SeedServerAsync(lovedPending: true);
-        _handler.SendAsyncFunc = async (_, _) =>
+        _handler.SendAsyncFunc = async (_, token) =>
         {
             // The user takes the favorite back while the server is being told about it.
             await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-                await context.Songs.ExecuteUpdateAsync(setters => setters.SetProperty(s => s.IsLoved, false));
+                await context.Songs.ExecuteUpdateAsync(setters => setters.SetProperty(s => s.IsLoved, false), token);
             return new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(OkResponse, Encoding.UTF8, "application/json") };
         };
 

@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:ImageEx">
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="using:ImageEx">
 
     <Style TargetType="controls:ImageEx">
         <Setter Property="Background" Value="Transparent" />
@@ -12,33 +11,30 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:ImageEx">
-                    <Grid
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}">
-                        <Image
-                            Name="PlaceholderImage"
-                            Width="{TemplateBinding Width}"
-                            Height="{TemplateBinding Height}"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Opacity="1.0"
-                            Source="{TemplateBinding PlaceholderSource}"
-                            Stretch="{TemplateBinding PlaceholderStretch}">
+                    <Grid Background="{TemplateBinding Background}"
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          BorderThickness="{TemplateBinding BorderThickness}"
+                          CornerRadius="{TemplateBinding CornerRadius}">
+                        <Image Name="PlaceholderImage"
+                               Width="{TemplateBinding Width}"
+                               Height="{TemplateBinding Height}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Opacity="1.0"
+                               Source="{TemplateBinding PlaceholderSource}"
+                               Stretch="{TemplateBinding PlaceholderStretch}">
                             <Image.OpacityTransition>
                                 <ScalarTransition Duration="0:0:0.2" />
                             </Image.OpacityTransition>
                         </Image>
-                        <Image
-                            Name="Image"
-                            Width="{TemplateBinding Width}"
-                            Height="{TemplateBinding Height}"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            NineGrid="{TemplateBinding NineGrid}"
-                            Opacity="0.0"
-                            Stretch="{TemplateBinding Stretch}">
+                        <Image Name="Image"
+                               Width="{TemplateBinding Width}"
+                               Height="{TemplateBinding Height}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               NineGrid="{TemplateBinding NineGrid}"
+                               Opacity="0.0"
+                               Stretch="{TemplateBinding Stretch}">
                             <Image.OpacityTransition>
                                 <ScalarTransition Duration="0:0:0.2" />
                             </Image.OpacityTransition>

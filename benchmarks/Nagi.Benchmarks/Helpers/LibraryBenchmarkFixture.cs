@@ -35,7 +35,8 @@ internal sealed class LibraryBenchmarkFixture : IDisposable
             options.UseSqlite(new SqliteConnectionStringBuilder { DataSource = dbPath, Pooling = false }.ToString()));
 
         services.AddSingleton<IFileSystemService, TestFileSystemService>();
-        services.AddSingleton<IPathConfiguration>(_ => {
+        services.AddSingleton<IPathConfiguration>(_ =>
+        {
             var pathConfig = Substitute.For<IPathConfiguration>();
             pathConfig.AlbumArtCachePath.Returns(Path.Combine(RootPath, "Art"));
             pathConfig.ArtistImageCachePath.Returns(Path.Combine(RootPath, "Artists"));

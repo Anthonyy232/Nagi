@@ -175,7 +175,7 @@ public class JellyfinClientTests : IDisposable
     public async Task SetFavoriteAsync_SkipsSongsDeletedFromTheServer()
     {
         _handler.SendAsyncFunc = (request, _) => Task.FromResult(new HttpResponseMessage(
-            request.RequestUri!.AbsolutePath.EndsWith("gone") ? HttpStatusCode.NotFound : HttpStatusCode.OK));
+            request.RequestUri!.AbsolutePath.EndsWith("gone", StringComparison.Ordinal) ? HttpStatusCode.NotFound : HttpStatusCode.OK));
 
         await Client().SetFavoriteAsync(["gone", "song-1"], false, CancellationToken.None);
 

@@ -1,8 +1,7 @@
-<UserControl
-    x:Class="Nagi.WinUI.Controls.DetailPageHeader"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    IsTabStop="False">
+﻿<UserControl x:Class="Nagi.WinUI.Controls.DetailPageHeader"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             IsTabStop="False">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -11,11 +10,13 @@
         </Grid.ColumnDefinitions>
         <ContentPresenter Grid.Column="0" Content="{x:Bind Artwork, Mode=OneWay}" />
 
-        <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Bottom" Spacing="8">
+        <StackPanel Grid.Column="1"
+                    Margin="24,0,0,0"
+                    VerticalAlignment="Bottom"
+                    Spacing="8">
             <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="{x:Bind Caption, Mode=OneWay}" />
             <TextBlock Style="{StaticResource HeaderTextBlockStyle}" Text="{x:Bind Title, Mode=OneWay}" />
-            <ContentPresenter Content="{x:Bind Details, Mode=OneWay}"
-                              Visibility="{x:Bind DetailsVisibility(Details), Mode=OneWay}" />
+            <ContentPresenter Content="{x:Bind Details, Mode=OneWay}" Visibility="{x:Bind DetailsVisibility(Details), Mode=OneWay}" />
         </StackPanel>
     </Grid>
 </UserControl>

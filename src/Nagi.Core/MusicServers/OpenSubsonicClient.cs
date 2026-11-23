@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
@@ -245,7 +246,7 @@ internal sealed class OpenSubsonicClient : IMusicServerClient
         }
     }
 
-    // The protocol defines the token as MD5(password + salt), so the algorithm isn't ours to choose.
+    [SuppressMessage("Security", "CA5351", Justification = "The protocol defines the token as MD5(password + salt).")]
     private string CreateToken(string salt) =>
         Convert.ToHexStringLower(MD5.HashData(Encoding.UTF8.GetBytes(_secret + salt)));
 

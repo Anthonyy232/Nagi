@@ -328,7 +328,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         var isEmpty = false;
         await RunPlaybackRequest(async request =>
         {
-            var songIds = await _libraryReader.GetSongIdsAsync(scope, null, PlayOrderOf(scope));
+            var songIds = await _libraryReader.GetSongIdsAsync(scope, null, PlayOrderOf(scope), request);
             isEmpty = songIds.Count == 0;
             if (!request.IsCancellationRequested)
                 await PlayInternalAsync(songIds, 0, startShuffled, PlaybackContext.Of(scope), request);

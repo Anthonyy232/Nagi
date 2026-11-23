@@ -1,0 +1,4 @@
+# LF everywhere, as .editorconfig says, whatever core.autocrlf is set to.
+* text=auto eol=lf
+# XAML Styler writes CRLF; the repository still stores LF.
+*.xaml text eol=crlf

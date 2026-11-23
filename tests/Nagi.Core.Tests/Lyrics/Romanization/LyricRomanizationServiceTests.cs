@@ -117,7 +117,7 @@ public sealed class LyricRomanizationServiceTests : IDisposable
         lines[0].RomanizedText.Should().BeNull();
     }
 
-    private ILyricRomanizationService CreateLyricService(
+    private static ILyricRomanizationService CreateLyricService(
         bool isEnabled,
         InstalledRomanizationPack? installedPack,
         params InstalledRomanizationPack[] additionalInstalledPacks)

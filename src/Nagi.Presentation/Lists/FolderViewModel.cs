@@ -75,8 +75,8 @@ public partial class FolderViewModel : ClientFilteredListViewModelBase<FolderVie
         (await _libraryReader.GetRootFoldersWithCountsAsync(token))
         .Select(item => new FolderViewModelItem(item.Folder, item.SongCount, item.IsFromServer));
 
-    protected override IEnumerable<FolderViewModelItem> Arrange(IEnumerable<FolderViewModelItem> folders) =>
-        folders.OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase).ThenBy(item => item.Id);
+    protected override IEnumerable<FolderViewModelItem> Arrange(IEnumerable<FolderViewModelItem> items) =>
+        items.OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase).ThenBy(item => item.Id);
 
     public override void Dispose()
     {

@@ -387,7 +387,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             _isPausing = true;
 
             // Fire and forget the fade-out and pause so the UI command completes immediately
-            _ = FadeAndPauseAsync(fadeCt, _userVolume);
+            _ = FadeAndPauseAsync(_userVolume, fadeCt);
             return;
         }
 

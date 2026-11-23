@@ -454,7 +454,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         request is null ? Task.CompletedTask : _musicNavigationService.OpenArtistAsync(request);
 
     /// <summary>Whether play all, shuffle and mixes have anything to play.</summary>
-    protected virtual bool HasPlayableSongs => Songs.Any();
+    protected virtual bool HasPlayableSongs => Songs.Count > 0;
 
     private bool CanExecutePlayAllCommands() => !IsLoading && HasPlayableSongs;
 
@@ -470,7 +470,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     private bool CanAddSelectedSongsToPlaylist()
     {
-        return CanExecuteSelectedSongsCommands() && AvailablePlaylists.Any();
+        return CanExecuteSelectedSongsCommands() && AvailablePlaylists.Count > 0;
     }
 
     protected virtual void UpdateSelectionStatus()

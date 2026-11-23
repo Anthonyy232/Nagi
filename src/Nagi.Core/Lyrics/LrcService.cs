@@ -58,10 +58,8 @@ public class LrcService : ILrcService, IDisposable
                 return await ReadLyricsFileAsync(song.LrcFilePath).ConfigureAwait(false) ?? LyricsParser.Parse(song.Lyrics);
 
             forceOnlineRefresh = true;
-            _logger.LogInformation(
-                isLegacyCachePath
-                    ? "Ignoring legacy collision-prone lyrics cache path while refreshing song {SongId}."
-                    : "Ignoring missing lyrics path while refreshing song {SongId}.",
+            _logger.LogInformation("Ignoring {Reason} lyrics path while refreshing song {SongId}.",
+                isLegacyCachePath ? "legacy collision-prone cache" : "missing",
                 song.Id);
         }
 

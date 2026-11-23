@@ -79,7 +79,7 @@ public partial class ArtistViewViewModel : DetailSongListViewModelBase<ArtistVie
     public bool IsCustomImage => ImageStorageHelper.IsCustomImage(ArtistImageUri);
 
     public ObservableRangeCollection<ArtistAlbumViewModelItem> Albums { get; } = new();
-    public bool HasAlbums => Albums.Any();
+    public bool HasAlbums => Albums.Count > 0;
 
     protected override SongScope? Scope => _artistId != Guid.Empty ? new SongScope.Artist(_artistId) : null;
 

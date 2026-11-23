@@ -41,6 +41,7 @@ A local-first music player for Windows: C#, .NET, WinUI 3, packaged as MSIX. Pub
 
 - Diff reviewed against this file.
 - `dotnet build Nagi.sln -c Debug -p:Platform=x64` then `dotnet test --solution Nagi.sln -p:Platform=x64 --no-build` pass with zero warnings.
+- The Lint job's checks in `build.yml` pass (`dotnet tool restore` first).
 - UI changes seen in the running app, light and dark. Docs and metadata changes need no end-to-end run.
 - README updated for anything users will notice; behaviour changes called out.
 

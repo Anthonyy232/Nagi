@@ -29,10 +29,10 @@ public sealed class Debouncer : IDisposable
         old?.Cancel();
         old?.Dispose();
 
-        return PendingInvocation = InvokeAsync(action, token, immediate);
+        return PendingInvocation = InvokeAsync(action, immediate, token);
     }
 
-    private async Task InvokeAsync(Func<CancellationToken, Task> action, CancellationToken token, bool immediate)
+    private async Task InvokeAsync(Func<CancellationToken, Task> action, bool immediate, CancellationToken token)
     {
         try
         {

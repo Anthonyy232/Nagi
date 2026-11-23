@@ -1,36 +1,47 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 
-<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:Microsoft.UI.Xaml.Controls">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="using:Microsoft.UI.Xaml.Controls">
 
-    <Style x:Key="MediaControlButtonStyle" TargetType="Button" BasedOn="{StaticResource AnimatedIconButtonStyle}">
+    <Style x:Key="MediaControlButtonStyle"
+           BasedOn="{StaticResource AnimatedIconButtonStyle}"
+           TargetType="Button">
         <Setter Property="Foreground" Value="{StaticResource AccentTextBrush}" />
     </Style>
 
-    <Style x:Key="CompactMediaControlButtonStyle" TargetType="Button" BasedOn="{StaticResource MediaControlButtonStyle}">
+    <Style x:Key="CompactMediaControlButtonStyle"
+           BasedOn="{StaticResource MediaControlButtonStyle}"
+           TargetType="Button">
         <Setter Property="Width" Value="32" />
         <Setter Property="Height" Value="32" />
         <Setter Property="Padding" Value="6" />
     </Style>
 
-    <Style x:Key="MediaOnImageControlButtonStyle" TargetType="Button" BasedOn="{StaticResource MediaControlButtonStyle}">
+    <Style x:Key="MediaOnImageControlButtonStyle"
+           BasedOn="{StaticResource MediaControlButtonStyle}"
+           TargetType="Button">
         <Setter Property="Foreground" Value="{StaticResource MediaOnImageAccentBrush}" />
     </Style>
 
-    <Style x:Key="MediaSeekerSliderStyle" TargetType="controls:Slider" BasedOn="{StaticResource DefaultSliderStyle}">
+    <Style x:Key="MediaSeekerSliderStyle"
+           BasedOn="{StaticResource DefaultSliderStyle}"
+           TargetType="controls:Slider">
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="StepFrequency" Value="0.1" />
         <Setter Property="SnapsTo" Value="StepValues" />
     </Style>
 
-    <Style x:Key="MediaOnImageSeekerSliderStyle" TargetType="controls:Slider" BasedOn="{StaticResource MediaSeekerSliderStyle}">
+    <Style x:Key="MediaOnImageSeekerSliderStyle"
+           BasedOn="{StaticResource MediaSeekerSliderStyle}"
+           TargetType="controls:Slider">
         <Setter Property="Background" Value="{StaticResource MediaOnImageControlTrackBrush}" />
         <Setter Property="Foreground" Value="{StaticResource MediaOnImageAccentBrush}" />
     </Style>
 
-    <Style x:Key="VolumeSliderStyle" TargetType="controls:Slider" BasedOn="{StaticResource MediaSeekerSliderStyle}">
+    <Style x:Key="VolumeSliderStyle"
+           BasedOn="{StaticResource MediaSeekerSliderStyle}"
+           TargetType="controls:Slider">
         <Setter Property="StepFrequency" Value="1" />
         <Setter Property="Width" Value="100" />
     </Style>

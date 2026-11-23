@@ -145,7 +145,7 @@ public partial class UIService : IUIService
             _logger.LogWarning(ex, "Could not show the crash report dialog");
             var hwnd = WindowNative.GetWindowHandle(_window);
             var message = $"{Strings.CrashReport_Message}\n\n{report}";
-            NativeMethods.MessageBox(hwnd, message, Strings.CrashReport_Title, NativeMethods.MB_ICONERROR | NativeMethods.MB_OK);
+            _ = NativeMethods.MessageBox(hwnd, message, Strings.CrashReport_Title, NativeMethods.MB_ICONERROR | NativeMethods.MB_OK);
             return false;
         }
     }

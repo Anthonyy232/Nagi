@@ -90,11 +90,11 @@ public class NetEaseLyricsServiceTests : IAsyncDisposable
         var searchResponse = new { result = new { songs = new[] { new { id = 12345L, name = "Track Name" } } } };
         var lyricsResponse = new { lrc = new { lyric = "[00:01.00]Found It" } };
 
-        _httpHandler.SendAsyncFunc = async (request, _) =>
+        _httpHandler.SendAsyncFunc = async (request, token) =>
         {
             if (request.RequestUri!.AbsolutePath.Contains("/api/search/get"))
             {
-                var query = System.Web.HttpUtility.ParseQueryString(await request.Content!.ReadAsStringAsync());
+                var query = System.Web.HttpUtility.ParseQueryString(await request.Content!.ReadAsStringAsync(token));
                 query["s"].Should().Be("Track Name");
                 return new HttpResponseMessage(HttpStatusCode.OK)
                 {

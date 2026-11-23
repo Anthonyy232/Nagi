@@ -65,7 +65,7 @@ public interface IWindowService
 /// <summary>
 ///     Lets a <see cref="IWindowService.Closing" /> handler keep the main window open.
 /// </summary>
-public sealed class WindowClosingEventArgs
+public sealed class WindowClosingEventArgs : EventArgs
 {
     public bool Cancel { get; set; }
 }

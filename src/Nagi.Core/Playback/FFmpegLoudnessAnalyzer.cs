@@ -53,7 +53,8 @@ public sealed class FFmpegLoudnessAnalyzer(ILogger<FFmpegLoudnessAnalyzer> logge
         finally
         {
             if (!process.HasExited) process.Kill(entireProcessTree: true);
-            await process.WaitForExitAsync().ConfigureAwait(false);
+            // the token may already be cancelled; the killed process still has to be reaped
+            await process.WaitForExitAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

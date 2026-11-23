@@ -113,10 +113,10 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     {
         if (token.IsCancellationRequested || _isDisposed) return;
 
-        _dispatcherService.TryEnqueue(() => ApplyPagedResult(result, token, append: false));
+        _dispatcherService.TryEnqueue(() => ApplyPagedResult(result, append: false, token));
     }
 
-    private void ApplyPagedResult(PagedResult<TItem> result, CancellationToken token, bool append)
+    private void ApplyPagedResult(PagedResult<TItem> result, bool append, CancellationToken token)
     {
         if (token.IsCancellationRequested || _isDisposed || _pendingReload) return;
 
@@ -295,7 +295,7 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
                 var result = await Task.Run(() => LoadPageItemsAsync(pageNumber, pageSize, token), token);
                 await _dispatcherService.EnqueueAsync(() =>
                 {
-                    ApplyPagedResult(result, token, append: true);
+                    ApplyPagedResult(result, append: true, token);
                     return Task.CompletedTask;
                 }).WaitAsync(token).ConfigureAwait(false);
                 if (!result.HasNextPage) break;

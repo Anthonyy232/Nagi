@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
@@ -319,6 +320,7 @@ public class OpenSubsonicClientTests : IDisposable
     private static string Response(object body) =>
         JsonSerializer.Serialize(new Dictionary<string, object> { ["subsonic-response"] = body });
 
+    [SuppressMessage("Security", "CA5351", Justification = "Mirrors the protocol's MD5 token.")]
     private static string Md5Hex(string value) =>
         Convert.ToHexStringLower(MD5.HashData(Encoding.UTF8.GetBytes(value)));
 }

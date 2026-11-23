@@ -14,6 +14,7 @@ namespace Nagi.Presentation.Settings;
 /// </summary>
 public partial class DataManagementSettingsViewModel : ObservableObject
 {
+    private static readonly string[] BackupFileTypes = [".zip"];
     private readonly IUIService _uiService;
     private readonly IPlaylistExportService _playlistExportService;
     private readonly IBackupRestoreService _backupRestoreService;
@@ -123,7 +124,7 @@ public partial class DataManagementSettingsViewModel : ObservableObject
     [RelayCommand]
     private async Task RestoreFromBackupAsync()
     {
-        var backupFilePath = await _uiService.PickSingleFileAsync(new[] { ".zip" });
+        var backupFilePath = await _uiService.PickSingleFileAsync(BackupFileTypes);
         if (string.IsNullOrEmpty(backupFilePath)) return;
 
         var isValid = await _backupRestoreService.ValidateBackupAsync(backupFilePath);

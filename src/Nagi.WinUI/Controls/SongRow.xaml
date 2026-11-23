@@ -1,36 +1,35 @@
-<?xml version="1.0" encoding="utf-8"?>
-<UserControl
-    x:Class="Nagi.WinUI.Controls.SongRow"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:ImageEx"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="using:Nagi.WinUI.Controls"
-    xmlns:resources="using:Nagi.Presentation.Resources"
-    mc:Ignorable="d">
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<UserControl x:Class="Nagi.WinUI.Controls.SongRow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="using:ImageEx"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:Nagi.WinUI.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:resources="using:Nagi.Presentation.Resources"
+             mc:Ignorable="d">
 
-    <!-- Margins instead of ColumnSpacing so hidden columns leave no gap. The plain text columns are
-         added in code, so the list header can reuse this layout. -->
-    <Grid x:Name="RowGrid" Height="54" Padding="0,0,12,0" Background="Transparent">
+    <!--
+        Margins instead of ColumnSpacing so hidden columns leave no gap. The plain text columns are
+        added in code, so the list header can reuse this layout.
+    -->
+    <Grid x:Name="RowGrid"
+          Height="54"
+          Padding="0,0,12,0"
+          Background="Transparent">
         <Grid.ContextFlyout>
             <MenuFlyout Opening="SongMenu_Opening">
-                <MenuFlyoutItem Text="{x:Bind resources:Strings.Generic_Play}"
-                                Command="{x:Bind ViewModel.PlaySelectedSongsCommand, Mode=OneWay}" />
-                <MenuFlyoutItem Text="{x:Bind resources:Strings.SongList_Context_PlayNext}"
-                                Command="{x:Bind ViewModel.PlaySelectedSongsNextCommand, Mode=OneWay}" />
-                <MenuFlyoutItem Text="{x:Bind resources:Strings.SongList_Context_AddToQueue}"
-                                Command="{x:Bind ViewModel.AddSelectedSongsToQueueCommand, Mode=OneWay}" />
+                <MenuFlyoutItem Command="{x:Bind ViewModel.PlaySelectedSongsCommand, Mode=OneWay}" Text="{x:Bind resources:Strings.Generic_Play}" />
+                <MenuFlyoutItem Command="{x:Bind ViewModel.PlaySelectedSongsNextCommand, Mode=OneWay}" Text="{x:Bind resources:Strings.SongList_Context_PlayNext}" />
+                <MenuFlyoutItem Command="{x:Bind ViewModel.AddSelectedSongsToQueueCommand, Mode=OneWay}" Text="{x:Bind resources:Strings.SongList_Context_AddToQueue}" />
                 <MenuFlyoutItem x:Name="FavoriteItem" Command="{x:Bind ViewModel.ToggleSelectedFavoriteCommand, Mode=OneWay}" />
                 <MenuFlyoutSubItem x:Name="FavoritesSubMenu" Text="{x:Bind resources:Strings.Listening_Favorites}">
-                    <MenuFlyoutItem Text="{x:Bind resources:Strings.Listening_AddFavorite}"
-                                    Command="{x:Bind ViewModel.SetSelectedFavoritesCommand, Mode=OneWay}">
+                    <MenuFlyoutItem Command="{x:Bind ViewModel.SetSelectedFavoritesCommand, Mode=OneWay}" Text="{x:Bind resources:Strings.Listening_AddFavorite}">
                         <MenuFlyoutItem.CommandParameter>
                             <x:Boolean>True</x:Boolean>
                         </MenuFlyoutItem.CommandParameter>
                     </MenuFlyoutItem>
-                    <MenuFlyoutItem Text="{x:Bind resources:Strings.Listening_RemoveFavorite}"
-                                    Command="{x:Bind ViewModel.SetSelectedFavoritesCommand, Mode=OneWay}">
+                    <MenuFlyoutItem Command="{x:Bind ViewModel.SetSelectedFavoritesCommand, Mode=OneWay}" Text="{x:Bind resources:Strings.Listening_RemoveFavorite}">
                         <MenuFlyoutItem.CommandParameter>
                             <x:Boolean>False</x:Boolean>
                         </MenuFlyoutItem.CommandParameter>
@@ -39,22 +38,22 @@
                 <MenuFlyoutSubItem x:Name="AddToPlaylistSubMenu" Text="{x:Bind resources:Strings.SongList_Context_AddToPlaylist}" />
                 <MenuFlyoutSeparator x:Name="SingleSongSeparator" />
                 <MenuFlyoutItem x:Name="GoToAlbumItem"
-                                Text="{x:Bind resources:Strings.SongList_Context_GoToAlbum}"
                                 Command="{x:Bind ViewModel.GoToAlbumCommand, Mode=OneWay}"
-                                CommandParameter="{x:Bind Song, Mode=OneWay}" />
+                                CommandParameter="{x:Bind Song, Mode=OneWay}"
+                                Text="{x:Bind resources:Strings.SongList_Context_GoToAlbum}" />
                 <MenuFlyoutSubItem x:Name="GoToArtistSubMenu" Text="{x:Bind resources:Strings.SongList_Context_GoToArtist}" />
                 <MenuFlyoutItem x:Name="ShowInExplorerItem"
-                                Text="{x:Bind resources:Strings.SongList_Context_ShowInExplorer}"
                                 Command="{x:Bind ViewModel.ShowInFolderCommand, Mode=OneWay}"
-                                CommandParameter="{x:Bind Song, Mode=OneWay}" />
+                                CommandParameter="{x:Bind Song, Mode=OneWay}"
+                                Text="{x:Bind resources:Strings.SongList_Context_ShowInExplorer}" />
                 <MenuFlyoutItem x:Name="SongInfoItem"
-                                Text="{x:Bind resources:Strings.SongList_Context_SongInfo}"
                                 Command="{x:Bind ViewModel.ShowSongInfoCommand, Mode=OneWay}"
-                                CommandParameter="{x:Bind Song, Mode=OneWay}" />
+                                CommandParameter="{x:Bind Song, Mode=OneWay}"
+                                Text="{x:Bind resources:Strings.SongList_Context_SongInfo}" />
                 <MenuFlyoutSeparator x:Name="RemoveFromPlaylistSeparator" />
                 <MenuFlyoutItem x:Name="RemoveFromPlaylistItem"
-                                Text="{x:Bind resources:Strings.SongList_Context_RemoveFromPlaylist}"
-                                Command="{x:Bind ViewModel.RemoveSelectionCommand, Mode=OneWay}" />
+                                Command="{x:Bind ViewModel.RemoveSelectionCommand, Mode=OneWay}"
+                                Text="{x:Bind resources:Strings.SongList_Context_RemoveFromPlaylist}" />
             </MenuFlyout>
         </Grid.ContextFlyout>
 
@@ -62,24 +61,31 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition x:Name="TitleColumn" Width="*" />
-            <ColumnDefinition x:Name="ArtistColumn" Width="*" MinWidth="112" />
-            <ColumnDefinition x:Name="AlbumColumn" Width="*" MinWidth="112" />
+            <ColumnDefinition x:Name="ArtistColumn"
+                              Width="*"
+                              MinWidth="112" />
+            <ColumnDefinition x:Name="AlbumColumn"
+                              Width="*"
+                              MinWidth="112" />
         </Grid.ColumnDefinitions>
 
         <Button x:Name="PlayButton"
                 Grid.Column="0"
+                AutomationProperties.Name="{x:Bind resources:Strings.Generic_Play}"
                 Command="{x:Bind ViewModel.PlaySongCommand, Mode=OneWay}"
                 CommandParameter="{x:Bind Song, Mode=OneWay}"
                 Style="{StaticResource SongListViewPageSongPlayButtonStyle}"
-                ToolTipService.ToolTip="{x:Bind resources:Strings.Generic_Play}"
-                AutomationProperties.Name="{x:Bind resources:Strings.Generic_Play}">
-            <Border Width="42" Height="42" CornerRadius="{StaticResource ArtworkCornerRadius}"
+                ToolTipService.ToolTip="{x:Bind resources:Strings.Generic_Play}">
+            <Border Width="42"
+                    Height="42"
+                    CornerRadius="{StaticResource ArtworkCornerRadius}"
                     Visibility="{x:Bind Song.AlbumArtUriFromTrack, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}, FallbackValue=Collapsed}">
-                <controls:ImageEx Width="42" Height="42"
-                                  Stretch="UniformToFill"
-                                  DecodePixelWidth="48"
+                <controls:ImageEx Width="42"
+                                  Height="42"
                                   DecodePixelType="Logical"
-                                  Source="{x:Bind Song.AlbumArtUriFromTrack, Mode=OneWay}" />
+                                  DecodePixelWidth="48"
+                                  Source="{x:Bind Song.AlbumArtUriFromTrack, Mode=OneWay}"
+                                  Stretch="UniformToFill" />
             </Border>
         </Button>
         <local:NowPlayingIndicator x:Name="NowPlayingIndicator"
@@ -101,10 +107,10 @@
         <local:ArtistLinks x:Name="ArtistCell"
                            Grid.Column="3"
                            Margin="12,0,0,0"
-                           Style="{StaticResource SongListArtistLinksStyle}"
                            ArtistName="{x:Bind Song.ArtistName, Mode=OneWay}"
+                           Command="{x:Bind ViewModel.GoToArtistCommand, Mode=OneWay}"
                            Song="{x:Bind Song, Mode=OneWay}"
-                           Command="{x:Bind ViewModel.GoToArtistCommand, Mode=OneWay}" />
+                           Style="{StaticResource SongListArtistLinksStyle}" />
 
         <HyperlinkButton x:Name="AlbumLink"
                          Grid.Column="4"

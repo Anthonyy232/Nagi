@@ -9,8 +9,55 @@ end_of_line = lf
 [*.cs]
 indent_size = 4
 
+# formatted by XAML Styler (Settings.XamlStyler), which writes CRLF
+[*.xaml]
+indent_size = 4
+end_of_line = crlf
+
 [*.{csproj,props,targets,config,xml}]
 indent_size = 4
 
 [*.{json,yml,yaml}]
 indent_size = 2
+
+# Analyzers: .NET's recommended set (AnalysisLevel in Directory.Build.props), less what doesn't fit an app.
+[*.cs]
+# logging isn't on a hot path; source-generated LoggerMessage everywhere isn't worth it
+dotnet_diagnostic.CA1848.severity = none
+dotnet_diagnostic.CA1873.severity = none
+# library API design rules; nothing here is consumed as a library
+dotnet_diagnostic.CA1000.severity = none
+dotnet_diagnostic.CA1051.severity = none
+dotnet_diagnostic.CA1716.severity = none
+# no type has a finalizer
+dotnet_diagnostic.CA1816.severity = none
+# a cached CompositeFormat per localised string isn't worth it
+dotnet_diagnostic.CA1863.severity = none
+# UI text formats in the user's culture on purpose
+dotnet_diagnostic.CA1305.severity = none
+# interfaces at boundaries on purpose; the speed-up is negligible
+dotnet_diagnostic.CA1859.severity = none
+# smart playlist field kinds are named Integer and Decimal
+dotnet_diagnostic.CA1720.severity = none
+# owners end through explicit Cleanup methods; SemaphoreSlim needs no disposal without its wait handle
+dotnet_diagnostic.CA1001.severity = none
+
+[src/Nagi.Core/Data/Migrations/**.cs]
+generated_code = true
+
+[src/Nagi.Core/{Playlists/SmartPlaylistQueryBuilder,Listening/StatisticsService}.cs]
+# EF Core turns these into SQL; the culture and comparison overloads don't translate
+dotnet_diagnostic.CA1304.severity = none
+dotnet_diagnostic.CA1310.severity = none
+dotnet_diagnostic.CA1311.severity = none
+dotnet_diagnostic.CA1862.severity = none
+
+[src/Nagi.WinUI/**.cs]
+# x:Bind functions must be instance members
+dotnet_diagnostic.CA1822.severity = none
+
+[tests/**.cs]
+# Method_State_Result test names
+dotnet_diagnostic.CA1707.severity = none
+# arrays built once per test
+dotnet_diagnostic.CA1861.severity = none

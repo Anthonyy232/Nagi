@@ -156,7 +156,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         (shuffle ? saved!.ShuffledQueueTrackIds : saved!.PlaybackQueueTrackIds).Should().Equal(order);
 
         _service.MoveQueueItem(moved, null);
-        _service.PlayOrder.Last().Should().Be(moved);
+        _service.PlayOrder[^1].Should().Be(moved);
         if (shuffle)
         {
             await _service.SetShuffleAsync(false);
@@ -462,7 +462,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _service.PlayOrder.Select(id => tracks[id].Title).Should().Equal("c.flac", "b.mp3");
     }
 
-    private class EventTracker
+    private sealed class EventTracker
     {
         public EventTracker(MusicPlaybackService service)
         {
@@ -710,7 +710,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         await _service.InitializeAsync();
         await _service.PlayAsync(Ids(_testSongs));
         var emptyPlaylist = new SongScope.Playlist(Guid.NewGuid());
-        _library.Reader.GetSongIdsAsync(emptyPlaylist, null, SongSortOrder.PlaylistOrder).Returns(new List<Guid>());
+        _library.Reader.GetSongIdsAsync(emptyPlaylist, null, SongSortOrder.PlaylistOrder, Arg.Any<CancellationToken>()).Returns(new List<Guid>());
 
         await _service.PlayAsync(Array.Empty<Guid>());
         await _service.PlayAsync(Guid.Empty);
@@ -978,19 +978,19 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         switch (type)
         {
             case PlaybackContextType.Album:
-                _library.Reader.GetSongIdsAsync(new SongScope.Album(id), null, Arg.Any<SongSortOrder>()).Returns(songIds);
+                _library.Reader.GetSongIdsAsync(new SongScope.Album(id), null, Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(songIds);
                 await _service.PlayScopeAsync(new SongScope.Album(id));
                 break;
             case PlaybackContextType.Artist:
-                _library.Reader.GetSongIdsAsync(new SongScope.Artist(id), null, Arg.Any<SongSortOrder>()).Returns(songIds);
+                _library.Reader.GetSongIdsAsync(new SongScope.Artist(id), null, Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(songIds);
                 await _service.PlayScopeAsync(new SongScope.Artist(id));
                 break;
             case PlaybackContextType.Folder:
-                _library.Reader.GetSongIdsAsync(new SongScope.Folder(id), null, Arg.Any<SongSortOrder>()).Returns(songIds);
+                _library.Reader.GetSongIdsAsync(new SongScope.Folder(id), null, Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(songIds);
                 await _service.PlayScopeAsync(new SongScope.Folder(id));
                 break;
             case PlaybackContextType.Genre:
-                _library.Reader.GetSongIdsAsync(new SongScope.Genre(id), null, Arg.Any<SongSortOrder>()).Returns(songIds);
+                _library.Reader.GetSongIdsAsync(new SongScope.Genre(id), null, Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(songIds);
                 await _service.PlayScopeAsync(new SongScope.Genre(id));
                 break;
             case PlaybackContextType.SmartPlaylist:
@@ -998,7 +998,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
                 (await _service.PlaySmartPlaylistAsync(id)).Should().BeTrue();
                 break;
             default:
-                _library.Reader.GetSongIdsAsync(new SongScope.Playlist(id), null, Arg.Any<SongSortOrder>()).Returns(songIds);
+                _library.Reader.GetSongIdsAsync(new SongScope.Playlist(id), null, Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(songIds);
                 await _service.PlayScopeAsync(new SongScope.Playlist(id));
                 break;
         }
@@ -1663,7 +1663,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     {
         var release = new TaskCompletionSource<List<Guid>>(TaskCreationOptions.RunContinuationsAsynchronously);
         var albumId = Guid.NewGuid();
-        _library.Reader.GetSongIdsAsync(new SongScope.Album(albumId), null, SongSortOrder.TrackNumberAsc).Returns(release.Task);
+        _library.Reader.GetSongIdsAsync(new SongScope.Album(albumId), null, SongSortOrder.TrackNumberAsc, Arg.Any<CancellationToken>()).Returns(release.Task);
         var oldRequest = _service.PlayScopeAsync(new SongScope.Album(albumId));
 
         await _service.PlayAsync(_testSongs[1].Id);

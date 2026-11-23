@@ -1,32 +1,39 @@
-<ResourceDictionary
-    x:Class="Nagi.WinUI.Styles.InsightsTemplates"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:insights="using:Nagi.Presentation.Insights"
-    xmlns:localControls="using:Nagi.WinUI.Controls">
+﻿<ResourceDictionary x:Class="Nagi.WinUI.Styles.InsightsTemplates"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:insights="using:Nagi.Presentation.Insights"
+                    xmlns:localControls="using:Nagi.WinUI.Controls">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="ms-appx:///Styles/Converters.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Style x:Key="SeeAllListItemStyle" TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+    <Style x:Key="SeeAllListItemStyle"
+           BasedOn="{StaticResource DefaultListViewItemStyle}"
+           TargetType="ListViewItem">
         <Setter Property="Padding" Value="0" />
         <Setter Property="MinHeight" Value="0" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
     </Style>
 
-    <Style x:Key="InsightsRankTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyStrongTextBlockStyle}">
+    <Style x:Key="InsightsRankTextBlockStyle"
+           BasedOn="{StaticResource BodyStrongTextBlockStyle}"
+           TargetType="TextBlock">
         <Setter Property="Foreground" Value="{StaticResource AccentTextBrush}" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
 
-    <Style x:Key="InsightsSecondaryTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+    <Style x:Key="InsightsSecondaryTextBlockStyle"
+           BasedOn="{StaticResource CaptionTextBlockStyle}"
+           TargetType="TextBlock">
         <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
         <Setter Property="TextWrapping" Value="NoWrap" />
     </Style>
 
-    <Style x:Key="InsightsStatTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyStrongTextBlockStyle}">
+    <Style x:Key="InsightsStatTextBlockStyle"
+           BasedOn="{StaticResource BodyStrongTextBlockStyle}"
+           TargetType="TextBlock">
         <Setter Property="FontSize" Value="{StaticResource CompactTextFontSize}" />
         <Setter Property="Foreground" Value="{ThemeResource TextFillColorTertiaryBrush}" />
         <Setter Property="HorizontalAlignment" Value="Right" />
@@ -42,14 +49,28 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="{x:Bind Rank.ToString()}" Style="{StaticResource InsightsRankTextBlockStyle}" />
-            <localControls:ArtworkImage Grid.Column="1" HorizontalAlignment="Center" Size="40" Source="{x:Bind ArtworkUri}"
-                                     PlaceholderGlyph="&#xE8D6;" PlaceholderGlyphSize="16" Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
-            <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="2">
-                <TextBlock Text="{x:Bind Title}" Style="{StaticResource BodyStrongTextBlockStyle}" FontSize="{StaticResource CompactTextFontSize}" TextWrapping="NoWrap" />
-                <TextBlock Text="{x:Bind Artist}" Style="{StaticResource InsightsSecondaryTextBlockStyle}" />
+            <TextBlock Grid.Column="0"
+                       Style="{StaticResource InsightsRankTextBlockStyle}"
+                       Text="{x:Bind Rank.ToString()}" />
+            <localControls:ArtworkImage Grid.Column="1"
+                                        HorizontalAlignment="Center"
+                                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                        PlaceholderGlyph="&#xE8D6;"
+                                        PlaceholderGlyphSize="16"
+                                        Size="40"
+                                        Source="{x:Bind ArtworkUri}" />
+            <StackPanel Grid.Column="2"
+                        VerticalAlignment="Center"
+                        Spacing="2">
+                <TextBlock FontSize="{StaticResource CompactTextFontSize}"
+                           Style="{StaticResource BodyStrongTextBlockStyle}"
+                           Text="{x:Bind Title}"
+                           TextWrapping="NoWrap" />
+                <TextBlock Style="{StaticResource InsightsSecondaryTextBlockStyle}" Text="{x:Bind Artist}" />
             </StackPanel>
-            <TextBlock Grid.Column="3" Text="{x:Bind StatText}" Style="{StaticResource InsightsStatTextBlockStyle}" />
+            <TextBlock Grid.Column="3"
+                       Style="{StaticResource InsightsStatTextBlockStyle}"
+                       Text="{x:Bind StatText}" />
         </Grid>
     </DataTemplate>
 
@@ -61,15 +82,27 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="{x:Bind Rank.ToString()}" Style="{StaticResource InsightsRankTextBlockStyle}" />
-            <localControls:ArtworkImage Grid.Column="1" HorizontalAlignment="Center" Size="40" IsCircular="True" Source="{x:Bind ImageUri}"
-                                     PlaceholderGlyph="&#xE77B;" PlaceholderGlyphSize="16" Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
-            <HyperlinkButton Grid.Column="2" Content="{x:Bind Name}"
+            <TextBlock Grid.Column="0"
+                       Style="{StaticResource InsightsRankTextBlockStyle}"
+                       Text="{x:Bind Rank.ToString()}" />
+            <localControls:ArtworkImage Grid.Column="1"
+                                        HorizontalAlignment="Center"
+                                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                        IsCircular="True"
+                                        PlaceholderGlyph="&#xE77B;"
+                                        PlaceholderGlyphSize="16"
+                                        Size="40"
+                                        Source="{x:Bind ImageUri}" />
+            <HyperlinkButton Grid.Column="2"
                              Command="{x:Bind Command}"
                              CommandParameter="{x:Bind}"
+                             Content="{x:Bind Name}"
                              Style="{StaticResource InsightsHyperlinkButtonStyle}" />
-            <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right" Text="{x:Bind StatText}"
-                       Style="{StaticResource InsightsSecondaryTextBlockStyle}" />
+            <TextBlock Grid.Column="3"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       Style="{StaticResource InsightsSecondaryTextBlockStyle}"
+                       Text="{x:Bind StatText}" />
         </Grid>
     </DataTemplate>
 
@@ -81,17 +114,28 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="{x:Bind Rank.ToString()}" Style="{StaticResource InsightsRankTextBlockStyle}" />
-            <localControls:ArtworkImage Grid.Column="1" HorizontalAlignment="Center" Size="40" Source="{x:Bind ArtworkUri}"
-                                     PlaceholderGlyph="&#xE93C;" PlaceholderGlyphSize="16" Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
-            <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="2">
-                <HyperlinkButton Content="{x:Bind Title}"
-                                 Command="{x:Bind Command}"
+            <TextBlock Grid.Column="0"
+                       Style="{StaticResource InsightsRankTextBlockStyle}"
+                       Text="{x:Bind Rank.ToString()}" />
+            <localControls:ArtworkImage Grid.Column="1"
+                                        HorizontalAlignment="Center"
+                                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                        PlaceholderGlyph="&#xE93C;"
+                                        PlaceholderGlyphSize="16"
+                                        Size="40"
+                                        Source="{x:Bind ArtworkUri}" />
+            <StackPanel Grid.Column="2"
+                        VerticalAlignment="Center"
+                        Spacing="2">
+                <HyperlinkButton Command="{x:Bind Command}"
                                  CommandParameter="{x:Bind}"
+                                 Content="{x:Bind Title}"
                                  Style="{StaticResource InsightsHyperlinkButtonStyle}" />
-                <TextBlock Text="{x:Bind ArtistName}" Style="{StaticResource InsightsSecondaryTextBlockStyle}" />
+                <TextBlock Style="{StaticResource InsightsSecondaryTextBlockStyle}" Text="{x:Bind ArtistName}" />
             </StackPanel>
-            <TextBlock Grid.Column="3" Text="{x:Bind StatText}" Style="{StaticResource InsightsStatTextBlockStyle}" />
+            <TextBlock Grid.Column="3"
+                       Style="{StaticResource InsightsStatTextBlockStyle}"
+                       Text="{x:Bind StatText}" />
         </Grid>
     </DataTemplate>
 
@@ -102,20 +146,25 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="{x:Bind Rank.ToString()}" Style="{StaticResource InsightsRankTextBlockStyle}" />
-            <HyperlinkButton Grid.Column="1" Content="{x:Bind Name}"
+            <TextBlock Grid.Column="0"
+                       Style="{StaticResource InsightsRankTextBlockStyle}"
+                       Text="{x:Bind Rank.ToString()}" />
+            <HyperlinkButton Grid.Column="1"
                              Command="{x:Bind Command}"
                              CommandParameter="{x:Bind}"
+                             Content="{x:Bind Name}"
                              Style="{StaticResource InsightsHyperlinkButtonStyle}" />
-            <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{x:Bind StatText}"
-                       Style="{StaticResource InsightsSecondaryTextBlockStyle}" />
+            <TextBlock Grid.Column="2"
+                       VerticalAlignment="Center"
+                       Style="{StaticResource InsightsSecondaryTextBlockStyle}"
+                       Text="{x:Bind StatText}" />
         </Grid>
     </DataTemplate>
 
     <localControls:InsightsItemTemplateSelector x:Key="InsightsItemTemplateSelector"
-                                                SongTemplate="{StaticResource TopSongItemTemplate}"
-                                                ArtistTemplate="{StaticResource TopArtistItemTemplate}"
                                                 AlbumTemplate="{StaticResource TopAlbumItemTemplate}"
-                                                GenreTemplate="{StaticResource TopGenreItemTemplate}" />
+                                                ArtistTemplate="{StaticResource TopArtistItemTemplate}"
+                                                GenreTemplate="{StaticResource TopGenreItemTemplate}"
+                                                SongTemplate="{StaticResource TopSongItemTemplate}" />
 
 </ResourceDictionary>

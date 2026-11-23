@@ -10,7 +10,7 @@ internal static class DialogThemeHelper
     // same brushes, so they look like pages and follow accent changes.
     private static readonly Lazy<IReadOnlyList<object>> AccentOverrideKeys = new(() =>
         Application.Current.Resources.MergedDictionaries
-            .Single(dictionary => dictionary.Source?.AbsolutePath.EndsWith(AppResourceKeys.ColorsDictionaryPath) == true)
+            .Single(dictionary => dictionary.Source?.AbsolutePath.EndsWith(AppResourceKeys.ColorsDictionaryPath, StringComparison.Ordinal) == true)
             .ThemeDictionaries["Default"] is ResourceDictionary overrides
             ? overrides.Keys.ToList()
             : []);

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -76,6 +77,7 @@ internal sealed class LastFmSignedClient
     /// <summary>
     ///     The MD5 signature of a signed call: the parameters sorted by name and concatenated, followed by the secret.
     /// </summary>
+    [SuppressMessage("Security", "CA5351", Justification = "Last.fm signs requests with MD5.")]
     private static string CreateSignature(IEnumerable<KeyValuePair<string, string>> parameters, string secret)
     {
         var text = string.Concat(parameters.Where(p => p.Key != "format").OrderBy(p => p.Key, StringComparer.Ordinal)

@@ -85,7 +85,7 @@ public partial class App : Application
 
     private (string? FilePath, LaunchCommand Command) ReadActivation(IActivatedEventArgs args) => args.Kind switch
     {
-        ActivationKind.File => (args.As<IFileActivatedEventArgs>().Files.FirstOrDefault()?.Path, LaunchCommand.None),
+        ActivationKind.File => (args.As<IFileActivatedEventArgs>().Files is [var file, ..] ? file.Path : null, LaunchCommand.None),
         ActivationKind.Launch => (_launchFilePath, _launchCommand),
         _ => (null, LaunchCommand.None)
     };

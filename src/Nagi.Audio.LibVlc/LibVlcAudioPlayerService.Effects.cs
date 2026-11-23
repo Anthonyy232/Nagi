@@ -10,7 +10,7 @@ namespace Nagi.Audio.LibVlc;
 /// </summary>
 public sealed partial class LibVlcAudioPlayerService
 {
-    private async Task FadeAndPauseAsync(CancellationToken fadeCt, double targetUserVolume)
+    private async Task FadeAndPauseAsync(double targetUserVolume, CancellationToken fadeCt)
     {
         try
         {

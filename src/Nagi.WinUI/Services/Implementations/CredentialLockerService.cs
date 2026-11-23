@@ -46,7 +46,7 @@ public class CredentialLockerService : ICredentialLockerService
     {
         try
         {
-            var credential = _vault.FindAllByResource(resource).FirstOrDefault();
+            var credential = _vault.FindAllByResource(resource) is [var found, ..] ? found : null;
 
             if (credential != null)
             {

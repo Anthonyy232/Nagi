@@ -34,7 +34,7 @@ public partial class LibraryReader : ILibraryReader
 
     public async Task<bool> HasAnyFolderAsync(CancellationToken token = default)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
         return await context.Folders.AnyAsync(token).ConfigureAwait(false);
     }
 

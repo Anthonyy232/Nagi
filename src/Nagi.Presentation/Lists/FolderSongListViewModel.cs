@@ -31,6 +31,7 @@ public sealed class BreadcrumbItem
 /// </summary>
 public partial class FolderSongListViewModel : DetailSongListViewModelBase<FolderSongViewNavigationParameter>
 {
+    private static readonly char[] PathSeparators = ['\\', '/'];
     private string _currentDirectoryPath = string.Empty;
     private Guid? _rootFolderId;
     private string? _rootFolderPath;
@@ -170,7 +171,7 @@ public partial class FolderSongListViewModel : DetailSongListViewModelBase<Folde
             if (relativePath != ".")
             {
                 var currentPath = _rootFolderPath;
-                foreach (var part in relativePath.Split(new[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries))
+                foreach (var part in relativePath.Split(PathSeparators, StringSplitOptions.RemoveEmptyEntries))
                 {
                     currentPath = Path.Combine(currentPath, part);
                     Breadcrumbs.Add(new BreadcrumbItem { Name = part, Path = currentPath });

@@ -1,16 +1,15 @@
-<Page
-    x:Class="Nagi.WinUI.Pages.OnboardingPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
-    xmlns:playback="using:Nagi.Core.Playback"
-    xmlns:settings="using:Nagi.Presentation.Settings"
-    xmlns:resources="using:Nagi.Presentation.Resources"
-    xmlns:uicontrols="using:Nagi.WinUI.Controls"
-    Background="Transparent">
+﻿<Page x:Class="Nagi.WinUI.Pages.OnboardingPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+      xmlns:playback="using:Nagi.Core.Playback"
+      xmlns:resources="using:Nagi.Presentation.Resources"
+      xmlns:settings="using:Nagi.Presentation.Settings"
+      xmlns:uicontrols="using:Nagi.WinUI.Controls"
+      Background="Transparent">
 
     <Page.Resources>
-        <Style TargetType="ComboBox" BasedOn="{StaticResource DefaultComboBoxStyle}">
+        <Style BasedOn="{StaticResource DefaultComboBoxStyle}" TargetType="ComboBox">
             <Setter Property="MinWidth" Value="160" />
         </Style>
     </Page.Resources>
@@ -21,6 +20,291 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+
+        <TitleBar x:Name="AppTitleBar"
+                  Grid.Row="0"
+                  Background="Transparent" />
+
+        <ScrollViewer x:Name="StepScroller"
+                      Grid.Row="1"
+                      HorizontalScrollBarVisibility="Disabled"
+                      HorizontalScrollMode="Disabled"
+                      VerticalScrollBarVisibility="Auto">
+            <Grid x:Name="StepHost"
+                  Padding="24,16"
+                  VerticalAlignment="Center">
+
+                <uicontrols:OnboardingStepView x:Name="LibraryStep"
+                                               Title="{x:Bind resources:Strings.OnboardingPage_Library_Title, Mode=OneTime}"
+                                               VerticalAlignment="Center"
+                                               Description="{x:Bind resources:Strings.OnboardingPage_Library_Description, Mode=OneTime}"
+                                               Visibility="Collapsed">
+                    <uicontrols:OnboardingLibraryPanel ViewModel="{x:Bind ViewModel}" />
+                </uicontrols:OnboardingStepView>
+
+                <uicontrols:OnboardingStepView x:Name="AppearanceStep"
+                                               Title="{x:Bind resources:Strings.OnboardingPage_Appearance_Title, Mode=OneTime}"
+                                               VerticalAlignment="Center"
+                                               Description="{x:Bind resources:Strings.OnboardingPage_Appearance_Description, Mode=OneTime}"
+                                               Visibility="Collapsed">
+                    <StackPanel Spacing="{StaticResource SettingsCardSpacing}">
+                        <controls:SettingsCard Description="{x:Bind resources:Strings.SettingsPage_Theme_Description, Mode=OneTime}" Header="{x:Bind resources:Strings.SettingsPage_Theme_Header, Mode=OneTime}">
+                            <controls:SettingsCard.HeaderIcon>
+                                <FontIcon Glyph="&#xE793;" />
+                            </controls:SettingsCard.HeaderIcon>
+                            <ComboBox DisplayMemberPath="DisplayName"
+                                      ItemsSource="{x:Bind Settings.Appearance.ThemeOptions}"
+                                      SelectedItem="{x:Bind Settings.Appearance.SelectedTheme, Mode=TwoWay}" />
+                        </controls:SettingsCard>
+
+                        <ContentControl Content="{x:Bind Settings.Appearance}"
+                                        ContentTemplate="{StaticResource BackdropMaterialSettingCard}"
+                                        Style="{StaticResource SettingCardHostStyle}" />
+
+                        <ContentControl Content="{x:Bind Settings.Appearance}"
+                                        ContentTemplate="{StaticResource DynamicThemingSettingCard}"
+                                        Style="{StaticResource SettingCardHostStyle}" />
+                    </StackPanel>
+                </uicontrols:OnboardingStepView>
+
+                <uicontrols:OnboardingStepView x:Name="ListeningStep"
+                                               Title="{x:Bind resources:Strings.OnboardingPage_Listening_Title, Mode=OneTime}"
+                                               VerticalAlignment="Center"
+                                               Description="{x:Bind resources:Strings.OnboardingPage_Listening_Description, Mode=OneTime}"
+                                               Visibility="Collapsed">
+                    <StackPanel Spacing="{StaticResource SettingsCardSpacing}">
+                        <controls:SettingsCard Description="{x:Bind resources:Strings.SettingsPage_FadeOnPlayPause_Description, Mode=OneTime}" Header="{x:Bind resources:Strings.SettingsPage_FadeOnPlayPause_Header, Mode=OneTime}">
+                            <controls:SettingsCard.HeaderIcon>
+                                <FontIcon Glyph="&#xE9E9;" />
+                            </controls:SettingsCard.HeaderIcon>
+                            <ToggleSwitch IsOn="{x:Bind Settings.Audio.IsFadeOnPlayPauseEnabled, Mode=TwoWay}" />
+                        </controls:SettingsCard>
+
+                        <controls:SettingsCard Description="{x:Bind resources:Strings.OnboardingPage_Equalizer_Description, Mode=OneTime}" Header="{x:Bind resources:Strings.SettingsPage_Equalizer, Mode=OneTime}">
+                            <controls:SettingsCard.HeaderIcon>
+                                <FontIcon Glyph="&#xE9E9;" />
+                            </controls:SettingsCard.HeaderIcon>
+                            <ComboBox AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_Equalizer, Mode=OneTime}"
+                                      ItemsSource="{x:Bind Settings.Audio.AvailableEqualizerPresets}"
+                                      PlaceholderText="{x:Bind resources:Strings.SettingsPage_Equalizer_Preset_Custom_Placeholder, Mode=OneTime}"
+                                      SelectedItem="{x:Bind Settings.Audio.SelectedEqualizerPreset, Mode=TwoWay}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate x:DataType="playback:EqualizerPreset">
+                                        <TextBlock Text="{x:Bind Name}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </controls:SettingsCard>
+                    </StackPanel>
+                </uicontrols:OnboardingStepView>
+
+                <uicontrols:OnboardingStepView x:Name="OnlineFeaturesStep"
+                                               Title="{x:Bind resources:Strings.OnboardingPage_OnlineFeatures_Title, Mode=OneTime}"
+                                               VerticalAlignment="Center"
+                                               Description="{x:Bind resources:Strings.OnboardingPage_OnlineFeatures_Description, Mode=OneTime}"
+                                               Visibility="Collapsed">
+                    <StackPanel Spacing="{StaticResource SettingsCardSpacing}">
+                        <controls:SettingsCard Description="{x:Bind resources:Strings.SettingsPage_OnlineMetadata_Description, Mode=OneTime}" Header="{x:Bind resources:Strings.SettingsPage_OnlineMetadata_Header, Mode=OneTime}">
+                            <controls:SettingsCard.HeaderIcon>
+                                <FontIcon Glyph="&#xE8EC;" />
+                            </controls:SettingsCard.HeaderIcon>
+                            <ToggleSwitch IsOn="{x:Bind Settings.Library.IsFetchOnlineMetadataEnabled, Mode=TwoWay}" />
+                        </controls:SettingsCard>
+
+                        <controls:SettingsCard Description="{x:Bind resources:Strings.SettingsPage_OnlineLyrics_Description, Mode=OneTime}" Header="{x:Bind resources:Strings.SettingsPage_OnlineLyrics_Header, Mode=OneTime}">
+                            <controls:SettingsCard.HeaderIcon>
+                                <FontIcon Glyph="&#xED1E;" />
+                            </controls:SettingsCard.HeaderIcon>
+                            <ToggleSwitch IsOn="{x:Bind Settings.Library.IsFetchOnlineLyricsEnabled, Mode=TwoWay}" />
+                        </controls:SettingsCard>
+                    </StackPanel>
+                </uicontrols:OnboardingStepView>
+
+                <uicontrols:OnboardingStepView x:Name="DesktopStep"
+                                               Title="{x:Bind resources:Strings.OnboardingPage_Desktop_Title, Mode=OneTime}"
+                                               VerticalAlignment="Center"
+                                               Description="{x:Bind resources:Strings.OnboardingPage_Desktop_Description, Mode=OneTime}"
+                                               Visibility="Collapsed">
+                    <StackPanel Spacing="{StaticResource SettingsCardSpacing}">
+                        <ContentControl Content="{x:Bind Settings}"
+                                        ContentTemplate="{StaticResource AutoLaunchSettingCard}"
+                                        Style="{StaticResource SettingCardHostStyle}" />
+
+                        <ContentControl Content="{x:Bind Settings}"
+                                        ContentTemplate="{StaticResource HideToTraySettingCard}"
+                                        Style="{StaticResource SettingCardHostStyle}" />
+
+                        <ContentControl Content="{x:Bind Settings}"
+                                        ContentTemplate="{StaticResource MinimizeToMiniPlayerSettingCard}"
+                                        Style="{StaticResource SettingCardHostStyle}" />
+                    </StackPanel>
+                </uicontrols:OnboardingStepView>
+
+                <uicontrols:OnboardingStepView x:Name="SharingStep"
+                                               Title="{x:Bind resources:Strings.OnboardingPage_Sharing_Title, Mode=OneTime}"
+                                               VerticalAlignment="Center"
+                                               Description="{x:Bind resources:Strings.OnboardingPage_Sharing_Description, Mode=OneTime}"
+                                               Visibility="Collapsed">
+                    <StackPanel Spacing="{StaticResource SettingsCardSpacing}">
+                        <controls:SettingsCard Description="{x:Bind resources:Strings.SettingsPage_LastFm_Description, Mode=OneTime}" Header="{x:Bind resources:Strings.SettingsPage_LastFm_Header, Mode=OneTime}">
+                            <controls:SettingsCard.HeaderIcon>
+                                <uicontrols:LastFmIcon Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                            </controls:SettingsCard.HeaderIcon>
+                            <uicontrols:LastFmAccountButtons ViewModel="{x:Bind Settings.Scrobbling}" />
+                        </controls:SettingsCard>
+
+                        <ContentControl Content="{x:Bind Settings}"
+                                        ContentTemplate="{StaticResource DiscordSettingCard}"
+                                        Style="{StaticResource SettingCardHostStyle}" />
+                    </StackPanel>
+                </uicontrols:OnboardingStepView>
+
+                <uicontrols:OnboardingStepView x:Name="FinishStep"
+                                               Title="{x:Bind resources:Strings.OnboardingPage_Finish_Title, Mode=OneTime}"
+                                               VerticalAlignment="Center"
+                                               Description="{x:Bind resources:Strings.OnboardingPage_Finish_Description, Mode=OneTime}"
+                                               Visibility="Collapsed">
+                    <uicontrols:OnboardingLibraryPanel ViewModel="{x:Bind ViewModel}" />
+                </uicontrols:OnboardingStepView>
+            </Grid>
+        </ScrollViewer>
+
+        <!--  The welcome step spans the footer row too, so the footer appearing or leaving never moves it.  -->
+        <ScrollViewer x:Name="WelcomeScroller"
+                      Grid.Row="1"
+                      Grid.RowSpan="2"
+                      HorizontalScrollBarVisibility="Disabled"
+                      HorizontalScrollMode="Disabled"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel x:Name="WelcomeStep"
+                        MaxWidth="640"
+                        Margin="24,16"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                <Image Width="128"
+                       Height="128"
+                       Margin="0,0,0,28"
+                       Source="ms-appx:///Assets/AppLogo.png" />
+                <TextBlock AutomationProperties.HeadingLevel="Level1"
+                           Style="{StaticResource TitleLargeTextBlockStyle}"
+                           Text="{x:Bind resources:Strings.OnboardingPage_Welcome_Title, Mode=OneTime}"
+                           TextAlignment="Center"
+                           TextWrapping="WrapWholeWords" />
+                <TextBlock MaxWidth="480"
+                           Margin="0,12,0,0"
+                           HorizontalAlignment="Center"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           LineHeight="28"
+                           Style="{StaticResource BodyLargeTextBlockStyle}"
+                           Text="{x:Bind resources:Strings.OnboardingPage_Welcome_Description, Mode=OneTime}"
+                           TextAlignment="Center"
+                           TextWrapping="WrapWholeWords" />
+                <Button Margin="0,32,0,0"
+                        Padding="32,12"
+                        HorizontalAlignment="Center"
+                        Command="{x:Bind ViewModel.GoNextCommand}"
+                        Content="{x:Bind resources:Strings.OnboardingPage_GetStarted, Mode=OneTime}"
+                        FontSize="{StaticResource BodyLargeTextBlockFontSize}"
+                        FontWeight="SemiBold"
+                        Style="{StaticResource AccentButtonStyle}" />
+                <StackPanel Margin="0,40,0,0"
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                    <FontIcon FontSize="16"
+                              Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                              Glyph="&#xE774;" />
+                    <ComboBox MinWidth="180"
+                              AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_Language_Header, Mode=OneTime}"
+                              ItemsSource="{x:Bind Settings.Appearance.AvailableLanguages}"
+                              SelectedItem="{x:Bind Settings.Appearance.SelectedLanguage, Mode=TwoWay}"
+                              ToolTipService.ToolTip="{x:Bind resources:Strings.SettingsPage_Language_Header, Mode=OneTime}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="settings:LanguageModel">
+                                <TextBlock Text="{x:Bind DisplayName}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid x:Name="Footer"
+              Grid.Row="2"
+              Padding="24,12,24,24"
+              Visibility="Collapsed">
+            <Grid x:Name="FooterLayout"
+                  MaxWidth="1120"
+                  ColumnSpacing="24"
+                  RowSpacing="12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <PipsPager x:Name="StepPips"
+                           VerticalAlignment="Center"
+                           SelectedIndexChanged="StepPips_SelectedIndexChanged" />
+
+                <!--  The library and finish steps show the scan in full, so the footer only summarizes it in between.  -->
+                <StackPanel Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="8"
+                            Visibility="{x:Bind ViewModel.IsOnSettingsStep, Mode=OneWay}">
+                    <ProgressRing Width="16"
+                                  Height="16"
+                                  IsActive="{x:Bind ViewModel.IsScanning, Mode=OneWay}"
+                                  Visibility="{x:Bind ViewModel.IsScanning, Mode=OneWay}" />
+                    <FontIcon FontSize="16"
+                              Foreground="{StaticResource AccentTextBrush}"
+                              Glyph="&#xE930;"
+                              Visibility="{x:Bind ViewModel.IsLibraryReady, Mode=OneWay}" />
+                    <FontIcon FontSize="16"
+                              Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                              Glyph="&#xE783;"
+                              Visibility="{x:Bind ViewModel.HasLibraryFailed, Mode=OneWay}" />
+                    <TextBlock VerticalAlignment="Center"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Text="{x:Bind ViewModel.ScanStatus, Mode=OneWay}"
+                               TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+
+                <StackPanel x:Name="FooterActions"
+                            Grid.Row="1"
+                            Grid.ColumnSpan="3"
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                    <HyperlinkButton Command="{x:Bind ViewModel.SkipSetupCommand}"
+                                     Content="{x:Bind resources:Strings.OnboardingPage_SkipSetup, Mode=OneTime}"
+                                     Visibility="{x:Bind ViewModel.IsOnSettingsStep, Mode=OneWay}" />
+                    <Button MinWidth="96"
+                            Command="{x:Bind ViewModel.GoBackCommand}"
+                            Content="{x:Bind resources:Strings.OnboardingPage_Back, Mode=OneTime}">
+                        <Button.KeyboardAccelerators>
+                            <KeyboardAccelerator Key="Left" Modifiers="Menu" />
+                        </Button.KeyboardAccelerators>
+                    </Button>
+                    <Button MinWidth="120"
+                            Command="{x:Bind ViewModel.GoNextCommand}"
+                            Content="{x:Bind resources:Strings.OnboardingPage_Continue, Mode=OneTime}"
+                            Style="{StaticResource AccentButtonStyle}"
+                            Visibility="{x:Bind ViewModel.IsOnFinishStep, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                    <Button MinWidth="120"
+                            Command="{x:Bind ViewModel.FinishCommand}"
+                            Content="{x:Bind resources:Strings.OnboardingPage_StartListening, Mode=OneTime}"
+                            Style="{StaticResource AccentButtonStyle}"
+                            Visibility="{x:Bind ViewModel.IsOnFinishStep, Mode=OneWay}" />
+                </StackPanel>
+            </Grid>
+        </Grid>
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutStates">
@@ -40,342 +324,5 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-
-        <TitleBar x:Name="AppTitleBar" Grid.Row="0" Background="Transparent" />
-
-        <ScrollViewer
-            x:Name="StepScroller"
-            Grid.Row="1"
-            HorizontalScrollBarVisibility="Disabled"
-            HorizontalScrollMode="Disabled"
-            VerticalScrollBarVisibility="Auto">
-            <Grid
-                x:Name="StepHost"
-                Padding="24,16"
-                VerticalAlignment="Center">
-
-                <uicontrols:OnboardingStepView
-                    x:Name="LibraryStep"
-                    VerticalAlignment="Center"
-                    Title="{x:Bind resources:Strings.OnboardingPage_Library_Title, Mode=OneTime}"
-                    Description="{x:Bind resources:Strings.OnboardingPage_Library_Description, Mode=OneTime}"
-                    Visibility="Collapsed">
-                    <uicontrols:OnboardingLibraryPanel ViewModel="{x:Bind ViewModel}" />
-                </uicontrols:OnboardingStepView>
-
-                <uicontrols:OnboardingStepView
-                    x:Name="AppearanceStep"
-                    VerticalAlignment="Center"
-                    Title="{x:Bind resources:Strings.OnboardingPage_Appearance_Title, Mode=OneTime}"
-                    Description="{x:Bind resources:Strings.OnboardingPage_Appearance_Description, Mode=OneTime}"
-                    Visibility="Collapsed">
-                    <StackPanel Spacing="{StaticResource SettingsCardSpacing}">
-                        <controls:SettingsCard
-                            Header="{x:Bind resources:Strings.SettingsPage_Theme_Header, Mode=OneTime}"
-                            Description="{x:Bind resources:Strings.SettingsPage_Theme_Description, Mode=OneTime}">
-                            <controls:SettingsCard.HeaderIcon>
-                                <FontIcon Glyph="&#xE793;" />
-                            </controls:SettingsCard.HeaderIcon>
-                            <ComboBox
-                                ItemsSource="{x:Bind Settings.Appearance.ThemeOptions}"
-                                DisplayMemberPath="DisplayName"
-                                SelectedItem="{x:Bind Settings.Appearance.SelectedTheme, Mode=TwoWay}" />
-                        </controls:SettingsCard>
-
-                        <ContentControl
-                            Content="{x:Bind Settings.Appearance}"
-                            ContentTemplate="{StaticResource BackdropMaterialSettingCard}"
-                            Style="{StaticResource SettingCardHostStyle}" />
-
-                        <ContentControl
-                            Content="{x:Bind Settings.Appearance}"
-                            ContentTemplate="{StaticResource DynamicThemingSettingCard}"
-                            Style="{StaticResource SettingCardHostStyle}" />
-                    </StackPanel>
-                </uicontrols:OnboardingStepView>
-
-                <uicontrols:OnboardingStepView
-                    x:Name="ListeningStep"
-                    VerticalAlignment="Center"
-                    Title="{x:Bind resources:Strings.OnboardingPage_Listening_Title, Mode=OneTime}"
-                    Description="{x:Bind resources:Strings.OnboardingPage_Listening_Description, Mode=OneTime}"
-                    Visibility="Collapsed">
-                    <StackPanel Spacing="{StaticResource SettingsCardSpacing}">
-                        <controls:SettingsCard
-                            Header="{x:Bind resources:Strings.SettingsPage_FadeOnPlayPause_Header, Mode=OneTime}"
-                            Description="{x:Bind resources:Strings.SettingsPage_FadeOnPlayPause_Description, Mode=OneTime}">
-                            <controls:SettingsCard.HeaderIcon>
-                                <FontIcon Glyph="&#xE9E9;" />
-                            </controls:SettingsCard.HeaderIcon>
-                            <ToggleSwitch
-                                IsOn="{x:Bind Settings.Audio.IsFadeOnPlayPauseEnabled, Mode=TwoWay}" />
-                        </controls:SettingsCard>
-
-                        <controls:SettingsCard
-                            Header="{x:Bind resources:Strings.SettingsPage_Equalizer, Mode=OneTime}"
-                            Description="{x:Bind resources:Strings.OnboardingPage_Equalizer_Description, Mode=OneTime}">
-                            <controls:SettingsCard.HeaderIcon>
-                                <FontIcon Glyph="&#xE9E9;" />
-                            </controls:SettingsCard.HeaderIcon>
-                            <ComboBox
-                                AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_Equalizer, Mode=OneTime}"
-                                ItemsSource="{x:Bind Settings.Audio.AvailableEqualizerPresets}"
-                                PlaceholderText="{x:Bind resources:Strings.SettingsPage_Equalizer_Preset_Custom_Placeholder, Mode=OneTime}"
-                                SelectedItem="{x:Bind Settings.Audio.SelectedEqualizerPreset, Mode=TwoWay}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate x:DataType="playback:EqualizerPreset">
-                                        <TextBlock Text="{x:Bind Name}" />
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                        </controls:SettingsCard>
-                    </StackPanel>
-                </uicontrols:OnboardingStepView>
-
-                <uicontrols:OnboardingStepView
-                    x:Name="OnlineFeaturesStep"
-                    VerticalAlignment="Center"
-                    Title="{x:Bind resources:Strings.OnboardingPage_OnlineFeatures_Title, Mode=OneTime}"
-                    Description="{x:Bind resources:Strings.OnboardingPage_OnlineFeatures_Description, Mode=OneTime}"
-                    Visibility="Collapsed">
-                    <StackPanel Spacing="{StaticResource SettingsCardSpacing}">
-                        <controls:SettingsCard
-                            Header="{x:Bind resources:Strings.SettingsPage_OnlineMetadata_Header, Mode=OneTime}"
-                            Description="{x:Bind resources:Strings.SettingsPage_OnlineMetadata_Description, Mode=OneTime}">
-                            <controls:SettingsCard.HeaderIcon>
-                                <FontIcon Glyph="&#xE8EC;" />
-                            </controls:SettingsCard.HeaderIcon>
-                            <ToggleSwitch
-                                IsOn="{x:Bind Settings.Library.IsFetchOnlineMetadataEnabled, Mode=TwoWay}" />
-                        </controls:SettingsCard>
-
-                        <controls:SettingsCard
-                            Header="{x:Bind resources:Strings.SettingsPage_OnlineLyrics_Header, Mode=OneTime}"
-                            Description="{x:Bind resources:Strings.SettingsPage_OnlineLyrics_Description, Mode=OneTime}">
-                            <controls:SettingsCard.HeaderIcon>
-                                <FontIcon Glyph="&#xED1E;" />
-                            </controls:SettingsCard.HeaderIcon>
-                            <ToggleSwitch
-                                IsOn="{x:Bind Settings.Library.IsFetchOnlineLyricsEnabled, Mode=TwoWay}" />
-                        </controls:SettingsCard>
-                    </StackPanel>
-                </uicontrols:OnboardingStepView>
-
-                <uicontrols:OnboardingStepView
-                    x:Name="DesktopStep"
-                    VerticalAlignment="Center"
-                    Title="{x:Bind resources:Strings.OnboardingPage_Desktop_Title, Mode=OneTime}"
-                    Description="{x:Bind resources:Strings.OnboardingPage_Desktop_Description, Mode=OneTime}"
-                    Visibility="Collapsed">
-                    <StackPanel Spacing="{StaticResource SettingsCardSpacing}">
-                        <ContentControl
-                            Content="{x:Bind Settings}"
-                            ContentTemplate="{StaticResource AutoLaunchSettingCard}"
-                            Style="{StaticResource SettingCardHostStyle}" />
-
-                        <ContentControl
-                            Content="{x:Bind Settings}"
-                            ContentTemplate="{StaticResource HideToTraySettingCard}"
-                            Style="{StaticResource SettingCardHostStyle}" />
-
-                        <ContentControl
-                            Content="{x:Bind Settings}"
-                            ContentTemplate="{StaticResource MinimizeToMiniPlayerSettingCard}"
-                            Style="{StaticResource SettingCardHostStyle}" />
-                    </StackPanel>
-                </uicontrols:OnboardingStepView>
-
-                <uicontrols:OnboardingStepView
-                    x:Name="SharingStep"
-                    VerticalAlignment="Center"
-                    Title="{x:Bind resources:Strings.OnboardingPage_Sharing_Title, Mode=OneTime}"
-                    Description="{x:Bind resources:Strings.OnboardingPage_Sharing_Description, Mode=OneTime}"
-                    Visibility="Collapsed">
-                    <StackPanel Spacing="{StaticResource SettingsCardSpacing}">
-                        <controls:SettingsCard
-                            Header="{x:Bind resources:Strings.SettingsPage_LastFm_Header, Mode=OneTime}"
-                            Description="{x:Bind resources:Strings.SettingsPage_LastFm_Description, Mode=OneTime}">
-                            <controls:SettingsCard.HeaderIcon>
-                                <uicontrols:LastFmIcon Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-                            </controls:SettingsCard.HeaderIcon>
-                            <uicontrols:LastFmAccountButtons ViewModel="{x:Bind Settings.Scrobbling}" />
-                        </controls:SettingsCard>
-
-                        <ContentControl
-                            Content="{x:Bind Settings}"
-                            ContentTemplate="{StaticResource DiscordSettingCard}"
-                            Style="{StaticResource SettingCardHostStyle}" />
-                    </StackPanel>
-                </uicontrols:OnboardingStepView>
-
-                <uicontrols:OnboardingStepView
-                    x:Name="FinishStep"
-                    VerticalAlignment="Center"
-                    Title="{x:Bind resources:Strings.OnboardingPage_Finish_Title, Mode=OneTime}"
-                    Description="{x:Bind resources:Strings.OnboardingPage_Finish_Description, Mode=OneTime}"
-                    Visibility="Collapsed">
-                    <uicontrols:OnboardingLibraryPanel ViewModel="{x:Bind ViewModel}" />
-                </uicontrols:OnboardingStepView>
-            </Grid>
-        </ScrollViewer>
-
-        <!-- The welcome step spans the footer row too, so the footer appearing or leaving never moves it. -->
-        <ScrollViewer
-            x:Name="WelcomeScroller"
-            Grid.Row="1"
-            Grid.RowSpan="2"
-            HorizontalScrollBarVisibility="Disabled"
-            HorizontalScrollMode="Disabled"
-            VerticalScrollBarVisibility="Auto">
-            <StackPanel
-                x:Name="WelcomeStep"
-                MaxWidth="640"
-                Margin="24,16"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-                <Image
-                    Width="128"
-                    Height="128"
-                    Margin="0,0,0,28"
-                    Source="ms-appx:///Assets/AppLogo.png" />
-                <TextBlock
-                    AutomationProperties.HeadingLevel="Level1"
-                    Style="{StaticResource TitleLargeTextBlockStyle}"
-                    Text="{x:Bind resources:Strings.OnboardingPage_Welcome_Title, Mode=OneTime}"
-                    TextAlignment="Center"
-                    TextWrapping="WrapWholeWords" />
-                <TextBlock
-                    MaxWidth="480"
-                    Margin="0,12,0,0"
-                    HorizontalAlignment="Center"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    LineHeight="28"
-                    Style="{StaticResource BodyLargeTextBlockStyle}"
-                    Text="{x:Bind resources:Strings.OnboardingPage_Welcome_Description, Mode=OneTime}"
-                    TextAlignment="Center"
-                    TextWrapping="WrapWholeWords" />
-                <Button
-                    Margin="0,32,0,0"
-                    Padding="32,12"
-                    HorizontalAlignment="Center"
-                    Command="{x:Bind ViewModel.GoNextCommand}"
-                    Content="{x:Bind resources:Strings.OnboardingPage_GetStarted, Mode=OneTime}"
-                    FontSize="{StaticResource BodyLargeTextBlockFontSize}"
-                    FontWeight="SemiBold"
-                    Style="{StaticResource AccentButtonStyle}" />
-                <StackPanel
-                    Margin="0,40,0,0"
-                    HorizontalAlignment="Center"
-                    Orientation="Horizontal"
-                    Spacing="8">
-                    <FontIcon
-                        FontSize="16"
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Glyph="&#xE774;" />
-                    <ComboBox
-                        MinWidth="180"
-                        AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_Language_Header, Mode=OneTime}"
-                        ItemsSource="{x:Bind Settings.Appearance.AvailableLanguages}"
-                        SelectedItem="{x:Bind Settings.Appearance.SelectedLanguage, Mode=TwoWay}"
-                        ToolTipService.ToolTip="{x:Bind resources:Strings.SettingsPage_Language_Header, Mode=OneTime}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="settings:LanguageModel">
-                                <TextBlock Text="{x:Bind DisplayName}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </StackPanel>
-            </StackPanel>
-        </ScrollViewer>
-
-        <Grid
-            x:Name="Footer"
-            Grid.Row="2"
-            Padding="24,12,24,24"
-            Visibility="Collapsed">
-            <Grid
-                x:Name="FooterLayout"
-                MaxWidth="1120"
-                ColumnSpacing="24"
-                RowSpacing="12">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-                <PipsPager
-                    x:Name="StepPips"
-                    VerticalAlignment="Center"
-                    SelectedIndexChanged="StepPips_SelectedIndexChanged" />
-
-                <!-- The library and finish steps show the scan in full, so the footer only summarizes it in between. -->
-                <StackPanel
-                    Grid.Column="1"
-                    VerticalAlignment="Center"
-                    Orientation="Horizontal"
-                    Spacing="8"
-                    Visibility="{x:Bind ViewModel.IsOnSettingsStep, Mode=OneWay}">
-                    <ProgressRing
-                        Width="16"
-                        Height="16"
-                        IsActive="{x:Bind ViewModel.IsScanning, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.IsScanning, Mode=OneWay}" />
-                    <FontIcon
-                        FontSize="16"
-                        Foreground="{StaticResource AccentTextBrush}"
-                        Glyph="&#xE930;"
-                        Visibility="{x:Bind ViewModel.IsLibraryReady, Mode=OneWay}" />
-                    <FontIcon
-                        FontSize="16"
-                        Foreground="{ThemeResource SystemFillColorCriticalBrush}"
-                        Glyph="&#xE783;"
-                        Visibility="{x:Bind ViewModel.HasLibraryFailed, Mode=OneWay}" />
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Text="{x:Bind ViewModel.ScanStatus, Mode=OneWay}"
-                        TextTrimming="CharacterEllipsis" />
-                </StackPanel>
-
-                <StackPanel
-                    x:Name="FooterActions"
-                    Grid.Row="1"
-                    Grid.ColumnSpan="3"
-                    HorizontalAlignment="Right"
-                    Orientation="Horizontal"
-                    Spacing="8">
-                    <HyperlinkButton
-                        Command="{x:Bind ViewModel.SkipSetupCommand}"
-                        Content="{x:Bind resources:Strings.OnboardingPage_SkipSetup, Mode=OneTime}"
-                        Visibility="{x:Bind ViewModel.IsOnSettingsStep, Mode=OneWay}" />
-                    <Button
-                        MinWidth="96"
-                        Command="{x:Bind ViewModel.GoBackCommand}"
-                        Content="{x:Bind resources:Strings.OnboardingPage_Back, Mode=OneTime}">
-                        <Button.KeyboardAccelerators>
-                            <KeyboardAccelerator Key="Left" Modifiers="Menu" />
-                        </Button.KeyboardAccelerators>
-                    </Button>
-                    <Button
-                        MinWidth="120"
-                        Command="{x:Bind ViewModel.GoNextCommand}"
-                        Content="{x:Bind resources:Strings.OnboardingPage_Continue, Mode=OneTime}"
-                        Style="{StaticResource AccentButtonStyle}"
-                        Visibility="{x:Bind ViewModel.IsOnFinishStep, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                    <Button
-                        MinWidth="120"
-                        Command="{x:Bind ViewModel.FinishCommand}"
-                        Content="{x:Bind resources:Strings.OnboardingPage_StartListening, Mode=OneTime}"
-                        Style="{StaticResource AccentButtonStyle}"
-                        Visibility="{x:Bind ViewModel.IsOnFinishStep, Mode=OneWay}" />
-                </StackPanel>
-            </Grid>
-        </Grid>
     </Grid>
 </Page>

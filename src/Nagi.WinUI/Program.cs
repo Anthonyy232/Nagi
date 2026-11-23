@@ -34,11 +34,11 @@ public static class Program
         XamlOptionalChanges.EnableChange(XamlChangeId.IconNoGridOptimization);
         XamlOptionalChanges.EnableChange(XamlChangeId.OptimizeApplyStyles);
 
-        Application.Start(_ =>
+        Application.Start(callbackParams =>
         {
             var context = new DispatcherQueueSynchronizationContext(DispatcherQueue.GetForCurrentThread());
             SynchronizationContext.SetSynchronizationContext(context);
-            new App(singleInstanceManager, filePath, command);
+            _ = new App(singleInstanceManager, filePath, command);
         });
 
         return 0;

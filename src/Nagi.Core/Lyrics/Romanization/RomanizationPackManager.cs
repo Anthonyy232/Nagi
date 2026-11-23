@@ -268,8 +268,8 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
         if (string.IsNullOrWhiteSpace(packId)) throw new ArgumentException("Pack ID is required.", nameof(packId));
 
         packId = packId.Trim();
-        if (packId.StartsWith(".", StringComparison.Ordinal)
-            || packId.EndsWith(".", StringComparison.Ordinal)
+        if (packId.StartsWith('.')
+            || packId.EndsWith('.')
             || packId.Contains("..", StringComparison.Ordinal))
             throw new ArgumentException("Pack ID is invalid.", nameof(packId));
 
