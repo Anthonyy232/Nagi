@@ -104,17 +104,16 @@
 
                 <StackPanel x:Name="TitlePanel"
                             HorizontalAlignment="Center"
-                            Spacing="6"
+                            Spacing="8"
                             Opacity="0">
                     <StackPanel.RenderTransform>
                         <TranslateTransform Y="16"/>
                     </StackPanel.RenderTransform>
                     <TextBlock Text="{x:Bind resources:Strings.SplashPage_AppName, Mode=OneTime}"
-                               Style="{ThemeResource TitleLargeTextBlockStyle}"
-                               HorizontalAlignment="Center"
-                               FontWeight="SemiBold"/>
+                               Style="{StaticResource TitleLargeTextBlockStyle}"
+                               HorizontalAlignment="Center" />
                     <TextBlock Text="{x:Bind resources:Strings.SplashPage_Tagline, Mode=OneTime}"
-                               Style="{ThemeResource BodyTextBlockStyle}"
+                               Style="{StaticResource BodyTextBlockStyle}"
                                HorizontalAlignment="Center"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                 </StackPanel>
@@ -122,12 +121,12 @@
                 <StackPanel x:Name="StatusPanel"
                             HorizontalAlignment="Center"
                             Orientation="Horizontal"
-                            Spacing="10"
+                            Spacing="8"
                             Margin="0,8,0,0"
                             Opacity="0">
                     <ProgressRing IsActive="True" Width="20" Height="20" VerticalAlignment="Center"/>
                     <TextBlock Text="{x:Bind resources:Strings.SplashPage_Status, Mode=OneTime}"
-                               Style="{ThemeResource BodyTextBlockStyle}"
+                               Style="{StaticResource BodyTextBlockStyle}"
                                VerticalAlignment="Center"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                 </StackPanel>

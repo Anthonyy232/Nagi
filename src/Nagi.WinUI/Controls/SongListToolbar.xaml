@@ -11,7 +11,7 @@
                 <!--  A page title is taller, so the counts sit on its baseline rather than its middle.  -->
                 <VisualState x:Name="PageTitle">
                     <VisualState.Setters>
-                        <Setter Target="TitleText.Style" Value="{StaticResource PageTitleTextStyle}" />
+                        <Setter Target="TitleText.Style" Value="{StaticResource TitleTextBlockStyle}" />
                         <Setter Target="SelectedCountText.VerticalAlignment" Value="Bottom" />
                         <Setter Target="SelectedCountText.Margin" Value="0,0,0,5" />
                         <Setter Target="TotalCountText.VerticalAlignment" Value="Bottom" />
@@ -28,17 +28,17 @@
 
         <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
             <TextBlock x:Name="TitleText"
-                       Style="{StaticResource SectionHeaderTextBlockStyle}"
+                       Style="{StaticResource SubtitleTextBlockStyle}"
                        Text="{x:Bind Title, Mode=OneWay}" />
             <TextBlock x:Name="SelectedCountText"
                        VerticalAlignment="Center"
-                       FontSize="13"
+                       FontSize="{StaticResource CompactTextFontSize}"
                        Foreground="{StaticResource AccentTextBrush}"
                        Text="{x:Bind ViewModel.SelectedItemsCountText, Mode=OneWay}"
                        Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay}" />
             <TextBlock x:Name="TotalCountText"
                        VerticalAlignment="Center"
-                       FontSize="13"
+                       FontSize="{StaticResource CompactTextFontSize}"
                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                        Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}"
                        Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />

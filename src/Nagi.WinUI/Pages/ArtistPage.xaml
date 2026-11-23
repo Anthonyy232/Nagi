@@ -72,12 +72,8 @@
 
                             <TextBlock
                                 Grid.Row="1"
-                                Margin="0,12,0,0"
-                                HorizontalAlignment="Center"
-                                FontWeight="SemiBold"
-                                Text="{x:Bind Name, Mode=OneWay}"
-                                TextTrimming="CharacterEllipsis"
-                                TextWrapping="NoWrap" />
+                                Style="{StaticResource CollectionCardTitleTextBlockStyle}"
+                                Text="{x:Bind Name, Mode=OneWay}" />
                         </Grid>
                     </DataTemplate>
                 </GridView.ItemTemplate>

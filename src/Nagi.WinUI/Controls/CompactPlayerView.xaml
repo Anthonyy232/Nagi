@@ -11,7 +11,7 @@
     <UserControl.Resources>
         <DataTemplate x:Key="QueueItemTemplate" x:DataType="library:Song">
             <StackPanel>
-                <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}"
+                <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}"
                            TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
                 <local:ArtistLinks FontSize="{StaticResource CaptionTextBlockFontSize}" HorizontalAlignment="Left"
                                    ArtistName="{x:Bind ArtistName}" Song="{x:Bind}"
@@ -21,19 +21,17 @@
 
         <DataTemplate x:Key="OnImageQueueItemTemplate" x:DataType="library:Song">
             <StackPanel>
-                <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}"
+                <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}"
                            Foreground="{StaticResource MediaOnImageTextPrimaryBrush}"
                            TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
-                <local:ArtistLinks FontSize="11" HorizontalAlignment="Left"
+                <local:ArtistLinks FontSize="{StaticResource CaptionTextBlockFontSize}" HorizontalAlignment="Left"
                                    Foreground="{StaticResource MediaOnImageControlSecondaryBrush}"
                                    ArtistName="{x:Bind ArtistName}" Song="{x:Bind}"
                                    Command="{Binding ViewModel.GoToArtistCommand, ElementName=Root}" />
             </StackPanel>
         </DataTemplate>
 
-        <Style x:Key="OnImageUpNextHeaderStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="FontWeight" Value="SemiBold" />
+        <Style x:Key="OnImageUpNextHeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyLargeStrongTextBlockStyle}">
             <Setter Property="Foreground" Value="{StaticResource MediaOnImageTextPrimaryBrush}" />
             <Setter Property="Margin" Value="44,0" />
         </Style>
@@ -108,7 +106,7 @@
                     Click="BackButton_Click"
                     ToolTipService.ToolTip="{x:Bind resources:Strings.Player_BackButton_ToolTip}"
                     AutomationProperties.Name="{x:Bind resources:Strings.Player_BackButton_ToolTip}">
-                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE72B;" />
+                <FontIcon Glyph="&#xE72B;" />
             </Button>
 
             <StackPanel x:Name="NowPlayingText"
@@ -119,7 +117,7 @@
                         Spacing="2">
                 <TextBlock x:Name="SongTitle"
                            HorizontalAlignment="Center"
-                           Style="{ThemeResource BodyStrongTextBlockStyle}"
+                           Style="{StaticResource BodyStrongTextBlockStyle}"
                            Text="{x:Bind ViewModel.SongTitle, Mode=OneWay}"
                            TextAlignment="Center"
                            TextTrimming="CharacterEllipsis"
@@ -139,7 +137,7 @@
                        Margin="12,0,12,4"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
-                       Style="{ThemeResource SubtitleTextBlockStyle}"
+                       Style="{StaticResource SubtitleTextBlockStyle}"
                        Text="{x:Bind resources:Strings.Player_UpNextHeader}"
                        Visibility="Collapsed" />
 
@@ -161,22 +159,21 @@
                             Command="{x:Bind ViewModel.ToggleShuffleCommand, Mode=OneWay}"
                             ToolTipService.ToolTip="{x:Bind ViewModel.ShuffleButtonToolTip, Mode=OneWay}"
                             AutomationProperties.Name="{x:Bind ViewModel.ShuffleButtonToolTip, Mode=OneWay}">
-                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                  Glyph="&#xE8B1;"
+                        <FontIcon Glyph="&#xE8B1;"
                                   Opacity="{x:Bind ViewModel.IsShuffleEnabled, Mode=OneWay, Converter={StaticResource ToggleIconOpacityConverter}}" />
                     </Button>
                     <Button x:Name="PreviousButton"
                             Command="{x:Bind ViewModel.PreviousCommand, Mode=OneWay}"
                             ToolTipService.ToolTip="{x:Bind resources:Strings.Player_PreviousButton_ToolTip}"
                             AutomationProperties.Name="{x:Bind resources:Strings.Player_PreviousButton_ToolTip}">
-                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE892;" />
+                        <FontIcon Glyph="&#xE892;" />
                     </Button>
                     <Button x:Name="PlayPauseButton"
                             Command="{x:Bind ViewModel.PlayPauseCommand, Mode=OneWay}"
                             ToolTipService.ToolTip="{x:Bind ViewModel.PlayPauseButtonToolTip, Mode=OneWay}"
                             AutomationProperties.Name="{x:Bind ViewModel.PlayPauseButtonToolTip, Mode=OneWay}">
                         <Grid>
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="24"
+                            <FontIcon FontSize="24"
                                       Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.PlayPauseIcon), Mode=OneWay}"
                                       Visibility="{x:Bind ViewModel.IsOpening, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                             <ProgressRing Width="20" Height="20" IsActive="{x:Bind ViewModel.IsOpening, Mode=OneWay}" />
@@ -186,20 +183,19 @@
                             Command="{x:Bind ViewModel.NextCommand, Mode=OneWay}"
                             ToolTipService.ToolTip="{x:Bind resources:Strings.Player_NextButton_ToolTip}"
                             AutomationProperties.Name="{x:Bind resources:Strings.Player_NextButton_ToolTip}">
-                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE893;" />
+                        <FontIcon Glyph="&#xE893;" />
                     </Button>
                     <Button x:Name="RepeatButton"
                             Command="{x:Bind ViewModel.CycleRepeatCommand, Mode=OneWay}"
                             ToolTipService.ToolTip="{x:Bind ViewModel.RepeatButtonToolTip, Mode=OneWay}"
                             AutomationProperties.Name="{x:Bind ViewModel.RepeatButtonToolTip, Mode=OneWay}">
-                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                  Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.RepeatIcon), Mode=OneWay}" />
+                        <FontIcon Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.RepeatIcon), Mode=OneWay}" />
                     </Button>
                     <Button x:Name="QueueButton"
                             Click="QueueButton_Click"
                             ToolTipService.ToolTip="{x:Bind resources:Strings.Player_QueueButton_ToolTip}"
                             AutomationProperties.Name="{x:Bind resources:Strings.Player_QueueButton_ToolTip}">
-                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE90B;" />
+                        <FontIcon Glyph="&#xE90B;" />
                     </Button>
                     <Button x:Name="VolumeButton"
                             Command="{x:Bind ViewModel.ToggleMuteCommand, Mode=OneWay}"
@@ -208,12 +204,10 @@
                             AutomationProperties.Name="{x:Bind ViewModel.VolumeButtonToolTip, Mode=OneWay}">
                         <Grid Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center">
                             <FontIcon x:Name="VolumeTrackIcon"
-                                      FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                       FontSize="20"
                                       Foreground="{ThemeResource TextFillColorDisabledBrush}"
                                       Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.VolumeIcon), Mode=OneWay}" />
                             <FontIcon x:Name="VolumeLevelIcon"
-                                      FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                       FontSize="20"
                                       Foreground="{StaticResource AccentTextBrush}"
                                       Clip="{x:Bind ViewModel.CurrentVolume, Mode=OneWay, Converter={StaticResource VolumeToClipRectConverter}, ConverterParameter='20'}"

@@ -51,11 +51,9 @@
 
                             <StackPanel VerticalAlignment="Bottom">
                                 <TextBlock
-                                    FontSize="22"
-                                    FontWeight="Bold"
+                                    Style="{StaticResource SubtitleTextBlockStyle}"
                                     Foreground="{StaticResource MediaOnImageTextPrimaryBrush}"
                                     Text="{x:Bind Name, Mode=OneTime}"
-                                    TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap" />
                             </StackPanel>
                         </Grid>

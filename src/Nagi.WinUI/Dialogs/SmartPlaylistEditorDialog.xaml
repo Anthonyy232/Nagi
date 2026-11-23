@@ -43,7 +43,7 @@
             </StackPanel>
 
             <StackPanel Grid.Column="2" Spacing="4" VerticalAlignment="Top">
-                <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_PlaylistNameLabel, Mode=OneTime}" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
+                <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_PlaylistNameLabel, Mode=OneTime}" Style="{StaticResource BodyStrongTextBlockStyle}"/>
                 <TextBox x:Name="PlaylistNameTextBox"
                          PlaceholderText="{x:Bind resources:Strings.SmartPlaylist_PlaylistNameTextBox_Placeholder, Mode=OneTime}"
                          Text="{x:Bind ViewModel.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -51,7 +51,7 @@
             </StackPanel>
 
             <StackPanel Grid.Column="4" Spacing="4" MinWidth="200" VerticalAlignment="Top">
-                <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_SortOrderLabel, Mode=OneTime}" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
+                <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_SortOrderLabel, Mode=OneTime}" Style="{StaticResource BodyStrongTextBlockStyle}"/>
                 <ComboBox HorizontalAlignment="Stretch"
                           AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylist_SortOrderLabel, Mode=OneTime}"
                           ItemsSource="{x:Bind playlists:SmartPlaylistEditorViewModel.SortOptions}"
@@ -72,8 +72,8 @@
                 <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_MatchSuffixLabel, Mode=OneTime}" VerticalAlignment="Center"/>
             </StackPanel>
 
-            <Button Grid.Column="2" Command="{x:Bind ViewModel.AddRuleCommand}" ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylist_AddRuleButton_ToolTip, Mode=OneTime}" AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylist_AddRuleButton_ToolTip, Mode=OneTime}" Style="{ThemeResource AccentButtonStyle}">
-                <StackPanel Orientation="Horizontal" Spacing="6">
+            <Button Grid.Column="2" Command="{x:Bind ViewModel.AddRuleCommand}" ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylist_AddRuleButton_ToolTip, Mode=OneTime}" AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylist_AddRuleButton_ToolTip, Mode=OneTime}" Style="{StaticResource AccentButtonStyle}">
+                <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon Glyph="&#xE710;" FontSize="12" />
                     <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_AddRuleLabel, Mode=OneTime}" />
                 </StackPanel>
@@ -140,7 +140,7 @@
                                                     Click="RemoveRule_Click"
                                                     ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylist_RemoveRuleButton_ToolTip, Mode=OneTime}"
                                                     AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylist_RemoveRuleButton_ToolTip, Mode=OneTime}"
-                                                    Style="{ThemeResource SubtleButtonStyle}">
+                                                    Style="{StaticResource SubtleButtonStyle}">
                                                 <FontIcon Glyph="&#xE738;" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                             </Button>
                                         </Grid>
@@ -156,7 +156,7 @@
                                    Spacing="16"
                                    Margin="0,48,0,48">
                             <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_NoRulesTitle, Mode=OneTime}"
-                                       Style="{ThemeResource SubtitleTextBlockStyle}"
+                                       Style="{StaticResource SubtitleTextBlockStyle}"
                                        HorizontalAlignment="Center"/>
                             <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_NoRulesMessage, Mode=OneTime}"
                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -164,7 +164,7 @@
                             <Button Content="{x:Bind resources:Strings.SmartPlaylist_AddFirstRuleButton_Content, Mode=OneTime}"
                                     ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylist_AddFirstRuleButton_ToolTip, Mode=OneTime}"
                                     Command="{x:Bind ViewModel.AddRuleCommand}"
-                                    Style="{ThemeResource AccentButtonStyle}"
+                                    Style="{StaticResource AccentButtonStyle}"
                                     HorizontalAlignment="Center" />
                         </StackPanel>
                     </StackPanel>
@@ -181,7 +181,7 @@
                 <TextBlock Text="{x:Bind ViewModel.MatchCountText, Mode=OneWay}"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                            VerticalAlignment="Center"
-                           Style="{ThemeResource CaptionTextBlockStyle}"/>
+                           Style="{StaticResource CaptionTextBlockStyle}"/>
             </StackPanel>
         </Border>
     </Grid>

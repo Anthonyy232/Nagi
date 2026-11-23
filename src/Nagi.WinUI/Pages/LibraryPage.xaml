@@ -31,16 +31,28 @@
                                     SearchPlaceholder="{x:Bind resources:Strings.LibraryPage_SearchBox_Placeholder}"
                                     SearchToolTip="{x:Bind resources:Strings.LibraryPage_SearchButton_Search_ToolTip}" />
 
-        <Border Grid.Row="1" Margin="24,0,24,16" Padding="12" CornerRadius="{ThemeResource ControlCornerRadius}" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+        <Border Grid.Row="1"
+                Margin="{StaticResource PageHeaderMarginIndented}"
+                Style="{StaticResource InfoStripBorderStyle}"
                 Visibility="{x:Bind ViewModel.ShowSuggestion, Mode=OneWay}">
-            <Grid ColumnSpacing="12"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                <StackPanel Spacing="4"><TextBlock Text="{x:Bind resources:Strings.Listening_RediscoveryTitle}" Style="{ThemeResource CaptionTextBlockStyle}" />
-                    <TextBlock Text="{x:Bind ViewModel.Suggestion.Title, Mode=OneWay}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" />
+            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="12">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="{x:Bind resources:Strings.Listening_RediscoveryTitle}" Style="{StaticResource CaptionTextBlockStyle}" />
+                    <TextBlock Text="{x:Bind ViewModel.Suggestion.Title, Mode=OneWay}" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="NoWrap" />
                     <TextBlock Text="{x:Bind ViewModel.Suggestion.ArtistName, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-                    <TextBlock Text="{x:Bind ViewModel.SuggestionReason, Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                    <TextBlock Text="{x:Bind ViewModel.SuggestionReason, Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                 </StackPanel>
-                <Button Grid.Column="1" VerticalAlignment="Center" Content="{x:Bind resources:Strings.Generic_Play}" Command="{x:Bind ViewModel.PlaySuggestionCommand}" />
-                <Button Grid.Column="2" VerticalAlignment="Top" Command="{x:Bind ViewModel.DismissSuggestionCommand}" ToolTipService.ToolTip="{x:Bind resources:Strings.Listening_Dismiss}" AutomationProperties.Name="{x:Bind resources:Strings.Listening_Dismiss}"><FontIcon FontSize="12" Glyph="&#xE711;" /></Button>
+                <Button Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Content="{x:Bind resources:Strings.Generic_Play}"
+                        Command="{x:Bind ViewModel.PlaySuggestionCommand}" />
+                <Button Grid.Column="2"
+                        VerticalAlignment="Top"
+                        Command="{x:Bind ViewModel.DismissSuggestionCommand}"
+                        ToolTipService.ToolTip="{x:Bind resources:Strings.Listening_Dismiss}"
+                        AutomationProperties.Name="{x:Bind resources:Strings.Listening_Dismiss}">
+                    <FontIcon FontSize="12" Glyph="&#xE711;" />
+                </Button>
             </Grid>
         </Border>
         <Grid Grid.Row="2" RowDefinitions="Auto,*">

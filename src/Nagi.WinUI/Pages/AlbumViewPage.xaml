@@ -37,9 +37,9 @@
                                                 ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
                                                 AlbumArtists="{x:Bind ViewModel.AlbumArtists, Mode=OneWay}"
                                                 Command="{x:Bind ViewModel.GoToArtistCommand}" />
-                        <TextBlock Opacity="0.8" Text="•"
+                        <TextBlock Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}" Text="•"
                                    Visibility="{x:Bind ViewModel.AlbumDetailsText, Converter={StaticResource StringToVisibilityConverter}, Mode=OneWay}" />
-                        <TextBlock Opacity="0.8" Text="{x:Bind ViewModel.AlbumDetailsText, Mode=OneWay}" />
+                        <TextBlock Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}" Text="{x:Bind ViewModel.AlbumDetailsText, Mode=OneWay}" />
                     </StackPanel>
                 </uicontrols:DetailPageHeader.Details>
             </uicontrols:DetailPageHeader>
@@ -78,9 +78,9 @@
                             <DataTemplate x:DataType="lists:DiscHeader">
                                 <TextBlock
                                     Text="{x:Bind Title}"
-                                    Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                    Style="{StaticResource BodyStrongTextBlockStyle}"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    FontSize="13" />
+                                    FontSize="{StaticResource CompactTextFontSize}" />
                             </DataTemplate>
                         </uihelpers:HeaderedListTemplateSelector.HeaderTemplate>
                         <uihelpers:HeaderedListTemplateSelector.SongTemplate>

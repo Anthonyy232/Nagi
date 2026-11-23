@@ -37,7 +37,7 @@
                         Click="RestoreButton_Click"
                         ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_RestoreButton_ToolTip}"
                         AutomationProperties.Name="{x:Bind resources:Strings.MiniPlayer_RestoreButton_ToolTip}">
-                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="20" Glyph="&#xE73F;" />
+                        <FontIcon FontSize="20" Glyph="&#xE73F;" />
                     </Button>
                 </local:CompactPlayerView.HeaderTrailingContent>
             </local:CompactPlayerView>

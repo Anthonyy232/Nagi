@@ -5,6 +5,8 @@
     <Style x:Key="InsightsHyperlinkButtonStyle" TargetType="HyperlinkButton"
            BasedOn="{StaticResource AnimatedHyperlinkButtonStyle}">
         <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
+        <Setter Property="FontSize" Value="{StaticResource CompactTextFontSize}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Center" />
@@ -17,19 +19,11 @@
         <Setter Property="Padding" Value="0,16,0,0" />
     </Style>
 
-    <Style x:Key="InsightsHeroValueStyle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="28" />
-        <Setter Property="FontWeight" Value="SemiBold" />
-    </Style>
-
-    <Style x:Key="InsightsHeroCaptionStyle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="12" />
+    <Style x:Key="InsightsHeroCaptionStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
         <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
     </Style>
 
-    <Style x:Key="InsightsCardHeaderStyle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="16" />
-        <Setter Property="FontWeight" Value="SemiBold" />
+    <Style x:Key="InsightsCardHeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyLargeStrongTextBlockStyle}">
         <Setter Property="Margin" Value="0,0,0,12" />
     </Style>
 

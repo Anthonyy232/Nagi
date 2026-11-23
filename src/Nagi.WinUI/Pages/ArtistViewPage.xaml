@@ -62,22 +62,14 @@
                                          PlaceholderGlyph="&#xE93C;" />
                 <TextBlock x:Name="AlbumName"
                     Grid.Row="1"
-                    Margin="4,8,4,0"
                     MaxWidth="{StaticResource AlbumCardImageSize}"
-                    HorizontalAlignment="Center"
-                    FontWeight="SemiBold"
-                    Text="{x:Bind Name}"
-                    TextTrimming="CharacterEllipsis"
-                    TextWrapping="NoWrap" />
+                    Style="{StaticResource CollectionCardTitleTextBlockStyle}"
+                    Text="{x:Bind Name}" />
                 <TextBlock x:Name="AlbumYear"
                     Grid.Row="2"
-                    Margin="4,2,4,0"
                     MaxWidth="{StaticResource AlbumCardImageSize}"
-                    HorizontalAlignment="Center"
-                    Opacity="0.7"
-                    Text="{x:Bind YearText}"
-                    TextTrimming="CharacterEllipsis"
-                    TextWrapping="NoWrap" />
+                    Style="{StaticResource CollectionCardSubtitleTextBlockStyle}"
+                    Text="{x:Bind YearText}" />
             </Grid>
         </DataTemplate>
 
@@ -136,14 +128,14 @@
                         <StackPanel Spacing="8">
                             <TextBlock
                                 MaxLines="3"
-                                Opacity="0.8"
-                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{StaticResource BodyTextBlockStyle}"
                                 Text="{x:Bind ViewModel.ArtistBio, Mode=OneWay}"
                                 TextTrimming="CharacterEllipsis"
                                 TextWrapping="Wrap" />
                             <TextBlock
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
                                 Text="{x:Bind ViewModel.BiographyCredit, Mode=OneWay}"
                                 TextWrapping="Wrap"
                                 Visibility="{x:Bind ViewModel.BiographyCredit, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}" />
@@ -155,7 +147,7 @@
                       Visibility="{x:Bind ViewModel.HasAlbums, Mode=OneWay}">
                     <ScrollViewer VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden">
                         <StackPanel x:Name="AlbumsContent" VerticalAlignment="Top" SizeChanged="OnAlbumsContentSizeChanged">
-                        <TextBlock Text="{x:Bind resources:Strings.ArtistViewPage_Albums_Title, Mode=OneTime}" Style="{StaticResource SectionHeaderTextBlockStyle}" />
+                        <TextBlock Text="{x:Bind resources:Strings.ArtistViewPage_Albums_Title, Mode=OneTime}" Style="{StaticResource SubtitleTextBlockStyle}" />
                         <GridView
                             Padding="0"
                             IsItemClickEnabled="True"

@@ -60,7 +60,7 @@
                     Grid.Column="2"
                     Margin="8,0,12,0"
                     VerticalAlignment="Center"
-                    FontWeight="SemiBold"
+                    Style="{StaticResource BodyStrongTextBlockStyle}"
                     Text="{x:Bind DisplayName}" />
 
                 <ToggleSwitch
@@ -95,8 +95,8 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Column="0" Spacing="6">
-                        <Grid ColumnSpacing="10">
+                    <StackPanel Grid.Column="0" Spacing="8">
+                        <Grid ColumnSpacing="12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
@@ -104,9 +104,9 @@
 
                             <TextBlock
                                 VerticalAlignment="Center"
-                                FontWeight="SemiBold"
+                                Style="{StaticResource BodyStrongTextBlockStyle}"
                                 Text="{x:Bind DisplayName, Mode=OneWay}"
-                                TextTrimming="CharacterEllipsis" />
+                                TextWrapping="NoWrap" />
                             <Border
                                 Grid.Column="1"
                                 Padding="8,4"
@@ -114,7 +114,7 @@
                                 Background="{ThemeResource ControlFillColorSecondaryBrush}"
                                 CornerRadius="{ThemeResource ControlCornerRadius}">
                                 <TextBlock
-                                    FontSize="12"
+                                    FontSize="{StaticResource CaptionTextBlockFontSize}"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Text="{x:Bind StatusText, Mode=OneWay}"
                                     TextTrimming="CharacterEllipsis" />
@@ -126,7 +126,7 @@
                             Text="{x:Bind Description, Mode=OneWay}"
                             TextWrapping="WrapWholeWords" />
                         <TextBlock
-                            FontSize="12"
+                            FontSize="{StaticResource CaptionTextBlockFontSize}"
                             Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                             Text="{x:Bind DetailsText, Mode=OneWay}"
                             TextWrapping="WrapWholeWords" />
@@ -280,7 +280,7 @@
                                 <StackPanel Orientation="Vertical" Spacing="4">
                                     <TextBlock Text="{x:Bind resources:Strings.SettingsPage_TintIntensity_Header, Mode=OneTime}" />
                                     <TextBlock
-                                        FontSize="12"
+                                        FontSize="{StaticResource CaptionTextBlockFontSize}"
                                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                         Text="{x:Bind resources:Strings.SettingsPage_TintIntensity_Description, Mode=OneTime}" />
                                 </StackPanel>
@@ -299,7 +299,7 @@
                                 <TextBlock
                                     Width="40"
                                     VerticalAlignment="Center"
-                                    Style="{ThemeResource CaptionTextBlockStyle}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{x:Bind ViewModel.Appearance.PlayerTintIntensity, Mode=OneWay, Converter={StaticResource DoubleToPercentageConverter}}" />
                             </StackPanel>
                         </controls:SettingsCard>
@@ -479,7 +479,7 @@
                                 <TextBlock
                                     VerticalAlignment="Center"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Style="{ThemeResource CaptionTextBlockStyle}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{x:Bind Milliseconds(ViewModel.Audio.FadeInDurationMs), Mode=OneWay}" />
                             </StackPanel>
                         </controls:SettingsCard>
@@ -498,7 +498,7 @@
                                 <TextBlock
                                     VerticalAlignment="Center"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Style="{ThemeResource CaptionTextBlockStyle}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{x:Bind Milliseconds(ViewModel.Audio.FadeOutDurationMs), Mode=OneWay}" />
                             </StackPanel>
                         </controls:SettingsCard>
@@ -519,8 +519,8 @@
                         <FontIcon Glyph="&#xE9E9;" />
                     </controls:SettingsCard.HeaderIcon>
                     <StackPanel Spacing="20" HorizontalAlignment="Center">
-                        <StackPanel Spacing="6" Width="320">
-                            <TextBlock FontWeight="SemiBold" Text="{x:Bind resources:Strings.SettingsPage_Equalizer_Preamp, Mode=OneTime}" HorizontalAlignment="Center" />
+                        <StackPanel Spacing="8" Width="320">
+                            <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind resources:Strings.SettingsPage_Equalizer_Preamp, Mode=OneTime}" HorizontalAlignment="Center" />
                             <Slider
                                 AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_Equalizer_Preamp, Mode=OneTime}"
                                 Maximum="{x:Bind playback:EqualizerSettings.MaxGainDb}"
@@ -531,7 +531,7 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
                                 Text="{x:Bind Decibels(ViewModel.Audio.EqualizerPreamp), Mode=OneWay}" />
                         </StackPanel>
 
@@ -541,7 +541,7 @@
                             </ItemsRepeater.Layout>
                             <ItemsRepeater.ItemTemplate>
                                 <DataTemplate x:DataType="settings:EqualizerBandViewModel">
-                                    <StackPanel Width="44" Spacing="6">
+                                    <StackPanel Width="44" Spacing="8">
                                         <Grid Height="140">
                                             <!-- 0 dB center line -->
                                             <Border
@@ -562,7 +562,7 @@
                                         <TextBlock
                                             HorizontalAlignment="Center"
                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                            Style="{ThemeResource CaptionTextBlockStyle}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
                                             Text="{x:Bind FrequencyLabel}" />
                                     </StackPanel>
                                 </DataTemplate>
@@ -664,7 +664,7 @@
                                             ToolTipService.ToolTip="{x:Bind DisplayName}">
 
                                             <Border
-                                                Width="57"
+                                                Width="56"
                                                 Background="{ThemeResource SubtleFillColorSecondaryBrush}"
                                                 CornerRadius="{ThemeResource ControlCornerRadius}"
                                                 Visibility="{x:Bind IsNotSeparator, Mode=OneWay}" />
@@ -680,9 +680,9 @@
                                                 Visibility="{x:Bind IsSeparator, Mode=OneWay}" />
 
                                             <StackPanel
-                                                Width="57"
+                                                Width="56"
                                                 Padding="0,8"
-                                                Spacing="6"
+                                                Spacing="8"
                                                 VerticalAlignment="Center"
                                                 Visibility="{x:Bind IsNotSeparator, Mode=OneWay}">
 
@@ -893,7 +893,7 @@
                             <StackPanel
                                 Width="520"
                                 HorizontalAlignment="Right"
-                                Spacing="10">
+                                Spacing="8">
                                 <StackPanel
                                     HorizontalAlignment="Right"
                                     Orientation="Horizontal"

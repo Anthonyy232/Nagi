@@ -35,12 +35,11 @@
                                            Selection="{x:Bind Sort}" />
                     <Button Grid.Column="2"
                             Command="{x:Bind OpenSeeAllCommand}"
-                            Style="{StaticResource SubtleButtonStyle}"
-                            Width="28" Height="28" Padding="0"
+                            Style="{StaticResource SongListViewPageIconButton}"
                             VerticalAlignment="Center"
                             ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip}"
                             AutomationProperties.Name="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip}">
-                        <FontIcon Glyph="&#xE76C;" FontSize="11" />
+                        <FontIcon Glyph="&#xE76C;" FontSize="16" />
                     </Button>
                 </Grid>
 
@@ -120,8 +119,9 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Column="0"
+                       VerticalAlignment="Center"
                        Text="{x:Bind resources:Strings.InsightsPage_Title, Mode=OneTime}"
-                       Style="{StaticResource PageTitleTextStyle}" />
+                       Style="{StaticResource TitleTextBlockStyle}" />
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                 <ComboBox
@@ -131,10 +131,10 @@
                           SelectedItem="{x:Bind ViewModel.SelectedTimeRange, Mode=TwoWay}"
                           MinWidth="140" />
                 <Button Command="{x:Bind ViewModel.ResetListenHistoryCommand}"
-                        Style="{StaticResource SubtleButtonStyle}"
+                        Style="{StaticResource SongListViewPageIconButton}"
                         ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_Reset_ToolTip, Mode=OneTime}"
                         AutomationProperties.Name="{x:Bind resources:Strings.InsightsPage_Reset_ToolTip, Mode=OneTime}">
-                    <FontIcon Glyph="&#xE74D;" FontSize="14" />
+                    <FontIcon Glyph="&#xE74D;" FontSize="16" />
                 </Button>
             </StackPanel>
         </Grid>
@@ -182,7 +182,7 @@
                                           VerticalAlignment="Center" />
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                                     <TextBlock Text="{x:Bind ViewModel.TotalListenTimeText, Mode=OneWay}"
-                                               Style="{StaticResource InsightsHeroValueStyle}" />
+                                               Style="{StaticResource TitleTextBlockStyle}" />
                                     <TextBlock Text="{x:Bind resources:Strings.InsightsPage_TotalTime, Mode=OneTime}"
                                                Style="{StaticResource InsightsHeroCaptionStyle}" />
                                 </StackPanel>
@@ -200,7 +200,7 @@
                                           VerticalAlignment="Center" />
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                                     <TextBlock Text="{x:Bind ViewModel.UniqueSongsPlayed.ToString(), Mode=OneWay}"
-                                               Style="{StaticResource InsightsHeroValueStyle}" />
+                                               Style="{StaticResource TitleTextBlockStyle}" />
                                     <TextBlock Text="{x:Bind resources:Strings.InsightsPage_UniqueSongs, Mode=OneTime}"
                                                Style="{StaticResource InsightsHeroCaptionStyle}" />
                                 </StackPanel>
@@ -218,7 +218,7 @@
                                           VerticalAlignment="Center" />
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                                     <TextBlock Text="{x:Bind ViewModel.PeakHourText, Mode=OneWay}"
-                                               Style="{StaticResource InsightsHeroValueStyle}" />
+                                               Style="{StaticResource TitleTextBlockStyle}" />
                                     <TextBlock Text="{x:Bind resources:Strings.InsightsPage_PeakHour, Mode=OneTime}"
                                                Style="{StaticResource InsightsHeroCaptionStyle}" />
                                 </StackPanel>
@@ -236,7 +236,7 @@
                                           VerticalAlignment="Center" />
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                                     <TextBlock Text="{x:Bind ViewModel.MostActiveDayText, Mode=OneWay}"
-                                               Style="{StaticResource InsightsHeroValueStyle}" />
+                                               Style="{StaticResource TitleTextBlockStyle}" />
                                     <TextBlock Text="{x:Bind resources:Strings.InsightsPage_MostActiveDay, Mode=OneTime}"
                                                Style="{StaticResource InsightsHeroCaptionStyle}" />
                                 </StackPanel>
@@ -318,7 +318,7 @@
 
                                         <TextBlock Grid.Column="0"
                                                    Text="{x:Bind Label}"
-                                                   FontSize="12"
+                                                   FontSize="{StaticResource CaptionTextBlockFontSize}"
                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                    VerticalAlignment="Center" />
 
@@ -332,7 +332,7 @@
                                                      VerticalAlignment="Center" />
 
                                         <TextBlock Grid.Column="2"
-                                                   FontSize="12" FontWeight="SemiBold"
+                                                   FontSize="{StaticResource CaptionTextBlockFontSize}" FontWeight="SemiBold"
                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                    VerticalAlignment="Center"
                                                    Text="{x:Bind PercentageText}" />
