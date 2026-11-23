@@ -89,10 +89,8 @@
                     </Grid>
                 </uicontrols:DetailPageHeader.Artwork>
             </uicontrols:DetailPageHeader>
-            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    Padding="16,8" CornerRadius="{ThemeResource OverlayCornerRadius}"
-                    Visibility="{x:Bind ViewModel.IsAtRootLevel, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}"
-                    Margin="{StaticResource SectionHeaderMargin}">
+            <Border Style="{StaticResource InfoStripBorderStyle}"
+                    Visibility="{x:Bind ViewModel.IsAtRootLevel, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
                 <BreadcrumbBar ItemsSource="{x:Bind ViewModel.Breadcrumbs, Mode=OneWay}"
                                ItemClicked="OnBreadcrumbItemClicked">
                     <BreadcrumbBar.ItemTemplate>

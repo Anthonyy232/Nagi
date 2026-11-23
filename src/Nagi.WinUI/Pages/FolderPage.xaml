@@ -111,20 +111,12 @@
 
                         <TextBlock
                             Grid.Row="1"
-                            Margin="0,12,0,0"
-                            HorizontalAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="{x:Bind Name}"
-                            TextTrimming="CharacterEllipsis"
-                            TextWrapping="NoWrap" />
+                            Style="{StaticResource CollectionCardTitleTextBlockStyle}"
+                            Text="{x:Bind Name}" />
                         <TextBlock
                             Grid.Row="2"
-                            Margin="0,4,0,0"
-                            HorizontalAlignment="Center"
-                            Opacity="0.7"
-                            Text="{x:Bind SongCountText}"
-                            TextTrimming="CharacterEllipsis"
-                            TextWrapping="NoWrap" />
+                            Style="{StaticResource CollectionCardSubtitleTextBlockStyle}"
+                            Text="{x:Bind SongCountText}" />
                     </Grid>
                 </DataTemplate>
             </GridView.ItemTemplate>

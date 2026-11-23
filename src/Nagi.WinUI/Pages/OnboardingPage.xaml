@@ -240,7 +240,6 @@
                     Source="ms-appx:///Assets/AppLogo.png" />
                 <TextBlock
                     AutomationProperties.HeadingLevel="Level1"
-                    FontSize="52"
                     Style="{StaticResource TitleLargeTextBlockStyle}"
                     Text="{x:Bind resources:Strings.OnboardingPage_Welcome_Title, Mode=OneTime}"
                     TextAlignment="Center"
@@ -249,10 +248,9 @@
                     MaxWidth="480"
                     Margin="0,12,0,0"
                     HorizontalAlignment="Center"
-                    FontSize="18"
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                     LineHeight="28"
-                    Style="{StaticResource BodyTextBlockStyle}"
+                    Style="{StaticResource BodyLargeTextBlockStyle}"
                     Text="{x:Bind resources:Strings.OnboardingPage_Welcome_Description, Mode=OneTime}"
                     TextAlignment="Center"
                     TextWrapping="WrapWholeWords" />
@@ -262,7 +260,7 @@
                     HorizontalAlignment="Center"
                     Command="{x:Bind ViewModel.GoNextCommand}"
                     Content="{x:Bind resources:Strings.OnboardingPage_GetStarted, Mode=OneTime}"
-                    FontSize="16"
+                    FontSize="{StaticResource BodyLargeTextBlockFontSize}"
                     FontWeight="SemiBold"
                     Style="{StaticResource AccentButtonStyle}" />
                 <StackPanel

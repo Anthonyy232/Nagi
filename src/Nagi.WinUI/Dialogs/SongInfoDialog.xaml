@@ -55,7 +55,7 @@
                             <ItemsControl ItemsSource="{x:Bind Fields}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
-                                        <StackPanel Spacing="6" />
+                                        <StackPanel Spacing="8" />
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>

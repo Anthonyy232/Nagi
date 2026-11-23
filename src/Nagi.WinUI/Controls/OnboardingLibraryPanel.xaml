@@ -25,12 +25,11 @@
                     AutomationProperties.Name="{x:Bind resources:Strings.OnboardingPage_AddFolderButton_Content, Mode=OneTime}"
                     Command="{x:Bind ViewModel.ChooseFolderCommand, Mode=OneWay}"
                     Style="{StaticResource AccentButtonStyle}">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
                         <FontIcon FontSize="16" Glyph="&#xE8F4;" />
                         <TextBlock
                             VerticalAlignment="Center"
-                            FontSize="16"
-                            FontWeight="SemiBold"
+                            Style="{StaticResource BodyLargeStrongTextBlockStyle}"
                             Text="{x:Bind resources:Strings.OnboardingPage_AddFolderButton_Content, Mode=OneTime}" />
                     </StackPanel>
                 </Button>

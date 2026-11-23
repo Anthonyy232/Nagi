@@ -12,11 +12,11 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-            <TextBlock Text="{x:Bind Title, Mode=OneWay}" Style="{StaticResource PageTitleTextStyle}" />
+            <TextBlock Text="{x:Bind Title, Mode=OneWay}" Style="{StaticResource TitleTextBlockStyle}" />
             <!--  Sits on the title's baseline rather than its middle.  -->
             <TextBlock Margin="0,0,0,5"
                        VerticalAlignment="Bottom"
-                       FontSize="13"
+                       FontSize="{StaticResource CompactTextFontSize}"
                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                        Text="{x:Bind CountText, Mode=OneWay}" />
         </StackPanel>
@@ -33,7 +33,6 @@
                     AutomationProperties.Name="{x:Bind resources:Strings.Generic_PickRandom}"
                     Style="{StaticResource SongListViewPageIconButton}"
                     Command="{x:Bind ViewModel.PlayRandomCommand, Mode=OneWay}"
-                    Margin="0,0,1,0"
                     ContentTemplate="{StaticResource RandomPlayIconTemplate}" />
 
             <ContentPresenter Content="{x:Bind ExtraContent, Mode=OneWay}" />

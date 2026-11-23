@@ -19,10 +19,10 @@
                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
         <TextBlock x:Name="TitleText"
                    HorizontalAlignment="Center"
-                   Style="{ThemeResource TitleTextBlockStyle}" />
+                   Style="{StaticResource TitleTextBlockStyle}" />
         <TextBlock x:Name="SubtitleText"
                    HorizontalAlignment="Center"
-                   Style="{ThemeResource SubtitleTextBlockStyle}"
+                   Style="{StaticResource SubtitleTextBlockStyle}"
                    Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
         <ContentPresenter x:Name="ActionHost" HorizontalAlignment="Center" />
     </StackPanel>

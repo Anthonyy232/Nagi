@@ -16,11 +16,6 @@
         <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
     </Style>
 
-    <Style x:Key="SectionHeaderTextBlockStyle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="20" />
-        <Setter Property="FontWeight" Value="SemiBold" />
-    </Style>
-
     <Style x:Key="PaddedListViewItemStyle" TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
         <Setter Property="Padding" Value="12,8" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -38,11 +33,8 @@
     <SolidColorBrush x:Key="MediaOnImageIndicatorBackgroundBrush" Color="#80000000" />
     <SolidColorBrush x:Key="MediaOnImageHoverScrimBrush" Color="#66000000" />
 
-    <Style x:Key="PageTitleTextStyle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="28" />
-        <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-    </Style>
+    <!--  Secondary list text and counts: between the ramp's caption and body sizes.  -->
+    <x:Double x:Key="CompactTextFontSize">13</x:Double>
 
     <CornerRadius x:Key="ArtworkCornerRadius">12</CornerRadius>
     <Thickness x:Key="SurfaceContentPadding">16</Thickness>
@@ -236,7 +228,7 @@
 
     <Style x:Key="SettingsResetHyperlinkButtonStyle" TargetType="HyperlinkButton" BasedOn="{StaticResource AnimatedHyperlinkButtonStyle}">
         <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontSize" Value="{StaticResource CaptionTextBlockFontSize}" />
         <Setter Property="Padding" Value="4,2" />
     </Style>
 

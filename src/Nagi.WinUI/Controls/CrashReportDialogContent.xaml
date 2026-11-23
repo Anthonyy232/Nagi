@@ -31,7 +31,7 @@
             <Run Text="{x:Bind resources:Strings.CrashReport_ReportIssuePostLink, Mode=OneTime}" />
         </TextBlock>
 
-        <TextBlock Grid.Row="2" TextWrapping="Wrap" Foreground="{ThemeResource SystemControlErrorTextForegroundBrush}" FontSize="12">
+        <TextBlock Grid.Row="2" TextWrapping="Wrap" Foreground="{ThemeResource SystemControlErrorTextForegroundBrush}" FontSize="{StaticResource CaptionTextBlockFontSize}">
             <Run Text="{x:Bind resources:Strings.CrashReport_ResetAppAdvice, Mode=OneTime}" />
         </TextBlock>
 

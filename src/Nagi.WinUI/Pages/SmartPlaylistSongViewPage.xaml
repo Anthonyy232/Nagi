@@ -31,13 +31,12 @@
                 </uicontrols:DetailPageHeader.Artwork>
             </uicontrols:DetailPageHeader>
 
-            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    Padding="16,8" CornerRadius="{ThemeResource OverlayCornerRadius}" Margin="{StaticResource SectionHeaderMargin}">
+            <Border Style="{StaticResource InfoStripBorderStyle}">
                 <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                     <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                     <TextBlock Text="{x:Bind ViewModel.RuleSummary, Mode=OneWay}"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               FontSize="13" />
+                               FontSize="{StaticResource CompactTextFontSize}" />
                 </StackPanel>
             </Border>
 

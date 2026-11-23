@@ -38,18 +38,16 @@
             <TextBlock
                 x:Name="TitleText"
                 AutomationProperties.HeadingLevel="Level1"
-                FontSize="40"
-                Style="{StaticResource TitleTextBlockStyle}"
+                Style="{StaticResource TitleLargeTextBlockStyle}"
                 Text="{x:Bind Title, Mode=OneWay}"
                 TextWrapping="WrapWholeWords" />
             <TextBlock
                 x:Name="DescriptionText"
                 MaxWidth="480"
                 HorizontalAlignment="Left"
-                FontSize="18"
                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                 LineHeight="28"
-                Style="{StaticResource BodyTextBlockStyle}"
+                Style="{StaticResource BodyLargeTextBlockStyle}"
                 Text="{x:Bind Description, Mode=OneWay}"
                 TextWrapping="WrapWholeWords" />
         </StackPanel>

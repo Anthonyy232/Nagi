@@ -42,9 +42,7 @@
                 Style="{StaticResource TitleTextBlockStyle}"
                 Text="{x:Bind ViewModel.SongTitle, Mode=OneWay}"
                 Foreground="{StaticResource AccentTextBrush}"
-                FontWeight="SemiBold"
                 HorizontalAlignment="Center"
-                TextTrimming="CharacterEllipsis"
                 TextWrapping="NoWrap"
                 MaxLines="1"
                 MaxWidth="1200" />
@@ -97,7 +95,7 @@
                                 PointerEntered="LyricItem_PointerEntered"
                                 PointerExited="LyricItem_PointerExited"
                                 Tapped="LyricItem_Tapped">
-                                <StackPanel x:Name="BaseLayer" Spacing="6">
+                                <StackPanel x:Name="BaseLayer" Spacing="8">
                                     <TextBlock
                                         Text="{x:Bind Text}"
                                         Style="{StaticResource LyricLineTextBlockStyle}" />
@@ -111,7 +109,7 @@
                                         Visibility="{x:Bind HasTranslatedText, Mode=OneTime}" />
                                 </StackPanel>
                                 <!-- Opacity is set through Composition. -->
-                                <StackPanel x:Name="ActiveLayer" Spacing="6">
+                                <StackPanel x:Name="ActiveLayer" Spacing="8">
                                     <TextBlock
                                         Text="{x:Bind Text}"
                                         Style="{StaticResource LyricLineTextBlockStyle}"
