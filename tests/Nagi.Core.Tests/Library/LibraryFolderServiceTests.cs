@@ -674,7 +674,7 @@ public class LibraryFolderServiceTests : LibraryTestBase
         _fileSystem.NormalizePath(Arg.Any<string>()).Returns(call =>
         {
             var path = call.Arg<string>();
-            if (failDuringSongMerge && path.EndsWith(".mp3")) throw new IOException("Normalization failed");
+            if (failDuringSongMerge && path.EndsWith(".mp3", StringComparison.Ordinal)) throw new IOException("Normalization failed");
             return path.Replace(alias, canonical, StringComparison.OrdinalIgnoreCase);
         });
         var notifications = 0;

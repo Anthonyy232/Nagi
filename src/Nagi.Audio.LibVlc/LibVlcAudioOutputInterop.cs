@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using LibVLCSharp;
 
@@ -10,6 +11,7 @@ internal static class LibVlcAudioOutputInterop
     // "libvlc" resolves to the module LibVLCSharp has already loaded by full path from its package folder.
     [DllImport("libvlc", CallingConvention = CallingConvention.Cdecl,
         EntryPoint = "libvlc_audio_output_device_set")]
+    [SuppressMessage("Globalization", "CA2101", Justification = "The string is marshalled as UTF-8 explicitly.")]
     private static extern int SetOutputDevice(IntPtr player,
         [MarshalAs(UnmanagedType.LPUTF8Str)] string deviceId);
 

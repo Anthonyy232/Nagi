@@ -15,7 +15,7 @@ internal sealed class Ebur128Meter : SafeHandle
         const int integrated = (1 << 2) | 1;
         const int samplePeak = (1 << 4) | 1;
         SetHandle(Init(Channels, new CULong(SampleRate), integrated | samplePeak));
-        if (IsInvalid) throw new OutOfMemoryException("Could not allocate the ReplayGain loudness meter.");
+        if (IsInvalid) throw new InvalidOperationException("Could not allocate the ReplayGain loudness meter.");
     }
 
     public override bool IsInvalid => handle == IntPtr.Zero;

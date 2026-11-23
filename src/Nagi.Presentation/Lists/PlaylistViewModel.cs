@@ -130,7 +130,7 @@ public partial class PlaylistViewModel : ClientFilteredListViewModelBase<Playlis
 
     protected override async Task<IEnumerable<PlaylistViewModelItem>> LoadItemsAsync(CancellationToken token)
     {
-        var playlistsTask = _playlistService.GetAllPlaylistsAsync();
+        var playlistsTask = _playlistService.GetAllPlaylistsAsync(token);
         var smartPlaylistsTask = _smartPlaylistService.GetAllSmartPlaylistsAsync();
         var matchCountsTask = _smartPlaylistService.GetAllMatchingSongCountsAsync();
         await Task.WhenAll(playlistsTask, smartPlaylistsTask, matchCountsTask);
@@ -145,14 +145,14 @@ public partial class PlaylistViewModel : ClientFilteredListViewModelBase<Playlis
     protected override bool MatchesSearch(PlaylistViewModelItem playlist, string searchTerm) =>
         playlist.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
 
-    protected override IEnumerable<PlaylistViewModelItem> Arrange(IEnumerable<PlaylistViewModelItem> playlists) => Sort.Current switch
+    protected override IEnumerable<PlaylistViewModelItem> Arrange(IEnumerable<PlaylistViewModelItem> items) => Sort.Current switch
     {
-        PlaylistSortOrder.NameDesc => playlists.OrderByDescending(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
-        PlaylistSortOrder.DateCreatedDesc => playlists.OrderByDescending(p => p.DateCreated).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
-        PlaylistSortOrder.DateCreatedAsc => playlists.OrderBy(p => p.DateCreated).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
-        PlaylistSortOrder.DateModifiedDesc => playlists.OrderByDescending(p => p.DateModified).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
-        PlaylistSortOrder.DateModifiedAsc => playlists.OrderBy(p => p.DateModified).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
-        _ => playlists.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id)
+        PlaylistSortOrder.NameDesc => items.OrderByDescending(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
+        PlaylistSortOrder.DateCreatedDesc => items.OrderByDescending(p => p.DateCreated).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
+        PlaylistSortOrder.DateCreatedAsc => items.OrderBy(p => p.DateCreated).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
+        PlaylistSortOrder.DateModifiedDesc => items.OrderByDescending(p => p.DateModified).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
+        PlaylistSortOrder.DateModifiedAsc => items.OrderBy(p => p.DateModified).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
+        _ => items.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id)
     };
 
     public void OpenPlaylist(PlaylistViewModelItem playlist)

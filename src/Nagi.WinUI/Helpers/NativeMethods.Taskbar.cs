@@ -146,7 +146,7 @@ internal static partial class NativeMethods
     [return: MarshalAs(UnmanagedType.Bool)]
     internal static extern bool DestroyIcon(IntPtr hIcon);
 
-    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
     internal static extern uint RegisterWindowMessage(string lpString);
 
     internal static int HIWORD(IntPtr wParam)

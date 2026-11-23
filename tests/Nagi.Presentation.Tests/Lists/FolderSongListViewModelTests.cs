@@ -112,9 +112,9 @@ public class FolderSongListViewModelTests
         viewModel.Breadcrumbs.Count(item => item.IsLast).Should().Be(1);
         viewModel.Breadcrumbs[^1].IsLast.Should().BeTrue();
         viewModel.Breadcrumbs.Select(item => item.Name).Should().Equal(
-            directoryPath.EndsWith("Album") ? new[] { rootName, "Album" } : new[] { rootName });
+            directoryPath.EndsWith("Album", StringComparison.Ordinal) ? new[] { rootName, "Album" } : new[] { rootName });
         viewModel.Breadcrumbs[^1].Path.TrimEnd('\\').Should().Be(directoryPath.TrimEnd('\\'));
-        viewModel.IsAtRootLevel.Should().Be(!directoryPath.EndsWith("Album"));
+        viewModel.IsAtRootLevel.Should().Be(!directoryPath.EndsWith("Album", StringComparison.Ordinal));
     }
 
     [Theory]

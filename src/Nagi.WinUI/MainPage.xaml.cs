@@ -45,7 +45,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void QueueListView_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs e)
     {
-        if (e.DropResult == DataPackageOperation.Move && e.Items.FirstOrDefault() is QueueEntry entry)
+        if (e.DropResult == DataPackageOperation.Move && e.Items is [QueueEntry entry, ..])
             ViewModel.SidebarQueue.CompleteReorder(entry, _queueDragVersion);
     }
 

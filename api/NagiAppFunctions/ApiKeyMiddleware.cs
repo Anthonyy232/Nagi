@@ -52,7 +52,7 @@ public class ApiKeyMiddleware : IFunctionsWorkerMiddleware
         }
 
         if (!request.Headers.TryGetValue(ApiKeyHeaderName, out var values) ||
-            !_serverApiKey.Equals(values.FirstOrDefault()))
+            !string.Equals(_serverApiKey, values.FirstOrDefault(), StringComparison.Ordinal))
         {
             _logger.LogWarning("Unauthorized access attempt to '{Path}'. Missing or invalid API Key.", requestPath);
             await CreateErrorResponse(httpContext, HttpStatusCode.Unauthorized,

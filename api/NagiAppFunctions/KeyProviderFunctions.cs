@@ -10,7 +10,7 @@ using Microsoft.OpenApi.Models;
 
 namespace NagiAppFunctions;
 
-file class KeyResponse
+file sealed class KeyResponse
 {
     public string Value { get; set; } = string.Empty;
 }

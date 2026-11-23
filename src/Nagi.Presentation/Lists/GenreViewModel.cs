@@ -47,12 +47,12 @@ public partial class GenreViewModel : ClientFilteredListViewModelBase<GenreSumma
     protected override bool MatchesSearch(GenreSummary genre, string searchTerm) =>
         genre.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
 
-    protected override IEnumerable<GenreSummary> Arrange(IEnumerable<GenreSummary> genres) => Sort.Current switch
+    protected override IEnumerable<GenreSummary> Arrange(IEnumerable<GenreSummary> items) => Sort.Current switch
     {
-        GenreSortOrder.NameDesc => genres.OrderByDescending(g => g.Name, StringComparer.OrdinalIgnoreCase).ThenBy(g => g.Id),
-        GenreSortOrder.SongCountDesc => genres.OrderByDescending(g => g.SongCount).ThenBy(g => g.Name, StringComparer.OrdinalIgnoreCase).ThenBy(g => g.Id),
-        GenreSortOrder.SongCountAsc => genres.OrderBy(g => g.SongCount).ThenBy(g => g.Name, StringComparer.OrdinalIgnoreCase).ThenBy(g => g.Id),
-        _ => genres.OrderBy(g => g.Name, StringComparer.OrdinalIgnoreCase).ThenBy(g => g.Id)
+        GenreSortOrder.NameDesc => items.OrderByDescending(g => g.Name, StringComparer.OrdinalIgnoreCase).ThenBy(g => g.Id),
+        GenreSortOrder.SongCountDesc => items.OrderByDescending(g => g.SongCount).ThenBy(g => g.Name, StringComparer.OrdinalIgnoreCase).ThenBy(g => g.Id),
+        GenreSortOrder.SongCountAsc => items.OrderBy(g => g.SongCount).ThenBy(g => g.Name, StringComparer.OrdinalIgnoreCase).ThenBy(g => g.Id),
+        _ => items.OrderBy(g => g.Name, StringComparer.OrdinalIgnoreCase).ThenBy(g => g.Id)
     };
 
     public void OpenGenre(GenreSummary genre) => _navigationService.OpenGenre(genre.Id, genre.Name);

@@ -55,7 +55,7 @@ public class MusicServerDialogViewModelTests
 
         (await _viewModel.SubmitAsync()).Should().BeFalse();
 
-        _viewModel.ErrorMessage.Should().Be(Strings.ResourceManager.GetString(expectedMessage));
+        _viewModel.ErrorMessage.Should().Be(Strings.ResourceManager.GetString(expectedMessage, Strings.Culture));
     }
 
     [Fact]

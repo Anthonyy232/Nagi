@@ -12,6 +12,7 @@ namespace Nagi.Core.Presence;
 /// </summary>
 public sealed class DiscordIpcClient : IDisposable
 {
+    private static readonly string[] RuntimeDirVariables = ["XDG_RUNTIME_DIR", "TMPDIR", "TMP", "TEMP"];
     private const int MaxFrameSize = 16 * 1024;
     private static readonly TimeSpan MinRetryDelay = TimeSpan.FromSeconds(1);
     private static readonly TimeSpan MaxRetryDelay = TimeSpan.FromSeconds(10);
@@ -241,7 +242,7 @@ public sealed class DiscordIpcClient : IDisposable
         string[] folders = OperatingSystem.IsWindows()
             ? []
             : [
-                ..new[] { "XDG_RUNTIME_DIR", "TMPDIR", "TMP", "TEMP" }
+                ..RuntimeDirVariables
                     .Select(Environment.GetEnvironmentVariable).OfType<string>().Where(path => path.Length > 0),
                 "/tmp"
             ];
@@ -283,7 +284,7 @@ public sealed record DiscordActivity
     public DiscordAssets? Assets { get; init; }
 
     // Listening.
-    public int Type => 2;
+    public int Type { get; } = 2;
 
     public DiscordStatusDisplay StatusDisplayType { get; init; }
 }

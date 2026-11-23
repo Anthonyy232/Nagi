@@ -12,6 +12,7 @@ namespace Nagi.Core.Backup;
 
 public class BackupRestoreService : IBackupRestoreService
 {
+    private static readonly string[] SqliteSidecarSuffixes = ["-wal", "-shm", "-journal"];
     // Settings live in the platform's settings store, so the backup carries them as a snapshot file.
     private const string SettingsFileName = "settings.json";
 
@@ -210,7 +211,7 @@ public class BackupRestoreService : IBackupRestoreService
                         // original database and its complete recovery state together.
                         if (incomingDatabaseLock is not null)
                         {
-                            foreach (var suffix in new[] { "-wal", "-shm", "-journal" })
+                            foreach (var suffix in SqliteSidecarSuffixes)
                             {
                                 var journalName = DatabaseFileName + suffix;
                                 var existingJournal = Path.Combine(destPath, journalName);

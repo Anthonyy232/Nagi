@@ -848,7 +848,7 @@ public class LibraryReaderTests : IDisposable
         var playlists = new PlaylistService(_dbHelper.ContextFactory, Substitute.For<IFileSystemService>(), Substitute.For<IImageProcessor>(),
             Substitute.For<IPathConfiguration>(), Substitute.For<ILibraryNotifier>(), NullLogger<PlaylistService>.Instance);
         var exported = await playlists.GetSongsInPlaylistOrderedAsync(playlist.Id);
-        exported.Where(s => s.Title.StartsWith("Song")).Select(s => s.Id).Should().Equal(expectedIds);
+        exported.Where(s => s.Title.StartsWith("Song", StringComparison.Ordinal)).Select(s => s.Id).Should().Equal(expectedIds);
 
         var page = await _libraryReader.GetSongsAsync(new SongScope.Playlist(playlist.Id), null, SongSortOrder.PlaylistOrder, 3, 1);
         page.TotalCount.Should().Be(4);
