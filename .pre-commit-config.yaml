@@ -20,3 +20,10 @@ repos:
         entry: dotnet format --include
         types: [c#]
         pass_filenames: true
+
+      - id: xaml-styler
+        name: xaml styler
+        language: system
+        entry: dotnet tool run xstyler -- -c Settings.XamlStyler -f
+        files: \.xaml$
+        pass_filenames: true

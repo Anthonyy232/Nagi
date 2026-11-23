@@ -29,6 +29,43 @@ env:
   SixLaborsLicenseKey: ${{ secrets.SIXLABORS_LICENSE_KEY }}
 
 jobs:
+  lint:
+    name: Lint
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          dotnet-version: 11.0.x
+          cache: true
+          cache-dependency-path: |
+            **/*.csproj
+            **/Directory.Build.props
+            **/Directory.Packages.props
+            **/NuGet.config
+
+      - run: dotnet tool restore
+
+      - name: Build with warnings as errors
+        run: dotnet build Nagi.sln -c Debug -p:Platform=x64 -warnaserror
+
+      # analyzers and code style are build warnings above; this checks layout, without loading projects
+      - name: C# format
+        run: dotnet format whitespace --folder --verify-no-changes
+
+      # tracked files only: the build writes unformatted copies under obj
+      - name: XAML format
+        run: dotnet tool run xstyler -- -c Settings.XamlStyler -p -l Minimal -f (git ls-files '*.xaml')
+
+      # dotnet format ran above
+      - name: Pre-commit hooks
+        env:
+          SKIP: dotnet-format,xaml-styler
+        run: pipx run pre-commit==4.2.0 run --all-files --show-diff-on-failure
+
   test:
     name: Run Unit Tests
     runs-on: windows-latest
