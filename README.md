@@ -83,6 +83,7 @@ Settings is grouped into:
 - Local romanization for Japanese, Korean and Hindi lyrics via downloadable packs.
 - Mica, Mica Alt and Acrylic backdrops, with colors taken from the current album art.
 - Resizable always-on-top mini-player.
+- Full screen (F11, or the button at the right of the player): the album art on its colors beside the lyrics, with the player below. Esc or F11 leaves it.
 
 **Windows integration**
 

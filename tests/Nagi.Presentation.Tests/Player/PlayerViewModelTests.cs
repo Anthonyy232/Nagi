@@ -23,6 +23,7 @@ public partial class PlayerViewModelTests : IDisposable
     private readonly SettingsService _settings = TestSettings.Create();
     private readonly IDispatcherService _dispatcher = new ImmediateDispatcher();
     private readonly FakeTimeProvider _time = new();
+    private readonly IWindowService _window = Substitute.For<IWindowService>();
     private readonly PlayerViewModel _viewModel;
     private readonly LibraryFakes _library = new LibraryFakes();
 
@@ -33,7 +34,7 @@ public partial class PlayerViewModelTests : IDisposable
         _settings.Set(AppSettings.PlayerButtons, new[] { "Volume", "Shuffle", "Previous", "PlayPause", "Next", "Repeat", "Separator", "Lyrics", "Queue" }
             .Select(id => new PlayerButtonSetting { Id = id, DisplayName = id, IsEnabled = true }).ToList());
         _viewModel = new PlayerViewModel(_playback, Substitute.For<IMusicNavigationService>(),
-            _dispatcher, _settings, Substitute.For<IWindowService>(),
+            _dispatcher, _settings, _window,
             _library.Reader, _library.Listening, _library.Notifier, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>(), _time);
     }
 
@@ -224,5 +225,22 @@ public partial class PlayerViewModelTests : IDisposable
         await _viewModel.AddFilesToQueueAsync([@"C:\b\Charlie.mp3", @"C:\a\bravo.mp3", @"C:\c\Alpha"]);
 
         queued.Should().Equal(@"C:\c\Alpha", @"C:\a\bravo.mp3", @"C:\b\Charlie.mp3");
+    }
+
+    [Fact]
+    public void FullScreen_FollowsTheWindowAndEndsWhenNoSongIsLeft()
+    {
+        _playback.CurrentTrack.Returns(new Song());
+        _playback.TrackChanged += Raise.Event<Action>();
+        _viewModel.ToggleFullScreenCommand.Execute(null);
+        _window.Received(1).SetFullScreen(true);
+        _window.IsFullScreen.Returns(true);
+        _window.UIStateChanged += Raise.Event<Action>();
+        _viewModel.IsFullScreen.Should().BeTrue();
+
+        _playback.CurrentTrack.Returns((Song?)null);
+        _playback.TrackChanged += Raise.Event<Action>();
+
+        _window.Received(1).SetFullScreen(false);
     }
 }

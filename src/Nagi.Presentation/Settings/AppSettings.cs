@@ -149,6 +149,7 @@ public static class AppSettings
         new() { Id = PlayerButtonIds.Separator, DisplayName = Strings.Settings_Button_Divider, IsEnabled = true },
         new() { Id = PlayerButtonIds.Lyrics, DisplayName = Strings.Settings_Button_Lyrics, Icon = AppIcon.Lyrics, IsEnabled = true },
         new() { Id = PlayerButtonIds.Queue, DisplayName = Strings.Settings_Button_Queue, Icon = AppIcon.Queue, IsEnabled = true },
+        new() { Id = PlayerButtonIds.FullScreen, DisplayName = Strings.Settings_Button_FullScreen, Icon = AppIcon.FullScreen, IsEnabled = true },
         new() { Id = PlayerButtonIds.Volume, DisplayName = Strings.Settings_Button_Volume, Icon = AppIcon.VolumeHigh, IsEnabled = true }
     ];
 }

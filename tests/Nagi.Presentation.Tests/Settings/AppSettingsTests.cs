@@ -139,8 +139,8 @@ public class AppSettingsTests
         var buttons = settings.Get(AppSettings.PlayerButtons);
 
         buttons.Select(button => button.Id).Should().Equal(hasDivider
-            ? ["Separator", "Shuffle", "Previous", "PlayPause", "Next", "Repeat", "Lyrics", "Queue", "Volume"]
-            : ["Shuffle", "Previous", "PlayPause", "Next", "Repeat", "Separator", "Lyrics", "Queue", "Volume"]);
+            ? ["Separator", "Shuffle", "Previous", "PlayPause", "Next", "Repeat", "Lyrics", "Queue", "FullScreen", "Volume"]
+            : ["Shuffle", "Previous", "PlayPause", "Next", "Repeat", "Separator", "Lyrics", "Queue", "FullScreen", "Volume"]);
         buttons.Single(button => button.Id == "Shuffle").IsEnabled.Should().BeFalse();
         buttons.Single(button => button.Id == "Separator").IsEnabled.Should().Be(!hasDivider);
         buttons.Should().OnlyContain(button => button.DisplayName != "Old");

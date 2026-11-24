@@ -11,6 +11,8 @@ public interface IWindowService
 
     bool IsMinimized { get; }
 
+    bool IsFullScreen { get; }
+
     /// <summary>
     ///     True once the main window is closing for good, which exits the app: after <see cref="Exit" />, or after a
     ///     close that no <see cref="Closing" /> handler cancelled.
@@ -25,7 +27,8 @@ public interface IWindowService
     event Action? Minimized;
 
     /// <summary>
-    ///     Raised when the main window is shown, hidden, minimized or restored, or the mini-player opens or closes.
+    ///     Raised when the main window is shown, hidden, minimized, restored, enters or leaves full screen, or the
+    ///     mini-player opens or closes.
     /// </summary>
     event Action? UIStateChanged;
 
@@ -60,6 +63,8 @@ public interface IWindowService
     ///     Asking for the mode already in effect does nothing.
     /// </summary>
     void SetEfficiencyMode(bool isEnabled);
+
+    void SetFullScreen(bool isFullScreen);
 }
 
 /// <summary>

@@ -39,6 +39,7 @@ public sealed class ThemeService : IThemeService
         SetBrushColor(AppResourceKeys.MediaOnImageAccentBrush, palette.MediaOnImageAccent);
         SetBrushColor(AppResourceKeys.PlayerTintColorBrush, palette.PlayerTint);
         SetBrushColor(AppResourceKeys.PlayerBackgroundBrush, palette.PlayerBackground);
+        SetBrushColor(AppResourceKeys.FullScreenBackgroundBrush, palette.FullScreenBackground);
         SetBrushColor(AppResourceKeys.AccentTextBrush, palette.AccentText);
     }
 

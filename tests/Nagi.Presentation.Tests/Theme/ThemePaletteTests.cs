@@ -26,14 +26,15 @@ public class ThemePaletteTests
     }
 
     [Theory]
-    [InlineData(true, 85, 100, 0, 40)]
-    [InlineData(false, 0, 35, 80, 100)]
+    [InlineData(true, 85, 100, 100, 0, 40)]
+    [InlineData(false, 0, 35, 15, 80, 100)]
     public void PlayerColors_StayWithinTheThemeToneRange(bool isLightTheme, double minBackground,
-        double maxBackground, double minAccent, double maxAccent)
+        double maxBackground, double maxFullScreenBackground, double minAccent, double maxAccent)
     {
         var palette = ThemePalette.Create(ArgbColor.FromRgb(120, 200, 90), isLightTheme, tintIntensity: 1);
 
         Tone(palette.PlayerBackground).Should().BeInRange(minBackground - 0.5, maxBackground + 0.5);
+        Tone(palette.FullScreenBackground).Should().BeInRange(minBackground - 0.5, maxFullScreenBackground + 0.5);
         Tone(palette.AccentText).Should().BeInRange(minAccent - 0.5, maxAccent + 0.5);
     }
 

@@ -16,6 +16,7 @@
         <KeyboardAccelerator Key="D"
                              Invoked="OnListeningShortcutInvoked"
                              Modifiers="Control" />
+        <KeyboardAccelerator Key="F11" Invoked="OnFullScreenShortcutInvoked" />
     </UserControl.KeyboardAccelerators>
     <UserControl.Resources>
         <ResourceDictionary>
@@ -835,6 +836,16 @@
                 <VisualState x:Name="QueuePaneOverlay">
                     <VisualState.Setters>
                         <Setter Target="QueuePanelSurface.Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="FullScreenStates">
+                <VisualState x:Name="Windowed" />
+                <VisualState x:Name="FullScreen">
+                    <VisualState.Setters>
+                        <Setter Target="RootGrid.Background" Value="{StaticResource FullScreenBackgroundBrush}" />
+                        <Setter Target="AppTitleBar.Visibility" Value="Collapsed" />
+                        <Setter Target="NavView.IsPaneVisible" Value="False" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

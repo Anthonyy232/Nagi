@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Nagi.Core.Lyrics;
 using Nagi.Presentation.Lyrics;
+using Nagi.Presentation.Player;
 using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Pages;
@@ -42,6 +43,7 @@ public sealed partial class LyricsPage : ViewModelPage
     public LyricsPage()
     {
         ViewModel = GetViewModel<LyricsPageViewModel>();
+        Player = GetViewModel<PlayerViewModel>();
         InitializeComponent();
         Storyboard.SetTarget(_progressBarAnimation, LyricsProgressBar);
         Storyboard.SetTargetProperty(_progressBarAnimation, nameof(ProgressBar.Value));
@@ -57,9 +59,13 @@ public sealed partial class LyricsPage : ViewModelPage
 
     public LyricsPageViewModel ViewModel { get; }
 
+    public PlayerViewModel Player { get; }
+
     private void OnPageLoaded(object sender, RoutedEventArgs e)
     {
         SystemVisualSettings.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
+        Player.PropertyChanged += OnPlayerPropertyChanged;
+        UpdateFullScreenState();
         if (Resources["PageLoadStoryboard"] is Storyboard storyboard)
         {
             storyboard.Begin();
@@ -85,6 +91,7 @@ public sealed partial class LyricsPage : ViewModelPage
     {
         _isUnloaded = true;
         SystemVisualSettings.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
+        Player.PropertyChanged -= OnPlayerPropertyChanged;
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
         ViewModel.LyricsReplaced -= OnLyricsReplaced;
         Unloaded -= OnPageUnloaded;
@@ -124,6 +131,10 @@ public sealed partial class LyricsPage : ViewModelPage
                 });
                 break;
 
+            case nameof(ViewModel.ShowNoLyricsMessage):
+                UpdateFullScreenState();
+                break;
+
             case nameof(ViewModel.IsPlaying):
             case nameof(ViewModel.CurrentPosition):
             case nameof(ViewModel.SongDuration):
@@ -135,6 +146,19 @@ public sealed partial class LyricsPage : ViewModelPage
                 break;
         }
     }
+
+    private void OnPlayerPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(Player.IsFullScreen)) UpdateFullScreenState();
+    }
+
+    // Decoded at the size shown, so it is sharp on any screen.
+    private void FullScreenArtworkArea_SizeChanged(object sender, SizeChangedEventArgs e) =>
+        FullScreenArtwork.Size = Math.Min(e.NewSize.Width, e.NewSize.Height);
+
+    private void UpdateFullScreenState() => VisualStateManager.GoToState(this,
+        !Player.IsFullScreen ? "Windowed" : ViewModel.ShowNoLyricsMessage ? "FullScreenWithoutLyrics" : "FullScreen",
+        false);
 
     private void OnLyricsReplaced()
     {

@@ -76,6 +76,7 @@
 
     <SolidColorBrush x:Key="PlayerTintColorBrush" Color="{StaticResource BrandAccentColor}" />
     <SolidColorBrush x:Key="PlayerBackgroundBrush" Color="#FF242424" />
+    <SolidColorBrush x:Key="FullScreenBackgroundBrush" Color="#FF242424" />
 
     <media:AcrylicBrush x:Key="Win11AcrylicBrush"
                         FallbackColor="{Binding Color, Source={StaticResource PlayerBackgroundBrush}}"

@@ -29,6 +29,7 @@ public sealed partial class MainWindow : Window
     private PointInt32 _lastWindowPosition;
     private bool _isActivatedOnce;
     private FrameworkElement? _rootElement;
+    private OverlappedPresenter? _windowedPresenter;
 
     public MainWindow(ISettingsService settingsService, ILogger<MainWindow> logger)
     {
@@ -61,6 +62,29 @@ public sealed partial class MainWindow : Window
         _rootElement.ActualThemeChanged += OnActualThemeChanged;
         InitializeCustomTitleBar();
         ContentChanged?.Invoke();
+    }
+
+    // Set before the presenter changes: full screen bounds arrive while the window is still overlapped.
+    public bool IsFullScreen { get; private set; }
+
+    // The same presenter back keeps the window maximized; a snapped window gets its bounds back but not the snap.
+    public void SetFullScreen(bool isFullScreen)
+    {
+        if (isFullScreen == IsFullScreen) return;
+        IsFullScreen = isFullScreen;
+        if (isFullScreen)
+        {
+            _windowedPresenter = (OverlappedPresenter)AppWindow.Presenter;
+            AppWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
+        }
+        else
+        {
+            // Read first: leaving full screen updates them.
+            var bounds = new RectInt32(_lastWindowPosition.X, _lastWindowPosition.Y, _lastWindowSize.Width,
+                _lastWindowSize.Height);
+            AppWindow.SetPresenter(_windowedPresenter);
+            if (_windowedPresenter!.State == OverlappedPresenterState.Restored) AppWindow.MoveAndResize(bounds);
+        }
     }
 
     public void SaveWindowState()
@@ -101,7 +125,7 @@ public sealed partial class MainWindow : Window
 
     private void OnWindowGeometryChanged(AppWindow sender, AppWindowChangedEventArgs args)
     {
-        if (sender.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized }) return;
+        if (IsFullScreen || sender.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized }) return;
 
         if (args.DidSizeChange) _lastWindowSize = sender.Size;
         if (args.DidPositionChange) _lastWindowPosition = sender.Position;

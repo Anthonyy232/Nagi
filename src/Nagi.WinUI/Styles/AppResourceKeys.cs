@@ -10,6 +10,7 @@ internal static class AppResourceKeys
     public const string MediaOnImageAccentBrush = nameof(MediaOnImageAccentBrush);
     public const string PlayerTintColorBrush = nameof(PlayerTintColorBrush);
     public const string PlayerBackgroundBrush = nameof(PlayerBackgroundBrush);
+    public const string FullScreenBackgroundBrush = nameof(FullScreenBackgroundBrush);
     public const string AccentTextBrush = nameof(AccentTextBrush);
     public const string Win11AcrylicBrush = nameof(Win11AcrylicBrush);
     public const string Win10AcrylicBrush = nameof(Win10AcrylicBrush);

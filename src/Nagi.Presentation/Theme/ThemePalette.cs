@@ -11,6 +11,7 @@ public readonly record struct ThemePalette(
     ArgbColor MediaOnImageAccent,
     ArgbColor PlayerTint,
     ArgbColor PlayerBackground,
+    ArgbColor FullScreenBackground,
     ArgbColor AccentText)
 {
     // Roughly 4.5:1 contrast against the dark media overlay surface (#303030).
@@ -57,6 +58,8 @@ public readonly record struct ThemePalette(
             GetMediaOnImageAccent(mediaOnImageSource ?? primary),
             playerTint,
             ClampTone(playerTint, isLightTheme ? 85 : 0, isLightTheme ? 100 : 35),
+            // As dark as the window backdrop, so faded lyric lines read the same.
+            ClampTone(playerTint, isLightTheme ? 85 : 0, isLightTheme ? 100 : 15),
             ClampTone(primary, isLightTheme ? 0 : 80, isLightTheme ? 40 : 100));
     }
 

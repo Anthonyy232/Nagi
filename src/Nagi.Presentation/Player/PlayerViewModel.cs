@@ -80,6 +80,7 @@ public partial class PlayerViewModel : ObservableObject
         InitializeListeningEvents();
         _libraryNotifier.Changed += OnQueueLibraryChanged;
         _settingsService.SettingChanged += OnSettingChanged;
+        _windowService.UIStateChanged += OnWindowStateChanged;
         InitializeStateFromService();
         LoadPlayerButtonSettings();
         QueueDisplaySettings = _settingsService.Get(AppSettings.QueueDisplay);
@@ -109,6 +110,7 @@ public partial class PlayerViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(GoToArtistCommand))]
     [NotifyCanExecuteChangedFor(nameof(GoToAlbumCommand))]
     [NotifyCanExecuteChangedFor(nameof(StopAfterTrackCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ToggleFullScreenCommand))]
     [NotifyPropertyChangedFor(nameof(CurrentPlayingSongId))]
     public partial Song? CurrentPlayingTrack { get; set; }
 
@@ -188,6 +190,18 @@ public partial class PlayerViewModel : ObservableObject
 
     public string VolumeButtonToolTip => IsMuted ? Strings.Tooltip_Unmute : Strings.Tooltip_Mute;
 
+    /// <summary>
+    ///     Whether the main window fills the screen, which it only does while a song is there to show.
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsFullScreen { get; private set; }
+
+    private AppIcon FullScreenIcon => IsFullScreen ? AppIcon.ExitFullScreen : AppIcon.FullScreen;
+
+    private string FullScreenButtonToolTip => IsFullScreen
+        ? Strings.Player_ExitFullScreenButton_ToolTip
+        : Strings.Player_FullScreenButton_ToolTip;
+
     partial void OnIsPlayingChanged(bool value)
     {
         UpdateButtonState(PlayerButtonIds.PlayPause, PlayPauseIcon, PlayPauseButtonToolTip, isLoading: IsOpening);
@@ -232,6 +246,7 @@ public partial class PlayerViewModel : ObservableObject
         CleanupListening();
         _libraryNotifier.Changed -= OnQueueLibraryChanged;
         _settingsService.SettingChanged -= OnSettingChanged;
+        _windowService.UIStateChanged -= OnWindowStateChanged;
 
         QueueDisplaySettings.PropertyChanged -= OnQueueDisplaySettingChanged;
         SidebarQueue.Dispose();
@@ -296,6 +311,11 @@ public partial class PlayerViewModel : ObservableObject
                     button.Command = ToggleQueuePanelCommand;
                     button.DynamicIcon = button.Icon;
                     button.DynamicToolTip = Strings.Player_QueueButton_ToolTip;
+                    break;
+                case PlayerButtonIds.FullScreen:
+                    button.Command = ToggleFullScreenCommand;
+                    button.DynamicIcon = FullScreenIcon;
+                    button.DynamicToolTip = FullScreenButtonToolTip;
                     break;
             }
         }
@@ -406,6 +426,21 @@ public partial class PlayerViewModel : ObservableObject
         if (CurrentPlayingTrack is not { } song) return;
         _windowService.ShowAndActivate();
         await _musicNavigationService.OpenAlbumAsync(song);
+    }
+
+    [RelayCommand(CanExecute = nameof(HasPlayingTrack))]
+    private void ToggleFullScreen() => _windowService.SetFullScreen(!IsFullScreen);
+
+    public void ExitFullScreen() => _windowService.SetFullScreen(false);
+
+    private void OnWindowStateChanged() => RunOnUIThread(() => IsFullScreen = _windowService.IsFullScreen);
+
+    partial void OnIsFullScreenChanged(bool value) =>
+        UpdateButtonState(PlayerButtonIds.FullScreen, FullScreenIcon, FullScreenButtonToolTip);
+
+    partial void OnCurrentPlayingTrackChanged(Song? value)
+    {
+        if (value is null) ExitFullScreen();
     }
 
     private bool CanGoToArtist(ArtistNavigationRequest? request) => request != null || HasPlayingTrack();

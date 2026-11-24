@@ -136,6 +136,21 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void LyricsButton_Click(object sender, RoutedEventArgs e) => _navigationService.ToggleLyrics();
 
+    private void OnFullScreenShortcutInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        if (IsShortcutBlocked(FocusManager.GetFocusedElement(XamlRoot) as DependencyObject) ||
+            !ViewModel.ToggleFullScreenCommand.CanExecute(null)) return;
+        args.Handled = true;
+        ViewModel.ToggleFullScreenCommand.Execute(null);
+    }
+
+    // Full screen belongs to the lyrics page: entering opens it, and leaving it ends full screen.
+    private void UpdateFullScreenState()
+    {
+        VisualStateManager.GoToState(this, ViewModel.IsFullScreen ? "FullScreen" : "Windowed", false);
+        if (ViewModel.IsFullScreen && !IsLyricsPageShown) _navigationService.ToggleLyrics();
+    }
+
     private void Queue_DragOver(object sender, DragEventArgs e)
     {
         if (e.DataView.Contains(StandardDataFormats.StorageItems))
@@ -267,7 +282,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         _settingsService.SettingChanged += OnSettingChanged;
         SystemVisualSettings.TransparencyEffectsEnabledChanged += OnTransparencyEffectsChanged;
         AddHandler(PointerPressedEvent, new PointerEventHandler(OnGlobalPointerPressed), true);
-        KeyDown += OnSelectionKeyDown;
+        KeyDown += OnEscapeKeyDown;
 
         SetPlatformSpecificBrush();
         PopulateNavigation();
@@ -312,7 +327,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         _trayIcon?.Dispose();
 
         RemoveHandler(PointerPressedEvent, (PointerEventHandler)OnGlobalPointerPressed);
-        KeyDown -= OnSelectionKeyDown;
+        KeyDown -= OnEscapeKeyDown;
     }
 
     private void SetPlatformSpecificBrush()
@@ -348,6 +363,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         if (e.PropertyName is nameof(PlayerViewModel.CurrentPlayingTrack) or nameof(PlayerViewModel.IsPlaying)
             or nameof(PlayerViewModel.IsQueuePanelOpen))
             UpdateUi(() => UpdatePlayerVisualState());
+        else if (e.PropertyName == nameof(PlayerViewModel.IsFullScreen))
+            UpdateUi(UpdateFullScreenState);
     }
 
     private void UpdateUi(Action update) => _dispatcherService.TryEnqueue(() =>
@@ -363,6 +380,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private void OnNavigated(Type page)
     {
         IsLyricsPageShown = page == typeof(LyricsPage);
+        if (!IsLyricsPageShown) ViewModel.ExitFullScreen();
         AppTitleBar.IsBackButtonVisible = _navigationService.ShowsBackButton;
         UpdateNavViewSelection();
 
@@ -433,11 +451,19 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
     }
 
-    private void OnSelectionKeyDown(object sender, KeyRoutedEventArgs e)
+    private void OnEscapeKeyDown(object sender, KeyRoutedEventArgs e)
     {
         if (e.Key != VirtualKey.Escape || e.Handled || IsShortcutBlocked(e.OriginalSource as DependencyObject)) return;
 
-        e.Handled = DismissListSelection(null);
+        if (ViewModel.IsFullScreen)
+        {
+            ViewModel.ExitFullScreen();
+            e.Handled = true;
+        }
+        else
+        {
+            e.Handled = DismissListSelection(null);
+        }
     }
 
     // Page-wide keyboard shortcuts give way to text input and to open menus, flyouts and dialogs.

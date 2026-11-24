@@ -29,5 +29,7 @@ public enum AppIcon
     VolumeMedium,
     VolumeHigh,
     OnlineSource,
-    History
+    History,
+    FullScreen,
+    ExitFullScreen
 }

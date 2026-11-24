@@ -14,4 +14,5 @@ public static class PlayerButtonIds
     public const string Lyrics = "Lyrics";
     public const string Queue = "Queue";
     public const string Volume = "Volume";
+    public const string FullScreen = "FullScreen";
 }

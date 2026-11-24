@@ -33,6 +33,8 @@ public static class AppIconGlyphs
         AppIcon.VolumeHigh => "\uE767",
         AppIcon.OnlineSource => "\uE774",
         AppIcon.History => "\uE81C",
+        AppIcon.FullScreen => "\uE740",
+        AppIcon.ExitFullScreen => "\uE73F",
         _ => string.Empty
     };
 }

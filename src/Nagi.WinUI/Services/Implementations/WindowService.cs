@@ -51,6 +51,14 @@ public sealed class WindowService : IWindowService, IDisposable
         State: OverlappedPresenterState.Minimized
     };
 
+    public bool IsFullScreen => _mainWindow.IsFullScreen;
+
+    public void SetFullScreen(bool isFullScreen)
+    {
+        // Playback stopping at shutdown leaves full screen; a closed window's presenter change hangs the exit.
+        if (!IsExiting) _mainWindow.SetFullScreen(isFullScreen);
+    }
+
     public bool IsExiting { get; private set; }
 
     public void Dispose()

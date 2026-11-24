@@ -540,6 +540,9 @@ Files that could not be imported: {0}.</value>
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>Volume</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>Full Screen</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>Community-curated lyrics database</value>
   </data>
@@ -804,6 +807,12 @@ Do you want to continue?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Go to Album</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>Full Screen</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>Exit Full Screen</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Seek</value>
