@@ -213,6 +213,20 @@ public class AtlMetadataServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task ExtractMetadataAsync_ReadsArtistSortTagsInTagOrder()
+    {
+        var filePath = CreateTestAudioFile("sort.mp3", track =>
+        {
+            track.Artist = $"Jennifer Lopez{Separate}Pitbull";
+            track.SortArtist = $"Lopez, Jennifer{Separate}Pitbull";
+        });
+
+        var result = await _metadataService.ExtractMetadataAsync(filePath, includeMediaAssets: false);
+
+        result.ArtistSortNames.Should().Equal("Lopez, Jennifer", "Pitbull");
+    }
+
+    [Fact]
     public async Task ExtractMetadataAsync_SplitsId3v23ValuesOnNullsButNotSlashes()
     {
         static byte[] Frame(string id, string first, string second)

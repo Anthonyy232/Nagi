@@ -17,9 +17,9 @@ public class Artist
     public string Name { get; set; } = UnknownArtistName;
 
     /// <summary>
-    ///     Denormalized sort key for <see cref="Name"/> with leading articles ("the", "a", "an") stripped.
-    ///     Populated before saving. Used by queries when the
-    ///     <c>IgnoreLeadingArticlesOnSort</c> setting is enabled.
+    ///     Sort key used when the <c>IgnoreLeadingArticlesOnSort</c> setting is enabled: the alphabetically first of
+    ///     its songs' sort tags for it, or else <see cref="Name"/> with leading articles ("the", "a", "an") stripped.
+    ///     Populated from the name before saving; an import applies the tags.
     /// </summary>
     [Required]
     [MaxLength(500)]

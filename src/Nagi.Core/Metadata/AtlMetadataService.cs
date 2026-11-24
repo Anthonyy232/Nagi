@@ -126,6 +126,7 @@ public partial class AtlMetadataService : IMetadataService
         metadata.AlbumArtists = MultiValues(track.AlbumArtist);
         metadata.Album = Text(track.Album);
         metadata.Genres = MultiValues(track.Genre);
+        metadata.ArtistSortNames = [.. MultiValues(track.SortArtist)];
         metadata.NormalizeTags(splitCharacters, genreSplitCharacters);
 
         metadata.Duration = TimeSpan.FromSeconds(track.Duration);

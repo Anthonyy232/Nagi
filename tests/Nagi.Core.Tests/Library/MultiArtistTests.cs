@@ -107,6 +107,110 @@ public class MultiArtistTests : LibraryTestBase
         ids["Duo B"].Should().BeNull();
     }
 
+    private static readonly DateTime FirstScan = new(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+    private static SongFileMetadata Tags(string title, string artist, string? artistSortName = null) => new()
+    {
+        FilePath = $@"C:\Music\{title}.mp3",
+        Title = title,
+        Album = $"{artist} Album",
+        Artists = [artist],
+        ArtistSortNames = artistSortName is null ? [] : [artistSortName]
+    };
+
+    // A file read again needs a later time than its last scan.
+    private async Task ScanAsync(Folder folder, params (SongFileMetadata Tags, DateTime Modified)[] files)
+    {
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(files.Select(file => (file.Tags.FilePath, file.Modified)).ToList());
+        foreach (var (tags, modified) in files)
+        {
+            tags.FileModifiedDate = modified;
+            _metadataService.ExtractMetadataAsync(tags.FilePath, folder.Path).Returns(tags);
+        }
+        (await _library.Folders.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
+    }
+
+    private async Task<Folder> AddFolderAsync()
+    {
+        var folder = new Folder { Path = @"C:\Music", Name = "Music" };
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        context.Folders.Add(folder);
+        await context.SaveChangesAsync();
+        return folder;
+    }
+
+    private async Task<List<string>> ArtistOrderAsync() =>
+        (await _libraryReader.GetArtistsAsync(null, ArtistSortOrder.NameAsc, 1, 10)).Items.Select(a => a.Name).ToList();
+
+    [Fact]
+    public async Task RescanFolderForMusicAsync_SortsArtistsByTheirSortTagsAlsoWhereSongsWereNotReadAgain()
+    {
+        var folder = await AddFolderAsync();
+        (SongFileMetadata, DateTime)[] library =
+        [
+            (Tags("know1", "(K)NoW_NAME"), FirstScan), (Tags("know2", "(K)NoW_NAME"), FirstScan),
+            (Tags("abba", "ABBA"), FirstScan), (Tags("zed", "Zed"), FirstScan)
+        ];
+        await ScanAsync(folder, library);
+
+        // Only know1 is read again; know2 and the album must follow.
+        library[0] = (Tags("know1", "(K)NoW_NAME", "KNoW NAME"), FirstScan.AddMinutes(1));
+        await ScanAsync(folder, library);
+
+        (await ArtistOrderAsync()).Should().Equal("ABBA", "(K)NoW_NAME", "Zed");
+        (await _libraryReader.GetAlbumsAsync(null, AlbumSortOrder.ArtistAsc, 1, 10)).Items.Select(a => a.PrimaryArtistName)
+            .Should().Equal("ABBA", "(K)NoW_NAME", "Zed");
+        (await _libraryReader.GetSongsAsync(SongScope.Library, null, SongSortOrder.ArtistAsc, 1, 10)).Items.Select(s => s.Title)
+            .Should().Equal("abba", "know1", "know2", "zed");
+    }
+
+    [Fact]
+    public async Task RescanFolderForMusicAsync_SortsAnArtistByItsNameAgainOnceItsSortTagIsRemoved()
+    {
+        var folder = await AddFolderAsync();
+        await ScanAsync(folder, (Tags("zed", "Zed", "Aaa"), FirstScan), (Tags("abba", "ABBA"), FirstScan));
+        (await ArtistOrderAsync()).Should().Equal("Zed", "ABBA");
+
+        await ScanAsync(folder, (Tags("zed", "Zed"), FirstScan.AddMinutes(1)), (Tags("abba", "ABBA"), FirstScan));
+
+        (await ArtistOrderAsync()).Should().Equal("ABBA", "Zed");
+        (await _libraryReader.GetSongsAsync(SongScope.Library, null, SongSortOrder.ArtistAsc, 1, 10)).Items.Select(s => s.Title)
+            .Should().Equal("abba", "zed");
+    }
+
+    [Fact]
+    public async Task RescanFolderForMusicAsync_SortsAnArtistByTheFirstOfItsSongsSortTagsWhicheverIsReadLast()
+    {
+        var folder = await AddFolderAsync();
+        (SongFileMetadata, DateTime)[] library =
+        [
+            (Tags("one", "Zed", "Aaa"), FirstScan), (Tags("two", "Zed", "Zzz"), FirstScan),
+            (Tags("three", "Zed"), FirstScan), (Tags("mid", "Mid"), FirstScan)
+        ];
+        await ScanAsync(folder, library);
+        (await ArtistOrderAsync()).Should().Equal("Zed", "Mid");
+
+        library[1] = (Tags("two", "Zed", "Zzz"), FirstScan.AddMinutes(1));
+        await ScanAsync(folder, library);
+
+        (await ArtistOrderAsync()).Should().Equal("Zed", "Mid");
+    }
+
+    [Fact]
+    public async Task RemovingTheOnlyTaggedSong_SortsTheArtistByItsNameAgain()
+    {
+        var folder = await AddFolderAsync();
+        await ScanAsync(folder, (Tags("tagged", "Zed", "Aaa"), FirstScan), (Tags("plain", "Zed"), FirstScan),
+            (Tags("abba", "ABBA"), FirstScan));
+        (await ArtistOrderAsync()).Should().Equal("Zed", "ABBA");
+
+        await ScanAsync(folder, (Tags("plain", "Zed"), FirstScan), (Tags("abba", "ABBA"), FirstScan));
+
+        (await ArtistOrderAsync()).Should().Equal("ABBA", "Zed");
+    }
+
     [Fact]
     public void Song_SyncDenormalizedFields_CorrectlyJoinsArtists()
     {

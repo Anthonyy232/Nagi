@@ -1286,7 +1286,7 @@ Do you want to continue?</value>
     <value>Ignore Articles When Sorting</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Sort albums, artists, and songs by their first significant word (e.g. "The Beatles" sorts under B).</value>
+    <value>Sort albums, artists, and songs by their first significant word (e.g. "The Beatles" sorts under B). Artist sort tags such as ARTISTSORT apply only while this is on.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Data Management</value>
