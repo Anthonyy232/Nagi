@@ -22,6 +22,9 @@ namespace Nagi.Core.Tests.Metadata;
 public class AtlMetadataServiceTests : IDisposable
 {
     private const string LrcCachePath = "C:\\cache\\lrc";
+
+    // ATL's separator for values written as separate tags.
+    private const char Separate = '\u02F5';
     private readonly IFileSystemService _fileSystem;
     private readonly IImageProcessor _imageProcessor;
     private readonly SettingsService _settingsService;
@@ -187,18 +190,45 @@ public class AtlMetadataServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task ExtractMetadataAsync_WithNativeMultiValueGenres_PreservesGenreBoundaries()
+    public async Task ExtractMetadataAsync_KeepsSeparatelyTaggedValuesApartWithoutSplitCharacters()
     {
-        var filePath = CreateTestAudioFile("multigenre.mp3", track =>
+        var filePath = CreateTestAudioFile("multivalue.mp3", track =>
         {
-            track.Genre = "2-Step\u02F5Funky Breaks";
+            track.Artist = $"Jennifer Lopez{Separate}Pitbull/Ne-Yo";
+            track.AlbumArtist = $"Jennifer Lopez{Separate}Pitbull";
+            track.Genre = $"2-Step{Separate}Funky Breaks";
+            track.Composer = $"Composer A{Separate}Composer B";
+            track.Conductor = $"Conductor A{Separate}Conductor B";
+            track.Comment = $"First{Separate}Second";
         });
 
-        _settingsService.Set(CoreSettings.GenreSplitCharacters, "\\");
+        var result = await _metadataService.ExtractMetadataAsync(filePath, includeMediaAssets: false);
 
-        var result = await _metadataService.ExtractMetadataAsync(filePath);
+        result.Artists.Should().Equal("Jennifer Lopez", "Pitbull/Ne-Yo");
+        result.AlbumArtists.Should().Equal("Jennifer Lopez", "Pitbull");
+        result.Genres.Should().Equal("2-Step", "Funky Breaks");
+        result.Composer.Should().Be("Composer A; Composer B");
+        result.Conductor.Should().Be("Conductor A; Conductor B");
+        result.Comment.Should().Be("First; Second");
+    }
 
-        result.Genres.Should().ContainInOrder("2-Step", "Funky Breaks");
+    [Fact]
+    public async Task ExtractMetadataAsync_SplitsId3v23ValuesOnNullsButNotSlashes()
+    {
+        static byte[] Frame(string id, string first, string second)
+        {
+            byte[] body = [0, .. Encoding.ASCII.GetBytes(first), 0, .. Encoding.ASCII.GetBytes(second)];
+            return [.. Encoding.ASCII.GetBytes(id), 0, 0, 0, (byte)body.Length, 0, 0, .. body];
+        }
+        byte[] frames = [.. Frame("TPE1", "AC/DC", "Pitbull"), .. Frame("TIT2", "On the Floor", "Radio Edit")];
+        var filePath = Path.Combine(_tempDirectory, "v23.mp3");
+        File.WriteAllBytes(filePath, [0x49, 0x44, 0x33, 0x03, 0x00, 0x00, 0, 0, 0, (byte)frames.Length, .. frames, .. ValidMp3Bytes[10..]]);
+        _fileSystem.GetFileInfo(filePath).Returns(new FileInfo(filePath));
+
+        var result = await _metadataService.ExtractMetadataAsync(filePath, includeMediaAssets: false);
+
+        result.Artists.Should().Equal("AC/DC", "Pitbull");
+        result.Title.Should().Be("On the Floor; Radio Edit");
     }
 
     [Fact]

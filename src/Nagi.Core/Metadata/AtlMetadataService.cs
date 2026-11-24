@@ -13,7 +13,6 @@ namespace Nagi.Core.Metadata;
 public partial class AtlMetadataService : IMetadataService
 {
     private const char AtlMultiValueSeparator = '\u001F';
-    private const char CombinedValueSeparator = ';';
     private const string ReplayGainTrackGainKey = "REPLAYGAIN_TRACK_GAIN";
     private const string ReplayGainTrackPeakKey = "REPLAYGAIN_TRACK_PEAK";
     private readonly IFileSystemService _fileSystem;
@@ -25,6 +24,8 @@ public partial class AtlMetadataService : IMetadataService
     static AtlMetadataService()
     {
         ATL.Settings.DisplayValueSeparator = AtlMultiValueSeparator;
+        // ATL splits ID3v2.3 artists on '/' by default, which divides "AC/DC".
+        ATL.Settings.ID3v2_separatev2v3Values = false;
         ATL.Settings.FileBufferSize = 8 * 1024;
     }
 
@@ -120,11 +121,11 @@ public partial class AtlMetadataService : IMetadataService
 
     private static void PopulateMetadataFromTrack(SongFileMetadata metadata, Track track, string splitCharacters, string genreSplitCharacters)
     {
-        if (!string.IsNullOrWhiteSpace(track.Title)) metadata.Title = track.Title;
-        metadata.Artists = MultiValues(track.Artist, splitCharacters);
-        metadata.AlbumArtists = MultiValues(track.AlbumArtist, splitCharacters);
-        metadata.Album = track.Album;
-        metadata.Genres = MultiValues(track.Genre, genreSplitCharacters);
+        if (Text(track.Title) is { } title) metadata.Title = title;
+        metadata.Artists = MultiValues(track.Artist);
+        metadata.AlbumArtists = MultiValues(track.AlbumArtist);
+        metadata.Album = Text(track.Album);
+        metadata.Genres = MultiValues(track.Genre);
         metadata.NormalizeTags(splitCharacters, genreSplitCharacters);
 
         metadata.Duration = TimeSpan.FromSeconds(track.Duration);
@@ -143,10 +144,10 @@ public partial class AtlMetadataService : IMetadataService
             ? null
             : TextNormalizer.Normalize(LyricsLanguagePrefix().Replace(lyrics, string.Empty));
 
-        metadata.Composer = TextNormalizer.Normalize(track.Composer);
-        metadata.Copyright = TextNormalizer.Normalize(track.Copyright);
-        metadata.Comment = TextNormalizer.Normalize(track.Comment);
-        metadata.Conductor = TextNormalizer.Normalize(track.Conductor);
+        metadata.Composer = Text(track.Composer);
+        metadata.Copyright = Text(track.Copyright);
+        metadata.Comment = Text(track.Comment);
+        metadata.Conductor = Text(track.Conductor);
 
         PopulateMusicBrainzIds(metadata, track);
 
@@ -155,7 +156,7 @@ public partial class AtlMetadataService : IMetadataService
             track.AdditionalFields.TryGetValue("CONTENTGROUP", out grouping) ||
             track.AdditionalFields.TryGetValue("GROUPING", out grouping) ||
             track.AdditionalFields.TryGetValue("TIT1", out grouping))
-            metadata.Grouping = TextNormalizer.Normalize(grouping);
+            metadata.Grouping = Text(grouping);
 
         metadata.ReplayGainTrackGain = ParseReplayGainValue(GetAdditionalField(track, ReplayGainTrackGainKey));
         metadata.ReplayGainTrackPeak = ParseReplayGainValue(GetAdditionalField(track, ReplayGainTrackPeakKey));
@@ -197,16 +198,12 @@ public partial class AtlMetadataService : IMetadataService
     private static List<string> ParseMusicBrainzIds(string value) =>
         MusicBrainzIdRegex().Matches(value).Select(match => match.Value.ToLowerInvariant()).ToList();
 
-    // ATL joins a tag's values with its separator. Without split characters they stay one name joined by ';', which
-    // is how files' names have always been stored, while a server's lists of names stay separate names.
-    private static List<string> MultiValues(string? tag, string splitCharacters)
-    {
-        // Normalized first, so null characters become a separator that split characters can divide.
-        if (TextNormalizer.Normalize(tag) is not { } value) return [];
-        return splitCharacters.Length == 0
-            ? [value.Replace(AtlMultiValueSeparator, CombinedValueSeparator)]
-            : [.. value.Split(AtlMultiValueSeparator)];
-    }
+    // ATL's separator, or null characters ATL leaves in ID3v2.3 frames. Split characters only divide a single value.
+    private static List<string> MultiValues(string? tag) =>
+        tag?.Split([AtlMultiValueSeparator, '\0']).Select(TextNormalizer.Normalize).OfType<string>().ToList() ?? [];
+
+    // As foobar2000 shows several values in one field.
+    private static string? Text(string? tag) => MultiValues(tag) is { Count: > 0 } values ? string.Join("; ", values) : null;
 
     private async Task<(string? Uri, string? Light, string? Dark)> ProcessAlbumArtAsync(
         string filePath, Track track, string? baseFolderPath)
