@@ -232,12 +232,16 @@ public class DiscordPresenceService : IDisposable
                 return;
             }
 
-            string stateText = _isPlaying
-                ? string.IsNullOrWhiteSpace(_currentSong.ArtistName)
-                    ? Artist.UnknownArtistName
-                    : string.Format(Resources.Strings.Presence_ByArtist, _currentSong.ArtistName)
-                : string.Format(Resources.Strings.Presence_PausedProgress,
-                    DurationFormatter.Format(_currentProgress), DurationFormatter.Format(_currentSong.Duration));
+            var artist = _currentSong.ArtistName;
+            var progress = DurationFormatter.Format(_currentProgress);
+            var duration = DurationFormatter.Format(_currentSong.Duration);
+            var stateText = (_isPlaying, string.IsNullOrWhiteSpace(artist)) switch
+            {
+                (true, false) => string.Format(Resources.Strings.Presence_ByArtist, artist),
+                (true, true) => Artist.UnknownArtistName,
+                (false, false) => string.Format(Resources.Strings.Presence_PausedByArtist, progress, duration, artist),
+                (false, true) => string.Format(Resources.Strings.Presence_PausedProgress, progress, duration)
+            };
 
             var activity = new DiscordActivity
             {
