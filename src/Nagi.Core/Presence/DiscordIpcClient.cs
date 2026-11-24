@@ -49,9 +49,10 @@ public sealed class DiscordIpcClient : IDisposable
     public void Start() => _loop ??= Task.Run(() => RunAsync(_stop.Token));
 
     /// <summary>
-    ///     Shows the activity once Discord is connected; an activity identical to the one shown is not sent again.
+    ///     Shows the activity once Discord is connected, or clears it when null; an activity identical to the one shown
+    ///     is not sent again.
     /// </summary>
-    public Task SetActivityAsync(DiscordActivity activity)
+    public Task SetActivityAsync(DiscordActivity? activity)
     {
         _activity = activity;
         return SendActivityAsync();
@@ -154,8 +155,10 @@ public sealed class DiscordIpcClient : IDisposable
         await _writeLock.WaitAsync().ConfigureAwait(false);
         try
         {
-            if (_readyStream is not { } stream || _activity is not { } activity || activity == _sentActivity) return;
+            var activity = _activity;
+            if (_readyStream is not { } stream || activity == _sentActivity) return;
 
+            // Without an activity, Discord clears the one shown.
             await WriteFrameAsync(stream, Opcode.Frame, JsonSerializer.Serialize(new
             {
                 cmd = "SET_ACTIVITY",

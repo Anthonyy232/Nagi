@@ -98,6 +98,7 @@ public class DiscordPresenceService : IDisposable
 
     private void OnSettingChanged(Setting setting)
     {
+        if (setting == CoreSettings.DiscordHideWhenPaused) RequestUpdate();
         if (setting != CoreSettings.DiscordRichPresence) return;
         if (_settingsService.Get(CoreSettings.DiscordRichPresence)) Connect();
         else Disconnect();
@@ -149,8 +150,7 @@ public class DiscordPresenceService : IDisposable
 
         if (song is null)
         {
-            // A stopped player still has a track loaded, so it shows as paused rather than clearing the presence,
-            // which is unstable in the library.
+            // Keeps the last track: stopped counts as paused.
             _isPlaying = false;
             _timestamps = null;
             RequestUpdate();
@@ -221,6 +221,12 @@ public class DiscordPresenceService : IDisposable
         {
             var client = _client;
             if (client == null || !_isReady) return;
+
+            if (!_isPlaying && _settingsService.Get(CoreSettings.DiscordHideWhenPaused))
+            {
+                _ = client.SetActivityAsync(null);
+                return;
+            }
 
             if (_currentSong == null)
             {

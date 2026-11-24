@@ -71,6 +71,40 @@ public class DiscordPresenceServiceTests
         longCredit.Should().HaveLength(128).And.StartWith(paused.Replace("Kalimba", "", StringComparison.Ordinal));
     }
 
+    [Fact]
+    public async Task Pausing_WhenHiddenWhilePaused_ClearsTheStatusUntilPlaybackResumes()
+    {
+        await using var discord = new FakeDiscord();
+        _settings.Set(CoreSettings.DiscordHideWhenPaused, true);
+        using var service = await StartPlayingAsync(discord);
+
+        _playback.IsPlaying.Returns(false);
+        _playback.PlaybackStateChanged += Raise.Event<Action>();
+        var (_, cleared) = await discord.ReadAsync();
+        _playback.IsPlaying.Returns(true);
+        _playback.PlaybackStateChanged += Raise.Event<Action>();
+
+        IsClear(cleared).Should().BeTrue();
+        (await discord.ReadActivityAsync()).Should().Contain("Kalimba");
+    }
+
+    [Fact]
+    public async Task TogglingHideWhilePaused_ClearsAndRestoresThePausedStatus()
+    {
+        await using var discord = new FakeDiscord();
+        using var service = await StartPlayingAsync(discord);
+        _playback.IsPlaying.Returns(false);
+        _playback.PlaybackStateChanged += Raise.Event<Action>();
+        var paused = await discord.ReadActivityAsync();
+
+        _settings.Set(CoreSettings.DiscordHideWhenPaused, true);
+        var (_, cleared) = await discord.ReadAsync();
+        _settings.Set(CoreSettings.DiscordHideWhenPaused, false);
+
+        IsClear(cleared).Should().BeTrue();
+        (await discord.ReadActivityAsync()).Should().Be(paused);
+    }
+
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -130,6 +164,11 @@ public class DiscordPresenceServiceTests
         await _albumCovers.Received(1).FindCoverUrlAsync(
             Arg.Is<AlbumCoverQuery>(q => q.Title == "Album" && q.ReleaseId == "release"), Arg.Any<CancellationToken>());
     }
+
+    // Discord clears the status for a missing or null activity.
+    private static bool IsClear(JsonElement frame) =>
+        frame.GetProperty("cmd").GetString() == "SET_ACTIVITY" &&
+        (!frame.GetProperty("args").TryGetProperty("activity", out var activity) || activity.ValueKind == JsonValueKind.Null);
 
     // Connected, with the playing status already read.
     private async Task<DiscordPresenceService> StartPlayingAsync(FakeDiscord discord)

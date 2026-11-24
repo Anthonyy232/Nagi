@@ -947,6 +947,15 @@
                                     ContentTemplate="{StaticResource DiscordSettingCard}"
                                     Style="{StaticResource SettingCardHostStyle}" />
 
+                    <controls:SettingsCard Description="{x:Bind resources:Strings.SettingsPage_DiscordHideWhenPaused_Description, Mode=OneTime}" Header="{x:Bind resources:Strings.SettingsPage_DiscordHideWhenPaused_Header, Mode=OneTime}">
+                        <controls:SettingsCard.HeaderIcon>
+                            <FontIcon Glyph="&#xE769;" />
+                        </controls:SettingsCard.HeaderIcon>
+                        <ToggleSwitch HorizontalAlignment="Right"
+                                      IsEnabled="{x:Bind ViewModel.IsDiscordRichPresenceEnabled, Mode=OneWay}"
+                                      IsOn="{x:Bind ViewModel.IsDiscordHideWhenPausedEnabled, Mode=TwoWay}" />
+                    </controls:SettingsCard>
+
                     <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{x:Bind resources:Strings.SettingsPage_Section_About, Mode=OneTime}" />
 
                     <controls:SettingsExpander Description="{x:Bind resources:Strings.SettingsPage_AboutExpander_Description, Mode=OneTime}"

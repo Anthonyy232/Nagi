@@ -55,6 +55,7 @@ public static class CoreSettings
         ServiceProviders("MetadataServiceProviders", ProviderCatalog.All.Where(p => !p.Can(ProviderCapabilities.Lyrics)));
 
     public static readonly Setting<bool> DiscordRichPresence = Setting.Value("DiscordRichPresenceEnabled", false);
+    public static readonly Setting<bool> DiscordHideWhenPaused = Setting.Value("DiscordHideWhenPausedEnabled", false);
 
     public static readonly Setting<bool> LastFmScrobbling = Setting.Value("LastFmScrobblingEnabled", false);
     public static readonly Setting<bool> LastFmNowPlaying = Setting.Value("LastFmNowPlayingEnabled", false);

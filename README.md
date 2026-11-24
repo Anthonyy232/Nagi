@@ -95,7 +95,7 @@ Settings is grouped into:
 **Optional online services** (off by default)
 
 - Last.fm and ListenBrainz scrobbling, with an offline queue.
-- Discord Rich Presence.
+- Discord Rich Presence, which can hide itself while music is paused.
 - Artist images, biographies and album covers from MusicBrainz, Wikipedia, Cover Art Archive, fanart.tv, TheAudioDB, Deezer, Apple Music and Last.fm.
 - Lyrics from LRCLIB and NetEase.
 
