@@ -187,8 +187,8 @@ public class Song
     public string PrimaryArtistName { get; set; } = Artist.UnknownArtistName;
 
     /// <summary>
-    ///     Denormalized sort key for <see cref="PrimaryArtistName"/> with leading articles stripped.
-    ///     Populated by <see cref="SyncDenormalizedFields"/>.
+    ///     Denormalized <see cref="Artist.SortName"/> of the primary artist, which a sort tag can set. Populated from
+    ///     the name by <see cref="SyncDenormalizedFields"/>.
     /// </summary>
     [Required]
     [MaxLength(500)]

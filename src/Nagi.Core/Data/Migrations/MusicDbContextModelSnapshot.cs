@@ -456,6 +456,10 @@ namespace Nagi.Core.Data.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("SortName")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
                     b.HasKey("SongId", "ArtistId");
 
                     b.HasIndex("ArtistId");

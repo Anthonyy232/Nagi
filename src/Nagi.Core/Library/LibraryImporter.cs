@@ -176,6 +176,12 @@ public sealed class LibraryImporter
         await context.Albums.Where(a => !a.Songs.Any()).ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
         await context.Genres.Where(g => !g.Songs.Any()).ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
 
+        // Removal can drop the sort tag an artist sorted by.
+        var resortedArtistIds = await context.Artists
+            .Where(a => a.SortName != (a.SongArtists.Min(sa => sa.SortName) ?? SortKeyHelper.Normalize(a.Name)))
+            .Select(a => a.Id).ToListAsync(cancellationToken).ConfigureAwait(false);
+        await ApplyArtistSortTagsAsync(context, resortedArtistIds, cancellationToken).ConfigureAwait(false);
+
         var orphanedArtistIds = await context.Artists
             .Where(a => !a.SongArtists.Any() && !a.AlbumArtists.Any())
             .Select(a => a.Id).ToListAsync(cancellationToken).ConfigureAwait(false);
@@ -185,6 +191,38 @@ public sealed class LibraryImporter
             await context.Artists.Where(a => chunk.Contains(a.Id))
                 .ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
         _artwork.DeleteArtistImages(orphanedArtistIds);
+    }
+
+    /// <summary>
+    ///     Gives the artists the alphabetically first sort tag their songs give them, or their name's key when none does,
+    ///     and copies the key to the songs and albums they are the primary artist of.
+    /// </summary>
+    internal static async Task ApplyArtistSortTagsAsync(MusicDbContext context, IEnumerable<Guid> artistIds,
+        CancellationToken cancellationToken)
+    {
+        foreach (var ids in artistIds.Chunk(MusicDbContext.MaxParametersPerQuery))
+        {
+            await context.Artists.Where(a => ids.Contains(a.Id))
+                .ExecuteUpdateAsync(setters => setters.SetProperty(a => a.SortName,
+                    a => a.SongArtists.Min(sa => sa.SortName) ?? SortKeyHelper.Normalize(a.Name)), cancellationToken)
+                .ConfigureAwait(false);
+
+            var primarySongArtists = context.SongArtists.Where(sa => sa.Order == 0 && ids.Contains(sa.ArtistId));
+            var staleSongIds = primarySongArtists.Where(sa => sa.Artist.SortName != sa.Song.PrimaryArtistSortName)
+                .Select(sa => sa.SongId);
+            await context.Songs.Where(s => staleSongIds.Contains(s.Id))
+                .ExecuteUpdateAsync(setters => setters.SetProperty(s => s.PrimaryArtistSortName,
+                    s => primarySongArtists.Where(sa => sa.SongId == s.Id).Select(sa => sa.Artist.SortName).First()), cancellationToken)
+                .ConfigureAwait(false);
+
+            var primaryAlbumArtists = context.AlbumArtists.Where(aa => aa.Order == 0 && ids.Contains(aa.ArtistId));
+            var staleAlbumIds = primaryAlbumArtists.Where(aa => aa.Artist.SortName != aa.Album.PrimaryArtistSortName)
+                .Select(aa => aa.AlbumId);
+            await context.Albums.Where(a => staleAlbumIds.Contains(a.Id))
+                .ExecuteUpdateAsync(setters => setters.SetProperty(a => a.PrimaryArtistSortName,
+                    a => primaryAlbumArtists.Where(aa => aa.AlbumId == a.Id).Select(aa => aa.Artist.SortName).First()), cancellationToken)
+                .ConfigureAwait(false);
+        }
     }
 
     private sealed record SongFiles(List<string> LrcPaths, List<string> CoverPaths);
@@ -312,12 +350,15 @@ internal sealed class SongImport(
                 .ToDictionaryAsync(s => s.FilePath, StringComparer.OrdinalIgnoreCase, cancellationToken).ConfigureAwait(false);
 
         foreach (var metadata in batch) metadata.NormalizeTags(artistSplitCharacters, genreSplitCharacters);
+        // Artists whose sort tags this batch can change, including those the songs no longer credit.
+        var resortedArtistIds = existingSongs.Values.SelectMany(s => s.SongArtists).Select(sa => sa.ArtistId).ToHashSet();
 
         var artistNames = batch.SelectMany(m => m.Artists.Concat(m.AlbumArtists))
             .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         var genreNames = batch.SelectMany(m => m.Genres).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
 
         var artistLookup = ResolveArtists(artistNames);
+        resortedArtistIds.UnionWith(artistLookup.Values.Select(a => a.Id));
         await ApplyTaggedArtistIdsAsync(batch, artistLookup, cancellationToken).ConfigureAwait(false);
         var genreLookup = ResolveGenres(genreNames);
         var albumLookup = await ResolveAlbumsAsync(BuildAlbumDefinitions(batch), artistLookup, cancellationToken).ConfigureAwait(false);
@@ -338,7 +379,13 @@ internal sealed class SongImport(
         // With AutoDetectChangesEnabled=false, collection operations (Clear/Add on navigation properties)
         // may not be reflected in entity states until DetectChanges is called explicitly.
         context.ChangeTracker.DetectChanges();
-        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await using (var transaction = await context.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false))
+        {
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            await LibraryImporter.ApplyArtistSortTagsAsync(context, resortedArtistIds, cancellationToken).ConfigureAwait(false);
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        }
+
         context.ChangeTracker.Clear();
     }
 
@@ -581,10 +628,22 @@ internal sealed class SongImport(
         song.AlbumId = album.Id;
 
         var newSongArtists = metadata.Artists
-            .Select((name, index) => new SongArtist { Artist = artistLookup[name], Order = index })
+            .Select((name, index) => new SongArtist
+            {
+                Artist = artistLookup[name],
+                Order = index,
+                SortName = metadata.ArtistSortNames.ElementAtOrDefault(index) is { } sortName
+                    ? SortKeyHelper.Normalize(sortName)
+                    : null
+            })
             .ToList();
-        if (!song.SongArtists.OrderBy(sa => sa.Order).Select(sa => (sa.ArtistId, sa.Order))
-                .SequenceEqual(newSongArtists.Select(sa => (sa.Artist.Id, sa.Order))))
+        var currentSongArtists = song.SongArtists.OrderBy(sa => sa.Order).ToList();
+        if (currentSongArtists.Select(sa => (sa.ArtistId, sa.Order)).SequenceEqual(newSongArtists.Select(sa => (sa.Artist.Id, sa.Order))))
+        {
+            foreach (var (current, tagged) in currentSongArtists.Zip(newSongArtists))
+                current.SortName = tagged.SortName;
+        }
+        else
         {
             song.SongArtists.Clear();
             foreach (var songArtist in newSongArtists)

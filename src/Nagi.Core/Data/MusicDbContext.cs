@@ -59,6 +59,7 @@ public class MusicDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.HasDbFunction(typeof(SortKeyHelper).GetMethod(nameof(SortKeyHelper.Normalize))!).HasName("nagi_sort_key");
 
         modelBuilder.Entity<Song>(entity =>
         {

@@ -48,14 +48,22 @@ public class SongFileMetadata
     public List<string> MusicBrainzAlbumArtistIds { get; set; } = new();
 
     /// <summary>
+    ///     Artist sort tags as tagged; after <see cref="NormalizeTags"/>, one per artist in <see cref="Artists"/> with
+    ///     null where the tags don't say, or none.
+    /// </summary>
+    public List<string?> ArtistSortNames { get; set; } = new();
+
+    /// <summary>
     ///     Cleans up the tags the way the library stores them, whether they came from a file or a music server: NFC
     ///     and trimmed, names split on the user's split characters without repeats, Unknown for a missing title,
-    ///     artist or album, and the artists for missing album artists. Running it again changes nothing.
+    ///     artist or album, the artists for missing album artists, and sort tags paired with artists. Running it again
+    ///     changes nothing.
     /// </summary>
     internal void NormalizeTags(string artistSplitCharacters, string genreSplitCharacters)
     {
         Title = TextNormalizer.Normalize(Title) ?? Song.UnknownTitle;
         Artists = SplitNames(Artists, artistSplitCharacters);
+        ArtistSortNames = Artists.Count == 0 ? [] : PairSortNames(ArtistSortNames, Artists.Count);
         if (Artists.Count == 0) Artists = [Artist.UnknownArtistName];
         AlbumArtists = SplitNames(AlbumArtists, artistSplitCharacters);
         if (AlbumArtists.Count == 0) AlbumArtists = [.. Artists];
@@ -71,6 +79,12 @@ public class SongFileMetadata
             .OfType<string>()
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
+
+    // A lone sort tag that doesn't pair is the primary artist's.
+    private static List<string?> PairSortNames(List<string?> sortNames, int artistCount) =>
+        sortNames.Count == artistCount ? sortNames
+        : sortNames.Count == 1 ? [sortNames[0], .. Enumerable.Repeat<string?>(null, artistCount - 1)]
+        : [];
 }
 
 public enum ExtractionFailure
