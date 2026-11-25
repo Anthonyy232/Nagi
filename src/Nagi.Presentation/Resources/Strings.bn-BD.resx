@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>গ্রুপিং</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>কাস্টম ট্যাগ</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>এড়িয়ে যাওয়ার সংখ্যা</value>
   </data>
@@ -540,6 +543,9 @@
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>ভলিউম</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>পূর্ণ পর্দা</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>কমিউনিটি-কিউরেটেড গানের কথা ডেটাবেস</value>
   </data>
@@ -769,6 +775,12 @@
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>ফিল্ড</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>ট্যাগের নাম</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>নেভিগেশন মেনুতে দেখান</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>শর্ত</value>
   </data>
@@ -804,6 +816,12 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>অ্যালবামে যান</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>পূর্ণ পর্দা</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>পূর্ণ পর্দা থেকে বের হন</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>সিক করুন</value>
@@ -1498,6 +1516,12 @@
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>Discord-এ আপনার বর্তমান শোনার কার্যকলাপ আপনার স্ট্যাটাস হিসাবে দেখান।</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>বিরতির সময় Discord স্ট্যাটাস লুকান</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>সঙ্গীত বিরতিতে বা বন্ধ থাকলে আপনার Discord স্ট্যাটাস মুছে ফেলুন।</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>স্মার্ট প্লেলিস্ট</value>
   </data>
@@ -1986,6 +2010,9 @@
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>ট্যাগ</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>অন্যান্য ট্যাগ</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>শোনার তথ্য</value>
   </data>
@@ -2275,5 +2302,17 @@
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>এলোমেলো</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>Nagi ভালো লাগছে? GitHub-এ একটি স্টার অন্যদের এটি খুঁজে পেতে সাহায্য করে।</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>Nagi ভালো লাগছে? Microsoft Store-এ একটি রেটিং অন্যদের এটি খুঁজে পেতে সাহায্য করে।</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>GitHub-এ স্টার দিন</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>Store-এ রেটিং দিন</value>
   </data>
 </root>

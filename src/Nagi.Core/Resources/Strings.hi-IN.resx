@@ -242,6 +242,10 @@
     <value>रुका हुआ | {0} / {1}</value>
     <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
   </data>
+  <data name="Presence_PausedByArtist" xml:space="preserve">
+    <value>रुका हुआ | {0} / {1} | {2} द्वारा</value>
+    <comment>{0} is the elapsed time, {1} the track length, e.g. 1:23 / 3:45, and {2} the artist name.</comment>
+  </data>
   <data name="Presence_AppName" xml:space="preserve">
     <value>Nagi म्यूज़िक प्लेयर</value>
   </data>

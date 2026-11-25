@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>Ukusanyaji</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>Lebo Maalum</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>Idadi ya Vilivyorukwa</value>
   </data>
@@ -540,6 +543,9 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>Sauti</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>Skrini Nzima</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>Hifadhidata ya maneno iliyosimamiwa na jamii</value>
   </data>
@@ -769,6 +775,12 @@ Je, unataka kuendelea?</value>
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>Sehemu</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>Jina la Lebo</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>Onyesha kwenye Menyu ya Urambazaji</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>Sharti</value>
   </data>
@@ -804,6 +816,12 @@ Je, unataka kuendelea?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Nenda kwenye Albamu</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>Skrini Nzima</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>Ondoka kwenye Skrini Nzima</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Nafasi ya kucheza</value>
@@ -1498,6 +1516,12 @@ Je, unataka kuendelea?</value>
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>Onyesha shughuli yako ya kusikiliza ya sasa kama hali yako kwenye Discord.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>Ficha Hali ya Discord Wakati Imesitishwa</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>Futa hali yako ya Discord wakati muziki umesitishwa au kusimamishwa.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Orodha ya Kucheza Nadhifu</value>
   </data>
@@ -1986,6 +2010,9 @@ Je, unataka kuendelea?</value>
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>Lebo</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>Lebo Nyingine</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>Usikilizaji</value>
   </data>
@@ -2275,5 +2302,17 @@ Je, unataka kuendelea?</value>
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>Nasibu</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>Unafurahia Nagi? Nyota kwenye GitHub huwasaidia wengine kuipata.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>Unafurahia Nagi? Ukadiriaji kwenye Microsoft Store huwasaidia wengine kuipata.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>Weka Nyota kwenye GitHub</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>Kadiria kwenye Store</value>
   </data>
 </root>

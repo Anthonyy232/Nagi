@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>Gruplama</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>Özel Etiket</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>Atlama Sayısı</value>
   </data>
@@ -540,6 +543,9 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>Ses Seviyesi</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>Tam Ekran</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>Topluluk tarafından derlenmiş şarkı sözleri veritabanı</value>
   </data>
@@ -769,6 +775,12 @@ Devam etmek ister misiniz?</value>
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>Alan</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>Etiket Adı</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>Navigasyon Menüsünde Göster</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>Koşul</value>
   </data>
@@ -804,6 +816,12 @@ Devam etmek ister misiniz?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Albümüne Git</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>Tam Ekran</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>Tam Ekrandan Çık</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Oynatma konumu</value>
@@ -1498,6 +1516,12 @@ Devam etmek ister misiniz?</value>
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>Geçerli dinleme etkinliğinizi Discord'da durumunuz olarak gösterin.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>Duraklatıldığında Discord Durumunu Gizle</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>Müzik duraklatılmış veya durdurulmuşken Discord durumunuzu temizler.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Akıllı Çalma Listesi</value>
   </data>
@@ -1986,6 +2010,9 @@ Devam etmek ister misiniz?</value>
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>Etiketler</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>Diğer Etiketler</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>Dinleme</value>
   </data>
@@ -2275,5 +2302,17 @@ Devam etmek ister misiniz?</value>
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>Rastgele</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>Nagi'yi beğendiniz mi? GitHub'da bir yıldız, başkalarının onu bulmasına yardımcı olur.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>Nagi'yi beğendiniz mi? Microsoft Store'da bir değerlendirme, başkalarının onu bulmasına yardımcı olur.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>GitHub'da Yıldız Ver</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>Store'da Değerlendir</value>
   </data>
 </root>

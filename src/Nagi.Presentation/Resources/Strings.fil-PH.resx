@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>Paggrupo</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>Custom na Tag</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>Bilang ng Nilaktawan</value>
   </data>
@@ -540,6 +543,9 @@ Mga file na hindi ma-import: {0}.</value>
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>Volume</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>Full Screen</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>Database ng liriko na curated ng komunidad</value>
   </data>
@@ -769,6 +775,12 @@ Gusto mo bang magpatuloy?</value>
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>Patlang</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>Pangalan ng Tag</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>Ipakita sa Navigation Menu</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>Kondisyon</value>
   </data>
@@ -804,6 +816,12 @@ Gusto mo bang magpatuloy?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Pumunta sa Album</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>Full Screen</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>Lumabas sa Full Screen</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Posisyon ng pagtugtog</value>
@@ -1498,6 +1516,12 @@ Gusto mo bang magpatuloy?</value>
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>Ipakita ang iyong kasalukuyang aktibidad sa pakikinig bilang iyong status sa Discord.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>Itago ang Discord Status Kapag Naka-pause</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>I-clear ang iyong Discord status habang naka-pause o nakahinto ang musika.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Smart Playlist</value>
   </data>
@@ -1986,6 +2010,9 @@ Gusto mo bang magpatuloy?</value>
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>Mga Tag</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>Iba Pang Tag</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>Pakikinig</value>
   </data>
@@ -2275,5 +2302,17 @@ Gusto mo bang magpatuloy?</value>
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>Random</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>Nagugustuhan mo ba ang Nagi? Nakakatulong ang star sa GitHub para mahanap ito ng iba.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>Nagugustuhan mo ba ang Nagi? Nakakatulong ang rating sa Microsoft Store para mahanap ito ng iba.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>Mag-star sa GitHub</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>I-rate sa Store</value>
   </data>
 </root>

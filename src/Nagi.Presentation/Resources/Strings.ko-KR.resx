@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>그룹화</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>사용자 지정 태그</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>건너뛴 횟수</value>
   </data>
@@ -540,6 +543,9 @@
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>볼륨</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>전체 화면</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>커뮤니티에서 큐레이션한 가사 데이터베이스</value>
   </data>
@@ -769,6 +775,12 @@
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>필드</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>태그 이름</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>탐색 메뉴에 표시</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>조건</value>
   </data>
@@ -804,6 +816,12 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>앨범으로 이동</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>전체 화면</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>전체 화면 종료</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>재생 위치</value>
@@ -1498,6 +1516,12 @@
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>Discord 상태에 현재 듣고 있는 활동을 표시합니다.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>일시 정지 시 Discord 상태 숨기기</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>음악이 일시 정지되거나 중지된 동안 Discord 상태를 지웁니다.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>스마트 재생목록</value>
   </data>
@@ -1986,6 +2010,9 @@
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>태그</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>기타 태그</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>재생 기록</value>
   </data>
@@ -2275,5 +2302,17 @@
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>무작위</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>Nagi가 마음에 드시나요? GitHub에서 별을 주시면 다른 사람들이 찾는 데 도움이 됩니다.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>Nagi가 마음에 드시나요? Microsoft Store에서 평가해 주시면 다른 사람들이 찾는 데 도움이 됩니다.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>GitHub에서 별 주기</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>Store에서 평가하기</value>
   </data>
 </root>

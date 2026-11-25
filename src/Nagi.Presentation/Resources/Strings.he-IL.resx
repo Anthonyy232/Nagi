@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>קיבוץ</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>תגית מותאמת אישית</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>מספר דילוגים</value>
   </data>
@@ -540,6 +543,9 @@
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>עוצמת קול</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>מסך מלא</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>מאגר מילות שירים המנוהל על ידי הקהילה</value>
   </data>
@@ -769,6 +775,12 @@
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>שדה</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>שם התגית</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>הצג בתפריט הניווט</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>תנאי</value>
   </data>
@@ -804,6 +816,12 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>עבור לאלבום</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>מסך מלא</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>יציאה ממסך מלא</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>מיקום בהשמעה</value>
@@ -1498,6 +1516,12 @@
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>הצג את פעילות ההאזנה הנוכחית שלך כסטטוס ב-Discord.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>הסתר את סטטוס Discord בהשהיה</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>מנקה את סטטוס ה-Discord שלך כשהמוזיקה מושהית או נעצרה.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>רשימת השמעה חכמה</value>
   </data>
@@ -1986,6 +2010,9 @@
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>תגיות</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>תגיות אחרות</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>האזנה</value>
   </data>
@@ -2275,5 +2302,17 @@
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>אקראי</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>נהנים מ-Nagi? כוכב ב-GitHub עוזר לאחרים למצוא אותו.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>נהנים מ-Nagi? דירוג ב-Microsoft Store עוזר לאחרים למצוא אותו.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>סמן בכוכב ב-GitHub</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>דרג ב-Store</value>
   </data>
 </root>

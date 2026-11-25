@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>گروه‌بندی</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>برچسب سفارشی</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>تعداد رد کردن</value>
   </data>
@@ -540,6 +543,9 @@
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>صدا</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>تمام‌صفحه</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>پایگاه داده متن ترانه با گردآوری جامعه</value>
   </data>
@@ -769,6 +775,12 @@
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>فیلد</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>نام برچسب</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>نمایش در منوی ناوبری</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>شرط</value>
   </data>
@@ -804,6 +816,12 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>رفتن به آلبوم</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>تمام‌صفحه</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>خروج از تمام‌صفحه</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>موقعیت پخش</value>
@@ -1498,6 +1516,12 @@
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>فعالیت گوش دادن فعلی خود را به عنوان وضعیت شما در Discord نمایش دهید.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>پنهان کردن وضعیت Discord هنگام مکث</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>وضعیت Discord شما را هنگامی که موسیقی مکث یا متوقف شده است پاک می‌کند.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>لیست پخش هوشمند</value>
   </data>
@@ -1986,6 +2010,9 @@
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>برچسب‌ها</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>برچسب‌های دیگر</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>شنیدن</value>
   </data>
@@ -2275,5 +2302,17 @@
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>تصادفی</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>از Nagi لذت می‌برید؟ یک ستاره در GitHub به دیگران کمک می‌کند آن را پیدا کنند.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>از Nagi لذت می‌برید؟ یک امتیاز در Microsoft Store به دیگران کمک می‌کند آن را پیدا کنند.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>ستاره دادن در GitHub</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>امتیاز دادن در Store</value>
   </data>
 </root>

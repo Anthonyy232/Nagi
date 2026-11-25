@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>Групування</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>Користувацький тег</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>Кількість пропусків</value>
   </data>
@@ -540,6 +543,9 @@
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>Гучність</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>Повний екран</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>База даних текстів пісень, створена спільнотою</value>
   </data>
@@ -769,6 +775,12 @@
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>Поле</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>Назва тегу</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>Показувати в меню навігації</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>Умова</value>
   </data>
@@ -804,6 +816,12 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Перейти до альбому</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>Повний екран</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>Вийти з повноекранного режиму</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Позиція відтворення</value>
@@ -1498,6 +1516,12 @@
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>Показуйте свою поточну діяльність прослуховування як ваш статус у Discord.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>Приховувати статус Discord на паузі</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>Очищає ваш статус у Discord, поки музику призупинено або зупинено.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Розумний список відтворення</value>
   </data>
@@ -1986,6 +2010,9 @@
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>Теги</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>Інші теги</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>Прослуховування</value>
   </data>
@@ -2275,5 +2302,17 @@
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>Випадково</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>Подобається Nagi? Зірка на GitHub допомагає іншим знайти застосунок.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>Подобається Nagi? Оцінка в Microsoft Store допомагає іншим знайти застосунок.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>Поставити зірку на GitHub</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>Оцінити в Store</value>
   </data>
 </root>

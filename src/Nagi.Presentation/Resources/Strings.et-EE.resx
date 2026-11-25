@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>Rühmitamine</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>Kohandatud silt</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>Vahelejätmiste arv</value>
   </data>
@@ -540,6 +543,9 @@ Failid, mida ei õnnestunud importida: {0}.</value>
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>Helitugevus</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>Täisekraan</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>Kogukonna kureeritud laulusõnade andmebaas</value>
   </data>
@@ -769,6 +775,12 @@ Kas soovite jätkata?</value>
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>Väli</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>Sildi nimi</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>Näita navigeerimismenüüs</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>Tingimus</value>
   </data>
@@ -804,6 +816,12 @@ Kas soovite jätkata?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Mine albumile</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>Täisekraan</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>Välju täisekraanilt</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Esituskoht</value>
@@ -1498,6 +1516,12 @@ Kas soovite jätkata?</value>
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>Näita oma praegust kuulamistegevust Discordi staatusena.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>Peida Discordi staatus pausi ajal</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>Tühjenda oma Discordi staatus, kui muusika on pausil või peatatud.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Nutikas esitusloend</value>
   </data>
@@ -1986,6 +2010,9 @@ Kas soovite jätkata?</value>
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>Sildid</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>Muud sildid</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>Kuulamine</value>
   </data>
@@ -2275,5 +2302,17 @@ Kas soovite jätkata?</value>
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>Juhuslik</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>Kas Nagi meeldib sulle? Tärn GitHubis aitab teistel seda leida.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>Kas Nagi meeldib sulle? Hinnang Microsoft Store'is aitab teistel seda leida.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>Anna GitHubis tärn</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>Hinda Store'is</value>
   </data>
 </root>

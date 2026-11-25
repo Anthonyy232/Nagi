@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>Agrupament</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>Etiqueta personalitzada</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>Comptador d'omissions</value>
   </data>
@@ -540,6 +543,9 @@ Fitxers que no s'han pogut importar: {0}.</value>
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>Volum</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>Pantalla completa</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>Base de dades de lletres curada per la comunitat</value>
   </data>
@@ -769,6 +775,12 @@ Vols continuar?</value>
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>Camp</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>Nom de l'etiqueta</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>Mostra al menú de navegació</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>Condició</value>
   </data>
@@ -804,6 +816,12 @@ Vols continuar?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Vés a l'àlbum</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>Pantalla completa</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>Surt de la pantalla completa</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Posició de reproducció</value>
@@ -1498,6 +1516,12 @@ Vols continuar?</value>
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>Mostra la teva activitat d'escolta actual com a estat a Discord.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>Amaga l'estat de Discord en pausa</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>Esborra el teu estat de Discord mentre la música està en pausa o aturada.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Llista de reproducció intel·ligent</value>
   </data>
@@ -1986,6 +2010,9 @@ Vols continuar?</value>
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>Etiquetes</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>Altres etiquetes</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>Escolta</value>
   </data>
@@ -2275,5 +2302,17 @@ Vols continuar?</value>
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>Aleatori</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>T'agrada Nagi? Una estrella a GitHub ajuda altres persones a trobar-lo.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>T'agrada Nagi? Una valoració a la Microsoft Store ajuda altres persones a trobar-lo.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>Posa una estrella a GitHub</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>Valora a la Store</value>
   </data>
 </root>

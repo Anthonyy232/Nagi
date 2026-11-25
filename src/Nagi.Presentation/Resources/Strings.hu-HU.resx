@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>Csoportosítás</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>Egyéni címke</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>Átugrások száma</value>
   </data>
@@ -540,6 +543,9 @@ Nem importálható fájlok: {0}.</value>
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>Hangerő</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>Teljes képernyő</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>Közösség által gondozott dalszöveg adatbázis</value>
   </data>
@@ -769,6 +775,12 @@ Szeretné folytatni?</value>
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>Mező</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>Címke neve</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>Megjelenítés a navigációs menüben</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>Feltétel</value>
   </data>
@@ -804,6 +816,12 @@ Szeretné folytatni?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Ugrás az albumhoz</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>Teljes képernyő</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>Kilépés a teljes képernyőből</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Lejátszási pozíció</value>
@@ -1498,6 +1516,12 @@ Szeretné folytatni?</value>
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>Jelenítse meg aktuális hallgatási tevékenységét Discord állapotként.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>Discord állapot elrejtése szüneteltetéskor</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>Törli a Discord állapotát, amíg a zene szünetel vagy le van állítva.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Intelligens lejátszási lista</value>
   </data>
@@ -1986,6 +2010,9 @@ Szeretné folytatni?</value>
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>Címkék</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>Egyéb címkék</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>Hallgatás</value>
   </data>
@@ -2275,5 +2302,17 @@ Szeretné folytatni?</value>
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>Véletlenszerű</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>Tetszik a Nagi? Egy csillag a GitHubon segít másoknak megtalálni.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>Tetszik a Nagi? Egy értékelés a Microsoft Store-ban segít másoknak megtalálni.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>Csillagozás a GitHubon</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>Értékelés a Store-ban</value>
   </data>
 </root>

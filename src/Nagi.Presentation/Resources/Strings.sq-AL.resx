@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>Grupimi</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>Etiketë e personalizuar</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>Numri i anashkalimeve</value>
   </data>
@@ -540,6 +543,9 @@ Skedarët që nuk u mundësuan të importohen: {0}.</value>
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>Volum</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>Ekran i plotë</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>Baza e të dhënave të teksteve të kuruar nga komuniteti</value>
   </data>
@@ -769,6 +775,12 @@ Dëshironi të vazhdoni?</value>
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>Fusha</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>Emri i etiketës</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>Shfaq në menynë e navigimit</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>Kushti</value>
   </data>
@@ -804,6 +816,12 @@ Dëshironi të vazhdoni?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Shko te albumi</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>Ekran i plotë</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>Dil nga ekrani i plotë</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Pozicioni i luajtjes</value>
@@ -1498,6 +1516,12 @@ Dëshironi të vazhdoni?</value>
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>Shfaqni aktivitetin tuaj aktual të dëgjimit si statusin tuaj në Discord.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>Fshih statusin e Discord gjatë pauzës</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>Pastron statusin tuaj në Discord ndërsa muzika është në pauzë ose e ndalur.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Listë inteligjente luajtjeje</value>
   </data>
@@ -1986,6 +2010,9 @@ Dëshironi të vazhdoni?</value>
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>Etiketat</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>Etiketa të tjera</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>Dëgjimi</value>
   </data>
@@ -2275,5 +2302,17 @@ Dëshironi të vazhdoni?</value>
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>Rastësor</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>Po ju pëlqen Nagi? Një yll në GitHub i ndihmon të tjerët ta gjejnë.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>Po ju pëlqen Nagi? Një vlerësim në Microsoft Store i ndihmon të tjerët ta gjejnë.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>Jepni një yll në GitHub</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>Vlerësoni në Store</value>
   </data>
 </root>

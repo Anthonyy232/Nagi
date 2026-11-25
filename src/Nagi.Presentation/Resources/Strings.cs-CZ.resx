@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>Seskupení</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>Vlastní značka</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>Počet přeskočení</value>
   </data>
@@ -540,6 +543,9 @@ Soubory, které se nepodařilo importovat: {0}.</value>
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>Hlasitost</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>Celá obrazovka</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>Komunitou spravovaná databáze textů písní</value>
   </data>
@@ -769,6 +775,12 @@ Chcete pokračovat?</value>
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>Pole</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>Název značky</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>Zobrazit v navigační nabídce</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>Podmínka</value>
   </data>
@@ -804,6 +816,12 @@ Chcete pokračovat?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Přejít na album</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>Celá obrazovka</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>Ukončit režim celé obrazovky</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Pozice přehrávání</value>
@@ -1498,6 +1516,12 @@ Chcete pokračovat?</value>
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>Zobrazit vaši aktuální poslechovou aktivitu jako váš stav na Discordu.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>Skrýt stav na Discordu při pozastavení</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>Vymaže váš stav na Discordu, když je hudba pozastavená nebo zastavená.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Chytrý seznam skladeb</value>
   </data>
@@ -1986,6 +2010,9 @@ Chcete pokračovat?</value>
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>Značky</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>Další značky</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>Poslech</value>
   </data>
@@ -2275,5 +2302,17 @@ Chcete pokračovat?</value>
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>Náhodně</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>Líbí se vám Nagi? Hvězdička na GitHubu pomůže ostatním ho najít.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>Líbí se vám Nagi? Hodnocení v Microsoft Storu pomůže ostatním ho najít.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>Dát hvězdičku na GitHubu</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>Ohodnotit ve Storu</value>
   </data>
 </root>

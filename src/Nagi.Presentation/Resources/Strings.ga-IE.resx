@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>Grúpáil</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>Clib Shaincheaptha</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>Líon na Léimeanna</value>
   </data>
@@ -533,6 +536,9 @@ Comhaid nárbh fhéidir a iompórtáil: {0}.</value>
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>Toirt</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>Lánscáileán</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>Bunachar sonraí liricí coimeádta ag an bpobal</value>
   </data>
@@ -759,6 +765,12 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>Réimse</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>Ainm na Clibe</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>Taispeáin sa Roghchlár Nascleanúna</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>Coinníoll</value>
   </data>
@@ -794,6 +806,12 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Gabh go dtí an tAlbam</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>Lánscáileán</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>Scoir den Lánscáileán</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Suíomh Seinnte</value>
@@ -1485,6 +1503,12 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>Taispeáin do ghníomhaíocht éisteachta reatha mar do stádas ar Discord.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>Folaigh Stádas Discord ar Sos</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>Glan do stádas Discord fad is atá an ceol ar sos nó stoptha.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Seinmliosta Cliste</value>
   </data>
@@ -1964,6 +1988,9 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>Clibeanna</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>Clibeanna Eile</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>Éisteacht</value>
   </data>
@@ -2095,5 +2122,17 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>Randamach</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>An dtaitníonn Nagi leat? Cabhraíonn réalta ar GitHub le daoine eile teacht air.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>An dtaitníonn Nagi leat? Cabhraíonn rátáil ar an Microsoft Store le daoine eile teacht air.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>Tabhair réalta ar GitHub</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>Rátáil ar an Store</value>
   </data>
 </root>

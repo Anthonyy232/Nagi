@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>分组</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>自定义标签</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>跳过次数</value>
   </data>
@@ -540,6 +543,9 @@
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>音量</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>全屏</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>社区维护的歌词数据库</value>
   </data>
@@ -769,6 +775,12 @@
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>字段</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>标签名称</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>在导航菜单中显示</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>条件</value>
   </data>
@@ -804,6 +816,12 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>转到专辑</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>全屏</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>退出全屏</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>播放进度</value>
@@ -1498,6 +1516,12 @@
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>在 Discord 上显示您当前的收听活动作为您的状态。</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>暂停时隐藏 Discord 状态</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>音乐暂停或停止时清除您的 Discord 状态。</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>智能播放列表</value>
   </data>
@@ -1986,6 +2010,9 @@
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>标签</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>其他标签</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>播放记录</value>
   </data>
@@ -2275,5 +2302,17 @@
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>随机</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>喜欢 Nagi 吗？在 GitHub 上点个星标能帮助更多人发现它。</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>喜欢 Nagi 吗？在 Microsoft Store 上评分能帮助更多人发现它。</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>在 GitHub 上加星标</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>在 Store 中评分</value>
   </data>
 </root>

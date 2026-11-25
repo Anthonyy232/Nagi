@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>التجميع</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>وسم مخصص</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>عدد التخطي</value>
   </data>
@@ -540,6 +543,9 @@
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>الصوت</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>ملء الشاشة</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>قاعدة بيانات كلمات الأغاني المنسقة من المجتمع</value>
   </data>
@@ -769,6 +775,12 @@
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>الحقل</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>اسم الوسم</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>إظهار في قائمة التنقل</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>الشرط</value>
   </data>
@@ -804,6 +816,12 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>الانتقال إلى الألبوم</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>ملء الشاشة</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>الخروج من ملء الشاشة</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>موضع التشغيل</value>
@@ -1498,6 +1516,12 @@
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>أظهر نشاط الاستماع الحالي الخاص بك كحالة لك على Discord.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>إخفاء حالة Discord عند الإيقاف المؤقت</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>امسح حالتك على Discord أثناء إيقاف الموسيقى مؤقتًا أو إيقافها.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>قائمة تشغيل ذكية</value>
   </data>
@@ -1986,6 +2010,9 @@
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>الوسوم</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>وسوم أخرى</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>الاستماع</value>
   </data>
@@ -2275,5 +2302,17 @@
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>عشوائي</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>هل يعجبك Nagi؟ نجمة على GitHub تساعد الآخرين في العثور عليه.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>هل يعجبك Nagi؟ تقييم على Microsoft Store يساعد الآخرين في العثور عليه.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>أضف نجمة على GitHub</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>قيّم على المتجر</value>
   </data>
 </root>

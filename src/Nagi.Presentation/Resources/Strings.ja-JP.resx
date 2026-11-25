@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>グループ化</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>カスタムタグ</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>スキップ回数</value>
   </data>
@@ -540,6 +543,9 @@
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>音量</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>全画面表示</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>コミュニティでキュレーションされた歌詞データベース</value>
   </data>
@@ -769,6 +775,12 @@
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>フィールド</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>タグ名</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>ナビゲーションメニューに表示</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>条件</value>
   </data>
@@ -804,6 +816,12 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>アルバムへ移動</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>全画面表示</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>全画面表示を終了</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>再生位置</value>
@@ -1498,6 +1516,12 @@
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>Discordで現在の再生アクティビティをステータスとして表示します。</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>一時停止中は Discord ステータスを非表示</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>音楽が一時停止中または停止中は Discord ステータスを消去します。</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>スマートプレイリスト</value>
   </data>
@@ -1986,6 +2010,9 @@
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>タグ</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>その他のタグ</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>再生履歴</value>
   </data>
@@ -2275,5 +2302,17 @@
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>ランダム</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>Nagi を気に入っていただけましたか？GitHub でスターを付けると、ほかの人が見つけやすくなります。</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>Nagi を気に入っていただけましたか？Microsoft Store で評価すると、ほかの人が見つけやすくなります。</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>GitHub でスターを付ける</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>Store で評価する</value>
   </data>
 </root>

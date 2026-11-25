@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>Grupiranje</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>Prilagođena oznaka</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>Broj preskakanja</value>
   </data>
@@ -540,6 +543,9 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>Glasnoća</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>Cijeli zaslon</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>Baza podataka tekstova pjesama koju uređuje zajednica</value>
   </data>
@@ -769,6 +775,12 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>Polje</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>Naziv oznake</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>Prikaži u navigacijskom izborniku</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>Uvjet</value>
   </data>
@@ -804,6 +816,12 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Idi na album</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>Cijeli zaslon</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>Izađi iz cijelog zaslona</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Položaj reprodukcije</value>
@@ -1498,6 +1516,12 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>Prikažite svoju trenutnu aktivnost slušanja kao svoj status na Discordu.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>Sakrij Discord status tijekom pauze</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>Briše vaš Discord status dok je glazba pauzirana ili zaustavljena.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Pametni popis pjesama</value>
   </data>
@@ -1986,6 +2010,9 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>Oznake</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>Ostale oznake</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>Slušanje</value>
   </data>
@@ -2275,5 +2302,17 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>Nasumično</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>Sviđa vam se Nagi? Zvjezdica na GitHubu pomaže drugima da ga pronađu.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>Sviđa vam se Nagi? Ocjena u Microsoft Storeu pomaže drugima da ga pronađu.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>Dodijeli zvjezdicu na GitHubu</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>Ocijeni u Storeu</value>
   </data>
 </root>

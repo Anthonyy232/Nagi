@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>குழுவாக்கம்</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>தனிப்பயன் குறிச்சொல்</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>தவிர்க்கப்பட்ட எண்ணிக்கை</value>
   </data>
@@ -540,6 +543,9 @@
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>ஒலி அளவு</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>முழுத்திரை</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>சமூகத்தால் தொகுக்கப்பட்ட பாடல் வரிகள் தரவுத்தளம்</value>
   </data>
@@ -769,6 +775,12 @@
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>புலம்</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>குறிச்சொல் பெயர்</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>வழிசெலுத்தல் பட்டியலில் காட்டு</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>நிபந்தனை</value>
   </data>
@@ -804,6 +816,12 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>ஆல்பத்திற்குச் செல்</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>முழுத்திரை</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>முழுத்திரையிலிருந்து வெளியேறு</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>இயக்க நிலையை நகர்த்து</value>
@@ -1498,6 +1516,12 @@
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>Discord-இல் உங்கள் தற்போதைய கேட்புச் செயல்பாட்டை உங்கள் நிலையாகக் காட்டுங்கள்.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>இடைநிறுத்தத்தின் போது Discord நிலையை மறை</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>இசை இடைநிறுத்தப்பட்டிருக்கும் அல்லது நிறுத்தப்பட்டிருக்கும் போது உங்கள் Discord நிலையை அழிக்கும்.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>ஸ்மார்ட் பிளேலிஸ்ட்</value>
   </data>
@@ -1986,6 +2010,9 @@
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>குறிச்சொற்கள்</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>பிற குறிச்சொற்கள்</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>கேட்கும் விவரம்</value>
   </data>
@@ -2275,5 +2302,17 @@
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>சீரற்ற வரிசை</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>Nagi பிடித்திருக்கிறதா? GitHub-இல் ஒரு நட்சத்திரம் மற்றவர்கள் இதைக் கண்டறிய உதவும்.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>Nagi பிடித்திருக்கிறதா? Microsoft Store-இல் ஒரு மதிப்பீடு மற்றவர்கள் இதைக் கண்டறிய உதவும்.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>GitHub-இல் நட்சத்திரம் இடு</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>Store-இல் மதிப்பிடு</value>
   </data>
 </root>

@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>Zoskupenie</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>Vlastná značka</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>Počet preskočení</value>
   </data>
@@ -540,6 +543,9 @@ Súbory, ktoré sa nepodarilo importovať: {0}.</value>
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>Hlasitosť</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>Celá obrazovka</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>Komunitne spravovaná databáza textov</value>
   </data>
@@ -769,6 +775,12 @@ Chcete pokračovať?</value>
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>Pole</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>Názov značky</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>Zobraziť v navigačnej ponuke</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>Podmienka</value>
   </data>
@@ -804,6 +816,12 @@ Chcete pokračovať?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Prejsť na album</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>Celá obrazovka</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>Ukončiť režim celej obrazovky</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Pozícia prehrávania</value>
@@ -1498,6 +1516,12 @@ Chcete pokračovať?</value>
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>Zobraziť vašu aktuálnu aktivitu počúvania ako stav na Discorde.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>Skryť stav na Discorde pri pozastavení</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>Vymaže váš stav na Discorde, kým je hudba pozastavená alebo zastavená.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Inteligentný zoznam skladieb</value>
   </data>
@@ -1986,6 +2010,9 @@ Chcete pokračovať?</value>
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>Značky</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>Ďalšie značky</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>Počúvanie</value>
   </data>
@@ -2275,5 +2302,17 @@ Chcete pokračovať?</value>
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>Náhodne</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>Páči sa vám Nagi? Hviezdička na GitHube pomôže ostatným ho nájsť.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>Páči sa vám Nagi? Hodnotenie v Microsoft Store pomôže ostatným ho nájsť.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>Dať hviezdičku na GitHube</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>Ohodnotiť v Store</value>
   </data>
 </root>

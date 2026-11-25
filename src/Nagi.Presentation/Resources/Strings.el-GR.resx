@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>Ομαδοποίηση</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>Προσαρμοσμένη ετικέτα</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>Αριθμός προσπεράσεων</value>
   </data>
@@ -540,6 +543,9 @@
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>Ένταση</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>Πλήρης οθόνη</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>Βάση δεδομένων στίχων που επιμελείται η κοινότητα</value>
   </data>
@@ -769,6 +775,12 @@
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>Πεδίο</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>Όνομα ετικέτας</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>Εμφάνιση στο μενού πλοήγησης</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>Συνθήκη</value>
   </data>
@@ -804,6 +816,12 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Μετάβαση στο άλμπουμ</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>Πλήρης οθόνη</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>Έξοδος από πλήρη οθόνη</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Θέση αναπαραγωγής</value>
@@ -1498,6 +1516,12 @@
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>Εμφανίστε την τρέχουσα δραστηριότητα ακρόασης ως την κατάστασή σας στο Discord.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>Απόκρυψη κατάστασης Discord σε παύση</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>Διαγράφει την κατάστασή σας στο Discord όσο η μουσική είναι σε παύση ή έχει σταματήσει.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Έξυπνη λίστα αναπαραγωγής</value>
   </data>
@@ -1986,6 +2010,9 @@
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>Ετικέτες</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>Άλλες ετικέτες</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>Ακρόαση</value>
   </data>
@@ -2275,5 +2302,17 @@
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>Τυχαία</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>Σας αρέσει το Nagi; Ένα αστέρι στο GitHub βοηθά και άλλους να το βρουν.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>Σας αρέσει το Nagi; Μια βαθμολογία στο Microsoft Store βοηθά και άλλους να το βρουν.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>Δώστε αστέρι στο GitHub</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>Βαθμολογήστε στο Store</value>
   </data>
 </root>

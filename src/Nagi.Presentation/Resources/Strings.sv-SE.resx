@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>Gruppering</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>Anpassad tagg</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>Antal överhoppningar</value>
   </data>
@@ -540,6 +543,9 @@ Filer som inte kunde importeras: {0}.</value>
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>Volym</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>Helskärm</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>Gemenskapskurerad databas för låttexter</value>
   </data>
@@ -769,6 +775,12 @@ Vill du fortsätta?</value>
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>Fält</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>Taggnamn</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>Visa i navigeringsmenyn</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>Villkor</value>
   </data>
@@ -804,6 +816,12 @@ Vill du fortsätta?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Gå till album</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>Helskärm</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>Avsluta helskärm</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Uppspelningsposition</value>
@@ -1498,6 +1516,12 @@ Vill du fortsätta?</value>
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>Visa din nuvarande lyssningsaktivitet som din status på Discord.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>Dölj Discord-status vid paus</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>Rensa din Discord-status medan musiken är pausad eller stoppad.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Smart spellista</value>
   </data>
@@ -1986,6 +2010,9 @@ Vill du fortsätta?</value>
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>Taggar</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>Andra taggar</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>Lyssning</value>
   </data>
@@ -2275,5 +2302,17 @@ Vill du fortsätta?</value>
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>Slumpmässigt</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>Gillar du Nagi? En stjärna på GitHub hjälper andra att hitta den.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>Gillar du Nagi? Ett betyg i Microsoft Store hjälper andra att hitta den.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>Ge en stjärna på GitHub</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>Betygsätt i Store</value>
   </data>
 </root>

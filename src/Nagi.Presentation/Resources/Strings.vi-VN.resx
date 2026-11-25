@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>Gom nhóm</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>Thẻ tùy chỉnh</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>Số lần bỏ qua</value>
   </data>
@@ -540,6 +543,9 @@ Các tệp không thể nhập: {0}.</value>
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>Âm lượng</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>Toàn màn hình</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>Cơ sở dữ liệu lời bài hát do cộng đồng quản lý</value>
   </data>
@@ -769,6 +775,12 @@ Bạn có muốn tiếp tục không?</value>
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>Trường</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>Tên thẻ</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>Hiển thị trong menu điều hướng</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>Điều kiện</value>
   </data>
@@ -804,6 +816,12 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Đi tới album</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>Toàn màn hình</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>Thoát toàn màn hình</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Vị trí phát</value>
@@ -1498,6 +1516,12 @@ Bạn có muốn tiếp tục không?</value>
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>Hiển thị hoạt động nghe hiện tại của bạn làm trạng thái trên Discord.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>Ẩn trạng thái Discord khi tạm dừng</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>Xóa trạng thái Discord của bạn khi nhạc đang tạm dừng hoặc đã dừng.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Danh sách phát thông minh</value>
   </data>
@@ -1986,6 +2010,9 @@ Bạn có muốn tiếp tục không?</value>
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>Thẻ</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>Thẻ khác</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>Lịch sử nghe</value>
   </data>
@@ -2275,5 +2302,17 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>Ngẫu nhiên</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>Bạn thích Nagi chứ? Một ngôi sao trên GitHub giúp người khác tìm thấy ứng dụng.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>Bạn thích Nagi chứ? Một đánh giá trên Microsoft Store giúp người khác tìm thấy ứng dụng.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>Gắn sao trên GitHub</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>Đánh giá trên Store</value>
   </data>
 </root>

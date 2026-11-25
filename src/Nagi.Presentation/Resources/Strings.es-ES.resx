@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>Agrupación</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>Etiqueta personalizada</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>Recuento de omisiones</value>
   </data>
@@ -540,6 +543,9 @@ Archivos que no se pudieron importar: {0}.</value>
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>Volumen</value>
   </data>
+  <data name="Settings_Button_FullScreen" xml:space="preserve">
+    <value>Pantalla completa</value>
+  </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
     <value>Base de datos de letras curada por la comunidad</value>
   </data>
@@ -769,6 +775,12 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>Campo</value>
   </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>Nombre de la etiqueta</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>Mostrar en el menú de navegación</value>
+  </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>Condición</value>
   </data>
@@ -804,6 +816,12 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Ir al álbum</value>
+  </data>
+  <data name="Player_FullScreenButton_ToolTip" xml:space="preserve">
+    <value>Pantalla completa</value>
+  </data>
+  <data name="Player_ExitFullScreenButton_ToolTip" xml:space="preserve">
+    <value>Salir de pantalla completa</value>
   </data>
   <data name="Player_SeekSlider_Name" xml:space="preserve">
     <value>Posición de reproducción</value>
@@ -1498,6 +1516,12 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>Muestra tu actividad de escucha actual como tu estado en Discord.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>Ocultar el estado de Discord en pausa</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>Borra tu estado de Discord mientras la música está en pausa o detenida.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Lista de reproducción inteligente</value>
   </data>
@@ -1986,6 +2010,9 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>Etiquetas</value>
   </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>Otras etiquetas</value>
+  </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>Escucha</value>
   </data>
@@ -2275,5 +2302,17 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>Aleatorio</value>
+  </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>¿Te gusta Nagi? Una estrella en GitHub ayuda a otras personas a encontrarlo.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>¿Te gusta Nagi? Una valoración en Microsoft Store ayuda a otras personas a encontrarlo.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>Dar una estrella en GitHub</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>Valorar en la Store</value>
   </data>
 </root>
