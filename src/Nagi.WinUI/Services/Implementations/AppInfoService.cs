@@ -17,6 +17,8 @@ public class AppInfoService : IAppInfoService
         _logger = logger;
     }
 
+    public bool IsStoreInstall => Package.Current.SignatureKind == PackageSignatureKind.Store;
+
     public string GetAppName()
     {
         return Package.Current.DisplayName;

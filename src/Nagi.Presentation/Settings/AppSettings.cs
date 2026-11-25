@@ -66,6 +66,9 @@ public static class AppSettings
     /// <summary>The values <see cref="SongsPerPage" /> offers, smallest first.</summary>
     public static IReadOnlyList<int> PageSizeOptions { get; } = [25, 50, 100, 250, 500, 0];
 
+    public static readonly Setting<int> SupportPromptLaunches = Setting.Value("SupportPromptLaunches", 0);
+    public static readonly Setting<bool> SupportPromptAnswered = Setting.Value("SupportPromptAnswered", false);
+
     public static readonly Setting<bool> RememberWindowSize = Setting.Value("RememberWindowSizeEnabled", false);
 
     /// <summary>In pixels. Null until a size is saved.</summary>

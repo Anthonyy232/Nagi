@@ -2291,4 +2291,16 @@ Do you want to continue?</value>
   <data name="Label_Random" xml:space="preserve">
     <value>Random</value>
   </data>
+  <data name="SupportPrompt_Message_GitHub" xml:space="preserve">
+    <value>Enjoying Nagi? A star on GitHub helps other people find it.</value>
+  </data>
+  <data name="SupportPrompt_Message_Store" xml:space="preserve">
+    <value>Enjoying Nagi? A rating on the Microsoft Store helps other people find it.</value>
+  </data>
+  <data name="SupportPrompt_Action_GitHub" xml:space="preserve">
+    <value>Star on GitHub</value>
+  </data>
+  <data name="SupportPrompt_Action_Store" xml:space="preserve">
+    <value>Rate on the Store</value>
+  </data>
 </root>

@@ -130,6 +130,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <SplitView x:Name="QueueSplitView"
                                CompactPaneLength="0"
@@ -458,13 +459,25 @@
                         <Frame x:Name="ContentFrame" Padding="12,0,12,0" />
                     </SplitView>
 
+                    <InfoBar Grid.Row="1"
+                             Margin="12,0,12,20"
+                             HorizontalAlignment="Center"
+                             CloseButtonCommand="{x:Bind SupportPrompt.DismissCommand}"
+                             CornerRadius="{ThemeResource OverlayCornerRadius}"
+                             IsOpen="{x:Bind SupportPrompt.IsOpen, Mode=OneWay}"
+                             Message="{x:Bind SupportPrompt.Message}">
+                        <InfoBar.ActionButton>
+                            <Button Command="{x:Bind SupportPrompt.OpenPageCommand}" Content="{x:Bind SupportPrompt.ActionText}" />
+                        </InfoBar.ActionButton>
+                    </InfoBar>
+
                     <Border x:Name="PlayerContentSpace"
-                            Grid.Row="1"
+                            Grid.Row="2"
                             Height="{Binding MinHeight, ElementName=FloatingPlayerContainer}"
                             MaxHeight="{x:Bind ExpandedPlayerHeight}" />
 
                     <Grid x:Name="PlayerHitBox"
-                          Grid.RowSpan="2"
+                          Grid.RowSpan="3"
                           Height="{x:Bind ExpandedPlayerHeight}"
                           Margin="12,0,12,12"
                           VerticalAlignment="Bottom"

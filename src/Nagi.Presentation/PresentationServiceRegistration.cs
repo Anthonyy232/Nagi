@@ -33,6 +33,7 @@ public static class PresentationServiceRegistration
         services.AddSingleton<PlayerViewModel>();
         services.AddSingleton<GlobalOperationViewModel>();
         services.AddSingleton<TrayIconViewModel>();
+        services.AddSingleton<SupportPromptViewModel>();
 
         // List/Grid ViewModels - Singleton for fast navigation, refresh on data changes
         services.AddSingleton<LibraryViewModel>();

@@ -92,10 +92,12 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         ISmartPlaylistService smartPlaylistService, IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService,
         NavigationService navigationService, InsightsViewModel insights, TrayIconViewModel trayIcon,
+        SupportPromptViewModel supportPrompt,
         ILogger<MainPage> logger)
     {
         ViewModel = viewModel;
         GlobalOperation = globalOperation;
+        SupportPrompt = supportPrompt;
         _settingsService = settingsService;
         _smartPlaylistService = smartPlaylistService;
         _musicNavigationService = musicNavigationService;
@@ -121,6 +123,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     public PlayerViewModel ViewModel { get; }
     public GlobalOperationViewModel GlobalOperation { get; }
+    public SupportPromptViewModel SupportPrompt { get; }
 
     public TitleBar GetAppTitleBarElement()
     {

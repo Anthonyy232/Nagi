@@ -35,6 +35,7 @@ public class AppSettingsTests
             "PlayerTintIntensity", "AppLanguage", "PlayerAnimationEnabled", "StartMinimizedEnabled",
             "HideToTrayEnabled", "MinimizeToMiniPlayerEnabled", "ShowCoverArtInTrayFlyout", "NavigationItems",
             "PlayerButtonSettings", "QueueDisplaySettings", "SongListColumns", "ShowSongListHeader", "SongsPerPage",
+            "SupportPromptLaunches", "SupportPromptAnswered",
             "RememberWindowSizeEnabled", "LastWindowSize", "RememberWindowPositionEnabled", "LastWindowPosition",
             "RememberPaneStateEnabled", "LastPaneOpen", "SortOrder_Library", "SortOrder_Albums", "SortOrder_Artists",
             "SortOrder_Genres", "SortOrder_Playlists", "SortOrder_FolderView", "SortOrder_AlbumView",
