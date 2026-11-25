@@ -42,7 +42,8 @@ public partial class AlbumViewViewModel : DetailSongListViewModelBase<AlbumViewN
     private static readonly SongSortOrder[] SortOrders =
     [
         SongSortOrder.TrackNumberAsc, SongSortOrder.TrackNumberDesc, SongSortOrder.TitleAsc, SongSortOrder.TitleDesc,
-        SongSortOrder.YearAsc, SongSortOrder.YearDesc, SongSortOrder.FileCreatedDateAsc, SongSortOrder.FileCreatedDateDesc
+        SongSortOrder.YearAsc, SongSortOrder.YearDesc, SongSortOrder.FileCreatedDateAsc, SongSortOrder.FileCreatedDateDesc,
+        SongSortOrder.FileModifiedDateAsc, SongSortOrder.FileModifiedDateDesc
     ];
 
     [ObservableProperty] public partial string ArtistName { get; set; }

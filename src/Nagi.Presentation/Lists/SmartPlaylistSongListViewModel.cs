@@ -26,7 +26,8 @@ public partial class SmartPlaylistSongListViewModel : DetailSongListViewModelBas
         SongSortOrder.TrackNumberAsc, SongSortOrder.TrackNumberDesc, SongSortOrder.PlayCountAsc, SongSortOrder.PlayCountDesc,
         SongSortOrder.LastPlayedAsc, SongSortOrder.LastPlayedDesc, SongSortOrder.DateAddedAsc, SongSortOrder.DateAddedDesc,
         SongSortOrder.DurationAsc, SongSortOrder.DurationDesc, SongSortOrder.BpmAsc, SongSortOrder.BpmDesc,
-        SongSortOrder.FileCreatedDateAsc, SongSortOrder.FileCreatedDateDesc, SongSortOrder.Random
+        SongSortOrder.FileCreatedDateAsc, SongSortOrder.FileCreatedDateDesc,
+        SongSortOrder.FileModifiedDateAsc, SongSortOrder.FileModifiedDateDesc, SongSortOrder.Random
     ];
 
     private readonly ISmartPlaylistService _smartPlaylistService;

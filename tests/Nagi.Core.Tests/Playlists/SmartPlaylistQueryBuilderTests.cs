@@ -358,6 +358,8 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
     [InlineData(SongSortOrder.AlbumDesc, "Another Brick in the Wall", "Something", "Come Together", "Let It Be", "Fly Me to the Moon")]
     [InlineData(SongSortOrder.YearDesc, "Another Brick in the Wall", "Let It Be", "Something", "Come Together", "Fly Me to the Moon")]
     [InlineData(SongSortOrder.TrackNumberAsc, "Fly Me to the Moon", "Let It Be", "Come Together", "Something", "Another Brick in the Wall")]
+    [InlineData(SongSortOrder.FileModifiedDateDesc, "Come Together", "Something", "Another Brick in the Wall",
+        "Fly Me to the Moon", "Let It Be")]
     public void BuildQuery_SortOrder_ReturnsExpectedSequence(
         SongSortOrder sortOrder, params string[] expectedTitles)
     {

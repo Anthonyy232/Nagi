@@ -98,7 +98,8 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     [
         SongSortOrder.TitleAsc, SongSortOrder.TitleDesc, SongSortOrder.YearAsc, SongSortOrder.YearDesc,
         SongSortOrder.ArtistAsc, SongSortOrder.ArtistDesc, SongSortOrder.AlbumAsc, SongSortOrder.AlbumDesc,
-        SongSortOrder.FileCreatedDateAsc, SongSortOrder.FileCreatedDateDesc
+        SongSortOrder.FileCreatedDateAsc, SongSortOrder.FileCreatedDateDesc,
+        SongSortOrder.FileModifiedDateAsc, SongSortOrder.FileModifiedDateDesc
     ];
 
     public SortOrderSelection<SongSortOrder> Sort { get; }
