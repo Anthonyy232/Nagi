@@ -13,6 +13,8 @@ public static class SortOrderHelper
     private static string TitleDescLabel => ResourceFormatter.Format(Strings.Format_AlphaDesc, CoreStrings.Label_Title);
     private static string DateCreatedNewestLabel => ResourceFormatter.Format(Strings.Format_TemporalNewest, Strings.Label_DateCreated);
     private static string DateCreatedOldestLabel => ResourceFormatter.Format(Strings.Format_TemporalOldest, Strings.Label_DateCreated);
+    private static string DateModifiedNewestLabel => ResourceFormatter.Format(Strings.Format_TemporalNewest, Strings.Label_DateModified);
+    private static string DateModifiedOldestLabel => ResourceFormatter.Format(Strings.Format_TemporalOldest, Strings.Label_DateModified);
     private static string ModifiedNewestLabel => ResourceFormatter.Format(Strings.Format_TemporalNewest, Strings.Label_DateModified);
     private static string ModifiedOldestLabel => ResourceFormatter.Format(Strings.Format_TemporalOldest, Strings.Label_DateModified);
     private static string ArtistAscLabel => ResourceFormatter.Format(Strings.Format_AlphaAsc, CoreStrings.Label_Artist);
@@ -49,6 +51,8 @@ public static class SortOrderHelper
         SongSortOrder.YearDesc => YearNewestLabel,
         SongSortOrder.FileCreatedDateAsc => DateCreatedOldestLabel,
         SongSortOrder.FileCreatedDateDesc => DateCreatedNewestLabel,
+        SongSortOrder.FileModifiedDateAsc => DateModifiedOldestLabel,
+        SongSortOrder.FileModifiedDateDesc => DateModifiedNewestLabel,
         SongSortOrder.ArtistAsc => ArtistAscLabel,
         SongSortOrder.ArtistDesc => ArtistDescLabel,
         SongSortOrder.TrackNumberAsc => TrackNumberAscLabel,

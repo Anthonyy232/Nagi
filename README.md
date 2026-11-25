@@ -53,7 +53,7 @@ Settings is grouped into:
 - Streaming from your own Navidrome or other OpenSubsonic server, or Jellyfin 10.11 and later, alongside your local music. Favorites and play counts sync both ways, the server's playlists show up read-only next to yours, and lyrics stored on the server are used first.
 - MP3, FLAC, AAC, OGG, WAV, AIFF, APE, DSD, M4A, WMA, WavPack and more.
 - Artists and genres in separate tags stay separate; the split settings also divide several names packed into one tag.
-- Artists sort by their ARTISTSORT tags while Ignore Articles When Sorting is on.
+- Sort by title, artist, album, year, or when the files were created or last modified. Artists sort by their ARTISTSORT tags while Ignore Articles When Sorting is on.
 - Playlists, rule-based smart playlists, and M3U import and export.
 - Favorites (Ctrl+D), stored in Nagi's database without touching your files.
 - Searchable listening history and an Insights page.

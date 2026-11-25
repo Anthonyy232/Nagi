@@ -64,7 +64,8 @@ public partial class ArtistViewViewModel : DetailSongListViewModelBase<ArtistVie
     private static readonly SongSortOrder[] SortOrders =
     [
         SongSortOrder.TitleAsc, SongSortOrder.TitleDesc, SongSortOrder.YearAsc, SongSortOrder.YearDesc,
-        SongSortOrder.AlbumAsc, SongSortOrder.AlbumDesc, SongSortOrder.FileCreatedDateAsc, SongSortOrder.FileCreatedDateDesc
+        SongSortOrder.AlbumAsc, SongSortOrder.AlbumDesc, SongSortOrder.FileCreatedDateAsc, SongSortOrder.FileCreatedDateDesc,
+        SongSortOrder.FileModifiedDateAsc, SongSortOrder.FileModifiedDateDesc
     ];
 
     [ObservableProperty] public partial string ArtistBio { get; set; }

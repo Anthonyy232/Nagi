@@ -65,6 +65,8 @@ internal static class SongQuery
             SongSortOrder.YearDesc => ByTracksDescending(query.OrderByDescending(s => s.Year).ThenByDescending(artist).ThenByDescending(album)),
             SongSortOrder.FileCreatedDateAsc => ByTracks(query.OrderBy(s => s.FileCreatedDate).ThenBy(artist).ThenBy(album)),
             SongSortOrder.FileCreatedDateDesc => ByTracksDescending(query.OrderByDescending(s => s.FileCreatedDate).ThenByDescending(artist).ThenByDescending(album)),
+            SongSortOrder.FileModifiedDateAsc => ByTracks(query.OrderBy(s => s.FileModifiedDate).ThenBy(artist).ThenBy(album)),
+            SongSortOrder.FileModifiedDateDesc => ByTracksDescending(query.OrderByDescending(s => s.FileModifiedDate).ThenByDescending(artist).ThenByDescending(album)),
             SongSortOrder.PlayCountAsc => ByMetric(s => s.PlayCount),
             SongSortOrder.PlayCountDesc => ByMetricDescending(s => s.PlayCount),
             SongSortOrder.LastPlayedAsc => ByMetric(s => s.LastPlayedDate),
