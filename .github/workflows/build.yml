@@ -1,4 +1,4 @@
-name: Nagi CI/CD
+name: Build
 
 on:
   # Every pull request runs the tests: they are the ruleset's required check.

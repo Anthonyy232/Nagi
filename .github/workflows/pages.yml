@@ -1,4 +1,4 @@
-name: Site
+name: Pages
 
 on:
   push:
