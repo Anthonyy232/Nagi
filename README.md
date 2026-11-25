@@ -3,25 +3,21 @@
   <img src=".github/readme/hero-light.png" alt="Nagi: a calm home for your music. A fast, private music player for your local library on Windows, shown with the library, the Up Next pane and the player.">
 </picture>
 
-<div align="center">
-
-<p>
-  <a href="https://github.com/Anthonyy232/Nagi/releases/latest"><img src="https://img.shields.io/github/v/release/Anthonyy232/Nagi?style=flat-square" alt="Latest Release"></a>
-  <a href="https://github.com/Anthonyy232/Nagi/releases"><img src="https://img.shields.io/github/downloads/Anthonyy232/Nagi/total?style=flat-square" alt="Total Downloads"></a>
+<p align="center">
+  <a href="https://github.com/Anthonyy232/Nagi/releases/latest"><img src="https://img.shields.io/github/v/release/Anthonyy232/Nagi?style=flat-square" alt="Latest release"></a>
+  <a href="https://github.com/Anthonyy232/Nagi/releases"><img src="https://img.shields.io/github/downloads/Anthonyy232/Nagi/total?style=flat-square" alt="Total downloads"></a>
   <a href="https://github.com/Anthonyy232/Nagi/actions/workflows/build.yml"><img src="https://img.shields.io/github/actions/workflow/status/Anthonyy232/Nagi/build.yml?style=flat-square&label=CI" alt="CI"></a>
   <a href="https://crowdin.com/project/nagi"><img src="https://badges.crowdin.net/nagi/localized.svg" alt="Crowdin"></a>
-  <a href="https://github.com/Anthonyy232/Nagi/blob/master/LICENSE"><img src="https://img.shields.io/github/license/Anthonyy232/Nagi?style=flat-square" alt="License"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/Anthonyy232/Nagi?style=flat-square" alt="License"></a>
 </p>
 
-</div>
-
-<div align="center">
-  <a href="https://apps.microsoft.com/detail/9P1V1PPML3QT?referrer=appbadge&launch=true&mode=full"><img src="https://get.microsoft.com/images/en-us%20dark.svg" alt="Download from Microsoft Store" width="205"></a>
-  &nbsp;
-  <a href="https://github.com/Anthonyy232/Nagi/releases/latest"><img src="media/GetItOnGitHub.png" alt="Download from GitHub" width="188"></a>
-</div>
-
-<br>
+<p align="center">
+  <a href="https://apps.microsoft.com/detail/9P1V1PPML3QT"><b>Get Nagi from the Microsoft Store</b></a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/Anthonyy232/Nagi/releases/latest"><b>Download from GitHub</b></a>
+  &nbsp;·&nbsp;
+  <a href="https://anthonyy232.github.io/Nagi/"><b>Website</b></a>
+</p>
 
 Windows 10 (1809 or later) or Windows 11, on x64 or ARM64. The Store version updates through the Store. From GitHub, install `Nagi.appinstaller` from the latest release so it updates itself. More on the [website](https://anthonyy232.github.io/Nagi/).
 
@@ -126,7 +122,7 @@ Some tests need `ffmpeg` on `PATH`.
 
 ## Contributing
 
-Issues and pull requests are welcome. Read [AGENTS.md](AGENTS.md) before opening a pull request. Translations are handled on [Crowdin](https://crowdin.com/project/nagi) and need no code changes.
+Contributions are welcome. Report bugs in [issues](https://github.com/Anthonyy232/Nagi/issues), suggest features in [Discussions](https://github.com/Anthonyy232/Nagi/discussions), and read [AGENTS.md](AGENTS.md) before opening a pull request. Translations are handled on [Crowdin](https://crowdin.com/project/nagi) and need no code changes.
 
 If Nagi is useful to you, you can support it through [GitHub Sponsors](https://github.com/sponsors/Anthonyy232).
 
