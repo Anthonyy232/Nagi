@@ -56,6 +56,10 @@ public class MusicDbContext : DbContext
             """, cancellationToken);
     }
 
+    // By name, so adding or reordering members can't change what saved rows mean.
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder) =>
+        configurationBuilder.Properties<Enum>().HaveConversion<string>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
