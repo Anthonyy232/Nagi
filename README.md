@@ -55,6 +55,7 @@ Settings is grouped into:
 - Artists and genres in separate tags stay separate; the split settings also divide several names packed into one tag.
 - Sort by title, artist, album, year, or when the files were created or last modified. Artists sort by their ARTISTSORT tags while Ignore Articles When Sorting is on.
 - Playlists, rule-based smart playlists, and M3U import and export.
+- Smart playlists as custom views: filter and sort by any other tag in your files with the Custom Tag field, and show the playlist in the navigation menu. Run Rescan Metadata once so songs already in the library get their other tags read.
 - Favorites (Ctrl+D), stored in Nagi's database without touching your files.
 - Searchable listening history and an Insights page.
 - Choose which columns song lists show, such as BPM, plays or date added, and open Song Info for a track's tags and file details.

@@ -216,12 +216,9 @@ public class DatabaseMigrationTests
             new DbContextOptionsBuilder<MusicDbContext>().UseSqlite("Data Source=:memory:").Options);
         await context.Database.OpenConnectionAsync();
         await context.GetService<IMigrator>().MigrateAsync("20261101215552_AddServerPlaylists");
-        var folder = new Folder { Name = "Music", Path = @"C:\Music" };
+        var folderId = await AddFolderAsync(context);
         string[] lyrics = ["eng||Words", "EN||Words", "Words || more", "[00:01.00]eng||Words"];
-        context.Songs.AddRange(lyrics.Select((text, i) =>
-            new Song { Title = $"{i}", FilePath = $@"C:\Music\{i}.mp3", Folder = folder, Lyrics = text }));
-        await context.SaveChangesAsync();
-        context.ChangeTracker.Clear();
+        for (var i = 0; i < lyrics.Length; i++) await AddSongAsync(context, folderId, $"{i}", lyrics[i]);
 
         await context.Database.MigrateAsync();
 
@@ -307,10 +304,8 @@ public class DatabaseMigrationTests
             new DbContextOptionsBuilder<MusicDbContext>().UseSqlite("Data Source=:memory:").Options);
         await context.Database.OpenConnectionAsync();
         await context.GetService<IMigrator>().MigrateAsync("20261124025217_AddArtistSortTags");
-        var folder = new Folder { Name = "Music", Path = @"C:\Music" };
-        var song = new Song { Title = "Song", FilePath = @"C:\Music\Song.mp3", DirectoryPath = @"C:\Music", Folder = folder };
-        context.Songs.Add(song);
-        await context.SaveChangesAsync();
+        var folderId = await AddFolderAsync(context);
+        var songId = await AddSongAsync(context, folderId, "Song");
         var playlistId = Guid.NewGuid();
         await context.Database.ExecuteSqlAsync($"""
             INSERT INTO SmartPlaylists (Id, Name, DateCreated, DateModified, MatchAllRules, SortOrder)
@@ -318,10 +313,10 @@ public class DatabaseMigrationTests
             INSERT INTO SmartPlaylistRules (Id, SmartPlaylistId, Field, Operator, "Order")
             VALUES ({Guid.NewGuid()}, {playlistId}, 22, 13, 0);
             INSERT INTO MusicServers (FolderId, Kind, BaseUrl, UserName, UserId, UsesApiKey)
-            VALUES ({folder.Id}, 1, 'https://jellyfin.example', 'me', 'id', 0);
+            VALUES ({folderId}, 1, 'https://jellyfin.example', 'me', 'id', 0);
             INSERT INTO ListenHistory (SongId, ListenTimestampUtc, EndReason, ContextType, ListenDurationTicks,
                 IsEligibleForScrobbling, IsScrobbled, IsSubmittedToListenBrainz, IsSubmittedToServer)
-            VALUES ({song.Id}, '2026-01-01', 2, 8, 0, 0, 0, 0, 0);
+            VALUES ({songId}, '2026-01-01', 2, 8, 0, 0, 0, 0, 0);
             """);
 
         await context.Database.MigrateAsync();
@@ -339,5 +334,24 @@ public class DatabaseMigrationTests
             SELECT SortOrder || ' ' || Field || ' ' || Operator || ' ' || Kind || ' ' || EndReason || ' ' || ContextType AS Value
             FROM SmartPlaylists, SmartPlaylistRules, MusicServers, ListenHistory
             """).SingleAsync()).Should().Be("25 22 13 1 2 8");
+    }
+
+    // Rows go in as SQL: the model has columns an older schema lacks.
+    private static async Task<Guid> AddFolderAsync(MusicDbContext context)
+    {
+        var id = Guid.NewGuid();
+        await context.Database.ExecuteSqlAsync($"INSERT INTO Folders (Id, Name, Path) VALUES ({id}, 'Music', 'Music')");
+        return id;
+    }
+
+    private static async Task<Guid> AddSongAsync(MusicDbContext context, Guid folderId, string title, string? lyrics = null)
+    {
+        var id = Guid.NewGuid();
+        await context.Database.ExecuteSqlAsync($"""
+            INSERT INTO Songs (Id, Title, SortTitle, ArtistName, PrimaryArtistName, PrimaryArtistSortName, FolderId, FilePath,
+                DirectoryPath, DurationTicks, IsLoved, IsLovedSyncPending, PlayCount, SkipCount, TotalListenTimeTicks, Lyrics)
+            VALUES ({id}, {title}, {title}, '', '', '', {folderId}, {title}, '', 0, 0, 0, 0, 0, 0, {lyrics});
+            """);
+        return id;
     }
 }

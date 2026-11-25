@@ -11,8 +11,11 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Nagi.Core.Platform;
+using Nagi.Core.Playlists;
 using Nagi.Core.Settings;
+using Nagi.Presentation.Common;
 using Nagi.Presentation.Insights;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Player;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Settings;
@@ -71,6 +74,9 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private readonly NavigationService _navigationService;
     private readonly ILogger<MainPage> _logger;
     private readonly ISettingsService _settingsService;
+    private readonly ISmartPlaylistService _smartPlaylistService;
+    private readonly IMusicNavigationService _musicNavigationService;
+    private IReadOnlyList<SmartPlaylist> _pinnedPlaylists = [];
 
 
     private bool _isPointerOverPlayer;
@@ -83,6 +89,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     public MainPage(PlayerViewModel viewModel,
         GlobalOperationViewModel globalOperation, ISettingsService settingsService,
+        ISmartPlaylistService smartPlaylistService, IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService,
         NavigationService navigationService, InsightsViewModel insights, TrayIconViewModel trayIcon,
         ILogger<MainPage> logger)
@@ -90,6 +97,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         ViewModel = viewModel;
         GlobalOperation = globalOperation;
         _settingsService = settingsService;
+        _smartPlaylistService = smartPlaylistService;
+        _musicNavigationService = musicNavigationService;
         _dispatcherService = dispatcherService;
         _navigationService = navigationService;
         _logger = logger;
@@ -130,8 +139,9 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void HandleNavigation(bool isSettings, object? selectedItem, NavigationTransitionInfo transitionInfo)
     {
-        var tag = isSettings ? AppDestinations.SettingsTag : (selectedItem as NavigationViewItem)?.Tag as string;
-        if (tag is not null) _navigationService.NavigateToMenu(tag, transitionInfo);
+        var tag = isSettings ? AppDestinations.SettingsTag : (selectedItem as NavigationViewItem)?.Tag;
+        if (tag is SmartPlaylist pinned) _musicNavigationService.OpenSmartPlaylist(pinned.Id, pinned.Name, pinned.CoverUri);
+        else if (tag is string menuTag) _navigationService.NavigateToMenu(menuTag, transitionInfo);
     }
 
     private void LyricsButton_Click(object sender, RoutedEventArgs e) => _navigationService.ToggleLyrics();
@@ -207,9 +217,12 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private void UpdateNavViewSelection()
     {
         var tag = _navigationService.CurrentMenuTag;
+        var items = NavView.MenuItems.OfType<NavigationViewItem>();
+        var playlistId = (_navigationService.CurrentParameter as SmartPlaylistSongViewNavigationParameter)?.SmartPlaylistId;
         NavView.SelectedItem = tag == AppDestinations.SettingsTag
             ? NavView.SettingsItem
-            : NavView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault(item => Equals(item.Tag, tag));
+            : items.FirstOrDefault(item => item.Tag is SmartPlaylist pinned && pinned.Id == playlistId)
+              ?? items.FirstOrDefault(item => Equals(item.Tag, tag));
     }
 
     private bool ShouldExpandPlayer =>
@@ -256,8 +269,37 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             });
         }
 
+        if (_pinnedPlaylists.Count > 0) NavView.MenuItems.Add(new NavigationViewItemSeparator());
+        foreach (var playlist in _pinnedPlaylists)
+        {
+            NavView.MenuItems.Add(new NavigationViewItem
+            {
+                Content = playlist.Name,
+                Tag = playlist,
+                Icon = new FontIcon { Glyph = AppIconGlyphs.ToGlyph(AppIcon.Playlists) }
+            });
+        }
+
         UpdateNavViewSelection();
     }
+
+    private async void LoadPinnedPlaylists()
+    {
+        try
+        {
+            // SQLite executes queries synchronously, so keep this one off the UI thread.
+            var playlists = await Task.Run(_smartPlaylistService.GetPinnedSmartPlaylistsAsync);
+            if (_isUnloaded) return;
+            _pinnedPlaylists = playlists;
+            PopulateNavigation();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load the pinned smart playlists.");
+        }
+    }
+
+    private void OnSmartPlaylistsChanged(object? sender, EventArgs e) => UpdateUi(LoadPinnedPlaylists);
 
     private void OnMainPageLoaded(object sender, RoutedEventArgs e)
     {
@@ -280,12 +322,14 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
         SystemVisualSettings.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
         _settingsService.SettingChanged += OnSettingChanged;
+        _smartPlaylistService.PlaylistsChanged += OnSmartPlaylistsChanged;
         SystemVisualSettings.TransparencyEffectsEnabledChanged += OnTransparencyEffectsChanged;
         AddHandler(PointerPressedEvent, new PointerEventHandler(OnGlobalPointerPressed), true);
         KeyDown += OnEscapeKeyDown;
 
         SetPlatformSpecificBrush();
         PopulateNavigation();
+        LoadPinnedPlaylists();
         if (ViewModel.GetRememberedPaneOpen() is { } isPaneOpen) NavView.IsPaneOpen = isPaneOpen;
 
         if (ContentFrame.CurrentSourcePageType is null)
@@ -320,6 +364,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
         SystemVisualSettings.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
         _settingsService.SettingChanged -= OnSettingChanged;
+        _smartPlaylistService.PlaylistsChanged -= OnSmartPlaylistsChanged;
         SystemVisualSettings.TransparencyEffectsEnabledChanged -= OnTransparencyEffectsChanged;
 
         // Dispose the tray icon control to prevent "Exception Processing Message 0xc0000005" errors on exit.

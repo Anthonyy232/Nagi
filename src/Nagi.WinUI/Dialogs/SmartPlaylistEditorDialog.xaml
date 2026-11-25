@@ -54,6 +54,7 @@
                          MaxLength="200"
                          PlaceholderText="{x:Bind resources:Strings.SmartPlaylist_PlaylistNameTextBox_Placeholder, Mode=OneTime}"
                          Text="{x:Bind ViewModel.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <CheckBox Content="{x:Bind resources:Strings.SmartPlaylist_ShowInNavigationCheckBox_Content, Mode=OneTime}" IsChecked="{x:Bind ViewModel.IsPinned, Mode=TwoWay}" />
             </StackPanel>
 
             <StackPanel Grid.Column="4"
@@ -66,6 +67,10 @@
                           DisplayMemberPath="Label"
                           ItemsSource="{x:Bind playlists:SmartPlaylistEditorViewModel.SortOptions}"
                           SelectedItem="{x:Bind ViewModel.SelectedSortOption, Mode=TwoWay}" />
+                <TextBox HorizontalAlignment="Stretch"
+                         PlaceholderText="{x:Bind resources:Strings.SmartPlaylist_TagNameTextBox_Placeholder, Mode=OneTime}"
+                         Text="{x:Bind ViewModel.SortTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Visibility="{x:Bind ViewModel.IsSortedByTag, Mode=OneWay}" />
             </StackPanel>
         </Grid>
 
@@ -130,12 +135,17 @@
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
 
-                                            <ComboBox Grid.Column="0"
-                                                      HorizontalAlignment="Stretch"
-                                                      AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylist_RuleField_Name, Mode=OneTime}"
-                                                      DisplayMemberPath="DisplayName"
-                                                      ItemsSource="{x:Bind playlists:RuleViewModel.AvailableFields}"
-                                                      SelectedItem="{x:Bind SelectedField, Mode=TwoWay}" />
+                                            <StackPanel Grid.Column="0" Spacing="8">
+                                                <ComboBox HorizontalAlignment="Stretch"
+                                                          AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylist_RuleField_Name, Mode=OneTime}"
+                                                          DisplayMemberPath="DisplayName"
+                                                          ItemsSource="{x:Bind playlists:RuleViewModel.AvailableFields}"
+                                                          SelectedItem="{x:Bind SelectedField, Mode=TwoWay}" />
+                                                <TextBox HorizontalAlignment="Stretch"
+                                                         PlaceholderText="{x:Bind resources:Strings.SmartPlaylist_TagNameTextBox_Placeholder, Mode=OneTime}"
+                                                         Text="{x:Bind TagName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                         Visibility="{x:Bind IsTag, Mode=OneWay}" />
+                                            </StackPanel>
 
                                             <ComboBox Grid.Column="1"
                                                       HorizontalAlignment="Stretch"

@@ -161,6 +161,12 @@ public partial class AtlMetadataService : IMetadataService
 
         metadata.ReplayGainTrackGain = ParseReplayGainValue(GetAdditionalField(track, ReplayGainTrackGainKey));
         metadata.ReplayGainTrackPeak = ParseReplayGainValue(GetAdditionalField(track, ReplayGainTrackPeakKey));
+
+        foreach (var (key, value) in track.AdditionalFields)
+        {
+            if (SongTags.NormalizeName(key) is { } name && Text(value) is { } text)
+                metadata.Tags.TryAdd(name, text.Length > SongTags.MaxValueLength ? text[..SongTags.MaxValueLength] : text);
+        }
     }
 
     private static void PopulateMusicBrainzIds(SongFileMetadata metadata, Track track)

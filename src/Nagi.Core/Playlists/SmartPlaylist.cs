@@ -32,6 +32,12 @@ public class SmartPlaylist
 
     public SongSortOrder SortOrder { get; set; } = SongSortOrder.TitleAsc;
 
+    [MaxLength(200)]
+    public string? SortTag { get; set; }
+
+    /// <summary>Whether the navigation menu lists the playlist.</summary>
+    public bool IsPinned { get; set; }
+
     public virtual ICollection<SmartPlaylistRule> Rules { get; set; } = new List<SmartPlaylistRule>();
 
     public override string ToString()

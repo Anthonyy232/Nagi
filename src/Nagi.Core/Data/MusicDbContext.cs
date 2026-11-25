@@ -1,4 +1,6 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nagi.Core.Library;
 using Nagi.Core.Listening;
@@ -55,6 +57,12 @@ public class MusicDbContext : DbContext
             WHERE SortTitle = '' OR PrimaryArtistSortName = '';
             """, cancellationToken);
     }
+
+    [DbFunction("json_extract", IsBuiltIn = true)]
+    public static string? JsonExtract(string? json, string path) => throw new NotSupportedException();
+
+    /// <summary>The number <paramref name="text" /> starts with, or 0 when it starts with none; for queries only.</summary>
+    public static double? ToNumber(string? text) => throw new NotSupportedException();
 
     // By name, so adding or reordering members can't change what saved rows mean.
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder) =>
@@ -207,6 +215,9 @@ public class MusicDbContext : DbContext
 
             entity.HasIndex(ps => new { ps.PlaylistId, ps.Order });
         });
+
+        modelBuilder.HasDbFunction(() => ToNumber(default))
+            .HasTranslation(arguments => new SqlUnaryExpression(ExpressionType.Convert, arguments[0], typeof(double), null));
 
         modelBuilder.Entity<SmartPlaylist>(entity =>
         {

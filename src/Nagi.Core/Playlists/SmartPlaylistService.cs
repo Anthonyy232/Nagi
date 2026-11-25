@@ -54,6 +54,8 @@ public class SmartPlaylistService : ISmartPlaylistService
         playlist.Description = draft.Description;
         playlist.MatchAllRules = draft.MatchAllRules;
         playlist.SortOrder = draft.SortOrder;
+        playlist.SortTag = SongTags.NormalizeName(draft.SortTag);
+        playlist.IsPinned = draft.IsPinned;
         if (!string.Equals(playlist.CoverImageUri, draft.CoverImageUri, StringComparison.Ordinal))
             await SetCoverAsync(playlist, draft.CoverImageUri).ConfigureAwait(false);
 
@@ -102,6 +104,16 @@ public class SmartPlaylistService : ISmartPlaylistService
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.SmartPlaylists.AsNoTracking()
             .Include(sp => sp.Rules.OrderBy(r => r.Order))
+            .OrderBy(sp => sp.Name)
+            .ThenBy(sp => sp.Id)
+            .ToListAsync().ConfigureAwait(false);
+    }
+
+    public async Task<IReadOnlyList<SmartPlaylist>> GetPinnedSmartPlaylistsAsync()
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await context.SmartPlaylists.AsNoTracking()
+            .Where(sp => sp.IsPinned)
             .OrderBy(sp => sp.Name)
             .ThenBy(sp => sp.Id)
             .ToListAsync().ConfigureAwait(false);
@@ -273,6 +285,7 @@ public class SmartPlaylistService : ISmartPlaylistService
             SmartPlaylistId = smartPlaylistId,
             Field = rule.Field,
             Operator = rule.Operator,
+            TagName = rule.Field == SmartPlaylistField.Tag ? SongTags.NormalizeName(rule.TagName) : null,
             Value = SmartPlaylistRuleValue.ToStoredValue(rule.Field, rule.Operator, rule.Value),
             SecondValue = SmartPlaylistRuleValue.ToStoredValue(rule.Field, rule.Operator, rule.SecondValue),
             Order = order

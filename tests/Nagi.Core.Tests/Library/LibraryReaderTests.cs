@@ -64,7 +64,7 @@ public class LibraryReaderTests : IDisposable
             var stored = await context.Songs.SingleAsync();
             foreach (var property in context.Model.FindEntityType(typeof(Song))!.GetProperties())
             {
-                var expected = property.Name is nameof(Song.Lyrics) or nameof(Song.Comment)
+                var expected = property.Name is nameof(Song.Lyrics) or nameof(Song.Comment) or nameof(Song.Tags)
                     ? null
                     : property.PropertyInfo!.GetValue(stored);
                 property.PropertyInfo!.GetValue(row).Should().Be(expected, $"a list row carries {property.Name}");

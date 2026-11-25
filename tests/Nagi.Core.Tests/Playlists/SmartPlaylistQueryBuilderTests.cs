@@ -152,6 +152,10 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         };
         _song5.Genres.Add(_genreJazz);
 
+        _song1.Tags = SongTags.Serialize(new Dictionary<string, string> { ["MOOD"] = "Mellow Évening", ["ENERGY"] = "9" });
+        _song2.Tags = SongTags.Serialize(new Dictionary<string, string> { ["MOOD"] = "Upbeat", ["ENERGY"] = "10" });
+        _song3.Tags = SongTags.Serialize(new Dictionary<string, string> { ["ENERGY"] = "low" });
+
         _song1.SyncDenormalizedFields();
         _song2.SyncDenormalizedFields();
         _song3.SyncDenormalizedFields();
@@ -236,6 +240,39 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
 
         SmartPlaylistQueryBuilder.BuildQuery(context, playlist, false).Select(song => song.Title).ToList()
             .Should().BeEquivalentTo(expectedTitles);
+    }
+
+    [Theory]
+    [InlineData(SmartPlaylistOperator.Is, "mellow évening", "Come Together")]
+    [InlineData(SmartPlaylistOperator.IsNot, "upbeat", "Come Together", "Another Brick in the Wall", "Let It Be", "Fly Me to the Moon")]
+    public void BuildQuery_TagRule_ReadsTheNamedTag(SmartPlaylistOperator ruleOperator, string value, params string[] expectedTitles)
+    {
+        var playlist = CreatePlaylist(new SmartPlaylistRule
+        {
+            Field = SmartPlaylistField.Tag,
+            TagName = "MOOD",
+            Operator = ruleOperator,
+            Value = value
+        });
+        using var context = _dbHelper.ContextFactory.CreateDbContext();
+
+        SmartPlaylistQueryBuilder.BuildQuery(context, playlist, false).Select(song => song.Title).ToList()
+            .Should().BeEquivalentTo(expectedTitles);
+    }
+
+    [Fact]
+    public void BuildQuery_SortedByTag_PutsUntaggedSongsFirstThenTextThenNumbersInNumberOrder()
+    {
+        var playlist = CreatePlaylist();
+        playlist.SortOrder = SongSortOrder.TagAsc;
+        playlist.SortTag = "ENERGY";
+        using var context = _dbHelper.ContextFactory.CreateDbContext();
+
+        SmartPlaylistQueryBuilder.BuildQuery(context, playlist, false).Select(song => song.Title).ToList()
+            .Should().Equal("Let It Be", "Fly Me to the Moon", "Another Brick in the Wall", "Come Together", "Something");
+        SmartPlaylistQueryBuilder.BuildQuery(context, playlist, false, sortOrderOverride: SongSortOrder.TagDesc)
+            .Select(song => song.Title).ToList()
+            .Should().Equal("Something", "Come Together", "Another Brick in the Wall", "Fly Me to the Moon", "Let It Be");
     }
 
     [Fact]
@@ -788,7 +825,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
                     SmartPlaylistFieldKind.Date => ("2025-01-01T00:00:00.0000000Z", "2025-02-01T00:00:00.0000000Z"),
                     _ => ((string?)null, (string?)null)
                 };
-                var rule = new SmartPlaylistRule { Field = field, Operator = ruleOperator, Value = value, SecondValue = secondValue };
+                var rule = new SmartPlaylistRule { Field = field, TagName = "MOOD", Operator = ruleOperator, Value = value, SecondValue = secondValue };
 
                 SmartPlaylistQueryBuilder.BuildRulePredicate(rule).Should().NotBeNull($"{field} offers {ruleOperator}");
             }

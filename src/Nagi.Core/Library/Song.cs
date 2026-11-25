@@ -166,6 +166,10 @@ public class Song
     [MaxLength(100)]
     public string? MusicBrainzReleaseGroupId { get; set; }
 
+    /// <summary>
+    ///     The file's tags beyond the standard fields in the form <see cref="SongTags" /> gives, or null when it has none.
+    /// </summary>
+    public string? Tags { get; set; }
 
     public virtual ICollection<SongArtist> SongArtists { get; set; } = new List<SongArtist>();
     public virtual ICollection<Genre> Genres { get; set; } = new List<Genre>();

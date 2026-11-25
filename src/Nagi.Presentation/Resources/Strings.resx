@@ -118,6 +118,9 @@
   <data name="Label_Grouping" xml:space="preserve">
     <value>Grouping</value>
   </data>
+  <data name="Label_CustomTag" xml:space="preserve">
+    <value>Custom Tag</value>
+  </data>
   <data name="Label_SkipCount" xml:space="preserve">
     <value>Skip Count</value>
   </data>
@@ -771,6 +774,12 @@ Do you want to continue?</value>
   </data>
   <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
     <value>Field</value>
+  </data>
+  <data name="SmartPlaylist_TagNameTextBox_Placeholder" xml:space="preserve">
+    <value>Tag Name</value>
+  </data>
+  <data name="SmartPlaylist_ShowInNavigationCheckBox_Content" xml:space="preserve">
+    <value>Show in Navigation Menu</value>
   </data>
   <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
     <value>Condition</value>
@@ -1988,6 +1997,9 @@ Do you want to continue?</value>
   </data>
   <data name="SongInfo_Section_Tags" xml:space="preserve">
     <value>Tags</value>
+  </data>
+  <data name="SongInfo_Section_OtherTags" xml:space="preserve">
+    <value>Other Tags</value>
   </data>
   <data name="SongInfo_Section_Listening" xml:space="preserve">
     <value>Listening</value>

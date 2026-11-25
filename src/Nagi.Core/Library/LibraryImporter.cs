@@ -666,6 +666,7 @@ internal sealed class SongImport(
         song.MusicBrainzReleaseId = metadata.MusicBrainzReleaseId;
         song.ReplayGainTrackGain = metadata.ReplayGainTrackGain;
         song.ReplayGainTrackPeak = metadata.ReplayGainTrackPeak;
+        song.Tags = SongTags.Serialize(metadata.Tags);
 
         if (existingSong == null)
         {
