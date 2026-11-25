@@ -127,8 +127,10 @@ Some tests need `ffmpeg` on `PATH`.
 
 Issues and pull requests are welcome. Read [AGENTS.md](AGENTS.md) before opening a pull request. Translations are handled on [Crowdin](https://crowdin.com/project/nagi) and need no code changes.
 
-If you'd like to support development, you can [sponsor on GitHub](https://github.com/sponsors/Anthonyy232).
+If Nagi is useful to you, you can support it through [GitHub Sponsors](https://github.com/sponsors/Anthonyy232).
 
 ## License
 
-Copyright (c) 2025-2026 Anthony La. Released under the [GNU General Public License v3.0](LICENSE).
+Copyright (c) 2025-2026 Anthony La.
+
+Nagi is free software, licensed under the [GNU General Public License v3.0](LICENSE) only, and comes with no warranty.
