@@ -6,6 +6,7 @@
                xmlns:lists="using:Nagi.Presentation.Lists"
                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                xmlns:resources="using:Nagi.Presentation.Resources"
+               xmlns:uicontrols="using:Nagi.WinUI.Controls"
                CloseButtonText="{x:Bind resources:Strings.Generic_Close}"
                DefaultButton="Close"
                Style="{StaticResource DefaultContentDialogStyle}"
@@ -16,7 +17,7 @@
     </ContentDialog.Resources>
 
     <!--  The dialog's own content area clips rather than scrolls, so the sections scroll here.  -->
-    <Grid RowSpacing="20">
+    <uicontrols:FillWidthGrid RowSpacing="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -91,5 +92,5 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
-    </Grid>
+    </uicontrols:FillWidthGrid>
 </ContentDialog>

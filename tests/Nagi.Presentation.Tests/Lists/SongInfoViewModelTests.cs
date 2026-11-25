@@ -42,7 +42,8 @@ public class SongInfoViewModelTests : IDisposable
             TrackNumber = 2,
             TrackCount = 12,
             SampleRate = 44100,
-            ReplayGainTrackGain = -3.214
+            ReplayGainTrackGain = -3.214,
+            Tags = SongTags.Serialize(new Dictionary<string, string> { ["MOOD"] = "Calm" })
         };
         _reader.GetSongByIdAsync(song.Id).Returns(song);
         _fileSystem.GetFileInfo(song.FilePath).Returns(new FileInfo(_tempFile));
@@ -55,6 +56,7 @@ public class SongInfoViewModelTests : IDisposable
             ["Track Number"] = "2 of 12",
             ["Sample Rate"] = "44,100 Hz",
             ["ReplayGain"] = "-3.21 dB",
+            ["MOOD"] = "Calm",
             ["Size"] = "1.5 MB"
         });
         fields.Should().NotContainKeys("Composer", "Last Played");

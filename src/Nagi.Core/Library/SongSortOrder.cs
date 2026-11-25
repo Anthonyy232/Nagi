@@ -27,5 +27,9 @@ public enum SongSortOrder
     Random,
     PlaylistOrder,
     FileModifiedDateAsc,
-    FileModifiedDateDesc
+    FileModifiedDateDesc,
+
+    // By a tag the list names, as smart playlists do; other lists sort these by title.
+    TagAsc,
+    TagDesc
 }

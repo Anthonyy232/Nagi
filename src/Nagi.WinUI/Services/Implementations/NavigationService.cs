@@ -31,6 +31,8 @@ public class NavigationService : INavigationService
     /// </summary>
     public string? CurrentMenuTag => AppDestinations.GetMenuTag(_frame?.CurrentSourcePageType, _currentParameter);
 
+    public object? CurrentParameter => _currentParameter;
+
     public bool ShowsBackButton =>
         _frame is { CanGoBack: true, CurrentSourcePageType: { } page } && AppDestinations.ShowsBackButton(page);
 

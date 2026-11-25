@@ -37,6 +37,8 @@ public static class SortOrderHelper
     private static string DurationDescLabel => Strings.Format_LongestFirst;
     private static string BpmAscLabel => ResourceFormatter.Format(Strings.Format_SlowestFirst, Strings.Label_Bpm);
     private static string BpmDescLabel => ResourceFormatter.Format(Strings.Format_FastestFirst, Strings.Label_Bpm);
+    private static string TagAscLabel => ResourceFormatter.Format(Strings.Format_AlphaAsc, Strings.Label_CustomTag);
+    private static string TagDescLabel => ResourceFormatter.Format(Strings.Format_AlphaDesc, Strings.Label_CustomTag);
     private static string PlaylistOrderLabel => Strings.Label_ManualOrder;
     private static string RandomLabel => Strings.Label_Random;
 
@@ -67,6 +69,8 @@ public static class SortOrderHelper
         SongSortOrder.DurationDesc => DurationDescLabel,
         SongSortOrder.BpmAsc => BpmAscLabel,
         SongSortOrder.BpmDesc => BpmDescLabel,
+        SongSortOrder.TagAsc => TagAscLabel,
+        SongSortOrder.TagDesc => TagDescLabel,
         SongSortOrder.Random => RandomLabel,
         SongSortOrder.PlaylistOrder => PlaylistOrderLabel,
 

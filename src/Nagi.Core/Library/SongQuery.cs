@@ -45,9 +45,18 @@ internal static class SongQuery
     ///     The playlist whose order <see cref="SongSortOrder.PlaylistOrder" /> follows; without one, that order sorts by
     ///     title.
     /// </param>
+    /// <param name="sortTag">
+    ///     The <see cref="SongTags.NormalizeName">normalized</see> name of the tag <see cref="SongSortOrder.TagAsc" />
+    ///     and <see cref="SongSortOrder.TagDesc" /> sort by; without one, those orders sort by title.
+    /// </param>
     public static IOrderedQueryable<Song> Sort(IQueryable<Song> query, SongSortOrder sortOrder, bool ignoreArticles,
-        Guid? playlistId = null)
+        Guid? playlistId = null, string? sortTag = null)
     {
+        var tagPath = sortTag is null ? null : SongTags.PathOf(sortTag);
+        // Numbers in number order, then text; songs without the tag come first.
+        Expression<Func<Song, double?>> tagNumber = s => MusicDbContext.ToNumber(MusicDbContext.JsonExtract(s.Tags, tagPath!));
+        Expression<Func<Song, string?>> tagText = s => EF.Functions.Collate(MusicDbContext.JsonExtract(s.Tags, tagPath!), "NOCASE");
+
         Expression<Func<Song, string>> title = ignoreArticles ? s => s.SortTitle : s => s.Title;
         Expression<Func<Song, string>> artist = ignoreArticles ? s => s.PrimaryArtistSortName : s => s.PrimaryArtistName;
         Expression<Func<Song, string>> album = ignoreArticles
@@ -77,6 +86,10 @@ internal static class SongQuery
             SongSortOrder.DurationDesc => ByMetricDescending(s => s.DurationTicks),
             SongSortOrder.BpmAsc => ByMetric(s => s.Bpm ?? 0),
             SongSortOrder.BpmDesc => ByMetricDescending(s => s.Bpm ?? 0),
+            SongSortOrder.TagAsc when tagPath is not null =>
+                query.OrderBy(tagNumber).ThenBy(tagText).ThenBy(artist).ThenBy(title).ThenBy(s => s.Id),
+            SongSortOrder.TagDesc when tagPath is not null =>
+                query.OrderByDescending(tagNumber).ThenByDescending(tagText).ThenByDescending(artist).ThenByDescending(title).ThenByDescending(s => s.Id),
             SongSortOrder.Random => query.OrderBy(_ => EF.Functions.Random()),
             SongSortOrder.PlaylistOrder when playlistId is { } id => query
                 .OrderBy(s => s.PlaylistSongs.Where(ps => ps.PlaylistId == id).Select(ps => ps.Order).FirstOrDefault())
@@ -99,7 +112,7 @@ internal static class SongQuery
     }
 
     // Long free-text tags that list rows leave out; playback and editing read the full song.
-    private static readonly string[] HeavyFields = [nameof(Song.Lyrics), nameof(Song.Comment)];
+    private static readonly string[] HeavyFields = [nameof(Song.Lyrics), nameof(Song.Comment), nameof(Song.Tags)];
 
     private static Expression<Func<Song, Song>>? _listRow;
 

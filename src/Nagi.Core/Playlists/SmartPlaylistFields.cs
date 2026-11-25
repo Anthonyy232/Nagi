@@ -57,7 +57,7 @@ public static class SmartPlaylistFields
     public static SmartPlaylistFieldKind KindOf(SmartPlaylistField field) => field switch
     {
         SmartPlaylistField.Title or SmartPlaylistField.Artist or SmartPlaylistField.Album or SmartPlaylistField.Genre or
-            SmartPlaylistField.Composer or SmartPlaylistField.Comment or SmartPlaylistField.Grouping => SmartPlaylistFieldKind.Text,
+            SmartPlaylistField.Composer or SmartPlaylistField.Comment or SmartPlaylistField.Grouping or SmartPlaylistField.Tag => SmartPlaylistFieldKind.Text,
 
         SmartPlaylistField.PlayCount or SmartPlaylistField.SkipCount or SmartPlaylistField.Rating or SmartPlaylistField.Year or
             SmartPlaylistField.TrackNumber or SmartPlaylistField.DiscNumber or SmartPlaylistField.Bitrate or

@@ -12,7 +12,7 @@ internal static class SmartPlaylistQueryBuilder
         string? searchTerm = null, SongSortOrder? sortOrderOverride = null)
     {
         var query = BuildCountQuery(context, smartPlaylist, searchTerm).Include(s => s.Album);
-        return SongQuery.Sort(query, sortOrderOverride ?? smartPlaylist.SortOrder, ignoreArticles);
+        return SongQuery.Sort(query, sortOrderOverride ?? smartPlaylist.SortOrder, ignoreArticles, sortTag: smartPlaylist.SortTag);
     }
 
     public static IQueryable<Song> BuildCountQuery(MusicDbContext context, SmartPlaylist smartPlaylist, string? searchTerm = null)
@@ -61,6 +61,8 @@ internal static class SmartPlaylistQueryBuilder
             SmartPlaylistField.Composer => BuildTextPredicate(s => s.Composer, rule),
             SmartPlaylistField.Comment => BuildTextPredicate(s => s.Comment, rule),
             SmartPlaylistField.Grouping => BuildTextPredicate(s => s.Grouping, rule),
+            SmartPlaylistField.Tag when rule.TagName is { } tag =>
+                BuildTextPredicate(s => MusicDbContext.JsonExtract(s.Tags, SongTags.PathOf(tag)), rule),
 
             SmartPlaylistField.Genre => BuildGenrePredicate(rule),
 

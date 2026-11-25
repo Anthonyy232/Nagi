@@ -160,6 +160,24 @@ public class AtlMetadataServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task ExtractMetadataAsync_KeepsTagsWithoutAFieldByUppercaseName()
+    {
+        var filePath = CreateTestAudioFile("custom.mp3", track =>
+        {
+            track.AdditionalFields.Add("My \"Mood\"", " Calm ");
+            track.AdditionalFields.Add("Notes", new string('n', SongTags.MaxValueLength + 1));
+        });
+
+        var result = await _metadataService.ExtractMetadataAsync(filePath);
+
+        result.Tags.Should().BeEquivalentTo(new Dictionary<string, string>
+        {
+            ["MY MOOD"] = "Calm",
+            ["NOTES"] = new string('n', SongTags.MaxValueLength)
+        });
+    }
+
+    [Fact]
     public async Task ExtractMetadataAsync_ReadsRecordingIdFromPicardUfidFrame()
     {
         const string recordingId = "33333333-3333-3333-3333-333333333333";

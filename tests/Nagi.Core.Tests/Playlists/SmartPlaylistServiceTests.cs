@@ -550,8 +550,14 @@ public class SmartPlaylistServiceTests : IDisposable
         draft.Name = "Updated Name";
         draft.Description = "Updated Description";
         draft.MatchAllRules = false;
-        draft.SortOrder = SongSortOrder.Random;
-        draft.Rules = [new SmartPlaylistRule { Field = SmartPlaylistField.Genre, Operator = SmartPlaylistOperator.Is, Value = "Pop" }];
+        draft.SortOrder = SongSortOrder.TagDesc;
+        draft.SortTag = " mood ";
+        draft.IsPinned = true;
+        draft.Rules =
+        [
+            new SmartPlaylistRule { Field = SmartPlaylistField.Genre, TagName = "ignored", Operator = SmartPlaylistOperator.Is, Value = "Pop" },
+            new SmartPlaylistRule { Field = SmartPlaylistField.Tag, TagName = "My \"Mood\"", Operator = SmartPlaylistOperator.Is, Value = "Calm" }
+        ];
         PlaylistUpdatedEventArgs? update = null;
         _service.PlaylistUpdated += (_, args) => update = args;
 
@@ -559,12 +565,14 @@ public class SmartPlaylistServiceTests : IDisposable
 
         saved!.Id.Should().Be(draft.Id);
         saved.DateCreated.Should().Be(draft.DateCreated);
-        saved.Rules.Should().ContainSingle().Which.Value.Should().Be("Pop");
         var fetched = await _service.GetSmartPlaylistByIdAsync(draft.Id);
-        fetched!.Name.Should().Be("Updated Name");
+        fetched!.Rules.Select(rule => (rule.Value, rule.TagName)).Should().Equal(("Pop", null), ("Calm", "MY MOOD"));
+        fetched.Name.Should().Be("Updated Name");
         fetched.Description.Should().Be("Updated Description");
         fetched.MatchAllRules.Should().BeFalse();
-        fetched.SortOrder.Should().Be(SongSortOrder.Random);
+        fetched.SortOrder.Should().Be(SongSortOrder.TagDesc);
+        fetched.SortTag.Should().Be("MOOD");
+        (await _service.GetPinnedSmartPlaylistsAsync()).Should().ContainSingle().Which.Id.Should().Be(draft.Id);
         update.Should().NotBeNull();
         update!.DateModified.Should().Be(fetched.DateModified);
         using var context = _dbHelper.ContextFactory.CreateDbContext();

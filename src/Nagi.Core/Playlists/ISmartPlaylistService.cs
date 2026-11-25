@@ -17,6 +17,8 @@ public interface ISmartPlaylistService
     Task<SmartPlaylist?> UpdateSmartPlaylistAsync(SmartPlaylist playlist);
     Task<SmartPlaylist?> GetSmartPlaylistByIdAsync(Guid smartPlaylistId);
     Task<IEnumerable<SmartPlaylist>> GetAllSmartPlaylistsAsync();
+
+    Task<IReadOnlyList<SmartPlaylist>> GetPinnedSmartPlaylistsAsync();
     /// <exception cref="PlaylistNameTakenException">Another smart playlist already has the name.</exception>
     Task<bool> RenameSmartPlaylistAsync(Guid smartPlaylistId, string newName);
     Task<bool> UpdateSmartPlaylistCoverAsync(Guid smartPlaylistId, string? newCoverImageUri);

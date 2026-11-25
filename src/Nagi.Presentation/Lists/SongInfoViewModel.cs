@@ -35,8 +35,8 @@ public sealed class SongInfoViewModel(
         Title = song.Title;
         ArtistName = song.ArtistName;
         ArtworkUri = song.AlbumArtUriFromTrack;
-        Sections =
-        [
+        Sections = new[]
+        {
             Section(Strings.SongInfo_Section_Tags,
                 (CoreStrings.Label_Title, song.Title),
                 (CoreStrings.Label_Artist, song.ArtistName),
@@ -53,6 +53,8 @@ public sealed class SongInfoViewModel(
                 (Strings.Label_ReplayGain, Format(Strings.SongInfo_Gain_Format, song.ReplayGainTrackGain)),
                 (Strings.Label_Comment, song.Comment),
                 (Strings.Label_Copyright, song.Copyright)),
+            Section(Strings.SongInfo_Section_OtherTags,
+                SongTags.Parse(song.Tags).Select(tag => (tag.Key, (string?)tag.Value)).ToArray()),
             Section(Strings.Label_File,
                 // A server song's path is a library key, not a file, so its server is shown instead.
                 song.IsFromServer ? (Strings.Label_Server, song.Folder?.Name) : (Strings.Label_Path, song.FilePath),
@@ -70,7 +72,7 @@ public sealed class SongInfoViewModel(
                 (Strings.Label_PlayCount, song.PlayCount.ToString("N0")),
                 (Strings.Label_SkipCount, song.SkipCount.ToString("N0")),
                 (Strings.Label_LastPlayed, FormatDate(song.LastPlayedDate)))
-        ];
+        }.Where(section => section.Fields.Count > 0).ToList();
     }
 
     private static SongInfoSection Section(string title, params (string Label, string? Value)[] fields) =>

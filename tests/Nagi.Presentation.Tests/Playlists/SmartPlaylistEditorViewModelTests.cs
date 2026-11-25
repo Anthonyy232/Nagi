@@ -54,6 +54,26 @@ public class SmartPlaylistEditorViewModelTests : IDisposable
     }
 
     [Fact]
+    public async Task Save_KeepsTheTagsAndPinOfAnExistingPlaylist()
+    {
+        _service.UpdateSmartPlaylistAsync(Arg.Any<SmartPlaylist>()).Returns(call => call.Arg<SmartPlaylist>());
+        _viewModel.Initialize(new SmartPlaylist
+        {
+            Name = "Calm",
+            SortOrder = SongSortOrder.TagAsc,
+            SortTag = "ENERGY",
+            IsPinned = true,
+            Rules = { new SmartPlaylistRule { Field = SmartPlaylistField.Tag, TagName = "MOOD", Operator = SmartPlaylistOperator.Is, Value = "Calm" } }
+        });
+
+        (await _viewModel.SaveAsync()).Should().Be(SmartPlaylistSaveResult.Saved);
+
+        var saved = _viewModel.ResultPlaylist!;
+        (saved.SortOrder, saved.SortTag, saved.IsPinned).Should().Be((SongSortOrder.TagAsc, "ENERGY", true));
+        saved.Rules.Single().TagName.Should().Be("MOOD");
+    }
+
+    [Fact]
     public async Task Save_WithoutANameStaysOpenAndSavesNothing()
     {
         _viewModel.Initialize(null);

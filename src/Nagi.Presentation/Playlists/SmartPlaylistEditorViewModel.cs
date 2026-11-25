@@ -53,8 +53,10 @@ public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposabl
         Rules.CollectionChanged += OnRulesCollectionChanged;
     }
 
+    // The list's own sort menu leaves out the tag orders: only the editor can name the tag.
     public static IReadOnlyList<SortOption> SortOptions { get; } =
-        SmartPlaylistSongListViewModel.SortOrders.Select(order => new SortOption(order, SortOrderHelper.GetLabel(order))).ToList();
+        SmartPlaylistSongListViewModel.SortOrders.Append(SongSortOrder.TagAsc).Append(SongSortOrder.TagDesc)
+            .Select(order => new SortOption(order, SortOrderHelper.GetLabel(order))).ToList();
 
     public ObservableCollection<RuleViewModel> Rules { get; } = new();
 
@@ -77,7 +79,15 @@ public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposabl
         set => MatchAllRules = value != 1;
     }
 
-    [ObservableProperty] public partial SortOption SelectedSortOption { get; set; }
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsSortedByTag))]
+    public partial SortOption SelectedSortOption { get; set; }
+
+    public bool IsSortedByTag => SelectedSortOption.Order is SongSortOrder.TagAsc or SongSortOrder.TagDesc;
+
+    [ObservableProperty] public partial string SortTag { get; set; } = string.Empty;
+
+    [ObservableProperty] public partial bool IsPinned { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CoverPreviewUri))]
@@ -107,6 +117,8 @@ public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposabl
             Name = editing.Name;
             MatchAllRules = editing.MatchAllRules;
             SelectedSortOption = SortOptions.FirstOrDefault(o => o.Order.Equals(editing.SortOrder)) ?? SortOptions[0];
+            SortTag = editing.SortTag ?? string.Empty;
+            IsPinned = editing.IsPinned;
             CoverImageUri = string.IsNullOrWhiteSpace(editing.CoverImageUri) ? null : editing.CoverImageUri;
             foreach (var rule in editing.Rules.OrderBy(r => r.Order))
                 Rules.Add(new RuleViewModel(rule));
@@ -187,6 +199,8 @@ public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposabl
             Name = Name,
             MatchAllRules = MatchAllRules,
             SortOrder = (SongSortOrder)SelectedSortOption.Order,
+            SortTag = SortTag,
+            IsPinned = IsPinned,
             CoverImageUri = CoverImageUri,
             Description = _editingPlaylist?.Description,
             Rules = Rules.Select(rule => rule.ToSmartPlaylistRule()).ToList()
@@ -251,6 +265,7 @@ public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposabl
         if (e.PropertyName is nameof(RuleViewModel.Value) or
             nameof(RuleViewModel.SecondValue) or
             nameof(RuleViewModel.SelectedField) or
+            nameof(RuleViewModel.TagName) or
             nameof(RuleViewModel.SelectedOperator))
         {
             _ = UpdateMatchCountAsync();

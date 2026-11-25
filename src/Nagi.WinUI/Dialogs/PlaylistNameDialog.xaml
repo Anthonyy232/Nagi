@@ -10,19 +10,25 @@
                PrimaryButtonText="{x:Bind ViewModel.AcceptText}"
                Style="{StaticResource DefaultContentDialogStyle}">
 
-    <StackPanel>
-        <!--  A new playlist can start with a cover image; a rename only changes the name.  -->
-        <uicontrols:ArtworkImage Margin="0,0,0,12"
-                                 HorizontalAlignment="Center"
-                                 PlaceholderGlyph="&#xE91B;"
-                                 Size="80"
-                                 Source="{x:Bind ViewModel.CoverImagePath, Mode=OneWay}"
-                                 Visibility="{x:Bind ViewModel.IsNewPlaylist}" />
-        <TextBox PlaceholderText="{x:Bind resources:Strings.PlaylistPage_CreateDialog_Placeholder}" Text="{x:Bind ViewModel.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        <Button Margin="0,12,0,0"
-                HorizontalAlignment="Stretch"
-                Command="{x:Bind ViewModel.PickCoverImageCommand}"
-                Content="{x:Bind resources:Strings.PlaylistPage_CreateDialog_PickImage}"
-                Visibility="{x:Bind ViewModel.IsNewPlaylist}" />
-    </StackPanel>
+    <ContentDialog.Resources>
+        <x:Double x:Key="ContentDialogMaxWidth">400</x:Double>
+    </ContentDialog.Resources>
+
+    <uicontrols:FillWidthGrid>
+        <StackPanel>
+            <!--  A new playlist can start with a cover image; a rename only changes the name.  -->
+            <uicontrols:ArtworkImage Margin="0,0,0,12"
+                                     HorizontalAlignment="Center"
+                                     PlaceholderGlyph="&#xE91B;"
+                                     Size="80"
+                                     Source="{x:Bind ViewModel.CoverImagePath, Mode=OneWay}"
+                                     Visibility="{x:Bind ViewModel.IsNewPlaylist}" />
+            <TextBox PlaceholderText="{x:Bind resources:Strings.PlaylistPage_CreateDialog_Placeholder}" Text="{x:Bind ViewModel.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Margin="0,12,0,0"
+                    HorizontalAlignment="Stretch"
+                    Command="{x:Bind ViewModel.PickCoverImageCommand}"
+                    Content="{x:Bind resources:Strings.PlaylistPage_CreateDialog_PickImage}"
+                    Visibility="{x:Bind ViewModel.IsNewPlaylist}" />
+        </StackPanel>
+    </uicontrols:FillWidthGrid>
 </ContentDialog>

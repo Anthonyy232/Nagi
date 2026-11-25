@@ -18,6 +18,13 @@ public class SmartPlaylistRule
     public SmartPlaylistOperator Operator { get; set; }
 
     /// <summary>
+    ///     The tag a <see cref="SmartPlaylistField.Tag" /> rule reads, as <see cref="Library.SongTags.NormalizeName" />
+    ///     gives it.
+    /// </summary>
+    [MaxLength(200)]
+    public string? TagName { get; set; }
+
+    /// <summary>
     ///     In the form <see cref="SmartPlaylistRuleValue.ToStoredValue" /> gives. <see cref="SecondValue" /> is
     ///     the upper bound of a range.
     /// </summary>

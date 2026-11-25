@@ -20,6 +20,7 @@ public class RuleViewModel : ObservableObject
         new(SmartPlaylistField.Comment, Strings.Label_Comment),
         new(SmartPlaylistField.Composer, Strings.Label_Composer),
         new(SmartPlaylistField.Grouping, Strings.Label_Grouping),
+        new(SmartPlaylistField.Tag, Strings.Label_CustomTag),
         new(SmartPlaylistField.PlayCount, Strings.Label_PlayCount),
         new(SmartPlaylistField.SkipCount, Strings.Label_SkipCount),
         new(SmartPlaylistField.TrackNumber, Strings.Label_TrackNumber),
@@ -41,6 +42,7 @@ public class RuleViewModel : ObservableObject
 
     private FieldOption _selectedField = AvailableFields[0];
     private OperatorOption _selectedOperator;
+    private string _tagName = string.Empty;
     private string _value = string.Empty;
     private string _secondValue = string.Empty;
 
@@ -55,6 +57,7 @@ public class RuleViewModel : ObservableObject
         _selectedField = AvailableFields.First(f => f.Field == rule.Field);
         AvailableOperators = OperatorsFor(rule.Field);
         _selectedOperator = AvailableOperators.First(o => o.Operator == rule.Operator);
+        _tagName = rule.TagName ?? string.Empty;
         _value = SmartPlaylistRuleValue.ToDisplayValue(rule.Field, rule.Operator, rule.Value);
         _secondValue = SmartPlaylistRuleValue.ToDisplayValue(rule.Field, rule.Operator, rule.SecondValue);
     }
@@ -68,8 +71,19 @@ public class RuleViewModel : ObservableObject
         {
             // ComboBox can clear selection while its items are refreshed.
             if (value != null && SetProperty(ref _selectedField, value))
+            {
+                OnPropertyChanged(nameof(IsTag));
                 UpdateOperatorsForField();
+            }
         }
+    }
+
+    public bool IsTag => SelectedField.Field == SmartPlaylistField.Tag;
+
+    public string TagName
+    {
+        get => _tagName;
+        set => SetProperty(ref _tagName, value);
     }
 
     public OperatorOption SelectedOperator
@@ -115,6 +129,7 @@ public class RuleViewModel : ObservableObject
     {
         Field = _selectedField.Field,
         Operator = _selectedOperator.Operator,
+        TagName = _tagName,
         Value = _value,
         SecondValue = _secondValue
     };

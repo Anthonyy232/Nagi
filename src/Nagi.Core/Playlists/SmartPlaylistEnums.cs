@@ -10,6 +10,9 @@ public enum SmartPlaylistField
     Comment,
     Grouping,
 
+    /// <summary>One of <see cref="Library.Song.Tags" />, which <see cref="SmartPlaylistRule.TagName" /> names.</summary>
+    Tag,
+
     PlayCount,
     SkipCount,
     Rating,

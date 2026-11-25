@@ -41,6 +41,9 @@ public class SongFileMetadata
     public string? MusicBrainzReleaseId { get; set; }
     public string? MusicBrainzReleaseGroupId { get; set; }
 
+    /// <summary>The tags beyond the standard fields, by <see cref="SongTags.NormalizeName">normalized</see> name.</summary>
+    public Dictionary<string, string> Tags { get; set; } = new();
+
     /// <summary>Artist IDs in tag order; they pair with <see cref="Artists"/> only when the counts match.</summary>
     public List<string> MusicBrainzArtistIds { get; set; } = new();
 
