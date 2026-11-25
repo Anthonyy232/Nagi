@@ -1,4 +1,6 @@
-﻿namespace Nagi.Core.Playback;
+﻿using System.Text.Json.Serialization;
+
+namespace Nagi.Core.Playback;
 
 /// <summary>
 ///     The queue saved between sessions. Shuffle and repeat are settings of their own, since they outlast the queue.
@@ -10,6 +12,8 @@ public class PlaybackState
     /// <summary>The play order while shuffling, or empty.</summary>
     public List<Guid> ShuffledQueueTrackIds { get; set; } = [];
 
+    // A number saved by an older version still reads.
+    [JsonConverter(typeof(JsonStringEnumConverter<ShuffleMode>))]
     public ShuffleMode ShuffleMode { get; set; }
 
     /// <summary>The song at the queue's position: the one loaded, or the one playback resumes with while stopped.</summary>

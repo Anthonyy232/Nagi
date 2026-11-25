@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Nagi.Core.Data;
 using Nagi.Core.Library;
+using Nagi.Core.MusicServers;
+using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
 using Nagi.Core.Tests.Utils;
 using Xunit;
@@ -276,10 +278,11 @@ public class DatabaseMigrationTests
             ["Duration"] = 16,
             ["Random"] = 22
         };
-        context.SmartPlaylists.AddRange(saved.Select(entry =>
-            new SmartPlaylist { Name = entry.Key, SortOrder = (SongSortOrder)entry.Value }));
-        await context.SaveChangesAsync();
-        context.ChangeTracker.Clear();
+        foreach (var (name, sortOrder) in saved)
+            await context.Database.ExecuteSqlAsync($"""
+                INSERT INTO SmartPlaylists (Id, Name, DateCreated, DateModified, MatchAllRules, SortOrder)
+                VALUES ({Guid.NewGuid()}, {name}, '2026-01-01', '2026-01-01', 1, {sortOrder})
+                """);
 
         await context.Database.MigrateAsync();
 
@@ -295,5 +298,46 @@ public class DatabaseMigrationTests
                 ["Duration"] = SongSortOrder.DurationAsc,
                 ["Random"] = SongSortOrder.Random
             });
+    }
+
+    [Fact]
+    public async Task StoreEnumsByName_KeepsEveryStoredEnumAndGoesBack()
+    {
+        await using var context = new MusicDbContext(
+            new DbContextOptionsBuilder<MusicDbContext>().UseSqlite("Data Source=:memory:").Options);
+        await context.Database.OpenConnectionAsync();
+        await context.GetService<IMigrator>().MigrateAsync("20261124025217_AddArtistSortTags");
+        var folder = new Folder { Name = "Music", Path = @"C:\Music" };
+        var song = new Song { Title = "Song", FilePath = @"C:\Music\Song.mp3", DirectoryPath = @"C:\Music", Folder = folder };
+        context.Songs.Add(song);
+        await context.SaveChangesAsync();
+        var playlistId = Guid.NewGuid();
+        await context.Database.ExecuteSqlAsync($"""
+            INSERT INTO SmartPlaylists (Id, Name, DateCreated, DateModified, MatchAllRules, SortOrder)
+            VALUES ({playlistId}, 'Recent', '2026-01-01', '2026-01-01', 1, 25);
+            INSERT INTO SmartPlaylistRules (Id, SmartPlaylistId, Field, Operator, "Order")
+            VALUES ({Guid.NewGuid()}, {playlistId}, 22, 13, 0);
+            INSERT INTO MusicServers (FolderId, Kind, BaseUrl, UserName, UserId, UsesApiKey)
+            VALUES ({folder.Id}, 1, 'https://jellyfin.example', 'me', 'id', 0);
+            INSERT INTO ListenHistory (SongId, ListenTimestampUtc, EndReason, ContextType, ListenDurationTicks,
+                IsEligibleForScrobbling, IsScrobbled, IsSubmittedToListenBrainz, IsSubmittedToServer)
+            VALUES ({song.Id}, '2026-01-01', 2, 8, 0, 0, 0, 0, 0);
+            """);
+
+        await context.Database.MigrateAsync();
+
+        (await context.SmartPlaylists.SingleAsync()).SortOrder.Should().Be(SongSortOrder.FileModifiedDateDesc);
+        var rule = await context.SmartPlaylistRules.SingleAsync();
+        (rule.Field, rule.Operator).Should().Be((SmartPlaylistField.FileModifiedDate, SmartPlaylistOperator.IsInTheLast));
+        (await context.MusicServers.SingleAsync()).Kind.Should().Be(MusicServerKind.Jellyfin);
+        var listen = await context.ListenHistory.SingleAsync();
+        (listen.EndReason, listen.ContextType).Should().Be((PlaybackEndReason.PausedAndAbandoned, PlaybackContextType.Transient));
+
+        await context.GetService<IMigrator>().MigrateAsync("20261124025217_AddArtistSortTags");
+
+        (await context.Database.SqlQueryRaw<string>("""
+            SELECT SortOrder || ' ' || Field || ' ' || Operator || ' ' || Kind || ' ' || EndReason || ' ' || ContextType AS Value
+            FROM SmartPlaylists, SmartPlaylistRules, MusicServers, ListenHistory
+            """).SingleAsync()).Should().Be("25 22 13 1 2 8");
     }
 }

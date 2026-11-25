@@ -478,11 +478,13 @@ namespace Nagi.Core.Data.Migrations
                     b.Property<Guid?>("ContextId")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ContextType")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("ContextType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
-                    b.Property<int>("EndReason")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("EndReason")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsEligibleForScrobbling")
                         .HasColumnType("INTEGER");
@@ -532,8 +534,9 @@ namespace Nagi.Core.Data.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Kind")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("UserId")
                         .HasMaxLength(100)
@@ -647,8 +650,9 @@ namespace Nagi.Core.Data.Migrations
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
-                    b.Property<int>("SortOrder")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("SortOrder")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -664,11 +668,13 @@ namespace Nagi.Core.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Field")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Field")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
-                    b.Property<int>("Operator")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Operator")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Order")
                         .HasColumnType("INTEGER");

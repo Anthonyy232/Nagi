@@ -1,6 +1,5 @@
 ﻿namespace Nagi.Core.Library;
 
-// Smart playlists store these as numbers: add new values at the end.
 public enum SongSortOrder
 {
     TitleAsc,

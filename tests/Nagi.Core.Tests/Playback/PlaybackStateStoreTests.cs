@@ -63,6 +63,26 @@ public class PlaybackStateStoreTests
         }
     }
 
+    [Fact]
+    public async Task SavesTheShuffleModeByNameAndReadsANumberAnOlderVersionSaved()
+    {
+        var directory = Directory.CreateTempSubdirectory("Nagi-playback-");
+        try
+        {
+            var path = Path.Combine(directory.FullName, "playback_state.json");
+            var store = CreateStore(path);
+            await store.SaveAsync(new PlaybackState { ShuffleMode = ShuffleMode.Rediscover });
+            (await File.ReadAllTextAsync(path)).Should().Contain("\"ShuffleMode\":\"Rediscover\"");
+
+            await File.WriteAllTextAsync(path, """{"ShuffleMode":3}""");
+            (await store.LoadAsync())!.ShuffleMode.Should().Be(ShuffleMode.Unheard);
+        }
+        finally
+        {
+            directory.Delete(recursive: true);
+        }
+    }
+
     private static PlaybackStateStore CreateStore(string path)
     {
         var paths = Substitute.For<IPathConfiguration>();
