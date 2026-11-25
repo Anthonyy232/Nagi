@@ -1316,7 +1316,7 @@
     <value>ละเว้นคำนำหน้านามเมื่อจัดเรียง</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>จัดเรียงอัลบั้ม, ศิลปิน และเพลงตามคำสำคัญแรก (เช่น "The Beatles" จะถูกจัดเรียงภายใต้ตัวอักษร B)</value>
+    <value>จัดเรียงอัลบั้ม, ศิลปิน และเพลงตามคำสำคัญแรก (เช่น "The Beatles" จะถูกจัดเรียงภายใต้ตัวอักษร B) แท็กจัดเรียงศิลปิน เช่น ARTISTSORT จะมีผลเฉพาะเมื่อเปิดตัวเลือกนี้เท่านั้น</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>การจัดการข้อมูล</value>
@@ -1325,13 +1325,13 @@
     <value>การแยกศิลปิน</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>กำหนดอักขระที่ใช้ในการแยกศิลปินหลายคน (เช่น ';/') เว้นว่างไว้เพื่อปิดใช้งาน</value>
+    <value>อักขระที่ใช้แยกศิลปินหลายคนที่เขียนอยู่ในแท็กเดียว (เช่น ';/') ศิลปินที่อยู่คนละแท็กจะถูกแยกจากกันเสมอ</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>การแยกแนวเพลง</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>กำหนดตัวอักษรที่ใช้ในการแยกแนวเพลงหลายแนว (เช่น ';/') เว้นว่างไว้เพื่อปิดใช้งาน</value>
+    <value>อักขระที่ใช้แยกแนวเพลงหลายแนวที่เขียนอยู่ในแท็กเดียว (เช่น ';/') แนวเพลงที่อยู่คนละแท็กจะถูกแยกจากกันเสมอ</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>สแกนคลังเพลงซ้ำ</value>

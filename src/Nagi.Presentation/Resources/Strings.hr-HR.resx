@@ -1316,7 +1316,7 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
     <value>Zanemari članove pri razvrstavanju</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Sortiraj albume, izvođače i pjesme prema prvoj značajnoj riječi (npr. "The Beatles" sortira se pod B).</value>
+    <value>Sortiraj albume, izvođače i pjesme prema prvoj značajnoj riječi (npr. "The Beatles" sortira se pod B). Oznake za sortiranje izvođača, poput ARTISTSORT, primjenjuju se samo dok je ovo uključeno.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Upravljanje podacima</value>
@@ -1325,13 +1325,13 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
     <value>Razdvajanje izvođača</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Definirajte znakove korištene za razdvajanje više izvođača (npr. ';/'). Ostavite prazno za onemogućavanje.</value>
+    <value>Znakovi koji razdvajaju više izvođača zapisanih u jednoj oznaci (npr. ';/'). Izvođači u zasebnim oznakama uvijek ostaju razdvojeni.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Razdvajanje žanrova</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Definirajte znakove koji se koriste za razdvajanje više žanrova (npr. ';/'). Ostavite prazno za onemogućavanje.</value>
+    <value>Znakovi koji razdvajaju više žanrova zapisanih u jednoj oznaci (npr. ';/'). Žanrovi u zasebnim oznakama uvijek ostaju razdvojeni.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Ponovno skeniraj biblioteku</value>

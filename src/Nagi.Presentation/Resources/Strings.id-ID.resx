@@ -1316,7 +1316,7 @@ Apakah Anda ingin melanjutkan?</value>
     <value>Abaikan Kata Sandang Saat Pengurutan</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Urutkan album, artis, dan lagu berdasarkan kata signifikan pertama mereka (misalnya "The Beatles" diurutkan di bawah B).</value>
+    <value>Urutkan album, artis, dan lagu berdasarkan kata signifikan pertama mereka (misalnya "The Beatles" diurutkan di bawah B). Tag pengurutan artis seperti ARTISTSORT hanya berlaku selama ini aktif.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Manajemen Data</value>
@@ -1325,13 +1325,13 @@ Apakah Anda ingin melanjutkan?</value>
     <value>Pemisahan Artis</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Definisikan karakter yang digunakan untuk memisahkan beberapa artis (misalnya ';/'). Biarkan kosong untuk menonaktifkan.</value>
+    <value>Karakter yang memisahkan beberapa artis yang ditulis dalam satu tag (misalnya ';/'). Artis dalam tag terpisah selalu dibiarkan terpisah.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Pemisahan Genre</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Definisikan karakter yang digunakan untuk memisahkan beberapa genre (misalnya ';/'). Biarkan kosong untuk menonaktifkan.</value>
+    <value>Karakter yang memisahkan beberapa genre yang ditulis dalam satu tag (misalnya ';/'). Genre dalam tag terpisah selalu dibiarkan terpisah.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Pindai Ulang Pustaka</value>

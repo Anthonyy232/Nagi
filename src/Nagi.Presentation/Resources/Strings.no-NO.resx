@@ -1316,7 +1316,7 @@ Vil du fortsette?</value>
     <value>Ignorer artikler ved sortering</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Sorter album, artister og sanger etter deres første betydningsfulle ord (f.eks. "The Beatles" sorteres under B).</value>
+    <value>Sorter album, artister og sanger etter deres første betydningsfulle ord (f.eks. "The Beatles" sorteres under B). Sorteringstagger for artister, som ARTISTSORT, gjelder bare mens dette er på.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Databehandling</value>
@@ -1325,13 +1325,13 @@ Vil du fortsette?</value>
     <value>Artistsplitting</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Definer tegn som brukes til å splitte flere artister (f.eks. ';/'). La stå tomt for å deaktivere.</value>
+    <value>Tegn som deler flere artister skrevet i én tagg (f.eks. ';/'). Artister i separate tagger holdes alltid adskilt.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Sjangerdeling</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Definer tegn som brukes til å dele flere sjangere (f.eks. ';/'). La stå tomt for å deaktivere.</value>
+    <value>Tegn som deler flere sjangere skrevet i én tagg (f.eks. ';/'). Sjangere i separate tagger holdes alltid adskilt.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Skann bibliotek på nytt</value>

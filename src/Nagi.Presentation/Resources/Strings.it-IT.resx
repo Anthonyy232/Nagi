@@ -1316,7 +1316,7 @@ Vuoi continuare?</value>
     <value>Ignora gli articoli durante l'ordinamento</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Ordina album, artisti e brani in base alla loro prima parola significativa (ad es. "The Beatles" viene ordinato sotto B).</value>
+    <value>Ordina album, artisti e brani in base alla loro prima parola significativa (ad es. "The Beatles" viene ordinato sotto B). I tag di ordinamento degli artisti, come ARTISTSORT, si applicano solo quando questa opzione è attiva.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Gestione dati</value>
@@ -1325,13 +1325,13 @@ Vuoi continuare?</value>
     <value>Divisione artisti</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Definisci i caratteri usati per separare più artisti (es. ';/'). Lascia vuoto per disabilitare.</value>
+    <value>Caratteri che separano più artisti scritti in un unico tag (es. ';/'). Gli artisti in tag separati restano sempre distinti.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Separazione generi</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Definisci i caratteri usati per separare più generi (es. ';/'). Lascia vuoto per disabilitare.</value>
+    <value>Caratteri che separano più generi scritti in un unico tag (es. ';/'). I generi in tag separati restano sempre distinti.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Riscansiona libreria</value>

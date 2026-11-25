@@ -1316,7 +1316,7 @@ Vill du fortsätta?</value>
     <value>Ignorera artiklar vid sortering</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Sortera album, artister och låtar efter deras första betydande ord (t.ex. "The Beatles" sorteras under B).</value>
+    <value>Sortera album, artister och låtar efter deras första betydande ord (t.ex. "The Beatles" sorteras under B). Sorteringstaggar för artister, som ARTISTSORT, gäller bara när detta är på.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Datahantering</value>
@@ -1325,13 +1325,13 @@ Vill du fortsätta?</value>
     <value>Artistuppdelning</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Definiera tecken som används för att dela upp flera artister (t.ex. ';/'). Lämna tomt för att inaktivera.</value>
+    <value>Tecken som delar upp flera artister skrivna i en och samma tagg (t.ex. ';/'). Artister i separata taggar hålls alltid isär.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Genreuppdelning</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Definiera tecken som används för att dela upp flera genrer (t.ex. ';/'). Lämna tomt för att inaktivera.</value>
+    <value>Tecken som delar upp flera genrer skrivna i en och samma tagg (t.ex. ';/'). Genrer i separata taggar hålls alltid isär.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Skanna om bibliotek</value>

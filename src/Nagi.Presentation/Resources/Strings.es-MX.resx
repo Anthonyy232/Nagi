@@ -1316,7 +1316,7 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
     <value>Ignorar artículos al ordenar</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Ordenar álbumes, artistas y canciones por su primera palabra significativa (por ejemplo, "The Beatles" se ordena bajo B).</value>
+    <value>Ordenar álbumes, artistas y canciones por su primera palabra significativa (por ejemplo, "The Beatles" se ordena bajo B). Las etiquetas de ordenación de artista, como ARTISTSORT, solo se aplican mientras esto está activado.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Administración de datos</value>
@@ -1325,13 +1325,13 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
     <value>División de artistas</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Define los caracteres utilizados para dividir varios artistas (por ejemplo, ';/'). Deja en blanco para deshabilitar.</value>
+    <value>Caracteres que separan varios artistas escritos en una sola etiqueta (p. ej., ';/'). Los artistas en etiquetas separadas siempre se mantienen separados.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>División de géneros</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Define los caracteres usados para separar múltiples géneros (p. ej., ';/'). Deja vacío para deshabilitar.</value>
+    <value>Caracteres que separan varios géneros escritos en una sola etiqueta (p. ej., ';/'). Los géneros en etiquetas separadas siempre se mantienen separados.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Volver a escanear biblioteca</value>

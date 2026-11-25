@@ -1316,7 +1316,7 @@
     <value>সাজানোর সময় আর্টিকেল উপেক্ষা করুন</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>অ্যালবাম, শিল্পী এবং গান তাদের প্রথম গুরুত্বপূর্ণ শব্দ দ্বারা সাজান (যেমন, "The Beatles" B এর অধীনে সাজানো হবে)।</value>
+    <value>অ্যালবাম, শিল্পী এবং গান তাদের প্রথম গুরুত্বপূর্ণ শব্দ দ্বারা সাজান (যেমন, "The Beatles" B এর অধীনে সাজানো হবে)। ARTISTSORT-এর মতো শিল্পী সাজানোর ট্যাগ কেবল এটি চালু থাকলেই প্রযোজ্য হয়।</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>ডেটা ব্যবস্থাপনা</value>
@@ -1325,13 +1325,13 @@
     <value>শিল্পী বিভাজন</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>একাধিক শিল্পীকে বিভাজন করতে ব্যবহৃত অক্ষরগুলি সংজ্ঞায়িত করুন (উদাহরণস্বরূপ ';/')। নিষ্ক্রিয় করতে খালি রাখুন।</value>
+    <value>একটি ট্যাগে লেখা একাধিক শিল্পীকে আলাদা করার অক্ষর (যেমন ';/')। আলাদা ট্যাগে থাকা শিল্পীদের সবসময় আলাদা রাখা হয়।</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>জেনার বিভাজন</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>একাধিক জেনার বিভক্ত করার জন্য ব্যবহৃত অক্ষরগুলি সংজ্ঞায়িত করুন (যেমন ';/')। নিষ্ক্রিয় করতে খালি রাখুন।</value>
+    <value>একটি ট্যাগে লেখা একাধিক জেনারকে আলাদা করার অক্ষর (যেমন ';/')। আলাদা ট্যাগে থাকা জেনারগুলো সবসময় আলাদা রাখা হয়।</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>লাইব্রেরি পুনরায় স্ক্যান করুন</value>

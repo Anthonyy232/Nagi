@@ -1316,7 +1316,7 @@
     <value>تجاهل أدوات التعريف والتنكير عند الفرز</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>فرز الألبومات والفنانين والأغاني حسب الكلمة المهمة الأولى (على سبيل المثال، يتم فرز "The Beatles" تحت حرف B).</value>
+    <value>فرز الألبومات والفنانين والأغاني حسب الكلمة المهمة الأولى (على سبيل المثال، يتم فرز "The Beatles" تحت حرف B). وسوم فرز الفنان مثل ARTISTSORT تُطبَّق فقط عند تفعيل هذا الخيار.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>إدارة البيانات</value>
@@ -1325,13 +1325,13 @@
     <value>تقسيم الفنانين</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>حدد الأحرف المستخدمة لتقسيم الفنانين المتعددين (مثل ';/'). اتركها فارغة للتعطيل.</value>
+    <value>الأحرف التي تفصل بين عدة فنانين مكتوبين في وسم واحد (مثل ';/'). الفنانون في وسوم منفصلة يبقون منفصلين دائمًا.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>تقسيم النوع الموسيقي</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>حدد الأحرف المستخدمة لتقسيم الأنواع الموسيقية المتعددة (على سبيل المثال ';/'). اتركه فارغًا للتعطيل.</value>
+    <value>الأحرف التي تفصل بين عدة أنواع موسيقية مكتوبة في وسم واحد (مثل ';/'). الأنواع في وسوم منفصلة تبقى منفصلة دائمًا.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>إعادة فحص المكتبة</value>

@@ -1316,7 +1316,7 @@ Adakah anda ingin meneruskan?</value>
     <value>Abaikan Kata Sandang Semasa Mengisih</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Isih album, artis dan lagu mengikut perkataan penting pertama mereka (cth. "The Beatles" diisih di bawah B).</value>
+    <value>Isih album, artis dan lagu mengikut perkataan penting pertama mereka (cth. "The Beatles" diisih di bawah B). Tag isihan artis seperti ARTISTSORT hanya digunakan semasa tetapan ini dihidupkan.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Pengurusan Data</value>
@@ -1325,13 +1325,13 @@ Adakah anda ingin meneruskan?</value>
     <value>Pemisahan Artis</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Tentukan aksara yang digunakan untuk memisahkan berbilang artis (cth. ';/'). Biarkan kosong untuk melumpuhkan.</value>
+    <value>Aksara yang memisahkan beberapa artis yang ditulis dalam satu tag (cth. ';/'). Artis dalam tag berasingan sentiasa dikekalkan berasingan.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Pemecahan Genre</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Tetapkan aksara yang digunakan untuk memisahkan berbilang genre (cth. ';/'). Biarkan kosong untuk melumpuhkan.</value>
+    <value>Aksara yang memisahkan beberapa genre yang ditulis dalam satu tag (cth. ';/'). Genre dalam tag berasingan sentiasa dikekalkan berasingan.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Imbas Semula Pustaka</value>

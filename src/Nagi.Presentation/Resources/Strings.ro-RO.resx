@@ -1316,7 +1316,7 @@ Vrei să continui?</value>
     <value>Ignoră articolele la sortare</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Sortează albumele, artiștii și melodiile după primul cuvânt semnificativ (de ex., "The Beatles" se sortează la B).</value>
+    <value>Sortează albumele, artiștii și melodiile după primul cuvânt semnificativ (de ex., "The Beatles" se sortează la B). Etichetele de sortare a artiștilor, precum ARTISTSORT, se aplică doar cât timp această opțiune este activată.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Gestionare date</value>
@@ -1325,13 +1325,13 @@ Vrei să continui?</value>
     <value>Separare artiști</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Definește caracterele utilizate pentru a separa mai mulți artiști (ex. ';/'). Lasă gol pentru a dezactiva.</value>
+    <value>Caractere care separă mai mulți artiști scriși într-o singură etichetă (ex. ';/'). Artiștii din etichete separate rămân întotdeauna separați.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Divizare genuri</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Definește caracterele utilizate pentru a separa mai multe genuri (ex. ';/'). Lasă gol pentru a dezactiva.</value>
+    <value>Caractere care separă mai multe genuri scrise într-o singură etichetă (ex. ';/'). Genurile din etichete separate rămân întotdeauna separate.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Rescanează Biblioteca</value>

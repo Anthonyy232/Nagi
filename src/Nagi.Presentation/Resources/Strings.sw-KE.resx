@@ -1316,7 +1316,7 @@ Je, unataka kuendelea?</value>
     <value>Puuza Vihusishi Wakati wa Kupanga</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Panga albamu, wasanii, na nyimbo kwa kutumia neno lao la kwanza muhimu (k.m. "The Beatles" hupangwa chini ya B).</value>
+    <value>Panga albamu, wasanii, na nyimbo kwa kutumia neno lao la kwanza muhimu (k.m. "The Beatles" hupangwa chini ya B). Lebo za kupanga wasanii kama ARTISTSORT hutumika tu wakati chaguo hili limewashwa.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Usimamizi wa Data</value>
@@ -1325,13 +1325,13 @@ Je, unataka kuendelea?</value>
     <value>Kugawanya Wasanii</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Fafanua herufi zinazotumika kugawanya wasanii wengi (k.m. ';/'). Acha tupu ili kuzima.</value>
+    <value>Herufi zinazotenganisha wasanii kadhaa walioandikwa katika lebo moja (k.m. ';/'). Wasanii walio katika lebo tofauti hubaki wametenganishwa kila wakati.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Kugawanya Aina</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Fafanua herufi zinazotumika kugawanya aina nyingi (k.m. ';/'). Acha tupu ili kuzima.</value>
+    <value>Herufi zinazotenganisha aina kadhaa zilizoandikwa katika lebo moja (k.m. ';/'). Aina zilizo katika lebo tofauti hubaki zimetenganishwa kila wakati.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Changanua Upya Maktaba</value>

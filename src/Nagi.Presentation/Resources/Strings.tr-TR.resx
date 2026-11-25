@@ -1316,7 +1316,7 @@ Devam etmek ister misiniz?</value>
     <value>Sıralarken Tanımlıkları Yoksay</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Albümleri, sanatçıları ve şarkıları ilk önemli kelimelerine göre sıralayın (örneğin, "The Beatles" B altında sıralanır).</value>
+    <value>Albümleri, sanatçıları ve şarkıları ilk önemli kelimelerine göre sıralayın (örneğin, "The Beatles" B altında sıralanır). ARTISTSORT gibi sanatçı sıralama etiketleri yalnızca bu açıkken uygulanır.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Veri Yönetimi</value>
@@ -1325,13 +1325,13 @@ Devam etmek ister misiniz?</value>
     <value>Sanatçı Bölme</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Birden fazla sanatçıyı ayırmak için kullanılan karakterleri tanımlayın (örn. ';/'). Devre dışı bırakmak için boş bırakın.</value>
+    <value>Tek bir etikete yazılmış birden fazla sanatçıyı ayıran karakterler (örn. ';/'). Ayrı etiketlerdeki sanatçılar her zaman ayrı tutulur.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Tür Ayırma</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Birden çok türü ayırmak için kullanılan karakterleri tanımlayın (örn. ';/'). Devre dışı bırakmak için boş bırakın.</value>
+    <value>Tek bir etikete yazılmış birden fazla türü ayıran karakterler (örn. ';/'). Ayrı etiketlerdeki türler her zaman ayrı tutulur.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Kitaplığı Yeniden Tara</value>

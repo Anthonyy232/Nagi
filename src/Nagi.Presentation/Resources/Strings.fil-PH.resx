@@ -1316,7 +1316,7 @@ Gusto mo bang magpatuloy?</value>
     <value>Ibalewala ang mga Artikulo Kapag Nag-uuri</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Ayusin ang mga album, artista, at kanta batay sa kanilang unang makabuluhang salita (hal. Ang "The Beatles" ay inaayos sa ilalim ng B).</value>
+    <value>Ayusin ang mga album, artista, at kanta batay sa kanilang unang makabuluhang salita (hal. Ang "The Beatles" ay inaayos sa ilalim ng B). Ang mga tag sa pag-aayos ng artista gaya ng ARTISTSORT ay gumagana lang habang naka-on ito.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Pamamahala ng Data</value>
@@ -1325,13 +1325,13 @@ Gusto mo bang magpatuloy?</value>
     <value>Paghihiwalay ng Artista</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Tukuyin ang mga karakter na ginagamit upang paghiwalayin ang maraming artista (hal. ';/'). Iwanang blangko upang i-disable.</value>
+    <value>Mga karakter na naghihiwalay sa maraming artista na nakasulat sa iisang tag (hal. ';/'). Palaging magkahiwalay ang mga artista na nasa magkakahiwalay na tag.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Paghihiwalay ng Genre</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Tukuyin ang mga karakter na ginagamit para paghiwalayin ang maraming genre (hal. ';/'). Iwanang walang laman para huwag paganahin.</value>
+    <value>Mga karakter na naghihiwalay sa maraming genre na nakasulat sa iisang tag (hal. ';/'). Palaging magkahiwalay ang mga genre na nasa magkakahiwalay na tag.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>I-rescan ang Library</value>

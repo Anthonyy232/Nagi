@@ -1316,7 +1316,7 @@ Bạn có muốn tiếp tục không?</value>
     <value>Bỏ qua mạo từ khi sắp xếp</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Sắp xếp album, nghệ sĩ và bài hát theo từ có ý nghĩa đầu tiên của chúng (ví dụ: "The Beatles" sẽ được sắp xếp dưới chữ B).</value>
+    <value>Sắp xếp album, nghệ sĩ và bài hát theo từ có ý nghĩa đầu tiên của chúng (ví dụ: "The Beatles" sẽ được sắp xếp dưới chữ B). Các thẻ sắp xếp nghệ sĩ như ARTISTSORT chỉ có hiệu lực khi tùy chọn này được bật.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Quản lý dữ liệu</value>
@@ -1325,13 +1325,13 @@ Bạn có muốn tiếp tục không?</value>
     <value>Tách nghệ sĩ</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Xác định các ký tự dùng để tách nhiều nghệ sĩ (ví dụ: ';/'). Để trống để tắt.</value>
+    <value>Các ký tự dùng để tách nhiều nghệ sĩ được ghi trong cùng một thẻ (ví dụ: ';/'). Nghệ sĩ ở các thẻ riêng luôn được giữ tách biệt.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Tách thể loại</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Xác định các ký tự được sử dụng để tách nhiều thể loại (ví dụ: ';/'). Để trống để tắt.</value>
+    <value>Các ký tự dùng để tách nhiều thể loại được ghi trong cùng một thẻ (ví dụ: ';/'). Thể loại ở các thẻ riêng luôn được giữ tách biệt.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Quét lại thư viện</value>

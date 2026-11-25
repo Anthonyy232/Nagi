@@ -1316,7 +1316,7 @@ Vil du fortsætte?</value>
     <value>Ignorer artikler ved sortering</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Sorter albummer, kunstnere og sange efter deres første betydningsfulde ord (f.eks. "The Beatles" sorteres under B).</value>
+    <value>Sorter albummer, kunstnere og sange efter deres første betydningsfulde ord (f.eks. "The Beatles" sorteres under B). Sorteringstags for kunstnere som ARTISTSORT gælder kun, mens dette er slået til.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Datahåndtering</value>
@@ -1325,13 +1325,13 @@ Vil du fortsætte?</value>
     <value>Kunstneropdeling</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Definer tegn, der bruges til at opdele flere kunstnere (f.eks. ';/'). Lad feltet være tomt for at deaktivere.</value>
+    <value>Tegn, der adskiller flere kunstnere skrevet i ét tag (f.eks. ';/'). Kunstnere i separate tags holdes altid adskilt.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Opdeling af genre</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Definer tegn, der bruges til at opdele flere genrer (f.eks. ';/'). Lad feltet være tomt for at deaktivere.</value>
+    <value>Tegn, der adskiller flere genrer skrevet i ét tag (f.eks. ';/'). Genrer i separate tags holdes altid adskilt.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Genscan bibliotek</value>

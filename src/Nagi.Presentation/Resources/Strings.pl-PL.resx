@@ -1316,7 +1316,7 @@ Czy chcesz kontynuować?</value>
     <value>Ignoruj rodzajniki podczas sortowania</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Sortuj albumy, wykonawców i utwory według ich pierwszego znaczącego słowa (np. "The Beatles" jest sortowane pod literą B).</value>
+    <value>Sortuj albumy, wykonawców i utwory według ich pierwszego znaczącego słowa (np. "The Beatles" jest sortowane pod literą B). Tagi sortowania wykonawców, takie jak ARTISTSORT, działają tylko wtedy, gdy ta opcja jest włączona.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Zarządzanie danymi</value>
@@ -1325,13 +1325,13 @@ Czy chcesz kontynuować?</value>
     <value>Dzielenie wykonawców</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Zdefiniuj znaki używane do rozdzielania wielu wykonawców (np. ';/'). Pozostaw puste, aby wyłączyć.</value>
+    <value>Znaki rozdzielające kilku wykonawców zapisanych w jednym tagu (np. ';/'). Wykonawcy w osobnych tagach zawsze pozostają rozdzieleni.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Dzielenie gatunków</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Zdefiniuj znaki używane do dzielenia wielu gatunków (np. ';/'). Pozostaw puste, aby wyłączyć.</value>
+    <value>Znaki rozdzielające kilka gatunków zapisanych w jednym tagu (np. ';/'). Gatunki w osobnych tagach zawsze pozostają rozdzielone.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Skanuj bibliotekę ponownie</value>

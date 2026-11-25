@@ -1316,7 +1316,7 @@
     <value>정렬 시 관사 무시</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>앨범, 아티스트, 곡을 첫 번째 주요 단어 기준으로 정렬합니다 (예: "The Beatles"는 B로 정렬됩니다).</value>
+    <value>앨범, 아티스트, 곡을 첫 번째 주요 단어 기준으로 정렬합니다 (예: "The Beatles"는 B로 정렬됩니다). ARTISTSORT 같은 아티스트 정렬 태그는 이 설정이 켜져 있을 때만 적용됩니다.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>데이터 관리</value>
@@ -1325,13 +1325,13 @@
     <value>아티스트 분할</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>여러 아티스트를 분할하는 데 사용되는 문자(예: ';/')를 정의합니다. 비워 두면 비활성화됩니다.</value>
+    <value>하나의 태그에 적힌 여러 아티스트를 분리하는 문자입니다(예: ';/'). 별도의 태그에 있는 아티스트는 항상 따로 유지됩니다.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>장르 분리</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>여러 장르를 분리하는 데 사용되는 문자를 정의합니다(예: ';/'). 비워두면 비활성화됩니다.</value>
+    <value>하나의 태그에 적힌 여러 장르를 분리하는 문자입니다(예: ';/'). 별도의 태그에 있는 장르는 항상 따로 유지됩니다.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>라이브러리 다시 스캔</value>

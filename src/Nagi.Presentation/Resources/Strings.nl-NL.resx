@@ -1316,7 +1316,7 @@ Wil je doorgaan?</value>
     <value>Lidwoorden negeren bij sorteren</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Sorteer albums, artiesten en nummers op hun eerste belangrijke woord (bijv. "The Beatles" wordt gesorteerd onder B).</value>
+    <value>Sorteer albums, artiesten en nummers op hun eerste belangrijke woord (bijv. "The Beatles" wordt gesorteerd onder B). Sorteertags voor artiesten, zoals ARTISTSORT, gelden alleen als dit is ingeschakeld.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Gegevensbeheer</value>
@@ -1325,13 +1325,13 @@ Wil je doorgaan?</value>
     <value>Artiestsplitsing</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Definieer tekens die worden gebruikt om meerdere artiesten te splitsen (bijv. ';/'). Laat leeg om uit te schakelen.</value>
+    <value>Tekens die meerdere artiesten in één tag splitsen (bijv. ';/'). Artiesten in afzonderlijke tags blijven altijd gescheiden.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Genresplitsing</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Definieer tekens die worden gebruikt om meerdere genres te splitsen (bijv. ';/'). Leeg laten om uit te schakelen.</value>
+    <value>Tekens die meerdere genres in één tag splitsen (bijv. ';/'). Genres in afzonderlijke tags blijven altijd gescheiden.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Bibliotheek opnieuw scannen</value>

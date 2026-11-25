@@ -1316,7 +1316,7 @@
     <value>排序时忽略冠词</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>按专辑、艺术家和歌曲的第一个实义词进行排序（例如，“The Beatles”将按B排序）。</value>
+    <value>按专辑、艺术家和歌曲的第一个实义词进行排序（例如，“The Beatles”将按B排序）。ARTISTSORT 等艺术家排序标签仅在此选项开启时生效。</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>数据管理</value>
@@ -1325,13 +1325,13 @@
     <value>艺术家拆分</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>定义用于拆分多个艺术家的字符（例如“;/”）。留空以禁用。</value>
+    <value>用于拆分写在同一个标签中的多个艺术家的字符（例如“;/”）。位于不同标签中的艺术家始终保持分开。</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>流派拆分</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>定义用于拆分多个流派的字符（例如“;/”）。留空以禁用。</value>
+    <value>用于拆分写在同一个标签中的多个流派的字符（例如“;/”）。位于不同标签中的流派始终保持分开。</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>重新扫描库</value>

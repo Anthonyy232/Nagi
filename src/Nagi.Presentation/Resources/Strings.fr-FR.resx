@@ -1316,7 +1316,7 @@ Voulez-vous continuer ?</value>
     <value>Ignorer les articles lors du tri</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Trier les albums, artistes et morceaux par leur premier mot significatif (par exemple, "The Beatles" est trié sous B).</value>
+    <value>Trier les albums, artistes et morceaux par leur premier mot significatif (par exemple, "The Beatles" est trié sous B). Les balises de tri d'artiste, comme ARTISTSORT, ne s'appliquent que lorsque cette option est activée.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Gestion des données</value>
@@ -1325,13 +1325,13 @@ Voulez-vous continuer ?</value>
     <value>Séparation des artistes</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Définir les caractères utilisés pour séparer plusieurs artistes (par exemple, ';/'). Laisser vide pour désactiver.</value>
+    <value>Caractères qui séparent plusieurs artistes écrits dans une même balise (par exemple, ';/'). Les artistes placés dans des balises distinctes restent toujours séparés.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Séparation des genres</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Définissez les caractères utilisés pour séparer plusieurs genres (ex: ';/'). Laissez vide pour désactiver.</value>
+    <value>Caractères qui séparent plusieurs genres écrits dans une même balise (par exemple, ';/'). Les genres placés dans des balises distinctes restent toujours séparés.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Analyser la bibliothèque</value>

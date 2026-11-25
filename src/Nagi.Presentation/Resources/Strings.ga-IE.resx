@@ -316,6 +316,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Níl aon mhíreanna</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>Níorbh fhéidir an liosta seo a luchtú.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Earráid</value>
   </data>
@@ -339,6 +342,10 @@
   </data>
   <data name="Playlist_Smart_Count" xml:space="preserve">
     <value>{0, plural, other {Cliste • # amhrán}}</value>
+  </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Níl aon amhráin ag teacht le rialacha an tseinmliosta chliste seo.</value>
@@ -677,6 +684,9 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Cumasaigh &amp; Scan</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Busy" xml:space="preserve">
+    <value>Tosaíonn normalú airde fuaime le scanadh ar do leabharlann, rud nach féidir a rith fad is atá oibríocht leabharlainne eile ar siúl. Bain triail eile as nuair a bheidh sí críochnaithe.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Scanadh normalaithe airde fuaime á ullmhú…</value>
@@ -1306,7 +1316,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Tabhair Neamhaird ar Ailt le linn Sórtála</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Sórtáil albaim, ealaíontóirí agus amhráin de réir a gcéad fhocail thábhachtaigh (m.sh. sórtálann "The Beatles" faoi B).</value>
+    <value>Sórtáil albaim, ealaíontóirí agus amhráin de réir a gcéad fhocail thábhachtaigh (m.sh. sórtálann "The Beatles" faoi B). Ní bhíonn feidhm le clibeanna sórtála ealaíontóra ar nós ARTISTSORT ach amháin fad is atá sé seo ar siúl.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Bainistíocht Sonraí</value>
@@ -1315,13 +1325,13 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Scoilt Ealaíontóra</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Sainigh carachtair a úsáidtear chun il-ealaíontóirí a scoilt (m.sh. ';/'). Fág folamh chun a dhíchumasú.</value>
+    <value>Carachtair a scoilteann roinnt ealaíontóirí atá scríofa in aon chlib amháin (m.sh. ';/'). Coinnítear ealaíontóirí i gclibeanna ar leith scartha i gcónaí.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Scoilt Seánraí</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Sainmhínigh carachtair a úsáidtear chun seánraí iolracha a scoilt (m.sh. ';/'). Fág folamh chun a dhíchumasú.</value>
+    <value>Carachtair a scoilteann roinnt seánraí atá scríofa in aon chlib amháin (m.sh. ';/'). Coinnítear seánraí i gclibeanna ar leith scartha i gcónaí.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Athscan an Leabharlann</value>
@@ -1379,6 +1389,9 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
     <value>Níl aon phacáistí rómhánaithe comhoiriúnacha ar fáil.</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailed" xml:space="preserve">
+    <value>Níorbh fhéidir na pacaí rómhánaithe a luchtú. Seiceáil do cheangal idirlín, ansin athnuaigh.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Theip ar shuiteáil an phacáiste.</value>
@@ -1535,6 +1548,9 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
     <value>Athfhionn do bhailiúchán ceoil áitiúil le Nagi, seinnteoir ceoil a dhíríonn ar luas, simplíocht, agus príobháideachas.</value>
+  </data>
+  <data name="SettingsPage_About_Version_Format" xml:space="preserve">
+    <value>Leagan {0}</value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
     <value>Féach ar Cheadúnais</value>
@@ -1760,6 +1776,12 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>m.sh. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Milliseconds_Format" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="SettingsPage_Decibels_Format" xml:space="preserve">
+    <value>{0:F1} dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>An 1 Lá Is Déanaí</value>
@@ -2009,6 +2031,10 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="Label_Path" xml:space="preserve">
     <value>Conair</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Freastalaí</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Formáid</value>
   </data>
@@ -2044,6 +2070,160 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Taispeáin ceanntásc os cionn gach colúin i liostaí amhrán.</value>
+  </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Cuir Leis</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Cuir fillteán ceoil nó freastalaí leis</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Fillteán Ceoil</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Freastalaí Ceoil</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>Sioncronaigh</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Sínigh Isteach Arís</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Bain Freastalaí</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>An bhfuil fonn ort '{0}' a bhaint de do leabharlann? Fanfaidh a chuid ceoil ar an bhfreastalaí.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>Níl amhráin ann go fóill</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>Sioncronaigh an freastalaí ón leathanach Fillteáin chun a chuid ceoil a thabhairt isteach</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>'{0}' á shioncronú…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>Níorbh fhéidir '{0}' a shioncronú. Bain triail eile as níos déanaí.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Cuir Freastalaí Ceoil Leis</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>Sínigh Isteach: {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Sínigh Isteach</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>Iontráil an pasfhocal le haghaidh {0} ar {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>Iontráil eochair API nua le haghaidh {0}.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Cineál Freastalaí</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome nó freastalaí OpenSubsonic eile</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Seoladh an Fhreastalaí</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Sínigh Isteach le</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>Ainm Úsáideora</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Pasfhocal</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>Eochair API</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Iontráil seoladh an fhreastalaí, mar shampla music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>Níorbh fhéidir teacht ar an bhfreastalaí. Seiceáil an seoladh agus go bhfuil an freastalaí ag rith.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>Níorbh fhéidir ceangal go slán. Mura n-úsáideann an freastalaí HTTPS, iontráil a sheoladh ag tosú le http://.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>Níl aon fhreastalaí Jellyfin ag an seoladh seo.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>Níl aon fhreastalaí OpenSubsonic ag an seoladh seo. Ní féidir freastalaithe nach dtacaíonn ach leis an API Subsonic bunaidh a chur leis.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Teastaíonn Jellyfin 10.11 nó níos déanaí ó Nagi. Nuashonraigh an freastalaí, ansin bain triail eile as.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>Tá an t-ainm úsáideora nó an pasfhocal mícheart.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>Níor ghlac an freastalaí leis an eochair API seo.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>Ní ghlacann an freastalaí seo le pasfhocail ó aipeanna. Sínigh isteach le heochair API ina ionad sin.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>Ní thacaíonn an freastalaí seo le heochracha API. Sínigh isteach le do phasfhocal ina ionad sin.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>Níl leabharlann cheoil ag do chuntas ar an bhfreastalaí seo.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>Tá an freastalaí seo i do leabharlann cheana féin.</value>
+  </data>
+  <data name="Generic_SignInNotSaved" xml:space="preserve">
+    <value>Níorbh fhéidir an síniú isteach a shábháil ar an ríomhaire seo.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>Tharla fadhb ar an bhfreastalaí. Bain triail eile as níos déanaí.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>Baineann an eochair API seo le cuntas eile. Cruthaigh ceann agus tú sínithe isteach mar {0}.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>Níorbh fhéidir teacht ar '{0}'. Seiceáil go bhfuil an freastalaí ag rith agus go bhfuil tú ar líne.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>Níorbh fhéidir ceangal go slán le '{0}'. Seans gur athraíodh a theastas nó go bhfuil sé as dáta.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>Ní ghlacann '{0}' leis an modh sínithe isteach seo a thuilleadh. Bain é, ansin cuir leis arís é agus roghnaigh an modh eile sínithe isteach.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>Níor ghlac '{0}' leis an síniú isteach sábháilte. Sínigh isteach arís chun leanúint dá úsáid.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>Níorbh fhéidir '{0}' a sheinm ó '{1}'.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>Níl '{0}' ar '{1}' a thuilleadh, mar sin fágfaidh sé do leabharlann ag an gcéad sioncronú eile.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
   </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A go Z)</value>

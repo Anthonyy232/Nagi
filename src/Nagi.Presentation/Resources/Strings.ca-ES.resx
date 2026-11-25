@@ -1316,7 +1316,7 @@ Vols continuar?</value>
     <value>Ignora els articles quan s'ordeni</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Ordena àlbums, artistes i cançons per la seva primera paraula significativa (p. ex., "The Beatles" s'ordena per B).</value>
+    <value>Ordena àlbums, artistes i cançons per la seva primera paraula significativa (p. ex., "The Beatles" s'ordena per B). Les etiquetes d'ordenació d'artista, com ara ARTISTSORT, només s'apliquen mentre això està activat.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Gestió de dades</value>
@@ -1325,13 +1325,13 @@ Vols continuar?</value>
     <value>Divisió d'artistes</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Defineix els caràcters utilitzats per dividir diversos artistes (p. ex., ';/'). Deixa-ho buit per desactivar.</value>
+    <value>Caràcters que separen diversos artistes escrits en una sola etiqueta (p. ex., ';/'). Els artistes en etiquetes separades sempre es mantenen separats.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Divisió de gèneres</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Defineix els caràcters utilitzats per dividir diversos gèneres (p. ex., ';/'). Deixa-ho buit per desactivar-ho.</value>
+    <value>Caràcters que separen diversos gèneres escrits en una sola etiqueta (p. ex., ';/'). Els gèneres en etiquetes separades sempre es mantenen separats.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Tornar a escanejar la biblioteca</value>

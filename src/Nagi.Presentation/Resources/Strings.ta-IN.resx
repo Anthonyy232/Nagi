@@ -1316,7 +1316,7 @@
     <value>வரிசைப்படுத்தும்போது முன்னொட்டுச் சொற்களைப் புறக்கணி</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>ஆல்பங்கள், கலைஞர்கள் மற்றும் பாடல்களை அவற்றின் முதல் குறிப்பிடத்தக்க வார்த்தையின்படி வரிசைப்படுத்தவும் (எ.கா., "The Beatles" B இன் கீழ் வரிசைப்படுத்தப்படும்).</value>
+    <value>ஆல்பங்கள், கலைஞர்கள் மற்றும் பாடல்களை அவற்றின் முதல் குறிப்பிடத்தக்க வார்த்தையின்படி வரிசைப்படுத்தவும் (எ.கா., "The Beatles" B இன் கீழ் வரிசைப்படுத்தப்படும்). ARTISTSORT போன்ற கலைஞர் வரிசைப்படுத்தல் குறிச்சொற்கள் இது இயக்கத்தில் இருக்கும்போது மட்டுமே பொருந்தும்.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>தரவு மேலாண்மை</value>
@@ -1325,13 +1325,13 @@
     <value>கலைஞர் பிரிப்பு</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>பல கலைஞர்களைப் பிரிக்கப் பயன்படுத்தப்படும் எழுத்துக்களை வரையறுக்கவும் (எ.கா. ';/'). முடக்க காலியாக விடவும்.</value>
+    <value>ஒரே குறிச்சொல்லில் எழுதப்பட்ட பல கலைஞர்களைப் பிரிக்கும் எழுத்துக்கள் (எ.கா. ';/'). தனித்தனி குறிச்சொற்களில் உள்ள கலைஞர்கள் எப்போதும் தனித்தனியாகவே வைக்கப்படுவர்.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>வகை பிரித்தல்</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>பல வகைகளைப் பிரிக்கப் பயன்படுத்தப்படும் எழுத்துக்களை வரையறுக்கவும் (எ.கா. ';/'). முடக்க காலியாக விடவும்.</value>
+    <value>ஒரே குறிச்சொல்லில் எழுதப்பட்ட பல வகைகளைப் பிரிக்கும் எழுத்துக்கள் (எ.கா. ';/'). தனித்தனி குறிச்சொற்களில் உள்ள வகைகள் எப்போதும் தனித்தனியாகவே வைக்கப்படும்.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>நூலகத்தை மீண்டும் ஸ்கேன் செய்</value>

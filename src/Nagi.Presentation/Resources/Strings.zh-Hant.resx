@@ -1316,7 +1316,7 @@
     <value>排序時忽略冠詞</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>依照專輯、藝人與歌曲的第一個重要字詞進行排序（例如：「The Beatles」會排在 B）。</value>
+    <value>依照專輯、藝人與歌曲的第一個重要字詞進行排序（例如：「The Beatles」會排在 B）。ARTISTSORT 等藝人排序標籤僅在此選項開啟時生效。</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>資料管理</value>
@@ -1325,13 +1325,13 @@
     <value>藝人分割</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>定義用於分割多個藝人的字元（例如「;/」）。留空則停用。</value>
+    <value>用於分割寫在同一個標籤中的多個藝人的字元（例如「;/」）。位於不同標籤中的藝人一律保持分開。</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>類型分隔</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>定義用於分隔多個類型的字元 (例如 ';/')。留空則停用。</value>
+    <value>用於分隔寫在同一個標籤中的多個類型的字元（例如「;/」）。位於不同標籤中的類型一律保持分開。</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>重新掃描媒體庫</value>

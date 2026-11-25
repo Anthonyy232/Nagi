@@ -1316,7 +1316,7 @@
     <value>Игнорировать артикли при сортировке</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Сортировать альбомы, исполнителей и песни по первому значимому слову (например, "The Beatles" сортируется по букве Б).</value>
+    <value>Сортировать альбомы, исполнителей и песни по первому значимому слову (например, "The Beatles" сортируется по букве Б). Теги сортировки исполнителей, такие как ARTISTSORT, применяются, только пока этот параметр включён.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Управление данными</value>
@@ -1325,13 +1325,13 @@
     <value>Разделение исполнителей</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Определите символы, используемые для разделения нескольких исполнителей (например, ';/'). Оставьте пустым, чтобы отключить.</value>
+    <value>Символы, разделяющие нескольких исполнителей, записанных в одном теге (например, ';/'). Исполнители в отдельных тегах всегда остаются раздельными.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Разделение по жанрам</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Определите символы, используемые для разделения нескольких жанров (например, ';/'). Оставьте пустым, чтобы отключить.</value>
+    <value>Символы, разделяющие несколько жанров, записанных в одном теге (например, ';/'). Жанры в отдельных тегах всегда остаются раздельными.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Пересканировать библиотеку</value>

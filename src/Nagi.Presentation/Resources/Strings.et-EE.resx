@@ -1316,7 +1316,7 @@ Kas soovite jätkata?</value>
     <value>Eira sortimisel artikleid</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Sordi albumeid, artiste ja lugusid nende esimese olulise sõna järgi (nt "The Beatles" sorteeritakse tähe B alla).</value>
+    <value>Sordi albumeid, artiste ja lugusid nende esimese olulise sõna järgi (nt "The Beatles" sorteeritakse tähe B alla). Artisti sortimissildid, näiteks ARTISTSORT, kehtivad ainult siis, kui see on sisse lülitatud.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Andmehaldus</value>
@@ -1325,13 +1325,13 @@ Kas soovite jätkata?</value>
     <value>Artisti jagamine</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Määra märgid, mida kasutatakse mitme artisti jagamiseks (nt ';/'). Keelamiseks jäta tühjaks.</value>
+    <value>Märgid, mis eraldavad mitu ühte silti kirjutatud artisti (nt ';/'). Eraldi siltides olevad artistid hoitakse alati lahus.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Žanrite jagamine</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Määrake märgid, mida kasutatakse mitme žanri jagamiseks (nt ';/'). Jätke keelamiseks tühjaks.</value>
+    <value>Märgid, mis eraldavad mitu ühte silti kirjutatud žanri (nt ';/'). Eraldi siltides olevad žanrid hoitakse alati lahus.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Skaneeri teek uuesti</value>

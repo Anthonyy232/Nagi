@@ -1316,7 +1316,7 @@ Chcete pokračovat?</value>
     <value>Při řazení ignorovat členy</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Seřadit alba, interprety a skladby podle jejich prvního významného slova (např. „The Beatles“ se seřadí pod B).</value>
+    <value>Seřadit alba, interprety a skladby podle jejich prvního významného slova (např. „The Beatles“ se seřadí pod B). Značky pro řazení interpretů, například ARTISTSORT, se použijí jen tehdy, když je tato možnost zapnutá.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Správa dat</value>
@@ -1325,13 +1325,13 @@ Chcete pokračovat?</value>
     <value>Rozdělení interpretů</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Definujte znaky použité pro rozdělení více interpretů (např. ';/'). Ponechejte prázdné pro zakázání.</value>
+    <value>Znaky, které oddělují více interpretů zapsaných v jedné značce (např. ';/'). Interpreti v samostatných značkách zůstávají vždy oddělení.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Dělení žánrů</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Definujte znaky používané pro dělení více žánrů (např. ';/'). Ponechte prázdné pro zakázání.</value>
+    <value>Znaky, které oddělují více žánrů zapsaných v jedné značce (např. ';/'). Žánry v samostatných značkách zůstávají vždy oddělené.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Znovu prohledat knihovnu</value>

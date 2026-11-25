@@ -1316,7 +1316,7 @@ Wil jy voortgaan?</value>
     <value>Ignoreer lidwoorde wanneer gesorteer word</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Sorteer albums, kunstenaars en liedjies volgens hul eerste betekenisvolle woord (bv. "The Beatles" sorteer onder B).</value>
+    <value>Sorteer albums, kunstenaars en liedjies volgens hul eerste betekenisvolle woord (bv. "The Beatles" sorteer onder B). Kunstenaarsorteeretikette soos ARTISTSORT geld slegs terwyl dit aan is.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Databeheer</value>
@@ -1325,13 +1325,13 @@ Wil jy voortgaan?</value>
     <value>Kunstenaarverdeling</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Definieer karakters wat gebruik word om veelvuldige kunstenaars te skei (bv. ';/'). Laat leeg om te deaktiveer.</value>
+    <value>Karakters wat verskeie kunstenaars skei wat in een etiket geskryf is (bv. ';/'). Kunstenaars in afsonderlike etikette word altyd apart gehou.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Genre-skeiding</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Definieer karakters wat gebruik word om veelvuldige genres te skei (bv. ';/'). Laat leeg om te deaktiveer.</value>
+    <value>Karakters wat verskeie genres skei wat in een etiket geskryf is (bv. ';/'). Genres in afsonderlike etikette word altyd apart gehou.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Herskandeer Biblioteek</value>

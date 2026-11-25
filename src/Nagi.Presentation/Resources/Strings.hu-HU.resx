@@ -1316,7 +1316,7 @@ Szeretné folytatni?</value>
     <value>Névelők figyelmen kívül hagyása rendezéskor</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Albumok, előadók és dalok rendezése az első jelentős szó szerint (pl. „The Beatles” a B betűnél rendeződik).</value>
+    <value>Albumok, előadók és dalok rendezése az első jelentős szó szerint (pl. „The Beatles” a B betűnél rendeződik). Az előadórendezési címkék, például az ARTISTSORT, csak akkor érvényesek, ha ez be van kapcsolva.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Adatkezelés</value>
@@ -1325,13 +1325,13 @@ Szeretné folytatni?</value>
     <value>Előadó szétválasztása</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Definiálja azokat a karaktereket, amelyekkel több előadó szétválasztható (pl. ';/'). Hagyja üresen a kikapcsoláshoz.</value>
+    <value>Karakterek, amelyek szétválasztják az egy címkébe írt több előadót (pl. ';/'). A külön címkékben szereplő előadók mindig külön maradnak.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Műfaj felosztása</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Adja meg a több műfaj felosztásához használt karaktereket (pl. ';/'). Hagyja üresen a letiltáshoz.</value>
+    <value>Karakterek, amelyek szétválasztják az egy címkébe írt több műfajt (pl. ';/'). A külön címkékben szereplő műfajok mindig külön maradnak.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Könyvtár újraolvasása</value>

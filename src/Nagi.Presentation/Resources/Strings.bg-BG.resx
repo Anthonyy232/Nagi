@@ -1316,7 +1316,7 @@
     <value>Игнориране на членовете при сортиране</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Сортирайте албуми, изпълнители и песни по първата им значима дума (напр. "The Beatles" се сортира под Б).</value>
+    <value>Сортирайте албуми, изпълнители и песни по първата им значима дума (напр. "The Beatles" се сортира под Б). Таговете за сортиране на изпълнители, като ARTISTSORT, се прилагат само докато това е включено.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Управление на данни</value>
@@ -1325,13 +1325,13 @@
     <value>Разделяне на изпълнители</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Определете символите, използвани за разделяне на множество изпълнители (напр. ';/'). Оставете празно, за да деактивирате.</value>
+    <value>Символи, които разделят няколко изпълнители, записани в един таг (напр. ';/'). Изпълнителите в отделни тагове винаги остават разделени.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Разделяне на жанрове</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Дефинирайте символи, използвани за разделяне на множество жанрове (напр. ';/'). Оставете празно за деактивиране.</value>
+    <value>Символи, които разделят няколко жанра, записани в един таг (напр. ';/'). Жанровете в отделни тагове винаги остават разделени.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Пресканирай библиотека</value>

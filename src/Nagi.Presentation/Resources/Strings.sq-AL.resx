@@ -1316,7 +1316,7 @@ Dëshironi të vazhdoni?</value>
     <value>Injoro nyjet gjatë renditjes</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Rendit albume, artistë dhe këngë sipas fjalës së tyre të parë të rëndësishme (p.sh. "The Beatles" renditet nën B).</value>
+    <value>Rendit albume, artistë dhe këngë sipas fjalës së tyre të parë të rëndësishme (p.sh. "The Beatles" renditet nën B). Etiketat e renditjes së artistit, si ARTISTSORT, zbatohen vetëm kur kjo është e aktivizuar.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Menaxhimi i të dhënave</value>
@@ -1325,13 +1325,13 @@ Dëshironi të vazhdoni?</value>
     <value>Ndarja e artistëve</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Përcaktoni karakteret e përdorura për të ndarë artistë të shumtë (p.sh. ';/'). Lëreni bosh për të çaktivizuar.</value>
+    <value>Karaktere që ndajnë disa artistë të shkruar në një etiketë të vetme (p.sh. ';/'). Artistët në etiketa të veçanta mbahen gjithmonë të ndarë.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Ndarja e Zhanreve</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Përcaktoni karakteret e përdorura për të ndarë zhanre të shumta (p.sh. ';/'). Lëreni bosh për të çaktivizuar.</value>
+    <value>Karaktere që ndajnë disa zhanre të shkruara në një etiketë të vetme (p.sh. ';/'). Zhanret në etiketa të veçanta mbahen gjithmonë të ndara.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Riskano bibliotekën</value>

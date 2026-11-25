@@ -1316,7 +1316,7 @@
     <value>نادیده‌گرفتن حروف تعریف هنگام مرتب‌سازی</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>آلبوم‌ها، هنرمندان و آهنگ‌ها را بر اساس اولین کلمه مهمشان مرتب کنید (مثلاً "The Beatles" زیر حرف B مرتب می‌شود).</value>
+    <value>آلبوم‌ها، هنرمندان و آهنگ‌ها را بر اساس اولین کلمه مهمشان مرتب کنید (مثلاً "The Beatles" زیر حرف B مرتب می‌شود). برچسب‌های مرتب‌سازی هنرمند مانند ARTISTSORT فقط وقتی این گزینه روشن است اعمال می‌شوند.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>مدیریت داده</value>
@@ -1325,13 +1325,13 @@
     <value>تفکیک هنرمند</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>کاراکترهای مورد استفاده برای تفکیک هنرمندان متعدد را تعریف کنید (مثلاً ';/'). برای غیرفعال کردن خالی بگذارید.</value>
+    <value>کاراکترهایی که چند هنرمند نوشته‌شده در یک برچسب را از هم جدا می‌کنند (مثلاً ';/'). هنرمندان برچسب‌های جداگانه همیشه جدا می‌مانند.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>تفکیک ژانر</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>کاراکترهای مورد استفاده برای تفکیک ژانرهای متعدد را تعریف کنید (مثلاً «;/»). برای غیرفعال کردن خالی بگذارید.</value>
+    <value>کاراکترهایی که چند ژانر نوشته‌شده در یک برچسب را از هم جدا می‌کنند (مثلاً ';/'). ژانرهای برچسب‌های جداگانه همیشه جدا می‌مانند.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>اسکن مجدد کتابخانه</value>

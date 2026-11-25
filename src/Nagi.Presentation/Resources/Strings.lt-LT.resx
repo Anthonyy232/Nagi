@@ -1316,7 +1316,7 @@ Ar norite tęsti?</value>
     <value>Rūšiuojant nepaisyti artikelių</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Rūšiuoti albumus, atlikėjus ir kūrinius pagal jų pirmą reikšmingą žodį (pvz., "The Beatles" rūšiuojami po B).</value>
+    <value>Rūšiuoti albumus, atlikėjus ir kūrinius pagal jų pirmą reikšmingą žodį (pvz., "The Beatles" rūšiuojami po B). Atlikėjų rikiavimo žymės, pvz., ARTISTSORT, taikomos tik tada, kai tai įjungta.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Duomenų valdymas</value>
@@ -1325,13 +1325,13 @@ Ar norite tęsti?</value>
     <value>Atlikėjų skaidymas</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Apibrėžkite simbolius, naudojamus atskirti kelis atlikėjus (pvz., „;/“). Palikite tuščią, kad išjungtumėte.</value>
+    <value>Simboliai, atskiriantys kelis vienoje žymėje įrašytus atlikėjus (pvz., „;/“). Atskirose žymėse esantys atlikėjai visada lieka atskirti.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Žanrų atskyrimas</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Nurodykite simbolius, naudojamus atskirti kelis žanrus (pvz., „;/“). Palikite tuščią, kad išjungtumėte.</value>
+    <value>Simboliai, atskiriantys kelis vienoje žymėje įrašytus žanrus (pvz., „;/“). Atskirose žymėse esantys žanrai visada lieka atskirti.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Nuskaityti biblioteką iš naujo</value>

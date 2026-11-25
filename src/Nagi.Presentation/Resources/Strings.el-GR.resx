@@ -1316,7 +1316,7 @@
     <value>Παράβλεψη άρθρων κατά την ταξινόμηση</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Ταξινόμηση άλμπουμ, καλλιτεχνών και τραγουδιών με βάση την πρώτη σημαντική λέξη τους (π.χ. το "The Beatles" ταξινομείται κάτω από το B).</value>
+    <value>Ταξινόμηση άλμπουμ, καλλιτεχνών και τραγουδιών με βάση την πρώτη σημαντική λέξη τους (π.χ. το "The Beatles" ταξινομείται κάτω από το B). Οι ετικέτες ταξινόμησης καλλιτέχνη, όπως το ARTISTSORT, ισχύουν μόνο όσο αυτό είναι ενεργό.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Διαχείριση δεδομένων</value>
@@ -1325,13 +1325,13 @@
     <value>Διαχωρισμός καλλιτεχνών</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Ορίστε χαρακτήρες που χρησιμοποιούνται για τον διαχωρισμό πολλών καλλιτεχνών (π.χ. ';/'). Αφήστε κενό για απενεργοποίηση.</value>
+    <value>Χαρακτήρες που διαχωρίζουν πολλούς καλλιτέχνες γραμμένους σε μία ετικέτα (π.χ. ';/'). Οι καλλιτέχνες σε ξεχωριστές ετικέτες παραμένουν πάντα ξεχωριστοί.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Διαχωρισμός ειδών</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Ορίστε τους χαρακτήρες που χρησιμοποιούνται για το διαχωρισμό πολλαπλών ειδών (π.χ. ';/'). Αφήστε κενό για απενεργοποίηση.</value>
+    <value>Χαρακτήρες που διαχωρίζουν πολλά είδη γραμμένα σε μία ετικέτα (π.χ. ';/'). Τα είδη σε ξεχωριστές ετικέτες παραμένουν πάντα ξεχωριστά.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Εκ νέου σάρωση βιβλιοθήκης</value>

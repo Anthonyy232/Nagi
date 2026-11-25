@@ -1316,7 +1316,7 @@ Haluatko jatkaa?</value>
     <value>Jätä artikkelit huomiotta järjestettäessä</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Lajittele albumit, artistit ja kappaleet niiden ensimmäisen merkitsevän sanan mukaan (esim. "The Beatles" lajitellaan B-kirjaimen alle).</value>
+    <value>Lajittele albumit, artistit ja kappaleet niiden ensimmäisen merkitsevän sanan mukaan (esim. "The Beatles" lajitellaan B-kirjaimen alle). Artistien lajittelutagit, kuten ARTISTSORT, ovat käytössä vain, kun tämä on päällä.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Tietojen hallinta</value>
@@ -1325,13 +1325,13 @@ Haluatko jatkaa?</value>
     <value>Artistien jakaminen</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Määritä merkit, joilla useat artistit jaetaan (esim. ';/'). Jätä tyhjäksi poistaaksesi käytöstä.</value>
+    <value>Merkit, jotka erottavat useat yhteen tagiin kirjoitetut artistit (esim. ';/'). Erillisissä tageissa olevat artistit pidetään aina erillään.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Genren jakaminen</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Määritä merkit, joita käytetään useiden genrejen jakamiseen (esim. ';/'). Jätä tyhjäksi poistaaksesi käytöstä.</value>
+    <value>Merkit, jotka erottavat useat yhteen tagiin kirjoitetut genret (esim. ';/'). Erillisissä tageissa olevat genret pidetään aina erillään.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Skannaa kirjasto uudelleen</value>

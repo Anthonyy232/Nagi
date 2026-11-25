@@ -1316,7 +1316,7 @@
     <value>Занемари чланове при сортирању</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Сортирајте албуме, извођаче и песме према њиховој првој значајној речи (нпр. „The Beatles“ се сортира под Б).</value>
+    <value>Сортирајте албуме, извођаче и песме према њиховој првој значајној речи (нпр. „The Beatles“ се сортира под Б). Ознаке за сортирање извођача, попут ARTISTSORT, примењују се само док је ово укључено.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Управљање подацима</value>
@@ -1325,13 +1325,13 @@
     <value>Раздвајање извођача</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Дефинишите знакове који се користе за раздвајање више извођача (нпр. ';/'). Оставите празно да бисте онемогућили.</value>
+    <value>Знакови који раздвајају више извођача уписаних у једну ознаку (нпр. ';/'). Извођачи у засебним ознакама увек остају раздвојени.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Раздвајање жанрова</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Дефинишите знакове који се користе за раздвајање више жанрова (нпр. ';/'). Оставите празно да бисте онемогућили.</value>
+    <value>Знакови који раздвајају више жанрова уписаних у једну ознаку (нпр. ';/'). Жанрови у засебним ознакама увек остају раздвојени.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Поново скенирај библиотеку</value>

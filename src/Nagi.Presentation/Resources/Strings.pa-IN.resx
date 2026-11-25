@@ -1316,7 +1316,7 @@
     <value>ਲੜੀਬੱਧ ਕਰਦੇ ਸਮੇਂ ਆਰਟੀਕਲ ਅਣਡਿੱਠ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>ਐਲਬਮਾਂ, ਕਲਾਕਾਰਾਂ ਅਤੇ ਗੀਤਾਂ ਨੂੰ ਉਹਨਾਂ ਦੇ ਪਹਿਲੇ ਮਹੱਤਵਪੂਰਨ ਸ਼ਬਦ ਦੁਆਰਾ ਕ੍ਰਮਬੱਧ ਕਰੋ (ਉਦਾਹਰਨ ਲਈ, "The Beatles" B ਅਧੀਨ ਕ੍ਰਮਬੱਧ ਹੁੰਦਾ ਹੈ)।</value>
+    <value>ਐਲਬਮਾਂ, ਕਲਾਕਾਰਾਂ ਅਤੇ ਗੀਤਾਂ ਨੂੰ ਉਹਨਾਂ ਦੇ ਪਹਿਲੇ ਮਹੱਤਵਪੂਰਨ ਸ਼ਬਦ ਦੁਆਰਾ ਕ੍ਰਮਬੱਧ ਕਰੋ (ਉਦਾਹਰਨ ਲਈ, "The Beatles" B ਅਧੀਨ ਕ੍ਰਮਬੱਧ ਹੁੰਦਾ ਹੈ)। ARTISTSORT ਵਰਗੇ ਕਲਾਕਾਰ ਕ੍ਰਮ ਟੈਗ ਸਿਰਫ਼ ਉਦੋਂ ਲਾਗੂ ਹੁੰਦੇ ਹਨ ਜਦੋਂ ਇਹ ਚਾਲੂ ਹੋਵੇ।</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>ਡਾਟਾ ਪ੍ਰਬੰਧਨ</value>
@@ -1325,13 +1325,13 @@
     <value>ਕਲਾਕਾਰ ਵੰਡਣਾ</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>ਕਈ ਕਲਾਕਾਰਾਂ ਨੂੰ ਵੰਡਣ ਲਈ ਵਰਤੇ ਜਾਣ ਵਾਲੇ ਅੱਖਰਾਂ ਨੂੰ ਪਰਿਭਾਸ਼ਿਤ ਕਰੋ (ਉਦਾਹਰਨ ਲਈ ';/')। ਅਯੋਗ ਕਰਨ ਲਈ ਖਾਲੀ ਛੱਡੋ।</value>
+    <value>ਇੱਕੋ ਟੈਗ ਵਿੱਚ ਲਿਖੇ ਕਈ ਕਲਾਕਾਰਾਂ ਨੂੰ ਵੱਖ ਕਰਨ ਵਾਲੇ ਅੱਖਰ (ਉਦਾਹਰਨ ਲਈ ';/')। ਵੱਖਰੇ ਟੈਗਾਂ ਵਿੱਚ ਮੌਜੂਦ ਕਲਾਕਾਰ ਹਮੇਸ਼ਾ ਵੱਖ ਰੱਖੇ ਜਾਂਦੇ ਹਨ।</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>ਸ਼ੈਲੀ ਵੰਡ</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>ਕਈ ਸ਼ੈਲੀਆਂ ਨੂੰ ਵੰਡਣ ਲਈ ਵਰਤੇ ਜਾਣ ਵਾਲੇ ਅੱਖਰਾਂ ਨੂੰ ਪਰਿਭਾਸ਼ਿਤ ਕਰੋ (ਉਦਾਹਰਨ ਲਈ ';/')। ਅਯੋਗ ਕਰਨ ਲਈ ਖਾਲੀ ਛੱਡੋ।</value>
+    <value>ਇੱਕੋ ਟੈਗ ਵਿੱਚ ਲਿਖੀਆਂ ਕਈ ਸ਼ੈਲੀਆਂ ਨੂੰ ਵੱਖ ਕਰਨ ਵਾਲੇ ਅੱਖਰ (ਉਦਾਹਰਨ ਲਈ ';/')। ਵੱਖਰੇ ਟੈਗਾਂ ਵਿੱਚ ਮੌਜੂਦ ਸ਼ੈਲੀਆਂ ਹਮੇਸ਼ਾ ਵੱਖ ਰੱਖੀਆਂ ਜਾਂਦੀਆਂ ਹਨ।</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>ਲਾਇਬ੍ਰੇਰੀ ਨੂੰ ਮੁੜ ਸਕੈਨ ਕਰੋ</value>

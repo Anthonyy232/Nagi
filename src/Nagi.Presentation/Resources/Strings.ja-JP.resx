@@ -1316,7 +1316,7 @@
     <value>並べ替え時に冠詞を無視</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>アルバム、アーティスト、曲を最初の意味のある単語でソートします (例：「The Beatles」は「B」でソートされます)。</value>
+    <value>アルバム、アーティスト、曲を最初の意味のある単語でソートします (例：「The Beatles」は「B」でソートされます)。ARTISTSORT などのアーティスト並べ替えタグは、この設定がオンの間のみ適用されます。</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>データ管理</value>
@@ -1325,13 +1325,13 @@
     <value>アーティストの分割</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>複数のアーティストを分割するために使用される文字を定義します（例：';/'）。無効にするには空欄にしてください。</value>
+    <value>1つのタグに書かれた複数のアーティストを分割する文字です（例：';/'）。別々のタグにあるアーティストは常に分けて扱われます。</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>ジャンルの分割</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>複数のジャンルを分割するために使用される文字を定義します（例: ';/'）。空白のままにすると無効になります。</value>
+    <value>1つのタグに書かれた複数のジャンルを分割する文字です（例：';/'）。別々のタグにあるジャンルは常に分けて扱われます。</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>ライブラリを再スキャン</value>

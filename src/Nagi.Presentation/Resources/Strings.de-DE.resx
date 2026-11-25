@@ -1316,7 +1316,7 @@ Möchten Sie fortfahren?</value>
     <value>Artikel beim Sortieren ignorieren</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Alben, Künstler und Titel nach ihrem ersten signifikanten Wort sortieren (z.B. werden "The Beatles" unter B sortiert).</value>
+    <value>Alben, Künstler und Titel nach ihrem ersten signifikanten Wort sortieren (z.B. werden "The Beatles" unter B sortiert). Künstler-Sortier-Tags wie ARTISTSORT gelten nur, solange dies aktiviert ist.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Datenverwaltung</value>
@@ -1325,13 +1325,13 @@ Möchten Sie fortfahren?</value>
     <value>Künstler-Aufteilung</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Definieren Sie Zeichen, die zum Trennen mehrerer Künstler verwendet werden (z.B. ';/'). Lassen Sie das Feld leer, um die Funktion zu deaktivieren.</value>
+    <value>Zeichen, die mehrere in einem Tag angegebene Künstler trennen (z.B. ';/'). Künstler in getrennten Tags bleiben immer getrennt.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Genre-Aufteilung</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Definieren Sie Zeichen, die zum Trennen mehrerer Genres verwendet werden (z.B. ';/'). Leer lassen, um zu deaktivieren.</value>
+    <value>Zeichen, die mehrere in einem Tag angegebene Genres trennen (z.B. ';/'). Genres in getrennten Tags bleiben immer getrennt.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Bibliothek neu scannen</value>

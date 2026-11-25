@@ -1316,7 +1316,7 @@
     <value>התעלם ממילות יידוע בעת מיון</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>מיין אלבומים, אמנים ושירים לפי המילה המשמעותית הראשונה שלהם (לדוגמה, "The Beatles" ימוין תחת B).</value>
+    <value>מיין אלבומים, אמנים ושירים לפי המילה המשמעותית הראשונה שלהם (לדוגמה, "The Beatles" ימוין תחת B). תגיות מיון אמן כגון ARTISTSORT חלות רק כאשר אפשרות זו מופעלת.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>ניהול נתונים</value>
@@ -1325,13 +1325,13 @@
     <value>פיצול אמנים</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>הגדר תווים המשמשים לפיצול מספר אמנים (לדוגמה: ';/'). השאר ריק כדי להשבית.</value>
+    <value>תווים שמפצלים כמה אמנים שנכתבו בתגית אחת (לדוגמה: ';/'). אמנים בתגיות נפרדות תמיד נשארים נפרדים.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>פיצול ז'אנרים</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>הגדר תווים המשמשים לפיצול מספר ז'אנרים (לדוגמה: ';/'). השאר ריק כדי להשבית.</value>
+    <value>תווים שמפצלים כמה ז'אנרים שנכתבו בתגית אחת (לדוגמה: ';/'). ז'אנרים בתגיות נפרדות תמיד נשארים נפרדים.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>סרוק מחדש ספרייה</value>

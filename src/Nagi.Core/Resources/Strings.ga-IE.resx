@@ -156,6 +156,9 @@
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Níl aon seinmliostaí le heaspórtáil.</value>
   </data>
+  <data name="Error_PlaylistsExportFailed" xml:space="preserve">
+    <value>Níorbh fhéidir na seinmliostaí a easpórtáil chuig an bhfillteán sin.</value>
+  </data>
   <data name="EqPreset_None" xml:space="preserve">
     <value>Dada</value>
   </data>
@@ -255,5 +258,21 @@
   <data name="Biography_WikipediaAttribution" xml:space="preserve">
     <value>Ó Vicipéid, faoin gceadúnas CC BY-SA.</value>
     <comment>Shown below an artist biography taken from Wikipedia, as its license requires.</comment>
+  </data>
+  <data name="Format_FetchingServerSongs" xml:space="preserve">
+    <value>Amhráin á bhfáil ón bhfreastalaí ({0})…</value>
+    <comment>Shown while a music server is synced. {0} is the number of songs received so far.</comment>
+  </data>
+  <data name="Status_AddingServerSongs" xml:space="preserve">
+    <value>Amhráin á gcur le do leabharlann…</value>
+    <comment>Shown while songs from a music server are saved to the library.</comment>
+  </data>
+  <data name="Status_DownloadingServerCovers" xml:space="preserve">
+    <value>Clúdaigh albam á n-íoslódáil…</value>
+    <comment>Shown while album covers are downloaded from a music server.</comment>
+  </data>
+  <data name="Status_SyncComplete" xml:space="preserve">
+    <value>Sioncronú críochnaithe.</value>
+    <comment>Shown when a music server has finished syncing.</comment>
   </data>
 </root>

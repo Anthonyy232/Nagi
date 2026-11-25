@@ -1316,7 +1316,7 @@
     <value>क्रमबद्ध करते समय आर्टिकल्स को नज़रअंदाज़ करें</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>एल्बम, कलाकार और गाने को उनके पहले महत्वपूर्ण शब्द से छाँटें (जैसे "The Beatles" को B के अंतर्गत छाँटा जाता है)।</value>
+    <value>एल्बम, कलाकार और गाने को उनके पहले महत्वपूर्ण शब्द से छाँटें (जैसे "The Beatles" को B के अंतर्गत छाँटा जाता है)। ARTISTSORT जैसे कलाकार सॉर्ट टैग केवल तभी लागू होते हैं जब यह चालू हो।</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>डेटा प्रबंधन</value>
@@ -1325,13 +1325,13 @@
     <value>कलाकार विभाजन</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>कई कलाकारों को विभाजित करने के लिए उपयोग किए जाने वाले वर्णों को परिभाषित करें (उदाहरण के लिए ';/')। अक्षम करने के लिए खाली छोड़ दें।</value>
+    <value>एक ही टैग में लिखे कई कलाकारों को अलग करने वाले वर्ण (उदाहरण के लिए ';/')। अलग-अलग टैग में मौजूद कलाकार हमेशा अलग रखे जाते हैं।</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>शैली विभाजन</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>कई शैलियों को विभाजित करने के लिए उपयोग किए जाने वाले वर्णों को परिभाषित करें (उदाहरण के लिए ';/'). अक्षम करने के लिए खाली छोड़ दें।</value>
+    <value>एक ही टैग में लिखी कई शैलियों को अलग करने वाले वर्ण (उदाहरण के लिए ';/')। अलग-अलग टैग में मौजूद शैलियाँ हमेशा अलग रखी जाती हैं।</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>लाइब्रेरी पुनः स्कैन करें</value>
