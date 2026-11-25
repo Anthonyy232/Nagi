@@ -1,3 +1,4 @@
+using System.Text.Json;
 using AwesomeAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -49,6 +50,59 @@ public class DiscordPresenceServiceTests
         clients.Should().Be(2);
         service.Stop();
         await discord.WaitForCloseAsync();
+    }
+
+    [Fact]
+    public async Task Pausing_KeepsTheArtistOnTheStatus()
+    {
+        await using var discord = new FakeDiscord();
+        using var service = await StartPlayingAsync(discord);
+
+        _playback.IsPlaying.Returns(false);
+        _playback.PlaybackStateChanged += Raise.Event<Action>();
+
+        var paused = JsonElement.Parse(await discord.ReadActivityAsync()).GetProperty("state").GetString()!;
+        _playback.CurrentTrack!.ArtistName = string.Join(", ", Enumerable.Repeat("Kalimba Orchestra", 12));
+        _playback.PlaybackStateChanged += Raise.Event<Action>();
+        var longCredit = JsonElement.Parse(await discord.ReadActivityAsync()).GetProperty("state").GetString();
+
+        paused.Should().Contain("Kalimba").And.Contain("3:00");
+        // Discord's limit cuts the artist, not the paused text.
+        longCredit.Should().HaveLength(128).And.StartWith(paused.Replace("Kalimba", "", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task Pausing_WhenHiddenWhilePaused_ClearsTheStatusUntilPlaybackResumes()
+    {
+        await using var discord = new FakeDiscord();
+        _settings.Set(CoreSettings.DiscordHideWhenPaused, true);
+        using var service = await StartPlayingAsync(discord);
+
+        _playback.IsPlaying.Returns(false);
+        _playback.PlaybackStateChanged += Raise.Event<Action>();
+        var (_, cleared) = await discord.ReadAsync();
+        _playback.IsPlaying.Returns(true);
+        _playback.PlaybackStateChanged += Raise.Event<Action>();
+
+        IsClear(cleared).Should().BeTrue();
+        (await discord.ReadActivityAsync()).Should().Contain("Kalimba");
+    }
+
+    [Fact]
+    public async Task TogglingHideWhilePaused_ClearsAndRestoresThePausedStatus()
+    {
+        await using var discord = new FakeDiscord();
+        using var service = await StartPlayingAsync(discord);
+        _playback.IsPlaying.Returns(false);
+        _playback.PlaybackStateChanged += Raise.Event<Action>();
+        var paused = await discord.ReadActivityAsync();
+
+        _settings.Set(CoreSettings.DiscordHideWhenPaused, true);
+        var (_, cleared) = await discord.ReadAsync();
+        _settings.Set(CoreSettings.DiscordHideWhenPaused, false);
+
+        IsClear(cleared).Should().BeTrue();
+        (await discord.ReadActivityAsync()).Should().Be(paused);
     }
 
     [Theory]
@@ -109,5 +163,33 @@ public class DiscordPresenceServiceTests
         await _albumCovers.Received(onlineMetadata ? 1 : 2).FindCoverUrlAsync(Arg.Any<AlbumCoverQuery>(), Arg.Any<CancellationToken>());
         await _albumCovers.Received(1).FindCoverUrlAsync(
             Arg.Is<AlbumCoverQuery>(q => q.Title == "Album" && q.ReleaseId == "release"), Arg.Any<CancellationToken>());
+    }
+
+    // Discord clears the status for a missing or null activity.
+    private static bool IsClear(JsonElement frame) =>
+        frame.GetProperty("cmd").GetString() == "SET_ACTIVITY" &&
+        (!frame.GetProperty("args").TryGetProperty("activity", out var activity) || activity.ValueKind == JsonValueKind.Null);
+
+    // Connected, with the playing status already read.
+    private async Task<DiscordPresenceService> StartPlayingAsync(FakeDiscord discord)
+    {
+        var configuration = Substitute.For<IConfiguration>();
+        configuration["Discord:AppId"].Returns("123456789");
+        _playback.CurrentTrack.Returns(new Song
+        {
+            Title = "Song",
+            ArtistName = "Kalimba",
+            Duration = TimeSpan.FromMinutes(3)
+        });
+        _playback.IsPlaying.Returns(true);
+        _settings.Set(CoreSettings.DiscordRichPresence, true);
+        var service = new DiscordPresenceService(configuration, NullLogger<DiscordPresenceService>.Instance,
+            _playback, _albumCovers, _settings,
+            appId => new DiscordIpcClient(appId, NullLogger.Instance, () => [discord.PipeName]));
+        var accepted = discord.AcceptAsync();
+        service.Start();
+        await accepted;
+        await discord.ReadActivityAsync();
+        return service;
     }
 }

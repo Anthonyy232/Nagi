@@ -1486,6 +1486,12 @@ Do you want to continue?</value>
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
     <value>Show your current listening activity as your status on Discord.</value>
   </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Header" xml:space="preserve">
+    <value>Hide Discord Status When Paused</value>
+  </data>
+  <data name="SettingsPage_DiscordHideWhenPaused_Description" xml:space="preserve">
+    <value>Clear your Discord status while music is paused or stopped.</value>
+  </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Smart Playlist</value>
   </data>

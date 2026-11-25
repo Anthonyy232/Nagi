@@ -98,6 +98,12 @@ public partial class SettingsViewModel : SettingsSectionViewModel
         set => Set(CoreSettings.DiscordRichPresence, value);
     }
 
+    public bool IsDiscordHideWhenPausedEnabled
+    {
+        get => Get(CoreSettings.DiscordHideWhenPaused);
+        set => Set(CoreSettings.DiscordHideWhenPaused, value);
+    }
+
     // Launching at sign-in is the operating system's state, read when the page loads.
     [ObservableProperty] public partial bool IsAutoLaunchEnabled { get; set; }
     [ObservableProperty] public partial bool IsUpdatingAutoLaunch { get; set; }
