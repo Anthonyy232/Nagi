@@ -39,7 +39,6 @@
                 </GridView.ItemsPanel>
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="library:GenreSummary">
-                        <!--  The background is bound to the genre name, producing a unique gradient for each.  -->
                         <Grid Margin="{StaticResource CollectionCardMargin}"
                               Padding="{StaticResource SurfaceContentPadding}"
                               Background="{x:Bind Name, Converter={StaticResource GenreToGradientConverter}, Mode=OneTime}"
