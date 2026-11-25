@@ -17,7 +17,7 @@
                mc:Ignorable="d">
 
     <ContentDialog.Resources>
-        <x:Double x:Key="ContentDialogMaxWidth">1400</x:Double>
+        <x:Double x:Key="ContentDialogMaxWidth">800</x:Double>
 
         <Style x:Key="RuleRowStyle" TargetType="Border">
             <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
@@ -26,13 +26,11 @@
         </Style>
     </ContentDialog.Resources>
 
-    <Grid Margin="0,12,0,0"
-          ColumnDefinitions="*"
-          RowDefinitions="Auto,Auto,*,Auto">
+    <uicontrols:FillWidthGrid Margin="0,12,0,0" RowDefinitions="Auto,Auto,*,Auto">
 
         <Grid Grid.Row="0"
               Margin="0,0,0,24"
-              ColumnDefinitions="Auto, 24, *, 24, Auto">
+              ColumnDefinitions="Auto, 24, *, 24, 200">
             <StackPanel Grid.Column="0"
                         VerticalAlignment="Top"
                         Spacing="8">
@@ -58,7 +56,6 @@
             </StackPanel>
 
             <StackPanel Grid.Column="4"
-                        MinWidth="200"
                         VerticalAlignment="Top"
                         Spacing="4">
                 <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind resources:Strings.SmartPlaylist_SortOrderLabel, Mode=OneTime}" />
@@ -222,5 +219,5 @@
                            Text="{x:Bind ViewModel.MatchCountText, Mode=OneWay}" />
             </StackPanel>
         </Border>
-    </Grid>
+    </uicontrols:FillWidthGrid>
 </ContentDialog>
